@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3bf5b30c-6b04-4593-b678-2591b268bf5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{9ad72c3c-48e4-4e2a-869e-6f611aa8cdb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AudioFormats">
+      <UniqueIdentifier>{f40df24f-bf38-4d63-b84d-11d0822b8e2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AudioFormats">
+      <UniqueIdentifier>{70cb229e-4a65-4e2b-9bad-4a4eb1dc3e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AudioStructs">
+      <UniqueIdentifier>{7fc1bede-5a56-4a47-b312-361959bfca91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AudioStructs">
+      <UniqueIdentifier>{0a7fcc38-cdce-4704-b08f-3e79f39cf8ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NativeAudio">
+      <UniqueIdentifier>{2caae077-88ed-4680-9906-4d585017b4aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NativeAudio">
+      <UniqueIdentifier>{28bbd6b8-db48-4d3f-b928-cdc7c7e87297}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FlacFormat.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioDevice.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioException.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Category.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioObject.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)int24.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)INativeAudio.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)FlacFormat.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

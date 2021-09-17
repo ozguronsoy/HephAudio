@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{bb93f558-91d0-4736-88af-56a3ad9532e9}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioDevice.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Category.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FlacFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)INativeAudio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)FlacFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />
+  </ItemGroup>
+</Project>
