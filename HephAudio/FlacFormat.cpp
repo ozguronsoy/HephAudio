@@ -58,10 +58,10 @@ namespace HephAudio
 		{
 			return L".flac";
 		}
-		WAVEFORMATEX FlacFormat::ReadFormatInfo(AudioFile& file) const
+		AudioFormatInfo FlacFormat::ReadFormatInfo(AudioFile& file) const
 		{
 			void* audioFileBuffer = file.GetInnerBufferAddress();
-			WAVEFORMATEX wfx = WAVEFORMATEX();
+			AudioFormatInfo wfx = AudioFormatInfo();
 			wfx.wFormatTag = 1;
 			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"fLaC")
 			{
@@ -81,7 +81,7 @@ namespace HephAudio
 					}
 					cursor += metaDataSize + metaDataHeaderSize;
 				}
-				wfx.cbSize = cursor; // Meta data ends.
+				wfx.headerSize = cursor; // Meta data ends.
 			}
 			else
 			{
@@ -93,16 +93,16 @@ namespace HephAudio
 		}
 		AudioBuffer FlacFormat::ReadFile(AudioFile& file) const
 		{
-			WAVEFORMATEX wfx = ReadFormatInfo(file);
+			AudioFormatInfo wfx = ReadFormatInfo(file);
 			void* audioFileBuffer = file.GetInnerBufferAddress();
-			ReadHeader(audioFileBuffer, wfx.cbSize, wfx);
+			ReadHeader(audioFileBuffer, wfx.headerSize, wfx);
 			throw AudioException(E_NOTIMPL, L"FlacFormat::ReadFile", L"Not implemented.");
 		}
 		bool FlacFormat::SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			throw AudioException(E_NOTIMPL, L"FlacFormat::SaveToFile", L"Not implemented.");
 		}
-		void FlacFormat::ReadHeader(void* audioFileBuffer, uint32_t startOfHeader, WAVEFORMATEX& wfx) const
+		void FlacFormat::ReadHeader(void* audioFileBuffer, uint32_t startOfHeader, AudioFormatInfo& wfx) const
 		{
 			uint32_t cursor = startOfHeader + 1;
 			const bool variableBlocking = Read<uint8_t>(audioFileBuffer, cursor, Endian::Big) & 0x01; // false = fixed, true = variable.
@@ -115,11 +115,11 @@ namespace HephAudio
 			cursor += 1;
 			uint32_t sfNumber = Read<uint32_t>(audioFileBuffer, cursor, Endian::Big) >> 1;
 			cursor += 3;
-			SubframeType subFrameType = ToSubFrameType(Read<uint8_t>(audioFileBuffer, wfx.cbSize + 11, Endian::Big) >> 2);
+			SubframeType subFrameType = ToSubFrameType(Read<uint8_t>(audioFileBuffer, wfx.headerSize + 11, Endian::Big) >> 2);
 			uint8_t order = 0;
 			if (subFrameType == SubframeType::Fixed)
 			{
-				order = (Read<uint8_t>(audioFileBuffer, wfx.cbSize + 11, Endian::Big) >> 2) & 0x07;
+				order = (Read<uint8_t>(audioFileBuffer, wfx.headerSize + 11, Endian::Big) >> 2) & 0x07;
 				if (order > 4) { order = 0; } // reserved.
 			}
 			// TODO...
@@ -168,7 +168,7 @@ namespace HephAudio
 			}
 			throw AudioException(E_INVALIDARG, L"FlacFormat", L"Invalid block size.");
 		}
-		uint16_t FlacFormat::GetBPS(uint8_t bpsbits, WAVEFORMATEX& wfx) const
+		uint16_t FlacFormat::GetBPS(uint8_t bpsbits, AudioFormatInfo& wfx) const
 		{
 			if (bpsbits == 0)
 			{

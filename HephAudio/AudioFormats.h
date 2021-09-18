@@ -18,7 +18,7 @@ namespace HephAudio
 				uint32_t cursor = 0;
 				while (true)
 				{
-					const uint32_t pos = extension.find(' ', cursor);
+					const size_t pos = extension.find(' ', cursor);
 					splitExtensions.push_back(extension.substr(cursor, pos - cursor));
 					cursor = pos + 1;
 					if (pos == std::wstring::npos)

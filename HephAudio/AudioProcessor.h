@@ -6,9 +6,9 @@ namespace HephAudio
 	class HephAudioAPI AudioProcessor final
 	{
 	private:
-		WAVEFORMATEX targetFormat;
+		AudioFormatInfo targetFormat;
 	public:
-		AudioProcessor(WAVEFORMATEX targetFormat);
+		AudioProcessor(AudioFormatInfo targetFormat);
 		AudioProcessor(const AudioProcessor&) = delete;
 		AudioProcessor& operator=(const AudioProcessor&) = delete;
 		// BPS = Bits Per Sample
@@ -19,7 +19,5 @@ namespace HephAudio
 		static void Reverse(AudioBuffer& buffer);
 		static std::vector<AudioBuffer> SplitChannels(AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(std::vector<AudioBuffer>& channels);
-	private:
-		static bool CompareWFX(const WAVEFORMATEX lhs, const WAVEFORMATEX rhs) noexcept;
 	};
 }

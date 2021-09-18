@@ -1,4 +1,5 @@
 #pragma once
+#ifdef _WIN32
 #include "framework.h"
 #include "INativeAudio.h"
 #include <wrl.h>
@@ -27,14 +28,14 @@ namespace HephAudio
 				AudioSessionEvents();
 				ULONG STDMETHODCALLTYPE AddRef();
 				ULONG STDMETHODCALLTYPE Release();
-				HRESULT STDMETHODCALLTYPE QueryInterface(REFIID  riid, VOID** ppvInterface);
-				HRESULT STDMETHODCALLTYPE OnDisplayNameChanged(LPCWSTR NewDisplayName, LPCGUID EventContext);
-				HRESULT STDMETHODCALLTYPE OnIconPathChanged(LPCWSTR NewIconPath, LPCGUID EventContext);
-				HRESULT STDMETHODCALLTYPE OnSimpleVolumeChanged(float NewVolume, BOOL NewMute, LPCGUID EventContext);
-				HRESULT STDMETHODCALLTYPE OnChannelVolumeChanged(DWORD ChannelCount, float NewChannelVolumeArray[], DWORD ChangedChannel, LPCGUID EventContext);
-				HRESULT STDMETHODCALLTYPE OnGroupingParamChanged(LPCGUID NewGroupingParam, LPCGUID EventContext);
-				HRESULT STDMETHODCALLTYPE OnStateChanged(AudioSessionState NewState);
-				HRESULT STDMETHODCALLTYPE OnSessionDisconnected(AudioSessionDisconnectReason DisconnectReason);
+				long STDMETHODCALLTYPE QueryInterface(REFIID  riid, VOID** ppvInterface);
+				long STDMETHODCALLTYPE OnDisplayNameChanged(LPCWSTR NewDisplayName, LPCGUID EventContext);
+				long STDMETHODCALLTYPE OnIconPathChanged(LPCWSTR NewIconPath, LPCGUID EventContext);
+				long STDMETHODCALLTYPE OnSimpleVolumeChanged(float NewVolume, BOOL NewMute, LPCGUID EventContext);
+				long STDMETHODCALLTYPE OnChannelVolumeChanged(DWORD ChannelCount, float NewChannelVolumeArray[], DWORD ChangedChannel, LPCGUID EventContext);
+				long STDMETHODCALLTYPE OnGroupingParamChanged(LPCGUID NewGroupingParam, LPCGUID EventContext);
+				long STDMETHODCALLTYPE OnStateChanged(AudioSessionState NewState);
+				long STDMETHODCALLTYPE OnSessionDisconnected(AudioSessionDisconnectReason DisconnectReason);
 			};
 #pragma endregion
 #pragma region Audio Device Events
@@ -49,12 +50,12 @@ namespace HephAudio
 				AudioDeviceEvents();
 				ULONG STDMETHODCALLTYPE AddRef();
 				ULONG STDMETHODCALLTYPE Release();
-				HRESULT STDMETHODCALLTYPE QueryInterface(REFIID  riid, VOID** ppvInterface);
-				HRESULT STDMETHODCALLTYPE OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId);
-				HRESULT STDMETHODCALLTYPE OnDeviceAdded(LPCWSTR pwstrDeviceId);
-				HRESULT STDMETHODCALLTYPE OnDeviceRemoved(LPCWSTR pwstrDeviceId);
-				HRESULT STDMETHODCALLTYPE OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState);
-				HRESULT STDMETHODCALLTYPE OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key);
+				long STDMETHODCALLTYPE QueryInterface(REFIID  riid, VOID** ppvInterface);
+				long STDMETHODCALLTYPE OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId);
+				long STDMETHODCALLTYPE OnDeviceAdded(LPCWSTR pwstrDeviceId);
+				long STDMETHODCALLTYPE OnDeviceRemoved(LPCWSTR pwstrDeviceId);
+				long STDMETHODCALLTYPE OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState);
+				long STDMETHODCALLTYPE OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key);
 			};
 #pragma endregion
 		protected:
@@ -74,9 +75,9 @@ namespace HephAudio
 			virtual ~WinAudio();
 			virtual void SetMasterVolume(double volume) const;
 			virtual double GetMasterVolume() const;
-			virtual void InitializeRender(AudioDevice* device, WAVEFORMATEX format);
+			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopRendering();
-			virtual void InitializeCapture(AudioDevice* device, WAVEFORMATEX format);
+			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopCapturing();
 			virtual void SetDisplayName(std::wstring displayName);
 			virtual void SetIconPath(std::wstring iconPath);
@@ -91,3 +92,4 @@ namespace HephAudio
 		};
 	}
 }
+#endif

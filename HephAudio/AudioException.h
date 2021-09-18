@@ -6,16 +6,19 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI AudioException : public std::exception
+		struct HephAudioAPI AudioException
 		{
-			HRESULT hr;
+			long hr;
 			std::wstring method; // Method name that exception has occurred.
 			std::wstring message;
 			AudioException();
-			AudioException(HRESULT hr, std::wstring method, std::wstring message);
+			AudioException(long hr, std::wstring method, std::wstring message);
 			virtual ~AudioException() = default;
+			virtual std::string What() const;
+			virtual std::wstring WhatW() const;
 		protected:
-			virtual std::string HRToHex(HRESULT hr) const;
+			virtual std::string HRToHex(long hr) const;
+			virtual std::wstring HRToHexW(long hr) const;
 		};
 	}
 }

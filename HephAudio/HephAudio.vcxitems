@@ -19,6 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioDevice.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
@@ -41,6 +42,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />

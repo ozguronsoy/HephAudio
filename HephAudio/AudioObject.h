@@ -16,7 +16,7 @@ namespace HephAudio
 			// Position of the audio object on the queue, if equals to 0 its currently playing.
 			uint32_t queueIndex;
 			// In milliseconds.
-			DWORD queueDelay;
+			uint32_t queueDelay;
 			AudioObject();
 			virtual bool IsPlaying() const override;
 			bool IsInQueue() const;

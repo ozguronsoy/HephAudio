@@ -5,7 +5,7 @@ using namespace HephAudio::Structs;
 
 namespace HephAudio
 {
-	AudioProcessor::AudioProcessor(WAVEFORMATEX targetFormat)
+	AudioProcessor::AudioProcessor(AudioFormatInfo targetFormat)
 	{
 		this->targetFormat = targetFormat;
 	}
@@ -13,7 +13,7 @@ namespace HephAudio
 	{
 		if (buffer.wfx.wBitsPerSample == targetFormat.wBitsPerSample) { return; }
 		const size_t frameCount = buffer.FrameCount();
-		WAVEFORMATEX resultFormat = AudioBuffer::CreateWaveFormat(buffer.wfx.wFormatTag, buffer.wfx.nChannels, targetFormat.wBitsPerSample, buffer.wfx.nSamplesPerSec);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, buffer.wfx.nChannels, targetFormat.wBitsPerSample, buffer.wfx.nSamplesPerSec);
 		AudioBuffer resultBuffer(frameCount, resultFormat);
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -39,7 +39,7 @@ namespace HephAudio
 	{
 		if (buffer.wfx.nChannels == targetFormat.nChannels) { return; }
 		const size_t frameCount = buffer.FrameCount();
-		WAVEFORMATEX resultFormat = AudioBuffer::CreateWaveFormat(buffer.wfx.wFormatTag, targetFormat.nChannels, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, targetFormat.nChannels, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
 		AudioBuffer resultBuffer(frameCount, resultFormat);
 		for (size_t i = 0; i < frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
 		{
@@ -66,7 +66,7 @@ namespace HephAudio
 		{
 			targetFrameCount = ceil((double)currentFrameCount * srRatio);
 		}
-		WAVEFORMATEX resultFormat = AudioBuffer::CreateWaveFormat(buffer.wfx.wFormatTag, buffer.wfx.nChannels, buffer.wfx.wBitsPerSample, targetFormat.nSamplesPerSec);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, buffer.wfx.nChannels, buffer.wfx.wBitsPerSample, targetFormat.nSamplesPerSec);
 		AudioBuffer resultBuffer(targetFrameCount, resultFormat);
 		const double cursorRatio = (1.0 / (targetFrameCount - 1)) * (currentFrameCount - 1);
 		double cursor = 0.0;
@@ -109,7 +109,7 @@ namespace HephAudio
 	std::vector<AudioBuffer> AudioProcessor::SplitChannels(AudioBuffer& buffer)
 	{
 		const size_t frameCount = buffer.FrameCount();
-		WAVEFORMATEX resultFormat = AudioBuffer::CreateWaveFormat(buffer.wfx.wFormatTag, 1, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, 1, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
 		std::vector<AudioBuffer> channels(buffer.wfx.nChannels, AudioBuffer(frameCount, resultFormat));
 		if (buffer.wfx.nChannels == 1)
 		{
@@ -127,15 +127,15 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::MergeChannels(std::vector<AudioBuffer>& channels)
 	{
-		if (channels.size() == 0) { return AudioBuffer(0, WAVEFORMATEX()); }
+		if (channels.size() == 0) { return AudioBuffer(0, AudioFormatInfo()); }
 		for (size_t i = 0; i < channels.size() - 1; i++)
 		{
-			if (!CompareWFX(channels.at(i).wfx, channels.at(i + 1).wfx))
+			if (channels.at(i).wfx != channels.at(i + 1).wfx)
 			{
 				throw AudioException(E_FAIL, L"AudioProcessor::MergeChannels", L"All channels must have the same wave format.");
 			}
 		}
-		AudioBuffer resultBuffer(channels.at(0).FrameCount(), AudioBuffer::CreateWaveFormat(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
+		AudioBuffer resultBuffer(channels.at(0).FrameCount(), AudioFormatInfo(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
 		for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
 		{
 			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
@@ -144,10 +144,5 @@ namespace HephAudio
 			}
 		}
 		return resultBuffer;
-	}
-	bool AudioProcessor::CompareWFX(const WAVEFORMATEX lhs, const WAVEFORMATEX rhs) noexcept
-	{
-		return lhs.wFormatTag == rhs.wFormatTag && lhs.wBitsPerSample == rhs.wBitsPerSample && lhs.nChannels == rhs.nChannels && lhs.nSamplesPerSec == rhs.nSamplesPerSec
-			&& lhs.nBlockAlign == rhs.nBlockAlign && lhs.nAvgBytesPerSec == rhs.nAvgBytesPerSec;
 	}
 }

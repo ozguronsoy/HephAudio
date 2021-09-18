@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "WinAudioDS.h"
 #include <string>
 #include <sstream>
@@ -69,7 +70,7 @@ namespace HephAudio
 			if (!disposing && isRenderInitialized)
 			{
 				const uint16_t usv = volume * UINT16_MAX;
-				const DWORD dv = (usv << 16) | usv;
+				const uint32_t dv = (usv << 16) | usv;
 				waveOutSetVolume(nullptr, dv);
 			}
 		}
@@ -84,7 +85,7 @@ namespace HephAudio
 			}
 			return -1.0;
 		}
-		void WinAudioDS::InitializeRender(AudioDevice* device, WAVEFORMATEX format)
+		void WinAudioDS::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			if (disposing) { return; }
 			StopRendering();
@@ -97,7 +98,7 @@ namespace HephAudio
 			}
 			if (renderFormat.nChannels != 1 && renderFormat.nChannels != 2) { renderFormat.nChannels = 2; }
 			if (renderFormat.wBitsPerSample != 8 && renderFormat.wBitsPerSample != 16 && renderFormat.wBitsPerSample != 24 && renderFormat.wBitsPerSample != 32) { renderFormat.wBitsPerSample = 32; }
-			renderFormat = AudioBuffer::CreateWaveFormat(renderFormat.wFormatTag, renderFormat.nChannels, renderFormat.wBitsPerSample, renderFormat.nSamplesPerSec);
+			renderFormat = AudioFormatInfo(renderFormat.wFormatTag, renderFormat.nChannels, renderFormat.wBitsPerSample, renderFormat.nSamplesPerSec);
 			GUID deviceId;
 			if (device == nullptr || device->type != AudioDeviceType::Render)
 			{
@@ -114,7 +115,8 @@ namespace HephAudio
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
 			bufferDesc.dwBufferBytes = renderFormat.nAvgBytesPerSec * 2;
 			bufferDesc.dwReserved = 0;
-			bufferDesc.lpwfxFormat = &renderFormat;
+			WAVEFORMATEX wrf = renderFormat;
+			bufferDesc.lpwfxFormat = &wrf;
 			bufferDesc.guid3DAlgorithm = GUID_NULL;
 			WINAUDIODS_EXCPT(pDirectSound->CreateSoundBuffer(&bufferDesc, pDirectSoundBuffer.GetAddressOf(), nullptr), this, L"WinAudioDS::InitializeRender", L"An error occurred whilst creating a render buffer.");
 			renderDeviceId = GuidToWString(&deviceId);
@@ -132,7 +134,7 @@ namespace HephAudio
 				pDirectSound = nullptr;
 			}
 		}
-		void WinAudioDS::InitializeCapture(AudioDevice* device, WAVEFORMATEX format)
+		void WinAudioDS::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			if (disposing) { return; }
 			StopCapturing();
@@ -145,7 +147,7 @@ namespace HephAudio
 			}
 			if (captureFormat.nChannels != 1 && captureFormat.nChannels != 2) { captureFormat.nChannels = 2; }
 			if (captureFormat.wBitsPerSample != 8 && captureFormat.wBitsPerSample != 16 && captureFormat.wBitsPerSample != 24 && captureFormat.wBitsPerSample != 32) { captureFormat.wBitsPerSample = 32; }
-			captureFormat = AudioBuffer::CreateWaveFormat(captureFormat.wFormatTag, captureFormat.nChannels, captureFormat.wBitsPerSample, captureFormat.nSamplesPerSec);
+			captureFormat = AudioFormatInfo(captureFormat.wFormatTag, captureFormat.nChannels, captureFormat.wBitsPerSample, captureFormat.nSamplesPerSec);
 			GUID deviceId;
 			if (device == nullptr || device->type != AudioDeviceType::Capture)
 			{
@@ -160,7 +162,8 @@ namespace HephAudio
 			bufferDesc.dwSize = sizeof(DSCBUFFERDESC);
 			bufferDesc.dwFlags = 0;
 			bufferDesc.dwBufferBytes = captureFormat.nAvgBytesPerSec * 2;
-			bufferDesc.lpwfxFormat = &captureFormat;
+			WAVEFORMATEX wcf = captureFormat;
+			bufferDesc.lpwfxFormat = &wcf;
 			bufferDesc.dwFXCount = 0;
 			bufferDesc.lpDSCFXDesc = nullptr;
 			WINAUDIODS_EXCPT(pDirectSoundCapture->CreateCaptureBuffer(&bufferDesc, pDirectSoundCaptureBuffer.GetAddressOf(), nullptr), this, L"WinAudioDS::InitializeCapture", L"An error occurred whilst creating a capture buffer.");
@@ -332,7 +335,7 @@ namespace HephAudio
 			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Play(0, 0, DSBPLAY_LOOPING), this, L"WinAudioDS", L"An error occurred whilst rendering the samples.");
 			while (!disposing && isRenderInitialized)
 			{
-				DWORD retval = WaitForMultipleObjects(notificationCount, hEvents, FALSE, 2000);
+				uint32_t retval = WaitForMultipleObjects(notificationCount, hEvents, FALSE, 2000);
 				if (retval == WAIT_OBJECT_0 || retval == WAIT_OBJECT_0 + 1 || retval == WAIT_OBJECT_0 + 2 || retval == WAIT_OBJECT_0 + 3 || retval == WAIT_OBJECT_0 + 4)
 				{
 					Mix(dataBuffer, dataBuffer.FrameCount());
@@ -354,7 +357,7 @@ namespace HephAudio
 					CloseHandle(hEvents[i]);
 				}
 			}
-			HRESULT hr = pDirectSoundBuffer->Stop();
+			long hr = pDirectSoundBuffer->Stop();
 			if (FAILED(hr))
 			{
 				RAISE_AUDIO_EXCPT(this, AudioException(hr, L"WinAudioDS", L"An error occurred whilst rendering the samples."));
@@ -382,7 +385,7 @@ namespace HephAudio
 			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Start(DSCBSTART_LOOPING), this, L"WinAudioDS", L"An error occurred whilst capturing the samples.");
 			while (!disposing && isCaptureInitialized)
 			{
-				DWORD retval = WaitForMultipleObjects(notificationCount, hEvents, FALSE, 2000);
+				uint32_t retval = WaitForMultipleObjects(notificationCount, hEvents, FALSE, 2000);
 				if (retval == WAIT_OBJECT_0 || retval == WAIT_OBJECT_0 + 1 || retval == WAIT_OBJECT_0 + 2 || retval == WAIT_OBJECT_0 + 3 || retval == WAIT_OBJECT_0 + 4)
 				{
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->GetCurrentPosition(&captureCursor, &readCursor), this, L"WinAudioDS", L"An error occurred whilst capturing the samples.");
@@ -407,7 +410,7 @@ namespace HephAudio
 					CloseHandle(hEvents[i]);
 				}
 			}
-			HRESULT hr = pDirectSoundCaptureBuffer->Stop();
+			long hr = pDirectSoundCaptureBuffer->Stop();
 			if (FAILED(hr))
 			{
 				RAISE_AUDIO_EXCPT(this, AudioException(hr, L"WinAudioDS", L"An error occurred whilst capturing the samples."));
@@ -539,3 +542,4 @@ namespace HephAudio
 		}
 	}
 }
+#endif

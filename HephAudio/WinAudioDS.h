@@ -1,4 +1,5 @@
 #pragma once
+#ifdef _WIN32
 #include "framework.h"
 #include "INativeAudio.h"
 #include <wrl.h>
@@ -28,9 +29,9 @@ namespace HephAudio
 			virtual ~WinAudioDS();
 			virtual void SetMasterVolume(double volume) const;
 			virtual double GetMasterVolume() const;
-			virtual void InitializeRender(AudioDevice* device, WAVEFORMATEX format);
+			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopRendering();
-			virtual void InitializeCapture(AudioDevice* device, WAVEFORMATEX format);
+			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopCapturing();
 			virtual void SetDisplayName(std::wstring displayName);
 			virtual void SetIconPath(std::wstring iconPath);
@@ -54,3 +55,4 @@ namespace HephAudio
 		};
 	}
 }
+#endif

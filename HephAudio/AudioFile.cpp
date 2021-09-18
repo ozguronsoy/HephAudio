@@ -1,7 +1,9 @@
 #include "AudioFile.h"
 #include "AudioException.h"
+#ifdef _WIN32
 #include <Shlwapi.h>
 #pragma comment(lib, "Shlwapi.lib")
+#endif
 
 using namespace HephAudio::Structs;
 
@@ -16,13 +18,15 @@ namespace HephAudio
 	}
 	AudioFile::AudioFile(std::wstring filePath)
 	{
+#ifdef _WIN32
 		WReadFile(filePath);
+#endif
 	}
 	AudioFile::~AudioFile()
 	{
 		Release(true, true);
 	}
-	DWORD AudioFile::Size() const noexcept
+	uint32_t AudioFile::Size() const noexcept
 	{
 		return fileSize;
 	}
@@ -44,17 +48,21 @@ namespace HephAudio
 	}
 	void AudioFile::Write(void* dataBuffer, size_t fileSize)
 	{
+#ifdef _WIN32
 		WWrite(dataBuffer, fileSize);
+#endif
 	}
 	void AudioFile::Release(bool releaseFile, bool releaseDataBuffer)
 	{
 		if (releaseFile && hFile != nullptr)
 		{
+#ifdef _WIN32
 			BOOL result = CloseHandle(hFile);
 			if (!result)
 			{
 				throw AudioException(E_HANDLE, L"", L"An error occurred whilst closing the audio file handle.");
 			}
+#endif
 			hFile = nullptr;
 		}
 		if (releaseDataBuffer && dataBuffer != nullptr)
@@ -63,6 +71,53 @@ namespace HephAudio
 			dataBuffer = nullptr;
 		}
 	}
+	bool AudioFile::FileExists(std::wstring filePath)
+	{
+#ifdef _WIN32
+		return WFileExists(filePath);
+#endif
+		return false;
+	}
+	std::shared_ptr<AudioFile> AudioFile::CreateNew(std::wstring filePath, bool overwrite)
+	{
+		if (!overwrite && FileExists(filePath))
+		{
+			return nullptr;
+		}
+#ifdef _WIN32
+		return WCreateNew(filePath, overwrite);
+#endif
+		return nullptr;
+	}
+	std::wstring AudioFile::GetFileName(std::wstring filePath)
+	{
+		uint32_t cursor = 0;
+		while (true)
+		{
+			const size_t pos = filePath.find(L"\\", cursor);
+			if (pos == std::wstring::npos)
+			{
+				break;
+			}
+			cursor = pos + 1;
+		}
+		return filePath.substr(cursor, filePath.size() - cursor);
+	}
+	std::wstring AudioFile::GetFileExtension(std::wstring filePath)
+	{
+		uint32_t cursor = 0;
+		while (true)
+		{
+			const size_t pos = filePath.find(L".", cursor);
+			if (pos == std::wstring::npos)
+			{
+				break;
+			}
+			cursor = pos + 1;
+		}
+		return filePath.substr(cursor - 1, filePath.size() - cursor + 1);
+	}
+#ifdef _WIN32
 	void AudioFile::WReadFile(std::wstring& filePath)
 	{
 		if (!PathFileExistsW(filePath.c_str()))
@@ -104,18 +159,6 @@ namespace HephAudio
 			throw AudioException(E_FAIL, L"", L"An error occurred whilst writing to the file.");
 		}
 	}
-	bool AudioFile::FileExists(std::wstring filePath)
-	{
-		return WFileExists(filePath);
-	}
-	std::shared_ptr<AudioFile> AudioFile::CreateNew(std::wstring filePath, bool overwrite)
-	{
-		if (!overwrite && FileExists(filePath))
-		{
-			return nullptr;
-		}
-		return WCreateNew(filePath, overwrite);
-	}
 	bool AudioFile::WFileExists(std::wstring& filePath)
 	{
 		return PathFileExistsW(filePath.c_str());
@@ -131,32 +174,5 @@ namespace HephAudio
 		}
 		return newFile;
 	}
-	std::wstring AudioFile::GetFileName(std::wstring filePath)
-	{
-		uint32_t cursor = 0;
-		while (true)
-		{
-			const size_t pos = filePath.find(L"\\", cursor);
-			if (pos == std::wstring::npos)
-			{
-				break;
-			}
-			cursor = pos + 1;
-		}
-		return filePath.substr(cursor, filePath.size() - cursor);
-	}
-	std::wstring AudioFile::GetFileExtension(std::wstring filePath)
-	{
-		uint32_t cursor = 0;
-		while (true)
-		{
-			const size_t pos = filePath.find(L".", cursor);
-			if (pos == std::wstring::npos)
-			{
-				break;
-			}
-			cursor = pos + 1;
-		}
-		return filePath.substr(cursor - 1, filePath.size() - cursor + 1);
-	}
+#endif
 }

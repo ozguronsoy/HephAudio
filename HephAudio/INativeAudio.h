@@ -4,10 +4,13 @@
 #include "Category.h"
 #include "AudioObject.h"
 #include "AudioFormats.h"
+#include "AudioFormatInfo.h"
 #include <vector>
 #include <thread>
 #include <mutex>
+#ifdef _WIN32
 #include <mmeapi.h>
+#endif
 
 using namespace HephAudio::Structs;
 
@@ -36,8 +39,8 @@ namespace HephAudio
 			std::thread renderThread;
 			std::thread captureThread;
 			std::vector<std::thread> queueThreads;
-			WAVEFORMATEX renderFormat;
-			WAVEFORMATEX captureFormat;
+			AudioFormatInfo renderFormat;
+			AudioFormatInfo captureFormat;
 			bool disposing;
 			bool isRenderInitialized;
 			bool isCaptureInitialized;
@@ -59,7 +62,7 @@ namespace HephAudio
 			virtual ~INativeAudio() = default;
 			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath);
 			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount);
-			virtual std::vector<std::shared_ptr<IAudioObject>> Queue(std::wstring queueName, DWORD queueDelay, std::vector<std::wstring> filePaths);
+			virtual std::vector<std::shared_ptr<IAudioObject>> Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths);
 			virtual std::shared_ptr<IAudioObject> CreateAO(std::wstring name, size_t bufferFrameCount);
 			virtual bool DestroyAO(std::shared_ptr<IAudioObject> audioObject);
 			virtual bool AOExists(std::shared_ptr<IAudioObject> audioObject) const;
@@ -74,25 +77,25 @@ namespace HephAudio
 			virtual bool CategoryExists(std::wstring categoryName) const;
 			virtual void Skip(std::wstring queueName, bool applyDelay);
 			virtual void Skip(size_t skipCount, std::wstring queueName, bool applyDelay);
-			virtual WAVEFORMATEX GetRenderFormat() const;
-			virtual WAVEFORMATEX GetCaptureFormat() const;
-			virtual void InitializeRender(AudioDevice* device, WAVEFORMATEX format) = 0;
+			virtual AudioFormatInfo GetRenderFormat() const;
+			virtual AudioFormatInfo GetCaptureFormat() const;
+			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopRendering() = 0;
-			virtual void InitializeCapture(AudioDevice* device, WAVEFORMATEX format) = 0;
+			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopCapturing() = 0;
 			virtual void SetDisplayName(std::wstring displayName) = 0;
 			virtual void SetIconPath(std::wstring iconPath) = 0;
 			virtual AudioDevice GetAudioDeviceById(std::wstring deviceId) const;
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const = 0;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const = 0;
-			virtual void SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, WAVEFORMATEX targetFormat);
+			virtual void SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat);
 		protected:
 			virtual void JoinRenderThread();
 			virtual void JoinCaptureThread();
 			virtual void JoinQueueThreads();
 			virtual AudioExceptionThread GetCurrentThread() const;
 			virtual std::vector<std::shared_ptr<IAudioObject>> GetQueue(std::wstring queueName) const;
-			virtual void PlayNextInQueue(std::wstring queueName, DWORD queueDelay, uint32_t decreaseQueueIndex);
+			virtual void PlayNextInQueue(std::wstring queueName, uint32_t queueDelay, uint32_t decreaseQueueIndex);
 			// Mixes audio objects that are currently playing into one buffer.
 			virtual void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
 			virtual size_t GetAOCountToMix() const;

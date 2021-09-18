@@ -3,13 +3,16 @@
 #include "AudioException.h"
 #include <string>
 
+#define max(x, y) (x > y ? x : y)
+#define min(x, y) (x < y ? x : y)
+
 namespace HephAudio
 {
 	AudioBuffer::AudioBuffer()
 	{
-		wfx = CreateWaveFormat(1, 2, 16, 48000);
+		wfx = AudioFormatInfo();
 	}
-	AudioBuffer::AudioBuffer(size_t frameCount, WAVEFORMATEX waveFormat)
+	AudioBuffer::AudioBuffer(size_t frameCount, AudioFormatInfo waveFormat)
 	{
 		wfx = waveFormat;
 		buffer = std::vector<uint8_t>(frameCount * wfx.nBlockAlign, 0u);
@@ -188,7 +191,7 @@ namespace HephAudio
 	{
 		return CalculateDuration(FrameCount(), wfx);
 	}
-	WAVEFORMATEX AudioBuffer::GetFormat() const noexcept
+	AudioFormatInfo AudioBuffer::GetFormat() const noexcept
 	{
 		return wfx;
 	}
@@ -233,20 +236,8 @@ namespace HephAudio
 		this->Join(rhs);
 		return *this;
 	}
-	double AudioBuffer::CalculateDuration(size_t frameCount, WAVEFORMATEX waveFormat) noexcept
+	double AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo waveFormat) noexcept
 	{
 		return (double)frameCount * (double)waveFormat.nBlockAlign / (double)waveFormat.nAvgBytesPerSec;
-	}
-	WAVEFORMATEX AudioBuffer::CreateWaveFormat(WORD formatTag, WORD nChannels, WORD bps, DWORD sampleRate) noexcept
-	{
-		WAVEFORMATEX format = WAVEFORMATEX();
-		format.wFormatTag = formatTag;
-		format.nChannels = nChannels;
-		format.wBitsPerSample = bps;
-		format.nSamplesPerSec = sampleRate;
-		format.nBlockAlign = bps * nChannels / 8;
-		format.nAvgBytesPerSec = sampleRate * format.nBlockAlign;
-		format.cbSize = 0;
-		return format;
 	}
 }

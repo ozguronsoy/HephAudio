@@ -5,7 +5,7 @@ namespace HephAudio
 	Fourier::Fourier(const AudioBuffer& buffer)
 	{
 		lastMethod = FourierMethod::Null;
-		const WAVEFORMATEX wfx = buffer.GetFormat();
+		const AudioFormatInfo wfx = buffer.GetFormat();
 		const size_t sampleCount = buffer.FrameCount();
 		size_t complexSampleCount = sampleCount * wfx.nChannels;
 		if (!(complexSampleCount > 0 && !(complexSampleCount & (complexSampleCount - 1)))) // if not power of 2

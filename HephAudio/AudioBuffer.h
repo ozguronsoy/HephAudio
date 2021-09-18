@@ -1,9 +1,8 @@
 #pragma once
 #include "framework.h"
 #include "int24.h"
+#include "AudioFormatInfo.h"
 #include <vector>
-#include <Mmreg.h>
-#include <mmeapi.h>
 
 using namespace HephAudio::Structs;
 
@@ -14,10 +13,10 @@ namespace HephAudio
 		friend class AudioProcessor;
 	private:
 		std::vector<uint8_t> buffer;
-		WAVEFORMATEX wfx;
+		AudioFormatInfo wfx;
 	public:
 		AudioBuffer();
-		AudioBuffer(size_t frameCount, WAVEFORMATEX waveFormat);
+		AudioBuffer(size_t frameCount, AudioFormatInfo waveFormat);
 		// Buffer size in byte.
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
@@ -33,7 +32,7 @@ namespace HephAudio
 		void Reset();
 		// Calculates the duration of the buffer in seconds.
 		double CalculateDuration() const noexcept;
-		WAVEFORMATEX GetFormat() const noexcept;
+		AudioFormatInfo GetFormat() const noexcept;
 		void* GetInnerBufferAddress() const noexcept;
 	private:
 		double GetMin() const noexcept;
@@ -42,7 +41,6 @@ namespace HephAudio
 		AudioBuffer& operator+=(const AudioBuffer& rhs); // Joins buffers.
 	public:
 		// Calculates the duration of the buffer in seconds.
-		static double CalculateDuration(size_t frameCount, WAVEFORMATEX waveFormat) noexcept;
-		static WAVEFORMATEX CreateWaveFormat(WORD formatTag, WORD nChannels, WORD bps, DWORD sampleRate) noexcept;
+		static double CalculateDuration(size_t frameCount, AudioFormatInfo waveFormat) noexcept;
 	};
 }

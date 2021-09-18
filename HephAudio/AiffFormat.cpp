@@ -9,9 +9,9 @@ namespace HephAudio
 		{
 			return L".aiff .aifc .aif";
 		}
-		WAVEFORMATEX AiffFormat::ReadFormatInfo(AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
+		AudioFormatInfo AiffFormat::ReadFormatInfo(AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
 		{
-			WAVEFORMATEX wfx = WAVEFORMATEX();
+			AudioFormatInfo wfx = AudioFormatInfo();
 			void* audioFileBuffer = inFile.GetInnerBufferAddress();
 			outEndian = Endian::Big;
 			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"FORM")
@@ -56,7 +56,7 @@ namespace HephAudio
 						wfx.nBlockAlign = wfx.wBitsPerSample * wfx.nChannels / 8;
 						wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
 						wfx.wFormatTag = 1;
-						wfx.cbSize = nextChunk;
+						wfx.headerSize = nextChunk;
 					}
 					else
 					{
@@ -78,9 +78,9 @@ namespace HephAudio
 		{
 			uint32_t frameCount = 0;
 			Endian audioDataEndian;
-			WAVEFORMATEX wfx = ReadFormatInfo(file, frameCount, audioDataEndian);
+			AudioFormatInfo wfx = ReadFormatInfo(file, frameCount, audioDataEndian);
 			void* audioFileBuffer = file.GetInnerBufferAddress();
-			uint32_t cursor = wfx.cbSize;
+			uint32_t cursor = wfx.headerSize;
 			while (true) // Find the sound data chunk.
 			{
 				if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) != *(uint32_t*)"SSND")
@@ -148,7 +148,7 @@ namespace HephAudio
 			{
 				return false;
 			}
-			WAVEFORMATEX bufferFormat = buffer.GetFormat();
+			AudioFormatInfo bufferFormat = buffer.GetFormat();
 			const uint64_t srBits = ChangeEndian64(SampleRateTo64(&bufferFormat), Endian::Big);
 			const size_t headerSize = 68;
 			const size_t padding = buffer.Size() % 2 == 1 ? 1 : 0;
@@ -199,7 +199,7 @@ namespace HephAudio
 			}
 			return false;
 		}
-		void AiffFormat::SampleRateFrom64(uint64_t srBits, WAVEFORMATEX* wfx) const
+		void AiffFormat::SampleRateFrom64(uint64_t srBits, AudioFormatInfo* wfx) const
 		{
 			if (wfx == nullptr)
 			{
@@ -278,7 +278,7 @@ namespace HephAudio
 				throw AudioException(E_FAIL, L"AiffFormat", L"Unknown sample rate.");
 			}
 		}
-		uint64_t AiffFormat::SampleRateTo64(WAVEFORMATEX* wfx) const
+		uint64_t AiffFormat::SampleRateTo64(AudioFormatInfo* wfx) const
 		{
 			if (wfx == nullptr)
 			{

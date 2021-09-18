@@ -8,7 +8,7 @@ namespace HephAudio
 	{
 		INativeAudio::INativeAudio()
 		{
-			WAVEFORMATEX defaultFormat = AudioBuffer::CreateWaveFormat(1, 2, 16, 48000);
+			AudioFormatInfo defaultFormat = AudioFormatInfo(1, 2, 16, 48000);
 			audioObjects = std::vector<std::shared_ptr<IAudioObject>>(0);
 			categories = Categories(0);
 			mainThreadId = std::this_thread::get_id();
@@ -56,7 +56,7 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		std::vector<std::shared_ptr<IAudioObject>> INativeAudio::Queue(std::wstring queueName, DWORD queueDelay, std::vector<std::wstring> filePaths)
+		std::vector<std::shared_ptr<IAudioObject>> INativeAudio::Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths)
 		{
 			if (queueName == L"")
 			{
@@ -228,11 +228,11 @@ namespace HephAudio
 				}
 			}
 		}
-		WAVEFORMATEX INativeAudio::GetRenderFormat() const
+		AudioFormatInfo INativeAudio::GetRenderFormat() const
 		{
 			return renderFormat;
 		}
-		WAVEFORMATEX INativeAudio::GetCaptureFormat() const
+		AudioFormatInfo INativeAudio::GetCaptureFormat() const
 		{
 			return captureFormat;
 		}
@@ -248,7 +248,7 @@ namespace HephAudio
 			}
 			return AudioDevice();
 		}
-		void INativeAudio::SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, WAVEFORMATEX targetFormat)
+		void INativeAudio::SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
 		{
 			try
 			{
@@ -333,7 +333,7 @@ namespace HephAudio
 			}
 			return queue;
 		}
-		void INativeAudio::PlayNextInQueue(std::wstring queueName, DWORD queueDelay, uint32_t decreaseQueueIndex)
+		void INativeAudio::PlayNextInQueue(std::wstring queueName, uint32_t queueDelay, uint32_t decreaseQueueIndex)
 		{
 			if (queueName != L"")
 			{
@@ -436,7 +436,7 @@ namespace HephAudio
 							if (audioObject->loopCount == 1) // Finish playing.
 							{
 								std::wstring queueName = audioObject->queueName;
-								DWORD queueDelay = audioObject->queueDelay;
+								uint32_t queueDelay = audioObject->queueDelay;
 								audioObjects.erase(audioObjects.begin() + i);
 								i--;
 								if (queueName != L"")

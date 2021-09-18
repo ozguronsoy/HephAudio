@@ -90,6 +90,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -139,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp">
       <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

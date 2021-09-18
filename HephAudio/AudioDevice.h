@@ -34,28 +34,25 @@ namespace HephAudio
 		{
 			return (AudioDeviceType)((uint8_t)lhs | (uint8_t)rhs);
 		}
-		constexpr HephAudioAPI AudioDeviceType& operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr HephAudioAPI AudioDeviceType operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
-			lhs = lhs | rhs;
-			return lhs;
+			return lhs | rhs;
 		}
 		constexpr HephAudioAPI AudioDeviceType operator&(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return (AudioDeviceType)((uint8_t)lhs & (uint8_t)rhs);
 		}
-		constexpr HephAudioAPI AudioDeviceType& operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr HephAudioAPI AudioDeviceType operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
-			lhs = lhs & rhs;
-			return lhs;
+			return lhs & rhs;
 		}
 		constexpr HephAudioAPI AudioDeviceType operator^(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return (AudioDeviceType)((uint8_t)lhs ^ (uint8_t)rhs);
 		}
-		constexpr HephAudioAPI AudioDeviceType& operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr HephAudioAPI AudioDeviceType operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
-			lhs = lhs ^ rhs;
-			return lhs;
+			return lhs ^ rhs;
 		}
 		constexpr HephAudioAPI AudioDeviceType operator~(const AudioDeviceType& lhs)
 		{

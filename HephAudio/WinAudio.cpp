@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "WinAudio.h"
 #include <VersionHelpers.h>
 
@@ -31,7 +32,7 @@ namespace HephAudio
 			}
 			return ulRef;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::QueryInterface(REFIID  riid, VOID** ppvInterface)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::QueryInterface(REFIID  riid, VOID** ppvInterface)
 		{
 			if (IID_IUnknown == riid)
 			{
@@ -50,31 +51,31 @@ namespace HephAudio
 			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnDisplayNameChanged(LPCWSTR NewDisplayName, LPCGUID EventContext)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnDisplayNameChanged(LPCWSTR NewDisplayName, LPCGUID EventContext)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnIconPathChanged(LPCWSTR NewIconPath, LPCGUID EventContext)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnIconPathChanged(LPCWSTR NewIconPath, LPCGUID EventContext)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnSimpleVolumeChanged(float NewVolume, BOOL NewMute, LPCGUID EventContext)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnSimpleVolumeChanged(float NewVolume, BOOL NewMute, LPCGUID EventContext)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnChannelVolumeChanged(DWORD ChannelCount, float NewChannelVolumeArray[], DWORD ChangedChannel, LPCGUID EventContext)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnChannelVolumeChanged(DWORD ChannelCount, float NewChannelVolumeArray[], DWORD ChangedChannel, LPCGUID EventContext)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnGroupingParamChanged(LPCGUID NewGroupingParam, LPCGUID EventContext)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnGroupingParamChanged(LPCGUID NewGroupingParam, LPCGUID EventContext)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnStateChanged(AudioSessionState NewState)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnStateChanged(AudioSessionState NewState)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnSessionDisconnected(AudioSessionDisconnectReason DisconnectReason)
+		long STDMETHODCALLTYPE WinAudio::AudioSessionEvents::OnSessionDisconnected(AudioSessionDisconnectReason DisconnectReason)
 		{
 			if (DisconnectReason == AudioSessionDisconnectReason::DisconnectReasonDeviceRemoval)
 			{
@@ -119,7 +120,7 @@ namespace HephAudio
 			}
 			return ulRef;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::QueryInterface(REFIID  riid, VOID** ppvInterface)
+		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::QueryInterface(REFIID  riid, VOID** ppvInterface)
 		{
 			if (IID_IUnknown == riid)
 			{
@@ -138,7 +139,7 @@ namespace HephAudio
 			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
+		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
 		{
 			if (parent->OnDefaultAudioDeviceChange != nullptr && parent->currentRenderDeviceId != std::wstring(pwstrDeviceId))
 			{
@@ -146,7 +147,7 @@ namespace HephAudio
 			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceAdded(LPCWSTR pwstrDeviceId)
+		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceAdded(LPCWSTR pwstrDeviceId)
 		{
 			if (parent->OnAudioDeviceAdded != nullptr)
 			{
@@ -154,7 +155,7 @@ namespace HephAudio
 			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceRemoved(LPCWSTR pwstrDeviceId)
+		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceRemoved(LPCWSTR pwstrDeviceId)
 		{
 			if (parent->OnAudioDeviceRemoved != nullptr)
 			{
@@ -162,11 +163,11 @@ namespace HephAudio
 			}
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
+		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
 		{
 			return S_OK;
 		}
-		HRESULT STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key)
+		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key)
 		{
 			return S_OK;
 		}
@@ -235,7 +236,7 @@ namespace HephAudio
 			}
 			return volume;
 		}
-		void WinAudio::InitializeRender(AudioDevice* device, WAVEFORMATEX format)
+		void WinAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			if (disposing) { return; }
 			ComPtr<IMMDevice> pDevice = nullptr;
@@ -258,16 +259,18 @@ namespace HephAudio
 			}
 			StopRendering();
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pAudioClient.GetAddressOf()), this, L"WinAudio::InitializeRender", L"An error occurred whilst activating the render device.");
-			WINAUDIO_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &format, &closestFormat), this, L"WinAudio::InitializeRender", L"An error occurred whilst checking if the given format is supported.");
+			WAVEFORMATEX wrf = format;
+			WINAUDIO_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wrf, &closestFormat), this, L"WinAudio::InitializeRender", L"An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr) // The given format is not supported, initialize audio client using the closest format.
 			{
 				format = (*closestFormat);
 				format.wFormatTag = 1;
-				format.cbSize = 0;
+				format.headerSize = 0;
+				wrf = format;
 				CoTaskMemFree(closestFormat);
 			}
 			renderFormat = format;
-			WINAUDIO_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, &renderFormat, nullptr), this, L"WinAudio::InitializeRender", L"An error occurred whilst initializing the audio client.");
+			WINAUDIO_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, &wrf, nullptr), this, L"WinAudio::InitializeRender", L"An error occurred whilst initializing the audio client.");
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager2), CLSCTX_INPROC_SERVER, nullptr, (void**)pSessionManager.GetAddressOf()), this, L"WinAudio::InitializeRender", L"An error occurred whilst activating the session manager.");
 			WINAUDIO_EXCPT(pSessionManager->GetAudioSessionControl(nullptr, 0, pSessionControl.GetAddressOf()), this, L"WinAudio::InitializeRender", L"An error occurred whilst getting the session controls.");
 			WINAUDIO_EXCPT(pSessionControl->RegisterAudioSessionNotification(&sessionEvents), this, L"WinAudio::InitializeRender", L"An error occurred whilst registering to session notifications.");
@@ -288,7 +291,7 @@ namespace HephAudio
 				pAudioClient == nullptr;
 			}
 		}
-		void WinAudio::InitializeCapture(AudioDevice* device, WAVEFORMATEX format)
+		void WinAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			if (disposing) { return; }
 			ComPtr<IAudioClient3> pCaptureAudioClient = nullptr;
@@ -312,16 +315,18 @@ namespace HephAudio
 			}
 			StopCapturing();
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), this, L"WinAudio::InitializeCapture", L"An error occurred whilst activating the device.");
-			WINAUDIO_EXCPT(pCaptureAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &format, &closestFormat), this, L"WinAudio::InitializeCapture", L"An error occurred whilst checking if the given format is supported.");
+			WAVEFORMATEX wcf = format;
+			WINAUDIO_EXCPT(pCaptureAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wcf, &closestFormat), this, L"WinAudio::InitializeCapture", L"An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr) // The given format is not supported, initialize audio client using the closest format.
 			{
 				format = (*closestFormat);
 				format.wFormatTag = 1;
-				format.cbSize = 0;
+				format.headerSize = 0;
+				wcf = format;
 				CoTaskMemFree(closestFormat);
 			}
 			captureFormat = format;
-			WINAUDIO_EXCPT(pCaptureAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, &captureFormat, nullptr), this, L"WinAudio::InitializeCapture", L"An error occurred whilst initializing the audio client.");
+			WINAUDIO_EXCPT(pCaptureAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, &wcf, nullptr), this, L"WinAudio::InitializeCapture", L"An error occurred whilst initializing the audio client.");
 			ComPtr<IAudioSessionManager2> pSessionManager = nullptr;
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager2), CLSCTX_INPROC_SERVER, nullptr, (void**)pSessionManager.GetAddressOf()), this, L"WinAudio::InitializeCapture", L"An error occurred whilst activating the session manager.");
 			isCaptureInitialized = true;
@@ -406,7 +411,7 @@ namespace HephAudio
 			ComPtr<IMMDevice> pDefaultCapture = nullptr;
 			LPWSTR defaultRenderId = nullptr;
 			LPWSTR defaultCaptureId = nullptr;
-			DWORD deviceState = DEVICE_STATE_ACTIVE;
+			uint32_t deviceState = DEVICE_STATE_ACTIVE;
 			if (includeInactive)
 			{
 				deviceState = DEVICE_STATE_ACTIVE | DEVICE_STATE_DISABLED | DEVICE_STATE_UNPLUGGED;
@@ -500,7 +505,7 @@ namespace HephAudio
 			while (!disposing && isRenderInitialized) // Render data while not disposing and not reinitializing.
 			{
 				// Wait for next buffer event to be signaled.
-				DWORD retval = WaitForSingleObject(hEvent, 2000);
+				uint32_t retval = WaitForSingleObject(hEvent, 2000);
 				if (retval != WAIT_OBJECT_0)
 				{
 					WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Stop(), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
@@ -605,3 +610,4 @@ namespace HephAudio
 		}
 	}
 }
+#endif

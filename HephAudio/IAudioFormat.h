@@ -2,6 +2,7 @@
 #include "framework.h"
 #include "AudioBuffer.h"
 #include "AudioFile.h"
+#include "AudioFormatInfo.h"
 #include <string>
 #include <memory>
 

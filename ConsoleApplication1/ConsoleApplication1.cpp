@@ -14,7 +14,7 @@ int main()
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
 	WinAudio wa;
 	wa.OnException = &OnException;
-	wa.InitializeRender(nullptr, AudioBuffer::CreateWaveFormat(WAVE_FORMAT_PCM, 2, 32, 48000));
+	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
 
 	auto start = std::chrono::high_resolution_clock::now();
@@ -26,5 +26,5 @@ int main()
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::cout << std::endl << std::endl << ex.what() << std::endl << std::endl;
+	std::wcout << std::endl << std::endl << ex.WhatW() << std::endl << std::endl;
 }
