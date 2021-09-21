@@ -93,6 +93,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudio.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp">
       <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudio.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

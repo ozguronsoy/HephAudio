@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudio", "HephAudio\Heph
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{E4F627E8-208E-420A-98E2-F6B3F9A25356}"
 	ProjectSection(ProjectDependencies) = postProject
-		{6BA51343-B83F-484F-B804-07B36FCF60E8} = {6BA51343-B83F-484F-B804-07B36FCF60E8}
+		{5032293E-D7FB-4310-A663-D9EA725DB97B} = {5032293E-D7FB-4310-A663-D9EA725DB97B}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudioDLL", "HephAudioDLL\HephAudioDLL.vcxproj", "{6BA51343-B83F-484F-B804-07B36FCF60E8}"
@@ -16,9 +16,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudioSO", "HephAudioSO\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplicationLinux", "ConsoleApplicationLinux\ConsoleApplicationLinux.vcxproj", "{1FED3BA0-F498-4338-922D-67023CD6012B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android1", "Android1", "{25D33B9A-332D-4A86-A9F6-86A88B26A7CC}"
+EndProject
+Project("{39E2626F-3545-4960-A6E8-258AD8476CE5}") = "Android1.Packaging", "Android1\Android1.Packaging\Android1.Packaging.androidproj", "{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Android1.NativeActivity", "Android1\Android1.NativeActivity\Android1.NativeActivity.vcxproj", "{5032293E-D7FB-4310-A663-D9EA725DB97B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		HephAudio\HephAudio.vcxitems*{41ced890-080d-4d47-b962-d441c6308ddc}*SharedItemsImports = 4
+		HephAudio\HephAudio.vcxitems*{5032293e-d7fb-4310-a663-d9ea725db97b}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{6ba51343-b83f-484f-b804-07b36fcf60e8}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{bb93f558-91d0-4736-88af-56a3ad9532e9}*SharedItemsImports = 9
 	EndGlobalSection
@@ -97,9 +104,53 @@ Global
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Release|x86.ActiveCfg = Release|x86
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Release|x86.Build.0 = Release|x86
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Release|x86.Deploy.0 = Release|x86
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|ARM.ActiveCfg = Debug|ARM
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|ARM.Build.0 = Debug|ARM
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|ARM.Deploy.0 = Debug|ARM
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|ARM64.Build.0 = Debug|ARM64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|x64.ActiveCfg = Debug|x64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|x64.Build.0 = Debug|x64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|x64.Deploy.0 = Debug|x64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|x86.ActiveCfg = Debug|x86
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|x86.Build.0 = Debug|x86
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Debug|x86.Deploy.0 = Debug|x86
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|ARM.ActiveCfg = Release|ARM
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|ARM.Build.0 = Release|ARM
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|ARM.Deploy.0 = Release|ARM
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|ARM64.ActiveCfg = Release|ARM64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|ARM64.Build.0 = Release|ARM64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|ARM64.Deploy.0 = Release|ARM64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|x64.ActiveCfg = Release|x64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|x64.Build.0 = Release|x64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|x64.Deploy.0 = Release|x64
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|x86.ActiveCfg = Release|x86
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|x86.Build.0 = Release|x86
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD}.Release|x86.Deploy.0 = Release|x86
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|ARM.Build.0 = Debug|ARM
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|ARM64.Build.0 = Debug|ARM64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|x64.ActiveCfg = Debug|x64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|x64.Build.0 = Debug|x64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|x86.ActiveCfg = Debug|x86
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Debug|x86.Build.0 = Debug|x86
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|ARM.ActiveCfg = Release|ARM
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|ARM.Build.0 = Release|ARM
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|ARM64.ActiveCfg = Release|ARM64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|ARM64.Build.0 = Release|ARM64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|x64.ActiveCfg = Release|x64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|x64.Build.0 = Release|x64
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|x86.ActiveCfg = Release|x86
+		{5032293E-D7FB-4310-A663-D9EA725DB97B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EE61D3F1-3C90-468D-B807-AB7A767C8CAD} = {25D33B9A-332D-4A86-A9F6-86A88B26A7CC}
+		{5032293E-D7FB-4310-A663-D9EA725DB97B} = {25D33B9A-332D-4A86-A9F6-86A88B26A7CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {87395B32-3B90-4400-A819-A5506CD066AF}

@@ -16,10 +16,13 @@ namespace HephAudio
 		dataBuffer = nullptr;
 		filePath = L"";
 	}
-	AudioFile::AudioFile(std::wstring filePath)
+	AudioFile::AudioFile(std::wstring filePath) : AudioFile()
 	{
 #ifdef _WIN32
 		WReadFile(filePath);
+#endif
+#ifdef __ANDROID__
+		AReadFile(filePath);
 #endif
 	}
 	AudioFile::~AudioFile()
@@ -75,6 +78,9 @@ namespace HephAudio
 	{
 #ifdef _WIN32
 		return WFileExists(filePath);
+#endif
+#ifdef __ANDROID__
+		return AFileExists(filePath);
 #endif
 		return false;
 	}
@@ -173,6 +179,43 @@ namespace HephAudio
 			throw AudioException(E_FAIL, L"", L"An error occurred whilst opening the file.");
 		}
 		return newFile;
+	}
+#endif
+#ifdef __ANDROID__
+	void AudioFile::AReadFile(std::wstring& filePath)
+	{
+		FILE* pFile = fopen(std::string(filePath.begin(), filePath.end()).c_str(), "r"); // open file for read.
+		if (pFile == nullptr)
+		{
+			throw AudioException(*__errno(), L"", L"An error occurred whilst opening the file.");
+		}
+		this->filePath = filePath;
+		// obtain the file size.
+		fseek(pFile, 0, SEEK_END);
+		this->fileSize = ftell(pFile);
+		rewind(pFile);
+		// file size obtained.
+		this->dataBuffer = malloc(fileSize);
+		if (dataBuffer == nullptr)
+		{
+			fclose(pFile);
+			throw AudioException(E_FAIL, L"", L"Insufficient memory.");
+		}
+		size_t result = fread(dataBuffer, 1, fileSize, pFile);
+		if (result != fileSize)
+		{
+			free(dataBuffer);
+			fclose(pFile);
+			throw AudioException(E_FAIL, L"", L"An error occurred whilst reading the file.");
+		}
+		fclose(pFile);
+	}
+	bool AudioFile::AFileExists(std::wstring& filePath)
+	{
+		FILE* pFile = fopen(std::string(filePath.begin(), filePath.end()).c_str(), "r"); // open file for read operations.
+		bool result = pFile != nullptr;
+		fclose(pFile);
+		return result;
 	}
 #endif
 }

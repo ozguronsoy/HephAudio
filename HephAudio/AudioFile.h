@@ -33,10 +33,16 @@ namespace HephAudio
 		static std::wstring GetFileName(std::wstring filePath);
 		static std::wstring GetFileExtension(std::wstring filePath);
 #ifdef _WIN32
+	private:
 		void WReadFile(std::wstring& filePath);
 		void WWrite(void* dataBuffer, size_t fileSize);
 		static bool WFileExists(std::wstring& filePath);
 		static std::shared_ptr<AudioFile> WCreateNew(std::wstring& filePath, bool overwrite);
+#endif
+#ifdef __ANDROID__
+	private:
+		void AReadFile(std::wstring& filePath);
+		static bool AFileExists(std::wstring& filePath);
 #endif
 	};
 }
