@@ -16,11 +16,7 @@
 */
 
 #include <malloc.h>
-#include <AndroidAudio.h>
 
-using namespace HephAudio;
-using namespace HephAudio::Structs;
-using namespace HephAudio::Native;
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "AndroidProject1.NativeActivity", __VA_ARGS__))
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "AndroidProject1.NativeActivity", __VA_ARGS__))
@@ -219,6 +215,14 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 	}
 }
 
+#include "AudioFile.h"
+#include "AudioException.h"
+#include "INativeAudio.h"
+
+using namespace HephAudio;
+using namespace HephAudio::Structs;
+using namespace HephAudio::Native;
+
 void OnException(AudioException ex, AudioExceptionThread t)
 {
 	LOGE(ex.What().c_str());
@@ -229,12 +233,13 @@ void OnException(AudioException ex, AudioExceptionThread t)
 * android_native_app_glue.  It runs in its own thread, with its own
 * event loop for receiving input events and doing other things.
 */
-#include <SLES/OpenSLES.h>
+#include <aaudio/AAudio.h>
+
 // "/storage/emulated/0/Music/blackened.wav"
 // "/storage/sdcard/Music/blackened.wav"
 void android_main(struct android_app* state) {
-	AndroidAudio aa;
-	aa.OnException = &OnException;
+	AudioFile(L"/storage/sdcard/Music/piano2.wav");
+
 
 	struct engine engine;
 

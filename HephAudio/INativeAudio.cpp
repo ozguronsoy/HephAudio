@@ -248,7 +248,7 @@ namespace HephAudio
 			}
 			return AudioDevice();
 		}
-		void INativeAudio::SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
+		bool INativeAudio::SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
 		{
 			try
 			{
@@ -260,14 +260,15 @@ namespace HephAudio
 				if (format == nullptr)
 				{
 					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::SaveToFile", L"File format '" + AudioFile::GetFileExtension(filePath) + L"' not supported."));
-					return;
+					return false;
 				}
-				format->SaveToFile(filePath, buffer, overwrite);
+				return format->SaveToFile(filePath, buffer, overwrite);
 			}
 			catch (AudioException ex)
 			{
 				RAISE_AUDIO_EXCPT(this, ex);
 			}
+			return false;
 		}
 		void INativeAudio::JoinRenderThread()
 		{

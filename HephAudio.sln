@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudio", "HephAudio\Heph
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{E4F627E8-208E-420A-98E2-F6B3F9A25356}"
 	ProjectSection(ProjectDependencies) = postProject
-		{5032293E-D7FB-4310-A663-D9EA725DB97B} = {5032293E-D7FB-4310-A663-D9EA725DB97B}
+		{6BA51343-B83F-484F-B804-07B36FCF60E8} = {6BA51343-B83F-484F-B804-07B36FCF60E8}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudioDLL", "HephAudioDLL\HephAudioDLL.vcxproj", "{6BA51343-B83F-484F-B804-07B36FCF60E8}"

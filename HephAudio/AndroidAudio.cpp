@@ -1,5 +1,6 @@
 #ifdef __ANDROID__
 #include "AndroidAudio.h"
+#include "AudioProcessor.h"
 
 #define RENDER_BUFFER_SIZE 352800 
 #define RENDER_CALLBACK_SIZE_FRAMES 882
@@ -65,8 +66,18 @@ namespace HephAudio
 			{
 				StopRendering();
 			}
-			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateOutputMix(audioEngine, &outputMixObject, 0, nullptr, nullptr), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating output mix.");
-			ANDROIDAUDIO_EXCPT((*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating output mix.");
+			SLuint32 selectedDeviceId = 0;
+			if (device == nullptr)
+			{
+				AudioDevice defaultRenderDevice = GetDefaultAudioDevice(AudioDeviceType::Render);
+				selectedDeviceId = std::stoul(defaultRenderDevice.id);
+				renderDeviceId = defaultRenderDevice.id;
+			}
+			else
+			{
+				selectedDeviceId = std::stoul(device->id);
+				renderDeviceId = device->id;
+			}
 			SLDataSource dataSource;
 			SLDataFormat_PCM pcmFormat;
 			pcmFormat.formatType = SL_DATAFORMAT_PCM;
@@ -82,11 +93,13 @@ namespace HephAudio
 			dataSource.pLocator = &bufferQueueLocator;
 			dataSource.pFormat = &pcmFormat;
 			SLDataSink dataSink;
-			SLDataLocator_OutputMix outputMixLocator;
-			outputMixLocator.locatorType = SL_DATALOCATOR_OUTPUTMIX;
-			outputMixLocator.outputMix = outputMixObject;
-			dataSink.pLocator = &outputMixLocator;
-			dataSink.pFormat = nullptr;
+			SLDataLocator_IODevice deviceLocator;
+			deviceLocator.locatorType = SL_DATALOCATOR_IODEVICE;
+			deviceLocator.deviceType = SL_IODEVICE_AUDIOINPUT;
+			deviceLocator.deviceID = selectedDeviceId;
+			deviceLocator.device = nullptr;
+			dataSink.pLocator = &deviceLocator;
+			dataSink.pFormat = &pcmFormat;
 			SLboolean audioPlayerBools[2] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 			SLInterfaceID audioPlayerIIDs[2] = { SL_IID_PLAY, SL_IID_BUFFERQUEUE };
 			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateAudioPlayer(audioEngine, &audioPlayerObject, &dataSource, &dataSink, 2, audioPlayerIIDs, audioPlayerBools), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating audio player.");
@@ -106,10 +119,6 @@ namespace HephAudio
 				if (audioPlayerObject != nullptr)
 				{
 					(*audioPlayerObject)->Destroy(audioPlayerObject);
-				}
-				if (outputMixObject != nullptr)
-				{
-					(*outputMixObject)->Destroy(outputMixObject);
 				}
 			}
 		}
@@ -432,10 +441,25 @@ namespace HephAudio
 		void AndroidAudio::RecordEventCallback(SLRecordItf audioRecorder, void* pContext, SLuint32 e)
 		{
 			CallbackContext* pCallbackContext = (CallbackContext*)pContext;
-			if (pCallbackContext != nullptr)
+			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->OnCapture != nullptr)
 			{
 				AudioBuffer captureBuffer(CAPTURE_CALLBACK_SIZE_FRAMES, DEFAULT_AUDIO_FORMAT);
-				// TODO...
+				memcpy(captureBuffer.GetInnerBufferAddress(), pCallbackContext->pData, CAPTURE_CALLBACK_SIZE);
+				AudioProcessor audioProcessor(pCallbackContext->pAndroidAudio->captureFormat);
+				audioProcessor.ConvertSampleRate(captureBuffer, CAPTURE_CALLBACK_SIZE_FRAMES);
+				audioProcessor.ConvertBPS(captureBuffer);
+				audioProcessor.ConvertChannels(captureBuffer);
+				pCallbackContext->pAndroidAudio->OnCapture(captureBuffer);
+				pCallbackContext->pData += CAPTURE_CALLBACK_SIZE;
+				if (pCallbackContext->pData >= pCallbackContext->pDataBase + CAPTURE_BUFFER_SIZE - CAPTURE_CALLBACK_SIZE)
+				{
+					pCallbackContext->pData = pCallbackContext->pDataBase;
+					SLresult slres = (*audioRecorder)->SetMarkerPosition(audioRecorder, 0);
+					if (slres != 0)
+					{
+						RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(E_FAIL, L"AndroidAudio", L"An error occurred whilst capturing data."));
+					}
+				}
 			}
 		}
 	}
