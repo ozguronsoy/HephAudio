@@ -3,7 +3,7 @@
 
 namespace HephAudio
 {
-	class HephAudioAPI AudioProcessor final
+	class AudioProcessor final
 	{
 	private:
 		AudioFormatInfo targetFormat;

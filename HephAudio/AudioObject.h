@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI AudioObject : public IAudioObject
+		struct AudioObject : public IAudioObject
 		{
 			AudioBuffer buffer;
 			// Starting frame to get sub buffer before the next render.

@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI Category
+		struct Category
 		{
 			std::wstring name;
 			double volume;
@@ -17,6 +17,6 @@ namespace HephAudio
 			bool operator==(const Category& rhs) const;
 			bool operator!=(const Category& rhs) const;
 		};
-		typedef HephAudioAPI std::vector<Category> Categories;
+		typedef std::vector<Category> Categories;
 	}
 }

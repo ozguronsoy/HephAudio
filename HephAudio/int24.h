@@ -10,11 +10,11 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI int24
+		struct int24
 		{
 			int value : 24;
 		};
-		struct HephAudioAPI uint24
+		struct uint24
 		{
 			unsigned int value : 24;
 		};

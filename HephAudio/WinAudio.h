@@ -13,7 +13,7 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses WASAPI. Use WinAudioDS if you have Windows XP or lower.
-		class HephAudioAPI WinAudio : public INativeAudio
+		class WinAudio : public INativeAudio
 		{
 #pragma region Audio Session Events
 		protected:

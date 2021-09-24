@@ -8,7 +8,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		class HephAudioAPI AudioFormats final
+		class AudioFormats final
 		{
 		private:
 			std::vector<IAudioFormat*> formats;

@@ -18,7 +18,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		enum class HephAudioAPI AudioExceptionThread : uint8_t
+		enum class AudioExceptionThread : uint8_t
 		{
 			MainThread = 0x00,
 			RenderThread = 0x01,
@@ -26,11 +26,11 @@ namespace HephAudio
 			QueueThread = 0x04,
 			Other = 0xFF
 		};
-		typedef HephAudioAPI void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
-		typedef HephAudioAPI void (*AudioDeviceEventHandler)(AudioDevice device);
-		typedef HephAudioAPI void (*AudioRenderEventHandler)(AudioBuffer& renderBuffer, std::wstring audioObjectName, bool isProcessed);
-		typedef HephAudioAPI void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
-		class HephAudioAPI INativeAudio
+		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
+		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
+		typedef void (*AudioRenderEventHandler)(AudioBuffer& renderBuffer, std::wstring audioObjectName, bool isProcessed);
+		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
+		class INativeAudio
 		{
 		protected:
 			std::vector<std::shared_ptr<IAudioObject>> audioObjects;

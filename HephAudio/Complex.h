@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI Complex
+		struct Complex
 		{
 			double real;
 			double imaginary;
@@ -35,6 +35,6 @@ namespace HephAudio
 			bool operator==(const double& rhs) const;
 			bool operator!=(const double& rhs) const;
 		};
-		typedef HephAudioAPI std::vector<Complex> ComplexBuffer;
+		typedef std::vector<Complex> ComplexBuffer;
 	}
 }

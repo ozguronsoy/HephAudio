@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		class HephAudioAPI AiffFormat final : public IAudioFormat
+		class AiffFormat final : public IAudioFormat
 		{
 		public:
 			virtual ~AiffFormat() = default;

@@ -6,13 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudio", "HephAudio\HephAudio.vcxitems", "{BB93F558-91D0-4736-88AF-56A3AD9532E9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{E4F627E8-208E-420A-98E2-F6B3F9A25356}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6BA51343-B83F-484F-B804-07B36FCF60E8} = {6BA51343-B83F-484F-B804-07B36FCF60E8}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudioDLL", "HephAudioDLL\HephAudioDLL.vcxproj", "{6BA51343-B83F-484F-B804-07B36FCF60E8}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudioSO", "HephAudioSO\HephAudioSO.vcxproj", "{41CED890-080D-4D47-B962-D441C6308DDC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplicationLinux", "ConsoleApplicationLinux\ConsoleApplicationLinux.vcxproj", "{1FED3BA0-F498-4338-922D-67023CD6012B}"
 EndProject
@@ -24,10 +17,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Android1.NativeActivity", "
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		HephAudio\HephAudio.vcxitems*{41ced890-080d-4d47-b962-d441c6308ddc}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{5032293e-d7fb-4310-a663-d9ea725db97b}*SharedItemsImports = 4
-		HephAudio\HephAudio.vcxitems*{6ba51343-b83f-484f-b804-07b36fcf60e8}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{bb93f558-91d0-4736-88af-56a3ad9532e9}*SharedItemsImports = 9
+		HephAudio\HephAudio.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -52,34 +44,6 @@ Global
 		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x64.Build.0 = Release|x64
 		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x86.ActiveCfg = Release|Win32
 		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x86.Build.0 = Release|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Debug|ARM.ActiveCfg = Debug|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Debug|ARM64.ActiveCfg = Debug|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Debug|x64.ActiveCfg = Debug|x64
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Debug|x64.Build.0 = Debug|x64
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Debug|x86.ActiveCfg = Debug|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Debug|x86.Build.0 = Debug|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Release|ARM.ActiveCfg = Release|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Release|ARM64.ActiveCfg = Release|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Release|x64.ActiveCfg = Release|x64
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Release|x64.Build.0 = Release|x64
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Release|x86.ActiveCfg = Release|Win32
-		{6BA51343-B83F-484F-B804-07B36FCF60E8}.Release|x86.Build.0 = Release|Win32
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|ARM.ActiveCfg = Debug|ARM
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|ARM.Build.0 = Debug|ARM
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|ARM64.Build.0 = Debug|ARM64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|x64.ActiveCfg = Debug|x64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|x64.Build.0 = Debug|x64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|x86.ActiveCfg = Debug|x86
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Debug|x86.Build.0 = Debug|x86
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|ARM.ActiveCfg = Release|ARM
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|ARM.Build.0 = Release|ARM
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|ARM64.ActiveCfg = Release|ARM64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|ARM64.Build.0 = Release|ARM64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|x64.ActiveCfg = Release|x64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|x64.Build.0 = Release|x64
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|x86.ActiveCfg = Release|x86
-		{41CED890-080D-4D47-B962-D441C6308DDC}.Release|x86.Build.0 = Release|x86
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Debug|ARM.ActiveCfg = Debug|ARM
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Debug|ARM.Build.0 = Debug|ARM
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Debug|ARM.Deploy.0 = Debug|ARM

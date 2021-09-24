@@ -5,7 +5,7 @@
 
 namespace HephAudio
 {
-	class HephAudioAPI AudioFile final
+	class AudioFile final
 	{
 	private:
 		FILE* pFile;

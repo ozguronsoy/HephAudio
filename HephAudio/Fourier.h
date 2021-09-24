@@ -7,7 +7,7 @@ using namespace HephAudio::Structs;
 
 namespace HephAudio
 {
-	class HephAudioAPI Fourier final
+	class Fourier final
 	{
 	private:
 		enum class FourierMethod : uint8_t

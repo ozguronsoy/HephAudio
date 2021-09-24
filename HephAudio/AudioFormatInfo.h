@@ -10,7 +10,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI AudioFormatInfo
+		struct AudioFormatInfo
 		{
 
 			uint16_t wFormatTag;        

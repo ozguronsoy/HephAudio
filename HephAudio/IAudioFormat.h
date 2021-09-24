@@ -10,13 +10,13 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		enum class HephAudioAPI Endian : uint8_t
+		enum class Endian : uint8_t
 		{
 			Little = 0,
 			Big = 1
 		};
 		constexpr Endian operator!(const Endian& lhs) { return lhs == Endian::Big ? Endian::Little : Endian::Big; }
-		class HephAudioAPI IAudioFormat
+		class IAudioFormat
 		{
 		public:
 			virtual ~IAudioFormat() = default;

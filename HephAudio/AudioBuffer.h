@@ -8,7 +8,7 @@ using namespace HephAudio::Structs;
 
 namespace HephAudio
 {
-	class HephAudioAPI AudioBuffer final
+	class AudioBuffer final
 	{
 		friend class AudioProcessor;
 	private:

@@ -10,7 +10,7 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses DirectSound. Use WinAudio if you have Windows Vista or higher.
-		class HephAudioAPI WinAudioDS : public INativeAudio
+		class WinAudioDS : public INativeAudio
 		{
 		protected:
 			HWND hwnd;

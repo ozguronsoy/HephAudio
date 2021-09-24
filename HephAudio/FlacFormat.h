@@ -8,7 +8,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		class HephAudioAPI FlacFormat final : public IAudioFormat
+		class FlacFormat final : public IAudioFormat
 		{
 		public:
 			virtual ~FlacFormat() = default;

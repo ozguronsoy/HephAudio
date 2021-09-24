@@ -6,14 +6,14 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		enum class HephAudioAPI AudioDeviceType : uint8_t
+		enum class AudioDeviceType : uint8_t
 		{
 			Null = 0,
 			Render = 1,
 			Capture = 2,
 			All = Render | Capture
 		};
-		struct HephAudioAPI AudioDevice
+		struct AudioDevice
 		{
 			std::wstring id;
 			std::wstring name;
@@ -30,31 +30,31 @@ namespace HephAudio
 			}
 			virtual ~AudioDevice() = default;
 		};
-		constexpr HephAudioAPI AudioDeviceType operator|(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr AudioDeviceType operator|(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return (AudioDeviceType)((uint8_t)lhs | (uint8_t)rhs);
 		}
-		constexpr HephAudioAPI AudioDeviceType operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr AudioDeviceType operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return lhs | rhs;
 		}
-		constexpr HephAudioAPI AudioDeviceType operator&(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr AudioDeviceType operator&(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return (AudioDeviceType)((uint8_t)lhs & (uint8_t)rhs);
 		}
-		constexpr HephAudioAPI AudioDeviceType operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr AudioDeviceType operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return lhs & rhs;
 		}
-		constexpr HephAudioAPI AudioDeviceType operator^(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr AudioDeviceType operator^(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return (AudioDeviceType)((uint8_t)lhs ^ (uint8_t)rhs);
 		}
-		constexpr HephAudioAPI AudioDeviceType operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+		constexpr AudioDeviceType operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 		{
 			return lhs ^ rhs;
 		}
-		constexpr HephAudioAPI AudioDeviceType operator~(const AudioDeviceType& lhs)
+		constexpr AudioDeviceType operator~(const AudioDeviceType& lhs)
 		{
 			return (AudioDeviceType)(~(uint8_t)lhs);
 		}

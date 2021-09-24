@@ -9,7 +9,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI IAudioObject
+		struct IAudioObject
 		{
 			std::wstring filePath;
 			std::wstring name;

@@ -5,7 +5,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI DistortionInfo
+		struct DistortionInfo
 		{
 		private:
 			double negative_threshold;

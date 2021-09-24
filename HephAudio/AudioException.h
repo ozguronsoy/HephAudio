@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Structs
 	{
-		struct HephAudioAPI AudioException
+		struct AudioException
 		{
 			long hr;
 			std::wstring method; // Method name that exception has occurred.
