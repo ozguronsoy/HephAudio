@@ -15,9 +15,14 @@ namespace HephAudio
 		void ConvertBPS(AudioBuffer& buffer) const;
 		// Mono to stereo, stereo to mono, from two channels to three channels...
 		void ConvertChannels(AudioBuffer& buffer) const;
-		void ConvertSampleRate(AudioBuffer& buffer, size_t outFrameCount = 0) const;
+		void ConvertSampleRate(AudioBuffer& buffer) const;
+		void ConvertSampleRate(AudioBuffer& buffer, size_t outFrameCount) const;
 		static void Reverse(AudioBuffer& buffer);
 		static std::vector<AudioBuffer> SplitChannels(AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(std::vector<AudioBuffer>& channels);
+		static void EncodeALAW(AudioBuffer& buffer);
+		static void DecodeALAW(AudioBuffer& buffer);
+		static void EncodeMULAW(AudioBuffer& buffer);
+		static void DecodeMULAW(AudioBuffer& buffer);
 	};
 }

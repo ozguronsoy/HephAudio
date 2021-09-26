@@ -1,5 +1,6 @@
 #include "WavFormat.h"
 #include "AudioException.h"
+#include "AudioProcessor.h"
 
 namespace HephAudio
 {
@@ -19,13 +20,18 @@ namespace HephAudio
 				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
 				{
 					wfx.wFormatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
-					if (wfx.wFormatTag == 1 || wfx.wFormatTag == 0xFFFE) // PCM OR WAVE_FORMAT_EXTENSIBLE
+					if (wfx.wFormatTag == 1 || wfx.wFormatTag == 0xFFFE || wfx.wFormatTag == 6 || wfx.wFormatTag == 7) // PCM OR WAVE_FORMAT_EXTENSIBLE OR ALAW OR MULAW
 					{
 						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
 						nextChunk = subChunkSize + 20;
-						if (Read<uint32_t>(audioFileBuffer, nextChunk, GetSystemEndian()) == *(uint32_t*)"fact")
+						while (Read<uint32_t>(audioFileBuffer, nextChunk, GetSystemEndian()) != *(uint32_t*)"data")
 						{
-							nextChunk += 12; // ignore fact chunk
+							const uint32_t chunkSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
+							if (nextChunk + chunkSize + 8 >= file.Size())
+							{
+								throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
+							}
+							nextChunk += chunkSize + 8;
 						}
 						wfx.nChannels = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
 						wfx.nSamplesPerSec = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
@@ -33,6 +39,10 @@ namespace HephAudio
 						wfx.nBlockAlign = Read<uint16_t>(audioFileBuffer, 32, Endian::Little);
 						wfx.wBitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
 						wfx.headerSize = nextChunk + 8; // use cbSize as headerSize.
+					}
+					else
+					{
+						throw AudioException(E_FAIL, L"WavFormat", L"Compression not supported.");
 					}
 				}
 				else
@@ -83,6 +93,14 @@ namespace HephAudio
 						throw AudioException(E_FAIL, L"WavFormat::ReadFile", L"Invalid bps.");
 					}
 				}
+			}
+			if (waveFormat.wFormatTag == 6)
+			{
+				AudioProcessor::DecodeALAW(resultBuffer);
+			}
+			else if (waveFormat.wFormatTag == 7)
+			{
+				AudioProcessor::DecodeMULAW(resultBuffer);
 			}
 			return resultBuffer;
 		}
