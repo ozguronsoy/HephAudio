@@ -113,7 +113,7 @@ namespace HephAudio
 			DSBUFFERDESC bufferDesc = DSBUFFERDESC();
 			bufferDesc.dwSize = sizeof(DSBUFFERDESC);
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
-			bufferDesc.dwBufferBytes = renderFormat.nAvgBytesPerSec * 2;
+			bufferDesc.dwBufferBytes = renderFormat.nAvgBytesPerSec / 100 * 4;
 			bufferDesc.dwReserved = 0;
 			WAVEFORMATEX wrf = renderFormat;
 			bufferDesc.lpwfxFormat = &wrf;
@@ -318,7 +318,7 @@ namespace HephAudio
 			void* audioPtr1;
 			void* audioPtr2;
 			DWORD audioBytes1, audioBytes2;
-			AudioBuffer dataBuffer(renderFormat.nSamplesPerSec / 2, renderFormat);
+			AudioBuffer dataBuffer(renderFormat.nSamplesPerSec / 100, renderFormat);
 			ComPtr<IDirectSoundNotify> pDirectSoundNotify;
 			const size_t notificationCount = 5;
 			HANDLE hEvents[notificationCount]{ nullptr };

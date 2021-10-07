@@ -140,20 +140,43 @@ namespace HephAudio
 		}
 		return subBuffer;
 	}
-	void AudioBuffer::Join(AudioBuffer b)
+	void AudioBuffer::Join(AudioBuffer buffer)
 	{
-		if (b.FrameCount() > 0)
+		if (buffer.FrameCount() > 0)
 		{
-			AudioBuffer resultBuffer(this->FrameCount() + b.FrameCount(), this->wfx);
 			AudioProcessor audioProcessor(this->wfx);
-			audioProcessor.ConvertSampleRate(b);
-			audioProcessor.ConvertBPS(b);
-			audioProcessor.ConvertChannels(b);
-			if (this->FrameCount() > 0)
+			audioProcessor.ConvertSampleRate(buffer);
+			audioProcessor.ConvertBPS(buffer);
+			audioProcessor.ConvertChannels(buffer);
+			if (this->FrameCount() == 0)
 			{
-				memcpy(resultBuffer.GetInnerBufferAddress(), this->GetInnerBufferAddress(), this->Size());
+				this->buffer = buffer.buffer;
+				return;
 			}
-			memcpy((uint8_t*)resultBuffer.GetInnerBufferAddress() + this->Size(), b.GetInnerBufferAddress(), b.Size());
+			AudioBuffer resultBuffer(this->FrameCount() + buffer.FrameCount(), this->wfx);
+			memcpy(resultBuffer.GetInnerBufferAddress(), this->GetInnerBufferAddress(), this->Size());
+			memcpy((uint8_t*)resultBuffer.GetInnerBufferAddress() + this->Size(), buffer.GetInnerBufferAddress(), buffer.Size());
+			this->buffer = resultBuffer.buffer;
+		}
+	}
+	void AudioBuffer::Insert(uint32_t frameIndex, AudioBuffer buffer)
+	{
+		if (buffer.FrameCount() > 0)
+		{
+			if (frameIndex >= this->FrameCount())
+			{
+				Join(buffer);
+				return;
+			}
+			AudioProcessor audioProcessor(this->wfx);
+			audioProcessor.ConvertSampleRate(buffer);
+			audioProcessor.ConvertBPS(buffer);
+			audioProcessor.ConvertChannels(buffer);
+			AudioBuffer resultBuffer(this->FrameCount() + buffer.FrameCount(), this->wfx);
+			const uint32_t byteIndex = frameIndex * this->wfx.nBlockAlign;
+			memcpy(resultBuffer.GetInnerBufferAddress(), this->GetInnerBufferAddress(), byteIndex);
+			memcpy((uint8_t*)resultBuffer.GetInnerBufferAddress() + byteIndex, buffer.GetInnerBufferAddress(), buffer.Size());
+			memcpy((uint8_t*)resultBuffer.GetInnerBufferAddress() + byteIndex + buffer.Size(), (uint8_t*)this->GetInnerBufferAddress() + byteIndex, this->Size() - byteIndex);
 			this->buffer = resultBuffer.buffer;
 		}
 	}
@@ -194,6 +217,20 @@ namespace HephAudio
 	AudioFormatInfo AudioBuffer::GetFormat() const noexcept
 	{
 		return wfx;
+	}
+	void AudioBuffer::SetFormat(AudioFormatInfo newFormat)
+	{
+		if (newFormat != wfx)
+		{
+			if (FrameCount() > 0)
+			{
+				AudioProcessor audioProcessor(newFormat);
+				audioProcessor.ConvertSampleRate(*this);
+				audioProcessor.ConvertBPS(*this);
+				audioProcessor.ConvertChannels(*this);
+			}
+			wfx = newFormat;
+		}
 	}
 	void* AudioBuffer::GetInnerBufferAddress() const noexcept
 	{

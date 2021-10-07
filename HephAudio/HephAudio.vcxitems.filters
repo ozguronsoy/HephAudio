@@ -48,9 +48,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)FlacFormat.h">
-      <Filter>Header Files\AudioFormats</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
@@ -96,6 +93,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudio.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -111,9 +111,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp">
-      <Filter>Source Files\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)FlacFormat.cpp">
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp">
@@ -151,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudio.cpp">
       <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

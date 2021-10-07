@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
-#include <thread>
 #include <INativeAudio.h>
-#include <WinAudio.h>
+#include <WinAudioDS.h>
 #include <AudioProcessor.h>
 
 using namespace HephAudio;
@@ -13,10 +12,10 @@ void OnException(AudioException ex, AudioExceptionThread t);
 int main()
 {
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
-	WinAudio wa;
+	WinAudioDS wa;
 	wa.OnException = &OnException;
-	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 16, 48000));
-	wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\SampleFLAC.flac");
+	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
 
 	auto start = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds> (std::chrono::high_resolution_clock::now() - start);

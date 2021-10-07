@@ -26,19 +26,23 @@ namespace HephAudio
 		// value must be between -1 and 1.
 		void Set(double value, uint32_t frameIndex, uint8_t channel);
 		AudioBuffer GetSubBuffer(uint32_t frameIndex, size_t frameCount) const;
-		void Join(AudioBuffer b);
+		// Joins the given buffer to the end of the current buffer.
+		void Join(AudioBuffer buffer);
+		void Insert(uint32_t frameIndex, AudioBuffer buffer);
 		void Cut(uint32_t frameIndex, size_t frameCount);
 		// Sets all samples in the buffer to 0.
 		void Reset();
 		// Calculates the duration of the buffer in seconds.
 		double CalculateDuration() const noexcept;
 		AudioFormatInfo GetFormat() const noexcept;
+		void SetFormat(AudioFormatInfo newFormat);
 		void* GetInnerBufferAddress() const noexcept;
 	private:
 		double GetMin() const noexcept;
 		double GetMax() const noexcept;
 	public:
-		AudioBuffer& operator+=(const AudioBuffer& rhs); // Joins buffers.
+		// Joins the rhs buffer to the end of the current buffer.
+		AudioBuffer& operator+=(const AudioBuffer& rhs);
 	public:
 		// Calculates the duration of the buffer in seconds.
 		static double CalculateDuration(size_t frameCount, AudioFormatInfo waveFormat) noexcept;

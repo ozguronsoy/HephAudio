@@ -1,8 +1,8 @@
 #pragma once
 #include "IAudioFormat.h"
 #include "WavFormat.h"
-#include "FlacFormat.h"
 #include "AiffFormat.h"
+#include "Mp3Format.h"
 
 namespace HephAudio
 {
@@ -48,8 +48,8 @@ namespace HephAudio
 			AudioFormats()
 			{
 				formats.push_back(new WavFormat());
-				formats.push_back(new FlacFormat());
 				formats.push_back(new AiffFormat());
+				formats.push_back(new Mp3Format());
 			}
 			AudioFormats(const AudioFormats&) = delete;
 			AudioFormats& operator=(const AudioFormats&) = delete;

@@ -63,9 +63,11 @@ namespace HephAudio
 			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath);
 			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount);
 			virtual std::vector<std::shared_ptr<IAudioObject>> Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths);
+			virtual std::shared_ptr<IAudioObject> Load(std::wstring filePath);
 			virtual std::shared_ptr<IAudioObject> CreateAO(std::wstring name, size_t bufferFrameCount);
 			virtual bool DestroyAO(std::shared_ptr<IAudioObject> audioObject);
 			virtual bool AOExists(std::shared_ptr<IAudioObject> audioObject) const;
+			virtual void SetAOPosition(std::shared_ptr<IAudioObject> audioObject, double position);
 			virtual void PauseCapture(bool pause);
 			virtual bool IsCapturePaused() const noexcept;
 			virtual void SetMasterVolume(double volume) const = 0;

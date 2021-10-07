@@ -8,7 +8,7 @@ namespace HephAudio
 	{
 		std::wstring WavFormat::Extension() const noexcept
 		{
-			return L".wav";
+			return L".wav .wave";
 		}
 		AudioFormatInfo WavFormat::ReadFormatInfo(AudioFile& file) const
 		{

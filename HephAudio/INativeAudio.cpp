@@ -98,6 +98,23 @@ namespace HephAudio
 			}
 			return objects;
 		}
+		std::shared_ptr<IAudioObject> INativeAudio::Load(std::wstring filePath)
+		{
+			std::shared_ptr<IAudioObject> pao = Play(filePath);
+			pao->paused = true;
+			if (isRenderInitialized)
+			{
+				AudioProcessor audioProcessor(renderFormat);
+				AudioObject* pObject = (AudioObject*)pao.get();
+				if (pObject != nullptr)
+				{
+					audioProcessor.ConvertSampleRate(pObject->buffer);
+					audioProcessor.ConvertBPS(pObject->buffer);
+					audioProcessor.ConvertChannels(pObject->buffer);
+				}
+			}
+			return pao;
+		}
 		std::shared_ptr<IAudioObject> INativeAudio::CreateAO(std::wstring name, size_t bufferFrameCount)
 		{
 			std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
@@ -132,6 +149,22 @@ namespace HephAudio
 				}
 			}
 			return false;
+		}
+		void INativeAudio::SetAOPosition(std::shared_ptr<IAudioObject> audioObject, double position)
+		{
+			if (position < 0.0 || position > 1.0)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::SetAOPosition", L"position must be between 0 and 1."));
+				return;
+			}
+			if (AOExists(audioObject))
+			{
+				AudioObject* pao = (AudioObject*)audioObject.get();
+				if (pao != nullptr)
+				{
+					pao->frameIndex = pao->buffer.FrameCount() * position;
+				}
+			}
 		}
 		void INativeAudio::PauseCapture(bool pause)
 		{
