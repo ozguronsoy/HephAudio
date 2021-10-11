@@ -42,7 +42,7 @@ namespace HephAudio
 					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::Play", L"File format '" + audioFile.Extension() + L"' not supported."));
 					return nullptr;
 				}
-				std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
+				std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
 				ao->filePath = filePath;
 				ao->name = audioFile.Name();
 				ao->buffer = format->ReadFile(audioFile);
@@ -68,7 +68,7 @@ namespace HephAudio
 			size_t failedCount = 0;
 			for (size_t i = 0; i < filePaths.size(); i++)
 			{
-				std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
+				std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
 				ao->filePath = filePaths.at(i);
 				ao->name = AudioFile::GetFileName(filePaths.at(i));
 				ao->queueName = queueName;
@@ -105,19 +105,15 @@ namespace HephAudio
 			if (isRenderInitialized)
 			{
 				AudioProcessor audioProcessor(renderFormat);
-				AudioObject* pObject = (AudioObject*)pao.get();
-				if (pObject != nullptr)
-				{
-					audioProcessor.ConvertSampleRate(pObject->buffer);
-					audioProcessor.ConvertBPS(pObject->buffer);
-					audioProcessor.ConvertChannels(pObject->buffer);
-				}
+				audioProcessor.ConvertSampleRate(pao->buffer);
+				audioProcessor.ConvertBPS(pao->buffer);
+				audioProcessor.ConvertChannels(pao->buffer);
 			}
 			return pao;
 		}
 		std::shared_ptr<IAudioObject> INativeAudio::CreateAO(std::wstring name, size_t bufferFrameCount)
 		{
-			std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
+			std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
 			ao->name = name;
 			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.nSamplesPerSec * renderFormat.nChannels * 2, renderFormat);
 			ao->constant = true;
@@ -159,12 +155,16 @@ namespace HephAudio
 			}
 			if (AOExists(audioObject))
 			{
-				AudioObject* pao = (AudioObject*)audioObject.get();
-				if (pao != nullptr)
-				{
-					pao->frameIndex = pao->buffer.FrameCount() * position;
-				}
+				audioObject->frameIndex = audioObject->buffer.FrameCount() * position;
 			}
+		}
+		double INativeAudio::GetAOPosition(std::shared_ptr<IAudioObject> audioObject) const
+		{
+			if (AOExists(audioObject))
+			{
+				return (double)audioObject->frameIndex / (double)audioObject->buffer.FrameCount();
+			}
+			return -1.0;
 		}
 		void INativeAudio::PauseCapture(bool pause)
 		{
@@ -244,8 +244,8 @@ namespace HephAudio
 				uint32_t queueDelay = 0u;
 				for (size_t i = 0; i < skipCount; i++)
 				{
-					AudioObject* qao = (AudioObject*)queue.at(i).get();
-					if (qao != nullptr && qao->queueIndex == 0)
+					std::shared_ptr<IAudioObject> qao = queue.at(i);
+					if (qao->queueIndex == 0)
 					{
 						queueDelay = qao->queueDelay;
 					}
@@ -358,7 +358,7 @@ namespace HephAudio
 			{
 				for (size_t i = 0; i < audioObjects.size(); i++)
 				{
-					AudioObject* ao = (AudioObject*)audioObjects.at(i).get();
+					std::shared_ptr<IAudioObject> ao = audioObjects.at(i);
 					if (ao != nullptr && ao->queueName == queueName)
 					{
 						queue.push_back(audioObjects.at(i));
@@ -387,34 +387,31 @@ namespace HephAudio
 				}
 				for (size_t i = 0; i < queue.size(); i++)
 				{
-					AudioObject* qao = (AudioObject*)queue.at(i).get();
-					if (qao != nullptr)
+					std::shared_ptr<IAudioObject> qao = queue.at(i);
+					if (qao->queueIndex < decreaseQueueIndex)
 					{
-						if (qao->queueIndex < decreaseQueueIndex)
-						{
-							RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio", L"Queue is empty."));
-							return;
-						}
-						if (qao->queueIndex == decreaseQueueIndex)
-						{
-							try
-							{
-								AudioFile audioFile(qao->filePath);
-								Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
-								if (format == nullptr)
-								{
-									RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio", L"File format '" + audioFile.Extension() + L"' not supported."));
-									return;
-								}
-								qao->buffer = format->ReadFile(audioFile);
-							}
-							catch (AudioException ex)
-							{
-								RAISE_AUDIO_EXCPT(this, ex);
-							}
-						}
-						qao->queueIndex -= decreaseQueueIndex;
+						RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio", L"Queue is empty."));
+						return;
 					}
+					if (qao->queueIndex == decreaseQueueIndex)
+					{
+						try
+						{
+							AudioFile audioFile(qao->filePath);
+							Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+							if (format == nullptr)
+							{
+								RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio", L"File format '" + audioFile.Extension() + L"' not supported."));
+								return;
+							}
+							qao->buffer = format->ReadFile(audioFile);
+						}
+						catch (AudioException ex)
+						{
+							RAISE_AUDIO_EXCPT(this, ex);
+						}
+					}
+					qao->queueIndex -= decreaseQueueIndex;
 				}
 			}
 		}
@@ -424,8 +421,8 @@ namespace HephAudio
 			AudioProcessor audioProcessor(renderFormat);
 			for (int i = 0; i < audioObjects.size(); i++)
 			{
-				AudioObject* audioObject = (AudioObject*)audioObjects.at(i).get();
-				if (audioObject != nullptr && audioObject->IsPlaying())
+				std::shared_ptr<IAudioObject> audioObject = audioObjects.at(i);
+				if (audioObject->IsPlaying())
 				{
 					const double volume = GetFinalAOVolume(audioObjects.at(i));
 					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.GetFormat().nSamplesPerSec / (double)renderFormat.nSamplesPerSec);
@@ -434,6 +431,10 @@ namespace HephAudio
 					if (OnRender != nullptr)
 					{
 						OnRender(subBuffer, audioObject->name, false);
+					}
+					if (audioObject->echoInfo.echo)
+					{
+						AudioProcessor::EchoSubBuffer(audioObject->buffer, subBuffer, frameIndex, audioObject->echoInfo, audioObject->reverse);
 					}
 					if (audioObject->reverse)
 					{
@@ -465,7 +466,7 @@ namespace HephAudio
 					if (!audioObject->constant)
 					{
 						audioObject->frameIndex += nFramesToRead;
-						if (audioObject->frameIndex >= audioObject->buffer.FrameCount())
+						if (audioObject->frameIndex >= audioObject->FrameCount())
 						{
 							if (audioObject->loopCount == 1) // Finish playing.
 							{

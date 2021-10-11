@@ -110,6 +110,101 @@ namespace HephAudio
 		}
 		buffer = resultBuffer;
 	}
+	void AudioProcessor::Echo(AudioBuffer& buffer, EchoInfo info)
+	{
+		if (info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
+		struct EchoKeyPoints
+		{
+			size_t startFrameIndex;
+			size_t endFrameIndex;
+		};
+		const size_t delayFrameCount = buffer.wfx.nSamplesPerSec * info.reflectionDelay;
+		const size_t echoStartFrame = buffer.FrameCount() * info.echoStartPosition;
+		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
+		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.FrameCount() * echoEndPosition - echoStartFrame);
+		size_t resultBufferFrameCount = buffer.FrameCount();
+		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount + 1);
+		keyPoints.at(0).startFrameIndex = 0; // Original data key points.
+		keyPoints.at(0).endFrameIndex = buffer.FrameCount() - 1;
+		for (size_t i = 1; i < keyPoints.size(); i++) // Find echo key points.
+		{
+			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * i;
+			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoBuffer.FrameCount() - 1;
+			if (keyPoints.at(i).endFrameIndex >= resultBufferFrameCount)
+			{
+				resultBufferFrameCount = keyPoints.at(i).endFrameIndex + 1;
+			}
+		}
+		AudioBuffer resultBuffer(resultBufferFrameCount, buffer.wfx);
+		memcpy(resultBuffer.GetInnerBufferAddress(), buffer.GetInnerBufferAddress(), buffer.Size());
+		for (size_t i = keyPoints.at(1).startFrameIndex; i < resultBuffer.FrameCount(); i++)
+		{
+			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
+			{
+				for (size_t k = 1; k < keyPoints.size(); k++)
+				{
+					if (i >= keyPoints.at(k).startFrameIndex && i <= keyPoints.at(k).endFrameIndex)
+					{
+						resultBuffer.Set(resultBuffer.Get(i, j) + echoBuffer.Get(i - keyPoints.at(k).startFrameIndex, j) * pow(info.volumeFactor, k), i, j);
+					}
+				}
+			}
+		}
+		buffer = resultBuffer;
+	}
+	void AudioProcessor::EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info, bool isReversed)
+	{
+		if (subBuffer.FrameCount() == 0 || info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
+		struct EchoKeyPoints
+		{
+			size_t startFrameIndex;
+			size_t endFrameIndex;
+			size_t index;
+		};
+		const size_t delayFrameCount = originalBuffer.wfx.nSamplesPerSec * info.reflectionDelay;
+		const size_t echoStartFrame = originalBuffer.FrameCount() * info.echoStartPosition;
+		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
+		const AudioBuffer echoBuffer = originalBuffer.GetSubBuffer(echoStartFrame, originalBuffer.FrameCount() * echoEndPosition - echoStartFrame);
+		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
+		size_t erasedKeyPointsCount = 0;
+		for (int i = 0; i < keyPoints.size(); i++) // Find echo key points.
+		{
+			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + 1 + erasedKeyPointsCount);
+			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoBuffer.FrameCount() - 1;
+			if (isReversed)
+			{
+				keyPoints.at(i).index = info.reflectionCount - (i + erasedKeyPointsCount + 1);
+			}
+			else
+			{
+				keyPoints.at(i).index = i + erasedKeyPointsCount + 1;
+			}
+			if (keyPoints.at(i).startFrameIndex > subBufferFrameIndex + subBuffer.FrameCount() || keyPoints.at(i).endFrameIndex < subBufferFrameIndex) // Remove keyPoints if not needed to reduce the total loop count.
+			{
+				keyPoints.erase(keyPoints.begin() + i);
+				i--;
+				erasedKeyPointsCount++;
+			}
+		}
+		if (keyPoints.size() > 0)
+		{
+			size_t originalFrameIndex = subBufferFrameIndex;
+			for (size_t i = 0; i < subBuffer.FrameCount(); i++)
+			{
+				for (size_t j = 0; j < subBuffer.wfx.nChannels; j++)
+				{
+					for (size_t k = 0; k < keyPoints.size(); k++)
+					{
+						if (originalFrameIndex >= keyPoints.at(k).startFrameIndex && originalFrameIndex <= keyPoints.at(k).endFrameIndex)
+						{
+							subBuffer.Set(subBuffer.Get(i, j) + echoBuffer.Get(originalFrameIndex - keyPoints.at(k).startFrameIndex, j) * pow(info.volumeFactor, keyPoints.at(k).index), i, j);
+						}
+					}
+				}
+				originalFrameIndex++;
+			}
+		}
+	}
 	std::vector<AudioBuffer> AudioProcessor::SplitChannels(AudioBuffer& buffer)
 	{
 		const size_t frameCount = buffer.FrameCount();

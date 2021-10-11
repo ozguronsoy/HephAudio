@@ -22,11 +22,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Category.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
@@ -45,7 +45,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />

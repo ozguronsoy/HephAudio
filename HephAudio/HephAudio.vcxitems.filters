@@ -60,9 +60,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioException.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h">
-      <Filter>Header Files\AudioStructs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Category.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
@@ -96,6 +93,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -117,9 +117,6 @@
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp">

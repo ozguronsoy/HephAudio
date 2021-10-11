@@ -2,9 +2,10 @@
 #include "AudioDevice.h"
 #include "AudioException.h"
 #include "Category.h"
-#include "AudioObject.h"
+#include "IAudioObject.h"
 #include "AudioFormats.h"
 #include "AudioFormatInfo.h"
+#include "EchoInfo.h"
 #include <vector>
 #include <thread>
 #include <mutex>
@@ -68,6 +69,7 @@ namespace HephAudio
 			virtual bool DestroyAO(std::shared_ptr<IAudioObject> audioObject);
 			virtual bool AOExists(std::shared_ptr<IAudioObject> audioObject) const;
 			virtual void SetAOPosition(std::shared_ptr<IAudioObject> audioObject, double position);
+			virtual double GetAOPosition(std::shared_ptr<IAudioObject> audioObject) const;
 			virtual void PauseCapture(bool pause);
 			virtual bool IsCapturePaused() const noexcept;
 			virtual void SetMasterVolume(double volume) const = 0;

@@ -25,7 +25,7 @@ namespace HephAudio
 	{
 		return buffer.size() / wfx.nBlockAlign;
 	}
-	int32_t AudioBuffer::GetAsInt32(uint32_t frameIndex, uint8_t channel) const
+	int32_t AudioBuffer::GetAsInt32(size_t frameIndex, uint8_t channel) const
 	{
 		const double result = Get(frameIndex, channel);
 		if (result == -1.0)
@@ -34,7 +34,7 @@ namespace HephAudio
 		}
 		return result * GetMax();
 	}
-	double AudioBuffer::Get(uint32_t frameIndex, uint8_t channel) const
+	double AudioBuffer::Get(size_t frameIndex, uint8_t channel) const
 	{
 		if (channel + 1 > wfx.nChannels)
 		{
@@ -76,7 +76,7 @@ namespace HephAudio
 		}
 		return 0.0f;
 	}
-	void AudioBuffer::Set(double value, uint32_t frameIndex, uint8_t channel)
+	void AudioBuffer::Set(double value, size_t frameIndex, uint8_t channel)
 	{
 		if (channel + 1 > wfx.nChannels)
 		{
@@ -126,7 +126,7 @@ namespace HephAudio
 			break;
 		}
 	}
-	AudioBuffer AudioBuffer::GetSubBuffer(uint32_t frameIndex, size_t frameCount) const
+	AudioBuffer AudioBuffer::GetSubBuffer(size_t frameIndex, size_t frameCount) const
 	{
 		AudioBuffer subBuffer(frameCount, wfx);
 		const size_t bufferFrameCount = FrameCount();
@@ -159,28 +159,32 @@ namespace HephAudio
 			this->buffer = resultBuffer.buffer;
 		}
 	}
-	void AudioBuffer::Insert(uint32_t frameIndex, AudioBuffer buffer)
+	void AudioBuffer::Insert(size_t frameIndex, AudioBuffer buffer)
 	{
 		if (buffer.FrameCount() > 0)
 		{
-			if (frameIndex >= this->FrameCount())
+			if (this->FrameCount() == 0)
 			{
-				Join(buffer);
+				this->buffer = buffer.buffer;
 				return;
+			}
+			if (frameIndex > this->FrameCount())
+			{
+				frameIndex = this->FrameCount();
 			}
 			AudioProcessor audioProcessor(this->wfx);
 			audioProcessor.ConvertSampleRate(buffer);
 			audioProcessor.ConvertBPS(buffer);
 			audioProcessor.ConvertChannels(buffer);
 			AudioBuffer resultBuffer(this->FrameCount() + buffer.FrameCount(), this->wfx);
-			const uint32_t byteIndex = frameIndex * this->wfx.nBlockAlign;
+			const size_t byteIndex = frameIndex * this->wfx.nBlockAlign;
 			memcpy(resultBuffer.GetInnerBufferAddress(), this->GetInnerBufferAddress(), byteIndex);
 			memcpy((uint8_t*)resultBuffer.GetInnerBufferAddress() + byteIndex, buffer.GetInnerBufferAddress(), buffer.Size());
 			memcpy((uint8_t*)resultBuffer.GetInnerBufferAddress() + byteIndex + buffer.Size(), (uint8_t*)this->GetInnerBufferAddress() + byteIndex, this->Size() - byteIndex);
 			this->buffer = resultBuffer.buffer;
 		}
 	}
-	void AudioBuffer::Cut(uint32_t frameIndex, size_t frameCount)
+	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount)
 	{
 		const size_t bufferFrameCount = FrameCount();
 		if (frameCount > 0 && frameIndex < bufferFrameCount)

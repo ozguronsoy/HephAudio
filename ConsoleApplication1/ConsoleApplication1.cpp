@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 #include <INativeAudio.h>
-#include <WinAudioDS.h>
+#include <WinAudio.h>
 #include <AudioProcessor.h>
+#include <EchoInfo.h>
 
 using namespace HephAudio;
 using namespace HephAudio::Structs;
@@ -12,7 +13,7 @@ void OnException(AudioException ex, AudioExceptionThread t);
 int main()
 {
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
-	WinAudioDS wa;
+	WinAudio wa;
 	wa.OnException = &OnException;
 	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");

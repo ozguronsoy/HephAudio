@@ -20,16 +20,16 @@ namespace HephAudio
 		// Buffer size in byte.
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
-		int32_t GetAsInt32(uint32_t frameIndex, uint8_t channel) const;
+		int32_t GetAsInt32(size_t frameIndex, uint8_t channel) const;
 		// Gets normalized sample from the buffer. (for frameIndex = 0 and channel = 0, get sample from the first frames first channel)
-		double Get(uint32_t frameIndex, uint8_t channel) const;
+		double Get(size_t frameIndex, uint8_t channel) const;
 		// value must be between -1 and 1.
-		void Set(double value, uint32_t frameIndex, uint8_t channel);
-		AudioBuffer GetSubBuffer(uint32_t frameIndex, size_t frameCount) const;
+		void Set(double value, size_t frameIndex, uint8_t channel);
+		AudioBuffer GetSubBuffer(size_t frameIndex, size_t frameCount) const;
 		// Joins the given buffer to the end of the current buffer.
 		void Join(AudioBuffer buffer);
-		void Insert(uint32_t frameIndex, AudioBuffer buffer);
-		void Cut(uint32_t frameIndex, size_t frameCount);
+		void Insert(size_t frameIndex, AudioBuffer buffer);
+		void Cut(size_t frameIndex, size_t frameCount);
 		// Sets all samples in the buffer to 0.
 		void Reset();
 		// Calculates the duration of the buffer in seconds.
