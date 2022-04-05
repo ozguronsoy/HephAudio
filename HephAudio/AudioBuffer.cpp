@@ -23,6 +23,7 @@ namespace HephAudio
 	}
 	size_t AudioBuffer::FrameCount() const noexcept
 	{
+		if (wfx.nBlockAlign == 0) { return 0; }
 		return buffer.size() / wfx.nBlockAlign;
 	}
 	int32_t AudioBuffer::GetAsInt32(size_t frameIndex, uint8_t channel) const
@@ -214,6 +215,21 @@ namespace HephAudio
 	{
 		memset(&buffer.at(0), 0, Size());
 	}
+	void AudioBuffer::Resize(size_t newFrameCount)
+	{
+		const size_t currentFrameCount = FrameCount();
+		if (newFrameCount != currentFrameCount)
+		{
+			if (newFrameCount > currentFrameCount)
+			{
+				this->Join(AudioBuffer(newFrameCount - currentFrameCount, wfx));
+			}
+			else
+			{
+				this->Cut(newFrameCount, currentFrameCount - newFrameCount);
+			}
+		}
+	}
 	double AudioBuffer::CalculateDuration() const noexcept
 	{
 		return CalculateDuration(FrameCount(), wfx);
@@ -279,6 +295,7 @@ namespace HephAudio
 	}
 	double AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo waveFormat) noexcept
 	{
+		if (waveFormat.nAvgBytesPerSec == 0) { return 0.0; }
 		return (double)frameCount * (double)waveFormat.nBlockAlign / (double)waveFormat.nAvgBytesPerSec;
 	}
 }

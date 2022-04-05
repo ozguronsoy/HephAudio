@@ -22,12 +22,11 @@ namespace HephAudio
 	public:
 		ComplexBuffer complexBuffer;
 	public:
-		Fourier(const AudioBuffer& buffer);
+		Fourier(const AudioBuffer& buffer, size_t fftSize);
 		Fourier(const ComplexBuffer& complexBuffer);
-		Fourier(const Fourier&) = delete;
-		Fourier& operator=(const Fourier&) = delete;
 		bool Forward();
 		bool Inverse();
+		void ComplexBufferToAudioBuffer(AudioBuffer& buffer) const;
 		static double Magnitude(Complex sample);
 		static double MagnitudeSquared(Complex sample);
 		static double Phase(Complex sample, bool isDegree);

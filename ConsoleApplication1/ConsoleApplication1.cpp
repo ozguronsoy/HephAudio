@@ -3,7 +3,7 @@
 #include <INativeAudio.h>
 #include <WinAudio.h>
 #include <AudioProcessor.h>
-#include <EchoInfo.h>
+#include <Fourier.h>
 
 using namespace HephAudio;
 using namespace HephAudio::Structs;
@@ -15,8 +15,9 @@ int main()
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
 	WinAudio wa;
 	wa.OnException = &OnException;
-	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 16, 48000));
 	wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
+
 
 	auto start = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds> (std::chrono::high_resolution_clock::now() - start);

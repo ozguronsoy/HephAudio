@@ -32,6 +32,7 @@ namespace HephAudio
 		void Cut(size_t frameIndex, size_t frameCount);
 		// Sets all samples in the buffer to 0.
 		void Reset();
+		void Resize(size_t newFrameCount);
 		// Calculates the duration of the buffer in seconds.
 		double CalculateDuration() const noexcept;
 		AudioFormatInfo GetFormat() const noexcept;
