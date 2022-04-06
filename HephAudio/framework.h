@@ -8,6 +8,8 @@
 
 #ifdef __ANDROID__
 #include <cmath>
+#define max(a, b) (a > b ? a : b)
+#define min(a, b) (a > b ? b : a)
 #endif
 
 #define PI 3.14159265358979323846

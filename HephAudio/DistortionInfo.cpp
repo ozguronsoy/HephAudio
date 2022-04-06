@@ -8,9 +8,9 @@ namespace HephAudio
 		DistortionInfo::DistortionInfo(double positive_threshold, double negative_threshold)
 		{
 			distort = false;
-			SetThreshold(positive_threshold, negative_threshold);
+			SetThresholds(positive_threshold, negative_threshold);
 		}
-		void DistortionInfo::SetThreshold(double positive, double negative)
+		void DistortionInfo::SetThresholds(double positive, double negative)
 		{
 			if (positive > 1.0) { positive = 1.0; }
 			if (positive < 0.0) { positive = 0.0; }
@@ -19,7 +19,7 @@ namespace HephAudio
 			positive_threshold = positive;
 			negative_threshold = negative;
 		}
-		void DistortionInfo::GetThreshold(double& positive, double& negative) const
+		void DistortionInfo::GetThresholds(double& positive, double& negative) const
 		{
 			positive = positive_threshold;
 			negative = negative_threshold;

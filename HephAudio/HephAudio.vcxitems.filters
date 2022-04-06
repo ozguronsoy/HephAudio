@@ -66,9 +66,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h">
-      <Filter>Header Files\AudioStructs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioObject.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
@@ -92,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h">
       <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h">
+      <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
@@ -125,9 +125,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
@@ -147,6 +144,12 @@
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp">
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>

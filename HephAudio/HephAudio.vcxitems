@@ -45,6 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />

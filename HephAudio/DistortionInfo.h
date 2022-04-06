@@ -16,8 +16,8 @@ namespace HephAudio
 			DistortionInfo();
 			DistortionInfo(double positive_threshold, double negative_threshold);
 			virtual ~DistortionInfo() = default;
-			void SetThreshold(double positive, double negative);
-			void GetThreshold(double& positive, double& negative) const;
+			void SetThresholds(double positive, double negative);
+			void GetThresholds(double& positive, double& negative) const;
 			double Distort(double sample) const;
 		};
 	}

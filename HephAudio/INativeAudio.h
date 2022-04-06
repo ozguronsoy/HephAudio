@@ -8,10 +8,6 @@
 #include "EchoInfo.h"
 #include <vector>
 #include <thread>
-#include <mutex>
-#ifdef _WIN32
-#include <mmeapi.h>
-#endif
 
 using namespace HephAudio::Structs;
 

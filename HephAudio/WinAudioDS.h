@@ -4,6 +4,7 @@
 #include "INativeAudio.h"
 #include <wrl.h>
 #include <dsound.h>
+#include <mmeapi.h>
 
 namespace HephAudio
 {

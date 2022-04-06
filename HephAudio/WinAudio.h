@@ -7,6 +7,7 @@
 #include <Functiondiscoverykeys_devpkey.h>
 #include <audioclient.h>
 #include <audiopolicy.h>
+#include <mmeapi.h>
 
 namespace HephAudio
 {

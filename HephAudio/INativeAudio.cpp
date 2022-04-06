@@ -194,6 +194,7 @@ namespace HephAudio
 					return categories.at(i).volume;
 				}
 			}
+			return 0.0;
 		}
 		void INativeAudio::RegisterCategory(Category category)
 		{
@@ -434,7 +435,7 @@ namespace HephAudio
 					}
 					if (audioObject->echoInfo.echo)
 					{
-						AudioProcessor::EchoSubBuffer(audioObject->buffer, subBuffer, frameIndex, audioObject->echoInfo, audioObject->reverse);
+						AudioProcessor::EchoSubBuffer(audioObject->buffer, subBuffer, frameIndex, audioObject->echoInfo);
 					}
 					if (audioObject->reverse)
 					{
