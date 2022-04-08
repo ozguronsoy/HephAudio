@@ -12,11 +12,18 @@ namespace HephAudio
 	{
 		friend class AudioProcessor;
 	private:
-		std::vector<uint8_t> buffer;
+		size_t frameCount;
+		void* pAudioData;
 		AudioFormatInfo wfx;
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo waveFormat);
+		AudioBuffer(const AudioBuffer& rhs);
+		AudioBuffer& operator=(const AudioBuffer& rhs);
+		AudioBuffer operator+(const AudioBuffer& rhs) const;
+		// Joins the rhs buffer to the end of the current buffer.
+		AudioBuffer& operator+=(const AudioBuffer& rhs);
+		~AudioBuffer();
 		// Buffer size in byte.
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
@@ -37,13 +44,10 @@ namespace HephAudio
 		double CalculateDuration() const noexcept;
 		AudioFormatInfo GetFormat() const noexcept;
 		void SetFormat(AudioFormatInfo newFormat);
-		void* GetInnerBufferAddress() const noexcept;
+		void* GetAudioDataAddress() const noexcept;
 	private:
 		double GetMin() const noexcept;
 		double GetMax() const noexcept;
-	public:
-		// Joins the rhs buffer to the end of the current buffer.
-		AudioBuffer& operator+=(const AudioBuffer& rhs);
 	public:
 		// Calculates the duration of the buffer in seconds.
 		static double CalculateDuration(size_t frameCount, AudioFormatInfo waveFormat) noexcept;

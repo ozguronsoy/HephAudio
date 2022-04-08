@@ -15,8 +15,8 @@ int main()
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
 	WinAudio wa;
 	wa.OnException = &OnException;
-	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 16, 48000));
-	std::shared_ptr<IAudioObject> pao = wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
+	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 
 	auto start = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::nanoseconds> (std::chrono::high_resolution_clock::now() - start);
@@ -24,6 +24,7 @@ int main()
 
 	std::string a;
 	std::cin >> a;
+	return 0;
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {

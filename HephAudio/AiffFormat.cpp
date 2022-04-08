@@ -9,7 +9,7 @@ namespace HephAudio
 		{
 			return L".aiff .aifc .aif";
 		}
-		AudioFormatInfo AiffFormat::ReadFormatInfo(AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
+		AudioFormatInfo AiffFormat::ReadFormatInfo(const AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
 		{
 			AudioFormatInfo wfx = AudioFormatInfo();
 			void* audioFileBuffer = inFile.GetInnerBufferAddress();
@@ -74,7 +74,7 @@ namespace HephAudio
 			}
 			return wfx;
 		}
-		AudioBuffer AiffFormat::ReadFile(AudioFile& file) const
+		AudioBuffer AiffFormat::ReadFile(const AudioFile& file) const
 		{
 			uint32_t frameCount = 0;
 			Endian audioDataEndian;
@@ -103,10 +103,10 @@ namespace HephAudio
 			}
 			cursor += 16;
 			AudioBuffer buffer(frameCount, wfx);
-			memcpy(buffer.GetInnerBufferAddress(), (uint8_t*)audioFileBuffer + cursor, buffer.Size());
+			memcpy(buffer.GetAudioDataAddress(), (uint8_t*)audioFileBuffer + cursor, buffer.Size());
 			if (audioDataEndian != GetSystemEndian() && wfx.wBitsPerSample != 8) // switch bytes.
 			{
-				uint8_t* innerBuffer = (uint8_t*)buffer.GetInnerBufferAddress();
+				uint8_t* innerBuffer = (uint8_t*)buffer.GetAudioDataAddress();
 				const uint32_t sampleSize = wfx.wBitsPerSample / 8;
 				for (size_t i = 0; i < buffer.Size(); i += sampleSize)
 				{
@@ -188,7 +188,7 @@ namespace HephAudio
 				memcpy(newBuffer + 68, &ssnd, 4);
 				memcpy(newBuffer + 72, &sndByteCount, 4);
 				memset(newBuffer + 76, 0, 8);
-				memcpy(newBuffer + 84, buffer.GetInnerBufferAddress(), buffer.Size());
+				memcpy(newBuffer + 84, buffer.GetAudioDataAddress(), buffer.Size());
 				if (padding == 1)
 				{
 					memset(newBuffer + 84 + buffer.Size(), 0, 1);
