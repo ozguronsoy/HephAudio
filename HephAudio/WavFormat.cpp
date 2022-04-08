@@ -10,7 +10,7 @@ namespace HephAudio
 		{
 			return L".wav .wave";
 		}
-		AudioFormatInfo WavFormat::ReadFormatInfo(AudioFile& file) const
+		AudioFormatInfo WavFormat::ReadFormatInfo(const AudioFile& file) const
 		{
 			void* audioFileBuffer = file.GetInnerBufferAddress();
 			uint32_t subChunkSize, nextChunk, waveEnd;
@@ -56,16 +56,16 @@ namespace HephAudio
 			}
 			return wfx;
 		}
-		AudioBuffer WavFormat::ReadFile(AudioFile& file) const
+		AudioBuffer WavFormat::ReadFile(const AudioFile& file) const
 		{
 			AudioFormatInfo waveFormat = ReadFormatInfo(file);
 			size_t audioDataSize = file.Size() - waveFormat.headerSize;
 			size_t frameCount = (audioDataSize) / waveFormat.nBlockAlign;
 			AudioBuffer resultBuffer(frameCount, waveFormat);
-			memcpy(resultBuffer.GetInnerBufferAddress(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
+			memcpy(resultBuffer.GetAudioDataAddress(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
 			if (GetSystemEndian() == Endian::Big && waveFormat.wBitsPerSample != 8) // switch bytes.
 			{
-				uint8_t* innerBuffer = (uint8_t*)resultBuffer.GetInnerBufferAddress();
+				uint8_t* innerBuffer = (uint8_t*)resultBuffer.GetAudioDataAddress();
 				const uint32_t sampleSize = waveFormat.wBitsPerSample / 8;
 				for (size_t i = 0; i < resultBuffer.Size(); i += sampleSize)
 				{
@@ -148,7 +148,7 @@ namespace HephAudio
 				memcpy(newBuffer + 34, &bps, 2);
 				memcpy(newBuffer + 36, &d, 4);
 				memcpy(newBuffer + 40, &dataSizeL, 4);
-				memcpy(newBuffer + headerSize, buffer.GetInnerBufferAddress(), dataSize);
+				memcpy(newBuffer + headerSize, buffer.GetAudioDataAddress(), dataSize);
 				newFile->Write(newBuffer, fullBufferSize);
 				free(newBuffer);
 				return true;

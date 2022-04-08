@@ -13,10 +13,9 @@ namespace HephAudio
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer) const
 	{
 		if (buffer.wfx.wBitsPerSample == targetFormat.wBitsPerSample) { return; }
-		const size_t frameCount = buffer.FrameCount();
 		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, buffer.wfx.nChannels, targetFormat.wBitsPerSample, buffer.wfx.nSamplesPerSec);
-		AudioBuffer resultBuffer(frameCount, resultFormat);
-		for (size_t i = 0; i < frameCount; i++)
+		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (uint8_t j = 0; j < buffer.wfx.nChannels; j++)
 			{
@@ -39,10 +38,9 @@ namespace HephAudio
 	void AudioProcessor::ConvertChannels(AudioBuffer& buffer) const
 	{
 		if (buffer.wfx.nChannels == targetFormat.nChannels) { return; }
-		const size_t frameCount = buffer.FrameCount();
 		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, targetFormat.nChannels, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
-		AudioBuffer resultBuffer(frameCount, resultFormat);
-		for (size_t i = 0; i < frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
+		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
+		for (size_t i = 0; i < buffer.frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
 		{
 			double averageValue = 0.0f;
 			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
@@ -65,7 +63,7 @@ namespace HephAudio
 	{
 		if (buffer.wfx.nSamplesPerSec == targetFormat.nSamplesPerSec) { return; }
 		const double srRatio = (double)targetFormat.nSamplesPerSec / (double)buffer.wfx.nSamplesPerSec;
-		const size_t currentFrameCount = buffer.FrameCount();
+		const size_t currentFrameCount = buffer.frameCount;
 		size_t targetFrameCount = outFrameCount;
 		if (targetFrameCount == 0)
 		{
@@ -104,7 +102,7 @@ namespace HephAudio
 		for (int i = 0; i < inputBuffers.size(); i++)
 		{
 			AudioBuffer& buffer = inputBuffers.at(i);
-			if (buffer.FrameCount() == 0)
+			if (buffer.frameCount == 0)
 			{
 				inputBuffers.erase(inputBuffers.begin() + i);
 				i--;
@@ -113,18 +111,18 @@ namespace HephAudio
 			this->ConvertSampleRate(buffer);
 			this->ConvertBPS(buffer);
 			this->ConvertChannels(buffer);
-			if (buffer.FrameCount() > outputBufferFrameCount)
+			if (buffer.frameCount > outputBufferFrameCount)
 			{
-				outputBufferFrameCount = buffer.FrameCount();
+				outputBufferFrameCount = buffer.frameCount;
 			}
 		}
 		outputBuffer = AudioBuffer(outputBufferFrameCount, targetFormat);
 		for (size_t i = 0; i < inputBuffers.size(); i++)
 		{
 			AudioBuffer& buffer = inputBuffers.at(i);
-			for (size_t j = 0; j < outputBuffer.FrameCount(); j++)
+			for (size_t j = 0; j < outputBuffer.frameCount; j++)
 			{
-				if (j >= buffer.FrameCount()) { break; }
+				if (j >= buffer.frameCount) { break; }
 				for (size_t k = 0; k < outputBuffer.wfx.nChannels; k++)
 				{
 					const double outputSample = outputBuffer.Get(j, k);
@@ -136,13 +134,12 @@ namespace HephAudio
 	}
 	void AudioProcessor::Reverse(AudioBuffer& buffer)
 	{
-		const size_t frameCount = buffer.FrameCount();
-		AudioBuffer resultBuffer(frameCount, buffer.wfx);
-		for (size_t i = 0; i < frameCount; i++)
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.wfx);
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
 			{
-				resultBuffer.Set(buffer.Get(frameCount - 1 - i, j), i, j);
+				resultBuffer.Set(buffer.Get(buffer.frameCount - 1 - i, j), i, j);
 			}
 		}
 		buffer = resultBuffer;
@@ -156,23 +153,23 @@ namespace HephAudio
 			size_t endFrameIndex;
 		};
 		const size_t delayFrameCount = buffer.wfx.nSamplesPerSec * info.reflectionDelay;
-		const size_t echoStartFrame = buffer.FrameCount() * info.echoStartPosition;
+		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
-		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.FrameCount() * echoEndPosition - echoStartFrame);
-		size_t resultBufferFrameCount = buffer.FrameCount();
+		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * echoEndPosition - echoStartFrame);
+		size_t resultBufferFrameCount = buffer.frameCount;
 		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount + 1);
 		for (size_t i = 0; i < keyPoints.size(); i++) // Find echo key points.
 		{
 			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + 1);
-			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoBuffer.FrameCount() - 1;
+			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoBuffer.frameCount - 1;
 			if (keyPoints.at(i).endFrameIndex >= resultBufferFrameCount)
 			{
 				resultBufferFrameCount = keyPoints.at(i).endFrameIndex + 1;
 			}
 		}
 		AudioBuffer resultBuffer(resultBufferFrameCount, buffer.wfx);
-		memcpy(resultBuffer.GetInnerBufferAddress(), buffer.GetInnerBufferAddress(), buffer.Size());
-		for (size_t i = keyPoints.at(0).startFrameIndex; i < resultBuffer.FrameCount(); i++)
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, buffer.Size());
+		for (size_t i = keyPoints.at(0).startFrameIndex; i < resultBuffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
 			{
@@ -189,7 +186,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
 	{
-		if (subBuffer.FrameCount() == 0 || info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
+		if (subBuffer.frameCount == 0 || info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
 		struct EchoKeyPoints
 		{
 			size_t startFrameIndex;
@@ -197,9 +194,9 @@ namespace HephAudio
 			size_t n;
 		};
 		const size_t delayFrameCount = originalBuffer.wfx.nSamplesPerSec * info.reflectionDelay;
-		const size_t echoStartFrame = originalBuffer.FrameCount() * info.echoStartPosition;
+		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
-		const size_t echoFrameCount = originalBuffer.FrameCount() * echoEndPosition - echoStartFrame;
+		const size_t echoFrameCount = originalBuffer.frameCount * echoEndPosition - echoStartFrame;
 		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
 		size_t erasedKeyPointsCount = 0;
 		for (int i = 0; i < keyPoints.size(); i++) // Find echo key points.
@@ -207,7 +204,7 @@ namespace HephAudio
 			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + erasedKeyPointsCount + 1);
 			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoFrameCount - 1;
 			keyPoints.at(i).n = i + erasedKeyPointsCount + 1;
-			if (keyPoints.at(i).startFrameIndex > subBufferFrameIndex + subBuffer.FrameCount() || keyPoints.at(i).endFrameIndex < subBufferFrameIndex) // Remove keyPoints if not needed to reduce the total loop count.
+			if (keyPoints.at(i).startFrameIndex > subBufferFrameIndex + subBuffer.frameCount || keyPoints.at(i).endFrameIndex < subBufferFrameIndex) // Remove keyPoints if not needed to reduce the total loop count.
 			{
 				keyPoints.erase(keyPoints.begin() + i);
 				i--;
@@ -216,9 +213,9 @@ namespace HephAudio
 		}
 		if (keyPoints.size() > 0)
 		{
-			const AudioBuffer echoBuffer = originalBuffer.GetSubBuffer(echoStartFrame, subBuffer.FrameCount() + subBufferFrameIndex - keyPoints.at(0).startFrameIndex);
+			const AudioBuffer echoBuffer = originalBuffer.GetSubBuffer(echoStartFrame, subBuffer.frameCount + subBufferFrameIndex - keyPoints.at(0).startFrameIndex);
 			size_t cursor = subBufferFrameIndex;
-			for (size_t i = 0; i < subBuffer.FrameCount(); i++)
+			for (size_t i = 0; i < subBuffer.frameCount; i++)
 			{
 				for (size_t j = 0; j < subBuffer.wfx.nChannels; j++)
 				{
@@ -236,7 +233,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, uint16_t cutoffFreq, uint16_t transitionBandLength)
 	{
-		size_t fftSize = buffer.FrameCount();
+		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
@@ -279,7 +276,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, uint16_t cutoffFreq, uint16_t transitionBandLength)
 	{
-		size_t fftSize = buffer.FrameCount();
+		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
@@ -322,7 +319,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandPassFilter(AudioBuffer& buffer, uint16_t lowCutoffFreq, uint16_t highCutoffFreq, uint16_t transitionBandLength)
 	{
-		size_t fftSize = buffer.FrameCount();
+		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
@@ -372,7 +369,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, uint16_t lowCutoffFreq, uint16_t highCutoffFreq, uint16_t transitionBandLength)
 	{
-		size_t fftSize = buffer.FrameCount();
+		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
@@ -422,9 +419,8 @@ namespace HephAudio
 	}
 	void AudioProcessor::TriangleWindow(AudioBuffer& buffer)
 	{
-		const size_t fc = buffer.FrameCount();
-		const size_t hfc = buffer.FrameCount() * 0.5;
-		for (size_t i = 0; i < fc; i++)
+		const size_t hfc = buffer.frameCount * 0.5;
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			double factor;
 			if (i <= hfc)
@@ -433,7 +429,7 @@ namespace HephAudio
 			}
 			else
 			{
-				factor = (double)(fc - i) / (double)hfc;
+				factor = (double)(buffer.frameCount - i) / (double)hfc;
 			}
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
@@ -443,11 +439,9 @@ namespace HephAudio
 	}
 	void AudioProcessor::HannWindow(AudioBuffer& buffer)
 	{
-		const size_t fc = buffer.FrameCount();
-		const size_t hfc = buffer.FrameCount() * 0.5;
-		for (size_t i = 0; i < fc; i++)
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			const double factor = pow(sin(PI * i / fc), 2);
+			const double factor = pow(sin(PI * i / buffer.frameCount), 2);
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
@@ -456,15 +450,14 @@ namespace HephAudio
 	}
 	std::vector<AudioBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
 	{
-		const size_t frameCount = buffer.FrameCount();
 		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, 1, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
-		std::vector<AudioBuffer> channels(buffer.wfx.nChannels, AudioBuffer(frameCount, resultFormat));
+		std::vector<AudioBuffer> channels(buffer.wfx.nChannels, AudioBuffer(buffer.frameCount, resultFormat));
 		if (buffer.wfx.nChannels == 1)
 		{
 			channels.at(0) = buffer;
 			return channels;
 		}
-		for (size_t i = 0; i < frameCount; i++)
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
 			{
@@ -483,8 +476,8 @@ namespace HephAudio
 				throw AudioException(E_FAIL, L"AudioProcessor::MergeChannels", L"All channels must have the same wave format.");
 			}
 		}
-		AudioBuffer resultBuffer(channels.at(0).FrameCount(), AudioFormatInfo(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
-		for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+		AudioBuffer resultBuffer(channels.at(0).frameCount, AudioFormatInfo(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
+		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
 			{
@@ -500,8 +493,8 @@ namespace HephAudio
 		AudioProcessor alawProcessor(alawFormat);
 		alawProcessor.ConvertSampleRate(buffer);
 		alawProcessor.ConvertChannels(buffer);
-		AudioBuffer resultBuffer(buffer.FrameCount(), alawFormat);
-		for (size_t i = 0; i < buffer.FrameCount(); i++)
+		AudioBuffer resultBuffer(buffer.frameCount, alawFormat);
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
@@ -528,8 +521,8 @@ namespace HephAudio
 	void AudioProcessor::DecodeALAW(AudioBuffer& buffer)
 	{
 		if (buffer.GetFormat().wFormatTag != 6) { throw AudioException(E_INVALIDARG, L"AudioProcessor::DecodeALAW", L"Buffer must be an a-law buffer."); }
-		AudioBuffer resultBuffer(buffer.FrameCount(), AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec));
-		for (size_t i = 0; i < buffer.FrameCount(); i++)
+		AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec));
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
@@ -561,8 +554,8 @@ namespace HephAudio
 		AudioProcessor mulawProcessor(mulawFormat);
 		mulawProcessor.ConvertSampleRate(buffer);
 		mulawProcessor.ConvertChannels(buffer);
-		AudioBuffer resultBuffer(buffer.FrameCount(), mulawFormat);
-		for (size_t i = 0; i < buffer.FrameCount(); i++)
+		AudioBuffer resultBuffer(buffer.frameCount, mulawFormat);
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
@@ -590,8 +583,8 @@ namespace HephAudio
 	void AudioProcessor::DecodeMULAW(AudioBuffer& buffer)
 	{
 		if (buffer.GetFormat().wFormatTag != 7) { throw AudioException(E_INVALIDARG, L"AudioProcessor::DecodeALAW", L"Buffer must be an mu-law buffer."); }
-		AudioBuffer resultBuffer(buffer.FrameCount(), AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec));
-		for (size_t i = 0; i < buffer.FrameCount(); i++)
+		AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec));
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{

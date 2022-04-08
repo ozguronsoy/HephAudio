@@ -10,8 +10,8 @@ namespace HephAudio
 		public:
 			virtual ~WavFormat() = default;
 			std::wstring Extension() const noexcept;
-			AudioFormatInfo ReadFormatInfo(AudioFile& file) const;
-			AudioBuffer ReadFile(AudioFile& file) const;
+			AudioFormatInfo ReadFormatInfo(const AudioFile& file) const;
+			AudioBuffer ReadFile(const AudioFile& file) const;
 			bool SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const;
 		};
 	}

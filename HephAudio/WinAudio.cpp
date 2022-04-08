@@ -517,7 +517,7 @@ namespace HephAudio
 				{
 					Mix(dataBuffer, nFramesAvailable);
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, &renderBuffer), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
-					memcpy(renderBuffer, dataBuffer.GetInnerBufferAddress(), nFramesAvailable * renderFormat.nBlockAlign);
+					memcpy(renderBuffer, dataBuffer.GetAudioDataAddress(), nFramesAvailable * renderFormat.nBlockAlign);
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(nFramesAvailable, 0), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
 					dataBuffer.Reset();
 				}
@@ -563,7 +563,7 @@ namespace HephAudio
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetBuffer(&captureBuffer, &nFramesAvailable, &flags, nullptr, nullptr), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
 						nBytesAvailable = nFramesAvailable * captureFormat.nBlockAlign;
 						AudioBuffer temp(nFramesAvailable, captureFormat);
-						memcpy(temp.GetInnerBufferAddress(), captureBuffer, nBytesAvailable);
+						memcpy(temp.GetAudioDataAddress(), captureBuffer, nBytesAvailable);
 						capturedData += temp;
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->ReleaseBuffer(nFramesAvailable), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetNextPacketSize(&packetLength), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
