@@ -231,24 +231,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, uint16_t cutoffFreq, uint16_t transitionBandLength)
+	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
 		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
-			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
+			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
 		const size_t nyquistFrequency = fftSize * 0.5;
-		const double frequencyFactor = (double)cutoffFreq / 20000.0;
-		const double transitionFactor = (double)transitionBandLength / 20000.0;
-		const uint16_t passBand = frequencyFactor > transitionFactor ? nyquistFrequency * (frequencyFactor - transitionFactor) : 0;
-		const uint16_t stopBand = nyquistFrequency * frequencyFactor;
+		const uint16_t passBand = cutoffFreq > transitionBandLength ? nyquistFrequency * (cutoffFreq - transitionBandLength) : 0;
+		const uint16_t stopBand = nyquistFrequency * cutoffFreq;
 		const uint16_t transitionLength = stopBand - passBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			AudioBuffer& channel = channels.at(i);
-			Fourier fourier(channel, 0);
+			Fourier fourier(channel, fftSize);
 			fourier.Forward();
 			for (size_t j = passBand; j < fftSize; j++)
 			{
@@ -274,18 +272,16 @@ namespace HephAudio
 		}
 		buffer = MergeChannels(channels);
 	}
-	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, uint16_t cutoffFreq, uint16_t transitionBandLength)
+	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
 		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
-			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
+			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
 		const size_t nyquistFrequency = fftSize * 0.5;
-		const double frequencyFactor = (double)cutoffFreq / 20000.0;
-		const double transitionFactor = (double)transitionBandLength / 20000.0;
-		const uint16_t stopBand = nyquistFrequency * frequencyFactor;
-		const uint16_t passBand = stopBand + nyquistFrequency * transitionFactor;
+		const uint16_t stopBand = nyquistFrequency * cutoffFreq;
+		const uint16_t passBand = stopBand + nyquistFrequency * transitionBandLength;
 		const uint16_t transitionLength = passBand - stopBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
@@ -317,21 +313,18 @@ namespace HephAudio
 		}
 		buffer = MergeChannels(channels);
 	}
-	void AudioProcessor::BandPassFilter(AudioBuffer& buffer, uint16_t lowCutoffFreq, uint16_t highCutoffFreq, uint16_t transitionBandLength)
+	void AudioProcessor::BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
 		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
-			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
+			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
 		const size_t nyquistFrequency = fftSize * 0.5;
-		const double lowFrequencyFactor = (double)lowCutoffFreq / 20000.0;
-		const double highFrequencyFactor = (double)highCutoffFreq / 20000.0;
-		const double transitionFactor = (double)transitionBandLength / 20000.0;
-		const uint16_t lowStopBand = nyquistFrequency * lowFrequencyFactor;
-		const uint16_t lowPassBand = lowStopBand + nyquistFrequency * transitionFactor;
-		const uint16_t highPassBand = highFrequencyFactor > transitionFactor ? nyquistFrequency * (highFrequencyFactor - transitionFactor) : 0;
-		const uint16_t highStopBand = nyquistFrequency * highFrequencyFactor;
+		const uint16_t lowStopBand = nyquistFrequency * lowCutoffFreq;
+		const uint16_t lowPassBand = lowStopBand + nyquistFrequency * transitionBandLength;
+		const uint16_t highPassBand = highCutoffFreq > transitionBandLength ? nyquistFrequency * (highCutoffFreq - transitionBandLength) : 0;
+		const uint16_t highStopBand = nyquistFrequency * highCutoffFreq;
 		const uint16_t transitionLength = highStopBand - highPassBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
@@ -367,21 +360,18 @@ namespace HephAudio
 		}
 		buffer = MergeChannels(channels);
 	}
-	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, uint16_t lowCutoffFreq, uint16_t highCutoffFreq, uint16_t transitionBandLength)
+	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
 		size_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
-			fftSize = pow(2, floor(log2f(fftSize)) + 1); // smallest power of 2 thats greater than nSample
+			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
 		const size_t nyquistFrequency = fftSize * 0.5;
-		const double lowFrequencyFactor = (double)lowCutoffFreq / 20000.0;
-		const double highFrequencyFactor = (double)highCutoffFreq / 20000.0;
-		const double transitionFactor = (double)transitionBandLength / 20000.0;
-		const uint16_t lowStopBand = nyquistFrequency * lowFrequencyFactor;
-		const uint16_t lowPassBand = lowStopBand + nyquistFrequency * transitionFactor;
-		const uint16_t highPassBand = highFrequencyFactor > transitionFactor ? nyquistFrequency * (highFrequencyFactor - transitionFactor) : 0;
-		const uint16_t highStopBand = nyquistFrequency * highFrequencyFactor;
+		const uint16_t lowStopBand = nyquistFrequency * lowCutoffFreq;
+		const uint16_t lowPassBand = lowStopBand + nyquistFrequency * transitionBandLength;
+		const uint16_t highPassBand = highCutoffFreq > transitionBandLength ? nyquistFrequency * (highCutoffFreq - transitionBandLength) : 0;
+		const uint16_t highStopBand = nyquistFrequency * highCutoffFreq;
 		const uint16_t transitionLength = highStopBand - highPassBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)

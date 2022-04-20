@@ -254,10 +254,7 @@ namespace HephAudio
 	{
 		if (buffer.frameCount > 0)
 		{
-			AudioProcessor audioProcessor(this->wfx);
-			audioProcessor.ConvertSampleRate(buffer);
-			audioProcessor.ConvertBPS(buffer);
-			audioProcessor.ConvertChannels(buffer);
+			buffer.SetFormat(this->wfx);
 			if (this->frameCount == 0)
 			{
 				*this = buffer;
@@ -282,15 +279,21 @@ namespace HephAudio
 			{
 				frameIndex = this->frameCount;
 			}
-			AudioProcessor audioProcessor(this->wfx);
-			audioProcessor.ConvertSampleRate(buffer);
-			audioProcessor.ConvertBPS(buffer);
-			audioProcessor.ConvertChannels(buffer);
+			buffer.SetFormat(this->wfx);
 			AudioBuffer resultBuffer(this->frameCount + buffer.frameCount, this->wfx);
 			const size_t byteIndex = frameIndex * this->wfx.nBlockAlign;
-			memcpy(resultBuffer.pAudioData, this->pAudioData, byteIndex);
-			memcpy((uint8_t*)resultBuffer.pAudioData + byteIndex, buffer.pAudioData, buffer.Size());
-			memcpy((uint8_t*)resultBuffer.pAudioData + byteIndex + buffer.Size(), (uint8_t*)this->pAudioData + byteIndex, this->Size() - byteIndex);
+			if (byteIndex > 0)
+			{
+				memcpy(resultBuffer.pAudioData, this->pAudioData, byteIndex);
+			}
+			if (buffer.Size() > 0)
+			{
+				memcpy((uint8_t*)resultBuffer.pAudioData + byteIndex, buffer.pAudioData, buffer.Size());
+			}
+			if (this->Size() - byteIndex > 0)
+			{
+				memcpy((uint8_t*)resultBuffer.pAudioData + byteIndex + buffer.Size(), (uint8_t*)this->pAudioData + byteIndex, this->Size() - byteIndex);
+			}
 			*this = resultBuffer;
 		}
 	}
@@ -309,14 +312,48 @@ namespace HephAudio
 				const size_t padding = frameCount * wfx.nBlockAlign;
 				if (frameIndexAsBytes > 0)
 				{
-					memcpy(resultBuffer.pAudioData, pAudioData, frameIndexAsBytes);
+					memcpy(resultBuffer.pAudioData, this->pAudioData, frameIndexAsBytes);
 				}
 				if (resultBuffer.Size() - frameIndexAsBytes > 0)
 				{
-					memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, (uint8_t*)pAudioData + frameIndexAsBytes + padding, resultBuffer.Size() - frameIndexAsBytes);
+					memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, resultBuffer.Size() - frameIndexAsBytes);
 				}
 			}
 			*this = resultBuffer;
+		}
+	}
+	void AudioBuffer::Replace(AudioBuffer buffer, size_t frameIndex)
+	{
+		Replace(buffer, frameIndex, buffer.frameCount);
+	}
+	void AudioBuffer::Replace(AudioBuffer buffer, size_t frameIndex, size_t frameCount)
+	{
+		if (frameCount > 0 && frameIndex < this->frameCount)
+		{
+			if (frameIndex + frameCount > this->frameCount)
+			{
+				frameCount = this->frameCount - frameIndex;
+			}
+			AudioBuffer resultBuffer(this->frameCount + buffer.frameCount - frameCount, this->wfx);
+			const size_t frameIndexAsBytes = frameIndex * wfx.nBlockAlign;
+			const size_t padding = frameCount * wfx.nBlockAlign;
+			if (frameIndexAsBytes > 0)
+			{
+				memcpy(resultBuffer.pAudioData, this->pAudioData, frameIndexAsBytes);
+			}
+			if (buffer.frameCount > 0)
+			{
+				buffer.SetFormat(this->wfx);
+				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, buffer.pAudioData, buffer.Size());
+			}
+			if (this->Size() - padding - frameIndexAsBytes > 0)
+			{
+				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes + buffer.Size(), (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, this->Size() - padding - frameIndexAsBytes);
+			}
+		}
+		else
+		{
+			this->Insert(frameIndex, buffer);
 		}
 	}
 	void AudioBuffer::Reset()

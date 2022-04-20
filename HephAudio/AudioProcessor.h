@@ -23,14 +23,10 @@ namespace HephAudio
 		// Adds echo to the given subBuffer using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
-		// All parameters except buffer are in hertz.
-		static void LowPassFilter(AudioBuffer& buffer, uint16_t cutoffFreq, uint16_t transitionBandLength);
-		// All parameters except buffer are in hertz.
-		static void HighPassFilter(AudioBuffer& buffer, uint16_t cutoffFreq, uint16_t transitionBandLength);
-		// All parameters except buffer are in hertz.
-		static void BandPassFilter(AudioBuffer& buffer, uint16_t lowCutoffFreq, uint16_t highCutoffFreq, uint16_t transitionBandLength);
-		// All parameters except buffer are in hertz.
-		static void BandCutFilter(AudioBuffer& buffer, uint16_t lowCutoffFreq, uint16_t highCutoffFreq, uint16_t transitionBandLength);
+		static void LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
+		static void HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
+		static void BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
+		static void BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void TriangleWindow(AudioBuffer& buffer);
 		static void HannWindow(AudioBuffer& buffer);
 		static std::vector<AudioBuffer> SplitChannels(const AudioBuffer& buffer);

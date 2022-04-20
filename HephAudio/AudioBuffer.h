@@ -20,12 +20,17 @@ namespace HephAudio
 		AudioBuffer(size_t frameCount, AudioFormatInfo waveFormat);
 		AudioBuffer(const AudioBuffer& rhs);
 		AudioBuffer& operator=(const AudioBuffer& rhs);
+		// Joins the rhs buffer to the end of the current buffer and returns it as a new audio buffer.
 		AudioBuffer operator+(const AudioBuffer& rhs) const;
 		// Joins the rhs buffer to the end of the current buffer.
 		AudioBuffer& operator+=(const AudioBuffer& rhs);
+		// Multiplies all the samples in the current buffer by rhs, then returns the result as a new audio buffer.
 		AudioBuffer operator*(const double& rhs) const;
+		// Multiplies all the samples in the current buffer by rhs.
 		AudioBuffer& operator*=(const double& rhs);
+		// Divides all the samples in the current buffer by rhs, then returns the result as a new audio buffer.
 		AudioBuffer operator/(const double& rhs) const;
+		// Divides all the samples in the current buffer by rhs.
 		AudioBuffer& operator/=(const double& rhs);
 		~AudioBuffer();
 		// Buffer size in byte.
@@ -41,6 +46,8 @@ namespace HephAudio
 		void Join(AudioBuffer buffer);
 		void Insert(size_t frameIndex, AudioBuffer buffer);
 		void Cut(size_t frameIndex, size_t frameCount);
+		void Replace(AudioBuffer buffer, size_t frameIndex);
+		void Replace(AudioBuffer buffer, size_t frameIndex, size_t frameCount);
 		// Sets all samples in the buffer to 0.
 		void Reset();
 		void Resize(size_t newFrameCount);

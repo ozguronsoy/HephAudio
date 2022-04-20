@@ -17,7 +17,7 @@ namespace HephAudio
 			ForwardTransform = 2
 		};
 	private:
-		uint32_t p; // Number of samples as power of two. (for p = 10, number of samples = pow(2, 10) = 1024)
+		uint32_t p; // fft size as power of two. (for p = 10, fft size = pow(2, 10) = 1024)
 		FourierMethod lastMethod; // Last called method.
 	public:
 		ComplexBuffer complexBuffer;
