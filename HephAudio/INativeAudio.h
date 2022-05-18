@@ -25,7 +25,6 @@ namespace HephAudio
 		};
 		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
 		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
-		typedef void (*AudioRenderEventHandler)(AudioBuffer& renderBuffer, std::wstring audioObjectName, bool isProcessed);
 		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
 		class INativeAudio
 		{
@@ -50,7 +49,6 @@ namespace HephAudio
 			AudioDeviceEventHandler OnDefaultAudioDeviceChange;
 			AudioDeviceEventHandler OnAudioDeviceAdded;
 			AudioDeviceEventHandler OnAudioDeviceRemoved;
-			AudioRenderEventHandler OnRender;
 			AudioCaptureEventHandler OnCapture;
 		public:
 			INativeAudio();
@@ -58,7 +56,9 @@ namespace HephAudio
 			INativeAudio& operator=(const INativeAudio&) = delete;
 			virtual ~INativeAudio() = default;
 			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath);
+			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, bool isPaused);
 			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount);
+			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount, bool isPaused);
 			virtual std::vector<std::shared_ptr<IAudioObject>> Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths);
 			virtual std::shared_ptr<IAudioObject> Load(std::wstring filePath);
 			virtual std::shared_ptr<IAudioObject> CreateAO(std::wstring name, size_t bufferFrameCount);

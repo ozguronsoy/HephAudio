@@ -152,5 +152,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp">
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

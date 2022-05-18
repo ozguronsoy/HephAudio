@@ -50,6 +50,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp" />

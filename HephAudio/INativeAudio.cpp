@@ -24,14 +24,21 @@ namespace HephAudio
 			OnDefaultAudioDeviceChange = nullptr;
 			OnAudioDeviceAdded = nullptr;
 			OnAudioDeviceRemoved = nullptr;
-			OnRender = nullptr;
 			OnCapture = nullptr;
 		}
 		std::shared_ptr<IAudioObject> INativeAudio::Play(std::wstring filePath)
 		{
-			return Play(filePath, 1);
+			return Play(filePath, 1u, false);
+		}
+		std::shared_ptr<IAudioObject> INativeAudio::Play(std::wstring filePath, bool isPaused)
+		{
+			return Play(filePath, 1u, isPaused);
 		}
 		std::shared_ptr<IAudioObject> INativeAudio::Play(std::wstring filePath, uint32_t loopCount)
+		{
+			return Play(filePath, loopCount, false);
+		}
+		std::shared_ptr<IAudioObject> INativeAudio::Play(std::wstring filePath, uint32_t loopCount, bool isPaused)
 		{
 			try
 			{
@@ -47,6 +54,7 @@ namespace HephAudio
 				ao->name = audioFile.Name();
 				ao->buffer = format->ReadFile(audioFile);
 				ao->loopCount = loopCount;
+				ao->paused = isPaused;
 				audioObjects.push_back(ao);
 				return ao;
 			}
@@ -421,7 +429,7 @@ namespace HephAudio
 		}
 		void INativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
-			const double aoCount = GetAOCountToMix();
+			const double aoFactor = 1.0 / GetAOCountToMix();
 			AudioProcessor audioProcessor(renderFormat);
 			for (int i = 0; i < audioObjects.size(); i++)
 			{
@@ -430,27 +438,21 @@ namespace HephAudio
 				{
 					const double volume = GetFinalAOVolume(audioObjects.at(i));
 					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.GetFormat().nSamplesPerSec / (double)renderFormat.nSamplesPerSec);
-					const size_t frameIndex = audioObject->reverse ? audioObject->ReversedFrameIndex() - nFramesToRead : audioObject->frameIndex;
-					AudioBuffer subBuffer = audioObject->buffer.GetSubBuffer(frameIndex, nFramesToRead);
-					if (OnRender != nullptr)
+					size_t frameIndex = 0;
+					if (audioObject->GetSubBuffer == nullptr)
 					{
-						OnRender(subBuffer, audioObject->name, false);
+						AudioException exception = AudioException(E_INVALIDARG, L"INativeAudio::Mix", L"IAudioObject::GetSubBuffer method must not be null, if a custom method is not necessary use the default method.");
+						RAISE_AUDIO_EXCPT(this, exception);
+						throw exception;
 					}
-					if (audioObject->echoInfo.echo)
+					AudioBuffer subBuffer = audioObject->GetSubBuffer(audioObject.get(), nFramesToRead, &frameIndex);
+					if (audioObject->OnRender != nullptr)
 					{
-						AudioProcessor::EchoSubBuffer(audioObject->buffer, subBuffer, frameIndex, audioObject->echoInfo);
-					}
-					if (audioObject->reverse)
-					{
-						AudioProcessor::Reverse(subBuffer);
+						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex);
 					}
 					audioProcessor.ConvertSampleRate(subBuffer, frameCount);
 					audioProcessor.ConvertBPS(subBuffer);
 					audioProcessor.ConvertChannels(subBuffer);
-					if (OnRender != nullptr)
-					{
-						OnRender(subBuffer, audioObject->name, true);
-					}
 					for (size_t j = 0; j < subBuffer.FrameCount(); j++)
 					{
 						if (j >= outputBuffer.FrameCount())
@@ -464,13 +466,19 @@ namespace HephAudio
 							{
 								sample = audioObject->distortionInfo.Distort(sample);
 							}
-							outputBuffer.Set(outputBuffer.Get(j, k) + sample / aoCount, j, k);
+							outputBuffer.Set(outputBuffer.Get(j, k) + sample * aoFactor, j, k);
 						}
 					}
 					if (!audioObject->constant)
 					{
 						audioObject->frameIndex += nFramesToRead;
-						if (audioObject->frameIndex >= audioObject->FrameCount())
+						if (audioObject->IsFinishedPlaying == nullptr)
+						{
+							AudioException exception = AudioException(E_INVALIDARG, L"INativeAudio::Mix", L"IAudioObject::IsFinishedPlaying method must not be null, if a custom method is not necessary use the default method.");
+							RAISE_AUDIO_EXCPT(this, exception);
+							throw exception;
+						}
+						if (audioObject->IsFinishedPlaying(audioObject.get()))
 						{
 							if (audioObject->loopCount == 1) // Finish playing.
 							{
