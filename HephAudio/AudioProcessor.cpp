@@ -10,6 +10,7 @@ namespace HephAudio
 	{
 		this->targetFormat = targetFormat;
 	}
+#pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer) const
 	{
 		if (buffer.wfx.wBitsPerSample == targetFormat.wBitsPerSample) { return; }
@@ -132,6 +133,46 @@ namespace HephAudio
 			}
 		}
 	}
+	std::vector<AudioBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
+	{
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, 1, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
+		std::vector<AudioBuffer> channels(buffer.wfx.nChannels, AudioBuffer(buffer.frameCount, resultFormat));
+		if (buffer.wfx.nChannels == 1)
+		{
+			channels.at(0) = buffer;
+			return channels;
+		}
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
+			{
+				channels.at(j).Set(buffer.Get(i, j), i, 0);
+			}
+		}
+		return channels;
+	}
+	AudioBuffer AudioProcessor::MergeChannels(const std::vector<AudioBuffer>& channels)
+	{
+		if (channels.size() == 0) { return AudioBuffer(0, AudioFormatInfo()); }
+		for (size_t i = 0; i < channels.size() - 1; i++)
+		{
+			if (channels.at(i).wfx != channels.at(i + 1).wfx)
+			{
+				throw AudioException(E_FAIL, L"AudioProcessor::MergeChannels", L"All channels must have the same wave format.");
+			}
+		}
+		AudioBuffer resultBuffer(channels.at(0).frameCount, AudioFormatInfo(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
+		for (size_t i = 0; i < resultBuffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
+			{
+				resultBuffer.Set(channels.at(j).Get(i, 0), i, j);
+			}
+		}
+		return resultBuffer;
+	}
+#pragma endregion
+#pragma region Sound Effects
 	void AudioProcessor::Reverse(AudioBuffer& buffer)
 	{
 		AudioBuffer resultBuffer(buffer.frameCount, buffer.wfx);
@@ -231,6 +272,8 @@ namespace HephAudio
 			}
 		}
 	}
+#pragma endregion
+#pragma region Filters
 	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
 		size_t fftSize = buffer.frameCount;
@@ -407,20 +450,68 @@ namespace HephAudio
 		}
 		buffer = MergeChannels(channels);
 	}
+#pragma endregion
+#pragma region Windows
 	void AudioProcessor::TriangleWindow(AudioBuffer& buffer)
 	{
-		const size_t hfc = buffer.frameCount * 0.5;
+		const double hN = 0.5 * (buffer.frameCount - 1);
+		const double hL = hN + 1.0;
+		double factor = 1.0;
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			double factor;
-			if (i <= hfc)
+			factor = 1.0 - fabs((i - hN) / hL);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
-				factor = (double)i / (double)hfc;
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::ParzenWindow(AudioBuffer& buffer)
+	{
+		const double hN = 0.5 * (buffer.frameCount - 1);
+		const double hL = hN + 0.5;
+		const double qL = hL * 0.5;
+		double n = 0.0;
+		double absN = 0.0;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			n = i - hN;
+			absN = fabs(n);
+			if (absN >= 0 && absN <= qL)
+			{
+				factor = 1.0 - 6.0 * pow(n / hL, 2) * (1.0 - absN / hL);
 			}
 			else
 			{
-				factor = (double)(buffer.frameCount - i) / (double)hfc;
+				factor = 2.0 * pow(1.0 - absN / hL, 3);
 			}
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::WelchWindow(AudioBuffer& buffer)
+	{
+		const double hN = 0.5 * (buffer.frameCount - 1);
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 1.0 - pow((i - hN) / hN, 2);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::SineWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = sin(PI * i / N);
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
@@ -429,53 +520,192 @@ namespace HephAudio
 	}
 	void AudioProcessor::HannWindow(AudioBuffer& buffer)
 	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			const double factor = pow(sin(PI * i / buffer.frameCount), 2);
+			factor = pow(sin(PI * i / N), 2);
 			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
 		}
 	}
-	std::vector<AudioBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
+	void AudioProcessor::HammingWindow(AudioBuffer& buffer)
 	{
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, 1, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
-		std::vector<AudioBuffer> channels(buffer.wfx.nChannels, AudioBuffer(buffer.frameCount, resultFormat));
-		if (buffer.wfx.nChannels == 1)
-		{
-			channels.at(0) = buffer;
-			return channels;
-		}
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
+			factor = 0.54 - 0.46 * cos(2.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
-				channels.at(j).Set(buffer.Get(i, j), i, 0);
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
 		}
-		return channels;
 	}
-	AudioBuffer AudioProcessor::MergeChannels(const std::vector<AudioBuffer>& channels)
+	void AudioProcessor::BlackmanWindow(AudioBuffer& buffer)
 	{
-		if (channels.size() == 0) { return AudioBuffer(0, AudioFormatInfo()); }
-		for (size_t i = 0; i < channels.size() - 1; i++)
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			if (channels.at(i).wfx != channels.at(i + 1).wfx)
+			factor = 0.42 - 0.5 * cos(2.0 * PI * i / N) + 0.08 * cos(4.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
 			{
-				throw AudioException(E_FAIL, L"AudioProcessor::MergeChannels", L"All channels must have the same wave format.");
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
 		}
-		AudioBuffer resultBuffer(channels.at(0).frameCount, AudioFormatInfo(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
-		for (size_t i = 0; i < resultBuffer.frameCount; i++)
-		{
-			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
-			{
-				resultBuffer.Set(channels.at(j).Get(i, 0), i, j);
-			}
-		}
-		return resultBuffer;
 	}
+	void AudioProcessor::ExactBlackmanWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.42659 - 0.49656 * cos(2.0 * PI * i / N) + 0.076849 * cos(4.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::NuttallWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.355768 - 0.487396 * cos(2.0 * PI * i / N) + 0.144232 * cos(4.0 * PI * i / N) - 0.012604 * cos(6.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::BlackmanNuttallWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.3635819 - 0.4891775 * cos(2.0 * PI * i / N) + 0.1365995 * cos(4.0 * PI * i / N) - 0.0106411 * cos(6.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::BlackmanHarrisWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.35875 - 0.48829 * cos(2.0 * PI * i / N) + 0.14128 * cos(4.0 * PI * i / N) - 0.01168 * cos(6.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::FlatTopWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.21557895 - 0.41663158 * cos(2.0 * PI * i / N) + 0.277263158 * cos(4.0 * PI * i / N) - 0.083578947 * cos(6.0 * PI * i / N) + 0.006947368 * cos(8.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::GaussianWindow(AudioBuffer& buffer, double sigma)
+	{
+		const double hN = 0.5 * (buffer.frameCount - 1);
+		const double shN = sigma * hN;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = exp(-0.5 * pow((i - hN) / shN, 2));
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::TukeyWindow(AudioBuffer& buffer, double alpha)
+	{
+		const double N = (buffer.frameCount - 1);
+		const double hN = 0.5 * N;
+		const double aN = alpha * N;
+		const double haN = 0.5 * aN;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			if (i < haN)
+			{
+				factor = 0.5 * (1.0 - cos(2.0 * PI * i / aN));
+			}
+			else if (i >= haN && i <= hN)
+			{
+				factor = 1.0;
+			}
+			else
+			{
+				factor = 0.5 * (1.0 - cos(2.0 * PI * (N - i) / aN));
+			}
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::BartlettHannWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.62 - 0.48 * fabs(i / N - 0.5) - 0.38 * cos(2.0 * PI * i / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::HannPoissonWindow(AudioBuffer& buffer, double alpha)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			factor = 0.5 * (1.0 - cos(2.0 * PI * i / N)) * exp(-alpha * fabs(N - 2.0 * i) / N);
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+	void AudioProcessor::LanczosWindow(AudioBuffer& buffer)
+	{
+		const double N = buffer.frameCount - 1;
+		double factor = 1.0;
+		double pix = 1.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			pix = PI * (2.0 * i / N - 1.0);
+			factor = sin(pix) / pix;
+			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			{
+				buffer.Set(buffer.Get(i, j) * factor, i, j);
+			}
+		}
+	}
+#pragma endregion
+#pragma region Encode/Decode
 	void AudioProcessor::EncodeALAW(AudioBuffer& buffer)
 	{
 		const AudioFormatInfo alawFormat = AudioFormatInfo(6, 2, 8, 8000);
@@ -594,4 +824,5 @@ namespace HephAudio
 		}
 		buffer = resultBuffer;
 	}
+#pragma endregion
 }

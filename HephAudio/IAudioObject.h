@@ -13,7 +13,22 @@ namespace HephAudio
 		{
 			RectangleWindow = 0x00,
 			TriangleWindow = 0x01,
-			HannWindow = 0x02
+			ParzenWindow = 0x02,
+			WelchWindow = 0x03,
+			SineWindow = 0x04,
+			HannWindow = 0x05,
+			HammingWindow = 0x06,
+			BlackmanWindow = 0x07,
+			ExactBlackmanWindow = 0x08,
+			NuttallWindow = 0x09,
+			BlackmanNuttallWindow = 0x0A,
+			BlackmanHarrisWindow = 0x0B,
+			FlatTopWindow = 0x0C,
+			GaussianWindow = 0x0D,
+			TukeyWindow = 0x0E,
+			BartlettHannWindow = 0x0F,
+			HannPoissonWindow = 0x10,
+			LanczosWindow = 0x11
 		};
 		struct IAudioObject;
 		typedef AudioBuffer(*AudioGetSubBufferEventHandler)(IAudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
