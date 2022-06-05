@@ -13,20 +13,20 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer) const
 	{
-		if (buffer.wfx.wBitsPerSample == targetFormat.wBitsPerSample) { return; }
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, buffer.wfx.nChannels, targetFormat.wBitsPerSample, buffer.wfx.nSamplesPerSec);
+		if (buffer.formatInfo.bitsPerSample == targetFormat.bitsPerSample) { return; }
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, targetFormat.bitsPerSample, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (uint8_t j = 0; j < buffer.wfx.nChannels; j++)
+			for (uint8_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				double sample = buffer.Get(i, j);
-				if (targetFormat.wBitsPerSample == 8)
+				if (targetFormat.bitsPerSample == 8)
 				{
 					sample += 1.0;
 					sample /= 2.0;
 				}
-				else if (buffer.wfx.wBitsPerSample == 8)
+				else if (buffer.formatInfo.bitsPerSample == 8)
 				{
 					sample *= 2.0;
 					sample -= 1.0;
@@ -38,18 +38,18 @@ namespace HephAudio
 	}
 	void AudioProcessor::ConvertChannels(AudioBuffer& buffer) const
 	{
-		if (buffer.wfx.nChannels == targetFormat.nChannels) { return; }
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, targetFormat.nChannels, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
+		if (buffer.formatInfo.channelCount == targetFormat.channelCount) { return; }
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, targetFormat.channelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
 		{
 			double averageValue = 0.0f;
-			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				averageValue += buffer.Get(i, j);
 			}
-			averageValue /= buffer.wfx.nChannels;
-			for (size_t j = 0; j < targetFormat.nChannels; j++)
+			averageValue /= buffer.formatInfo.channelCount;
+			for (size_t j = 0; j < targetFormat.channelCount; j++)
 			{
 				resultBuffer.Set(averageValue, i, j);
 			}
@@ -62,15 +62,15 @@ namespace HephAudio
 	}
 	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, size_t outFrameCount) const
 	{
-		if (buffer.wfx.nSamplesPerSec == targetFormat.nSamplesPerSec) { return; }
-		const double srRatio = (double)targetFormat.nSamplesPerSec / (double)buffer.wfx.nSamplesPerSec;
+		if (buffer.formatInfo.sampleRate == targetFormat.sampleRate) { return; }
+		const double srRatio = (double)targetFormat.sampleRate / (double)buffer.formatInfo.sampleRate;
 		const size_t currentFrameCount = buffer.frameCount;
 		size_t targetFrameCount = outFrameCount;
 		if (targetFrameCount == 0)
 		{
 			targetFrameCount = ceil((double)currentFrameCount * srRatio);
 		}
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, buffer.wfx.nChannels, buffer.wfx.wBitsPerSample, targetFormat.nSamplesPerSec);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, targetFormat.sampleRate);
 		AudioBuffer resultBuffer(targetFrameCount, resultFormat);
 		const double cursorRatio = (1.0 / (targetFrameCount - 1)) * (currentFrameCount - 1);
 		double cursor = 0.0;
@@ -80,7 +80,7 @@ namespace HephAudio
 		{
 			const double fc = floor(cursor);
 			const double cursorFactor = cursor - fc;
-			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				A = buffer.Get(fc, j);
 				if (fc + 1 < currentFrameCount)
@@ -124,7 +124,7 @@ namespace HephAudio
 			for (size_t j = 0; j < outputBuffer.frameCount; j++)
 			{
 				if (j >= buffer.frameCount) { break; }
-				for (size_t k = 0; k < outputBuffer.wfx.nChannels; k++)
+				for (size_t k = 0; k < outputBuffer.formatInfo.channelCount; k++)
 				{
 					const double outputSample = outputBuffer.Get(j, k);
 					double inputSample = buffer.Get(j, k);
@@ -135,16 +135,16 @@ namespace HephAudio
 	}
 	std::vector<AudioBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
 	{
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.wfx.wFormatTag, 1, buffer.wfx.wBitsPerSample, buffer.wfx.nSamplesPerSec);
-		std::vector<AudioBuffer> channels(buffer.wfx.nChannels, AudioBuffer(buffer.frameCount, resultFormat));
-		if (buffer.wfx.nChannels == 1)
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, 1, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
+		std::vector<AudioBuffer> channels(buffer.formatInfo.channelCount, AudioBuffer(buffer.frameCount, resultFormat));
+		if (buffer.formatInfo.channelCount == 1)
 		{
 			channels.at(0) = buffer;
 			return channels;
 		}
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				channels.at(j).Set(buffer.Get(i, j), i, 0);
 			}
@@ -156,15 +156,15 @@ namespace HephAudio
 		if (channels.size() == 0) { return AudioBuffer(0, AudioFormatInfo()); }
 		for (size_t i = 0; i < channels.size() - 1; i++)
 		{
-			if (channels.at(i).wfx != channels.at(i + 1).wfx)
+			if (channels.at(i).formatInfo != channels.at(i + 1).formatInfo)
 			{
 				throw AudioException(E_FAIL, L"AudioProcessor::MergeChannels", L"All channels must have the same wave format.");
 			}
 		}
-		AudioBuffer resultBuffer(channels.at(0).frameCount, AudioFormatInfo(channels.at(0).wfx.wFormatTag, channels.size(), channels.at(0).wfx.wBitsPerSample, channels.at(0).wfx.nSamplesPerSec));
+		AudioBuffer resultBuffer(channels.at(0).frameCount, AudioFormatInfo(channels.at(0).formatInfo.formatTag, channels.size(), channels.at(0).formatInfo.bitsPerSample, channels.at(0).formatInfo.sampleRate));
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
+			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer.Set(channels.at(j).Get(i, 0), i, j);
 			}
@@ -175,10 +175,10 @@ namespace HephAudio
 #pragma region Sound Effects
 	void AudioProcessor::Reverse(AudioBuffer& buffer)
 	{
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.wfx);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.wfx.nChannels; j++)
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer.Set(buffer.Get(buffer.frameCount - 1 - i, j), i, j);
 			}
@@ -193,7 +193,7 @@ namespace HephAudio
 			size_t startFrameIndex;
 			size_t endFrameIndex;
 		};
-		const size_t delayFrameCount = buffer.wfx.nSamplesPerSec * info.reflectionDelay;
+		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
 		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * echoEndPosition - echoStartFrame);
@@ -208,11 +208,11 @@ namespace HephAudio
 				resultBufferFrameCount = keyPoints.at(i).endFrameIndex + 1;
 			}
 		}
-		AudioBuffer resultBuffer(resultBufferFrameCount, buffer.wfx);
+		AudioBuffer resultBuffer(resultBufferFrameCount, buffer.formatInfo);
 		memcpy(resultBuffer.pAudioData, buffer.pAudioData, buffer.Size());
 		for (size_t i = keyPoints.at(0).startFrameIndex; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < resultBuffer.wfx.nChannels; j++)
+			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
 			{
 				for (size_t k = 0; k < keyPoints.size(); k++)
 				{
@@ -234,7 +234,7 @@ namespace HephAudio
 			size_t endFrameIndex;
 			size_t n;
 		};
-		const size_t delayFrameCount = originalBuffer.wfx.nSamplesPerSec * info.reflectionDelay;
+		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
 		const size_t echoFrameCount = originalBuffer.frameCount * echoEndPosition - echoStartFrame;
@@ -258,7 +258,7 @@ namespace HephAudio
 			size_t cursor = subBufferFrameIndex;
 			for (size_t i = 0; i < subBuffer.frameCount; i++)
 			{
-				for (size_t j = 0; j < subBuffer.wfx.nChannels; j++)
+				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 				{
 					for (size_t k = 0; k < keyPoints.size(); k++)
 					{
@@ -276,38 +276,33 @@ namespace HephAudio
 #pragma region Filters
 	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
-		size_t fftSize = buffer.frameCount;
+		uint64_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
-		const size_t nyquistFrequency = fftSize * 0.5;
-		const uint16_t passBand = cutoffFreq > transitionBandLength ? nyquistFrequency * (cutoffFreq - transitionBandLength) : 0;
-		const uint16_t stopBand = nyquistFrequency * cutoffFreq;
-		const uint16_t transitionLength = stopBand - passBand;
+		const uint64_t nyquistFrequency = fftSize * 0.5;
+		const uint64_t passBand = cutoffFreq > transitionBandLength ? FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq - transitionBandLength) : FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
+		const uint64_t stopBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
+		const uint64_t transitionLength = stopBand - passBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			AudioBuffer& channel = channels.at(i);
 			Fourier fourier(channel, fftSize);
 			fourier.Forward();
-			for (size_t j = passBand; j < fftSize; j++)
+			for (size_t j = passBand; j <= nyquistFrequency; j++)
 			{
-				if (j <= nyquistFrequency)
+				if (j >= stopBand)
 				{
-					if (j >= stopBand)
-					{
-						fourier.complexBuffer.at(j) = Complex();
-					}
-					else if (j > passBand && j < stopBand) // Transition band.
-					{
-						fourier.complexBuffer.at(j) *= (double)(stopBand - j) / (double)transitionLength;
-					}
+					fourier.complexBuffer.at(j) = Complex();
+					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
 				}
-				else
+				else if (j > passBand && j < stopBand) // Transition band.
 				{
-					fourier.complexBuffer.at(j) = fourier.complexBuffer.at(fftSize - j);
-					fourier.complexBuffer.at(j).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					fourier.complexBuffer.at(j) *= (double)(stopBand - j) / (double)transitionLength;
+					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
+					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
 				}
 			}
 			fourier.Inverse();
@@ -317,38 +312,33 @@ namespace HephAudio
 	}
 	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
-		size_t fftSize = buffer.frameCount;
+		uint64_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
-		const size_t nyquistFrequency = fftSize * 0.5;
-		const uint16_t stopBand = nyquistFrequency * cutoffFreq;
-		const uint16_t passBand = stopBand + nyquistFrequency * transitionBandLength;
-		const uint16_t transitionLength = passBand - stopBand;
+		const uint64_t nyquistFrequency = fftSize * 0.5;
+		const uint64_t stopBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
+		const uint64_t passBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq + transitionBandLength);
+		const uint64_t transitionLength = passBand - stopBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			AudioBuffer& channel = channels.at(i);
 			Fourier fourier(channel, fftSize);
 			fourier.Forward();
-			for (size_t j = 0; j < fftSize; j++)
+			for (size_t j = 0; j <= nyquistFrequency; j++)
 			{
-				if (j <= nyquistFrequency)
+				if (j <= stopBand)
 				{
-					if (j <= stopBand)
-					{
-						fourier.complexBuffer.at(j) = Complex();
-					}
-					else if (j > stopBand && j < passBand) // Transition band.
-					{
-						fourier.complexBuffer.at(j) *= (double)(j - stopBand) / (double)transitionLength;
-					}
+					fourier.complexBuffer.at(j) = Complex();
+					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
 				}
-				else
+				else if (j > stopBand && j < passBand) // Transition band.
 				{
-					fourier.complexBuffer.at(j) = fourier.complexBuffer.at(fftSize - j);
-					fourier.complexBuffer.at(j).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					fourier.complexBuffer.at(j) *= (double)(j - stopBand) / (double)transitionLength;
+					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
+					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
 				}
 			}
 			fourier.Inverse();
@@ -358,44 +348,41 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
-		size_t fftSize = buffer.frameCount;
+		uint64_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
-		const size_t nyquistFrequency = fftSize * 0.5;
-		const uint16_t lowStopBand = nyquistFrequency * lowCutoffFreq;
-		const uint16_t lowPassBand = lowStopBand + nyquistFrequency * transitionBandLength;
-		const uint16_t highPassBand = highCutoffFreq > transitionBandLength ? nyquistFrequency * (highCutoffFreq - transitionBandLength) : 0;
-		const uint16_t highStopBand = nyquistFrequency * highCutoffFreq;
-		const uint16_t transitionLength = highStopBand - highPassBand;
+		const uint64_t nyquistFrequency = fftSize * 0.5;
+		const uint64_t lowStopBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
+		const uint64_t lowPassBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq + transitionBandLength);
+		const uint64_t highPassBand = highCutoffFreq > transitionBandLength ? FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq - transitionBandLength) : FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
+		const uint64_t highStopBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
+		const uint64_t transitionLength = highStopBand - highPassBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			AudioBuffer& channel = channels.at(i);
 			Fourier fourier(channel, fftSize);
 			fourier.Forward();
-			for (size_t j = 0; j < fftSize; j++)
+			for (size_t j = 0; j <= nyquistFrequency; j++)
 			{
-				if (j <= nyquistFrequency)
+				if (j <= lowStopBand || j >= highStopBand)
 				{
-					if (j <= lowStopBand || j >= highStopBand)
-					{
-						fourier.complexBuffer.at(j) = Complex();
-					}
-					else if (j > lowStopBand && j < lowPassBand)
-					{
-						fourier.complexBuffer.at(j) *= (double)(j - lowStopBand) / (double)transitionLength;
-					}
-					else if (j > highPassBand && j < highStopBand)
-					{
-						fourier.complexBuffer.at(j) *= (double)(highStopBand - j) / (double)transitionLength;
-					}
+					fourier.complexBuffer.at(j) = Complex();
+					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
 				}
-				else
+				else if (j > lowStopBand && j < lowPassBand)
 				{
-					fourier.complexBuffer.at(j) = fourier.complexBuffer.at(fftSize - j);
-					fourier.complexBuffer.at(j).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					fourier.complexBuffer.at(j) *= (double)(j - lowStopBand) / (double)transitionLength;
+					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
+					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+				}
+				else if (j > highPassBand && j < highStopBand)
+				{
+					fourier.complexBuffer.at(j) *= (double)(highStopBand - j) / (double)transitionLength;
+					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
+					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
 				}
 			}
 			fourier.Inverse();
@@ -405,50 +392,51 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
-		size_t fftSize = buffer.frameCount;
+		uint64_t fftSize = buffer.frameCount;
 		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
 		{
 			fftSize = pow(2, ceil(log2f(fftSize))); // smallest power of 2 thats greater than nSample
 		}
-		const size_t nyquistFrequency = fftSize * 0.5;
-		const uint16_t lowStopBand = nyquistFrequency * lowCutoffFreq;
-		const uint16_t lowPassBand = lowStopBand + nyquistFrequency * transitionBandLength;
-		const uint16_t highPassBand = highCutoffFreq > transitionBandLength ? nyquistFrequency * (highCutoffFreq - transitionBandLength) : 0;
-		const uint16_t highStopBand = nyquistFrequency * highCutoffFreq;
-		const uint16_t transitionLength = highStopBand - highPassBand;
+		const uint64_t nyquistFrequency = fftSize * 0.5;
+		const uint64_t lowStopBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
+		const uint64_t lowPassBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq + transitionBandLength);
+		const uint64_t highPassBand = highCutoffFreq > transitionBandLength ? FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq - transitionBandLength) : FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
+		const uint64_t highStopBand = FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
+		const uint64_t transitionLength = highStopBand - highPassBand;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
 			AudioBuffer& channel = channels.at(i);
 			Fourier fourier(channel, fftSize);
 			fourier.Forward();
-			for (size_t j = 0; j < fftSize; j++)
+			for (size_t j = 0; j <= nyquistFrequency; j++)
 			{
-				if (j <= fftSize * 0.5)
+				if (j >= lowPassBand && j <= highPassBand)
 				{
-					if (j >= lowPassBand && j <= highPassBand)
-					{
-						fourier.complexBuffer.at(j) = Complex();
-					}
-					else if (j > lowStopBand && j < lowPassBand)
-					{
-						fourier.complexBuffer.at(j) *= (double)(transitionLength - (j - lowStopBand)) / (double)transitionLength;
-					}
-					else if (j > highPassBand && j < highStopBand)
-					{
-						fourier.complexBuffer.at(j) *= (double)(transitionLength - (highStopBand - j)) / (double)transitionLength;
-					}
+					fourier.complexBuffer.at(j) = Complex();
+					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
 				}
-				else
+				else if (j > lowStopBand && j < lowPassBand)
 				{
-					fourier.complexBuffer.at(j) = fourier.complexBuffer.at(fftSize - j);
-					fourier.complexBuffer.at(j).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					fourier.complexBuffer.at(j) *= (double)(transitionLength - (j - lowStopBand)) / (double)transitionLength;
+					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
+					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+				}
+				else if (j > highPassBand && j < highStopBand)
+				{
+					fourier.complexBuffer.at(j) *= (double)(transitionLength - (highStopBand - j)) / (double)transitionLength;
+					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
+					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
 				}
 			}
 			fourier.Inverse();
 			fourier.ComplexBufferToAudioBuffer(channel);
 		}
 		buffer = MergeChannels(channels);
+	}
+	uint64_t AudioProcessor::FrequencyToIndex(size_t sampleRateond, size_t fftSize, double frequency)
+	{
+		return round(frequency * fftSize / sampleRateond);
 	}
 #pragma endregion
 #pragma region Windows
@@ -460,7 +448,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 1.0 - fabs((i - hN) / hL);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -486,7 +474,7 @@ namespace HephAudio
 			{
 				factor = 2.0 * pow(1.0 - absN / hL, 3);
 			}
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -499,7 +487,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 1.0 - pow((i - hN) / hN, 2);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -512,7 +500,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = sin(PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -525,7 +513,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = pow(sin(PI * i / N), 2);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -538,7 +526,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.54 - 0.46 * cos(2.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -551,7 +539,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.42 - 0.5 * cos(2.0 * PI * i / N) + 0.08 * cos(4.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -564,7 +552,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.42659 - 0.49656 * cos(2.0 * PI * i / N) + 0.076849 * cos(4.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -577,7 +565,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.355768 - 0.487396 * cos(2.0 * PI * i / N) + 0.144232 * cos(4.0 * PI * i / N) - 0.012604 * cos(6.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -590,7 +578,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.3635819 - 0.4891775 * cos(2.0 * PI * i / N) + 0.1365995 * cos(4.0 * PI * i / N) - 0.0106411 * cos(6.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -603,7 +591,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.35875 - 0.48829 * cos(2.0 * PI * i / N) + 0.14128 * cos(4.0 * PI * i / N) - 0.01168 * cos(6.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -616,7 +604,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.21557895 - 0.41663158 * cos(2.0 * PI * i / N) + 0.277263158 * cos(4.0 * PI * i / N) - 0.083578947 * cos(6.0 * PI * i / N) + 0.006947368 * cos(8.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -630,7 +618,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = exp(-0.5 * pow((i - hN) / shN, 2));
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -657,7 +645,7 @@ namespace HephAudio
 			{
 				factor = 0.5 * (1.0 - cos(2.0 * PI * (N - i) / aN));
 			}
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -670,7 +658,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.62 - 0.48 * fabs(i / N - 0.5) - 0.38 * cos(2.0 * PI * i / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -683,7 +671,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			factor = 0.5 * (1.0 - cos(2.0 * PI * i / N)) * exp(-alpha * fabs(N - 2.0 * i) / N);
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -698,7 +686,7 @@ namespace HephAudio
 		{
 			pix = PI * (2.0 * i / N - 1.0);
 			factor = sin(pix) / pix;
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				buffer.Set(buffer.Get(i, j) * factor, i, j);
 			}
@@ -709,14 +697,14 @@ namespace HephAudio
 	void AudioProcessor::EncodeALAW(AudioBuffer& buffer)
 	{
 		const AudioFormatInfo alawFormat = AudioFormatInfo(6, 2, 8, 8000);
-		AudioProcessor(AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec)).ConvertBPS(buffer); // Convert current buffer to 16 bps.
+		AudioProcessor(AudioFormatInfo(1, buffer.GetFormat().channelCount, 16, buffer.GetFormat().sampleRate)).ConvertBPS(buffer); // Convert current buffer to 16 bps.
 		AudioProcessor alawProcessor(alawFormat);
 		alawProcessor.ConvertSampleRate(buffer);
 		alawProcessor.ConvertChannels(buffer);
 		AudioBuffer resultBuffer(buffer.frameCount, alawFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				int16_t pcm = buffer.GetAsInt32(i, j);
 				int16_t sign = (pcm & 0x8000) >> 8;
@@ -740,11 +728,11 @@ namespace HephAudio
 	}
 	void AudioProcessor::DecodeALAW(AudioBuffer& buffer)
 	{
-		if (buffer.GetFormat().wFormatTag != 6) { throw AudioException(E_INVALIDARG, L"AudioProcessor::DecodeALAW", L"Buffer must be an a-law buffer."); }
-		AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec));
+		if (buffer.GetFormat().formatTag != 6) { throw AudioException(E_INVALIDARG, L"AudioProcessor::DecodeALAW", L"Buffer must be an a-law buffer."); }
+		AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(1, buffer.GetFormat().channelCount, 16, buffer.GetFormat().sampleRate));
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				uint8_t sample = buffer.GetAsInt32(i, j);
 				sample ^= 0xD5;
@@ -770,14 +758,14 @@ namespace HephAudio
 	void AudioProcessor::EncodeMULAW(AudioBuffer& buffer)
 	{
 		const AudioFormatInfo mulawFormat = AudioFormatInfo(7, 2, 8, 8000);
-		AudioProcessor(AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec)).ConvertBPS(buffer); // Convert current buffer to 16 bps.
+		AudioProcessor(AudioFormatInfo(1, buffer.GetFormat().channelCount, 16, buffer.GetFormat().sampleRate)).ConvertBPS(buffer); // Convert current buffer to 16 bps.
 		AudioProcessor mulawProcessor(mulawFormat);
 		mulawProcessor.ConvertSampleRate(buffer);
 		mulawProcessor.ConvertChannels(buffer);
 		AudioBuffer resultBuffer(buffer.frameCount, mulawFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				int16_t pcm = buffer.GetAsInt32(i, j);
 				int16_t sign = (pcm & 0x8000) >> 8;
@@ -802,11 +790,11 @@ namespace HephAudio
 	}
 	void AudioProcessor::DecodeMULAW(AudioBuffer& buffer)
 	{
-		if (buffer.GetFormat().wFormatTag != 7) { throw AudioException(E_INVALIDARG, L"AudioProcessor::DecodeALAW", L"Buffer must be an mu-law buffer."); }
-		AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(1, buffer.GetFormat().nChannels, 16, buffer.GetFormat().nSamplesPerSec));
+		if (buffer.GetFormat().formatTag != 7) { throw AudioException(E_INVALIDARG, L"AudioProcessor::DecodeALAW", L"Buffer must be an mu-law buffer."); }
+		AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(1, buffer.GetFormat().channelCount, 16, buffer.GetFormat().sampleRate));
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < buffer.GetFormat().nChannels; j++)
+			for (size_t j = 0; j < buffer.GetFormat().channelCount; j++)
 			{
 				uint8_t mulaw = buffer.GetAsInt32(i, j);
 				mulaw = ~mulaw;

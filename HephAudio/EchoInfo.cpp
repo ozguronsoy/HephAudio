@@ -19,7 +19,7 @@ namespace HephAudio
 				size_t startFrameIndex;
 				size_t endFrameIndex;
 			};
-			const size_t delayFrameCount = buffer.GetFormat().nSamplesPerSec * this->reflectionDelay;
+			const size_t delayFrameCount = buffer.GetFormat().sampleRate * this->reflectionDelay;
 			const size_t echoStartFrame = buffer.FrameCount() * this->echoStartPosition;
 			const double echoEndPosition = this->echoEndPosition > this->echoStartPosition ? this->echoEndPosition : 1.0;
 			const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.FrameCount() * echoEndPosition - echoStartFrame);

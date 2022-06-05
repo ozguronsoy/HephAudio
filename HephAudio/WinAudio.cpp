@@ -264,7 +264,7 @@ namespace HephAudio
 			if (closestFormat != nullptr) // The given format is not supported, initialize audio client using the closest format.
 			{
 				format = (*closestFormat);
-				format.wFormatTag = 1;
+				format.formatTag = 1;
 				format.headerSize = 0;
 				wrf = format;
 				CoTaskMemFree(closestFormat);
@@ -320,7 +320,7 @@ namespace HephAudio
 			if (closestFormat != nullptr) // The given format is not supported, initialize audio client using the closest format.
 			{
 				format = (*closestFormat);
-				format.wFormatTag = 1;
+				format.formatTag = 1;
 				format.headerSize = 0;
 				wcf = format;
 				CoTaskMemFree(closestFormat);
@@ -499,7 +499,7 @@ namespace HephAudio
 			dataBuffer = AudioBuffer(bufferSize, renderFormat);
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetService(__uuidof(IAudioRenderClient), &pRenderClient), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
 			WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(bufferSize, &renderBuffer), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
-			memset(renderBuffer, 0, bufferSize * renderFormat.nBlockAlign);
+			memset(renderBuffer, 0, bufferSize * renderFormat.FrameSize());
 			WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(bufferSize, 0), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Start(), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
 			while (!disposing && isRenderInitialized) // Render data while not disposing and not reinitializing.
@@ -517,7 +517,7 @@ namespace HephAudio
 				{
 					Mix(dataBuffer, nFramesAvailable);
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, &renderBuffer), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
-					memcpy(renderBuffer, dataBuffer.GetAudioDataAddress(), nFramesAvailable * renderFormat.nBlockAlign);
+					memcpy(renderBuffer, dataBuffer.GetAudioDataAddress(), nFramesAvailable * renderFormat.FrameSize());
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(nFramesAvailable, 0), this, L"WinAudio", L"An error occurred whilst rendering the samples.");
 					dataBuffer.Reset();
 				}
@@ -547,7 +547,7 @@ namespace HephAudio
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pSessionManager->GetAudioSessionControl(nullptr, 0, pSessionControl.GetAddressOf()), this, L"WinAudio::InitializeCapture", L"An error occurred whilst getting the session controls.");
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pSessionControl->RegisterAudioSessionNotification(&captureSessionEvents), this, L"WinAudio::InitializeCapture", L"An error occurred whilst registering to session notifications.");
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetBufferSize(&bufferSize), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
-			hnsActualDuration = (double)reftimesPerSec * bufferSize / captureFormat.nSamplesPerSec;
+			hnsActualDuration = (double)reftimesPerSec * bufferSize / captureFormat.sampleRate;
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetService(__uuidof(IAudioCaptureClient), &pCaptureClient), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->Start(), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
 			while (!disposing && isCaptureInitialized) // Capture data while not disposing and not reinitializing.
@@ -561,7 +561,7 @@ namespace HephAudio
 					{
 						if (isCapturePaused || disposing) { break; } // Stop capturing if paused or disposing.
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetBuffer(&captureBuffer, &nFramesAvailable, &flags, nullptr, nullptr), this, L"WinAudio", L"An error occurred whilst capturing the samples.");
-						nBytesAvailable = nFramesAvailable * captureFormat.nBlockAlign;
+						nBytesAvailable = nFramesAvailable * captureFormat.FrameSize();
 						AudioBuffer temp(nFramesAvailable, captureFormat);
 						memcpy(temp.GetAudioDataAddress(), captureBuffer, nBytesAvailable);
 						capturedData += temp;

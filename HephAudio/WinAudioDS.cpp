@@ -90,15 +90,15 @@ namespace HephAudio
 			if (disposing) { return; }
 			StopRendering();
 			renderFormat = format;
-			if (renderFormat.wFormatTag != 1) { renderFormat.wFormatTag = 1; }
-			if (renderFormat.nSamplesPerSec != 22050 && renderFormat.nSamplesPerSec != 44100 && renderFormat.nSamplesPerSec != 88200 && renderFormat.nSamplesPerSec != 176400 &&
-				renderFormat.nSamplesPerSec != 24000 && renderFormat.nSamplesPerSec != 48000 && renderFormat.nSamplesPerSec != 96000 && renderFormat.nSamplesPerSec != 192000)
+			if (renderFormat.formatTag != 1) { renderFormat.formatTag = 1; }
+			if (renderFormat.sampleRate != 22050 && renderFormat.sampleRate != 44100 && renderFormat.sampleRate != 88200 && renderFormat.sampleRate != 176400 &&
+				renderFormat.sampleRate != 24000 && renderFormat.sampleRate != 48000 && renderFormat.sampleRate != 96000 && renderFormat.sampleRate != 192000)
 			{
-				renderFormat.nSamplesPerSec = 48000;
+				renderFormat.sampleRate = 48000;
 			}
-			if (renderFormat.nChannels != 1 && renderFormat.nChannels != 2) { renderFormat.nChannels = 2; }
-			if (renderFormat.wBitsPerSample != 8 && renderFormat.wBitsPerSample != 16 && renderFormat.wBitsPerSample != 24 && renderFormat.wBitsPerSample != 32) { renderFormat.wBitsPerSample = 32; }
-			renderFormat = AudioFormatInfo(renderFormat.wFormatTag, renderFormat.nChannels, renderFormat.wBitsPerSample, renderFormat.nSamplesPerSec);
+			if (renderFormat.channelCount != 1 && renderFormat.channelCount != 2) { renderFormat.channelCount = 2; }
+			if (renderFormat.bitsPerSample != 8 && renderFormat.bitsPerSample != 16 && renderFormat.bitsPerSample != 24 && renderFormat.bitsPerSample != 32) { renderFormat.bitsPerSample = 32; }
+			renderFormat = AudioFormatInfo(renderFormat.formatTag, renderFormat.channelCount, renderFormat.bitsPerSample, renderFormat.sampleRate);
 			GUID deviceId;
 			if (device == nullptr || device->type != AudioDeviceType::Render)
 			{
@@ -113,7 +113,7 @@ namespace HephAudio
 			DSBUFFERDESC bufferDesc = DSBUFFERDESC();
 			bufferDesc.dwSize = sizeof(DSBUFFERDESC);
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
-			bufferDesc.dwBufferBytes = renderFormat.nAvgBytesPerSec / 100 * 4;
+			bufferDesc.dwBufferBytes = renderFormat.ByteRate() / 100 * 4;
 			bufferDesc.dwReserved = 0;
 			WAVEFORMATEX wrf = renderFormat;
 			bufferDesc.lpwfxFormat = &wrf;
@@ -139,15 +139,15 @@ namespace HephAudio
 			if (disposing) { return; }
 			StopCapturing();
 			captureFormat = format;
-			if (captureFormat.wFormatTag != 1) { captureFormat.wFormatTag = 1; }
-			if (captureFormat.nSamplesPerSec != 22050 && captureFormat.nSamplesPerSec != 44100 && captureFormat.nSamplesPerSec != 88200 && captureFormat.nSamplesPerSec != 176400 &&
-				captureFormat.nSamplesPerSec != 24000 && captureFormat.nSamplesPerSec != 48000 && captureFormat.nSamplesPerSec != 96000 && captureFormat.nSamplesPerSec != 192000)
+			if (captureFormat.formatTag != 1) { captureFormat.formatTag = 1; }
+			if (captureFormat.sampleRate != 22050 && captureFormat.sampleRate != 44100 && captureFormat.sampleRate != 88200 && captureFormat.sampleRate != 176400 &&
+				captureFormat.sampleRate != 24000 && captureFormat.sampleRate != 48000 && captureFormat.sampleRate != 96000 && captureFormat.sampleRate != 192000)
 			{
-				captureFormat.nSamplesPerSec = 48000;
+				captureFormat.sampleRate = 48000;
 			}
-			if (captureFormat.nChannels != 1 && captureFormat.nChannels != 2) { captureFormat.nChannels = 2; }
-			if (captureFormat.wBitsPerSample != 8 && captureFormat.wBitsPerSample != 16 && captureFormat.wBitsPerSample != 24 && captureFormat.wBitsPerSample != 32) { captureFormat.wBitsPerSample = 32; }
-			captureFormat = AudioFormatInfo(captureFormat.wFormatTag, captureFormat.nChannels, captureFormat.wBitsPerSample, captureFormat.nSamplesPerSec);
+			if (captureFormat.channelCount != 1 && captureFormat.channelCount != 2) { captureFormat.channelCount = 2; }
+			if (captureFormat.bitsPerSample != 8 && captureFormat.bitsPerSample != 16 && captureFormat.bitsPerSample != 24 && captureFormat.bitsPerSample != 32) { captureFormat.bitsPerSample = 32; }
+			captureFormat = AudioFormatInfo(captureFormat.formatTag, captureFormat.channelCount, captureFormat.bitsPerSample, captureFormat.sampleRate);
 			GUID deviceId;
 			if (device == nullptr || device->type != AudioDeviceType::Capture)
 			{
@@ -161,7 +161,7 @@ namespace HephAudio
 			DSCBUFFERDESC bufferDesc = DSCBUFFERDESC();
 			bufferDesc.dwSize = sizeof(DSCBUFFERDESC);
 			bufferDesc.dwFlags = 0;
-			bufferDesc.dwBufferBytes = captureFormat.nAvgBytesPerSec * 2;
+			bufferDesc.dwBufferBytes = captureFormat.ByteRate() * 2;
 			WAVEFORMATEX wcf = captureFormat;
 			bufferDesc.lpwfxFormat = &wcf;
 			bufferDesc.dwFXCount = 0;
@@ -318,7 +318,7 @@ namespace HephAudio
 			void* audioPtr1;
 			void* audioPtr2;
 			DWORD audioBytes1, audioBytes2;
-			AudioBuffer dataBuffer(renderFormat.nSamplesPerSec / 100, renderFormat);
+			AudioBuffer dataBuffer(renderFormat.sampleRate / 100, renderFormat);
 			ComPtr<IDirectSoundNotify> pDirectSoundNotify;
 			const size_t notificationCount = 5;
 			HANDLE hEvents[notificationCount]{ nullptr };
@@ -368,7 +368,7 @@ namespace HephAudio
 			void* audioPtr1;
 			void* audioPtr2;
 			DWORD audioBytes1, audioBytes2, captureCursor, readCursor;
-			AudioBuffer dataBuffer(captureFormat.nSamplesPerSec / 2, captureFormat);
+			AudioBuffer dataBuffer(captureFormat.sampleRate / 2, captureFormat);
 			ComPtr<IDirectSoundNotify> pDirectSoundNotify;
 			const size_t notificationCount = 5;
 			HANDLE hEvents[notificationCount]{ nullptr };

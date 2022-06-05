@@ -11,7 +11,7 @@ namespace HephAudio
 		}
 		AudioFormatInfo AiffFormat::ReadFormatInfo(const AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
 		{
-			AudioFormatInfo wfx = AudioFormatInfo();
+			AudioFormatInfo format = AudioFormatInfo();
 			void* audioFileBuffer = inFile.GetInnerBufferAddress();
 			outEndian = Endian::Big;
 			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"FORM")
@@ -33,13 +33,13 @@ namespace HephAudio
 						}
 						uint32_t nextChunk = cursor + commSize + 8;
 						cursor += 8;
-						wfx.nChannels = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
+						format.channelCount = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
 						cursor += 2;
 						outFrameCount = Read<uint32_t>(audioFileBuffer, cursor, Endian::Big);
 						cursor += 4;
-						wfx.wBitsPerSample = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
+						format.bitsPerSample = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
 						cursor += 2;
-						SampleRateFrom64(Read<uint64_t>(audioFileBuffer, cursor, Endian::Big), &wfx);
+						SampleRateFrom64(Read<uint64_t>(audioFileBuffer, cursor, Endian::Big), &format);
 						cursor += 10;
 						if (formType == *(uint32_t*)"AIFC")
 						{
@@ -53,10 +53,8 @@ namespace HephAudio
 								outEndian = Endian::Little;
 							}
 						}
-						wfx.nBlockAlign = wfx.wBitsPerSample * wfx.nChannels / 8;
-						wfx.nAvgBytesPerSec = wfx.nSamplesPerSec * wfx.nBlockAlign;
-						wfx.wFormatTag = 1;
-						wfx.headerSize = nextChunk;
+						format.formatTag = 1;
+						format.headerSize = nextChunk;
 					}
 					else
 					{
@@ -72,15 +70,15 @@ namespace HephAudio
 			{
 				throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
 			}
-			return wfx;
+			return format;
 		}
 		AudioBuffer AiffFormat::ReadFile(const AudioFile& file) const
 		{
 			uint32_t frameCount = 0;
 			Endian audioDataEndian;
-			AudioFormatInfo wfx = ReadFormatInfo(file, frameCount, audioDataEndian);
+			AudioFormatInfo format = ReadFormatInfo(file, frameCount, audioDataEndian);
 			void* audioFileBuffer = file.GetInnerBufferAddress();
-			uint32_t cursor = wfx.headerSize;
+			uint32_t cursor = format.headerSize;
 			while (true) // Find the sound data chunk.
 			{
 				if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) != *(uint32_t*)"SSND")
@@ -102,12 +100,12 @@ namespace HephAudio
 				}
 			}
 			cursor += 16;
-			AudioBuffer buffer(frameCount, wfx);
+			AudioBuffer buffer(frameCount, format);
 			memcpy(buffer.GetAudioDataAddress(), (uint8_t*)audioFileBuffer + cursor, buffer.Size());
-			if (audioDataEndian != GetSystemEndian() && wfx.wBitsPerSample != 8) // switch bytes.
+			if (audioDataEndian != GetSystemEndian() && format.bitsPerSample != 8) // switch bytes.
 			{
 				uint8_t* innerBuffer = (uint8_t*)buffer.GetAudioDataAddress();
-				const uint32_t sampleSize = wfx.wBitsPerSample / 8;
+				const uint32_t sampleSize = format.bitsPerSample / 8;
 				for (size_t i = 0; i < buffer.Size(); i += sampleSize)
 				{
 					switch (sampleSize)
@@ -163,13 +161,13 @@ namespace HephAudio
 			uint8_t* newBuffer = (uint8_t*)malloc(fullFileSize);
 			if (newBuffer != nullptr)
 			{
-				const uint16_t nChannels = ChangeEndian16(bufferFormat.nChannels, Endian::Big);
-				const uint16_t bps = ChangeEndian16(bufferFormat.wBitsPerSample, Endian::Big);
+				const uint16_t channelCount = ChangeEndian16(bufferFormat.channelCount, Endian::Big);
+				const uint16_t bps = ChangeEndian16(bufferFormat.bitsPerSample, Endian::Big);
 				const uint32_t four32 = ChangeEndian32(4, Endian::Big);
 				const uint32_t timeStamp = ChangeEndian32(0xA2805140, Endian::Big);
 				const uint32_t commSize = ChangeEndian32(headerSize - 32, Endian::Big);
 				const uint32_t frameCount = ChangeEndian32(buffer.FrameCount(), Endian::Big);
-				const uint32_t sndByteCount = ChangeEndian32(buffer.FrameCount() * bufferFormat.nBlockAlign + 8, Endian::Big);
+				const uint32_t sndByteCount = ChangeEndian32(buffer.FrameCount() * bufferFormat.FrameSize() + 8, Endian::Big);
 				memcpy(newBuffer, &form, 4);
 				memcpy(newBuffer + 4, &four32, 4);
 				memcpy(newBuffer + 8, &aiff, 4);
@@ -178,7 +176,7 @@ namespace HephAudio
 				memcpy(newBuffer + 20, &timeStamp, 4);
 				memcpy(newBuffer + 24, &comm, 4);
 				memcpy(newBuffer + 28, &commSize, 4);
-				memcpy(newBuffer + 32, &nChannels, 2);
+				memcpy(newBuffer + 32, &channelCount, 2);
 				memcpy(newBuffer + 34, &frameCount, 4);
 				memcpy(newBuffer + 38, &bps, 2);
 				memcpy(newBuffer + 40, &srBits, 8);
@@ -199,156 +197,156 @@ namespace HephAudio
 			}
 			return false;
 		}
-		void AiffFormat::SampleRateFrom64(uint64_t srBits, AudioFormatInfo* wfx) const
+		void AiffFormat::SampleRateFrom64(uint64_t srBits, AudioFormatInfo* format) const
 		{
-			if (wfx == nullptr)
+			if (format == nullptr)
 			{
-				throw AudioException(E_INVALIDARG, L"AiffFormat::SampleRateFrom64", L"wfx was nullptr.");
+				throw AudioException(E_INVALIDARG, L"AiffFormat::SampleRateFrom64", L"format was nullptr.");
 			}
 			if (srBits == 0x400FAC4400000000)
 			{
-				wfx->nSamplesPerSec = 88200;
+				format->sampleRate = 88200;
 			}
 			else if (srBits == 0x400EAC4400000000)
 			{
-				wfx->nSamplesPerSec = 44100;
+				format->sampleRate = 44100;
 			}
 			else if (srBits == 0x400DAC4400000000)
 			{
-				wfx->nSamplesPerSec = 22050;
+				format->sampleRate = 22050;
 			}
 			else if (srBits == 0x400CAC4400000000)
 			{
-				wfx->nSamplesPerSec = 11025;
+				format->sampleRate = 11025;
 			}
 			else if (srBits == 0x400FBB8000000000)
 			{
-				wfx->nSamplesPerSec = 96000;
+				format->sampleRate = 96000;
 			}
 			else if (srBits == 0x400EBB8000000000)
 			{
-				wfx->nSamplesPerSec = 48000;
+				format->sampleRate = 48000;
 			}
 			else if (srBits == 0x400DBB8000000000)
 			{
-				wfx->nSamplesPerSec = 24000;
+				format->sampleRate = 24000;
 			}
 			else if (srBits == 0x400CBB8000000000)
 			{
-				wfx->nSamplesPerSec = 12000;
+				format->sampleRate = 12000;
 			}
 			else if (srBits == 0x400BBB8000000000)
 			{
-				wfx->nSamplesPerSec = 6000;
+				format->sampleRate = 6000;
 			}
 			else if (srBits == 0x400FFA0000000000)
 			{
-				wfx->nSamplesPerSec = 128000;
+				format->sampleRate = 128000;
 			}
 			else if (srBits == 0x400EFA0000000000)
 			{
-				wfx->nSamplesPerSec = 64000;
+				format->sampleRate = 64000;
 			}
 			else if (srBits == 0x400DFA0000000000)
 			{
-				wfx->nSamplesPerSec = 32000;
+				format->sampleRate = 32000;
 			}
 			else if (srBits == 0x400CFA0000000000)
 			{
-				wfx->nSamplesPerSec = 16000;
+				format->sampleRate = 16000;
 			}
 			else if (srBits == 0x400BFA0000000000)
 			{
-				wfx->nSamplesPerSec = 8000;
+				format->sampleRate = 8000;
 			}
 			else if (srBits == 0x400AFA0000000000)
 			{
-				wfx->nSamplesPerSec = 4000;
+				format->sampleRate = 4000;
 			}
 			else if (srBits == 0x4009FA0000000000)
 			{
-				wfx->nSamplesPerSec = 2000;
+				format->sampleRate = 2000;
 			}
 			else if (srBits == 0x4008FA0000000000)
 			{
-				wfx->nSamplesPerSec = 1000;
+				format->sampleRate = 1000;
 			}
 			else
 			{
 				throw AudioException(E_FAIL, L"AiffFormat", L"Unknown sample rate.");
 			}
 		}
-		uint64_t AiffFormat::SampleRateTo64(AudioFormatInfo* wfx) const
+		uint64_t AiffFormat::SampleRateTo64(AudioFormatInfo* format) const
 		{
-			if (wfx == nullptr)
+			if (format == nullptr)
 			{
-				throw AudioException(E_INVALIDARG, L"AiffFormat::SampleRateTo64", L"wfx was nullptr.");
+				throw AudioException(E_INVALIDARG, L"AiffFormat::SampleRateTo64", L"format was nullptr.");
 			}
-			if (wfx->nSamplesPerSec == 88200)
+			if (format->sampleRate == 88200)
 			{
 				return 0x400FAC4400000000;
 			}
-			else if (wfx->nSamplesPerSec == 44100)
+			else if (format->sampleRate == 44100)
 			{
 				return 0x400EAC4400000000;
 			}
-			else if (wfx->nSamplesPerSec == 22050)
+			else if (format->sampleRate == 22050)
 			{
 				return 0x400DAC4400000000;
 			}
-			else if (wfx->nSamplesPerSec == 11025)
+			else if (format->sampleRate == 11025)
 			{
 				return 0x400CAC4400000000;
 			}
-			else if (wfx->nSamplesPerSec == 96000)
+			else if (format->sampleRate == 96000)
 			{
 				return 0x400FBB8000000000;
 			}
-			else if (wfx->nSamplesPerSec == 48000)
+			else if (format->sampleRate == 48000)
 			{
 				return 0x400EBB8000000000;
 			}
-			else if (wfx->nSamplesPerSec == 24000)
+			else if (format->sampleRate == 24000)
 			{
 				return 0x400DBB8000000000;
 			}
-			else if (wfx->nSamplesPerSec == 12000)
+			else if (format->sampleRate == 12000)
 			{
 				return 0x400CBB8000000000;
 			}
-			else if (wfx->nSamplesPerSec == 6000)
+			else if (format->sampleRate == 6000)
 			{
 				return 0x400BBB8000000000;
 			}
-			else if (wfx->nSamplesPerSec == 128000)
+			else if (format->sampleRate == 128000)
 			{
 				return 0x400FFA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 64000)
+			else if (format->sampleRate == 64000)
 			{
 				return 0x400EFA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 32000)
+			else if (format->sampleRate == 32000)
 			{
 				return 0x400DFA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 16000)
+			else if (format->sampleRate == 16000)
 			{
 				return 0x400CFA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 8000)
+			else if (format->sampleRate == 8000)
 			{
 				return 0x400BFA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 4000)
+			else if (format->sampleRate == 4000)
 			{
 				return 0x400AFA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 2000)
+			else if (format->sampleRate == 2000)
 			{
 				return 0x4009FA0000000000;
 			}
-			else if (wfx->nSamplesPerSec == 1000)
+			else if (format->sampleRate == 1000)
 			{
 				return 0x4008FA0000000000;
 			}

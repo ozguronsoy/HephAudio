@@ -17,8 +17,7 @@ int main()
 	WinAudio wa;
 	wa.OnException = &OnException;
 	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
-	std::shared_ptr<IAudioObject> pAudioObject = wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
-	pAudioObject->windowType = AudioWindowType::LanczosWindow;
+	std::shared_ptr<IAudioObject> pao = wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 
 	std::string a;
 	std::cin >> a;

@@ -14,10 +14,10 @@ namespace HephAudio
 	private:
 		size_t frameCount;
 		void* pAudioData;
-		AudioFormatInfo wfx;
+		AudioFormatInfo formatInfo;
 	public:
 		AudioBuffer();
-		AudioBuffer(size_t frameCount, AudioFormatInfo waveFormat);
+		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		// Joins the rhs buffer to the end of the current buffer and returns it as a new audio buffer.
@@ -61,6 +61,6 @@ namespace HephAudio
 		double GetMax() const noexcept;
 	public:
 		// Calculates the duration of the buffer in seconds.
-		static double CalculateDuration(size_t frameCount, AudioFormatInfo waveFormat) noexcept;
+		static double CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
 	};
 }

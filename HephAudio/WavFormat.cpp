@@ -19,8 +19,8 @@ namespace HephAudio
 			{
 				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
 				{
-					wfx.wFormatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
-					if (wfx.wFormatTag == 1 || wfx.wFormatTag == 0xFFFE || wfx.wFormatTag == 6 || wfx.wFormatTag == 7) // PCM OR WAVE_FORMAT_EXTENSIBLE OR ALAW OR MULAW
+					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
+					if (wfx.formatTag == 1 || wfx.formatTag == 0xFFFE || wfx.formatTag == 6 || wfx.formatTag == 7) // PCM OR WAVE_FORMAT_EXTENSIBLE OR ALAW OR MULAW
 					{
 						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
 						nextChunk = subChunkSize + 20;
@@ -33,11 +33,9 @@ namespace HephAudio
 							}
 							nextChunk += chunkSize + 8;
 						}
-						wfx.nChannels = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
-						wfx.nSamplesPerSec = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
-						wfx.nAvgBytesPerSec = Read<uint32_t>(audioFileBuffer, 28, Endian::Little);
-						wfx.nBlockAlign = Read<uint16_t>(audioFileBuffer, 32, Endian::Little);
-						wfx.wBitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
+						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
+						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
+						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
 						wfx.headerSize = nextChunk + 8; // use cbSize as headerSize.
 					}
 					else
@@ -60,13 +58,13 @@ namespace HephAudio
 		{
 			AudioFormatInfo waveFormat = ReadFormatInfo(file);
 			size_t audioDataSize = file.Size() - waveFormat.headerSize;
-			size_t frameCount = (audioDataSize) / waveFormat.nBlockAlign;
+			size_t frameCount = (audioDataSize) / waveFormat.FrameSize();
 			AudioBuffer resultBuffer(frameCount, waveFormat);
 			memcpy(resultBuffer.GetAudioDataAddress(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
-			if (GetSystemEndian() == Endian::Big && waveFormat.wBitsPerSample != 8) // switch bytes.
+			if (GetSystemEndian() == Endian::Big && waveFormat.bitsPerSample != 8) // switch bytes.
 			{
 				uint8_t* innerBuffer = (uint8_t*)resultBuffer.GetAudioDataAddress();
-				const uint32_t sampleSize = waveFormat.wBitsPerSample / 8;
+				const uint32_t sampleSize = waveFormat.bitsPerSample / 8;
 				for (size_t i = 0; i < resultBuffer.Size(); i += sampleSize)
 				{
 					switch (sampleSize)
@@ -94,11 +92,11 @@ namespace HephAudio
 					}
 				}
 			}
-			if (waveFormat.wFormatTag == 6)
+			if (waveFormat.formatTag == 6)
 			{
 				AudioProcessor::DecodeALAW(resultBuffer);
 			}
-			else if (waveFormat.wFormatTag == 7)
+			else if (waveFormat.formatTag == 7)
 			{
 				AudioProcessor::DecodeMULAW(resultBuffer);
 			}
@@ -129,19 +127,19 @@ namespace HephAudio
 				const uint8_t d[4] = { 'd', 'a', 't', 'a' };
 				const uint32_t dataSizeL = ChangeEndian32(dataSize, Endian::Little);
 				AudioFormatInfo wfx = buffer.GetFormat();
-				const uint16_t formatTag = ChangeEndian16(wfx.wFormatTag, Endian::Little);
-				const uint16_t nChannels = ChangeEndian16(wfx.nChannels, Endian::Little);
-				const uint32_t sampleRate = ChangeEndian32(wfx.nSamplesPerSec, Endian::Little);
-				const uint32_t byteRate = ChangeEndian32(wfx.nAvgBytesPerSec, Endian::Little);
-				const uint16_t blockAlign = ChangeEndian16(wfx.nBlockAlign, Endian::Little);
-				const uint16_t bps = ChangeEndian16(wfx.wBitsPerSample, Endian::Little);
+				const uint16_t formatTag = ChangeEndian16(wfx.formatTag, Endian::Little);
+				const uint16_t channelCount = ChangeEndian16(wfx.channelCount, Endian::Little);
+				const uint32_t sampleRate = ChangeEndian32(wfx.sampleRate, Endian::Little);
+				const uint32_t byteRate = ChangeEndian32(wfx.ByteRate(), Endian::Little);
+				const uint16_t blockAlign = ChangeEndian16(wfx.FrameSize(), Endian::Little);
+				const uint16_t bps = ChangeEndian16(wfx.bitsPerSample, Endian::Little);
 				memcpy(newBuffer, &riff, 4);
 				memcpy(newBuffer + 4, &chunkSize, 4);
 				memcpy(newBuffer + 8, &riffType, 4);
 				memcpy(newBuffer + 12, &fmt, 4);
 				memcpy(newBuffer + 16, &subChunkSize, 4);
 				memcpy(newBuffer + 20, &formatTag, 2);
-				memcpy(newBuffer + 22, &nChannels, 2);
+				memcpy(newBuffer + 22, &channelCount, 2);
 				memcpy(newBuffer + 24, &sampleRate, 4);
 				memcpy(newBuffer + 28, &byteRate, 4);
 				memcpy(newBuffer + 32, &blockAlign, 2);

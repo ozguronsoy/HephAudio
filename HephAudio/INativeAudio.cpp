@@ -126,7 +126,7 @@ namespace HephAudio
 		{
 			std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
 			ao->name = name;
-			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.nSamplesPerSec * renderFormat.nChannels * 2, renderFormat);
+			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate * renderFormat.channelCount * 2, renderFormat);
 			ao->constant = true;
 			audioObjects.push_back(ao);
 			return ao;
@@ -437,7 +437,7 @@ namespace HephAudio
 				if (audioObject->IsPlaying())
 				{
 					const double volume = GetFinalAOVolume(audioObjects.at(i));
-					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.GetFormat().nSamplesPerSec / (double)renderFormat.nSamplesPerSec);
+					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.GetFormat().sampleRate / (double)renderFormat.sampleRate);
 					size_t frameIndex = 0;
 					if (audioObject->GetSubBuffer == nullptr)
 					{
@@ -459,7 +459,7 @@ namespace HephAudio
 						{
 							break;
 						}
-						for (size_t k = 0; k < renderFormat.nChannels; k++)
+						for (size_t k = 0; k < renderFormat.channelCount; k++)
 						{
 							double sample = subBuffer.Get(j, k) * volume;
 							if (audioObject->distortionInfo.distort)

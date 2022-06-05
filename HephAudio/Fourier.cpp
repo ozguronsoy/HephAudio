@@ -6,7 +6,7 @@ namespace HephAudio
 	Fourier::Fourier(const AudioBuffer& buffer, size_t fftSize)
 	{
 		lastMethod = FourierMethod::Null;
-		if (buffer.GetFormat().nChannels != 1)
+		if (buffer.GetFormat().channelCount != 1)
 		{
 			throw AudioException(E_INVALIDARG, L"Fourier::Fourier", L"Channel count of the buffer must be 1.");
 		}

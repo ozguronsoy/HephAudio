@@ -11,6 +11,7 @@ namespace HephAudio
 	public:
 		AudioProcessor(AudioFormatInfo targetFormat);
 #pragma region Converts, Mix, Split/Merge Channels
+	public:
 		// BPS = Bits Per Sample
 		void ConvertBPS(AudioBuffer& buffer) const;
 		// Mono to stereo, stereo to mono, from two channels to three channels...
@@ -22,6 +23,7 @@ namespace HephAudio
 		static AudioBuffer MergeChannels(const std::vector<AudioBuffer>& channels);
 #pragma endregion
 #pragma region Sound Effects
+	public:
 		static void Reverse(AudioBuffer& buffer);
 		// Adds echo to the given buffer.
 		static void Echo(AudioBuffer& buffer, EchoInfo info);
@@ -30,12 +32,16 @@ namespace HephAudio
 		static void EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
 #pragma endregion
 #pragma region Filters
+	public:
 		static void LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
 		static void HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
 		static void BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
+	private:
+		static uint64_t FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency);
 #pragma endregion
 #pragma region Windows
+	public:
 		static void TriangleWindow(AudioBuffer& buffer);
 		static void ParzenWindow(AudioBuffer& buffer);
 		static void WelchWindow(AudioBuffer& buffer);
@@ -55,6 +61,7 @@ namespace HephAudio
 		static void LanczosWindow(AudioBuffer& buffer);
 #pragma endregion
 #pragma region Encode/Decode
+	public:
 		static void EncodeALAW(AudioBuffer& buffer);
 		static void DecodeALAW(AudioBuffer& buffer);
 		static void EncodeMULAW(AudioBuffer& buffer);
