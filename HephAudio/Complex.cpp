@@ -34,12 +34,7 @@ namespace HephAudio
 		}
 		Complex Complex::operator*(const Complex& rhs) const
 		{
-			double first, inside, outside, last;
-			first = this->real * rhs.real;
-			outside = this->real * rhs.imaginary;
-			inside = this->imaginary * rhs.real;
-			last = -1.0 * this->imaginary * rhs.imaginary;
-			return Complex(first + last, inside + outside);
+			return Complex(this->real * rhs.real - this->imaginary * rhs.imaginary, this->imaginary * rhs.real + this->real * rhs.imaginary);
 		}
 		Complex& Complex::operator*=(const Complex& rhs)
 		{

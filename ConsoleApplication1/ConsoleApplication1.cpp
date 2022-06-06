@@ -16,8 +16,11 @@ int main()
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
 	WinAudio wa;
 	wa.OnException = &OnException;
-	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
-	std::shared_ptr<IAudioObject> pao = wa.Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	wa.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 96000));
+	std::shared_ptr<IAudioObject> pao = wa.Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
+	AudioProcessor::LowPassFilter(pao->buffer, 800.0, 100.0);
+	pao->loopCount = 0u;
+	pao->paused = false;
 
 	std::string a;
 	std::cin >> a;
