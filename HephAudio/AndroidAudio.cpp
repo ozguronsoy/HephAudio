@@ -52,7 +52,7 @@ namespace HephAudio
 			StopCapturing();
 			(*audioEngineObject)->Destroy(audioEngineObject);
 		}
-		void AndroidAudio::SetMasterVolume(double volume) const
+		void AndroidAudio::SetMasterVolume(double volume)
 		{
 			masterVolume = volume;
 		}

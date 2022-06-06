@@ -22,8 +22,10 @@ namespace HephAudio
 	public:
 		ComplexBuffer complexBuffer;
 	public:
+		Fourier(const AudioBuffer& buffer);
 		Fourier(const AudioBuffer& buffer, size_t fftSize);
 		Fourier(const ComplexBuffer& complexBuffer);
+		Fourier(const ComplexBuffer& complexBuffer, size_t fftSize);
 		bool Forward();
 		bool Inverse();
 		void ComplexBufferToAudioBuffer(AudioBuffer& buffer) const;
@@ -31,6 +33,8 @@ namespace HephAudio
 		static double MagnitudeSquared(Complex sample);
 		static double Phase(Complex sample, bool isDegree);
 		static double Decibels(Complex sample);
+		static double FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency);
+		static size_t CalculateFFTSize(size_t bufferSize);
 	private:
 		void ReverseBits();
 		void FFT(const bool isForward);

@@ -3,45 +3,36 @@
 
 namespace HephAudio
 {
+	Fourier::Fourier(const AudioBuffer& buffer) : Fourier(buffer, 0u) {}
 	Fourier::Fourier(const AudioBuffer& buffer, size_t fftSize)
 	{
 		lastMethod = FourierMethod::Null;
 		if (buffer.GetFormat().channelCount != 1)
 		{
-			throw AudioException(E_INVALIDARG, L"Fourier::Fourier", L"Channel count of the buffer must be 1.");
+			throw AudioException(E_INVALIDARG, L"Fourier::Fourier", L"Channel count of the audio buffer must be 1.");
 		}
 		if (fftSize == 0)
 		{
 			fftSize = buffer.FrameCount();
 		}
-		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
-		{
-			p = log2f(fftSize) + 1;
-			fftSize = pow(2, p); // smallest power of 2 thats greater than nSample
-		}
-		else
-		{
-			p = log2f(fftSize);
-		}
+		fftSize = CalculateFFTSize(fftSize);
+		p = log2f(fftSize);
 		complexBuffer.resize(fftSize, Complex());
 		for (size_t i = 0; i < buffer.FrameCount(); i++)
 		{
 			complexBuffer.at(i).real = buffer.Get(i, 0);
 		}
 	}
-	Fourier::Fourier(const ComplexBuffer& bufferToCopy)
+	Fourier::Fourier(const ComplexBuffer& bufferToCopy) : Fourier(bufferToCopy, 0u) {}
+	Fourier::Fourier(const ComplexBuffer& bufferToCopy, size_t fftSize)
 	{
 		lastMethod = FourierMethod::Null;
-		size_t fftSize = bufferToCopy.size();
-		if (!(fftSize > 0 && !(fftSize & (fftSize - 1)))) // if not power of 2
+		if (fftSize == 0)
 		{
-			p = log2f(fftSize) + 1;
-			fftSize = pow(2, p); // smallest power of 2 thats greater than nSample
+			fftSize = bufferToCopy.size();
 		}
-		else
-		{
-			p = log2f(fftSize);
-		}
+		fftSize = CalculateFFTSize(fftSize);
+		p = log2f(fftSize);
 		complexBuffer.resize(fftSize, Complex());
 		memcpy(&complexBuffer.at(0), &bufferToCopy.at(0), bufferToCopy.size() * sizeof(Complex));
 	}
@@ -67,12 +58,9 @@ namespace HephAudio
 	}
 	void Fourier::ComplexBufferToAudioBuffer(AudioBuffer& buffer) const
 	{
-		for (size_t i = 0; i < complexBuffer.size(); i++)
+		const size_t bufferSize = complexBuffer.size() > buffer.FrameCount() ? buffer.FrameCount() : complexBuffer.size();
+		for (size_t i = 0; i < bufferSize; i++)
 		{
-			if (i >= buffer.FrameCount())
-			{
-				break;
-			}
 			buffer.Set(complexBuffer.at(i).real, i, 0);
 		}
 	}
@@ -100,19 +88,31 @@ namespace HephAudio
 		}
 		return 10.0 * log10(MagnitudeSquared(sample));
 	}
+	double Fourier::FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency)
+	{
+		return frequency * fftSize / sampleRate;
+	}
+	size_t Fourier::CalculateFFTSize(size_t bufferSize)
+	{
+		if (!(bufferSize > 0 && !(bufferSize & (bufferSize - 1)))) // if not power of 2
+		{
+			return pow(2, ceil(log2f(bufferSize))); // smallest power of 2 thats greater than nSample
+		}
+		return bufferSize;
+	}
 	void Fourier::ReverseBits()
 	{
-		uint32_t k = 0u;
+		size_t k;
 		ComplexBuffer resultBuffer(complexBuffer.size(), Complex());
 		for (size_t i = 0; i < complexBuffer.size(); i++)
 		{
 			k = 0u;
 			for (size_t j = 0; j < p; j++)
 			{
-				const uint32_t jp = pow(2, j);
+				const size_t jp = pow(2, j);
 				if ((i & jp) == jp)
 				{
-					k += pow(2, p - 1 - j);
+					k += pow(2, p - j - 1);
 				}
 				resultBuffer.at(i) = complexBuffer.at(k);
 			}
@@ -122,49 +122,30 @@ namespace HephAudio
 	void Fourier::FFT(const bool isForward)
 	{
 		ReverseBits();
-		/* Compute the FFT */
 		const size_t nSample = complexBuffer.size();
-		long i, i1, j, l, l1, l2;
-		double c1, c2, t1, t2, u1, u2, z;
-		c1 = -1.0;
-		c2 = 0.0;
-		l2 = 1;
-		for (l = 0; l < p; l++)
+		Complex a = Complex(-1.0, 0.0);
+		for (size_t i = 0; i < p; i++)
 		{
-			l1 = l2;
-			l2 <<= 1;
-			u1 = 1.0;
-			u2 = 0.0;
-			for (j = 0; j < l1; j++)
+			const size_t s = pow(2, i);
+			const size_t s2 = s * 2;
+			Complex b = Complex(1.0, 0.0);
+			for (size_t j = 0; j < s; j++)
 			{
-				for (i = j; i < nSample; i += l2)
+				for (size_t k = j; k < nSample; k += s2)
 				{
-					i1 = i + l1;
-					t1 = u1 * complexBuffer.at(i1).real - u2 * complexBuffer.at(i1).imaginary;
-					t2 = u1 * complexBuffer.at(i1).imaginary + u2 * complexBuffer.at(i1).real;
-					complexBuffer.at(i1).real = complexBuffer.at(i).real - t1;
-					complexBuffer.at(i1).imaginary = complexBuffer.at(i).imaginary - t2;
-					complexBuffer.at(i).real += t1;
-					complexBuffer.at(i).imaginary += t2;
+					const Complex temp = b * complexBuffer.at(k + s);
+					complexBuffer.at(k + s) = complexBuffer.at(k) - temp;
+					complexBuffer.at(k) += temp;
 				}
-				z = u1 * c1 - u2 * c2;
-				u2 = u1 * c2 + u2 * c1;
-				u1 = z;
+				b *= a;
 			}
-			c2 = sqrt((1.0 - c1) / 2.0);
-			if (isForward)
-			{
-				c2 = -c2;
-			}
-			c1 = sqrt((1.0 + c1) / 2.0);
+			a = Complex(sqrt((1.0 + a.real) / 2.0), isForward ? -sqrt((1.0 - a.real) * 0.5) : sqrt((1.0 - a.real) * 0.5));
 		}
-		/* Scaling for inverse transform */
 		if (!isForward)
 		{
-			for (i = 0; i < nSample; i++)
+			for (size_t i = 0; i < nSample; i++)
 			{
-				complexBuffer.at(i).real /= nSample;
-				complexBuffer.at(i).imaginary /= nSample;
+				complexBuffer.at(i) /= nSample;
 			}
 		}
 	}

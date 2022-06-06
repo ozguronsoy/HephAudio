@@ -30,6 +30,7 @@ namespace HephAudio
 		// Adds echo to the given subBuffer using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
+		static void Equalizer(AudioBuffer& buffer, double f1, double f2, double volume);
 #pragma endregion
 #pragma region Filters
 	public:
@@ -37,8 +38,6 @@ namespace HephAudio
 		static void HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
 		static void BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
-	private:
-		static uint64_t FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency);
 #pragma endregion
 #pragma region Windows
 	public:

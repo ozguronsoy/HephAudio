@@ -26,7 +26,7 @@ namespace HephAudio
 			SLPlayItf audioPlayer;
 			SLObjectItf audioRecorderObject;
 			SLRecordItf audioRecorder;
-			mutable double masterVolume;
+			double masterVolume;
 			std::vector<AudioDevice> audioDevices;
 			std::thread deviceThread;
 			std::wstring renderDeviceId;
@@ -36,7 +36,7 @@ namespace HephAudio
 			AndroidAudio(const AndroidAudio&) = delete;
 			AndroidAudio& operator=(const AndroidAudio&) = delete;
 			virtual ~AndroidAudio();
-			virtual void SetMasterVolume(double volume) const;
+			virtual void SetMasterVolume(double volume);
 			virtual double GetMasterVolume() const;
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopRendering();
