@@ -165,6 +165,17 @@ namespace HephAudio
 		}
 		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
 		{
+			switch (dwNewState)
+			{
+			case DEVICE_STATE_ACTIVE:
+				OnDeviceAdded(pwstrDeviceId);
+				break;
+			case DEVICE_STATE_DISABLED:
+			case DEVICE_STATE_UNPLUGGED:
+			case DEVICE_STATE_NOTPRESENT:
+				OnDeviceRemoved(pwstrDeviceId);
+				break;
+			}
 			return S_OK;
 		}
 		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnPropertyValueChanged(LPCWSTR pwstrDeviceId, const PROPERTYKEY key)

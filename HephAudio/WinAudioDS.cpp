@@ -235,7 +235,7 @@ namespace HephAudio
 		}
 		void WinAudioDS::EnumerateAudioDevices()
 		{
-			const uint32_t period = 1000; // In ms.
+			const uint32_t period = 100; // In ms.
 			auto start = std::chrono::high_resolution_clock::now();
 			auto passedTime = std::chrono::milliseconds(0);
 			while (!disposing)
@@ -267,48 +267,41 @@ namespace HephAudio
 					{
 						for (size_t i = 0; i < audioDevices.size(); i++)
 						{
-							bool added = true;
 							for (size_t j = 0; j < oldDevices.size(); j++)
 							{
 								if (audioDevices.at(i).id == oldDevices.at(j).id)
 								{
-									added = false;
-									break;
+									goto ADD_BREAK;
 								}
 							}
-							if (added && OnAudioDeviceAdded != nullptr)
-							{
-								OnAudioDeviceAdded(audioDevices.at(i));
-							}
+							OnAudioDeviceAdded(audioDevices.at(i));
+						ADD_BREAK:;
 						}
 					}
+					AudioDevice* removedDevice = nullptr;
 					for (size_t i = 0; i < oldDevices.size(); i++)
 					{
-						bool removed = true;
 						for (size_t j = 0; j < audioDevices.size(); j++)
 						{
 							if (oldDevices.at(i).id == audioDevices.at(j).id)
 							{
-								removed = false;
-								break;
+								goto REMOVE_BREAK;
 							}
 						}
-						if (removed)
+						removedDevice = &oldDevices.at(i);
+						if (removedDevice->id == renderDeviceId)
 						{
-							AudioDevice removedDevice = oldDevices.at(i);
-							if (removedDevice.id == renderDeviceId)
-							{
-								InitializeRender(nullptr, renderFormat);
-							}
-							if (removedDevice.id == captureDeviceId)
-							{
-								InitializeCapture(nullptr, captureFormat);
-							}
-							if (OnAudioDeviceRemoved != nullptr)
-							{
-								OnAudioDeviceRemoved(removedDevice);
-							}
+							InitializeRender(nullptr, renderFormat);
 						}
+						if (removedDevice->id == captureDeviceId)
+						{
+							InitializeCapture(nullptr, captureFormat);
+						}
+						if (OnAudioDeviceRemoved != nullptr)
+						{
+							OnAudioDeviceRemoved(*removedDevice);
+						}
+					REMOVE_BREAK:;
 					}
 				}
 			}

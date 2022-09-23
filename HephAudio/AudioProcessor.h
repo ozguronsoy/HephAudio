@@ -19,6 +19,7 @@ namespace HephAudio
 		void ConvertSampleRate(AudioBuffer& buffer) const;
 		void ConvertSampleRate(AudioBuffer& buffer, size_t outFrameCount) const;
 		void Mix(AudioBuffer& outputBuffer, std::vector<AudioBuffer> inputBuffers) const;
+		static void Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers);
 		static std::vector<AudioBuffer> SplitChannels(const AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(const std::vector<AudioBuffer>& channels);
 #pragma endregion
@@ -27,9 +28,9 @@ namespace HephAudio
 		static void Reverse(AudioBuffer& buffer);
 		// Adds echo to the given buffer.
 		static void Echo(AudioBuffer& buffer, EchoInfo info);
-		// Adds echo to the given subBuffer using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
+		// Adds echo to the given subBuffer using the originalBuffer in real-time, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
-		static void EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
+		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
 		static void Equalizer(AudioBuffer& buffer, double f1, double f2, double volume);
 #pragma endregion
 #pragma region Filters

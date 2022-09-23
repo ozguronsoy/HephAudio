@@ -133,6 +133,43 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers)
+	{
+		size_t outputBufferFrameCount = 0;
+		AudioProcessor audioProcessor = AudioProcessor(outputFormat);
+		for (int i = 0; i < inputBuffers.size(); i++)
+		{
+			AudioBuffer& buffer = inputBuffers.at(i);
+			if (buffer.frameCount == 0)
+			{
+				inputBuffers.erase(inputBuffers.begin() + i);
+				i--;
+				continue;
+			}
+			audioProcessor.ConvertSampleRate(buffer);
+			audioProcessor.ConvertBPS(buffer);
+			audioProcessor.ConvertChannels(buffer);
+			if (buffer.frameCount > outputBufferFrameCount)
+			{
+				outputBufferFrameCount = buffer.frameCount;
+			}
+		}
+		outputBuffer = AudioBuffer(outputBufferFrameCount, outputFormat);
+		for (size_t i = 0; i < inputBuffers.size(); i++)
+		{
+			AudioBuffer& buffer = inputBuffers.at(i);
+			for (size_t j = 0; j < outputBuffer.frameCount; j++)
+			{
+				if (j >= buffer.frameCount) { break; }
+				for (size_t k = 0; k < outputBuffer.formatInfo.channelCount; k++)
+				{
+					const double outputSample = outputBuffer.Get(j, k);
+					double inputSample = buffer.Get(j, k);
+					outputBuffer.Set(outputSample + inputSample / (double)inputBuffers.size(), j, k);
+				}
+			}
+		}
+	}
 	std::vector<AudioBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
 	{
 		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, 1, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
@@ -225,7 +262,7 @@ namespace HephAudio
 		}
 		buffer = resultBuffer;
 	}
-	void AudioProcessor::EchoSubBuffer(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
+	void AudioProcessor::EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
 	{
 		if (subBuffer.frameCount == 0 || info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
 		struct EchoKeyPoints
