@@ -12,7 +12,7 @@ namespace HephAudio
 		class AndroidAudio : public INativeAudio
 		{
 		protected:
-			typedef struct CallbackContext {
+			struct CallbackContext {
 				AndroidAudio* pAndroidAudio;
 				SLint8* pDataBase; // Base adress of local audio data storage
 				SLint8* pData; // Current adress of local audio data storage
@@ -21,14 +21,13 @@ namespace HephAudio
 		protected:
 			SLObjectItf audioEngineObject;
 			SLEngineItf audioEngine;
-			SLAudioIODeviceCapabilitiesItf audioDeviceCaps;
 			SLObjectItf audioPlayerObject;
 			SLPlayItf audioPlayer;
 			SLObjectItf audioRecorderObject;
 			SLRecordItf audioRecorder;
 			double masterVolume;
-			std::vector<AudioDevice> audioDevices;
-			std::thread deviceThread;
+			uint32_t renderBufferSize;
+			uint32_t captureBufferSize;
 		public:
 			AndroidAudio();
 			AndroidAudio(const AndroidAudio&) = delete;
@@ -45,13 +44,10 @@ namespace HephAudio
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const;
 		protected:
-			virtual void JoinDeviceThread();
 			virtual void RenderData(SLBufferQueueItf bufferQueue);
 			virtual void CaptureData(void* dataBuffer);
 			virtual double GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const;
-			virtual void EnumerateAudioDevices();
-			virtual void EnumerateRenderDevices();
-			virtual void EnumerateCaptureDevices();
+			virtual SLDataFormat_PCM ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);
 			static void RecordEventCallback(SLRecordItf audioRecorder, void* pContext, SLuint32 e);
 		};

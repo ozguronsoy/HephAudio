@@ -221,7 +221,7 @@ namespace HephAudio
 			pAudioClient = nullptr;
 			CoUninitialize();
 		}
-		void WinAudio::SetMasterVolume(double volume) const
+		void WinAudio::SetMasterVolume(double volume)
 		{
 			if (pSessionManager != nullptr)
 			{

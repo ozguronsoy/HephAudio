@@ -70,7 +70,7 @@ namespace HephAudio
 			virtual double GetAOPosition(std::shared_ptr<IAudioObject> audioObject) const;
 			virtual void PauseCapture(bool pause);
 			virtual bool IsCapturePaused() const noexcept;
-			virtual void SetMasterVolume(double volume) const = 0;
+			virtual void SetMasterVolume(double volume) = 0;
 			virtual double GetMasterVolume() const = 0;
 			virtual void SetCategoryVolume(std::wstring categoryName, double newVolume);
 			virtual double GetCategoryVolume(std::wstring categoryName) const;

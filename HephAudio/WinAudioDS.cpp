@@ -63,7 +63,7 @@ namespace HephAudio
 			UnregisterClassW(L"HephAudio", DLL_INSTANCE);
 			CoUninitialize();
 		}
-		void WinAudioDS::SetMasterVolume(double volume) const
+		void WinAudioDS::SetMasterVolume(double volume)
 		{
 			if (!disposing && isRenderInitialized)
 			{

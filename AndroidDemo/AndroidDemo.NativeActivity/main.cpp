@@ -17,9 +17,7 @@
 
 #include <malloc.h>
 
-
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "AndroidProject1.NativeActivity", __VA_ARGS__))
-#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "AndroidProject1.NativeActivity", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "AndroidProject1.NativeActivity", __VA_ARGS__))
 
 /**
@@ -214,31 +212,24 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 		break;
 	}
 }
-
 #include "AudioFile.h"
 #include "AudioException.h"
 #include "INativeAudio.h"
+#include "AndroidAudio.h"
 
 using namespace HephAudio;
-using namespace HephAudio::Structs;
 using namespace HephAudio::Native;
-
-void OnException(AudioException ex, AudioExceptionThread t)
-{
-	LOGE(ex.What().c_str());
-}
 
 /**
 * This is the main entry point of a native application that is using
 * android_native_app_glue.  It runs in its own thread, with its own
 * event loop for receiving input events and doing other things.
 */
-#include <aaudio/AAudio.h>
-
-// "/storage/emulated/0/Music/blackened.wav"
-// "/storage/sdcard/Music/blackened.wav"
 void android_main(struct android_app* state) {
-	AudioFile(L"/storage/sdcard/Music/piano2.wav");
+
+	AndroidAudio* aa = new AndroidAudio();
+	aa->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	aa->Play(L"/storage/sdcard0/Music/Gate of Steiner.wav", 0u);
 
 
 	struct engine engine;
@@ -262,25 +253,57 @@ void android_main(struct android_app* state) {
 	}
 
 	engine.animating = 1;
+
 	// loop waiting for stuff to do.
-	while (true) {
+
+	while (1) {
+		// Read all pending events.
+		int ident;
+		int events;
+		struct android_poll_source* source;
+
+		// If not animating, we will block forever waiting for events.
+		// If animating, we loop until all events are read, then continue
+		// to draw the next frame of animation.
+		while ((ident = ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
+			(void**)&source)) >= 0) {
+
+			// Process this event.
+			if (source != NULL) {
+				source->process(state, source);
+			}
+
+			// If a sensor has data, process it now.
+			if (ident == LOOPER_ID_USER) {
+				if (engine.accelerometerSensor != NULL) {
+					ASensorEvent event;
+					while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
+						&event, 1) > 0) {
+						LOGI("accelerometer: x=%f y=%f z=%f",
+							event.acceleration.x, event.acceleration.y,
+							event.acceleration.z);
+					}
+				}
+			}
+
+			// Check if we are exiting.
+			if (state->destroyRequested != 0) {
+				engine_term_display(&engine);
+				delete aa;
+				return;
+			}
+		}
+
+		if (engine.animating) {
+			// Done with events; draw next animation frame.
+			engine.state.angle += .01f;
+			if (engine.state.angle > 1) {
+				engine.state.angle = 0;
+			}
+
+			// Drawing is throttled to the screen update rate, so there
+			// is no need to do timing here.
+			engine_draw_frame(&engine);
+		}
 	}
 }
-
-//#define SL_RESULT_SUCCESS				((SLuint32) 0x00000000)     0
-//#define SL_RESULT_PRECONDITIONS_VIOLATED	((SLuint32) 0x00000001) 1
-//#define SL_RESULT_PARAMETER_INVALID		((SLuint32) 0x00000002) 2
-//#define SL_RESULT_MEMORY_FAILURE			((SLuint32) 0x00000003) 3
-//#define SL_RESULT_RESOURCE_ERROR			((SLuint32) 0x00000004) 4
-//#define SL_RESULT_RESOURCE_LOST			((SLuint32) 0x00000005) 5
-//#define SL_RESULT_IO_ERROR				((SLuint32) 0x00000006) 6
-//#define SL_RESULT_BUFFER_INSUFFICIENT		((SLuint32) 0x00000007) 7
-//#define SL_RESULT_CONTENT_CORRUPTED		((SLuint32) 0x00000008) 8
-//#define SL_RESULT_CONTENT_UNSUPPORTED		((SLuint32) 0x00000009) 9
-//#define SL_RESULT_CONTENT_NOT_FOUND		((SLuint32) 0x0000000A) 10
-//#define SL_RESULT_PERMISSION_DENIED		((SLuint32) 0x0000000B) 11
-//#define SL_RESULT_FEATURE_UNSUPPORTED		((SLuint32) 0x0000000C) 12
-//#define SL_RESULT_INTERNAL_ERROR			((SLuint32) 0x0000000D) 13
-//#define SL_RESULT_UNKNOWN_ERROR			((SLuint32) 0x0000000E) 14
-//#define SL_RESULT_OPERATION_ABORTED		((SLuint32) 0x0000000F) 15
-//#define SL_RESULT_CONTROL_LOST			((SLuint32) 0x00000010) 16

@@ -35,9 +35,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5032293e-d7fb-4310-a663-d9ea725db97b}</ProjectGuid>
+    <ProjectGuid>{2802ee3d-aeef-480c-a660-5f3112ca0546}</ProjectGuid>
     <Keyword>Android</Keyword>
-    <RootNamespace>Android1</RootNamespace>
+    <RootNamespace>AndroidDemo</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <ApplicationType>Android</ApplicationType>
@@ -48,49 +48,42 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-23</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-23</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-27</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-27</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-23</AndroidAPILevel>
+    <AndroidAPILevel>android-30</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-23</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-23</AndroidAPILevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
-    <AndroidAPILevel>android-23</AndroidAPILevel>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -136,9 +129,11 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Enabled</ExceptionHandling>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;m;</LibraryDependencies>
+      <AdditionalOptions>-lOpenSLES %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -196,15 +191,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>..\..\HephAudio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ExceptionHandling>Enabled</ExceptionHandling>
-      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL</LibraryDependencies>
-      <AdditionalLibraryDirectories>..\..\$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>-lm -lOpenSLES %(AdditionalOptions)</AdditionalOptions>
+      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
@@ -212,15 +201,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>..\..\HephAudio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ExceptionHandling>Enabled</ExceptionHandling>
-      <CppLanguageStandard>c++1z</CppLanguageStandard>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL</LibraryDependencies>
-      <AdditionalLibraryDirectories>..\..\$(IntDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>-lm -lOpenSLES %(AdditionalOptions)</AdditionalOptions>
+      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
