@@ -22,8 +22,6 @@ int main()
 	wa->OnAudioDeviceRemoved = SetToDefaultDevice;
 	wa->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	std::shared_ptr<IAudioObject> pao = wa->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
-	//AudioProcessor::LowPassFilter(pao->buffer, 600.0, 100.0);
-	//pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	pao->paused = false;
 
@@ -39,6 +37,7 @@ void OnException(AudioException ex, AudioExceptionThread t)
 }
 void SetToDefaultDevice(AudioDevice device) 
 {
+	std::cout << "Is current device: " << (device.id == wa->GetRenderDevice().id) << "\n";
 	wa->StopRendering();
 	wa->InitializeRender(nullptr, wa->GetRenderFormat());
 }

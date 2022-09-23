@@ -12,6 +12,8 @@ namespace HephAudio
 			audioObjects = std::vector<std::shared_ptr<IAudioObject>>(0);
 			categories = Categories(0);
 			mainThreadId = std::this_thread::get_id();
+			renderDeviceId = L"";
+			captureDeviceId = L"";
 			renderFormat = defaultFormat;
 			captureFormat = defaultFormat;
 			disposing = false;
@@ -292,6 +294,14 @@ namespace HephAudio
 				}
 			}
 			return AudioDevice();
+		}
+		AudioDevice INativeAudio::GetRenderDevice() const
+		{
+			return GetAudioDeviceById(renderDeviceId);
+		}
+		AudioDevice INativeAudio::GetCaptureDevice() const
+		{
+			return GetAudioDeviceById(captureDeviceId);
 		}
 		bool INativeAudio::SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
 		{

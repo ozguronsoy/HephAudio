@@ -141,7 +141,7 @@ namespace HephAudio
 		}
 		long STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
 		{
-			if (parent->OnDefaultAudioDeviceChange != nullptr && parent->currentRenderDeviceId != std::wstring(pwstrDeviceId))
+			if (parent->OnDefaultAudioDeviceChange != nullptr)
 			{
 				parent->OnDefaultAudioDeviceChange(parent->GetAudioDeviceById(pwstrDeviceId));
 			}
@@ -199,8 +199,6 @@ namespace HephAudio
 			pSessionControl = nullptr;
 			sessionEvents.parent = this;
 			sessionEvents.type = AudioDeviceType::Render;
-			currentRenderDeviceId = L"";
-			currentCaptureDeviceId = L"";
 		}
 		WinAudio::~WinAudio()
 		{
@@ -264,8 +262,8 @@ namespace HephAudio
 			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), this, L"WinAudio::InitializeRender", L"An error occurred whilst getting the render device.");
 			if (deviceId != nullptr)
 			{
-				if (currentRenderDeviceId == std::wstring(deviceId)) { CoTaskMemFree(deviceId); return; }
-				currentRenderDeviceId = deviceId;
+				if (renderDeviceId == std::wstring(deviceId)) { CoTaskMemFree(deviceId); return; }
+				renderDeviceId = deviceId;
 				CoTaskMemFree(deviceId);
 			}
 			StopRendering();
@@ -320,8 +318,8 @@ namespace HephAudio
 			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), this, L"WinAudio::InitializeCapture", L"An error occurred whilst getting the device.");
 			if (deviceId != nullptr)
 			{
-				if (currentCaptureDeviceId == std::wstring(deviceId)) { CoTaskMemFree(deviceId); return; }
-				currentCaptureDeviceId = deviceId;
+				if (captureDeviceId == std::wstring(deviceId)) { CoTaskMemFree(deviceId); return; }
+				captureDeviceId = deviceId;
 				CoTaskMemFree(deviceId);
 			}
 			StopCapturing();

@@ -35,6 +35,8 @@ namespace HephAudio
 			std::thread renderThread;
 			std::thread captureThread;
 			std::vector<std::thread> queueThreads;
+			std::wstring renderDeviceId;
+			std::wstring captureDeviceId;
 			AudioFormatInfo renderFormat;
 			AudioFormatInfo captureFormat;
 			bool disposing;
@@ -86,6 +88,8 @@ namespace HephAudio
 			virtual void SetDisplayName(std::wstring displayName) = 0;
 			virtual void SetIconPath(std::wstring iconPath) = 0;
 			virtual AudioDevice GetAudioDeviceById(std::wstring deviceId) const;
+			virtual AudioDevice GetRenderDevice() const;
+			virtual AudioDevice GetCaptureDevice() const;
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const = 0;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const = 0;
 			virtual bool SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat);

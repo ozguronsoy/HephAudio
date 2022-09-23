@@ -21,8 +21,6 @@ namespace HephAudio
 			Microsoft::WRL::ComPtr<IDirectSoundCaptureBuffer> pDirectSoundCaptureBuffer;
 			std::vector<AudioDevice> audioDevices;
 			std::thread deviceThread;
-			std::wstring renderDeviceId;
-			std::wstring captureDeviceId;
 		public:
 			WinAudioDS();
 			WinAudioDS(const WinAudioDS&) = delete;

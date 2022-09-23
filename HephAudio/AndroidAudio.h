@@ -29,8 +29,6 @@ namespace HephAudio
 			double masterVolume;
 			std::vector<AudioDevice> audioDevices;
 			std::thread deviceThread;
-			std::wstring renderDeviceId;
-			std::wstring captureDeviceId;
 		public:
 			AndroidAudio();
 			AndroidAudio(const AndroidAudio&) = delete;

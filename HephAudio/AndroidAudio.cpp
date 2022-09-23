@@ -38,8 +38,6 @@ namespace HephAudio
 			EnumerateRenderDevices();
 			EnumerateCaptureDevices();
 			deviceThread = std::thread(&AndroidAudio::EnumerateAudioDevices, this);
-			renderDeviceId = L"";
-			captureDeviceId = L"";
 		}
 		AndroidAudio::~AndroidAudio()
 		{

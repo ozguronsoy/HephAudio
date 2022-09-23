@@ -67,8 +67,6 @@ namespace HephAudio
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pSessionControl;
 			AudioSessionEvents sessionEvents;
 			AudioDeviceEvents deviceEvents;
-			std::wstring currentRenderDeviceId;
-			std::wstring currentCaptureDeviceId;
 		public:
 			WinAudio();
 			WinAudio(const WinAudio&) = delete;

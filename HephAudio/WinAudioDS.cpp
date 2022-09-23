@@ -29,8 +29,6 @@ namespace HephAudio
 			pDirectSoundBuffer = nullptr;
 			pDirectSoundCapture = nullptr;
 			pDirectSoundCaptureBuffer = nullptr;
-			renderDeviceId = L"";
-			captureDeviceId = L"";
 			WINAUDIODS_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, L"WinAudioDS::WinAudioDS", L"An error occurred whilst enumerating render devices."); // Enumerate render devices.
 			WINAUDIODS_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), this, L"WinAudioDS::WinAudioDS", L"An error occurred whilst enumerating capture devices."); // Enumerate capture devices.
 			deviceThread = std::thread(&WinAudioDS::EnumerateAudioDevices, this);
