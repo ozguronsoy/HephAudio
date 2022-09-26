@@ -9,12 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "Cons
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplicationLinux", "ConsoleApplicationLinux\ConsoleApplicationLinux.vcxproj", "{1FED3BA0-F498-4338-922D-67023CD6012B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidDemo", "AndroidDemo", "{7F9CEF39-D327-47D8-908C-64DC82630203}"
-EndProject
-Project("{39E2626F-3545-4960-A6E8-258AD8476CE5}") = "AndroidDemo.Packaging", "AndroidDemo\AndroidDemo.Packaging\AndroidDemo.Packaging.androidproj", "{4BF4104A-380F-4089-BDE1-6A5167B7F272}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AndroidDemo.NativeActivity", "AndroidDemo\AndroidDemo.NativeActivity\AndroidDemo.NativeActivity.vcxproj", "{2802EE3D-AEEF-480C-A660-5F3112CA0546}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -63,59 +57,14 @@ Global
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Release|x86.ActiveCfg = Release|x86
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Release|x86.Build.0 = Release|x86
 		{1FED3BA0-F498-4338-922D-67023CD6012B}.Release|x86.Deploy.0 = Release|x86
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|ARM.ActiveCfg = Debug|ARM
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|ARM.Build.0 = Debug|ARM
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|ARM.Deploy.0 = Debug|ARM
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|ARM64.Build.0 = Debug|ARM64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|ARM64.Deploy.0 = Debug|ARM64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|x64.ActiveCfg = Debug|x64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|x64.Build.0 = Debug|x64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|x64.Deploy.0 = Debug|x64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|x86.ActiveCfg = Debug|x86
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|x86.Build.0 = Debug|x86
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Debug|x86.Deploy.0 = Debug|x86
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|ARM.ActiveCfg = Release|ARM
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|ARM.Build.0 = Release|ARM
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|ARM.Deploy.0 = Release|ARM
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|ARM64.ActiveCfg = Release|ARM64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|ARM64.Build.0 = Release|ARM64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|ARM64.Deploy.0 = Release|ARM64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|x64.ActiveCfg = Release|x64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|x64.Build.0 = Release|x64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|x64.Deploy.0 = Release|x64
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|x86.ActiveCfg = Release|x86
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|x86.Build.0 = Release|x86
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272}.Release|x86.Deploy.0 = Release|x86
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|ARM.ActiveCfg = Debug|ARM
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|ARM.Build.0 = Debug|ARM
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|ARM64.Build.0 = Debug|ARM64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|x64.ActiveCfg = Debug|x64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|x64.Build.0 = Debug|x64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|x86.ActiveCfg = Debug|x86
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Debug|x86.Build.0 = Debug|x86
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|ARM.ActiveCfg = Release|ARM
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|ARM.Build.0 = Release|ARM
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|ARM64.ActiveCfg = Release|ARM64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|ARM64.Build.0 = Release|ARM64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|x64.ActiveCfg = Release|x64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|x64.Build.0 = Release|x64
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|x86.ActiveCfg = Release|x86
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4BF4104A-380F-4089-BDE1-6A5167B7F272} = {7F9CEF39-D327-47D8-908C-64DC82630203}
-		{2802EE3D-AEEF-480C-A660-5F3112CA0546} = {7F9CEF39-D327-47D8-908C-64DC82630203}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {87395B32-3B90-4400-A819-A5506CD066AF}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		HephAudio\HephAudio.vcxitems*{2802ee3d-aeef-480c-a660-5f3112ca0546}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{bb93f558-91d0-4736-88af-56a3ad9532e9}*SharedItemsImports = 9
 		HephAudio\HephAudio.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
 	EndGlobalSection
