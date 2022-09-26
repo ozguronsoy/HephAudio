@@ -96,6 +96,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp">
       <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Audio.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -248,6 +248,7 @@ namespace HephAudio
 		void WinAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			if (disposing) { return; }
+			StopRendering();
 			ComPtr<IMMDevice> pDevice = nullptr;
 			WAVEFORMATEX* closestFormat = nullptr;
 			if (device == nullptr || device->type != AudioDeviceType::Render || device->isDefault)
@@ -262,11 +263,9 @@ namespace HephAudio
 			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), this, L"WinAudio::InitializeRender", L"An error occurred whilst getting the render device.");
 			if (deviceId != nullptr)
 			{
-				if (renderDeviceId == std::wstring(deviceId)) { CoTaskMemFree(deviceId); return; }
-				renderDeviceId = deviceId;
+				renderDeviceId = std::wstring(deviceId);
 				CoTaskMemFree(deviceId);
 			}
-			StopRendering();
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pAudioClient.GetAddressOf()), this, L"WinAudio::InitializeRender", L"An error occurred whilst activating the render device.");
 			WAVEFORMATEX wrf = format;
 			WINAUDIO_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wrf, &closestFormat), this, L"WinAudio::InitializeRender", L"An error occurred whilst checking if the given format is supported.");
@@ -303,6 +302,7 @@ namespace HephAudio
 		void WinAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			if (disposing) { return; }
+			StopCapturing();
 			ComPtr<IAudioClient3> pCaptureAudioClient = nullptr;
 			ComPtr<IMMDevice> pDevice = nullptr;
 			WAVEFORMATEX* closestFormat = nullptr;
@@ -318,11 +318,9 @@ namespace HephAudio
 			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), this, L"WinAudio::InitializeCapture", L"An error occurred whilst getting the device.");
 			if (deviceId != nullptr)
 			{
-				if (captureDeviceId == std::wstring(deviceId)) { CoTaskMemFree(deviceId); return; }
-				captureDeviceId = deviceId;
+				captureDeviceId = std::wstring(deviceId);
 				CoTaskMemFree(deviceId);
 			}
-			StopCapturing();
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), this, L"WinAudio::InitializeCapture", L"An error occurred whilst activating the device.");
 			WAVEFORMATEX wcf = format;
 			WINAUDIO_EXCPT(pCaptureAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wcf, &closestFormat), this, L"WinAudio::InitializeCapture", L"An error occurred whilst checking if the given format is supported.");
