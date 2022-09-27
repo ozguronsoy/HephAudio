@@ -6,13 +6,22 @@
 #include "AudioFormats.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
+#include "Audio.h"
 #include <vector>
 #include <thread>
 
-using namespace HephAudio::Structs;
-
+#pragma region Exports
+#if defined(_WIN32)
+extern "C" __declspec(dllexport) void* _stdcall CreateAudio();
+extern "C" __declspec(dllexport) void _stdcall InitializeRender(void* pAudio, void* pDevice, void* formatInfo);
+extern "C" __declspec(dllexport) void* _stdcall Play(void* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused);
+extern "C" __declspec(dllexport) void _stdcall DestroyAudio(void* pAudio);
+#endif
+#pragma endregion
 namespace HephAudio
 {
+	using namespace HephAudio::Structs;
+
 	namespace Native
 	{
 		enum class AudioExceptionThread : uint8_t
@@ -28,6 +37,9 @@ namespace HephAudio
 		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
 		class INativeAudio
 		{
+#if defined(_WIN32)
+			friend void* _stdcall ::Play(void* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused);
+#endif
 		protected:
 			std::vector<std::shared_ptr<IAudioObject>> audioObjects;
 			Categories categories;

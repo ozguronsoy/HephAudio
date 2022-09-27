@@ -56,6 +56,10 @@ namespace HephAudio
 			pNativeAudio = nullptr;
 		}
 	}
+	INativeAudio* Audio::GetNativeAudio() const
+	{
+		return pNativeAudio;
+	}
 	std::shared_ptr<IAudioObject> Audio::Play(std::wstring filePath)
 	{
 		return pNativeAudio->Play(filePath);

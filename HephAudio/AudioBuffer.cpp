@@ -31,10 +31,10 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator=(const AudioBuffer& rhs)
 	{
-		this->formatInfo = rhs.formatInfo;
-		this->frameCount = rhs.frameCount;
 		if (rhs.pAudioData != nullptr)
 		{
+			this->formatInfo = rhs.formatInfo;
+			this->frameCount = rhs.frameCount;
 			if (this->pAudioData != nullptr)
 			{
 				free(this->pAudioData);
@@ -328,28 +328,30 @@ namespace HephAudio
 	}
 	void AudioBuffer::Replace(AudioBuffer buffer, size_t frameIndex, size_t frameCount)
 	{
-		if (frameCount > 0 && frameIndex < this->frameCount)
+		if (buffer.frameCount > 0 && frameCount > 0 && frameIndex < this->frameCount)
 		{
+			AudioBuffer resultBuffer(this->frameCount, this->formatInfo);
+			if (frameCount > buffer.frameCount)
+			{
+				frameCount = buffer.frameCount;
+			}
 			if (frameIndex + frameCount > this->frameCount)
 			{
-				frameCount = this->frameCount - frameIndex;
+				resultBuffer.Resize(this->frameCount + frameCount - (this->frameCount - frameIndex));
 			}
-			AudioBuffer resultBuffer(this->frameCount + buffer.frameCount - frameCount, this->formatInfo);
 			const size_t frameIndexAsBytes = frameIndex * formatInfo.FrameSize();
 			const size_t padding = frameCount * formatInfo.FrameSize();
 			if (frameIndexAsBytes > 0)
 			{
 				memcpy(resultBuffer.pAudioData, this->pAudioData, frameIndexAsBytes);
 			}
-			if (buffer.frameCount > 0)
+			buffer.SetFormat(this->formatInfo);
+			memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, buffer.pAudioData, padding);
+			if (this->Size() - frameIndexAsBytes - (int64_t)padding > 0)
 			{
-				buffer.SetFormat(this->formatInfo);
-				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, buffer.pAudioData, buffer.Size());
+				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes + padding, (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, this->Size() - frameIndexAsBytes - padding);
 			}
-			if (this->Size() - padding - frameIndexAsBytes > 0)
-			{
-				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes + buffer.Size(), (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, this->Size() - padding - frameIndexAsBytes);
-			}
+			*this = resultBuffer;
 		}
 		else
 		{
@@ -438,3 +440,75 @@ namespace HephAudio
 		return (double)frameCount * (double)formatInfo.FrameSize() / (double)formatInfo.ByteRate();
 	}
 }
+#pragma region Exports
+using namespace HephAudio;
+using namespace HephAudio::Structs;
+#if defined(_WIN32)
+void* _stdcall CreateAudioBuffer(size_t frameCount, void* pFormatInfo)
+{
+	return new AudioBuffer(frameCount, *((AudioFormatInfo*)pFormatInfo));
+}
+size_t _stdcall AudioBufferGetSize(void* pAudioBuffer)
+{
+	return ((AudioBuffer*)pAudioBuffer)->Size();
+}
+size_t _stdcall AudioBufferGetFrameCount(void* pAudioBuffer)
+{
+	return ((AudioBuffer*)pAudioBuffer)->FrameCount();
+}
+double _stdcall AudioBufferGetSample(void* pAudioBuffer, size_t frameIndex, uint8_t channel)
+{
+	return ((AudioBuffer*)pAudioBuffer)->Get(frameIndex, channel);
+}
+void _stdcall AudioBufferSetSample(void* pAudioBuffer, double value, size_t frameIndex, uint8_t channel)
+{
+	((AudioBuffer*)pAudioBuffer)->Set(value, frameIndex, channel);
+}
+void* _stdcall AudioBufferGetSubBuffer(void* pAudioBuffer, size_t frameIndex, size_t frameCount)
+{
+	AudioBuffer* subBuffer = new AudioBuffer();
+	*subBuffer = ((AudioBuffer*)pAudioBuffer)->GetSubBuffer(frameIndex, frameCount);
+	return subBuffer;
+}
+void _stdcall AudioBufferJoin(void* pB1, void* pB2)
+{
+	((AudioBuffer*)pB1)->Join(*((AudioBuffer*)pB2));
+}
+void _stdcall AudioBufferInsert(void* pB1, size_t frameIndex, void* pB2)
+{
+	((AudioBuffer*)pB1)->Insert(frameIndex, *((AudioBuffer*)pB2));
+}
+void _stdcall AudioBufferCut(void* pAudioBuffer, size_t frameIndex, size_t frameCount)
+{
+	((AudioBuffer*)pAudioBuffer)->Cut(frameIndex, frameCount);
+}
+void _stdcall AudioBufferReplace(void* pB1, void* pB2, size_t frameIndex, size_t frameCount)
+{
+	((AudioBuffer*)pB1)->Replace(*((AudioBuffer*)pB2), frameIndex, frameCount);
+}
+void _stdcall AudioBufferReset(void* pAudioBuffer)
+{
+	((AudioBuffer*)pAudioBuffer)->Reset();
+}
+void _stdcall AudioBufferResize(void* pAudioBuffer, size_t newFrameCount)
+{
+	((AudioBuffer*)pAudioBuffer)->Resize(newFrameCount);
+}
+double _stdcall AudioBufferCalculateDuration(void* pAudioBuffer)
+{
+	return ((AudioBuffer*)pAudioBuffer)->CalculateDuration();
+}
+void* _stdcall AudioBufferGetFormat(void* pAudioBuffer)
+{
+	return &((AudioBuffer*)pAudioBuffer)->formatInfo;
+}
+void _stdcall AudioBufferSetFormat(void* pAudioBuffer, void* newFormat)
+{
+	((AudioBuffer*)pAudioBuffer)->SetFormat(*((AudioFormatInfo*)newFormat));
+}
+void _stdcall DestroyAudioBuffer(void* pAudioBuffer)
+{
+	delete ((AudioBuffer*)pAudioBuffer);
+}
+#endif
+#pragma endregion

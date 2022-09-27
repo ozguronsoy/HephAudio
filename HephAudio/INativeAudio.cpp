@@ -545,3 +545,33 @@ namespace HephAudio
 		}
 	}
 }
+#pragma region Exports
+#if defined(_WIN32)
+#include <iostream>
+void* _stdcall CreateAudio()
+{
+	return new HephAudio::Audio();
+}
+void _stdcall InitializeRender(void* pAudio, void* pDevice, void* pFormatInfo)
+{
+	((HephAudio::Audio*)pAudio)->InitializeRender((HephAudio::Structs::AudioDevice*)pDevice, *((HephAudio::Structs::AudioFormatInfo*)pFormatInfo));
+}
+void* _stdcall Play(void* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused)
+{
+	IAudioObject* object = ((HephAudio::Audio*)pAudio)->Play(std::wstring(filePath), loopCount, isPaused).get();
+	std::vector<std::shared_ptr<IAudioObject>>& audioObjects = ((HephAudio::Audio*)pAudio)->GetNativeAudio()->audioObjects;
+	for (size_t i = 0; i < audioObjects.size(); i++)
+	{
+		if (object == audioObjects.at(i).get())
+		{
+			return &audioObjects.at(i);
+		}
+	}
+	return nullptr;
+}
+void _stdcall DestroyAudio(void* pAudio)
+{
+	delete ((HephAudio::Audio*)pAudio);
+}
+#endif
+#pragma endregion

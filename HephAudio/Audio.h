@@ -1,10 +1,19 @@
 #pragma once
 #include "INativeAudio.h"
 
-
 namespace HephAudio
 {
+	namespace Native
+	{
+		enum class AudioExceptionThread : uint8_t;
+		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
+		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
+		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
+		class INativeAudio;
+	}
+
 	using namespace HephAudio::Native;
+
 	class Audio final
 	{
 	private:
@@ -21,6 +30,7 @@ namespace HephAudio
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
+		INativeAudio* GetNativeAudio() const;
 		std::shared_ptr<IAudioObject> Play(std::wstring filePath);
 		std::shared_ptr<IAudioObject> Play(std::wstring filePath, bool isPaused);
 		std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount);
