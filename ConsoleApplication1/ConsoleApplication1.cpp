@@ -19,8 +19,9 @@ int main()
 	audio->SetOnExceptionHandler(OnException);
 	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
-	std::shared_ptr<IAudioObject> pao = audio->Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", 0u, true);
+	std::shared_ptr<IAudioObject> pao = audio->Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\SampleALAW2.wav", 0u, true);
 	pao->paused = false;
+
 	std::string a;
 	std::cin >> a;
 	delete audio;

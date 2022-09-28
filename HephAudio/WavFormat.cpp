@@ -20,7 +20,7 @@ namespace HephAudio
 				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
 				{
 					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
-					if (wfx.formatTag == 1 || wfx.formatTag == 0xFFFE || wfx.formatTag == 6 || wfx.formatTag == 7) // PCM OR WAVE_FORMAT_EXTENSIBLE OR ALAW OR MULAW
+					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE || wfx.formatTag == WAVE_FORMAT_ALAW || wfx.formatTag == WAVE_FORMAT_MULAW)
 					{
 						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
 						nextChunk = subChunkSize + 20;
@@ -37,6 +37,10 @@ namespace HephAudio
 						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
 						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
 						wfx.headerSize = nextChunk + 8; // use cbSize as headerSize.
+						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE) // WAVE_FORMAT_EXTENSIBLE
+						{
+							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
+						}
 					}
 					else
 					{
@@ -91,14 +95,6 @@ namespace HephAudio
 						throw AudioException(E_FAIL, L"WavFormat::ReadFile", L"Invalid bps.");
 					}
 				}
-			}
-			if (waveFormat.formatTag == 6)
-			{
-				AudioProcessor::DecodeALAW(resultBuffer);
-			}
-			else if (waveFormat.formatTag == 7)
-			{
-				AudioProcessor::DecodeMULAW(resultBuffer);
 			}
 			return resultBuffer;
 		}

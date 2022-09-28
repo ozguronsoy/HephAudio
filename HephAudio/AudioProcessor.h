@@ -60,12 +60,5 @@ namespace HephAudio
 		static void HannPoissonWindow(AudioBuffer& buffer, double alpha);
 		static void LanczosWindow(AudioBuffer& buffer);
 #pragma endregion
-#pragma region Encode/Decode
-	public:
-		static void EncodeALAW(AudioBuffer& buffer);
-		static void DecodeALAW(AudioBuffer& buffer);
-		static void EncodeMULAW(AudioBuffer& buffer);
-		static void DecodeMULAW(AudioBuffer& buffer);
-#pragma endregion
 	};
 }
