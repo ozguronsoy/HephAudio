@@ -34,15 +34,16 @@ namespace HephAudio
 }
 #pragma region Exports
 #if defined(_WIN32)
-extern "C" __declspec(dllexport) void* _stdcall CreateFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
-extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetFormatTag(void* pFormatInfo);
-extern "C" __declspec(dllexport) void _stdcall FormatInfoSetFormatTag(void* pFormatInfo, uint16_t formatTag);
-extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetChannelCount(void* pFormatInfo);
-extern "C" __declspec(dllexport) void _stdcall FormatInfoSetChannelCount(void* pFormatInfo, uint16_t channelCount);
-extern "C" __declspec(dllexport) uint32_t _stdcall FormatInfoGetSampleRate(void* pFormatInfo);
-extern "C" __declspec(dllexport) void _stdcall FormatInfoSetSampleRate(void* pFormatInfo, uint32_t sampleRate);
-extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetBitsPerSample(void* pFormatInfo);
-extern "C" __declspec(dllexport) void _stdcall FormatInfoSetBitsPerSample(void* pFormatInfo, uint16_t bitsPerSample);
-extern "C" __declspec(dllexport) void _stdcall DestroyFormatInfo(void* pFormatInfo);
+using namespace HephAudio::Structs;
+extern "C" __declspec(dllexport) AudioFormatInfo * _stdcall CreateFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
+extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetFormatTag(AudioFormatInfo * pFormatInfo);
+extern "C" __declspec(dllexport) void _stdcall FormatInfoSetFormatTag(AudioFormatInfo * pFormatInfo, uint16_t formatTag);
+extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetChannelCount(AudioFormatInfo * pFormatInfo);
+extern "C" __declspec(dllexport) void _stdcall FormatInfoSetChannelCount(AudioFormatInfo * pFormatInfo, uint16_t channelCount);
+extern "C" __declspec(dllexport) uint32_t _stdcall FormatInfoGetSampleRate(AudioFormatInfo * pFormatInfo);
+extern "C" __declspec(dllexport) void _stdcall FormatInfoSetSampleRate(AudioFormatInfo * pFormatInfo, uint32_t sampleRate);
+extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetBitsPerSample(AudioFormatInfo * pFormatInfo);
+extern "C" __declspec(dllexport) void _stdcall FormatInfoSetBitsPerSample(AudioFormatInfo * pFormatInfo, uint16_t bitsPerSample);
+extern "C" __declspec(dllexport) void _stdcall DestroyFormatInfo(AudioFormatInfo * pFormatInfo);
 #endif
 #pragma endregion

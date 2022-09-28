@@ -546,20 +546,22 @@ namespace HephAudio
 	}
 }
 #pragma region Exports
+using namespace HephAudio;
+using namespace HephAudio::Structs;
 #if defined(_WIN32)
 #include <iostream>
-void* _stdcall CreateAudio()
+Audio* _stdcall CreateAudio()
 {
-	return new HephAudio::Audio();
+	return new Audio();
 }
-void _stdcall InitializeRender(void* pAudio, void* pDevice, void* pFormatInfo)
+void _stdcall InitializeRender(HephAudio::Audio* pAudio, AudioDevice* pDevice, AudioFormatInfo* pFormatInfo)
 {
-	((HephAudio::Audio*)pAudio)->InitializeRender((HephAudio::Structs::AudioDevice*)pDevice, *((HephAudio::Structs::AudioFormatInfo*)pFormatInfo));
+	pAudio->InitializeRender(pDevice, *pFormatInfo);
 }
-void* _stdcall Play(void* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused)
+void* _stdcall Play(HephAudio::Audio* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused)
 {
-	IAudioObject* object = ((HephAudio::Audio*)pAudio)->Play(std::wstring(filePath), loopCount, isPaused).get();
-	std::vector<std::shared_ptr<IAudioObject>>& audioObjects = ((HephAudio::Audio*)pAudio)->GetNativeAudio()->audioObjects;
+	IAudioObject* object = pAudio->Play(std::wstring(filePath), loopCount, isPaused).get();
+	std::vector<std::shared_ptr<IAudioObject>>& audioObjects = pAudio->GetNativeAudio()->audioObjects;
 	for (size_t i = 0; i < audioObjects.size(); i++)
 	{
 		if (object == audioObjects.at(i).get())
@@ -569,9 +571,9 @@ void* _stdcall Play(void* pAudio, const wchar_t* filePath, uint32_t loopCount, b
 	}
 	return nullptr;
 }
-void _stdcall DestroyAudio(void* pAudio)
+void _stdcall DestroyAudio(HephAudio::Audio* pAudio)
 {
-	delete ((HephAudio::Audio*)pAudio);
+	delete pAudio;
 }
 #endif
 #pragma endregion

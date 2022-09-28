@@ -444,71 +444,71 @@ namespace HephAudio
 using namespace HephAudio;
 using namespace HephAudio::Structs;
 #if defined(_WIN32)
-void* _stdcall CreateAudioBuffer(size_t frameCount, void* pFormatInfo)
+AudioBuffer* _stdcall CreateAudioBuffer(size_t frameCount, AudioFormatInfo* pFormatInfo)
 {
-	return new AudioBuffer(frameCount, *((AudioFormatInfo*)pFormatInfo));
+	return new AudioBuffer(frameCount, *pFormatInfo);
 }
-size_t _stdcall AudioBufferGetSize(void* pAudioBuffer)
+size_t _stdcall AudioBufferGetSize(AudioBuffer* pAudioBuffer)
 {
-	return ((AudioBuffer*)pAudioBuffer)->Size();
+	return pAudioBuffer->Size();
 }
-size_t _stdcall AudioBufferGetFrameCount(void* pAudioBuffer)
+size_t _stdcall AudioBufferGetFrameCount(AudioBuffer* pAudioBuffer)
 {
-	return ((AudioBuffer*)pAudioBuffer)->FrameCount();
+	return pAudioBuffer->FrameCount();
 }
-double _stdcall AudioBufferGetSample(void* pAudioBuffer, size_t frameIndex, uint8_t channel)
+double _stdcall AudioBufferGetSample(AudioBuffer* pAudioBuffer, size_t frameIndex, uint8_t channel)
 {
-	return ((AudioBuffer*)pAudioBuffer)->Get(frameIndex, channel);
+	return pAudioBuffer->Get(frameIndex, channel);
 }
-void _stdcall AudioBufferSetSample(void* pAudioBuffer, double value, size_t frameIndex, uint8_t channel)
+void _stdcall AudioBufferSetSample(AudioBuffer* pAudioBuffer, double value, size_t frameIndex, uint8_t channel)
 {
-	((AudioBuffer*)pAudioBuffer)->Set(value, frameIndex, channel);
+	pAudioBuffer->Set(value, frameIndex, channel);
 }
-void* _stdcall AudioBufferGetSubBuffer(void* pAudioBuffer, size_t frameIndex, size_t frameCount)
+AudioBuffer* _stdcall AudioBufferGetSubBuffer(AudioBuffer* pAudioBuffer, size_t frameIndex, size_t frameCount)
 {
 	AudioBuffer* subBuffer = new AudioBuffer();
-	*subBuffer = ((AudioBuffer*)pAudioBuffer)->GetSubBuffer(frameIndex, frameCount);
+	*subBuffer = pAudioBuffer->GetSubBuffer(frameIndex, frameCount);
 	return subBuffer;
 }
-void _stdcall AudioBufferJoin(void* pB1, void* pB2)
+void _stdcall AudioBufferJoin(AudioBuffer* pB1, AudioBuffer* pB2)
 {
-	((AudioBuffer*)pB1)->Join(*((AudioBuffer*)pB2));
+	pB1->Join(*pB2);
 }
-void _stdcall AudioBufferInsert(void* pB1, size_t frameIndex, void* pB2)
+void _stdcall AudioBufferInsert(AudioBuffer* pB1, size_t frameIndex, AudioBuffer* pB2)
 {
-	((AudioBuffer*)pB1)->Insert(frameIndex, *((AudioBuffer*)pB2));
+	pB1->Insert(frameIndex, *pB2);
 }
-void _stdcall AudioBufferCut(void* pAudioBuffer, size_t frameIndex, size_t frameCount)
+void _stdcall AudioBufferCut(AudioBuffer* pAudioBuffer, size_t frameIndex, size_t frameCount)
 {
-	((AudioBuffer*)pAudioBuffer)->Cut(frameIndex, frameCount);
+	pAudioBuffer->Cut(frameIndex, frameCount);
 }
-void _stdcall AudioBufferReplace(void* pB1, void* pB2, size_t frameIndex, size_t frameCount)
+void _stdcall AudioBufferReplace(AudioBuffer* pB1, AudioBuffer* pB2, size_t frameIndex, size_t frameCount)
 {
-	((AudioBuffer*)pB1)->Replace(*((AudioBuffer*)pB2), frameIndex, frameCount);
+	pB1->Replace(*pB2, frameIndex, frameCount);
 }
-void _stdcall AudioBufferReset(void* pAudioBuffer)
+void _stdcall AudioBufferReset(AudioBuffer* pAudioBuffer)
 {
-	((AudioBuffer*)pAudioBuffer)->Reset();
+	pAudioBuffer->Reset();
 }
-void _stdcall AudioBufferResize(void* pAudioBuffer, size_t newFrameCount)
+void _stdcall AudioBufferResize(AudioBuffer* pAudioBuffer, size_t newFrameCount)
 {
-	((AudioBuffer*)pAudioBuffer)->Resize(newFrameCount);
+	pAudioBuffer->Resize(newFrameCount);
 }
-double _stdcall AudioBufferCalculateDuration(void* pAudioBuffer)
+double _stdcall AudioBufferCalculateDuration(AudioBuffer* pAudioBuffer)
 {
-	return ((AudioBuffer*)pAudioBuffer)->CalculateDuration();
+	return pAudioBuffer->CalculateDuration();
 }
-void* _stdcall AudioBufferGetFormat(void* pAudioBuffer)
+AudioFormatInfo* _stdcall AudioBufferGetFormat(AudioBuffer* pAudioBuffer)
 {
-	return &((AudioBuffer*)pAudioBuffer)->formatInfo;
+	return &pAudioBuffer->formatInfo;
 }
-void _stdcall AudioBufferSetFormat(void* pAudioBuffer, void* newFormat)
+void _stdcall AudioBufferSetFormat(AudioBuffer* pAudioBuffer, AudioFormatInfo* newFormat)
 {
-	((AudioBuffer*)pAudioBuffer)->SetFormat(*((AudioFormatInfo*)newFormat));
+	pAudioBuffer->SetFormat(*newFormat);
 }
-void _stdcall DestroyAudioBuffer(void* pAudioBuffer)
+void _stdcall DestroyAudioBuffer(AudioBuffer* pAudioBuffer)
 {
-	delete ((AudioBuffer*)pAudioBuffer);
+	delete pAudioBuffer;
 }
 #endif
 #pragma endregion

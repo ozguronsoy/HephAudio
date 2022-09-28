@@ -7,23 +7,27 @@
 using namespace HephAudio::Structs;
 
 #pragma region Exports
+namespace HephAudio
+{
+	class AudioBuffer;
+}
 #if defined(_WIN32)
-extern "C" __declspec(dllexport) void* _stdcall CreateAudioBuffer(size_t frameCount, void* pFormatInfo);
-extern "C" __declspec(dllexport) size_t _stdcall AudioBufferGetSize(void* pAudioBuffer);
-extern "C" __declspec(dllexport) size_t _stdcall AudioBufferGetFrameCount(void* pAudioBuffer);
-extern "C" __declspec(dllexport) double _stdcall AudioBufferGetSample(void* pAudioBuffer, size_t frameIndex, uint8_t channel);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferSetSample(void* pAudioBuffer, double value, size_t frameIndex, uint8_t channel);
-extern "C" __declspec(dllexport) void* _stdcall AudioBufferGetSubBuffer(void* pAudioBuffer, size_t frameIndex, size_t frameCount);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferJoin(void* pB1, void* pB2);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferInsert(void* pB1, size_t frameIndex, void* pB2);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferCut(void* pAudioBuffer, size_t frameIndex, size_t frameCount);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferReplace(void* pB1, void* pB2, size_t frameIndex, size_t frameCount);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferReset(void* pAudioBuffer);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferResize(void* pAudioBuffer, size_t newFrameCount);
-extern "C" __declspec(dllexport) double _stdcall AudioBufferCalculateDuration(void* pAudioBuffer);
-extern "C" __declspec(dllexport) void* _stdcall AudioBufferGetFormat(void* pAudioBuffer);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferSetFormat(void* pAudioBuffer, void* newFormat);
-extern "C" __declspec(dllexport) void _stdcall DestroyAudioBuffer(void* pAudioBuffer);
+extern "C" __declspec(dllexport) HephAudio::AudioBuffer * _stdcall CreateAudioBuffer(size_t frameCount, AudioFormatInfo * pFormatInfo);
+extern "C" __declspec(dllexport) size_t _stdcall AudioBufferGetSize(HephAudio::AudioBuffer * pAudioBuffer);
+extern "C" __declspec(dllexport) size_t _stdcall AudioBufferGetFrameCount(HephAudio::AudioBuffer * pAudioBuffer);
+extern "C" __declspec(dllexport) double _stdcall AudioBufferGetSample(HephAudio::AudioBuffer * pAudioBuffer, size_t frameIndex, uint8_t channel);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferSetSample(HephAudio::AudioBuffer * pAudioBuffer, double value, size_t frameIndex, uint8_t channel);
+extern "C" __declspec(dllexport) HephAudio::AudioBuffer * _stdcall AudioBufferGetSubBuffer(HephAudio::AudioBuffer * pAudioBuffer, size_t frameIndex, size_t frameCount);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferJoin(HephAudio::AudioBuffer * pB1, HephAudio::AudioBuffer * pB2);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferInsert(HephAudio::AudioBuffer * pB1, size_t frameIndex, HephAudio::AudioBuffer * pB2);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferCut(HephAudio::AudioBuffer * pAudioBuffer, size_t frameIndex, size_t frameCount);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferReplace(HephAudio::AudioBuffer * pB1, HephAudio::AudioBuffer * pB2, size_t frameIndex, size_t frameCount);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferReset(HephAudio::AudioBuffer * pAudioBuffer);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferResize(HephAudio::AudioBuffer * pAudioBuffer, size_t newFrameCount);
+extern "C" __declspec(dllexport) double _stdcall AudioBufferCalculateDuration(HephAudio::AudioBuffer * pAudioBuffer);
+extern "C" __declspec(dllexport) AudioFormatInfo * _stdcall AudioBufferGetFormat(HephAudio::AudioBuffer * pAudioBuffer);
+extern "C" __declspec(dllexport) void _stdcall AudioBufferSetFormat(HephAudio::AudioBuffer * pAudioBuffer, AudioFormatInfo * newFormat);
+extern "C" __declspec(dllexport) void _stdcall DestroyAudioBuffer(HephAudio::AudioBuffer * pAudioBuffer);
 #endif
 #pragma endregion
 
@@ -33,7 +37,7 @@ namespace HephAudio
 	{
 		friend class AudioProcessor;
 #if defined(_WIN32)
-		friend void* _stdcall ::AudioBufferGetFormat(void* pAudioBuffer);
+		friend AudioFormatInfo* _stdcall ::AudioBufferGetFormat(HephAudio::AudioBuffer* pAudioBuffer);
 #endif
 	private:
 		size_t frameCount;
