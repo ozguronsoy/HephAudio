@@ -285,17 +285,14 @@ namespace HephAudio
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
-			AudioBuffer& channel = channels.at(i);
-			Fourier fourier(channel, fftSize);
-			fourier.Forward();
+			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(i), fftSize);
 			for (size_t j = lowerFrequencyIndex; j <= upperBound; j++)
 			{
-				fourier.complexBuffer.at(j) *= volume;
-				fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-				fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+				complexBuffer.at(j) *= volume;
+				complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+				complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 			}
-			fourier.Inverse();
-			fourier.ComplexBufferToAudioBuffer(channel);
+			Fourier::FFT_Inverse(channels.at(i), complexBuffer);
 		}
 		buffer = MergeChannels(channels);
 	}
@@ -311,25 +308,22 @@ namespace HephAudio
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
-			AudioBuffer& channel = channels.at(i);
-			Fourier fourier(channel, fftSize);
-			fourier.Forward();
+			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(i), fftSize);
 			for (size_t j = passBand; j < nyquistFrequency; j++)
 			{
 				if (j >= stopBand)
 				{
-					fourier.complexBuffer.at(j) = Complex();
-					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
+					complexBuffer.at(j) = Complex();
+					complexBuffer.at(fftSize - j - 1) = Complex();
 				}
 				else if (j > passBand && j < stopBand) // Transition band.
 				{
-					fourier.complexBuffer.at(j) *= (double)(stopBand - j) / (double)transitionLength;
-					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					complexBuffer.at(j) *= (double)(stopBand - j) / (double)transitionLength;
+					complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+					complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 				}
 			}
-			fourier.Inverse();
-			fourier.ComplexBufferToAudioBuffer(channel);
+			Fourier::FFT_Inverse(channels.at(i), complexBuffer);
 		}
 		buffer = MergeChannels(channels);
 	}
@@ -344,25 +338,22 @@ namespace HephAudio
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
-			AudioBuffer& channel = channels.at(i);
-			Fourier fourier(channel, fftSize);
-			fourier.Forward();
+			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(i), fftSize);
 			for (size_t j = 0; j < upperBound; j++)
 			{
 				if (j <= stopBand)
 				{
-					fourier.complexBuffer.at(j) = Complex();
-					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
+					complexBuffer.at(j) = Complex();
+					complexBuffer.at(fftSize - j - 1) = Complex();
 				}
 				else if (j > stopBand && j < passBand) // Transition band.
 				{
-					fourier.complexBuffer.at(j) *= (double)(j - stopBand) / (double)transitionLength;
-					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					complexBuffer.at(j) *= (double)(j - stopBand) / (double)transitionLength;
+					complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+					complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 				}
 			}
-			fourier.Inverse();
-			fourier.ComplexBufferToAudioBuffer(channel);
+			Fourier::FFT_Inverse(channels.at(i), complexBuffer);
 		}
 		buffer = MergeChannels(channels);
 	}
@@ -385,39 +376,36 @@ namespace HephAudio
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
-			AudioBuffer& channel = channels.at(i);
-			Fourier fourier(channel, fftSize);
-			fourier.Forward();
+			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(i), fftSize);
 			for (size_t j = 0; j < upperBound; j++)
 			{
 				if (j > lowStopBand)
 				{
-					fourier.complexBuffer.at(j) *= (double)(j - lowStopBand) / (double)transitionLength;
-					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					complexBuffer.at(j) *= (double)(j - lowStopBand) / (double)transitionLength;
+					complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+					complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 				}
 				else
 				{
-					fourier.complexBuffer.at(j) = Complex();
-					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
+					complexBuffer.at(j) = Complex();
+					complexBuffer.at(fftSize - j - 1) = Complex();
 				}
 			}
 			for (size_t j = highPassBand; j < nyquistFrequency; j++)
 			{
 				if (j < highStopBand)
 				{
-					fourier.complexBuffer.at(j) *= (double)(highStopBand - j) / (double)transitionLength;
-					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					complexBuffer.at(j) *= (double)(highStopBand - j) / (double)transitionLength;
+					complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+					complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 				}
 				else
 				{
-					fourier.complexBuffer.at(j) = Complex();
-					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
+					complexBuffer.at(j) = Complex();
+					complexBuffer.at(fftSize - j - 1) = Complex();
 				}
 			}
-			fourier.Inverse();
-			fourier.ComplexBufferToAudioBuffer(channel);
+			Fourier::FFT_Inverse(channels.at(i), complexBuffer);
 		}
 		buffer = MergeChannels(channels);
 	}
@@ -440,31 +428,28 @@ namespace HephAudio
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
 		for (size_t i = 0; i < channels.size(); i++)
 		{
-			AudioBuffer& channel = channels.at(i);
-			Fourier fourier(channel, fftSize);
-			fourier.Forward();
+			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(i), fftSize);
 			for (size_t j = lowStopBand; j < upperBound; j++)
 			{
 				if (j >= lowPassBand && j <= highPassBand)
 				{
-					fourier.complexBuffer.at(j) = Complex();
-					fourier.complexBuffer.at(fftSize - j - 1) = Complex();
+					complexBuffer.at(j) = Complex();
+					complexBuffer.at(fftSize - j - 1) = Complex();
 				}
 				else if (j > lowStopBand && j < lowPassBand)
 				{
-					fourier.complexBuffer.at(j) *= (double)(transitionLength - (j - lowStopBand)) / (double)transitionLength;
-					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					complexBuffer.at(j) *= (double)(transitionLength - (j - lowStopBand)) / (double)transitionLength;
+					complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+					complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 				}
 				else if (j > highPassBand && j < highStopBand)
 				{
-					fourier.complexBuffer.at(j) *= (double)(transitionLength - (highStopBand - j)) / (double)transitionLength;
-					fourier.complexBuffer.at(fftSize - j - 1).real = fourier.complexBuffer.at(j).real;
-					fourier.complexBuffer.at(fftSize - j - 1).imaginary = -fourier.complexBuffer.at(j).imaginary;
+					complexBuffer.at(j) *= (double)(transitionLength - (highStopBand - j)) / (double)transitionLength;
+					complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
+					complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
 				}
 			}
-			fourier.Inverse();
-			fourier.ComplexBufferToAudioBuffer(channel);
+			Fourier::FFT_Inverse(channels.at(i), complexBuffer);
 		}
 		buffer = MergeChannels(channels);
 	}
