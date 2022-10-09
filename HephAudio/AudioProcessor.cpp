@@ -4,25 +4,21 @@
 
 namespace HephAudio
 {
-	AudioProcessor::AudioProcessor(AudioFormatInfo targetFormat)
-	{
-		this->targetFormat = targetFormat;
-	}
 #pragma region Converts, Mix, Split/Merge Channels
-	void AudioProcessor::ConvertBPS(AudioBuffer& buffer) const
+	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, AudioFormatInfo outputFormat)
 	{
-		if (buffer.formatInfo.bitsPerSample == targetFormat.bitsPerSample) { return; }
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, targetFormat.bitsPerSample, buffer.formatInfo.sampleRate);
+		if (buffer.formatInfo.bitsPerSample == outputFormat.bitsPerSample) { return; }
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, outputFormat.bitsPerSample, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (uint8_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				double sample = buffer.Get(i, j);
-				if (targetFormat.bitsPerSample == 8)
+				if (outputFormat.bitsPerSample == 8)
 				{
 					sample += 1.0;
-					sample /= 2.0;
+					sample *= 0.5;
 				}
 				else if (buffer.formatInfo.bitsPerSample == 8)
 				{
@@ -34,10 +30,10 @@ namespace HephAudio
 		}
 		buffer = resultBuffer;
 	}
-	void AudioProcessor::ConvertChannels(AudioBuffer& buffer) const
+	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, AudioFormatInfo outputFormat)
 	{
-		if (buffer.formatInfo.channelCount == targetFormat.channelCount) { return; }
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, targetFormat.channelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
+		if (buffer.formatInfo.channelCount == outputFormat.channelCount) { return; }
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, outputFormat.channelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
 		{
@@ -47,28 +43,28 @@ namespace HephAudio
 				averageValue += buffer.Get(i, j);
 			}
 			averageValue /= buffer.formatInfo.channelCount;
-			for (size_t j = 0; j < targetFormat.channelCount; j++)
+			for (size_t j = 0; j < outputFormat.channelCount; j++)
 			{
 				resultBuffer.Set(averageValue, i, j);
 			}
 		}
 		buffer = resultBuffer;
 	}
-	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer) const
+	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, AudioFormatInfo outputFormat)
 	{
-		ConvertSampleRate(buffer, 0);
+		ConvertSampleRate(buffer, outputFormat, 0u);
 	}
-	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, size_t outFrameCount) const
+	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, AudioFormatInfo outputFormat, size_t outFrameCount)
 	{
-		if (buffer.formatInfo.sampleRate == targetFormat.sampleRate) { return; }
-		const double srRatio = (double)targetFormat.sampleRate / (double)buffer.formatInfo.sampleRate;
+		if (buffer.formatInfo.sampleRate == outputFormat.sampleRate) { return; }
+		const double srRatio = (double)outputFormat.sampleRate / (double)buffer.formatInfo.sampleRate;
 		const size_t currentFrameCount = buffer.frameCount;
 		size_t targetFrameCount = outFrameCount;
 		if (targetFrameCount == 0)
 		{
 			targetFrameCount = ceil((double)currentFrameCount * srRatio);
 		}
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, targetFormat.sampleRate);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputFormat.sampleRate);
 		AudioBuffer resultBuffer(targetFrameCount, resultFormat);
 		const double cursorRatio = (1.0 / (targetFrameCount - 1)) * (currentFrameCount - 1);
 		double cursor = 0.0;
@@ -95,46 +91,9 @@ namespace HephAudio
 		}
 		buffer = resultBuffer;
 	}
-	void AudioProcessor::Mix(AudioBuffer& outputBuffer, std::vector<AudioBuffer> inputBuffers) const
-	{
-		size_t outputBufferFrameCount = 0;
-		for (int i = 0; i < inputBuffers.size(); i++)
-		{
-			AudioBuffer& buffer = inputBuffers.at(i);
-			if (buffer.frameCount == 0)
-			{
-				inputBuffers.erase(inputBuffers.begin() + i);
-				i--;
-				continue;
-			}
-			this->ConvertSampleRate(buffer);
-			this->ConvertBPS(buffer);
-			this->ConvertChannels(buffer);
-			if (buffer.frameCount > outputBufferFrameCount)
-			{
-				outputBufferFrameCount = buffer.frameCount;
-			}
-		}
-		outputBuffer = AudioBuffer(outputBufferFrameCount, targetFormat);
-		for (size_t i = 0; i < inputBuffers.size(); i++)
-		{
-			AudioBuffer& buffer = inputBuffers.at(i);
-			for (size_t j = 0; j < outputBuffer.frameCount; j++)
-			{
-				if (j >= buffer.frameCount) { break; }
-				for (size_t k = 0; k < outputBuffer.formatInfo.channelCount; k++)
-				{
-					const double outputSample = outputBuffer.Get(j, k);
-					double inputSample = buffer.Get(j, k);
-					outputBuffer.Set(outputSample + inputSample / (double)inputBuffers.size(), j, k);
-				}
-			}
-		}
-	}
 	void AudioProcessor::Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers)
 	{
 		size_t outputBufferFrameCount = 0;
-		AudioProcessor audioProcessor = AudioProcessor(outputFormat);
 		for (int i = 0; i < inputBuffers.size(); i++)
 		{
 			AudioBuffer& buffer = inputBuffers.at(i);
@@ -144,9 +103,9 @@ namespace HephAudio
 				i--;
 				continue;
 			}
-			audioProcessor.ConvertSampleRate(buffer);
-			audioProcessor.ConvertBPS(buffer);
-			audioProcessor.ConvertChannels(buffer);
+			ConvertSampleRate(buffer, outputFormat);
+			ConvertBPS(buffer, outputFormat);
+			ConvertChannels(buffer, outputFormat);
 			if (buffer.frameCount > outputBufferFrameCount)
 			{
 				outputBufferFrameCount = buffer.frameCount;

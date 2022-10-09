@@ -147,14 +147,6 @@ namespace HephAudio
 	}
 	double AudioBuffer::Get(size_t frameIndex, uint8_t channel) const
 	{
-		if (channel + 1 > formatInfo.channelCount)
-		{
-			throw AudioException(E_FAIL, L"AudioBuffer::Get", L"Channel must be between 0 and " + std::to_wstring(formatInfo.channelCount - 1) + L".");
-		}
-		if (frameIndex >= frameCount)
-		{
-			throw AudioException(E_FAIL, L"AudioBuffer::Get", L"frameIndex must be lesser than frame count.");
-		}
 		const uint8_t sampleSize = formatInfo.bitsPerSample / 8;
 		switch (formatInfo.bitsPerSample)
 		{
@@ -189,22 +181,6 @@ namespace HephAudio
 	}
 	void AudioBuffer::Set(double value, size_t frameIndex, uint8_t channel)
 	{
-		if (channel + 1 > formatInfo.channelCount)
-		{
-			throw AudioException(E_FAIL, L"AudioBuffer::Set", L"channel must be between 0 and " + std::to_wstring(formatInfo.channelCount - 1) + L".");
-		}
-		if (frameIndex >= frameCount)
-		{
-			throw AudioException(E_FAIL, L"AudioBuffer::Set", L"frameIndex must be lesser than frame count.");
-		}
-		if (value < -1.0)
-		{
-			value = -1.0;
-		}
-		if (value > 1.0)
-		{
-			value = 1.0;
-		}
 		const uint8_t sampleSize = formatInfo.bitsPerSample / 8;
 		switch (formatInfo.bitsPerSample)
 		{
@@ -390,10 +366,9 @@ namespace HephAudio
 		{
 			if (frameCount > 0)
 			{
-				AudioProcessor audioProcessor(newFormat);
-				audioProcessor.ConvertSampleRate(*this);
-				audioProcessor.ConvertBPS(*this);
-				audioProcessor.ConvertChannels(*this);
+				AudioProcessor::ConvertSampleRate(*this, newFormat);
+				AudioProcessor::ConvertBPS(*this, newFormat);
+				AudioProcessor::ConvertChannels(*this, newFormat);
 			}
 			formatInfo = newFormat;
 		}

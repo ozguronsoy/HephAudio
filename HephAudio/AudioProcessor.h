@@ -6,19 +6,14 @@ namespace HephAudio
 {
 	class AudioProcessor final
 	{
-	private:
-		AudioFormatInfo targetFormat;
-	public:
-		AudioProcessor(AudioFormatInfo targetFormat);
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		// BPS = Bits Per Sample
-		void ConvertBPS(AudioBuffer& buffer) const;
+		static void ConvertBPS(AudioBuffer& buffer, AudioFormatInfo outputFormat);
 		// Mono to stereo, stereo to mono, from two channels to three channels...
-		void ConvertChannels(AudioBuffer& buffer) const;
-		void ConvertSampleRate(AudioBuffer& buffer) const;
-		void ConvertSampleRate(AudioBuffer& buffer, size_t outFrameCount) const;
-		void Mix(AudioBuffer& outputBuffer, std::vector<AudioBuffer> inputBuffers) const;
+		static void ConvertChannels(AudioBuffer& buffer, AudioFormatInfo outputFormat);
+		static void ConvertSampleRate(AudioBuffer& buffer, AudioFormatInfo outputFormat);
+		static void ConvertSampleRate(AudioBuffer& buffer, AudioFormatInfo outputFormat, size_t outFrameCount);
 		static void Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers);
 		static std::vector<AudioBuffer> SplitChannels(const AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(const std::vector<AudioBuffer>& channels);

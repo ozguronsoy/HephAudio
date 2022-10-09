@@ -116,10 +116,9 @@ namespace HephAudio
 				pao->paused = true;
 				if (isRenderInitialized)
 				{
-					AudioProcessor audioProcessor(renderFormat);
-					audioProcessor.ConvertSampleRate(pao->buffer);
-					audioProcessor.ConvertBPS(pao->buffer);
-					audioProcessor.ConvertChannels(pao->buffer);
+					AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat);
+					AudioProcessor::ConvertBPS(pao->buffer, renderFormat);
+					AudioProcessor::ConvertChannels(pao->buffer, renderFormat);
 				}
 			}
 			return pao;
@@ -307,10 +306,9 @@ namespace HephAudio
 		{
 			try
 			{
-				AudioProcessor ap(targetFormat);
-				ap.ConvertSampleRate(buffer);
-				ap.ConvertBPS(buffer);
-				ap.ConvertChannels(buffer);
+				AudioProcessor::ConvertSampleRate(buffer, targetFormat);
+				AudioProcessor::ConvertBPS(buffer, targetFormat);
+				AudioProcessor::ConvertChannels(buffer, targetFormat);
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
 				if (format == nullptr)
 				{
@@ -440,8 +438,7 @@ namespace HephAudio
 		void INativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
 			const double aoFactor = 1.0 / GetAOCountToMix();
-			AudioProcessor audioProcessor(renderFormat);
-			for (int i = 0; i < audioObjects.size(); i++)
+			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
 				std::shared_ptr<IAudioObject> audioObject = audioObjects.at(i);
 				if (audioObject->IsPlaying())
@@ -460,9 +457,9 @@ namespace HephAudio
 					{
 						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex);
 					}
-					audioProcessor.ConvertSampleRate(subBuffer, frameCount);
-					audioProcessor.ConvertBPS(subBuffer);
-					audioProcessor.ConvertChannels(subBuffer);
+					AudioProcessor::ConvertSampleRate(subBuffer, renderFormat, frameCount);
+					AudioProcessor::ConvertBPS(subBuffer, renderFormat);
+					AudioProcessor::ConvertChannels(subBuffer, renderFormat);
 					for (size_t j = 0; j < subBuffer.FrameCount(); j++)
 					{
 						if (j >= outputBuffer.FrameCount())
