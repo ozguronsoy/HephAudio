@@ -8,33 +8,30 @@
 
 namespace HephAudio
 {
-	namespace Structs
+	struct AudioFormatInfo
 	{
-		struct AudioFormatInfo
-		{
-			uint16_t formatTag;        
-			uint16_t channelCount;
-			uint32_t sampleRate;
-			uint16_t bitsPerSample;
-			uint16_t headerSize;
-			AudioFormatInfo();
-			AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
-			virtual ~AudioFormatInfo() = default;
-			bool operator==(const AudioFormatInfo& rhs) const;
-			bool operator!=(const AudioFormatInfo& rhs) const;
-			uint16_t FrameSize() const noexcept;
-			uint32_t BitRate() const noexcept;
-			uint32_t ByteRate() const noexcept;
+		uint16_t formatTag;
+		uint16_t channelCount;
+		uint32_t sampleRate;
+		uint16_t bitsPerSample;
+		uint16_t headerSize;
+		AudioFormatInfo();
+		AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
+		virtual ~AudioFormatInfo() = default;
+		bool operator==(const AudioFormatInfo& rhs) const;
+		bool operator!=(const AudioFormatInfo& rhs) const;
+		uint16_t FrameSize() const noexcept;
+		uint32_t BitRate() const noexcept;
+		uint32_t ByteRate() const noexcept;
 #ifdef _WIN32
-			AudioFormatInfo(const WAVEFORMATEX& wfx);
-			operator WAVEFORMATEX() const;
+		AudioFormatInfo(const WAVEFORMATEX& wfx);
+		operator WAVEFORMATEX() const;
 #endif
-		};
-	}
+	};
 }
 #pragma region Exports
+using namespace HephAudio;
 #if defined(_WIN32)
-using namespace HephAudio::Structs;
 extern "C" __declspec(dllexport) AudioFormatInfo * _stdcall CreateFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
 extern "C" __declspec(dllexport) uint16_t _stdcall FormatInfoGetFormatTag(AudioFormatInfo * pFormatInfo);
 extern "C" __declspec(dllexport) void _stdcall FormatInfoSetFormatTag(AudioFormatInfo * pFormatInfo, uint16_t formatTag);

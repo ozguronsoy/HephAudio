@@ -547,7 +547,6 @@ namespace HephAudio
 }
 #pragma region Exports
 using namespace HephAudio;
-using namespace HephAudio::Structs;
 #if defined(_WIN32)
 #include <iostream>
 Audio* _stdcall CreateAudio()

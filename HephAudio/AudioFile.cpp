@@ -2,8 +2,6 @@
 #include "AudioException.h"
 #include <errno.h>
 
-using namespace HephAudio::Structs;
-
 namespace HephAudio
 {
 	AudioFile::AudioFile()

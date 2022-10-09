@@ -3,8 +3,6 @@
 #include "Complex.h"
 #include "AudioBuffer.h"
 
-using namespace HephAudio::Structs;
-
 namespace HephAudio
 {
 	class Fourier final

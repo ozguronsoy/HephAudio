@@ -8,16 +8,13 @@
 #pragma pack(push, 1)
 namespace HephAudio
 {
-	namespace Structs
+	struct int24
 	{
-		struct int24
-		{
-			int value : 24;
-		};
-		struct uint24
-		{
-			unsigned int value : 24;
-		};
-	}
+		int value : 24;
+	};
+	struct uint24
+	{
+		unsigned int value : 24;
+	};
 }
 #pragma pack(pop)

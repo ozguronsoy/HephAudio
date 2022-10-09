@@ -2,8 +2,6 @@
 #include "AudioException.h"
 #include "Fourier.h"
 
-using namespace HephAudio::Structs;
-
 namespace HephAudio
 {
 	AudioProcessor::AudioProcessor(AudioFormatInfo targetFormat)

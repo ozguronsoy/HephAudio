@@ -4,8 +4,6 @@
 #include "AudioFormatInfo.h"
 #include <vector>
 
-using namespace HephAudio::Structs;
-
 #pragma region Exports
 namespace HephAudio
 {

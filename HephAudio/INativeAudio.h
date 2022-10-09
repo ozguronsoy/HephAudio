@@ -24,8 +24,6 @@ extern "C" __declspec(dllexport) void _stdcall DestroyAudio(HephAudio::Audio * p
 #pragma endregion
 namespace HephAudio
 {
-	using namespace HephAudio::Structs;
-
 	namespace Native
 	{
 		enum class AudioExceptionThread : uint8_t

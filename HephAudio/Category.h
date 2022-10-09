@@ -5,18 +5,15 @@
 
 namespace HephAudio
 {
-	namespace Structs
+	struct Category
 	{
-		struct Category
-		{
-			std::wstring name;
-			double volume;
-			Category();
-			Category(std::wstring name, double volume);
-			virtual ~Category() = default;
-			bool operator==(const Category& rhs) const;
-			bool operator!=(const Category& rhs) const;
-		};
-		typedef std::vector<Category> Categories;
-	}
+		std::wstring name;
+		double volume;
+		Category();
+		Category(std::wstring name, double volume);
+		virtual ~Category() = default;
+		bool operator==(const Category& rhs) const;
+		bool operator!=(const Category& rhs) const;
+	};
+	typedef std::vector<Category> Categories;
 }
