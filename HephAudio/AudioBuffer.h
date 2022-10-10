@@ -58,6 +58,8 @@ namespace HephAudio
 		AudioBuffer operator/(const double& rhs) const;
 		// Divides all the samples in the current buffer by rhs.
 		AudioBuffer& operator/=(const double& rhs);
+		bool operator==(AudioBuffer& rhs) const;
+		bool operator!=(AudioBuffer& rhs) const;
 		~AudioBuffer();
 		// Buffer size in byte.
 		size_t Size() const noexcept;
@@ -79,6 +81,7 @@ namespace HephAudio
 		void Resize(size_t newFrameCount);
 		// Calculates the duration of the buffer in seconds.
 		double CalculateDuration() const noexcept;
+		size_t CalculateFrameIndex(double ts) const noexcept;
 		AudioFormatInfo GetFormat() const noexcept;
 		void SetFormat(AudioFormatInfo newFormat);
 		void* GetAudioDataAddress() const noexcept;
@@ -88,5 +91,6 @@ namespace HephAudio
 	public:
 		// Calculates the duration of the buffer in seconds.
 		static double CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
+		static size_t CalculateFrameIndex(double ts, AudioFormatInfo formatInfo) noexcept;
 	};
 }

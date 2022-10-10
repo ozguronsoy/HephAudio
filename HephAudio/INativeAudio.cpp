@@ -110,16 +110,12 @@ namespace HephAudio
 		}
 		std::shared_ptr<IAudioObject> INativeAudio::Load(std::wstring filePath)
 		{
-			std::shared_ptr<IAudioObject> pao = Play(filePath);
-			if (pao != nullptr)
+			std::shared_ptr<IAudioObject> pao = Play(filePath, 1u, true);
+			if (pao != nullptr && isRenderInitialized)
 			{
-				pao->paused = true;
-				if (isRenderInitialized)
-				{
-					AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat);
-					AudioProcessor::ConvertBPS(pao->buffer, renderFormat);
-					AudioProcessor::ConvertChannels(pao->buffer, renderFormat);
-				}
+				AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat);
+				AudioProcessor::ConvertBPS(pao->buffer, renderFormat);
+				AudioProcessor::ConvertChannels(pao->buffer, renderFormat);
 			}
 			return pao;
 		}

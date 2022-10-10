@@ -169,15 +169,23 @@ namespace HephAudio
 #pragma region Sound Effects
 	void AudioProcessor::Reverse(AudioBuffer& buffer)
 	{
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo);
-		for (size_t i = 0; i < buffer.frameCount; i++)
+		switch (buffer.formatInfo.bitsPerSample)
 		{
-			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-			{
-				resultBuffer.Set(buffer.Get(buffer.frameCount - i - 1, j), i, j);
-			}
+		case 8:
+			std::reverse((int8_t*)buffer.pAudioData, (int8_t*)buffer.pAudioData + buffer.Size());
+			break;
+		case 16:
+			std::reverse((int16_t*)buffer.pAudioData, (int16_t*)buffer.pAudioData + buffer.Size() / 2);
+			break;
+		case 24:
+			std::reverse((int24*)buffer.pAudioData, (int24*)buffer.pAudioData + buffer.Size() / 3);
+			break;
+		case 32:
+			std::reverse((int32_t*)buffer.pAudioData, (int32_t*)buffer.pAudioData + buffer.Size() / 4);
+			break;
+		default:
+			return;
 		}
-		buffer = resultBuffer;
 	}
 	void AudioProcessor::Echo(AudioBuffer& buffer, EchoInfo info)
 	{

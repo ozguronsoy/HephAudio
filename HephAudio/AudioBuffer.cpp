@@ -120,6 +120,14 @@ namespace HephAudio
 		}
 		return *this;
 	}
+	bool AudioBuffer::operator==(AudioBuffer& rhs) const
+	{
+		return this == &rhs || (this->formatInfo == rhs.formatInfo && this->frameCount == rhs.frameCount && memcmp(this->pAudioData, rhs.pAudioData, this->Size()) == 0);
+	}
+	bool AudioBuffer::operator!=(AudioBuffer& rhs) const
+	{
+		return this != &rhs && (this->formatInfo != rhs.formatInfo || this->frameCount != rhs.frameCount || memcmp(this->pAudioData, rhs.pAudioData, this->Size()) != 0);
+	}
 	AudioBuffer::~AudioBuffer()
 	{
 		if (pAudioData != nullptr)
@@ -323,7 +331,7 @@ namespace HephAudio
 			}
 			buffer.SetFormat(this->formatInfo);
 			memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, buffer.pAudioData, padding);
-			if (this->Size() - frameIndexAsBytes - (int64_t)padding > 0)
+			if (this->Size() > frameIndexAsBytes + padding)
 			{
 				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes + padding, (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, this->Size() - frameIndexAsBytes - padding);
 			}
@@ -355,6 +363,10 @@ namespace HephAudio
 	double AudioBuffer::CalculateDuration() const noexcept
 	{
 		return CalculateDuration(frameCount, formatInfo);
+	}
+	size_t AudioBuffer::CalculateFrameIndex(double ts) const noexcept
+	{
+		return CalculateFrameIndex(ts, formatInfo);
 	}
 	AudioFormatInfo AudioBuffer::GetFormat() const noexcept
 	{
@@ -413,6 +425,11 @@ namespace HephAudio
 	{
 		if (formatInfo.ByteRate() == 0) { return 0.0; }
 		return (double)frameCount * (double)formatInfo.FrameSize() / (double)formatInfo.ByteRate();
+	}
+	size_t AudioBuffer::CalculateFrameIndex(double ts, AudioFormatInfo formatInfo) noexcept
+	{
+		if (formatInfo.FrameSize() == 0) { return 0.0; }
+		return ts * (double)formatInfo.ByteRate() / (double)formatInfo.FrameSize();
 	}
 }
 #pragma region Exports
