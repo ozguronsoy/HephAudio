@@ -45,6 +45,7 @@ namespace HephAudio
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
+		~AudioBuffer();
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		// Joins the rhs buffer to the end of the current buffer and returns it as a new audio buffer.
 		AudioBuffer operator+(const AudioBuffer& rhs) const;
@@ -60,7 +61,6 @@ namespace HephAudio
 		AudioBuffer& operator/=(const double& rhs);
 		bool operator==(AudioBuffer& rhs) const;
 		bool operator!=(AudioBuffer& rhs) const;
-		~AudioBuffer();
 		// Buffer size in byte.
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
@@ -72,7 +72,7 @@ namespace HephAudio
 		AudioBuffer GetSubBuffer(size_t frameIndex, size_t frameCount) const;
 		// Joins the given buffer to the end of the current buffer.
 		void Join(AudioBuffer buffer);
-		void Insert(size_t frameIndex, AudioBuffer buffer);
+		void Insert(AudioBuffer buffer, size_t frameIndex);
 		void Cut(size_t frameIndex, size_t frameCount);
 		void Replace(AudioBuffer buffer, size_t frameIndex);
 		void Replace(AudioBuffer buffer, size_t frameIndex, size_t frameCount);

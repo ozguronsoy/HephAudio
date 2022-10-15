@@ -212,22 +212,20 @@ namespace HephAudio
 				resultBufferFrameCount = keyPoints.at(i).endFrameIndex + 1;
 			}
 		}
-		AudioBuffer resultBuffer(resultBufferFrameCount, buffer.formatInfo);
-		memcpy(resultBuffer.pAudioData, buffer.pAudioData, buffer.Size());
-		for (size_t i = keyPoints.at(0).startFrameIndex; i < resultBuffer.frameCount; i++)
+		buffer.Resize(resultBufferFrameCount);
+		for (size_t i = keyPoints.at(0).startFrameIndex; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				for (size_t k = 0; k < keyPoints.size(); k++)
 				{
 					if (i >= keyPoints.at(k).startFrameIndex && i <= keyPoints.at(k).endFrameIndex)
 					{
-						resultBuffer.Set(resultBuffer.Get(i, j) + echoBuffer.Get(i - keyPoints.at(k).startFrameIndex, j) * keyPoints.at(k).factor, i, j);
+						buffer.Set(buffer.Get(i, j) + echoBuffer.Get(i - keyPoints.at(k).startFrameIndex, j) * keyPoints.at(k).factor, i, j);
 					}
 				}
 			}
 		}
-		buffer = resultBuffer;
 	}
 	void AudioProcessor::EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
 	{
@@ -244,7 +242,7 @@ namespace HephAudio
 		const size_t echoFrameCount = originalBuffer.frameCount * echoEndPosition - echoStartFrame;
 		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
 		size_t erasedKeyPointsCount = 0;
-		for (size_t i = 0; i < keyPoints.size(); i++) // Find echo key points.
+		for (int i = 0; i < keyPoints.size(); i++) // Find echo key points.
 		{
 			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + erasedKeyPointsCount + 1);
 			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoFrameCount - 1;
