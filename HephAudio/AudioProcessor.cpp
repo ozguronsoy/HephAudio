@@ -194,17 +194,19 @@ namespace HephAudio
 		{
 			size_t startFrameIndex;
 			size_t endFrameIndex;
+			double factor;
 		};
 		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
 		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * echoEndPosition - echoStartFrame);
 		size_t resultBufferFrameCount = buffer.frameCount;
-		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount + 1);
+		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
 		for (size_t i = 0; i < keyPoints.size(); i++) // Find echo key points.
 		{
 			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + 1);
 			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoBuffer.frameCount - 1;
+			keyPoints.at(i).factor = pow(info.volumeFactor, i + 1.0);
 			if (keyPoints.at(i).endFrameIndex >= resultBufferFrameCount)
 			{
 				resultBufferFrameCount = keyPoints.at(i).endFrameIndex + 1;
@@ -220,7 +222,7 @@ namespace HephAudio
 				{
 					if (i >= keyPoints.at(k).startFrameIndex && i <= keyPoints.at(k).endFrameIndex)
 					{
-						resultBuffer.Set(resultBuffer.Get(i, j) + echoBuffer.Get(i - keyPoints.at(k).startFrameIndex, j) * pow(info.volumeFactor, k + 1.0), i, j);
+						resultBuffer.Set(resultBuffer.Get(i, j) + echoBuffer.Get(i - keyPoints.at(k).startFrameIndex, j) * keyPoints.at(k).factor, i, j);
 					}
 				}
 			}
@@ -234,7 +236,7 @@ namespace HephAudio
 		{
 			size_t startFrameIndex;
 			size_t endFrameIndex;
-			size_t n;
+			double factor;
 		};
 		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
@@ -242,11 +244,11 @@ namespace HephAudio
 		const size_t echoFrameCount = originalBuffer.frameCount * echoEndPosition - echoStartFrame;
 		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
 		size_t erasedKeyPointsCount = 0;
-		for (int i = 0; i < keyPoints.size(); i++) // Find echo key points.
+		for (size_t i = 0; i < keyPoints.size(); i++) // Find echo key points.
 		{
 			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + erasedKeyPointsCount + 1);
 			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoFrameCount - 1;
-			keyPoints.at(i).n = i + erasedKeyPointsCount + 1;
+			keyPoints.at(i).factor = pow(info.volumeFactor, i + erasedKeyPointsCount + 1.0);
 			if (keyPoints.at(i).startFrameIndex > subBufferFrameIndex + subBuffer.frameCount || keyPoints.at(i).endFrameIndex < subBufferFrameIndex) // Remove keyPoints if not needed to reduce the total loop count.
 			{
 				keyPoints.erase(keyPoints.begin() + i);
@@ -266,7 +268,7 @@ namespace HephAudio
 					{
 						if (cursor >= keyPoints.at(k).startFrameIndex && cursor <= keyPoints.at(k).endFrameIndex)
 						{
-							subBuffer.Set(subBuffer.Get(i, j) + echoBuffer.Get(cursor - keyPoints.at(k).startFrameIndex, j) * pow(info.volumeFactor, keyPoints.at(k).n), i, j);
+							subBuffer.Set(subBuffer.Get(i, j) + echoBuffer.Get(cursor - keyPoints.at(k).startFrameIndex, j) * keyPoints.at(k).factor, i, j);
 						}
 					}
 				}
