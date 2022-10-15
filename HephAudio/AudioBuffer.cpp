@@ -29,6 +29,14 @@ namespace HephAudio
 	{
 		(*this) = rhs;
 	}
+	AudioBuffer::~AudioBuffer()
+	{
+		if (pAudioData != nullptr)
+		{
+			free(pAudioData);
+			pAudioData = nullptr;
+		}
+	}
 	AudioBuffer& AudioBuffer::operator=(const AudioBuffer& rhs)
 	{
 		if (rhs.pAudioData != nullptr)
@@ -127,14 +135,6 @@ namespace HephAudio
 	bool AudioBuffer::operator!=(AudioBuffer& rhs) const
 	{
 		return this != &rhs && (this->formatInfo != rhs.formatInfo || this->frameCount != rhs.frameCount || memcmp(this->pAudioData, rhs.pAudioData, this->Size()) != 0);
-	}
-	AudioBuffer::~AudioBuffer()
-	{
-		if (pAudioData != nullptr)
-		{
-			free(pAudioData);
-			pAudioData = nullptr;
-		}
 	}
 	size_t AudioBuffer::Size() const noexcept
 	{
@@ -238,47 +238,56 @@ namespace HephAudio
 	{
 		if (buffer.frameCount > 0)
 		{
-			buffer.SetFormat(this->formatInfo);
 			if (this->frameCount == 0)
 			{
 				*this = buffer;
 				return;
 			}
-			AudioBuffer resultBuffer(this->frameCount + buffer.frameCount, this->formatInfo);
-			memcpy(resultBuffer.pAudioData, this->pAudioData, this->Size());
-			memcpy((uint8_t*)resultBuffer.pAudioData + this->Size(), buffer.pAudioData, buffer.Size());
-			*this = resultBuffer;
+			const size_t newFrameCount = this->frameCount + buffer.frameCount;
+			void* tempPtr = malloc(newFrameCount * formatInfo.FrameSize());
+			if (tempPtr == nullptr)
+			{
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+			}
+			const size_t oldSize = Size();
+			if (oldSize > 0)
+			{
+				memcpy(tempPtr, this->pAudioData, oldSize);
+			}
+			buffer.SetFormat(this->formatInfo);
+			memcpy((uint8_t*)tempPtr + oldSize, buffer.pAudioData, buffer.Size());
+			free(pAudioData);
+			pAudioData = tempPtr;
+			this->frameCount = newFrameCount;
 		}
 	}
-	void AudioBuffer::Insert(size_t frameIndex, AudioBuffer buffer)
+	void AudioBuffer::Insert(AudioBuffer buffer, size_t frameIndex)
 	{
 		if (buffer.frameCount > 0)
 		{
-			if (this->frameCount == 0)
+			const size_t newFrameCount = frameIndex > this->frameCount ? buffer.frameCount + frameIndex : this->frameCount + buffer.frameCount;
+			const size_t newSize = newFrameCount * formatInfo.FrameSize();
+			void* tempPtr = malloc(newSize);
+			if (tempPtr == nullptr)
 			{
-				*this = buffer;
-				return;
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
 			}
-			if (frameIndex > this->frameCount)
+			memset(tempPtr, 0, newSize);
+			size_t cursor = 0;
+			if (frameIndex > 0 && this->frameCount > 0)
 			{
-				frameIndex = this->frameCount;
+				cursor = frameIndex * formatInfo.FrameSize();
+				memcpy(tempPtr, this->pAudioData, frameIndex > this->frameCount ? Size() : cursor);
 			}
 			buffer.SetFormat(this->formatInfo);
-			AudioBuffer resultBuffer(this->frameCount + buffer.frameCount, this->formatInfo);
-			const size_t byteIndex = frameIndex * this->formatInfo.FrameSize();
-			if (byteIndex > 0)
+			memcpy((uint8_t*)tempPtr + cursor, buffer.pAudioData, buffer.Size());
+			if (frameIndex < this->frameCount)
 			{
-				memcpy(resultBuffer.pAudioData, this->pAudioData, byteIndex);
+				memcpy((uint8_t*)tempPtr + cursor + buffer.Size(), (uint8_t*)this->pAudioData + cursor, Size() - cursor);
 			}
-			if (buffer.Size() > 0)
-			{
-				memcpy((uint8_t*)resultBuffer.pAudioData + byteIndex, buffer.pAudioData, buffer.Size());
-			}
-			if (this->Size() - byteIndex > 0)
-			{
-				memcpy((uint8_t*)resultBuffer.pAudioData + byteIndex + buffer.Size(), (uint8_t*)this->pAudioData + byteIndex, this->Size() - byteIndex);
-			}
-			*this = resultBuffer;
+			free(pAudioData);
+			pAudioData = tempPtr;
+			this->frameCount = newFrameCount;
 		}
 	}
 	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount)
@@ -289,21 +298,25 @@ namespace HephAudio
 			{
 				frameCount = this->frameCount - frameIndex;
 			}
-			AudioBuffer resultBuffer(this->frameCount - frameCount, formatInfo);
-			if (resultBuffer.Size() > 0)
+			const size_t newFrameCount = this->frameCount - frameCount;
+			const size_t newSize = newFrameCount * formatInfo.FrameSize();
+			void* tempPtr = malloc(newSize);
+			if (tempPtr == nullptr)
 			{
-				const size_t frameIndexAsBytes = frameIndex * formatInfo.FrameSize();
-				const size_t padding = frameCount * formatInfo.FrameSize();
-				if (frameIndexAsBytes > 0)
-				{
-					memcpy(resultBuffer.pAudioData, this->pAudioData, frameIndexAsBytes);
-				}
-				if (resultBuffer.Size() - frameIndexAsBytes > 0)
-				{
-					memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, resultBuffer.Size() - frameIndexAsBytes);
-				}
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
 			}
-			*this = resultBuffer;
+			const size_t frameIndexAsBytes = frameIndex * formatInfo.FrameSize();
+			if (frameIndexAsBytes > 0)
+			{
+				memcpy(tempPtr, pAudioData, frameIndexAsBytes);
+			}
+			if (newSize > frameIndexAsBytes)
+			{
+				memcpy((uint8_t*)tempPtr + frameIndexAsBytes, (uint8_t*)pAudioData + frameIndexAsBytes + frameCount * formatInfo.FrameSize(), newSize - frameIndexAsBytes);
+			}
+			free(pAudioData);
+			pAudioData = tempPtr;
+			this->frameCount = newFrameCount;
 		}
 	}
 	void AudioBuffer::Replace(AudioBuffer buffer, size_t frameIndex)
@@ -314,32 +327,32 @@ namespace HephAudio
 	{
 		if (buffer.frameCount > 0 && frameCount > 0 && frameIndex < this->frameCount)
 		{
-			AudioBuffer resultBuffer(this->frameCount, this->formatInfo);
-			if (frameCount > buffer.frameCount)
+			const size_t newFrameCount = this->frameCount + buffer.frameCount - frameCount + frameIndex;
+			void* tempPtr = malloc(newFrameCount * formatInfo.FrameSize());
+			if (tempPtr == nullptr)
 			{
-				frameCount = buffer.frameCount;
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
 			}
-			if (frameIndex + frameCount > this->frameCount)
+			size_t cursor = 0;
+			if (frameIndex > 0)
 			{
-				resultBuffer.Resize(this->frameCount + frameCount - (this->frameCount - frameIndex));
+				cursor = frameIndex * formatInfo.FrameSize();
+				memcpy(tempPtr, this->pAudioData, cursor);
 			}
-			const size_t frameIndexAsBytes = frameIndex * formatInfo.FrameSize();
-			const size_t padding = frameCount * formatInfo.FrameSize();
-			if (frameIndexAsBytes > 0)
+			buffer.SetFormat(formatInfo);
+			memcpy((uint8_t*)tempPtr + cursor, buffer.pAudioData, buffer.Size());
+			if (frameIndex + frameCount < this->frameCount)
 			{
-				memcpy(resultBuffer.pAudioData, this->pAudioData, frameIndexAsBytes);
+				const size_t padding = cursor + frameCount * formatInfo.FrameSize();
+				memcpy((uint8_t*)tempPtr + cursor + buffer.Size(), (uint8_t*)this->pAudioData + padding, this->frameCount - padding);
 			}
-			buffer.SetFormat(this->formatInfo);
-			memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes, buffer.pAudioData, padding);
-			if (this->Size() > frameIndexAsBytes + padding)
-			{
-				memcpy((uint8_t*)resultBuffer.pAudioData + frameIndexAsBytes + padding, (uint8_t*)this->pAudioData + frameIndexAsBytes + padding, this->Size() - frameIndexAsBytes - padding);
-			}
-			*this = resultBuffer;
+			free(pAudioData);
+			pAudioData = tempPtr;
+			this->frameCount = newFrameCount;
 		}
 		else
 		{
-			this->Insert(frameIndex, buffer);
+			this->Insert(buffer, frameIndex);
 		}
 	}
 	void AudioBuffer::Reset()
@@ -350,14 +363,13 @@ namespace HephAudio
 	{
 		if (newFrameCount != this->frameCount)
 		{
-			if (newFrameCount > this->frameCount)
+			void* tempPtr = realloc(pAudioData, newFrameCount * formatInfo.FrameSize());
+			if (tempPtr == nullptr)
 			{
-				this->Join(AudioBuffer(newFrameCount - this->frameCount, formatInfo));
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
 			}
-			else
-			{
-				this->Cut(newFrameCount, this->frameCount - newFrameCount);
-			}
+			pAudioData = tempPtr;
+			frameCount = newFrameCount;
 		}
 	}
 	double AudioBuffer::CalculateDuration() const noexcept
@@ -467,7 +479,7 @@ void _stdcall AudioBufferJoin(AudioBuffer* pB1, AudioBuffer* pB2)
 }
 void _stdcall AudioBufferInsert(AudioBuffer* pB1, size_t frameIndex, AudioBuffer* pB2)
 {
-	pB1->Insert(frameIndex, *pB2);
+	pB1->Insert(*pB2, frameIndex);
 }
 void _stdcall AudioBufferCut(AudioBuffer* pAudioBuffer, size_t frameIndex, size_t frameCount)
 {
