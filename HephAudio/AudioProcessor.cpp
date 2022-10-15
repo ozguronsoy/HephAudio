@@ -178,8 +178,23 @@ namespace HephAudio
 			std::reverse((int16_t*)buffer.pAudioData, (int16_t*)buffer.pAudioData + buffer.Size() / 2);
 			break;
 		case 24:
-			std::reverse((int24*)buffer.pAudioData, (int24*)buffer.pAudioData + buffer.Size() / 3);
-			break;
+		{
+			constexpr size_t sampleSize = 3;
+			int24 sample;
+			const size_t bufferSize = buffer.Size();
+			const size_t bufferSize2 = bufferSize * 0.5;
+			uint8_t* br = nullptr;
+			uint8_t* bl = nullptr;
+			for (size_t i = 0; i < bufferSize2; i += sampleSize)
+			{
+				br = (uint8_t*)buffer.pAudioData + bufferSize - i - sampleSize;
+				bl = (uint8_t*)buffer.pAudioData + i;
+				memcpy(&sample, br, sampleSize);
+				memcpy(br, bl, sampleSize);
+				memcpy(bl, &sample, sampleSize);
+			}
+		}
+		break;
 		case 32:
 			std::reverse((int32_t*)buffer.pAudioData, (int32_t*)buffer.pAudioData + buffer.Size() / 4);
 			break;

@@ -46,6 +46,7 @@ namespace HephAudio
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
 		~AudioBuffer();
+		AudioBuffer operator-() const;
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		// Joins the rhs buffer to the end of the current buffer and returns it as a new audio buffer.
 		AudioBuffer operator+(const AudioBuffer& rhs) const;

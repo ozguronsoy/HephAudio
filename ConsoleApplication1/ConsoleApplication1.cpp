@@ -23,7 +23,7 @@ int main()
 	PrintDeltaTime("Init Render");
 
 	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
-	pao->loopCount = 1u;
+	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
 	pao->paused = false;

@@ -2,6 +2,7 @@
 #include "AudioProcessor.h"
 #include "AudioException.h"
 #include <string>
+#include <algorithm>
 
 namespace HephAudio
 {
@@ -36,6 +37,27 @@ namespace HephAudio
 			free(pAudioData);
 			pAudioData = nullptr;
 		}
+	}
+	AudioBuffer AudioBuffer::operator-() const
+	{
+		AudioBuffer resultBuffer(frameCount, formatInfo);
+		switch (formatInfo.bitsPerSample)
+		{
+		case 8:
+			std::transform((uint8_t*)pAudioData, (uint8_t*)pAudioData + Size(), (uint8_t*)resultBuffer.pAudioData, [](uint8_t& sample) {return -sample; });
+			break;
+		case 16:
+			std::transform((int16_t*)pAudioData, (int16_t*)((uint8_t*)pAudioData + Size()), (int16_t*)resultBuffer.pAudioData, [](int16_t& sample) {return -sample; });
+			break;
+		case 24:
+		case 32:
+			std::transform((int32_t*)pAudioData, (int32_t*)((uint8_t*)pAudioData + Size()), (int32_t*)resultBuffer.pAudioData, [](int32_t& sample) {return -sample; });
+			break;
+		default:
+			memcpy(resultBuffer.pAudioData, pAudioData, Size());
+			break;
+		}
+		return resultBuffer;
 	}
 	AudioBuffer& AudioBuffer::operator=(const AudioBuffer& rhs)
 	{
