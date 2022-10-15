@@ -50,6 +50,16 @@ namespace HephAudio
 			std::transform((int16_t*)pAudioData, (int16_t*)((uint8_t*)pAudioData + Size()), (int16_t*)resultBuffer.pAudioData, [](int16_t& sample) {return -sample; });
 			break;
 		case 24:
+		{
+			for (size_t i = 0; i < frameCount; i++)
+			{
+				for (size_t j = 0; j < formatInfo.channelCount; j++)
+				{
+					resultBuffer.Set(-Get(i, j), i, j);
+				}
+			}
+		}
+		break;
 		case 32:
 			std::transform((int32_t*)pAudioData, (int32_t*)((uint8_t*)pAudioData + Size()), (int32_t*)resultBuffer.pAudioData, [](int32_t& sample) {return -sample; });
 			break;
