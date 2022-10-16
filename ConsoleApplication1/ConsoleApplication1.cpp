@@ -19,12 +19,15 @@ int main()
 	audio->SetOnExceptionHandler(OnException);
 	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
-	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 16, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", true);
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
+
+	AudioProcessor::MaximizeVolume(pao->buffer);
+	PrintDeltaTime("Maximize Volume");
 
 	pao->paused = false;
 

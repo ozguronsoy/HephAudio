@@ -23,7 +23,7 @@ namespace HephAudio
 		static void Reverse(AudioBuffer& buffer);
 		// Adds echo to the given buffer.
 		static void Echo(AudioBuffer& buffer, EchoInfo info);
-		// Adds echo to the given subBuffer using the originalBuffer in real-time, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
+		// Adds echo to the given subBuffer in real-time using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
 		static void Equalizer(AudioBuffer& buffer, double f1, double f2, double volume);
@@ -54,6 +54,11 @@ namespace HephAudio
 		static void BartlettHannWindow(AudioBuffer& buffer);
 		static void HannPoissonWindow(AudioBuffer& buffer, double alpha);
 		static void LanczosWindow(AudioBuffer& buffer);
+#pragma endregion
+#pragma region Maximize Volume
+	public:
+		static double FindMaxVolume(const AudioBuffer& buffer);
+		static void MaximizeVolume(AudioBuffer& buffer);
 #pragma endregion
 	};
 }

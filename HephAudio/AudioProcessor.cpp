@@ -731,4 +731,53 @@ namespace HephAudio
 		}
 	}
 #pragma endregion
+#pragma region Maximize Volume
+	double AudioProcessor::FindMaxVolume(const AudioBuffer& buffer)
+	{
+		const size_t channelCount = buffer.GetFormat().channelCount;
+		double maxSample = 0.0;
+		double currentSample = 0.0;
+		for (size_t i = 0; i < buffer.FrameCount(); i++)
+		{
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				currentSample = abs(buffer.Get(i, j));
+				if (currentSample > maxSample)
+				{
+					maxSample = currentSample;
+					if (maxSample == 1.0)
+					{
+						return 1.0;
+					}
+				}
+			}
+		}
+		return maxSample != 0.0 ? (1.0 / maxSample) : 1.0;
+	}
+	void AudioProcessor::MaximizeVolume(AudioBuffer& buffer)
+	{
+		const size_t channelCount = buffer.GetFormat().channelCount;
+		double maxSample = 0.0;
+		double currentSample = 0.0;
+		for (size_t i = 0; i < buffer.FrameCount(); i++)
+		{
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				currentSample = abs(buffer.Get(i, j));
+				if (currentSample > maxSample)
+				{
+					maxSample = currentSample;
+					if (maxSample == 1.0)
+					{
+						return;
+					}
+				}
+			}
+		}
+		if (maxSample != 0.0)
+		{
+			buffer /= maxSample;
+		}
+	}
+#pragma endregion
 }
