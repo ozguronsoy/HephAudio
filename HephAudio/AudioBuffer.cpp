@@ -50,16 +50,8 @@ namespace HephAudio
 			std::transform((int16_t*)pAudioData, (int16_t*)((uint8_t*)pAudioData + Size()), (int16_t*)resultBuffer.pAudioData, [](int16_t& sample) {return -sample; });
 			break;
 		case 24:
-		{
-			for (size_t i = 0; i < frameCount; i++)
-			{
-				for (size_t j = 0; j < formatInfo.channelCount; j++)
-				{
-					resultBuffer.Set(-Get(i, j), i, j);
-				}
-			}
-		}
-		break;
+			std::transform((int24*)pAudioData, (int24*)((uint8_t*)pAudioData + Size()), (int24*)resultBuffer.pAudioData, [](int24& sample) {return -sample; });
+			break;
 		case 32:
 			std::transform((int32_t*)pAudioData, (int32_t*)((uint8_t*)pAudioData + Size()), (int32_t*)resultBuffer.pAudioData, [](int32_t& sample) {return -sample; });
 			break;
@@ -206,7 +198,7 @@ namespace HephAudio
 		{
 			int24 result;
 			memcpy(&result, (uint8_t*)pAudioData + frameIndex * formatInfo.FrameSize() + channel * sampleSize, sampleSize);
-			return max(min((double)result.value / (double)INT24_MAX, 1.0), -1.0);
+			return max(min((double)result / (double)INT24_MAX, 1.0), -1.0);
 		}
 		case 32:
 		{
@@ -238,8 +230,7 @@ namespace HephAudio
 		break;
 		case 24:
 		{
-			int24 result;
-			result.value = max(min(value * (double)INT24_MAX, INT24_MAX), INT24_MIN);
+			int24 result = max(min(value * (double)INT24_MAX, INT24_MAX), INT24_MIN);
 			memcpy((uint8_t*)pAudioData + frameIndex * formatInfo.FrameSize() + channel * sampleSize, &result, sampleSize);
 		}
 		break;
