@@ -6,6 +6,9 @@ namespace HephAudio
 {
 	class AudioProcessor final
 	{
+	private:
+		static constexpr size_t defaultHopSize = 4096u;
+		static constexpr size_t defaultFFTSize = 8192u;
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		// BPS = Bits Per Sample
@@ -27,6 +30,7 @@ namespace HephAudio
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
 		static void Equalizer(AudioBuffer& buffer, double f1, double f2, double volume);
+		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double f1, double f2, double volume);
 #pragma endregion
 #pragma region Filters
 	public:

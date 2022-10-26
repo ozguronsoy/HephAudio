@@ -274,7 +274,11 @@ namespace HephAudio
 	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, double f1, double f2, double volume)
 	{
-		const size_t fftSize = Fourier::CalculateFFTSize(buffer.frameCount);
+		Equalizer(buffer, defaultHopSize, defaultFFTSize, f1, f2, volume);
+	}
+	void AudioProcessor::Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double f1, double f2, double volume)
+	{
+		fftSize = Fourier::CalculateFFTSize(fftSize);
 		const size_t nyquistFrequency = fftSize * 0.5;
 		uint64_t lowerFrequencyIndex, higherFrequencyIndex;
 		if (f1 > f2)
@@ -288,25 +292,38 @@ namespace HephAudio
 			lowerFrequencyIndex = floor(Fourier::FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, f1));
 		}
 		const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
+		const size_t frameCount = buffer.frameCount;
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
-		for (size_t i = 0; i < channels.size(); i++)
+		buffer.~AudioBuffer();
+		std::vector<AudioBuffer> filteredChannels = std::vector<AudioBuffer>(channels.size(), AudioBuffer(frameCount, channels.at(0).formatInfo));
+		for (size_t i = 0; i < frameCount; i += hopSize)
 		{
-			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(i), fftSize);
-			for (size_t j = lowerFrequencyIndex; j <= upperBound; j++)
+			for (size_t j = 0; j < channels.size(); j++)
 			{
-				complexBuffer.at(j) *= volume;
-				complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-				complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+				AudioBuffer subBuffer = channels.at(j).GetSubBuffer(i, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT_Forward(subBuffer, fftSize);
+				for (size_t k = lowerFrequencyIndex; k <= upperBound; k++)
+				{
+					complexBuffer.at(k) *= volume;
+					complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
+					complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+				}
+				Fourier::FFT_Inverse(subBuffer, complexBuffer);
+				HannWindow(subBuffer);
+				for (size_t k = 0; k < fftSize && (i + k) < frameCount; k++)
+				{
+					filteredChannels.at(j).Set(filteredChannels.at(j).Get(i + k, 0) + subBuffer.Get(k, 0), i + k, 0);
+				}
 			}
-			Fourier::FFT_Inverse(channels.at(i), complexBuffer);
 		}
-		buffer = MergeChannels(channels);
+		channels.clear();
+		buffer = MergeChannels(filteredChannels);
 	}
 #pragma endregion
 #pragma region Filters
 	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
-		LowPassFilter(buffer, 4096, 8192, cutoffFreq, transitionBandLength);
+		LowPassFilter(buffer, defaultHopSize, defaultFFTSize, cutoffFreq, transitionBandLength);
 	}
 	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength)
 	{
@@ -352,7 +369,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)
 	{
-		HighPassFilter(buffer, 4096, 8192, cutoffFreq, transitionBandLength);
+		HighPassFilter(buffer, defaultHopSize, defaultFFTSize, cutoffFreq, transitionBandLength);
 	}
 	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength)
 	{
@@ -399,7 +416,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
-		BandPassFilter(buffer, 1024, 2048, lowCutoffFreq, highCutoffFreq, transitionBandLength);
+		BandPassFilter(buffer, defaultHopSize, defaultFFTSize, lowCutoffFreq, highCutoffFreq, transitionBandLength);
 	}
 	void AudioProcessor::BandPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
@@ -462,7 +479,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
-		BandCutFilter(buffer, 1024, 2048, lowCutoffFreq, highCutoffFreq, transitionBandLength);
+		BandCutFilter(buffer, defaultHopSize, defaultFFTSize, lowCutoffFreq, highCutoffFreq, transitionBandLength);
 	}
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
