@@ -28,8 +28,8 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	//AudioProcessor::BandCutFilter(pao->buffer, 200.0, 1500.0, 20.0);
-	AudioProcessor::BandCutFilter(pao->buffer, 1024, 2048, 200.0, 1500.0, 20.0);
+	AudioProcessor::BandCutFilter(pao->buffer, 200.0, 1500.0, 20.0);
+	//AudioProcessor::BandCutFilter(pao->buffer, 1024, 2048, 200.0, 1500.0, 20.0);
 	PrintDeltaTime("Filter");
 
 	pao->paused = false;
