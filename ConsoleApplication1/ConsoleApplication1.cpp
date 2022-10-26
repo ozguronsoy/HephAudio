@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <string>
 #include <Audio.h>
-#include <WinAudioDS.h>
 #include <AudioProcessor.h>
 #include <Fourier.h>
 
@@ -13,13 +12,13 @@ void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
 inline void PrintDeltaTime(const char* label);
 
-WinAudioDS* audio;
+Audio* audio;
 int main()
 {
-	audio = new WinAudioDS();
+	audio = new Audio();
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
-	//audio->SetOnExceptionHandler(OnException);
-	//audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
+	audio->SetOnExceptionHandler(OnException);
+	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
@@ -29,7 +28,8 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 1500.0, 20.0);
+	//AudioProcessor::BandCutFilter(pao->buffer, 200.0, 1500.0, 20.0);
+	AudioProcessor::BandCutFilter(pao->buffer, 1024, 2048, 200.0, 1500.0, 20.0);
 	PrintDeltaTime("Filter");
 
 	pao->paused = false;
