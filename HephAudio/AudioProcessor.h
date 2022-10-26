@@ -31,7 +31,9 @@ namespace HephAudio
 #pragma region Filters
 	public:
 		static void LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
+		static void LowPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength);
 		static void HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
+		static void HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength);
 		static void BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 #pragma endregion

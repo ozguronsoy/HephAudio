@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include <Audio.h>
+#include <WinAudioDS.h>
 #include <AudioProcessor.h>
 #include <Fourier.h>
 
@@ -9,35 +10,34 @@ using namespace HephAudio::Native;
 
 void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
+void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
 inline void PrintDeltaTime(const char* label);
 
-Audio* audio;
+WinAudioDS* audio;
 int main()
 {
-	audio = new Audio();
+	audio = new WinAudioDS();
 	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
-	audio->SetOnExceptionHandler(OnException);
-	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
+	//audio->SetOnExceptionHandler(OnException);
+	//audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
-	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 24, 48000));
+	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	/*AudioProcessor::Reverse(pao->buffer);
-	PrintDeltaTime("Reverse");*/
-
-	pao->buffer = -pao->buffer;
-	PrintDeltaTime("operator -");
+	AudioProcessor::HighPassFilter(pao->buffer, 1500.0, 20.0);
+	PrintDeltaTime("Filter");
 
 	pao->paused = false;
 
 	std::string a;
 	std::cin >> a;
 	delete audio;
-	//pao = nullptr;
+	pao = nullptr;
 	std::cin >> a;
 	return 0;
 }
@@ -49,6 +49,10 @@ void SetToDefaultDevice(AudioDevice device)
 {
 	std::cout << "Is current device: " << (device.id == audio->GetRenderDevice().id) << "\n";
 	audio->InitializeRender(nullptr, audio->GetRenderFormat());
+}
+void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
+{
+	//AudioProcessor::LowPassFilter(renderBuffer, renderBuffer.FrameCount(), 1024, 400, 0);
 }
 inline void PrintDeltaTime(const char* label)
 {
