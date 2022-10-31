@@ -9,6 +9,13 @@ namespace HephAudio
 	private:
 		static constexpr size_t defaultHopSize = 4096u;
 		static constexpr size_t defaultFFTSize = 8192u;
+	private:
+		struct FilteredBuffer
+		{
+			size_t fStart;
+			AudioBuffer audioBuffer;
+			const AudioBuffer* pOriginalBuffer;
+		};
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		// BPS = Bits Per Sample
@@ -36,12 +43,16 @@ namespace HephAudio
 	public:
 		static void LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
 		static void LowPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength);
+		static void LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength);
 		static void HighPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength);
 		static void HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength);
+		static void HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength);
 		static void BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
+		static FilteredBuffer* GetFilteredBuffer(std::vector<FilteredBuffer*>& filteredBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
+		static void RemoveOldFilteredBuffers(std::vector<FilteredBuffer*>& filteredBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
 #pragma endregion
 #pragma region Windows
 	public:

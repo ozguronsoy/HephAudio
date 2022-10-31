@@ -10,7 +10,7 @@ using namespace HephAudio::Native;
 void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
-inline void PrintDeltaTime(const char* label);
+double PrintDeltaTime(const char* label);
 
 Audio* audio;
 int main()
@@ -23,10 +23,13 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Fatima.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
+
+	/*AudioProcessor::LowPassFilter(pao->buffer, 512, 1024, 650.0, 0.0);
+	PrintDeltaTime("Filter");*/
 
 	pao->paused = false;
 
@@ -48,9 +51,11 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
-	//AudioProcessor::LowPassFilter(renderBuffer, renderBuffer.FrameCount(), 1024, 400, 0);
+	PrintDeltaTime("");
+	AudioProcessor::LowPassFilterRT(sender->buffer, renderBuffer, frameIndex, 480, 1024, 650.0, 0.0);
+	PrintDeltaTime("Filter");
 }
-inline void PrintDeltaTime(const char* label)
+double PrintDeltaTime(const char* label)
 {
 	static std::chrono::high_resolution_clock clock;
 	static std::chrono::steady_clock::time_point t1 = clock.now();
@@ -60,4 +65,5 @@ inline void PrintDeltaTime(const char* label)
 	dt = (t2 - t1).count() * 0.000001;
 	std::cout << label << ": " << dt << "ms\n";
 	t1 = t2 = clock.now();
+	return dt;
 }
