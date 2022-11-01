@@ -367,6 +367,10 @@ namespace HephAudio
 		channels.clear();
 		buffer = MergeChannels(filteredChannels);
 	}
+	void AudioProcessor::LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, double transitionBandLength)
+	{
+		LowPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, cutoffFreq, transitionBandLength);
+	}
 	void AudioProcessor::LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength)
 	{
 		static std::vector<FilteredBuffer*> filteredBuffers;
@@ -500,6 +504,10 @@ namespace HephAudio
 		}
 		channels.clear();
 		buffer = MergeChannels(filteredChannels);
+	}
+	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, double transitionBandLength)
+	{
+		HighPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, cutoffFreq, transitionBandLength);
 	}
 	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, double transitionBandLength)
 	{
@@ -653,6 +661,115 @@ namespace HephAudio
 		channels.clear();
 		buffer = MergeChannels(filteredChannels);
 	}
+	void AudioProcessor::BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
+	{
+		BandPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, lowCutoffFreq, highCutoffFreq, transitionBandLength);
+	}
+	void AudioProcessor::BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
+	{
+		static std::vector<FilteredBuffer*> filteredBuffers;
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const size_t nyquistFrequency = fftSize * 0.5;
+		const uint64_t lowStopBand = floor(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq));
+		const uint64_t lowPassBand = floor(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq + transitionBandLength));
+		const uint64_t highPassBand = highCutoffFreq > transitionBandLength ? ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq - transitionBandLength)) : ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq));
+		const uint64_t highStopBand = ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq));
+		const uint64_t transitionLength = highStopBand - highPassBand;
+		const size_t upperBound = lowPassBand < nyquistFrequency ? lowPassBand : nyquistFrequency;
+		const size_t frameCount = subBuffer.frameCount;
+		const auto applyFilter = [&hopSize, &fftSize, &nyquistFrequency, &lowPassBand, &lowStopBand, &highPassBand, &highStopBand, &transitionLength, &upperBound, &frameCount](AudioBuffer& subBuffer) -> void
+		{
+			std::vector<AudioBuffer> channels = SplitChannels(subBuffer);
+			for (size_t i = 0; i < frameCount; i += hopSize)
+			{
+				for (size_t j = 0; j < channels.size(); j++)
+				{
+					AudioBuffer& channel = channels.at(j);
+					ComplexBuffer complexBuffer = Fourier::FFT_Forward(channel, fftSize);
+					for (size_t k = 0; k < upperBound; k++)
+					{
+						if (k > lowStopBand)
+						{
+							complexBuffer.at(k) *= (double)(k - lowStopBand) / (double)transitionLength;
+							complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
+							complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						}
+						else
+						{
+							complexBuffer.at(j) = Complex();
+							complexBuffer.at(fftSize - k - 1) = Complex();
+						}
+					}
+					for (size_t k = highPassBand; k < nyquistFrequency; k++)
+					{
+						if (k < highStopBand)
+						{
+							complexBuffer.at(k) *= (double)(highStopBand - k) / (double)transitionLength;
+							complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
+							complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						}
+						else
+						{
+							complexBuffer.at(k) = Complex();
+							complexBuffer.at(fftSize - k - 1) = Complex();
+						}
+					}
+					Fourier::FFT_Inverse(channel, complexBuffer);
+					HannWindow(channel);
+				}
+			}
+			subBuffer = MergeChannels(channels);
+		};
+		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
+		size_t fStart = 0;
+		if (subBufferFrameIndex >= fftSize)
+		{
+			fStart = fTarget;
+			do
+			{
+				fStart -= hopSize;
+			} while (fStart + fftSize > fTarget);
+		}
+		size_t fEnd = fStart;
+		while (fEnd + hopSize < fTarget + fftSize)
+		{
+			fEnd += hopSize;
+		}
+		subBuffer.Reset();
+		RemoveOldFilteredBuffers(filteredBuffers, &originalBuffer, fStart);
+		AudioBuffer tempBuffer;
+		size_t isb, itb;
+		for (size_t i = fStart; i < fEnd; i += hopSize)
+		{
+			FilteredBuffer* filteredBuffer = GetFilteredBuffer(filteredBuffers, &originalBuffer, i);
+			if (filteredBuffer == nullptr)
+			{
+				filteredBuffer = new FilteredBuffer();
+				filteredBuffer->fStart = i;
+				filteredBuffer->audioBuffer = originalBuffer.GetSubBuffer(i, fftSize);
+				filteredBuffer->pOriginalBuffer = &originalBuffer;
+				applyFilter(filteredBuffer->audioBuffer);
+				filteredBuffers.push_back(filteredBuffer);
+			}
+			if (i > fTarget)
+			{
+				isb = (int64_t)i - fTarget;
+				itb = 0;
+			}
+			else
+			{
+				isb = 0;
+				itb = (int64_t)fTarget - i;
+			}
+			for (size_t j = 0; isb < frameCount && itb < fftSize; j++, isb++, itb++)
+			{
+				for (size_t k = 0; k < subBuffer.formatInfo.channelCount; k++)
+				{
+					subBuffer.Set(subBuffer.Get(isb, k) + filteredBuffer->audioBuffer.Get(itb, k), isb, k);
+				}
+			}
+		}
+	}
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
 	{
 		BandCutFilter(buffer, defaultHopSize, defaultFFTSize, lowCutoffFreq, highCutoffFreq, transitionBandLength);
@@ -707,6 +824,107 @@ namespace HephAudio
 		}
 		channels.clear();
 		buffer = MergeChannels(filteredChannels);
+	}
+	void AudioProcessor::BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
+	{
+		BandCutFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, lowCutoffFreq, highCutoffFreq, transitionBandLength);
+	}
+	void AudioProcessor::BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength)
+	{
+		static std::vector<FilteredBuffer*> filteredBuffers;
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const size_t nyquistFrequency = fftSize * 0.5;
+		const uint64_t lowStopBand = floor(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq));
+		const uint64_t lowPassBand = floor(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq + transitionBandLength));
+		const uint64_t highPassBand = highCutoffFreq > transitionBandLength ? ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq - transitionBandLength)) : ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq));
+		const uint64_t highStopBand = ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq));
+		const uint64_t transitionLength = highStopBand - highPassBand;
+		const size_t upperBound = highStopBand < nyquistFrequency ? highStopBand : nyquistFrequency;
+		const size_t frameCount = subBuffer.frameCount;
+		const auto applyFilter = [&hopSize, &fftSize, &nyquistFrequency, &lowPassBand, &lowStopBand, &highPassBand, &highStopBand, &transitionLength, &upperBound, &frameCount](AudioBuffer& subBuffer) -> void
+		{
+			std::vector<AudioBuffer> channels = SplitChannels(subBuffer);
+			for (size_t i = 0; i < frameCount; i += hopSize)
+			{
+				for (size_t j = 0; j < channels.size(); j++)
+				{
+					AudioBuffer& channel = channels.at(j);
+					ComplexBuffer complexBuffer = Fourier::FFT_Forward(channel, fftSize);
+					for (size_t k = lowStopBand; k < upperBound; k++)
+					{
+						if (k >= lowPassBand && k <= highPassBand)
+						{
+							complexBuffer.at(k) = Complex();
+							complexBuffer.at(fftSize - k - 1) = Complex();
+						}
+						else if (k > lowStopBand && k < lowPassBand)
+						{
+							complexBuffer.at(k) *= (double)(transitionLength - (k - lowStopBand)) / (double)transitionLength;
+							complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
+							complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						}
+						else if (k > highPassBand && k < highStopBand)
+						{
+							complexBuffer.at(k) *= (double)(transitionLength - (highStopBand - k)) / (double)transitionLength;
+							complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
+							complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						}
+					}
+					Fourier::FFT_Inverse(channel, complexBuffer);
+					HannWindow(channel);
+				}
+			}
+			subBuffer = MergeChannels(channels);
+		};
+		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
+		size_t fStart = 0;
+		if (subBufferFrameIndex >= fftSize)
+		{
+			fStart = fTarget;
+			do
+			{
+				fStart -= hopSize;
+			} while (fStart + fftSize > fTarget);
+		}
+		size_t fEnd = fStart;
+		while (fEnd + hopSize < fTarget + fftSize)
+		{
+			fEnd += hopSize;
+		}
+		subBuffer.Reset();
+		RemoveOldFilteredBuffers(filteredBuffers, &originalBuffer, fStart);
+		AudioBuffer tempBuffer;
+		size_t isb, itb;
+		for (size_t i = fStart; i < fEnd; i += hopSize)
+		{
+			FilteredBuffer* filteredBuffer = GetFilteredBuffer(filteredBuffers, &originalBuffer, i);
+			if (filteredBuffer == nullptr)
+			{
+				filteredBuffer = new FilteredBuffer();
+				filteredBuffer->fStart = i;
+				filteredBuffer->audioBuffer = originalBuffer.GetSubBuffer(i, fftSize);
+				filteredBuffer->pOriginalBuffer = &originalBuffer;
+				applyFilter(filteredBuffer->audioBuffer);
+				filteredBuffers.push_back(filteredBuffer);
+			}
+			if (i > fTarget)
+			{
+				isb = (int64_t)i - fTarget;
+				itb = 0;
+			}
+			else
+			{
+				isb = 0;
+				itb = (int64_t)fTarget - i;
+			}
+			for (size_t j = 0; isb < frameCount && itb < fftSize; j++, isb++, itb++)
+			{
+				for (size_t k = 0; k < subBuffer.formatInfo.channelCount; k++)
+				{
+					subBuffer.Set(subBuffer.Get(isb, k) + filteredBuffer->audioBuffer.Get(itb, k), isb, k);
+				}
+			}
+		}
 	}
 	AudioProcessor::FilteredBuffer* AudioProcessor::GetFilteredBuffer(std::vector<FilteredBuffer*>& filteredBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart)
 	{
