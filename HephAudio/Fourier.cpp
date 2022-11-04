@@ -18,18 +18,17 @@ namespace HephAudio
 	ComplexBuffer Fourier::FFT_Forward(const AudioBuffer& audioBuffer, size_t fftSize)
 	{
 		fftSize = CalculateFFTSize(fftSize);
-		const size_t p = log2f(fftSize);
 		ComplexBuffer complexBuffer = ComplexBuffer(fftSize, Complex(0.0, 0.0));
 		for (size_t i = 0; i < audioBuffer.FrameCount(); i++)
 		{
 			complexBuffer.at(i).real = audioBuffer.Get(i, 0);
 		}
-		FFT(complexBuffer, p, true);
+		FFT(complexBuffer, fftSize, true);
 		return complexBuffer;
 	}
 	void Fourier::FFT_Inverse(AudioBuffer& audioBuffer, ComplexBuffer& complexBuffer)
 	{
-		FFT(complexBuffer, log2f(complexBuffer.size()), false);
+		FFT(complexBuffer, CalculateFFTSize(complexBuffer.size()), false);
 		ComplexBufferToAudioBuffer(audioBuffer, complexBuffer);
 	}
 	double Fourier::Magnitude(Complex sample)
@@ -64,33 +63,28 @@ namespace HephAudio
 	{
 		if (!(bufferSize > 0 && !(bufferSize & (bufferSize - 1)))) // if not power of 2
 		{
-			return 1 << (size_t)ceil(log2f(bufferSize)); // smallest power of 2 thats greater than nSample
+			return 1 << (size_t)ceil(log2(bufferSize)); // smallest power of 2 thats greater than nSample
 		}
 		return bufferSize;
 	}
-	void Fourier::ReverseBits(ComplexBuffer& complexBuffer, const size_t& p)
+	void Fourier::ReverseBits(ComplexBuffer& complexBuffer, const size_t& fftSize)
 	{
-		size_t k = 0;
-		ComplexBuffer resultBuffer(complexBuffer.size(), Complex());
-		for (size_t i = 0; i < complexBuffer.size(); i++)
+		size_t j = 0;
+		for (size_t i = 0; i < fftSize; i++)
 		{
-			k = 0;
-			for (size_t j = 0; j < p; j++)
+			if (i < j)
 			{
-				const size_t jp = 1 << j;
-				if ((i & jp) == jp)
-				{
-					k += (1 << (p - j - 1));
-				}
-				resultBuffer.at(i) = complexBuffer.at(k);
+				const Complex temp = complexBuffer.at(j);
+				complexBuffer.at(j) = complexBuffer.at(i);
+				complexBuffer.at(i) = temp;
 			}
+			j ^= fftSize - fftSize / ((i ^ (i + 1)) + 1);
 		}
-		complexBuffer = resultBuffer;
 	}
-	void Fourier::FFT(ComplexBuffer& complexBuffer, const size_t& p, const bool isForward)
+	void Fourier::FFT(ComplexBuffer& complexBuffer, size_t fftSize, const bool isForward)
 	{
-		ReverseBits(complexBuffer, p);
-		const size_t nSample = complexBuffer.size();
+		ReverseBits(complexBuffer, fftSize);
+		const size_t p = log2(fftSize);
 		Complex a = Complex(-1.0, 0.0);
 		for (size_t i = 0; i < p; i++)
 		{
@@ -99,7 +93,7 @@ namespace HephAudio
 			Complex b = Complex(1.0, 0.0);
 			for (size_t j = 0; j < s; j++)
 			{
-				for (size_t k = j; k < nSample; k += s2)
+				for (size_t k = j; k < fftSize; k += s2)
 				{
 					const Complex temp = b * complexBuffer.at(k + s);
 					complexBuffer.at(k + s) = complexBuffer.at(k) - temp;
@@ -107,13 +101,14 @@ namespace HephAudio
 				}
 				b *= a;
 			}
-			a = Complex(sqrt((1.0 + a.real) / 2.0), isForward ? -sqrt((1.0 - a.real) * 0.5) : sqrt((1.0 - a.real) * 0.5));
+			a.imaginary = isForward ? -sqrt((1.0 - a.real) * 0.5) : sqrt((1.0 - a.real) * 0.5);
+			a.real = sqrt((1.0 + a.real) * 0.5);
 		}
 		if (!isForward)
 		{
-			for (size_t i = 0; i < nSample; i++)
+			for (size_t i = 0; i < fftSize; i++)
 			{
-				complexBuffer.at(i) /= nSample;
+				complexBuffer.at(i) /= fftSize;
 			}
 		}
 	}

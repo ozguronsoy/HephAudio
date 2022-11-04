@@ -23,13 +23,13 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Fatima.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	//AudioProcessor::BandCutFilter(pao->buffer, 512, 1024, 400, 2600, 0.0);
-	//PrintDeltaTime("Filter");
+	AudioProcessor::LowPassFilter(pao->buffer, 8192, 8192*2, 650.0, 0.0);
+	PrintDeltaTime("Filter");
 
 	pao->paused = false;
 
@@ -51,9 +51,9 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
-	PrintDeltaTime("");
-	AudioProcessor::BandCutFilterRT(sender->buffer, renderBuffer, frameIndex, 400.0, 2600, 0.0);
-	PrintDeltaTime("Filter");
+	//PrintDeltaTime("");
+	//AudioProcessor::LowPassFilterRT(sender->buffer, renderBuffer, frameIndex, 650.0, 0.0);
+	//PrintDeltaTime("Filter");
 }
 double PrintDeltaTime(const char* label)
 {

@@ -19,7 +19,7 @@ namespace HephAudio
 		static double FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency);
 		static size_t CalculateFFTSize(size_t bufferSize);
 	private:
-		static void ReverseBits(ComplexBuffer& complexBuffer, const size_t& p);
-		static void FFT(ComplexBuffer& complexBuffer, const size_t& p, const bool isForward);
+		static void ReverseBits(ComplexBuffer& complexBuffer, const size_t& fftSize);
+		static void FFT(ComplexBuffer& complexBuffer, size_t fftSize, const bool isForward);
 	};
 }
