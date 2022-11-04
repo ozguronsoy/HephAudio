@@ -28,8 +28,8 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	AudioProcessor::LowPassFilter(pao->buffer, 8192, 8192*2, 650.0, 0.0);
-	PrintDeltaTime("Filter");
+	/*AudioProcessor::BandPassFilter(pao->buffer, 512, 1024, 450.0, 650.0, 0.0);
+	PrintDeltaTime("Filter");*/
 
 	pao->paused = false;
 
@@ -51,9 +51,9 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
-	//PrintDeltaTime("");
-	//AudioProcessor::LowPassFilterRT(sender->buffer, renderBuffer, frameIndex, 650.0, 0.0);
-	//PrintDeltaTime("Filter");
+	PrintDeltaTime("");
+	AudioProcessor::BandPassFilterRT(sender->buffer, renderBuffer, frameIndex, 450.0, 650.0, 0.0);
+	PrintDeltaTime("Filter");
 }
 double PrintDeltaTime(const char* label)
 {
