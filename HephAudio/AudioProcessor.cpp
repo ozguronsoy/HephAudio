@@ -318,6 +318,100 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos)
+	{
+		EqualizerRT(originalBuffer, subBuffer, subBufferFrameIndex, defaultHopSize, defaultFFTSize, infos);
+	}
+	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos)
+	{
+		static std::vector<ProcessedBuffer*> processedBuffers;
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const auto applyEqualizer = [&hopSize, &fftSize, &infos](AudioBuffer& subBuffer) -> void
+		{
+			const size_t nyquistFrequency = fftSize * 0.5;
+			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
+			const size_t frameSize = subBuffer.formatInfo.FrameSize();
+			std::vector<AudioBuffer> channels = SplitChannels(subBuffer);
+			for (size_t i = 0; i < subBuffer.formatInfo.channelCount; i++)
+			{
+				AudioBuffer& channel = channels.at(i);
+				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channel, fftSize);
+				for (size_t j = 0; j < infos.size(); j++)
+				{
+					const EqualizerInfo& info = infos.at(j);
+					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
+					if (info.f1 > info.f2)
+					{
+						higherFrequencyIndex = ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f1));
+						lowerFrequencyIndex = floor(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f2));
+					}
+					else
+					{
+						higherFrequencyIndex = ceil(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f2));
+						lowerFrequencyIndex = floor(Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f1));
+					}
+					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
+					for (size_t k = lowerFrequencyIndex; k <= upperBound; k++)
+					{
+						complexBuffer.at(k) *= info.volumeFunction(Fourier::IndexToFrequency(subBuffer.formatInfo.sampleRate, fftSize, k));
+						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
+						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+					}
+				}
+				Fourier::FFT_Inverse(channel, complexBuffer);
+				HannWindow(channel);
+				for (size_t j = 0; j < fftSize; j++)
+				{
+					memcpy((uint8_t*)subBuffer.pAudioData + j * frameSize + i * sampleSize, (uint8_t*)channel.pAudioData + j * sampleSize, sampleSize);
+				}
+			}
+		};
+		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
+		size_t fStart = 0;
+		if (subBufferFrameIndex >= fftSize)
+		{
+			fStart = fTarget;
+			do
+			{
+				fStart -= hopSize;
+			} while (fStart + fftSize > fTarget);
+		}
+		size_t fEnd = fStart;
+		while (fEnd + hopSize < fTarget + fftSize)
+		{
+			fEnd += hopSize;
+		}
+		subBuffer.Reset();
+		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
+		size_t isb, itb;
+		for (size_t i = fStart; i < fEnd; i += hopSize)
+		{
+			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i);
+			if (processedBuffer == nullptr)
+			{
+				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i);
+				applyEqualizer(processedBuffer->audioBuffer);
+				processedBuffers.push_back(processedBuffer);
+			}
+			if (i > fTarget)
+			{
+				isb = (int64_t)i - fTarget;
+				itb = 0;
+			}
+			else
+			{
+				isb = 0;
+				itb = (int64_t)fTarget - i;
+			}
+			for (; isb < subBuffer.frameCount && itb < fftSize; isb++, itb++)
+			{
+				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+				{
+					subBuffer.Set(subBuffer.Get(isb, j) + processedBuffer->audioBuffer.Get(itb, j), isb, j);
+				}
+			}
+		}
+	}
 #pragma endregion
 #pragma region Filters
 	void AudioProcessor::LowPassFilter(AudioBuffer& buffer, double cutoffFreq, double transitionBandLength)

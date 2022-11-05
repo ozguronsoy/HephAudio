@@ -13,6 +13,10 @@ void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex
 double PrintDeltaTime(const char* label);
 
 Audio* audio;
+std::vector<EqualizerInfo> infos =
+{
+	EqualizerInfo(0.0, 1800.0,[](double frequency) { return 0.0; })
+};
 int main()
 {
 	audio = new Audio();
@@ -28,12 +32,8 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	std::vector<EqualizerInfo> infos =
-	{
-		EqualizerInfo(0.0, 1800.0,[](double frequency) { return 0.0; })
-	};
-	AudioProcessor::Equalizer(pao->buffer, 512, 1024, infos);
-	PrintDeltaTime("Equalizer");
+	//AudioProcessor::Equalizer(pao->buffer, 512, 1024, infos);
+	//PrintDeltaTime("Equalizer");
 
 	pao->paused = false;
 
@@ -55,9 +55,9 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
-	//PrintDeltaTime("");
-	//AudioProcessor::LowPassFilterRT(sender->buffer, renderBuffer, frameIndex, 650.0, 0.0);
-	//PrintDeltaTime("Filter");
+	PrintDeltaTime("");
+	AudioProcessor::EqualizerRT(sender->buffer, renderBuffer, frameIndex, 480, 1024, infos);
+	PrintDeltaTime("Equalizer");
 }
 double PrintDeltaTime(const char* label)
 {
