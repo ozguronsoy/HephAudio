@@ -99,6 +99,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h">
+      <Filter>Header Files\AudioStructs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -162,6 +165,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp">
+      <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
   </ItemGroup>

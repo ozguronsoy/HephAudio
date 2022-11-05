@@ -28,6 +28,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp" />

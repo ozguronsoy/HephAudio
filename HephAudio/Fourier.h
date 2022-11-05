@@ -17,6 +17,7 @@ namespace HephAudio
 		static double Phase(Complex sample, bool isDegree);
 		static double Decibels(Complex sample);
 		static double FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency);
+		static double IndexToFrequency(size_t sampleRate, size_t fftSize, size_t index);
 		static size_t CalculateFFTSize(size_t bufferSize);
 	private:
 		static void ReverseBits(ComplexBuffer& complexBuffer, const size_t& fftSize);

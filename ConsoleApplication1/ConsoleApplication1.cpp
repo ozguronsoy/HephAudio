@@ -28,8 +28,12 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	/*AudioProcessor::BandPassFilter(pao->buffer, 512, 1024, 450.0, 650.0, 0.0);
-	PrintDeltaTime("Filter");*/
+	std::vector<EqualizerInfo> infos =
+	{
+		EqualizerInfo(0.0, 1800.0,[](double frequency) { return 0.0; })
+	};
+	AudioProcessor::Equalizer(pao->buffer, 512, 1024, infos);
+	PrintDeltaTime("Equalizer");
 
 	pao->paused = false;
 
@@ -51,9 +55,9 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
-	PrintDeltaTime("");
-	AudioProcessor::BandPassFilterRT(sender->buffer, renderBuffer, frameIndex, 450.0, 650.0, 0.0);
-	PrintDeltaTime("Filter");
+	//PrintDeltaTime("");
+	//AudioProcessor::LowPassFilterRT(sender->buffer, renderBuffer, frameIndex, 650.0, 0.0);
+	//PrintDeltaTime("Filter");
 }
 double PrintDeltaTime(const char* label)
 {

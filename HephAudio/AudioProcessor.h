@@ -1,6 +1,7 @@
 #pragma once
 #include "AudioBuffer.h"
 #include "EchoInfo.h"
+#include "EqualizerInfo.h"
 
 namespace HephAudio
 {
@@ -9,13 +10,6 @@ namespace HephAudio
 	private:
 		static constexpr size_t defaultHopSize = 4096u;
 		static constexpr size_t defaultFFTSize = 8192u;
-	private:
-		struct FilteredBuffer
-		{
-			size_t fStart;
-			AudioBuffer audioBuffer;
-			const AudioBuffer* pOriginalBuffer;
-		};
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		// BPS = Bits Per Sample
@@ -36,8 +30,8 @@ namespace HephAudio
 		// Adds echo to the given subBuffer in real-time using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
-		static void Equalizer(AudioBuffer& buffer, double f1, double f2, double volume);
-		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double f1, double f2, double volume);
+		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
+		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 #pragma endregion
 #pragma region Filters
 	public:
@@ -57,8 +51,6 @@ namespace HephAudio
 		static void BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
 		static void BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, double transitionBandLength);
-		static FilteredBuffer* GetFilteredBuffer(std::vector<FilteredBuffer*>& filteredBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
-		static void RemoveOldFilteredBuffers(std::vector<FilteredBuffer*>& filteredBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
 #pragma endregion
 #pragma region Windows
 	public:
@@ -84,6 +76,20 @@ namespace HephAudio
 	public:
 		static double FindMaxVolume(const AudioBuffer& buffer);
 		static void MaximizeVolume(AudioBuffer& buffer);
+#pragma endregion
+#pragma region Processed Buffer
+	private:
+		struct ProcessedBuffer
+		{
+			size_t fStart;
+			AudioBuffer audioBuffer;
+			const AudioBuffer* pOriginalBuffer;
+			ProcessedBuffer();
+			ProcessedBuffer(const AudioBuffer* pOriginalBuffer, const AudioBuffer& audioBuffer, size_t fStart);
+		};
+	public:
+		static ProcessedBuffer* GetProcessedBuffer(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
+		static void RemoveOldProcessedBuffers(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
 #pragma endregion
 	};
 }
