@@ -26,6 +26,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Category.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />

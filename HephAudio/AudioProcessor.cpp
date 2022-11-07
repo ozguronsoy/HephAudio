@@ -304,9 +304,9 @@ namespace HephAudio
 					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
 					for (size_t l = lowerFrequencyIndex; l <= upperBound; l++)
 					{
-						complexBuffer.at(l) *= info.volumeFunction(Fourier::IndexToFrequency(buffer.formatInfo.sampleRate, fftSize, l));
-						complexBuffer.at(fftSize - l - 1).real = complexBuffer.at(l).real;
-						complexBuffer.at(fftSize - l - 1).imaginary = -complexBuffer.at(l).imaginary;
+						complexBuffer[l] *= info.volumeFunction(Fourier::IndexToFrequency(buffer.formatInfo.sampleRate, fftSize, l));
+						complexBuffer[fftSize - l - 1].real = complexBuffer[l].real;
+						complexBuffer[fftSize - l - 1].imaginary = -complexBuffer[l].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(subBuffer, complexBuffer);
@@ -320,7 +320,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos)
 	{
-		EqualizerRT(originalBuffer, subBuffer, subBufferFrameIndex, defaultHopSize, defaultFFTSize, infos);
+		EqualizerRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, infos);
 	}
 	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos)
 	{
@@ -353,9 +353,9 @@ namespace HephAudio
 					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
 					for (size_t k = lowerFrequencyIndex; k <= upperBound; k++)
 					{
-						complexBuffer.at(k) *= info.volumeFunction(Fourier::IndexToFrequency(subBuffer.formatInfo.sampleRate, fftSize, k));
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= info.volumeFunction(Fourier::IndexToFrequency(subBuffer.formatInfo.sampleRate, fftSize, k));
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(channel, complexBuffer);
@@ -437,14 +437,14 @@ namespace HephAudio
 				{
 					if (k >= stopBand)
 					{
-						complexBuffer.at(k) = Complex();
-						complexBuffer.at(fftSize - k - 1) = Complex();
+						complexBuffer[k] = Complex();
+						complexBuffer[fftSize - k - 1] = Complex();
 					}
 					else if (k > passBand && k < stopBand) // Transition band.
 					{
-						complexBuffer.at(k) *= (double)(stopBand - k) / (double)transitionLength;
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= (double)(stopBand - k) / (double)transitionLength;
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(subBuffer, complexBuffer);
@@ -481,14 +481,14 @@ namespace HephAudio
 				{
 					if (j >= stopBand)
 					{
-						complexBuffer.at(j) = Complex();
-						complexBuffer.at(fftSize - j - 1) = Complex();
+						complexBuffer[j] = Complex();
+						complexBuffer[fftSize - j - 1] = Complex();
 					}
 					else if (j > passBand && j < stopBand) // Transition band.
 					{
-						complexBuffer.at(j) *= (double)(stopBand - j) / (double)transitionLength;
-						complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-						complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+						complexBuffer[j] *= (double)(stopBand - j) / (double)transitionLength;
+						complexBuffer[fftSize - j - 1].real = complexBuffer[j].real;
+						complexBuffer[fftSize - j - 1].imaginary = -complexBuffer[j].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(channel, complexBuffer);
@@ -569,14 +569,14 @@ namespace HephAudio
 				{
 					if (k <= stopBand)
 					{
-						complexBuffer.at(k) = Complex();
-						complexBuffer.at(fftSize - k - 1) = Complex();
+						complexBuffer[k] = Complex();
+						complexBuffer[fftSize - k - 1] = Complex();
 					}
 					else if (k > stopBand && k < passBand) // Transition band.
 					{
-						complexBuffer.at(k) *= (double)(k - stopBand) / (double)transitionLength;
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= (double)(k - stopBand) / (double)transitionLength;
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(subBuffer, complexBuffer);
@@ -614,14 +614,14 @@ namespace HephAudio
 				{
 					if (j <= stopBand)
 					{
-						complexBuffer.at(j) = Complex();
-						complexBuffer.at(fftSize - j - 1) = Complex();
+						complexBuffer[j] = Complex();
+						complexBuffer[fftSize - j - 1] = Complex();
 					}
 					else if (j > stopBand && j < passBand) // Transition band.
 					{
-						complexBuffer.at(j) *= (double)(j - stopBand) / (double)transitionLength;
-						complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-						complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+						complexBuffer[j] *= (double)(j - stopBand) / (double)transitionLength;
+						complexBuffer[fftSize - j - 1].real = complexBuffer[j].real;
+						complexBuffer[fftSize - j - 1].imaginary = -complexBuffer[j].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(channel, complexBuffer);
@@ -705,28 +705,28 @@ namespace HephAudio
 				{
 					if (k > lowStopBand)
 					{
-						complexBuffer.at(k) *= (double)(k - lowStopBand) / (double)transitionLength;
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= (double)(k - lowStopBand) / (double)transitionLength;
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 					else
 					{
-						complexBuffer.at(k) = Complex();
-						complexBuffer.at(fftSize - k - 1) = Complex();
+						complexBuffer[k] = Complex();
+						complexBuffer[fftSize - k - 1] = Complex();
 					}
 				}
 				for (size_t k = highPassBand; k < nyquistFrequency; k++)
 				{
 					if (k < highStopBand)
 					{
-						complexBuffer.at(k) *= (double)(highStopBand - k) / (double)transitionLength;
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= (double)(highStopBand - k) / (double)transitionLength;
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 					else
 					{
-						complexBuffer.at(k) = Complex();
-						complexBuffer.at(fftSize - k - 1) = Complex();
+						complexBuffer[k] = Complex();
+						complexBuffer[fftSize - k - 1] = Complex();
 					}
 				}
 				Fourier::FFT_Inverse(subBuffer, complexBuffer);
@@ -766,28 +766,28 @@ namespace HephAudio
 				{
 					if (j > lowStopBand)
 					{
-						complexBuffer.at(j) *= (double)(j - lowStopBand) / (double)transitionLength;
-						complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-						complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+						complexBuffer[j] *= (double)(j - lowStopBand) / (double)transitionLength;
+						complexBuffer[fftSize - j - 1].real = complexBuffer[j].real;
+						complexBuffer[fftSize - j - 1].imaginary = -complexBuffer[j].imaginary;
 					}
 					else
 					{
-						complexBuffer.at(j) = Complex();
-						complexBuffer.at(fftSize - j - 1) = Complex();
+						complexBuffer[j] = Complex();
+						complexBuffer[fftSize - j - 1] = Complex();
 					}
 				}
 				for (size_t j = highPassBand; j < nyquistFrequency; j++)
 				{
 					if (j < highStopBand)
 					{
-						complexBuffer.at(j) *= (double)(highStopBand - j) / (double)transitionLength;
-						complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-						complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+						complexBuffer[j] *= (double)(highStopBand - j) / (double)transitionLength;
+						complexBuffer[fftSize - j - 1].real = complexBuffer[j].real;
+						complexBuffer[fftSize - j - 1].imaginary = -complexBuffer[j].imaginary;
 					}
 					else
 					{
-						complexBuffer.at(j) = Complex();
-						complexBuffer.at(fftSize - j - 1) = Complex();
+						complexBuffer[j] = Complex();
+						complexBuffer[fftSize - j - 1] = Complex();
 					}
 				}
 				Fourier::FFT_Inverse(channel, complexBuffer);
@@ -871,20 +871,20 @@ namespace HephAudio
 				{
 					if (k >= lowPassBand && k <= highPassBand)
 					{
-						complexBuffer.at(k) = Complex();
-						complexBuffer.at(fftSize - k - 1) = Complex();
+						complexBuffer[k] = Complex();
+						complexBuffer[fftSize - k - 1] = Complex();
 					}
 					else if (k > lowStopBand && k < lowPassBand)
 					{
-						complexBuffer.at(k) *= (double)(transitionLength - (k - lowStopBand)) / (double)transitionLength;
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= (double)(transitionLength - (k - lowStopBand)) / (double)transitionLength;
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 					else if (k > highPassBand && k < highStopBand)
 					{
-						complexBuffer.at(k) *= (double)(transitionLength - (highStopBand - k)) / (double)transitionLength;
-						complexBuffer.at(fftSize - k - 1).real = complexBuffer.at(k).real;
-						complexBuffer.at(fftSize - k - 1).imaginary = -complexBuffer.at(k).imaginary;
+						complexBuffer[k] *= (double)(transitionLength - (highStopBand - k)) / (double)transitionLength;
+						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
+						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(subBuffer, complexBuffer);
@@ -924,20 +924,20 @@ namespace HephAudio
 				{
 					if (j >= lowPassBand && j <= highPassBand)
 					{
-						complexBuffer.at(j) = Complex();
-						complexBuffer.at(fftSize - j - 1) = Complex();
+						complexBuffer[j] = Complex();
+						complexBuffer[fftSize - j - 1] = Complex();
 					}
 					else if (j > lowStopBand && j < lowPassBand)
 					{
-						complexBuffer.at(j) *= (double)(transitionLength - (j - lowStopBand)) / (double)transitionLength;
-						complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-						complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+						complexBuffer[j] *= (double)(transitionLength - (j - lowStopBand)) / (double)transitionLength;
+						complexBuffer[fftSize - j - 1].real = complexBuffer[j].real;
+						complexBuffer[fftSize - j - 1].imaginary = -complexBuffer[j].imaginary;
 					}
 					else if (j > highPassBand && j < highStopBand)
 					{
-						complexBuffer.at(j) *= (double)(transitionLength - (highStopBand - j)) / (double)transitionLength;
-						complexBuffer.at(fftSize - j - 1).real = complexBuffer.at(j).real;
-						complexBuffer.at(fftSize - j - 1).imaginary = -complexBuffer.at(j).imaginary;
+						complexBuffer[j] *= (double)(transitionLength - (highStopBand - j)) / (double)transitionLength;
+						complexBuffer[fftSize - j - 1].real = complexBuffer[j].real;
+						complexBuffer[fftSize - j - 1].imaginary = -complexBuffer[j].imaginary;
 					}
 				}
 				Fourier::FFT_Inverse(channel, complexBuffer);

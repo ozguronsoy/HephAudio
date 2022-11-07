@@ -1,6 +1,5 @@
 #pragma once
 #include "framework.h"
-#include <vector>
 
 namespace HephAudio
 {
@@ -33,5 +32,4 @@ namespace HephAudio
 		bool operator==(const double& rhs) const;
 		bool operator!=(const double& rhs) const;
 	};
-	typedef std::vector<Complex> ComplexBuffer;
 }

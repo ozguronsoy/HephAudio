@@ -1,4 +1,5 @@
 #include "EqualizerInfo.h"
+
 namespace HephAudio
 {
 	EqualizerInfo::EqualizerInfo() : EqualizerInfo(0.0, 0.0, [](double frequency) { return 1.0; }) {}

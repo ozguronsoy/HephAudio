@@ -1,6 +1,7 @@
 #pragma once
 #include "framework.h"
 #include "Complex.h"
+#include "ComplexBuffer.h"
 #include "AudioBuffer.h"
 
 namespace HephAudio

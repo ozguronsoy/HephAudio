@@ -74,7 +74,7 @@ namespace HephAudio
 			this->pAudioData = malloc(rhs.Size());
 			if (this->pAudioData == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::opeartor=", L"Insufficient memory.");
 			}
 			memcpy(this->pAudioData, rhs.pAudioData, rhs.Size());
 		}
@@ -270,7 +270,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newFrameCount * formatInfo.FrameSize());
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
 			}
 			const size_t oldSize = this->Size();
 			if (oldSize > 0)
@@ -293,7 +293,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Insert", L"Insufficient memory.");
 			}
 			memset(tempPtr, 0, newSize);
 			size_t cursor = 0;
@@ -326,7 +326,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Cut", L"Insufficient memory.");
 			}
 			const size_t frameIndexAsBytes = frameIndex * formatInfo.FrameSize();
 			if (frameIndexAsBytes > 0)
@@ -355,7 +355,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Replace", L"Insufficient memory.");
 			}
 			size_t cursor = 0;
 			if (frameIndex > 0)
@@ -394,7 +394,7 @@ namespace HephAudio
 			void* tempPtr = realloc(pAudioData, newFrameCount * formatInfo.FrameSize());
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Resize", L"Insufficient memory.");
 			}
 			pAudioData = tempPtr;
 			frameCount = newFrameCount;

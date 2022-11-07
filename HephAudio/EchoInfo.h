@@ -29,6 +29,7 @@ namespace HephAudio
 		/// </summary>
 		double echoEndPosition;
 		EchoInfo();
+		virtual ~EchoInfo() = default;
 		/// <summary>
 		/// Calculates the given buffers frame count after the echo is applied.
 		/// </summary>

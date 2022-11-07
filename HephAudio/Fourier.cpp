@@ -8,7 +8,7 @@ namespace HephAudio
 		const size_t bufferSize = audioBuffer.FrameCount();
 		for (size_t i = 0; i < bufferSize; i++)
 		{
-			audioBuffer.Set(complexBuffer.at(i).real, i, 0);
+			audioBuffer.Set(complexBuffer[i].real, i, 0);
 		}
 	}
 	ComplexBuffer Fourier::FFT_Forward(const AudioBuffer& audioBuffer)
@@ -18,17 +18,17 @@ namespace HephAudio
 	ComplexBuffer Fourier::FFT_Forward(const AudioBuffer& audioBuffer, size_t fftSize)
 	{
 		fftSize = CalculateFFTSize(fftSize);
-		ComplexBuffer complexBuffer = ComplexBuffer(fftSize, Complex(0.0, 0.0));
+		ComplexBuffer complexBuffer = ComplexBuffer(fftSize);
 		for (size_t i = 0; i < audioBuffer.FrameCount(); i++)
 		{
-			complexBuffer.at(i).real = audioBuffer.Get(i, 0);
+			complexBuffer[i].real = audioBuffer.Get(i, 0);
 		}
 		FFT(complexBuffer, fftSize, true);
 		return complexBuffer;
 	}
 	void Fourier::FFT_Inverse(AudioBuffer& audioBuffer, ComplexBuffer& complexBuffer)
 	{
-		FFT(complexBuffer, CalculateFFTSize(complexBuffer.size()), false);
+		FFT(complexBuffer, CalculateFFTSize(complexBuffer.FrameCount()), false);
 		ComplexBufferToAudioBuffer(audioBuffer, complexBuffer);
 	}
 	double Fourier::Magnitude(Complex sample)
@@ -78,9 +78,9 @@ namespace HephAudio
 		{
 			if (i < j)
 			{
-				const Complex temp = complexBuffer.at(j);
-				complexBuffer.at(j) = complexBuffer.at(i);
-				complexBuffer.at(i) = temp;
+				const Complex temp = complexBuffer[j];
+				complexBuffer[j] = complexBuffer[i];
+				complexBuffer[i] = temp;
 			}
 			j ^= fftSize - fftSize / ((i ^ (i + 1)) + 1);
 		}
@@ -99,9 +99,9 @@ namespace HephAudio
 			{
 				for (size_t k = j; k < fftSize; k += s2)
 				{
-					const Complex temp = b * complexBuffer.at(k + s);
-					complexBuffer.at(k + s) = complexBuffer.at(k) - temp;
-					complexBuffer.at(k) += temp;
+					const Complex temp = b * complexBuffer[k + s];
+					complexBuffer[k + s] = complexBuffer[k] - temp;
+					complexBuffer[k] += temp;
 				}
 				b *= a;
 			}
@@ -112,7 +112,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < fftSize; i++)
 			{
-				complexBuffer.at(i) /= fftSize;
+				complexBuffer[i] /= fftSize;
 			}
 		}
 	}

@@ -102,6 +102,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -169,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp">
       <Filter>Source Files\AudioStructs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
