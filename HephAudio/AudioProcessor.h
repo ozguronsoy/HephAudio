@@ -30,6 +30,9 @@ namespace HephAudio
 		// Adds echo to the given subBuffer in real-time using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
 		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
+		static void LinearPanning(AudioBuffer& buffer, double panningFactor);
+		static void SquareLawPanning(AudioBuffer& buffer, double panningFactor);
+		static void SineLawPanning(AudioBuffer& buffer, double panningFactor);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);

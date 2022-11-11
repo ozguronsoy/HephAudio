@@ -80,6 +80,48 @@ namespace HephAudio
 		this->Join(rhs);
 		return *this;
 	}
+	ComplexBuffer ComplexBuffer::operator*(const Complex& rhs) const
+	{
+		ComplexBuffer resultBuffer(*this);
+		for (size_t i = 0; i < resultBuffer.frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] * rhs;
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer& ComplexBuffer::operator*=(const Complex& rhs)
+	{
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			(*this)[i] *= rhs;
+		}
+		return *this;
+	}
+	ComplexBuffer ComplexBuffer::operator/(const Complex& rhs) const
+	{
+		if (rhs == 0)
+		{
+			throw AudioException(E_FAIL, L"ComplexBuffer::operator/", L"Divided by zero.");
+		}
+		ComplexBuffer resultBuffer(*this);
+		for (size_t i = 0; i < resultBuffer.frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] / rhs;
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer& ComplexBuffer::operator/=(const Complex& rhs)
+	{
+		if (rhs == 0)
+		{
+			throw AudioException(E_FAIL, L"ComplexBuffer::operator/=", L"Divided by zero.");
+		}
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			(*this)[i] /= rhs;
+		}
+		return *this;
+	}
 	ComplexBuffer ComplexBuffer::operator*(const double& rhs) const
 	{
 		ComplexBuffer resultBuffer(*this);

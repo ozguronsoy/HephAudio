@@ -58,7 +58,7 @@ namespace HephAudio
 	}
 	double Fourier::IndexToFrequency(size_t sampleRate, size_t fftSize, size_t index)
 	{
-		return round((double)index * sampleRate / fftSize);
+		return (double)index * sampleRate / fftSize;
 	}
 	size_t Fourier::CalculateFFTSize(size_t bufferSize)
 	{

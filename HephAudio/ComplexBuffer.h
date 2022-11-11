@@ -19,6 +19,10 @@ namespace HephAudio
 		ComplexBuffer& operator=(const ComplexBuffer& rhs);
 		ComplexBuffer operator+(const ComplexBuffer& rhs) const;
 		ComplexBuffer& operator+=(const ComplexBuffer& rhs);
+		ComplexBuffer operator*(const Complex& rhs) const;
+		ComplexBuffer& operator*=(const Complex& rhs);
+		ComplexBuffer operator/(const Complex& rhs) const;
+		ComplexBuffer& operator/=(const Complex& rhs);
 		ComplexBuffer operator*(const double& rhs) const;
 		ComplexBuffer& operator*=(const double& rhs);
 		ComplexBuffer operator/(const double& rhs) const;

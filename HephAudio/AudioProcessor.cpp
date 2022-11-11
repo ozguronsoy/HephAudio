@@ -271,6 +271,48 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::LinearPanning(AudioBuffer& buffer, double panningFactor)
+	{
+		if (buffer.formatInfo.channelCount == 2)
+		{
+			const double rightVolume = panningFactor * 0.005 + 0.5;
+			const double leftVolume = 1.0 - rightVolume;
+			for (size_t i = 0; i < buffer.frameCount; i++)
+			{
+				buffer.Set(buffer.Get(i, 0) * leftVolume, i, 0);
+				buffer.Set(buffer.Get(i, 1) * rightVolume, i, 1);
+			}
+		}
+	}
+	void AudioProcessor::SquareLawPanning(AudioBuffer& buffer, double panningFactor)
+	{
+		if (buffer.formatInfo.channelCount == 2)
+		{
+			const double volume = panningFactor * 0.005 + 0.5;
+			const double rightVolume = sqrt(volume);
+			const double leftVolume = sqrt(1.0 - volume);
+			for (size_t i = 0; i < buffer.frameCount; i++)
+			{
+				buffer.Set(buffer.Get(i, 0) * leftVolume, i, 0);
+				buffer.Set(buffer.Get(i, 1) * rightVolume, i, 1);
+			}
+		}
+	}
+	void AudioProcessor::SineLawPanning(AudioBuffer& buffer, double panningFactor)
+	{
+		if (buffer.formatInfo.channelCount == 2)
+		{
+			constexpr double pi2 = PI * 0.5;
+			const double volume = panningFactor * 0.005 + 0.5;
+			const double rightVolume = sin(volume * pi2);
+			const double leftVolume = sin((1.0 - volume) * pi2);
+			for (size_t i = 0; i < buffer.frameCount; i++)
+			{
+				buffer.Set(buffer.Get(i, 0) * leftVolume, i, 0);
+				buffer.Set(buffer.Get(i, 1) * rightVolume, i, 1);
+			}
+		}
+	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
 	{
 		Equalizer(buffer, defaultHopSize, defaultFFTSize, infos);
