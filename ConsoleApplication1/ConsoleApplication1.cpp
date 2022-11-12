@@ -28,8 +28,8 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	/*AudioProcessor::LowPassFilter(pao->buffer, 512, 1024, 650.0, 0.0);
-	PrintDeltaTime("Filter");*/
+	//AudioProcessor::Tremolo(pao->buffer, 8.0, 1.0, 0.0, TREMOLO_SINE_WAVE);
+	//PrintDeltaTime("Tremolo");
 
 	pao->paused = false;
 
@@ -52,8 +52,8 @@ void SetToDefaultDevice(AudioDevice device)
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
 	PrintDeltaTime("");
-	AudioProcessor::LowPassFilterRT(sender->buffer, renderBuffer, frameIndex, 650.0, 0.0);
-	PrintDeltaTime("Filter");
+	AudioProcessor::TremoloRT(renderBuffer, frameIndex, 8.0, 1.0, 0.0, TREMOLO_SINE_WAVE);
+	PrintDeltaTime("Tremolo");
 }
 double PrintDeltaTime(const char* label)
 {

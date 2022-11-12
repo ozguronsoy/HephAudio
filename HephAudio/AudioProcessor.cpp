@@ -2,6 +2,19 @@
 #include "AudioException.h"
 #include "Fourier.h"
 
+constexpr double sgn(double x)
+{
+	if (x > 0)
+	{
+		return 1.0;
+	}
+	if (x < 0)
+	{
+		return -1.0;
+	}
+	return 0.0;
+}
+
 namespace HephAudio
 {
 #pragma region Converts, Mix, Split/Merge Channels
@@ -275,7 +288,7 @@ namespace HephAudio
 	{
 		if (buffer.formatInfo.channelCount == 2)
 		{
-			const double rightVolume = panningFactor * 0.005 + 0.5;
+			const double rightVolume = panningFactor * 0.5 + 0.5;
 			const double leftVolume = 1.0 - rightVolume;
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
@@ -288,7 +301,7 @@ namespace HephAudio
 	{
 		if (buffer.formatInfo.channelCount == 2)
 		{
-			const double volume = panningFactor * 0.005 + 0.5;
+			const double volume = panningFactor * 0.5 + 0.5;
 			const double rightVolume = sqrt(volume);
 			const double leftVolume = sqrt(1.0 - volume);
 			for (size_t i = 0; i < buffer.frameCount; i++)
@@ -303,13 +316,74 @@ namespace HephAudio
 		if (buffer.formatInfo.channelCount == 2)
 		{
 			constexpr double pi2 = PI * 0.5;
-			const double volume = panningFactor * 0.005 + 0.5;
+			const double volume = panningFactor * 0.5 + 0.5;
 			const double rightVolume = sin(volume * pi2);
 			const double leftVolume = sin((1.0 - volume) * pi2);
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
 				buffer.Set(buffer.Get(i, 0) * leftVolume, i, 0);
 				buffer.Set(buffer.Get(i, 1) * rightVolume, i, 1);
+			}
+		}
+	}
+	void AudioProcessor::Tremolo(AudioBuffer& buffer, double frequency, double depth, double phase, uint8_t waveType)
+	{
+		TremoloRT(buffer, 0u, frequency, depth, phase, waveType);
+	}
+	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase, uint8_t waveType)
+	{
+		constexpr double pi2 = PI * 2.0;
+		const double w = pi2 * frequency;
+		const double dt = 1.0 / subBuffer.formatInfo.sampleRate;
+		const double wetFactor = depth * 0.5;
+		const double dryFactor = 1.0 - wetFactor;
+		double t = subBufferFrameIndex * dt;
+		double (*waveFunction)(const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) = nullptr;
+		switch (waveType)
+		{
+		case TREMOLO_SINE_WAVE:
+		{
+			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
+			{
+				return wetFactor * sin(w * t + phase) + dryFactor;
+			};
+		}
+		break;
+		case TREMOLO_SQUARE_WAVE:
+		{
+			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
+			{
+				return wetFactor * sgn(sin(w * t + phase)) + dryFactor;
+			};
+		}
+		break;
+		case TREMOLO_TRIANGLE_WAVE:
+		{
+			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
+			{
+				constexpr double topi = 2.0 / PI;
+				return wetFactor * (topi * asin(sin(w * t + phase))) + dryFactor;
+			};
+		}
+		break;
+		case TREMOLO_SAWTOOTH_WAVE:
+		{
+			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
+			{
+				const double x = t * frequency + phase;
+				return wetFactor * (2.0 * (x - floor(x + 0.5))) + dryFactor;
+			};
+		}
+		break;
+		default:
+			throw AudioException(E_FAIL, L"AudioProcessor::Tremolo", L"Incorrect wave type.");
+		}
+		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
+		{
+			const double volume = waveFunction(frequency, phase, w, t, wetFactor, dryFactor);
+			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+			{
+				subBuffer.Set(subBuffer.Get(i, j) * volume, i, j);
 			}
 		}
 	}
