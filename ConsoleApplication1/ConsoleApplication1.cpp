@@ -28,9 +28,6 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	//AudioProcessor::Tremolo(pao->buffer, 8.0, 1.0, 0.0, TREMOLO_SINE_WAVE);
-	//PrintDeltaTime("Tremolo");
-
 	pao->paused = false;
 
 	std::string a;
@@ -51,9 +48,6 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
 {
-	PrintDeltaTime("");
-	AudioProcessor::TremoloRT(renderBuffer, frameIndex, 8.0, 1.0, 0.0, TREMOLO_SINE_WAVE);
-	PrintDeltaTime("Tremolo");
 }
 double PrintDeltaTime(const char* label)
 {
@@ -62,7 +56,7 @@ double PrintDeltaTime(const char* label)
 	static std::chrono::steady_clock::time_point t2 = t1;
 	static double dt = 0.0;
 	t2 = clock.now();
-	dt = (t2 - t1).count() * 0.000001;
+	dt = (t2 - t1).count() * 1.0e-6;
 	std::cout << label << ": " << dt << "ms\n";
 	t1 = t2 = clock.now();
 	return dt;
