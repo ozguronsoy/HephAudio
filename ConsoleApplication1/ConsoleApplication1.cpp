@@ -11,8 +11,10 @@ void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
 double PrintDeltaTime(const char* label);
+void TS(AudioBuffer& buffer, double speed);
 
 Audio* audio;
+std::vector<EqualizerInfo> infos = { EqualizerInfo(0.0, 650.0, [](double frequency) -> double { return 0.0; }) };
 int main()
 {
 	audio = new Audio();

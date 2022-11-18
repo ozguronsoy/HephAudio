@@ -28,6 +28,18 @@ namespace HephAudio
 			audioBuffer.Set(complexBuffer[i].real, i, 0);
 		}
 	}
+	void Fourier::FFT_Inverse(ComplexBuffer& complexBuffer, bool scale)
+	{
+		const size_t fftSize = CalculateFFTSize(complexBuffer.FrameCount());
+		FFT(complexBuffer, fftSize, false);
+		if (scale)
+		{
+			for (size_t i = 0; i < complexBuffer.FrameCount(); i++)
+			{
+				complexBuffer[i] /= fftSize;
+			}
+		}
+	}
 	double Fourier::Magnitude(Complex sample)
 	{
 		return sqrt(MagnitudeSquared(sample));

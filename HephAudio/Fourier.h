@@ -12,6 +12,7 @@ namespace HephAudio
 		static ComplexBuffer FFT_Forward(const AudioBuffer& audioBuffer);
 		static ComplexBuffer FFT_Forward(const AudioBuffer& audioBuffer, size_t fftSize);
 		static void FFT_Inverse(AudioBuffer& audioBuffer, ComplexBuffer& complexBuffer);
+		static void FFT_Inverse(ComplexBuffer& complexBuffer, bool scale);
 		static double Magnitude(Complex sample);
 		static double MagnitudeSquared(Complex sample);
 		static double Phase(Complex sample, bool isDegree);
