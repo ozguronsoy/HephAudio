@@ -46,6 +46,7 @@ namespace HephAudio
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
+		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double speed);
 #pragma endregion
 #pragma region Filters
 	public:

@@ -11,10 +11,8 @@ void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
 double PrintDeltaTime(const char* label);
-void TS(AudioBuffer& buffer, double speed);
 
 Audio* audio;
-std::vector<EqualizerInfo> infos = { EqualizerInfo(0.0, 650.0, [](double frequency) -> double { return 0.0; }) };
 int main()
 {
 	audio = new Audio();
@@ -29,6 +27,11 @@ int main()
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
+
+	AudioProcessor::ChangeSpeed(pao->buffer, 1024 , 4096, 0.5);
+	PrintDeltaTime("Change Speed");
+
+	//audio->SetAOPosition(pao, (double)pao->buffer.CalculateFrameIndex(32.0) / pao->buffer.FrameCount());
 
 	pao->paused = false;
 

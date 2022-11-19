@@ -35,6 +35,8 @@ namespace HephAudio
 		if (pAudioData != nullptr)
 		{
 			free(pAudioData);
+			frameCount = 0;
+			formatInfo = AudioFormatInfo();
 			pAudioData = nullptr;
 		}
 	}

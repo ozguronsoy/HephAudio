@@ -2,7 +2,7 @@
 
 namespace HephAudio
 {
-	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(1, 2, 16, 48000) {}
+	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(0, 0, 0, 0) {}
 	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bps, uint32_t sampleRate)
 	{
 		this->formatTag = formatTag;

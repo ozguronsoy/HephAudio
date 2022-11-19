@@ -1,7 +1,7 @@
 #include "AudioProcessor.h"
 #include "AudioException.h"
 #include "Fourier.h"
-#include <iostream>
+#include <functional>
 
 #pragma region Helper Methods
 constexpr int sgn(double x)
@@ -536,6 +536,49 @@ namespace HephAudio
 				{
 					const double s = sin(itb * piOverN);
 					subBuffer.Set(subBuffer.Get(isb, j) + processedBuffer->audioBuffer.Get(itb, j) * s * s, isb, j);
+				}
+			}
+		}
+	}
+	void AudioProcessor::ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double speed)
+	{
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const size_t targetSize = Fourier::CalculateFFTSize(fftSize / speed);
+		const size_t targetNyquistFrequency = targetSize * 0.5;
+		const size_t tsm1 = targetSize - 1;
+		std::function<double(const size_t& i)> window;
+		if (speed >= 2.0)
+		{
+			window = [&tsm1](const size_t& i) -> double { const double s = (i - 0.5 * tsm1) / (0.5 * tsm1); return (1.0 - s * s) * 0.25; };
+		}
+		else
+		{
+			window = [&tsm1](const size_t& i) -> double { return 0.42 - 0.5 * cos(2.0 * PI * i / tsm1) + 0.08 * cos(4.0 * PI * i / tsm1); };
+		}
+		const double cursorRatio = 1.0 / tsm1 * (fftSize - 1);
+		const size_t oldFrameCount = buffer.frameCount;
+		std::vector<AudioBuffer> channels = SplitChannels(buffer);
+		buffer.Reset();
+		buffer.Resize(buffer.frameCount / speed);
+		for (size_t i = 0; i < oldFrameCount; i += hopSize)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels.at(j).GetSubBuffer(i, fftSize), fftSize);
+				ComplexBuffer targetComplexBuffer = ComplexBuffer(targetSize);
+				double cursor = 0.0;
+				for (size_t k = 0; k < targetNyquistFrequency; k++, cursor += cursorRatio)
+				{
+					const double fc = floor(cursor);
+					const double factor = cursor - fc;
+					targetComplexBuffer[k] = complexBuffer[fc] * (1.0 - factor) + complexBuffer[fc + 1.0] * factor;
+					targetComplexBuffer[targetSize - k - 1] = Complex(targetComplexBuffer[k].real, -targetComplexBuffer[k].imaginary);
+				}
+				complexBuffer.~ComplexBuffer();
+				Fourier::FFT_Inverse(targetComplexBuffer, false);
+				for (size_t k = 0, l = i / speed; k < targetSize && l < buffer.frameCount; k++, l++)
+				{
+					buffer.Set(buffer.Get(l, j) + targetComplexBuffer[k].real * window(k) / targetSize, l, j);
 				}
 			}
 		}
