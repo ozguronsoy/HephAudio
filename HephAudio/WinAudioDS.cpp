@@ -1,5 +1,6 @@
 #ifdef _WIN32
 #include "WinAudioDS.h"
+#include "AudioProcessor.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -331,10 +332,10 @@ namespace HephAudio
 				{
 					Mix(dataBuffer, dataBuffer.FrameCount());
 					WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), this, L"WinAudioDS", L"An error occurred whilst rendering the samples.");
-					memcpy(audioPtr1, dataBuffer.GetAudioDataAddress(), audioBytes1);
+					memcpy(audioPtr1, dataBuffer.Begin(), audioBytes1);
 					if (audioPtr2 != nullptr)
 					{
-						memcpy(audioPtr2, (uint8_t*)dataBuffer.GetAudioDataAddress() + audioBytes1, audioBytes2);
+						memcpy(audioPtr2, (uint8_t*)dataBuffer.Begin() + audioBytes1, audioBytes2);
 					}
 					WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), this, L"WinAudioDS", L"An error occurred whilst rendering the samples.");
 					dataBuffer.Reset();
@@ -381,15 +382,17 @@ namespace HephAudio
 				{
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->GetCurrentPosition(&captureCursor, &readCursor), this, L"WinAudioDS", L"An error occurred whilst capturing the samples.");
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Lock(readCursor, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, 0), this, L"WinAudioDS", L"An error occurred whilst capturing the samples.");
-					memcpy(dataBuffer.GetAudioDataAddress(), audioPtr1, audioBytes1);
+					memcpy(dataBuffer.Begin(), audioPtr1, audioBytes1);
 					if (audioPtr2 != nullptr)
 					{
-						memcpy((uint8_t*)dataBuffer.GetAudioDataAddress() + audioBytes1, audioPtr2, audioBytes2);
+						memcpy((uint8_t*)dataBuffer.Begin() + audioBytes1, audioPtr2, audioBytes2);
 					}
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), this, L"WinAudioDS", L"An error occurred whilst capturing the samples.");
 					if (OnCapture != nullptr)
 					{
-						OnCapture(dataBuffer);
+						AudioBuffer tempBuffer = dataBuffer;
+						AudioProcessor::ConvertPcmToInnerFormat(tempBuffer);
+						OnCapture(tempBuffer);
 					}
 				}
 			}

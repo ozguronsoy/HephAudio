@@ -63,11 +63,11 @@ namespace HephAudio
 			AudioFormatInfo waveFormat = ReadFormatInfo(file);
 			size_t audioDataSize = file.Size() - waveFormat.headerSize;
 			size_t frameCount = (audioDataSize) / waveFormat.FrameSize();
-			AudioBuffer resultBuffer(frameCount, waveFormat);
-			memcpy(resultBuffer.GetAudioDataAddress(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
+			AudioBuffer resultBuffer = AudioBuffer(frameCount, waveFormat);
+			memcpy(resultBuffer.Begin(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
 			if (GetSystemEndian() == Endian::Big && waveFormat.bitsPerSample != 8) // switch bytes.
 			{
-				uint8_t* innerBuffer = (uint8_t*)resultBuffer.GetAudioDataAddress();
+				uint8_t* innerBuffer = (uint8_t*)resultBuffer.Begin();
 				const uint32_t sampleSize = waveFormat.bitsPerSample / 8;
 				for (size_t i = 0; i < resultBuffer.Size(); i += sampleSize)
 				{
@@ -96,6 +96,7 @@ namespace HephAudio
 					}
 				}
 			}
+			AudioProcessor::ConvertPcmToInnerFormat(resultBuffer);
 			return resultBuffer;
 		}
 		bool WavFormat::SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const
@@ -142,7 +143,7 @@ namespace HephAudio
 				memcpy(newBuffer + 34, &bps, 2);
 				memcpy(newBuffer + 36, &d, 4);
 				memcpy(newBuffer + 40, &dataSizeL, 4);
-				memcpy(newBuffer + headerSize, buffer.GetAudioDataAddress(), dataSize);
+				memcpy(newBuffer + headerSize, buffer.Begin(), dataSize);
 				newFile->Write(newBuffer, fullBufferSize);
 				free(newBuffer);
 				return true;

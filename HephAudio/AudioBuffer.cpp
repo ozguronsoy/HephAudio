@@ -1,11 +1,19 @@
 #include "AudioBuffer.h"
 #include "AudioProcessor.h"
 #include "AudioException.h"
-#include <string>
-#include <algorithm>
 
 namespace HephAudio
 {
+	AudioFrame::AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount)
+	{
+		this->pAudioData = (double*)pAudioData;
+		this->frameIndex = frameIndex;
+		this->channelCount = channelCount;
+	}
+	double& AudioFrame::operator[](size_t channel) const
+	{
+		return *(pAudioData + frameIndex * channelCount + channel);
+	}
 	AudioBuffer::AudioBuffer()
 	{
 		formatInfo = AudioFormatInfo();
@@ -40,26 +48,19 @@ namespace HephAudio
 			pAudioData = nullptr;
 		}
 	}
+	AudioFrame AudioBuffer::operator[](size_t frameIndex) const
+	{
+		return AudioFrame(pAudioData, frameIndex, formatInfo.channelCount);
+	}
 	AudioBuffer AudioBuffer::operator-() const
 	{
 		AudioBuffer resultBuffer(frameCount, formatInfo);
-		switch (formatInfo.bitsPerSample)
+		for (size_t i = 0; i < frameCount; i++)
 		{
-		case 8:
-			std::transform((uint8_t*)pAudioData, (uint8_t*)pAudioData + Size(), (uint8_t*)resultBuffer.pAudioData, [](uint8_t& sample) {return -sample; });
-			break;
-		case 16:
-			std::transform((int16_t*)pAudioData, (int16_t*)((uint8_t*)pAudioData + Size()), (int16_t*)resultBuffer.pAudioData, [](int16_t& sample) {return -sample; });
-			break;
-		case 24:
-			std::transform((int24*)pAudioData, (int24*)((uint8_t*)pAudioData + Size()), (int24*)resultBuffer.pAudioData, [](int24& sample) {return -sample; });
-			break;
-		case 32:
-			std::transform((int32_t*)pAudioData, (int32_t*)((uint8_t*)pAudioData + Size()), (int32_t*)resultBuffer.pAudioData, [](int32_t& sample) {return -sample; });
-			break;
-		default:
-			memcpy(resultBuffer.pAudioData, pAudioData, Size());
-			break;
+			for (size_t j = 0; j < formatInfo.channelCount; j++)
+			{
+				resultBuffer[i][j] = -(*this)[i][j];
+			}
 		}
 		return resultBuffer;
 	}
@@ -107,7 +108,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
 			{
-				resultBuffer.Set(resultBuffer.Get(i, j) * rhs, i, j);
+				resultBuffer[i][j] *= rhs;
 			}
 		}
 		return resultBuffer;
@@ -118,7 +119,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < formatInfo.channelCount; j++)
 			{
-				Set(Get(i, j) * rhs, i, j);
+				(*this)[i][j] *= rhs;
 			}
 		}
 		return *this;
@@ -134,7 +135,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
 			{
-				resultBuffer.Set(resultBuffer.Get(i, j) / rhs, i, j);
+				resultBuffer[i][j] /= rhs;
 			}
 		}
 		return resultBuffer;
@@ -149,7 +150,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < formatInfo.channelCount; j++)
 			{
-				Set(Get(i, j) / rhs, i, j);
+				(*this)[i][j] /= rhs;
 			}
 		}
 		return *this;
@@ -169,15 +170,6 @@ namespace HephAudio
 	size_t AudioBuffer::FrameCount() const noexcept
 	{
 		return frameCount;
-	}
-	int32_t AudioBuffer::GetAsInt32(size_t frameIndex, uint8_t channel) const
-	{
-		const double result = Get(frameIndex, channel);
-		if (result == -1.0)
-		{
-			return GetMin();
-		}
-		return result * GetMax();
 	}
 	double AudioBuffer::Get(size_t frameIndex, uint8_t channel) const
 	{
@@ -207,6 +199,10 @@ namespace HephAudio
 			int32_t result = 0;
 			memcpy(&result, (uint8_t*)pAudioData + frameIndex * formatInfo.FrameSize() + channel * sampleSize, sampleSize);
 			return max(min((double)result / (double)INT32_MAX, 1.0), -1.0);
+		}
+		case 64:
+		{
+			return (*this)[frameIndex][channel];
 		}
 		default:
 			break;
@@ -240,6 +236,11 @@ namespace HephAudio
 		{
 			const int32_t result = max(min(value * (double)INT32_MAX, INT32_MAX), INT32_MIN);
 			memcpy((uint8_t*)pAudioData + frameIndex * formatInfo.FrameSize() + channel * sampleSize, &result, sampleSize);
+		}
+		break;
+		case 64:
+		{
+			(*this)[frameIndex][channel] = value;
 		}
 		break;
 		default:
@@ -421,47 +422,18 @@ namespace HephAudio
 			if (frameCount > 0)
 			{
 				AudioProcessor::ConvertSampleRate(*this, newFormat);
-				AudioProcessor::ConvertBPS(*this, newFormat);
 				AudioProcessor::ConvertChannels(*this, newFormat);
 			}
 			formatInfo = newFormat;
 		}
 	}
-	void* AudioBuffer::GetAudioDataAddress() const noexcept
+	void* AudioBuffer::Begin() const noexcept
 	{
 		return pAudioData;
 	}
-	double AudioBuffer::GetMin() const noexcept
+	void* AudioBuffer::End() const noexcept
 	{
-		switch (formatInfo.bitsPerSample)
-		{
-		case 8:
-			return 0.0f;
-		case 16:
-			return INT16_MIN;
-		case 24:
-			return INT24_MIN;
-		case 32:
-			return INT32_MIN;
-		default:
-			return 1.0;
-		}
-	}
-	double AudioBuffer::GetMax() const noexcept
-	{
-		switch (formatInfo.bitsPerSample)
-		{
-		case 8:
-			return UINT8_MAX;
-		case 16:
-			return INT16_MAX;
-		case 24:
-			return INT24_MAX;
-		case 32:
-			return INT32_MAX;
-		default:
-			return 1.0;
-		}
+		return (uint8_t*)pAudioData + Size();
 	}
 	double AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept
 	{
@@ -474,74 +446,3 @@ namespace HephAudio
 		return ts * (double)formatInfo.ByteRate() / (double)formatInfo.FrameSize();
 	}
 }
-#pragma region Exports
-using namespace HephAudio;
-#if defined(_WIN32)
-AudioBuffer* _stdcall CreateAudioBuffer(size_t frameCount, AudioFormatInfo* pFormatInfo)
-{
-	return new AudioBuffer(frameCount, *pFormatInfo);
-}
-size_t _stdcall AudioBufferGetSize(AudioBuffer* pAudioBuffer)
-{
-	return pAudioBuffer->Size();
-}
-size_t _stdcall AudioBufferGetFrameCount(AudioBuffer* pAudioBuffer)
-{
-	return pAudioBuffer->FrameCount();
-}
-double _stdcall AudioBufferGetSample(AudioBuffer* pAudioBuffer, size_t frameIndex, uint8_t channel)
-{
-	return pAudioBuffer->Get(frameIndex, channel);
-}
-void _stdcall AudioBufferSetSample(AudioBuffer* pAudioBuffer, double value, size_t frameIndex, uint8_t channel)
-{
-	pAudioBuffer->Set(value, frameIndex, channel);
-}
-AudioBuffer* _stdcall AudioBufferGetSubBuffer(AudioBuffer* pAudioBuffer, size_t frameIndex, size_t frameCount)
-{
-	AudioBuffer* subBuffer = new AudioBuffer();
-	*subBuffer = pAudioBuffer->GetSubBuffer(frameIndex, frameCount);
-	return subBuffer;
-}
-void _stdcall AudioBufferJoin(AudioBuffer* pB1, AudioBuffer* pB2)
-{
-	pB1->Join(*pB2);
-}
-void _stdcall AudioBufferInsert(AudioBuffer* pB1, size_t frameIndex, AudioBuffer* pB2)
-{
-	pB1->Insert(*pB2, frameIndex);
-}
-void _stdcall AudioBufferCut(AudioBuffer* pAudioBuffer, size_t frameIndex, size_t frameCount)
-{
-	pAudioBuffer->Cut(frameIndex, frameCount);
-}
-void _stdcall AudioBufferReplace(AudioBuffer* pB1, AudioBuffer* pB2, size_t frameIndex, size_t frameCount)
-{
-	pB1->Replace(*pB2, frameIndex, frameCount);
-}
-void _stdcall AudioBufferReset(AudioBuffer* pAudioBuffer)
-{
-	pAudioBuffer->Reset();
-}
-void _stdcall AudioBufferResize(AudioBuffer* pAudioBuffer, size_t newFrameCount)
-{
-	pAudioBuffer->Resize(newFrameCount);
-}
-double _stdcall AudioBufferCalculateDuration(AudioBuffer* pAudioBuffer)
-{
-	return pAudioBuffer->CalculateDuration();
-}
-AudioFormatInfo* _stdcall AudioBufferGetFormat(AudioBuffer* pAudioBuffer)
-{
-	return &pAudioBuffer->formatInfo;
-}
-void _stdcall AudioBufferSetFormat(AudioBuffer* pAudioBuffer, AudioFormatInfo* newFormat)
-{
-	pAudioBuffer->SetFormat(*newFormat);
-}
-void _stdcall DestroyAudioBuffer(AudioBuffer* pAudioBuffer)
-{
-	delete pAudioBuffer;
-}
-#endif
-#pragma endregion

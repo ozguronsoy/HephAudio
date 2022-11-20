@@ -114,7 +114,6 @@ namespace HephAudio
 			if (pao != nullptr && isRenderInitialized)
 			{
 				AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat);
-				AudioProcessor::ConvertBPS(pao->buffer, renderFormat);
 				AudioProcessor::ConvertChannels(pao->buffer, renderFormat);
 			}
 			return pao;
@@ -123,7 +122,7 @@ namespace HephAudio
 		{
 			std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
 			ao->name = name;
-			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate * renderFormat.channelCount * 2, renderFormat);
+			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(double) * 2, renderFormat.sampleRate));
 			ao->constant = true;
 			audioObjects.push_back(ao);
 			return ao;
@@ -439,7 +438,7 @@ namespace HephAudio
 				std::shared_ptr<IAudioObject> audioObject = audioObjects.at(i);
 				if (audioObject->IsPlaying())
 				{
-					const double volume = GetFinalAOVolume(audioObjects.at(i));
+					const double volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
 					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.GetFormat().sampleRate / (double)renderFormat.sampleRate);
 					size_t frameIndex = 0;
 					if (audioObject->GetSubBuffer == nullptr)
@@ -453,8 +452,7 @@ namespace HephAudio
 					{
 						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex);
 					}
-					AudioProcessor::ConvertSampleRate(subBuffer, renderFormat, frameCount);
-					AudioProcessor::ConvertBPS(subBuffer, renderFormat);
+					AudioProcessor::ConvertSampleRate(subBuffer, renderFormat);
 					AudioProcessor::ConvertChannels(subBuffer, renderFormat);
 					for (size_t j = 0; j < subBuffer.FrameCount(); j++)
 					{
@@ -464,12 +462,7 @@ namespace HephAudio
 						}
 						for (size_t k = 0; k < renderFormat.channelCount; k++)
 						{
-							double sample = subBuffer.Get(j, k) * volume;
-							if (audioObject->distortionInfo.distort)
-							{
-								sample = audioObject->distortionInfo.Distort(sample);
-							}
-							outputBuffer.Set(outputBuffer.Get(j, k) + sample * aoFactor, j, k);
+							outputBuffer.Set(outputBuffer.Get(j, k) + subBuffer[j][k] * volume, j, k);
 						}
 					}
 					if (!audioObject->constant)
@@ -538,34 +531,3 @@ namespace HephAudio
 		}
 	}
 }
-#pragma region Exports
-using namespace HephAudio;
-#if defined(_WIN32)
-#include <iostream>
-Audio* _stdcall CreateAudio()
-{
-	return new Audio();
-}
-void _stdcall InitializeRender(HephAudio::Audio* pAudio, AudioDevice* pDevice, AudioFormatInfo* pFormatInfo)
-{
-	pAudio->InitializeRender(pDevice, *pFormatInfo);
-}
-void* _stdcall Play(HephAudio::Audio* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused)
-{
-	IAudioObject* object = pAudio->Play(std::wstring(filePath), loopCount, isPaused).get();
-	std::vector<std::shared_ptr<IAudioObject>>& audioObjects = pAudio->GetNativeAudio()->audioObjects;
-	for (size_t i = 0; i < audioObjects.size(); i++)
-	{
-		if (object == audioObjects.at(i).get())
-		{
-			return &audioObjects.at(i);
-		}
-	}
-	return nullptr;
-}
-void _stdcall DestroyAudio(HephAudio::Audio* pAudio)
-{
-	delete pAudio;
-}
-#endif
-#pragma endregion

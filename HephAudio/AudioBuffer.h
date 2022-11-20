@@ -4,39 +4,25 @@
 #include "AudioFormatInfo.h"
 #include <vector>
 
-#pragma region Exports
-namespace HephAudio
-{
-	class AudioBuffer;
-}
-#if defined(_WIN32)
-extern "C" __declspec(dllexport) HephAudio::AudioBuffer * _stdcall CreateAudioBuffer(size_t frameCount, AudioFormatInfo * pFormatInfo);
-extern "C" __declspec(dllexport) size_t _stdcall AudioBufferGetSize(HephAudio::AudioBuffer * pAudioBuffer);
-extern "C" __declspec(dllexport) size_t _stdcall AudioBufferGetFrameCount(HephAudio::AudioBuffer * pAudioBuffer);
-extern "C" __declspec(dllexport) double _stdcall AudioBufferGetSample(HephAudio::AudioBuffer * pAudioBuffer, size_t frameIndex, uint8_t channel);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferSetSample(HephAudio::AudioBuffer * pAudioBuffer, double value, size_t frameIndex, uint8_t channel);
-extern "C" __declspec(dllexport) HephAudio::AudioBuffer * _stdcall AudioBufferGetSubBuffer(HephAudio::AudioBuffer * pAudioBuffer, size_t frameIndex, size_t frameCount);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferJoin(HephAudio::AudioBuffer * pB1, HephAudio::AudioBuffer * pB2);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferInsert(HephAudio::AudioBuffer * pB1, size_t frameIndex, HephAudio::AudioBuffer * pB2);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferCut(HephAudio::AudioBuffer * pAudioBuffer, size_t frameIndex, size_t frameCount);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferReplace(HephAudio::AudioBuffer * pB1, HephAudio::AudioBuffer * pB2, size_t frameIndex, size_t frameCount);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferReset(HephAudio::AudioBuffer * pAudioBuffer);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferResize(HephAudio::AudioBuffer * pAudioBuffer, size_t newFrameCount);
-extern "C" __declspec(dllexport) double _stdcall AudioBufferCalculateDuration(HephAudio::AudioBuffer * pAudioBuffer);
-extern "C" __declspec(dllexport) AudioFormatInfo * _stdcall AudioBufferGetFormat(HephAudio::AudioBuffer * pAudioBuffer);
-extern "C" __declspec(dllexport) void _stdcall AudioBufferSetFormat(HephAudio::AudioBuffer * pAudioBuffer, AudioFormatInfo * newFormat);
-extern "C" __declspec(dllexport) void _stdcall DestroyAudioBuffer(HephAudio::AudioBuffer * pAudioBuffer);
-#endif
-#pragma endregion
+#define WAV_FORMAT_HEPHAUDIO 37
 
 namespace HephAudio
 {
+	class AudioBuffer;
+	struct AudioFrame final
+	{
+		friend class AudioBuffer;
+	private:
+		double* pAudioData;
+		size_t frameIndex;
+		size_t channelCount;
+		AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount);
+	public:
+		double& operator[](size_t channel) const;
+	};
 	class AudioBuffer final
 	{
 		friend class AudioProcessor;
-#if defined(_WIN32)
-		friend AudioFormatInfo* _stdcall ::AudioBufferGetFormat(HephAudio::AudioBuffer* pAudioBuffer);
-#endif
 	private:
 		size_t frameCount;
 		void* pAudioData;
@@ -46,6 +32,8 @@ namespace HephAudio
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
 		~AudioBuffer();
+		// Only for WAVE_FORMAT_IEEE_FLOAT.
+		AudioFrame operator[](size_t frameIndex) const;
 		AudioBuffer operator-() const;
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		// Joins the rhs buffer to the end of the current buffer and returns it as a new audio buffer.
@@ -65,7 +53,6 @@ namespace HephAudio
 		// Buffer size in byte.
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
-		int32_t GetAsInt32(size_t frameIndex, uint8_t channel) const;
 		// Gets normalized sample from the buffer. (for frameIndex = 0 and channel = 0, get sample from the first frames first channel)
 		double Get(size_t frameIndex, uint8_t channel) const;
 		// value must be between -1 and 1.
@@ -85,10 +72,8 @@ namespace HephAudio
 		size_t CalculateFrameIndex(double ts) const noexcept;
 		AudioFormatInfo GetFormat() const noexcept;
 		void SetFormat(AudioFormatInfo newFormat);
-		void* GetAudioDataAddress() const noexcept;
-	private:
-		double GetMin() const noexcept;
-		double GetMax() const noexcept;
+		void* Begin() const noexcept;
+		void* End() const noexcept;
 	public:
 		// Calculates the duration of the buffer in seconds.
 		static double CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;

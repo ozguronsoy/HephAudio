@@ -221,7 +221,7 @@ namespace HephAudio
 				const uint32_t renderCallbackFrameCount = pCallbackContext->pAndroidAudio->renderBufferSize * 0.01 / pCallbackContext->pAndroidAudio->renderFormat.FrameSize();
 				AudioBuffer dataBuffer(renderCallbackFrameCount, pCallbackContext->pAndroidAudio->renderFormat);
 				pCallbackContext->pAndroidAudio->Mix(dataBuffer, renderCallbackFrameCount);
-				memcpy(pCallbackContext->pData, dataBuffer.GetAudioDataAddress(), dataBuffer.Size());
+				memcpy(pCallbackContext->pData, dataBuffer.Begin(), dataBuffer.Size());
 				SLresult slres = (*bufferQueue)->Enqueue(bufferQueue, pCallbackContext->pData, dataBuffer.Size());
 				if (slres != 0)
 				{
@@ -243,11 +243,8 @@ namespace HephAudio
 				const uint32_t captureCallbackSize = pCallbackContext->pAndroidAudio->captureBufferSize * 0.01;
 				const uint32_t captureCallbackFrameCount = captureCallbackSize / pCallbackContext->pAndroidAudio->captureFormat.FrameSize();
 				AudioBuffer captureBuffer(captureCallbackFrameCount, pCallbackContext->pAndroidAudio->captureFormat);
-				memcpy(captureBuffer.GetAudioDataAddress(), pCallbackContext->pData, captureCallbackSize);
-				AudioProcessor audioProcessor(pCallbackContext->pAndroidAudio->captureFormat);
-				audioProcessor.ConvertSampleRate(captureBuffer, captureCallbackFrameCount);
-				audioProcessor.ConvertBPS(captureBuffer);
-				audioProcessor.ConvertChannels(captureBuffer);
+				memcpy(captureBuffer.Begin(), pCallbackContext->pData, captureCallbackSize);
+				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer);
 				pCallbackContext->pAndroidAudio->OnCapture(captureBuffer);
 				pCallbackContext->pData += captureCallbackSize;
 				if (pCallbackContext->pData >= pCallbackContext->pDataBase + pCallbackContext->pAndroidAudio->captureBufferSize - captureCallbackSize)

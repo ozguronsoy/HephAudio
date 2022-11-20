@@ -23,15 +23,13 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	AudioProcessor::ChangeSpeed(pao->buffer, 1024 , 4096, 0.5);
-	PrintDeltaTime("Change Speed");
-
-	//audio->SetAOPosition(pao, (double)pao->buffer.CalculateFrameIndex(32.0) / pao->buffer.FrameCount());
+	AudioProcessor::Reverse(pao->buffer);
+	PrintDeltaTime("Reverse");
 
 	pao->paused = false;
 

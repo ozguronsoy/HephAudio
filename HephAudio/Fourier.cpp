@@ -13,7 +13,7 @@ namespace HephAudio
 		ComplexBuffer complexBuffer = ComplexBuffer(fftSize);
 		for (size_t i = 0; i < audioBuffer.FrameCount(); i++)
 		{
-			complexBuffer[i].real = audioBuffer.Get(i, 0);
+			complexBuffer[i].real = audioBuffer[i][0];
 		}
 		FFT(complexBuffer, fftSize, true);
 		return complexBuffer;
@@ -25,7 +25,7 @@ namespace HephAudio
 		for (size_t i = 0; i < audioBuffer.FrameCount(); i++)
 		{
 			complexBuffer[i] /= fftSize;
-			audioBuffer.Set(complexBuffer[i].real, i, 0);
+			audioBuffer[i][0] = complexBuffer[i].real;
 		}
 	}
 	void Fourier::FFT_Inverse(ComplexBuffer& complexBuffer, bool scale)

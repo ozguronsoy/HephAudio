@@ -1,7 +1,6 @@
 #pragma once
 #include "framework.h"
 #include "AudioBuffer.h"
-#include "DistortionInfo.h"
 #include <string>
 #include <vector>
 
@@ -51,7 +50,6 @@ namespace HephAudio
 		/// </summary>
 		double volume;
 		std::vector<std::wstring> categories;
-		DistortionInfo distortionInfo;
 		AudioBuffer buffer;
 		/// <summary>
 		/// Starting frame to get sub buffer before the next render.

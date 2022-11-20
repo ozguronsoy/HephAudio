@@ -90,9 +90,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)DistortionInfo.h">
-      <Filter>Header Files\AudioStructs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
@@ -154,9 +151,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp">
       <Filter>Source Files\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)DistortionInfo.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp">
       <Filter>Source Files\AudioFormats</Filter>

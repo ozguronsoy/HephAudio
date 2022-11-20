@@ -14,7 +14,6 @@ namespace HephAudio
 		loopCount = 1;
 		volume = 1.0;
 		categories = std::vector<std::wstring>(0);
-		distortionInfo = DistortionInfo();
 		buffer = AudioBuffer();
 		frameIndex = 0;
 		queueName = L"";

@@ -10,18 +10,6 @@
 #include <vector>
 #include <thread>
 
-#pragma region Exports
-namespace HephAudio
-{
-	class Audio;
-}
-#if defined(_WIN32)
-extern "C" __declspec(dllexport) HephAudio::Audio * _stdcall CreateAudio();
-extern "C" __declspec(dllexport) void _stdcall InitializeRender(HephAudio::Audio * pAudio, AudioDevice * pDevice, AudioFormatInfo * pFormatInfo);
-extern "C" __declspec(dllexport) void* _stdcall Play(HephAudio::Audio * pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused);
-extern "C" __declspec(dllexport) void _stdcall DestroyAudio(HephAudio::Audio * pAudio);
-#endif
-#pragma endregion
 namespace HephAudio
 {
 	namespace Native
@@ -39,9 +27,6 @@ namespace HephAudio
 		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
 		class INativeAudio
 		{
-#if defined(_WIN32)
-			friend void* _stdcall ::Play(HephAudio::Audio* pAudio, const wchar_t* filePath, uint32_t loopCount, bool isPaused);
-#endif
 		protected:
 			std::vector<std::shared_ptr<IAudioObject>> audioObjects;
 			Categories categories;

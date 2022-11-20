@@ -1,5 +1,6 @@
 #include "AiffFormat.h"
 #include "AudioException.h"
+#include "AudioProcessor.h"
 
 namespace HephAudio
 {
@@ -101,10 +102,10 @@ namespace HephAudio
 			}
 			cursor += 16;
 			AudioBuffer buffer(frameCount, format);
-			memcpy(buffer.GetAudioDataAddress(), (uint8_t*)audioFileBuffer + cursor, buffer.Size());
+			memcpy(buffer.Begin(), (uint8_t*)audioFileBuffer + cursor, buffer.Size());
 			if (audioDataEndian != GetSystemEndian() && format.bitsPerSample != 8) // switch bytes.
 			{
-				uint8_t* innerBuffer = (uint8_t*)buffer.GetAudioDataAddress();
+				uint8_t* innerBuffer = (uint8_t*)buffer.Begin();
 				const uint32_t sampleSize = format.bitsPerSample / 8;
 				for (size_t i = 0; i < buffer.Size(); i += sampleSize)
 				{
@@ -133,6 +134,7 @@ namespace HephAudio
 					}
 				}
 			}
+			AudioProcessor::ConvertPcmToInnerFormat(buffer);
 			return buffer;
 		}
 		bool AiffFormat::SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const
@@ -186,7 +188,7 @@ namespace HephAudio
 				memcpy(newBuffer + 68, &ssnd, 4);
 				memcpy(newBuffer + 72, &sndByteCount, 4);
 				memset(newBuffer + 76, 0, 8);
-				memcpy(newBuffer + 84, buffer.GetAudioDataAddress(), buffer.Size());
+				memcpy(newBuffer + 84, buffer.Begin(), buffer.Size());
 				if (padding == 1)
 				{
 					memset(newBuffer + 84 + buffer.Size(), 0, 1);

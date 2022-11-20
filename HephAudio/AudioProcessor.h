@@ -28,6 +28,8 @@ namespace HephAudio
 		static void Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers);
 		static std::vector<AudioBuffer> SplitChannels(const AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(const std::vector<AudioBuffer>& channels);
+		static void ConvertPcmToInnerFormat(AudioBuffer& buffer);
+		static void ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps);
 #pragma endregion
 #pragma region Sound Effects
 	public:
