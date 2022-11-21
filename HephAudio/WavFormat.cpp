@@ -10,10 +10,10 @@ namespace HephAudio
 		{
 			return L".wav .wave";
 		}
-		AudioFormatInfo WavFormat::ReadFormatInfo(const AudioFile& file) const
+		AudioFormatInfo WavFormat::ReadFormatInfo(const AudioFile& file, size_t& audioDataSize) const
 		{
 			void* audioFileBuffer = file.GetInnerBufferAddress();
-			uint32_t subChunkSize, nextChunk, waveEnd;
+			uint32_t subChunkSize, nextChunk = 0;
 			AudioFormatInfo wfx = AudioFormatInfo();
 			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"RIFF")
 			{
@@ -22,6 +22,14 @@ namespace HephAudio
 					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
 					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE || wfx.formatTag == WAVE_FORMAT_ALAW || wfx.formatTag == WAVE_FORMAT_MULAW)
 					{
+						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
+						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
+						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
+						wfx.headerSize = nextChunk + 8; // use cbSize as headerSize.
+						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE) // WAVE_FORMAT_EXTENSIBLE
+						{
+							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
+						}
 						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
 						nextChunk = subChunkSize + 20;
 						while (Read<uint32_t>(audioFileBuffer, nextChunk, GetSystemEndian()) != *(uint32_t*)"data")
@@ -33,14 +41,7 @@ namespace HephAudio
 							}
 							nextChunk += chunkSize + 8;
 						}
-						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
-						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
-						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
-						wfx.headerSize = nextChunk + 8; // use cbSize as headerSize.
-						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE) // WAVE_FORMAT_EXTENSIBLE
-						{
-							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
-						}
+						audioDataSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
 					}
 					else
 					{
@@ -60,9 +61,9 @@ namespace HephAudio
 		}
 		AudioBuffer WavFormat::ReadFile(const AudioFile& file) const
 		{
-			AudioFormatInfo waveFormat = ReadFormatInfo(file);
-			size_t audioDataSize = file.Size() - waveFormat.headerSize;
-			size_t frameCount = (audioDataSize) / waveFormat.FrameSize();
+			size_t audioDataSize;
+			AudioFormatInfo waveFormat = ReadFormatInfo(file, audioDataSize);
+			size_t frameCount = audioDataSize / waveFormat.FrameSize();
 			AudioBuffer resultBuffer = AudioBuffer(frameCount, waveFormat);
 			memcpy(resultBuffer.Begin(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
 			if (GetSystemEndian() == Endian::Big && waveFormat.bitsPerSample != 8) // switch bytes.

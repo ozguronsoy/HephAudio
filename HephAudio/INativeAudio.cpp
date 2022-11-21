@@ -113,8 +113,8 @@ namespace HephAudio
 			std::shared_ptr<IAudioObject> pao = Play(filePath, 1u, true);
 			if (pao != nullptr && isRenderInitialized)
 			{
-				AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat);
-				AudioProcessor::ConvertChannels(pao->buffer, renderFormat);
+				AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat.sampleRate);
+				AudioProcessor::ConvertChannels(pao->buffer, renderFormat.channelCount);
 			}
 			return pao;
 		}
@@ -301,9 +301,9 @@ namespace HephAudio
 		{
 			try
 			{
-				AudioProcessor::ConvertSampleRate(buffer, targetFormat);
-				AudioProcessor::ConvertBPS(buffer, targetFormat);
-				AudioProcessor::ConvertChannels(buffer, targetFormat);
+				AudioProcessor::ConvertSampleRate(buffer, targetFormat.sampleRate);
+				AudioProcessor::ConvertBPS(buffer, targetFormat.bitsPerSample);
+				AudioProcessor::ConvertChannels(buffer, targetFormat.channelCount);
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
 				if (format == nullptr)
 				{
@@ -452,8 +452,8 @@ namespace HephAudio
 					{
 						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex);
 					}
-					AudioProcessor::ConvertSampleRate(subBuffer, renderFormat);
-					AudioProcessor::ConvertChannels(subBuffer, renderFormat);
+					AudioProcessor::ConvertSampleRate(subBuffer, renderFormat.sampleRate);
+					AudioProcessor::ConvertChannels(subBuffer, renderFormat.channelCount);
 					for (size_t j = 0; j < subBuffer.FrameCount(); j++)
 					{
 						if (j >= outputBuffer.FrameCount())

@@ -29,17 +29,17 @@ inline double GainToDecibel(double gain)
 namespace HephAudio
 {
 #pragma region Converts, Mix, Split/Merge Channels
-	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, AudioFormatInfo outputFormat)
+	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, uint16_t outputBps)
 	{
-		if (buffer.formatInfo.bitsPerSample == outputFormat.bitsPerSample) { return; }
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, outputFormat.bitsPerSample, buffer.formatInfo.sampleRate);
+		if (buffer.formatInfo.bitsPerSample == outputBps) { return; }
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, outputBps, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (uint8_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				double sample = buffer.Get(i, j);
-				if (outputFormat.bitsPerSample == 8)
+				if (outputBps == 8)
 				{
 					sample += 1.0;
 					sample *= 0.5;
@@ -54,10 +54,10 @@ namespace HephAudio
 		}
 		buffer = resultBuffer;
 	}
-	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, AudioFormatInfo outputFormat)
+	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
 	{
-		if (buffer.formatInfo.channelCount == outputFormat.channelCount) { return; }
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, outputFormat.channelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
+		if (buffer.formatInfo.channelCount == outputChannelCount) { return; }
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, outputChannelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
 		for (size_t i = 0; i < buffer.frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
 		{
@@ -67,49 +67,39 @@ namespace HephAudio
 				averageValue += buffer[i][j];
 			}
 			averageValue /= buffer.formatInfo.channelCount;
-			for (size_t j = 0; j < outputFormat.channelCount; j++)
+			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = averageValue;
 			}
 		}
 		buffer = resultBuffer;
 	}
-	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, AudioFormatInfo outputFormat)
+	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate)
 	{
-		ConvertSampleRate(buffer, outputFormat, 0u);
+		ConvertSampleRate(buffer, outputSampleRate, 0u);
 	}
-	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, AudioFormatInfo outputFormat, size_t outFrameCount)
+	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate, size_t outFrameCount)
 	{
-		if (buffer.formatInfo.sampleRate == outputFormat.sampleRate) { return; }
-		const double srRatio = (double)outputFormat.sampleRate / (double)buffer.formatInfo.sampleRate;
+		if (buffer.formatInfo.sampleRate == outputSampleRate) { return; }
+		const double srRatio = (double)outputSampleRate / (double)buffer.formatInfo.sampleRate;
 		const size_t currentFrameCount = buffer.frameCount;
 		size_t targetFrameCount = outFrameCount;
 		if (targetFrameCount == 0)
 		{
 			targetFrameCount = ceil((double)currentFrameCount * srRatio);
 		}
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputFormat.sampleRate);
+		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate);
 		AudioBuffer resultBuffer(targetFrameCount, resultFormat);
 		const double cursorRatio = (1.0 / (targetFrameCount - 1)) * (currentFrameCount - 1);
 		double cursor = 0.0;
-		double s1 = 0.0;
-		double s2 = 0.0;
 		for (size_t i = 0; i < targetFrameCount; i++)
 		{
 			const double fc = floor(cursor);
-			const double cursorFactor = cursor - fc;
+			const double factor = cursor - fc;
+			const size_t fc2 = fc + 1 < currentFrameCount ? fc + 1 : currentFrameCount - 1;
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
-				s1 = buffer[fc][j];
-				if (fc + 1 < currentFrameCount)
-				{
-					s2 = buffer[fc + 1][j];
-				}
-				else
-				{
-					s2 = buffer[currentFrameCount - 1][j];
-				}
-				resultBuffer[i][j] = s1 * (1.0 - cursorFactor) + s2 * cursorFactor;
+				resultBuffer[i][j] = buffer[fc][j] * (1.0 - factor) + buffer[fc + 1.0][j] * factor;
 			}
 			cursor += cursorRatio;
 		}

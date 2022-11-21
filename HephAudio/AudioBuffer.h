@@ -8,6 +8,7 @@
 
 namespace HephAudio
 {
+#pragma region Audio Frame
 	class AudioBuffer;
 	struct AudioFrame final
 	{
@@ -20,6 +21,8 @@ namespace HephAudio
 	public:
 		double& operator[](size_t channel) const;
 	};
+#pragma endregion
+#pragma region Audio Buffer
 	class AudioBuffer final
 	{
 		friend class AudioProcessor;
@@ -79,4 +82,5 @@ namespace HephAudio
 		static double CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
 		static size_t CalculateFrameIndex(double ts, AudioFormatInfo formatInfo) noexcept;
 	};
+#pragma endregion
 }

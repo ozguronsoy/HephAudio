@@ -4,6 +4,7 @@
 
 namespace HephAudio
 {
+#pragma region Audio Frame
 	AudioFrame::AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount)
 	{
 		this->pAudioData = (double*)pAudioData;
@@ -14,6 +15,8 @@ namespace HephAudio
 	{
 		return *(pAudioData + frameIndex * channelCount + channel);
 	}
+#pragma endregion
+#pragma region Audio Buffer
 	AudioBuffer::AudioBuffer()
 	{
 		formatInfo = AudioFormatInfo();
@@ -34,9 +37,25 @@ namespace HephAudio
 			throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
 		}
 	}
-	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) : AudioBuffer()
+	AudioBuffer::AudioBuffer(const AudioBuffer& rhs)
 	{
-		(*this) = rhs;
+		if (rhs.pAudioData != nullptr)
+		{
+			this->formatInfo = rhs.formatInfo;
+			this->frameCount = rhs.frameCount;
+			this->pAudioData = malloc(rhs.Size());
+			if (this->pAudioData == nullptr)
+			{
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::opeartor=", L"Insufficient memory.");
+			}
+			memcpy(this->pAudioData, rhs.pAudioData, rhs.Size());
+		}
+		else
+		{
+			formatInfo = AudioFormatInfo();
+			frameCount = 0;
+			pAudioData = nullptr;
+		}
 	}
 	AudioBuffer::~AudioBuffer()
 	{
@@ -68,12 +87,9 @@ namespace HephAudio
 	{
 		if (rhs.pAudioData != nullptr)
 		{
+			this->~AudioBuffer();
 			this->formatInfo = rhs.formatInfo;
 			this->frameCount = rhs.frameCount;
-			if (this->pAudioData != nullptr)
-			{
-				free(this->pAudioData);
-			}
 			this->pAudioData = malloc(rhs.Size());
 			if (this->pAudioData == nullptr)
 			{
@@ -106,7 +122,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
+			for (size_t j = 0; j < formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] *= rhs;
 			}
@@ -133,7 +149,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
+			for (size_t j = 0; j < formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] /= rhs;
 			}
@@ -150,7 +166,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < formatInfo.channelCount; j++)
 			{
-				(*this)[i][j] /= rhs;
+				(*this)[i][j] *= rhs;
 			}
 		}
 		return *this;
@@ -421,8 +437,8 @@ namespace HephAudio
 		{
 			if (frameCount > 0)
 			{
-				AudioProcessor::ConvertSampleRate(*this, newFormat);
-				AudioProcessor::ConvertChannels(*this, newFormat);
+				AudioProcessor::ConvertSampleRate(*this, newFormat.sampleRate);
+				AudioProcessor::ConvertChannels(*this, newFormat.channelCount);
 			}
 			formatInfo = newFormat;
 		}
@@ -445,4 +461,5 @@ namespace HephAudio
 		if (formatInfo.FrameSize() == 0) { return 0.0; }
 		return ts * (double)formatInfo.ByteRate() / (double)formatInfo.FrameSize();
 	}
+#pragma endregion
 }
