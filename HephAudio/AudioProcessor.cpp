@@ -409,6 +409,27 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::Normalize(AudioBuffer& buffer)
+	{
+		const size_t channelCount = buffer.formatInfo.channelCount;
+		double maxSample = 0.0;
+		double currentSample = 0.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				currentSample = abs(buffer[i][j]);
+				if (currentSample > maxSample)
+				{
+					maxSample = currentSample;
+				}
+			}
+		}
+		if (maxSample != 0.0 && maxSample != 1.0)
+		{
+			buffer /= maxSample;
+		}
+	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
 	{
 		Equalizer(buffer, defaultHopSize, defaultFFTSize, infos);
@@ -458,12 +479,9 @@ namespace HephAudio
 	}
 	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos)
 	{
-		EqualizerRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, infos);
-	}
-	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos)
-	{
 		static std::vector<ProcessedBuffer*> processedBuffers;
-		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const size_t hopSize = subBuffer.frameCount;
+		const size_t fftSize = Fourier::CalculateFFTSize(hopSize * 2);
 		const auto applyEqualizer = [&hopSize, &fftSize, &infos](AudioBuffer& subBuffer) -> void
 		{
 			const size_t nyquistFrequency = fftSize * 0.5;
@@ -505,19 +523,13 @@ namespace HephAudio
 		};
 		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
 		size_t fStart = 0;
-		if (subBufferFrameIndex >= fftSize)
+		if (subBufferFrameIndex > fftSize)
 		{
-			fStart = fTarget;
-			do
-			{
-				fStart -= hopSize;
-			} while (fStart + fftSize > fTarget);
+			fStart = subBufferFrameIndex - fftSize;
+			fStart = fStart + hopSize - (fStart % hopSize);
 		}
-		size_t fEnd = fStart;
-		while (fEnd + hopSize < fTarget + fftSize)
-		{
-			fEnd += hopSize;
-		}
+		size_t fEnd = fTarget + fftSize;
+		fEnd = fEnd - (fEnd % hopSize);
 		subBuffer.Reset();
 		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
 		size_t isb, itb;
@@ -629,13 +641,10 @@ namespace HephAudio
 	}
 	void AudioProcessor::LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, FilterVolumeFunction volumeFunction)
 	{
-		LowPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, cutoffFreq, volumeFunction);
-	}
-	void AudioProcessor::LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction)
-	{
 		static std::vector<ProcessedBuffer*> processedBuffers;
-		fftSize = Fourier::CalculateFFTSize(fftSize);
-		const auto applyFilter = [&hopSize, &fftSize, &cutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
+		const size_t hopSize = subBuffer.frameCount;
+		const size_t fftSize = Fourier::CalculateFFTSize(hopSize * 2);
+		const auto applyFilter = [&fftSize, &cutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
 		{
 			const size_t nyquistFrequency = fftSize * 0.5;
 			const uint64_t startIndex = Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, cutoffFreq);
@@ -660,19 +669,13 @@ namespace HephAudio
 		};
 		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
 		size_t fStart = 0;
-		if (subBufferFrameIndex >= fftSize)
+		if (subBufferFrameIndex > fftSize)
 		{
-			fStart = fTarget;
-			do
-			{
-				fStart -= hopSize;
-			} while (fStart + fftSize > fTarget);
+			fStart = subBufferFrameIndex - fftSize;
+			fStart = fStart + hopSize - (fStart % hopSize);
 		}
-		size_t fEnd = fStart;
-		while (fEnd + hopSize < fTarget + fftSize)
-		{
-			fEnd += hopSize;
-		}
+		size_t fEnd = fTarget + fftSize;
+		fEnd = fEnd - (fEnd % hopSize);
 		subBuffer.Reset();
 		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
 		size_t isb, itb;
@@ -713,7 +716,6 @@ namespace HephAudio
 	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction)
 	{
 		fftSize = Fourier::CalculateFFTSize(fftSize);
-		const size_t nyquistFrequency = fftSize * 0.5;
 		const uint64_t stopIndex = Fourier::FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
 		const double piOverN = PI / (fftSize - 1);
 		std::vector<AudioBuffer> channels = SplitChannels(buffer);
@@ -739,15 +741,11 @@ namespace HephAudio
 	}
 	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, FilterVolumeFunction volumeFunction)
 	{
-		HighPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, cutoffFreq, volumeFunction);
-	}
-	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction)
-	{
 		static std::vector<ProcessedBuffer*> processedBuffers;
-		fftSize = Fourier::CalculateFFTSize(fftSize);
-		const auto applyFilter = [&hopSize, &fftSize, &cutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
+		const size_t hopSize = subBuffer.frameCount;
+		const size_t fftSize = Fourier::CalculateFFTSize(hopSize * 2);
+		const auto applyFilter = [&fftSize, &cutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
 		{
-			const size_t nyquistFrequency = fftSize * 0.5;
 			const uint64_t stopIndex = Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, cutoffFreq);
 			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
 			const size_t frameSize = subBuffer.formatInfo.FrameSize();
@@ -770,19 +768,13 @@ namespace HephAudio
 		};
 		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
 		size_t fStart = 0;
-		if (subBufferFrameIndex >= fftSize)
+		if (subBufferFrameIndex > fftSize)
 		{
-			fStart = fTarget;
-			do
-			{
-				fStart -= hopSize;
-			} while (fStart + fftSize > fTarget);
+			fStart = subBufferFrameIndex - fftSize;
+			fStart = fStart + hopSize - (fStart % hopSize);
 		}
-		size_t fEnd = fStart;
-		while (fEnd + hopSize < fTarget + fftSize)
-		{
-			fEnd += hopSize;
-		}
+		size_t fEnd = fTarget + fftSize;
+		fEnd = fEnd - (fEnd % hopSize);
 		subBuffer.Reset();
 		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
 		AudioBuffer tempBuffer;
@@ -856,13 +848,10 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction)
 	{
-		BandPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, lowCutoffFreq, highCutoffFreq, volumeFunction);
-	}
-	void AudioProcessor::BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction)
-	{
 		static std::vector<ProcessedBuffer*> processedBuffers;
-		fftSize = Fourier::CalculateFFTSize(fftSize);
-		const auto applyFilter = [&hopSize, &fftSize, &lowCutoffFreq, &highCutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
+		const size_t hopSize = subBuffer.frameCount;
+		const size_t fftSize = Fourier::CalculateFFTSize(hopSize * 2);
+		const auto applyFilter = [&fftSize, &lowCutoffFreq, &highCutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
 		{
 			const size_t nyquistFrequency = fftSize * 0.5;
 			const uint64_t startIndex = Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
@@ -893,19 +882,13 @@ namespace HephAudio
 		};
 		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
 		size_t fStart = 0;
-		if (subBufferFrameIndex >= fftSize)
+		if (subBufferFrameIndex > fftSize)
 		{
-			fStart = fTarget;
-			do
-			{
-				fStart -= hopSize;
-			} while (fStart + fftSize > fTarget);
+			fStart = subBufferFrameIndex - fftSize;
+			fStart = fStart + hopSize - (fStart % hopSize);
 		}
-		size_t fEnd = fStart;
-		while (fEnd + hopSize < fTarget + fftSize)
-		{
-			fEnd += hopSize;
-		}
+		size_t fEnd = fTarget + fftSize;
+		fEnd = fEnd - (fEnd % hopSize);
 		subBuffer.Reset();
 		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
 		AudioBuffer tempBuffer;
@@ -947,7 +930,6 @@ namespace HephAudio
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction)
 	{
 		fftSize = Fourier::CalculateFFTSize(fftSize);
-		const size_t nyquistFrequency = fftSize * 0.5;
 		const uint64_t startIndex = Fourier::FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
 		const uint64_t stopIndex = Fourier::FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
 		const double piOverN = PI / (fftSize - 1);
@@ -974,15 +956,11 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction)
 	{
-		BandCutFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, subBuffer.frameCount, subBuffer.frameCount * 2, lowCutoffFreq, highCutoffFreq, volumeFunction);
-	}
-	void AudioProcessor::BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction)
-	{
 		static std::vector<ProcessedBuffer*> processedBuffers;
-		fftSize = Fourier::CalculateFFTSize(fftSize);
-		const auto applyFilter = [&hopSize, &fftSize, &lowCutoffFreq, &highCutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
+		const size_t hopSize = subBuffer.frameCount;
+		const size_t fftSize = Fourier::CalculateFFTSize(hopSize * 2);
+		const auto applyFilter = [&fftSize, &lowCutoffFreq, &highCutoffFreq, &volumeFunction](AudioBuffer& subBuffer) -> void
 		{
-			const size_t nyquistFrequency = fftSize * 0.5;
 			const uint64_t startIndex = Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
 			const uint64_t stopIndex = Fourier::FrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
 			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
@@ -1006,19 +984,13 @@ namespace HephAudio
 		};
 		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
 		size_t fStart = 0;
-		if (subBufferFrameIndex >= fftSize)
+		if (subBufferFrameIndex > fftSize)
 		{
-			fStart = fTarget;
-			do
-			{
-				fStart -= hopSize;
-			} while (fStart + fftSize > fTarget);
+			fStart = subBufferFrameIndex - fftSize;
+			fStart = fStart + hopSize - (fStart % hopSize);
 		}
-		size_t fEnd = fStart;
-		while (fEnd + hopSize < fTarget + fftSize)
-		{
-			fEnd += hopSize;
-		}
+		size_t fEnd = fTarget + fftSize;
+		fEnd = fEnd - (fEnd % hopSize);
 		subBuffer.Reset();
 		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
 		AudioBuffer tempBuffer;
@@ -1305,55 +1277,6 @@ namespace HephAudio
 			{
 				buffer[i][j] *= factor;
 			}
-		}
-	}
-#pragma endregion
-#pragma region Maximize Volume
-	double AudioProcessor::FindMaxVolume(const AudioBuffer& buffer)
-	{
-		const size_t channelCount = buffer.formatInfo.channelCount;
-		double maxSample = 0.0;
-		double currentSample = 0.0;
-		for (size_t i = 0; i < buffer.frameCount; i++)
-		{
-			for (size_t j = 0; j < channelCount; j++)
-			{
-				currentSample = abs(buffer[i][j]);
-				if (currentSample > maxSample)
-				{
-					maxSample = currentSample;
-					if (maxSample == 1.0)
-					{
-						return 1.0;
-					}
-				}
-			}
-		}
-		return maxSample != 0.0 ? (1.0 / maxSample) : 1.0;
-	}
-	void AudioProcessor::MaximizeVolume(AudioBuffer& buffer)
-	{
-		const size_t channelCount = buffer.formatInfo.channelCount;
-		double maxSample = 0.0;
-		double currentSample = 0.0;
-		for (size_t i = 0; i < buffer.frameCount; i++)
-		{
-			for (size_t j = 0; j < channelCount; j++)
-			{
-				currentSample = abs(buffer[i][j]);
-				if (currentSample > maxSample)
-				{
-					maxSample = currentSample;
-					if (maxSample == 1.0)
-					{
-						return;
-					}
-				}
-			}
-		}
-		if (maxSample != 0.0)
-		{
-			buffer /= maxSample;
 		}
 	}
 #pragma endregion

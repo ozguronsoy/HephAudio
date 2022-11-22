@@ -56,7 +56,7 @@ namespace HephAudio
 		// Buffer size in byte.
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
-		// Gets normalized sample from the buffer. (for frameIndex = 0 and channel = 0, get sample from the first frames first channel)
+		// Gets normalized sample from the buffer.
 		double Get(size_t frameIndex, uint8_t channel) const;
 		// value must be between -1 and 1.
 		void Set(double value, size_t frameIndex, uint8_t channel);

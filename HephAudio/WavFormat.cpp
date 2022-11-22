@@ -25,8 +25,7 @@ namespace HephAudio
 						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
 						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
 						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
-						wfx.headerSize = nextChunk + 8; // use cbSize as headerSize.
-						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE) // WAVE_FORMAT_EXTENSIBLE
+						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
 						{
 							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
 						}
@@ -42,6 +41,7 @@ namespace HephAudio
 							nextChunk += chunkSize + 8;
 						}
 						audioDataSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
+						wfx.headerSize = nextChunk + 8;
 					}
 					else
 					{

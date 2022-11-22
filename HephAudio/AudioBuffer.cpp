@@ -142,10 +142,6 @@ namespace HephAudio
 	}
 	AudioBuffer AudioBuffer::operator/(const double& rhs) const
 	{
-		if (rhs == 0)
-		{
-			throw AudioException(E_FAIL, L"AudioBuffer::operator/", L"Divided by zero.");
-		}
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
@@ -158,15 +154,11 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator/=(const double& rhs)
 	{
-		if (rhs == 0)
-		{
-			throw AudioException(E_FAIL, L"AudioBuffer::operator/=", L"Divided by zero.");
-		}
 		for (size_t i = 0; i < frameCount; i++)
 		{
 			for (size_t j = 0; j < formatInfo.channelCount; j++)
 			{
-				(*this)[i][j] *= rhs;
+				(*this)[i][j] /= rhs;
 			}
 		}
 		return *this;

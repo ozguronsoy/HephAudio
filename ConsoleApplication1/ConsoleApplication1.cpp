@@ -16,14 +16,13 @@ Audio* audio;
 int main()
 {
 	audio = new Audio();
-	// C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav
 	audio->SetOnExceptionHandler(OnException);
 	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
-	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 96000));
+	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\blackened.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");

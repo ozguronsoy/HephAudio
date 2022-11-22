@@ -19,9 +19,7 @@ namespace HephAudio
 		static constexpr size_t defaultFFTSize = 8192u;
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
-		// BPS = Bits Per Sample
 		static void ConvertBPS(AudioBuffer& buffer, uint16_t outputBps);
-		// Mono to stereo, stereo to mono, from two channels to three channels...
 		static void ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount);
 		static void ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate);
 		static void ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate, size_t outFrameCount);
@@ -34,20 +32,17 @@ namespace HephAudio
 #pragma region Sound Effects
 	public:
 		static void Reverse(AudioBuffer& buffer);
-		// Adds echo to the given buffer.
 		static void Echo(AudioBuffer& buffer, EchoInfo info);
-		// Adds echo to the given subBuffer in real-time using the originalBuffer, subBufferFrameIndex and the subBuffers frame count to calculate the echo.
-		// Note that this method only adds the echo data to the given subBuffer, thus you should provide the subBuffer data from the originalBuffer.
 		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
 		static void LinearPanning(AudioBuffer& buffer, double panningFactor);
 		static void SquareLawPanning(AudioBuffer& buffer, double panningFactor);
 		static void SineLawPanning(AudioBuffer& buffer, double panningFactor);
 		static void Tremolo(AudioBuffer& buffer, double frequency, double depth, double phase, uint8_t waveType);
 		static void TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase, uint8_t waveType);
+		static void Normalize(AudioBuffer& buffer);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);
-		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double speed);
 #pragma endregion
 #pragma region Filters
@@ -55,19 +50,15 @@ namespace HephAudio
 		static void LowPassFilter(AudioBuffer& buffer, double cutoffFreq, FilterVolumeFunction volumeFunction);
 		static void LowPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction);
 		static void LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, FilterVolumeFunction volumeFunction);
-		static void LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction);
 		static void HighPassFilter(AudioBuffer& buffer, double cutoffFreq, FilterVolumeFunction volumeFunction);
 		static void HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction);
 		static void HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, FilterVolumeFunction volumeFunction);
-		static void HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction);
 		static void BandPassFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
 		static void BandPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
 		static void BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
-		static void BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
 		static void BandCutFilter(AudioBuffer& buffer, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
 		static void BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
 		static void BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
-		static void BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, FilterVolumeFunction volumeFunction);
 #pragma endregion
 #pragma region Windows
 	public:
@@ -88,11 +79,6 @@ namespace HephAudio
 		static void BartlettHannWindow(AudioBuffer& buffer);
 		static void HannPoissonWindow(AudioBuffer& buffer, double alpha);
 		static void LanczosWindow(AudioBuffer& buffer);
-#pragma endregion
-#pragma region Maximize Volume
-	public:
-		static double FindMaxVolume(const AudioBuffer& buffer);
-		static void MaximizeVolume(AudioBuffer& buffer);
 #pragma endregion
 #pragma region Processed Buffer
 	private:

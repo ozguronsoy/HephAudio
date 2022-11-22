@@ -99,10 +99,6 @@ namespace HephAudio
 	}
 	ComplexBuffer ComplexBuffer::operator/(const Complex& rhs) const
 	{
-		if (rhs == 0)
-		{
-			throw AudioException(E_FAIL, L"ComplexBuffer::operator/", L"Divided by zero.");
-		}
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
@@ -112,10 +108,6 @@ namespace HephAudio
 	}
 	ComplexBuffer& ComplexBuffer::operator/=(const Complex& rhs)
 	{
-		if (rhs == 0)
-		{
-			throw AudioException(E_FAIL, L"ComplexBuffer::operator/=", L"Divided by zero.");
-		}
 		for (size_t i = 0; i < frameCount; i++)
 		{
 			(*this)[i] /= rhs;
