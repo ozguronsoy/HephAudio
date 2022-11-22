@@ -3,11 +3,6 @@
 #include "EchoInfo.h"
 #include "EqualizerInfo.h"
 
-#define TREMOLO_SINE_WAVE 0
-#define TREMOLO_SQUARE_WAVE 1
-#define TREMOLO_TRIANGLE_WAVE 2
-#define TREMOLO_SAWTOOTH_WAVE 3
-
 typedef double (*FilterVolumeFunction)(double frequency);
 
 namespace HephAudio
@@ -37,8 +32,10 @@ namespace HephAudio
 		static void LinearPanning(AudioBuffer& buffer, double panningFactor);
 		static void SquareLawPanning(AudioBuffer& buffer, double panningFactor);
 		static void SineLawPanning(AudioBuffer& buffer, double panningFactor);
-		static void Tremolo(AudioBuffer& buffer, double frequency, double depth, double phase, uint8_t waveType);
-		static void TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase, uint8_t waveType);
+		static void SineWaveTremolo(AudioBuffer& buffer, double frequency, double depth, double phase);
+		static void SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase);
+		static void TriangleWaveTremolo(AudioBuffer& buffer, double frequency, double depth, double phase);
+		static void TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase);
 		static void Normalize(AudioBuffer& buffer);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);

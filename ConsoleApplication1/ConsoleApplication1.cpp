@@ -27,6 +27,9 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
+	AudioProcessor::TriangleWaveTremolo(pao->buffer, 8.0, 1.0, 0.0);
+	PrintDeltaTime("Operation");
+
 	pao->paused = false;
 
 	std::string a;

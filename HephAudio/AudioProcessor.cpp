@@ -338,10 +338,10 @@ namespace HephAudio
 	{
 		if (buffer.formatInfo.channelCount == 2)
 		{
-			constexpr double pi2 = PI * 0.5;
+			constexpr double piOver2 = PI * 0.5;
 			const double volume = panningFactor * 0.5 + 0.5;
-			const double rightVolume = sin(volume * pi2);
-			const double leftVolume = sin((1.0 - volume) * pi2);
+			const double rightVolume = sin(volume * piOver2);
+			const double leftVolume = sin((1.0 - volume) * piOver2);
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
 				buffer[i][0] *= leftVolume;
@@ -349,63 +349,44 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Tremolo(AudioBuffer& buffer, double frequency, double depth, double phase, uint8_t waveType)
+	void AudioProcessor::SineWaveTremolo(AudioBuffer& buffer, double frequency, double depth, double phase)
 	{
-		TremoloRT(buffer, 0u, frequency, depth, phase, waveType);
+		SineWaveTremoloRT(buffer, 0, frequency, depth, phase);
 	}
-	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase, uint8_t waveType)
+	void AudioProcessor::SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase)
 	{
-		constexpr double pi2 = PI * 2.0;
-		const double w = pi2 * frequency;
+		constexpr double twopi = PI * 2.0;
+		const double w = twopi * frequency;
 		const double dt = 1.0 / subBuffer.formatInfo.sampleRate;
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
 		double t = subBufferFrameIndex * dt;
-		double (*waveFunction)(const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) = nullptr;
-		switch (waveType)
-		{
-		case TREMOLO_SINE_WAVE:
-		{
-			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
-			{
-				return wetFactor * sin(w * t + phase) + dryFactor;
-			};
-		}
-		break;
-		case TREMOLO_SQUARE_WAVE:
-		{
-			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
-			{
-				return wetFactor * sgn(sin(w * t + phase)) + dryFactor;
-			};
-		}
-		break;
-		case TREMOLO_TRIANGLE_WAVE:
-		{
-			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
-			{
-				constexpr double topi = 2.0 / PI;
-				return wetFactor * (topi * asin(sin(w * t + phase))) + dryFactor;
-			};
-		}
-		break;
-		case TREMOLO_SAWTOOTH_WAVE:
-		{
-			waveFunction = [](const double& frequency, const double& phase, const double& w, const double& t, const double& wetFactor, const double& dryFactor) -> double
-			{
-				const double x = t * frequency + phase;
-				return wetFactor * (2.0 * (x - floor(x + 0.5))) + dryFactor;
-			};
-		}
-		break;
-		default:
-			throw AudioException(E_FAIL, L"AudioProcessor::Tremolo", L"Invalid wave type.");
-		}
 		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
 		{
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
-				subBuffer[i][j] *= waveFunction(frequency, phase, w, t, wetFactor, dryFactor);
+				subBuffer[i][j] *= wetFactor * sin(w * t + phase) + dryFactor;
+			}
+		}
+	}
+	void AudioProcessor::TriangleWaveTremolo(AudioBuffer& buffer, double frequency, double depth, double phase)
+	{
+		TriangleWaveTremoloRT(buffer, 0, frequency, depth, phase);
+	}
+	void AudioProcessor::TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase)
+	{
+		constexpr double twopi = PI * 2.0;
+		constexpr double twoOverPi = 2.0 / PI;
+		const double w = twopi * frequency;
+		const double dt = 1.0 / subBuffer.formatInfo.sampleRate;
+		const double wetFactor = depth * 0.5;
+		const double dryFactor = 1.0 - wetFactor;
+		double t = subBufferFrameIndex * dt;
+		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
+		{
+			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+			{
+				subBuffer[i][j] *= wetFactor * twoOverPi * asin(sin(w * t + phase)) + dryFactor;
 			}
 		}
 	}
