@@ -11,7 +11,7 @@ namespace HephAudio
 	{
 	private:
 		static constexpr size_t defaultHopSize = 4096u;
-		static constexpr size_t defaultFFTSize = 8192u;
+		static constexpr size_t defaultFFTSize = 16384u;
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		static void ConvertBPS(AudioBuffer& buffer, uint16_t outputBps);

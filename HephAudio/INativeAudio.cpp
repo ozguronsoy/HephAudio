@@ -56,7 +56,7 @@ namespace HephAudio
 				ao->name = audioFile.Name();
 				ao->buffer = format->ReadFile(audioFile);
 				ao->loopCount = loopCount;
-				ao->paused = isPaused;
+				ao->pause = isPaused;
 				audioObjects.push_back(ao);
 				return ao;
 			}
@@ -450,16 +450,10 @@ namespace HephAudio
 					AudioBuffer subBuffer = audioObject->GetSubBuffer(audioObject.get(), nFramesToRead, &frameIndex);
 					if (audioObject->OnRender != nullptr)
 					{
-						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex);
+						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex, frameCount);
 					}
-					AudioProcessor::ConvertSampleRate(subBuffer, renderFormat.sampleRate);
-					AudioProcessor::ConvertChannels(subBuffer, renderFormat.channelCount);
-					for (size_t j = 0; j < subBuffer.FrameCount(); j++)
+					for (size_t j = 0; j < frameCount && j < subBuffer.FrameCount(); j++)
 					{
-						if (j >= outputBuffer.FrameCount())
-						{
-							break;
-						}
 						for (size_t k = 0; k < renderFormat.channelCount; k++)
 						{
 							outputBuffer.Set(outputBuffer.Get(j, k) + subBuffer[j][k] * volume, j, k);

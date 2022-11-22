@@ -8,7 +8,7 @@ namespace HephAudio
 	{
 		filePath = L"";
 		name = L"";
-		paused = false;
+		pause = false;
 		mute = false;
 		constant = false;
 		loopCount = 1;
@@ -26,7 +26,7 @@ namespace HephAudio
 	}
 	bool IAudioObject::IsPlaying() const
 	{
-		return !paused && !IsInQueue();
+		return !pause && !IsInQueue();
 	}
 	bool IAudioObject::IsInQueue() const
 	{

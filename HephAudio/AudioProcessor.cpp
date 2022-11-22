@@ -96,7 +96,6 @@ namespace HephAudio
 		{
 			const double fc = floor(cursor);
 			const double factor = cursor - fc;
-			const size_t fc2 = fc + 1 < currentFrameCount ? fc + 1 : currentFrameCount - 1;
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = buffer[fc][j] * (1.0 - factor) + buffer[fc + 1.0][j] * factor;

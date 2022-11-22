@@ -9,7 +9,7 @@ using namespace HephAudio::Native;
 
 void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
-void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
+void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 double PrintDeltaTime(const char* label);
 
 Audio* audio;
@@ -19,18 +19,16 @@ int main()
 	audio->SetOnExceptionHandler(OnException);
 	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
+	PrintDeltaTime("");
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", true);
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	AudioProcessor::TriangleWaveTremolo(pao->buffer, 8.0, 1.0, 0.0);
-	PrintDeltaTime("Operation");
-
-	pao->paused = false;
+	pao->pause = false;
 
 	std::string a;
 	std::cin >> a;
@@ -48,8 +46,10 @@ void SetToDefaultDevice(AudioDevice device)
 	std::cout << "Is current device: " << (device.id == audio->GetRenderDevice().id) << "\n";
 	audio->InitializeRender(nullptr, audio->GetRenderFormat());
 }
-void OnRender(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex)
+void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
+	AudioProcessor::ConvertChannels(subBuffer, audio->GetRenderFormat().channelCount);
+	AudioProcessor::ConvertSampleRate(subBuffer, audio->GetRenderFormat().sampleRate, renderFrameCount);
 }
 double PrintDeltaTime(const char* label)
 {

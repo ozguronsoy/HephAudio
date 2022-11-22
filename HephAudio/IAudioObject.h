@@ -30,12 +30,12 @@ namespace HephAudio
 	struct IAudioObject;
 	typedef AudioBuffer(*AudioGetSubBufferEventHandler)(IAudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
 	typedef bool (*AudioIsFinishedPlayingEventHandler)(IAudioObject* sender);
-	typedef void (*AudioRenderEventHandler)(IAudioObject* sender, AudioBuffer& renderBuffer, size_t frameIndex);
+	typedef void (*AudioRenderEventHandler)(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 	struct IAudioObject
 	{
 		std::wstring filePath;
 		std::wstring name;
-		bool paused;
+		bool pause;
 		bool mute;
 		/// <summary>
 		/// A constant object does not finish playing until you either destroy it by calling the INativeAudio::DestroyAO method or make this false and wait until it finishes.
