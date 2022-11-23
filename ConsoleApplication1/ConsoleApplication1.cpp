@@ -13,7 +13,6 @@ void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFram
 double PrintDeltaTime(const char* label);
 
 Audio* audio;
-std::vector<EqualizerInfo> infos = { EqualizerInfo(0.0, 250.0, [](double f) { return 0.0; }) };
 int main()
 {
 	audio = new Audio();
@@ -49,9 +48,6 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
-	PrintDeltaTime(nullptr);
-	AudioProcessor::LowPassFilterRT(sender->buffer, subBuffer, subBufferFrameIndex, 650.0, [](double f) -> double { return 0.0; });
-	PrintDeltaTime("Filter");
 }
 double PrintDeltaTime(const char* label)
 {

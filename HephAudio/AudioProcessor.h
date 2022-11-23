@@ -37,6 +37,7 @@ namespace HephAudio
 		static void TriangleWaveTremolo(AudioBuffer& buffer, double frequency, double depth, double phase);
 		static void TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, double frequency, double depth, double phase);
 		static void Normalize(AudioBuffer& buffer, double peakAmplitude);
+		static void RmsNormalize(AudioBuffer& buffer, double desiredRms);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);

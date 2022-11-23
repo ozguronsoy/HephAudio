@@ -408,6 +408,21 @@ namespace HephAudio
 			buffer *= peakAmplitude / maxSample;
 		}
 	}
+	void AudioProcessor::RmsNormalize(AudioBuffer& buffer, double desiredRms)
+	{
+		double sumOfSamplesSquared = 0.0;
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				sumOfSamplesSquared += buffer[i][j] * buffer[i][j];
+			}
+		}
+		if (sumOfSamplesSquared != 0.0)
+		{
+			buffer *= sqrt(buffer.frameCount * desiredRms * desiredRms / sumOfSamplesSquared);
+		}
+	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
 	{
 		Equalizer(buffer, defaultHopSize, defaultFFTSize, infos);
