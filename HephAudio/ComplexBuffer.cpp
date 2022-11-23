@@ -24,13 +24,28 @@ namespace HephAudio
 	}
 	ComplexBuffer::ComplexBuffer(const ComplexBuffer& rhs)
 	{
-		(*this) = rhs;
+		if (rhs.pComplexData != nullptr)
+		{
+			this->frameCount = rhs.frameCount;
+			this->pComplexData = (Complex*)malloc(rhs.Size());
+			if (this->pComplexData == nullptr)
+			{
+				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::operator=", L"Insufficient memory.");
+			}
+			memcpy(this->pComplexData, rhs.pComplexData, rhs.Size());
+		}
+		else
+		{
+			this->frameCount = 0;
+			this->pComplexData = nullptr;
+		}
 	}
 	ComplexBuffer::~ComplexBuffer()
 	{
 		if (pComplexData != nullptr)
 		{
 			free(pComplexData);
+			frameCount = 0;
 			pComplexData = nullptr;
 		}
 	}
@@ -48,11 +63,8 @@ namespace HephAudio
 	{
 		if (rhs.pComplexData != nullptr)
 		{
+			this->~ComplexBuffer();
 			this->frameCount = rhs.frameCount;
-			if (this->pComplexData != nullptr)
-			{
-				free(this->pComplexData);
-			}
 			this->pComplexData = (Complex*)malloc(rhs.Size());
 			if (this->pComplexData == nullptr)
 			{
