@@ -41,55 +41,55 @@ namespace HephAudio
 		case AudioWindowType::RectangleWindow:
 			break;
 		case AudioWindowType::TriangleWindow:
-			AudioProcessor::TriangleWindow(subBuffer);
+			AudioProcessor::ApplyTriangleWindow(subBuffer);
 			break;
 		case AudioWindowType::ParzenWindow:
-			AudioProcessor::ParzenWindow(subBuffer);
+			AudioProcessor::ApplyParzenWindow(subBuffer);
 			break;
 		case AudioWindowType::WelchWindow:
-			AudioProcessor::WelchWindow(subBuffer);
+			AudioProcessor::ApplyWelchWindow(subBuffer);
 			break;
 		case AudioWindowType::SineWindow:
-			AudioProcessor::SineWindow(subBuffer);
+			AudioProcessor::ApplySineWindow(subBuffer);
 			break;
 		case AudioWindowType::HannWindow:
-			AudioProcessor::HannWindow(subBuffer);
+			AudioProcessor::ApplyHannWindow(subBuffer);
 			break;
 		case AudioWindowType::HammingWindow:
-			AudioProcessor::HammingWindow(subBuffer);
+			AudioProcessor::ApplyHammingWindow(subBuffer);
 			break;
 		case AudioWindowType::BlackmanWindow:
-			AudioProcessor::BlackmanWindow(subBuffer);
+			AudioProcessor::ApplyBlackmanWindow(subBuffer);
 			break;
 		case AudioWindowType::ExactBlackmanWindow:
-			AudioProcessor::ExactBlackmanWindow(subBuffer);
+			AudioProcessor::ApplyExactBlackmanWindow(subBuffer);
 			break;
 		case AudioWindowType::NuttallWindow:
-			AudioProcessor::NuttallWindow(subBuffer);
+			AudioProcessor::ApplyNuttallWindow(subBuffer);
 			break;
 		case AudioWindowType::BlackmanNuttallWindow:
-			AudioProcessor::BlackmanNuttallWindow(subBuffer);
+			AudioProcessor::ApplyBlackmanNuttallWindow(subBuffer);
 			break;
 		case AudioWindowType::BlackmanHarrisWindow:
-			AudioProcessor::BlackmanHarrisWindow(subBuffer);
+			AudioProcessor::ApplyBlackmanHarrisWindow(subBuffer);
 			break;
 		case AudioWindowType::FlatTopWindow:
-			AudioProcessor::FlatTopWindow(subBuffer);
+			AudioProcessor::ApplyFlatTopWindow(subBuffer);
 			break;
 		case AudioWindowType::GaussianWindow:
-			AudioProcessor::GaussianWindow(subBuffer, 0.4);
+			AudioProcessor::ApplyGaussianWindow(subBuffer, 0.4);
 			break;
 		case AudioWindowType::TukeyWindow:
-			AudioProcessor::TukeyWindow(subBuffer, 0.5);
+			AudioProcessor::ApplyTukeyWindow(subBuffer, 0.5);
 			break;
 		case AudioWindowType::BartlettHannWindow:
-			AudioProcessor::BartlettHannWindow(subBuffer);
+			AudioProcessor::ApplyBartlettHannWindow(subBuffer);
 			break;
 		case AudioWindowType::HannPoissonWindow:
-			AudioProcessor::HannPoissonWindow(subBuffer, 2.0);
+			AudioProcessor::ApplyHannPoissonWindow(subBuffer, 2.0);
 			break;
 		case AudioWindowType::LanczosWindow:
-			AudioProcessor::LanczosWindow(subBuffer);
+			AudioProcessor::ApplyLanczosWindow(subBuffer);
 			break;
 		default:
 			break;

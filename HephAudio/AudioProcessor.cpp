@@ -389,14 +389,13 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Normalize(AudioBuffer& buffer)
+	void AudioProcessor::Normalize(AudioBuffer& buffer, double peakAmplitude)
 	{
-		const size_t channelCount = buffer.formatInfo.channelCount;
 		double maxSample = 0.0;
 		double currentSample = 0.0;
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < channelCount; j++)
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				currentSample = abs(buffer[i][j]);
 				if (currentSample > maxSample)
@@ -405,9 +404,9 @@ namespace HephAudio
 				}
 			}
 		}
-		if (maxSample != 0.0 && maxSample != 1.0)
+		if (maxSample != 0.0 && maxSample != peakAmplitude)
 		{
-			buffer /= maxSample;
+			buffer *= peakAmplitude / maxSample;
 		}
 	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
@@ -516,10 +515,10 @@ namespace HephAudio
 		const double piOverN = PI / (fftSize - 1);
 		for (size_t i = fStart; i < fEnd; i += hopSize)
 		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i);
+			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
 			if (processedBuffer == nullptr)
 			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i);
+				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
 				applyEqualizer(processedBuffer->audioBuffer);
 				processedBuffers.push_back(processedBuffer);
 			}
@@ -662,10 +661,10 @@ namespace HephAudio
 		const double piOverN = PI / (fftSize - 1);
 		for (size_t i = fStart; i < fEnd; i += hopSize)
 		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i);
+			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
 			if (processedBuffer == nullptr)
 			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i);
+				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
 				applyFilter(processedBuffer->audioBuffer);
 				processedBuffers.push_back(processedBuffer);
 			}
@@ -762,10 +761,10 @@ namespace HephAudio
 		const double piOverN = PI / (fftSize - 1);
 		for (size_t i = fStart; i < fEnd; i += hopSize)
 		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i);
+			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
 			if (processedBuffer == nullptr)
 			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i);
+				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
 				applyFilter(processedBuffer->audioBuffer);
 				processedBuffers.push_back(processedBuffer);
 			}
@@ -876,10 +875,10 @@ namespace HephAudio
 		const double piOverN = PI / (fftSize - 1);
 		for (size_t i = fStart; i < fEnd; i += hopSize)
 		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i);
+			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
 			if (processedBuffer == nullptr)
 			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i);
+				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
 				applyFilter(processedBuffer->audioBuffer);
 				processedBuffers.push_back(processedBuffer);
 			}
@@ -978,10 +977,10 @@ namespace HephAudio
 		const double piOverN = PI / (fftSize - 1);
 		for (size_t i = fStart; i < fEnd; i += hopSize)
 		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i);
+			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
 			if (processedBuffer == nullptr)
 			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i);
+				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
 				applyFilter(processedBuffer->audioBuffer);
 				processedBuffers.push_back(processedBuffer);
 			}
@@ -1007,7 +1006,7 @@ namespace HephAudio
 	}
 #pragma endregion
 #pragma region Windows
-	void AudioProcessor::TriangleWindow(AudioBuffer& buffer)
+	void AudioProcessor::ApplyTriangleWindow(AudioBuffer& buffer)
 	{
 		const double hN = 0.5 * (buffer.frameCount - 1);
 		const double hL = hN + 1.0;
@@ -1021,7 +1020,23 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::ParzenWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateTriangleWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double hN = 0.5 * (frameCount - 1);
+		const double hL = hN + 1.0;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 1.0 - fabs((i - hN) / hL);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyParzenWindow(AudioBuffer& buffer)
 	{
 		const double hN = 0.5 * (buffer.frameCount - 1);
 		const double hL = hN + 0.5;
@@ -1047,7 +1062,35 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::WelchWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateParzenWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double hN = 0.5 * (frameCount - 1);
+		const double hL = hN + 0.5;
+		const double qL = hL * 0.5;
+		double n = 0.0;
+		double absN = 0.0;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			n = i - hN;
+			absN = fabs(n);
+			if (absN >= 0 && absN <= qL)
+			{
+				factor = 1.0 - 6.0 * pow(n / hL, 2) * (1.0 - absN / hL);
+			}
+			else
+			{
+				factor = 2.0 * pow(1.0 - absN / hL, 3);
+			}
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyWelchWindow(AudioBuffer& buffer)
 	{
 		const double hN = 0.5 * (buffer.frameCount - 1);
 		double factor = 1.0;
@@ -1060,7 +1103,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::SineWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateWelchWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double hN = 0.5 * (frameCount - 1);
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 1.0 - pow((i - hN) / hN, 2);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplySineWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1073,7 +1131,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::HannWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateSineWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = sin(PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyHannWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1086,7 +1159,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::HammingWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateHannWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = pow(sin(PI * i / N), 2);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyHammingWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1099,7 +1187,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::BlackmanWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateHammingWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.54 - 0.46 * cos(2.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyBlackmanWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1112,7 +1215,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::ExactBlackmanWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateBlackmanWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.42 - 0.5 * cos(2.0 * PI * i / N) + 0.08 * cos(4.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyExactBlackmanWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1125,7 +1243,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::NuttallWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateExactBlackmanWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.42659 - 0.49656 * cos(2.0 * PI * i / N) + 0.076849 * cos(4.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyNuttallWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1138,7 +1271,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::BlackmanNuttallWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateNuttallWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.355768 - 0.487396 * cos(2.0 * PI * i / N) + 0.144232 * cos(4.0 * PI * i / N) - 0.012604 * cos(6.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyBlackmanNuttallWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1151,7 +1299,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::BlackmanHarrisWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateBlackmanNuttallWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.3635819 - 0.4891775 * cos(2.0 * PI * i / N) + 0.1365995 * cos(4.0 * PI * i / N) - 0.0106411 * cos(6.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyBlackmanHarrisWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1164,7 +1327,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::FlatTopWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateBlackmanHarrisWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.35875 - 0.48829 * cos(2.0 * PI * i / N) + 0.14128 * cos(4.0 * PI * i / N) - 0.01168 * cos(6.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyFlatTopWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1177,7 +1355,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::GaussianWindow(AudioBuffer& buffer, double sigma)
+	AudioBuffer AudioProcessor::GenerateFlatTopWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.21557895 - 0.41663158 * cos(2.0 * PI * i / N) + 0.277263158 * cos(4.0 * PI * i / N) - 0.083578947 * cos(6.0 * PI * i / N) + 0.006947368 * cos(8.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyGaussianWindow(AudioBuffer& buffer, double sigma)
 	{
 		const double hN = 0.5 * (buffer.frameCount - 1);
 		const double shN = sigma * hN;
@@ -1191,7 +1384,23 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::TukeyWindow(AudioBuffer& buffer, double alpha)
+	AudioBuffer AudioProcessor::GenerateGaussianWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate, double sigma)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double hN = 0.5 * (frameCount - 1);
+		const double shN = sigma * hN;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = exp(-0.5 * pow((i - hN) / shN, 2));
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyTukeyWindow(AudioBuffer& buffer, double alpha)
 	{
 		const double N = (buffer.frameCount - 1);
 		const double hN = 0.5 * N;
@@ -1218,7 +1427,36 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::BartlettHannWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateTukeyWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate, double alpha)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = (frameCount - 1);
+		const double hN = 0.5 * N;
+		const double aN = alpha * N;
+		const double haN = 0.5 * aN;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			if (i < haN)
+			{
+				factor = 0.5 * (1.0 - cos(2.0 * PI * i / aN));
+			}
+			else if (i >= haN && i <= hN)
+			{
+				factor = 1.0;
+			}
+			else
+			{
+				factor = 0.5 * (1.0 - cos(2.0 * PI * (N - i) / aN));
+			}
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyBartlettHannWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1231,7 +1469,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::HannPoissonWindow(AudioBuffer& buffer, double alpha)
+	AudioBuffer AudioProcessor::GenerateBartlettHannWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.62 - 0.48 * fabs(i / N - 0.5) - 0.38 * cos(2.0 * PI * i / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyHannPoissonWindow(AudioBuffer& buffer, double alpha)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1244,7 +1497,22 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::LanczosWindow(AudioBuffer& buffer)
+	AudioBuffer AudioProcessor::GenerateHannPoissonWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate, double alpha)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			factor = 0.5 * (1.0 - cos(2.0 * PI * i / N)) * exp(-alpha * fabs(N - 2.0 * i) / N);
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
+	void AudioProcessor::ApplyLanczosWindow(AudioBuffer& buffer)
 	{
 		const double N = buffer.frameCount - 1;
 		double factor = 1.0;
@@ -1259,22 +1527,40 @@ namespace HephAudio
 			}
 		}
 	}
+	AudioBuffer AudioProcessor::GenerateLanczosWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate)
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, channelCount, sizeof(double) * 8, sampleRate));
+		const double N = frameCount - 1;
+		double factor = 1.0;
+		double pix = 1.0;
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			pix = PI * (2.0 * i / N - 1.0);
+			factor = sin(pix) / pix;
+			for (size_t j = 0; j < channelCount; j++)
+			{
+				buffer[i][j] = factor;
+			}
+		}
+		return buffer;
+	}
 #pragma endregion
 #pragma region Processed Buffer
-	AudioProcessor::ProcessedBuffer::ProcessedBuffer() : ProcessedBuffer(nullptr, AudioBuffer(), 0u) {}
-	AudioProcessor::ProcessedBuffer::ProcessedBuffer(const AudioBuffer* pOriginalBuffer, const AudioBuffer& audioBuffer, size_t fStart)
+	AudioProcessor::ProcessedBuffer::ProcessedBuffer(const AudioBuffer* pOriginalBuffer, const AudioBuffer& audioBuffer, const size_t& fStart, const size_t& hopSize)
 	{
 		this->pOriginalBuffer = pOriginalBuffer;
 		this->audioBuffer = audioBuffer;
 		this->fStart = fStart;
+		this->hopSize = hopSize;
 	}
-	AudioProcessor::ProcessedBuffer* AudioProcessor::GetProcessedBuffer(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart)
+	AudioProcessor::ProcessedBuffer* AudioProcessor::GetProcessedBuffer(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart, const size_t& hopSize)
 	{
 		for (size_t i = 0; i < processedBuffers.size(); i++)
 		{
-			if (fStart == processedBuffers.at(i)->fStart && pOriginalBuffer == processedBuffers.at(i)->pOriginalBuffer)
+			ProcessedBuffer*& processedBuffer = processedBuffers.at(i);
+			if (processedBuffer->fStart == fStart && hopSize == processedBuffer->hopSize && processedBuffer->pOriginalBuffer == pOriginalBuffer)
 			{
-				return processedBuffers.at(i);
+				return processedBuffer;
 			}
 		}
 		return nullptr;
@@ -1283,9 +1569,10 @@ namespace HephAudio
 	{
 		for (int64_t i = 0; i < processedBuffers.size(); i++)
 		{
-			if (processedBuffers.at(i)->fStart < fStart && pOriginalBuffer == processedBuffers.at(i)->pOriginalBuffer)
+			ProcessedBuffer*& processedBuffer = processedBuffers.at(i);
+			if (processedBuffer->fStart < fStart && processedBuffer->pOriginalBuffer == pOriginalBuffer)
 			{
-				delete processedBuffers.at(i);
+				delete processedBuffer;
 				processedBuffers.erase(processedBuffers.begin() + i);
 				i--;
 			}

@@ -19,11 +19,11 @@ int main()
 	audio->SetOnExceptionHandler(OnException);
 	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
-	PrintDeltaTime("");
+	PrintDeltaTime(nullptr);
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Play(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", true);
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
@@ -48,8 +48,6 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
-	AudioProcessor::ConvertChannels(subBuffer, audio->GetRenderFormat().channelCount);
-	AudioProcessor::ConvertSampleRate(subBuffer, audio->GetRenderFormat().sampleRate, renderFrameCount);
 }
 double PrintDeltaTime(const char* label)
 {
@@ -59,7 +57,10 @@ double PrintDeltaTime(const char* label)
 	static double dt = 0.0;
 	t2 = clock.now();
 	dt = (t2 - t1).count() * 1.0e-6;
-	std::cout << label << ": " << dt << "ms\n";
+	if (label != nullptr)
+	{
+		std::cout << label << ": " << dt << "ms\n";
+	}
 	t1 = t2 = clock.now();
 	return dt;
 }
