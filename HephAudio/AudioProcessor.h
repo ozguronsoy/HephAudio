@@ -10,8 +10,8 @@ namespace HephAudio
 	class AudioProcessor final
 	{
 	private:
-		static constexpr size_t defaultHopSize = 4096u;
-		static constexpr size_t defaultFFTSize = 16384u;
+		static constexpr size_t defaultHopSize = 1024u;
+		static constexpr size_t defaultFFTSize = 4096u;
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		static void ConvertBPS(AudioBuffer& buffer, uint16_t outputBps);
@@ -43,6 +43,8 @@ namespace HephAudio
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double speed);
+		static void PitchShift(AudioBuffer& buffer, double frequencyFactor);
+		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double frequencyFactor);
 #pragma endregion
 #pragma region Filters
 	public:

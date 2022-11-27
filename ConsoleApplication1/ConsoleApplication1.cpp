@@ -28,6 +28,9 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
+	AudioProcessor::PitchShift(pao->buffer, 512, 4096, 0.5);
+	PrintDeltaTime("Pitch Shift");
+
 	pao->pause = false;
 
 	std::string a;

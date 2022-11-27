@@ -18,6 +18,18 @@ namespace HephAudio
 		FFT(complexBuffer, fftSize, true);
 		return complexBuffer;
 	}
+	void Fourier::FFT_Forward(ComplexBuffer& complexBuffer)
+	{
+		const size_t fftSize = CalculateFFTSize(complexBuffer.FrameCount());
+		complexBuffer.Resize(fftSize);
+		FFT(complexBuffer, fftSize, true);
+	}
+	void Fourier::FFT_Forward(ComplexBuffer& complexBuffer, size_t fftSize)
+	{
+		fftSize = CalculateFFTSize(fftSize);
+		complexBuffer.Resize(fftSize);
+		FFT(complexBuffer, fftSize, true);
+	}
 	void Fourier::FFT_Inverse(AudioBuffer& audioBuffer, ComplexBuffer& complexBuffer)
 	{
 		const size_t fftSize = CalculateFFTSize(complexBuffer.FrameCount());
@@ -46,14 +58,10 @@ namespace HephAudio
 	}
 	double Fourier::MagnitudeSquared(Complex sample)
 	{
-		return pow(sample.real, 2) + pow(sample.imaginary, 2);
+		return sample.real * sample.real + sample.imaginary * sample.imaginary;
 	}
-	double Fourier::Phase(Complex sample, bool isDegree)
+	double Fourier::Phase(Complex sample)
 	{
-		if (isDegree)
-		{
-			return atan2(sample.imaginary, sample.real) * 180.0 / PI;
-		}
 		return atan2(sample.imaginary, sample.real);
 	}
 	double Fourier::Decibels(Complex sample)
@@ -62,7 +70,7 @@ namespace HephAudio
 		{
 			return 0;
 		}
-		return 10.0 * log10(MagnitudeSquared(sample));
+		return 20.0 * log10(MagnitudeSquared(sample));
 	}
 	double Fourier::FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency)
 	{
