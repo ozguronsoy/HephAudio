@@ -43,8 +43,8 @@ namespace HephAudio
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double speed);
-		static void PitchShift(AudioBuffer& buffer, double frequencyFactor);
-		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double frequencyFactor);
+		static void PitchShift(AudioBuffer& buffer, double shiftFactor);
+		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double shiftFactor);
 #pragma endregion
 #pragma region Filters
 	public:
@@ -68,39 +68,39 @@ namespace HephAudio
 #pragma region Windows
 	public:
 		static void ApplyTriangleWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateTriangleWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateTriangleWindow(size_t frameCount);
 		static void ApplyParzenWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateParzenWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateParzenWindow(size_t frameCount);
 		static void ApplyWelchWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateWelchWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateWelchWindow(size_t frameCount);
 		static void ApplySineWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateSineWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateSineWindow(size_t frameCount);
 		static void ApplyHannWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateHannWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateHannWindow(size_t frameCount);
 		static void ApplyHammingWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateHammingWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateHammingWindow(size_t frameCount);
 		static void ApplyBlackmanWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBlackmanWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateBlackmanWindow(size_t frameCount);
 		static void ApplyExactBlackmanWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateExactBlackmanWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateExactBlackmanWindow(size_t frameCount);
 		static void ApplyNuttallWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateNuttallWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateNuttallWindow(size_t frameCount);
 		static void ApplyBlackmanNuttallWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBlackmanNuttallWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateBlackmanNuttallWindow(size_t frameCount);
 		static void ApplyBlackmanHarrisWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBlackmanHarrisWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateBlackmanHarrisWindow(size_t frameCount);
 		static void ApplyFlatTopWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateFlatTopWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateFlatTopWindow(size_t frameCount);
 		static void ApplyGaussianWindow(AudioBuffer& buffer, double sigma);
-		static AudioBuffer GenerateGaussianWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate, double sigma);
+		static AudioBuffer GenerateGaussianWindow(size_t frameCount, double sigma);
 		static void ApplyTukeyWindow(AudioBuffer& buffer, double alpha);
-		static AudioBuffer GenerateTukeyWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate, double alpha);
+		static AudioBuffer GenerateTukeyWindow(size_t frameCount, double alpha);
 		static void ApplyBartlettHannWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBartlettHannWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateBartlettHannWindow(size_t frameCount);
 		static void ApplyHannPoissonWindow(AudioBuffer& buffer, double alpha);
-		static AudioBuffer GenerateHannPoissonWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate, double alpha);
+		static AudioBuffer GenerateHannPoissonWindow(size_t frameCount, double alpha);
 		static void ApplyLanczosWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateLanczosWindow(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
+		static AudioBuffer GenerateLanczosWindow(size_t frameCount);
 #pragma endregion
 #pragma region Processed Buffer
 	private:

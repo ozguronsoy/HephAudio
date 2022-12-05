@@ -16,7 +16,7 @@ namespace HephAudio
 			bool SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const;
 		protected:
 			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo* wfx) const;
-			uint64_t SampleRateTo64(AudioFormatInfo* wfx) const;
+			uint64_t SampleRateTo64(const AudioFormatInfo* const& wfx) const;
 		};
 	}
 }

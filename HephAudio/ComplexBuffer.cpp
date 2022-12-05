@@ -49,7 +49,7 @@ namespace HephAudio
 			pComplexData = nullptr;
 		}
 	}
-	Complex& ComplexBuffer::operator[](size_t index) const
+	Complex& ComplexBuffer::operator[](const size_t& index) const
 	{
 		return *(pComplexData + index);
 	}
@@ -168,11 +168,11 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	bool ComplexBuffer::operator==(ComplexBuffer& rhs) const
+	bool ComplexBuffer::operator==(const ComplexBuffer& rhs) const
 	{
 		return this == &rhs || (this->frameCount == rhs.frameCount && memcmp(this->pComplexData, rhs.pComplexData, this->Size()) == 0);
 	}
-	bool ComplexBuffer::operator!=(ComplexBuffer& rhs) const
+	bool ComplexBuffer::operator!=(const ComplexBuffer& rhs) const
 	{
 		return this != &rhs && (this->frameCount != rhs.frameCount || memcmp(this->pComplexData, rhs.pComplexData, this->Size()) != 0);
 	}
@@ -337,8 +337,12 @@ namespace HephAudio
 			frameCount = newFrameCount;
 		}
 	}
-	Complex* ComplexBuffer::GetComplexDataAddress() const noexcept
+	Complex* const& ComplexBuffer::Begin() const noexcept
 	{
 		return pComplexData;
+	}
+	Complex* ComplexBuffer::End() const noexcept
+	{
+		return (Complex*)((uint8_t*)pComplexData + Size());
 	}
 }

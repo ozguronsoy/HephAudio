@@ -124,7 +124,7 @@ namespace HephAudio
 				const uint32_t subChunkSize = ChangeEndian32(16, Endian::Little);;
 				const uint8_t d[4] = { 'd', 'a', 't', 'a' };
 				const uint32_t dataSizeL = ChangeEndian32(dataSize, Endian::Little);
-				AudioFormatInfo wfx = buffer.GetFormat();
+				const AudioFormatInfo& wfx = buffer.FormatInfo();
 				const uint16_t formatTag = ChangeEndian16(wfx.formatTag, Endian::Little);
 				const uint16_t channelCount = ChangeEndian16(wfx.channelCount, Endian::Little);
 				const uint32_t sampleRate = ChangeEndian32(wfx.sampleRate, Endian::Little);

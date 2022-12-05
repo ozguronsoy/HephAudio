@@ -11,7 +11,7 @@ namespace HephAudio
 		this->frameIndex = frameIndex;
 		this->channelCount = channelCount;
 	}
-	double& AudioFrame::operator[](size_t channel) const
+	double& AudioFrame::operator[](const size_t& channel) const
 	{
 		return *(pAudioData + frameIndex * channelCount + channel);
 	}
@@ -67,7 +67,7 @@ namespace HephAudio
 			pAudioData = nullptr;
 		}
 	}
-	AudioFrame AudioBuffer::operator[](size_t frameIndex) const
+	AudioFrame AudioBuffer::operator[](const size_t& frameIndex) const
 	{
 		return AudioFrame(pAudioData, frameIndex, formatInfo.channelCount);
 	}
@@ -163,11 +163,11 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	bool AudioBuffer::operator==(AudioBuffer& rhs) const
+	bool AudioBuffer::operator==(const AudioBuffer& rhs) const
 	{
 		return this == &rhs || (this->formatInfo == rhs.formatInfo && this->frameCount == rhs.frameCount && memcmp(this->pAudioData, rhs.pAudioData, this->Size()) == 0);
 	}
-	bool AudioBuffer::operator!=(AudioBuffer& rhs) const
+	bool AudioBuffer::operator!=(const AudioBuffer& rhs) const
 	{
 		return this != &rhs && (this->formatInfo != rhs.formatInfo || this->frameCount != rhs.frameCount || memcmp(this->pAudioData, rhs.pAudioData, this->Size()) != 0);
 	}
@@ -175,7 +175,7 @@ namespace HephAudio
 	{
 		return frameCount * formatInfo.FrameSize();
 	}
-	size_t AudioBuffer::FrameCount() const noexcept
+	const size_t& AudioBuffer::FrameCount() const noexcept
 	{
 		return frameCount;
 	}
@@ -419,7 +419,7 @@ namespace HephAudio
 	{
 		return CalculateFrameIndex(ts, formatInfo);
 	}
-	AudioFormatInfo AudioBuffer::GetFormat() const noexcept
+	const AudioFormatInfo& AudioBuffer::FormatInfo() const noexcept
 	{
 		return formatInfo;
 	}
@@ -435,7 +435,7 @@ namespace HephAudio
 			formatInfo = newFormat;
 		}
 	}
-	void* AudioBuffer::Begin() const noexcept
+	void* const& AudioBuffer::Begin() const noexcept
 	{
 		return pAudioData;
 	}

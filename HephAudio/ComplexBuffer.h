@@ -7,14 +7,14 @@ namespace HephAudio
 	class ComplexBuffer final
 	{
 	private:
-		Complex* pComplexData;
 		size_t frameCount;
+		Complex* pComplexData;
 	public:
 		ComplexBuffer();
 		ComplexBuffer(size_t frameCount);
 		ComplexBuffer(const ComplexBuffer& rhs);
 		~ComplexBuffer();
-		Complex& operator[](size_t index) const;
+		Complex& operator[](const size_t& index) const;
 		ComplexBuffer operator-() const;
 		ComplexBuffer& operator=(const ComplexBuffer& rhs);
 		ComplexBuffer operator+(const ComplexBuffer& rhs) const;
@@ -27,8 +27,8 @@ namespace HephAudio
 		ComplexBuffer& operator*=(const double& rhs);
 		ComplexBuffer operator/(const double& rhs) const;
 		ComplexBuffer& operator/=(const double& rhs);
-		bool operator==(ComplexBuffer& rhs) const;
-		bool operator!=(ComplexBuffer& rhs) const;
+		bool operator==(const ComplexBuffer& rhs) const;
+		bool operator!=(const ComplexBuffer& rhs) const;
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
 		ComplexBuffer GetSubBuffer(size_t frameIndex, size_t frameCount) const;
@@ -39,6 +39,7 @@ namespace HephAudio
 		void Replace(const ComplexBuffer& buffer, size_t frameIndex, size_t frameCount);
 		void Reset();
 		void Resize(size_t newFrameCount);
-		Complex* GetComplexDataAddress() const noexcept;
+		Complex* const& Begin() const noexcept;
+		Complex* End() const noexcept;
 	};
 }

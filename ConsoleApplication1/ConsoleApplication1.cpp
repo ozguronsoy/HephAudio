@@ -28,8 +28,8 @@ int main()
 	pao->loopCount = 0u;
 	PrintDeltaTime("Load File");
 
-	AudioProcessor::PitchShift(pao->buffer, 512, 4096, 0.5);
-	PrintDeltaTime("Pitch Shift");
+	AudioProcessor::LowPassFilter(pao->buffer, 512, 1024, 650.0, [](double f) { return 0.0; });
+	PrintDeltaTime("Filter");
 
 	pao->pause = false;
 

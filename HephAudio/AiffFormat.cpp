@@ -148,7 +148,7 @@ namespace HephAudio
 			{
 				return false;
 			}
-			AudioFormatInfo bufferFormat = buffer.GetFormat();
+			AudioFormatInfo bufferFormat = buffer.FormatInfo();
 			const uint64_t srBits = ChangeEndian64(SampleRateTo64(&bufferFormat), Endian::Big);
 			const size_t headerSize = 68;
 			const size_t padding = buffer.Size() % 2 == 1 ? 1 : 0;
@@ -278,7 +278,7 @@ namespace HephAudio
 				throw AudioException(E_FAIL, L"AiffFormat", L"Unknown sample rate.");
 			}
 		}
-		uint64_t AiffFormat::SampleRateTo64(AudioFormatInfo* format) const
+		uint64_t AiffFormat::SampleRateTo64(const AudioFormatInfo* const& format) const
 		{
 			if (format == nullptr)
 			{

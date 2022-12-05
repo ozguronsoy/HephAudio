@@ -439,7 +439,7 @@ namespace HephAudio
 				if (audioObject->IsPlaying())
 				{
 					const double volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
-					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.GetFormat().sampleRate / (double)renderFormat.sampleRate);
+					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
 					size_t frameIndex = 0;
 					if (audioObject->GetSubBuffer == nullptr)
 					{

@@ -19,7 +19,7 @@ namespace HephAudio
 		size_t channelCount;
 		AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount);
 	public:
-		double& operator[](size_t channel) const;
+		double& operator[](const size_t& channel) const;
 	};
 #pragma endregion
 #pragma region Audio Buffer
@@ -27,16 +27,16 @@ namespace HephAudio
 	{
 		friend class AudioProcessor;
 	private:
+		AudioFormatInfo formatInfo;
 		size_t frameCount;
 		void* pAudioData;
-		AudioFormatInfo formatInfo;
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
 		~AudioBuffer();
 		// Only for WAVE_FORMAT_IEEE_FLOAT.
-		AudioFrame operator[](size_t frameIndex) const;
+		AudioFrame operator[](const size_t& frameIndex) const;
 		AudioBuffer operator-() const;
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		// Joins the rhs buffer to the end of the current buffer and returns it as a new audio buffer.
@@ -51,11 +51,11 @@ namespace HephAudio
 		AudioBuffer operator/(const double& rhs) const;
 		// Divides all the samples in the current buffer by rhs.
 		AudioBuffer& operator/=(const double& rhs);
-		bool operator==(AudioBuffer& rhs) const;
-		bool operator!=(AudioBuffer& rhs) const;
+		bool operator!=(const AudioBuffer& rhs) const;
+		bool operator==(const AudioBuffer& rhs) const;
 		// Buffer size in byte.
 		size_t Size() const noexcept;
-		size_t FrameCount() const noexcept;
+		const size_t& FrameCount() const noexcept;
 		// Gets normalized sample from the buffer.
 		double Get(size_t frameIndex, uint8_t channel) const;
 		// value must be between -1 and 1.
@@ -73,9 +73,9 @@ namespace HephAudio
 		// Calculates the duration of the buffer in seconds.
 		double CalculateDuration() const noexcept;
 		size_t CalculateFrameIndex(double ts) const noexcept;
-		AudioFormatInfo GetFormat() const noexcept;
+		const AudioFormatInfo& FormatInfo() const noexcept;
 		void SetFormat(AudioFormatInfo newFormat);
-		void* Begin() const noexcept;
+		void* const& Begin() const noexcept;
 		void* End() const noexcept;
 	public:
 		// Calculates the duration of the buffer in seconds.
