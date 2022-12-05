@@ -1,4 +1,5 @@
 #pragma once
+#include "framework.h"
 #include "AudioDevice.h"
 #include "AudioException.h"
 #include "Category.h"

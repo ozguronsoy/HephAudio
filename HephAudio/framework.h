@@ -10,6 +10,8 @@
 #include <cmath>
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) > (b)) ? (b) : (a))
+#define WAVE_FORMAT_PCM 1
+#define WAVE_FORMAT_EXTENSIBLE 0xFFFE
 #endif
 
 #ifndef PI
@@ -27,3 +29,4 @@
 #ifndef E_OUTOFMEMORY
 #define E_OUTOFMEMORY 0x8007000E
 #endif
+#define WAVE_FORMAT_HEPHAUDIO 37

@@ -1,4 +1,5 @@
 #pragma once
+#include "framework.h"
 #include "AudioBuffer.h"
 #include "EchoInfo.h"
 #include "EqualizerInfo.h"

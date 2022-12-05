@@ -84,7 +84,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudio.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h">
@@ -146,7 +146,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudio.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp">

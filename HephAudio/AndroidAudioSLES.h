@@ -9,11 +9,11 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses OpenSL ES, min api target = 14. Use AndroidAudioA for api level 26 or greater (uses AAudio).
-		class AndroidAudio : public INativeAudio
+		class AndroidAudioSLES : public INativeAudio
 		{
 		protected:
 			struct CallbackContext {
-				AndroidAudio* pAndroidAudio;
+				AndroidAudioSLES* pAndroidAudio;
 				SLint8* pDataBase; // Base adress of local audio data storage
 				SLint8* pData; // Current adress of local audio data storage
 				SLuint32 size;
@@ -29,10 +29,10 @@ namespace HephAudio
 			uint32_t renderBufferSize;
 			uint32_t captureBufferSize;
 		public:
-			AndroidAudio();
-			AndroidAudio(const AndroidAudio&) = delete;
-			AndroidAudio& operator=(const AndroidAudio&) = delete;
-			virtual ~AndroidAudio();
+			AndroidAudioSLES();
+			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
+			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
+			virtual ~AndroidAudioSLES();
 			virtual void SetMasterVolume(double volume);
 			virtual double GetMasterVolume() const;
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);

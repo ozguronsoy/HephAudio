@@ -1,4 +1,5 @@
 #pragma once
+#include "framework.h"
 #include "IAudioFormat.h"
 #include "WavFormat.h"
 #include "AiffFormat.h"

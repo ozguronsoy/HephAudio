@@ -4,8 +4,6 @@
 #include "AudioFormatInfo.h"
 #include <vector>
 
-#define WAV_FORMAT_HEPHAUDIO 37
-
 namespace HephAudio
 {
 #pragma region Audio Frame

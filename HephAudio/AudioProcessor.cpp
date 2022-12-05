@@ -178,7 +178,7 @@ namespace HephAudio
 		{
 			throw AudioException(E_FAIL, L"AudioProcessor::ConvertPcmToInnerFormat", L"Invalid format. buffer format must be raw pcm.");
 		}
-		AudioBuffer tempBuffer = AudioBuffer(buffer.frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, sizeof(double) * 8, buffer.formatInfo.sampleRate));
+		AudioBuffer tempBuffer = AudioBuffer(buffer.frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, sizeof(double) * 8, buffer.formatInfo.sampleRate));
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -190,7 +190,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps)
 	{
-		if (buffer.formatInfo.formatTag != WAV_FORMAT_HEPHAUDIO)
+		if (buffer.formatInfo.formatTag != WAVE_FORMAT_HEPHAUDIO)
 		{
 			throw AudioException(E_FAIL, L"AudioProcessor::ConvertInnerToPcmFormat", L"Invalid format. buffer format must be the inner format of the HephAudio library.");
 		}
@@ -613,10 +613,10 @@ namespace HephAudio
 		std::vector<AudioBuffer> channels = AudioProcessor::SplitChannels(buffer);
 		buffer.Reset();
 		AudioBuffer hannWindow = GenerateHannWindow(fftSize);
-		AudioBuffer lastAnalysisPhases = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
-		AudioBuffer lastSynthesisPhases = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
-		AudioBuffer synthesisMagnitudes = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
-		AudioBuffer synthesisFrequencies = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
+		AudioBuffer lastAnalysisPhases = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
+		AudioBuffer lastSynthesisPhases = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
+		AudioBuffer synthesisMagnitudes = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
+		AudioBuffer synthesisFrequencies = AudioBuffer(nyquistFrequency, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, doubleSizeInBits, buffer.formatInfo.sampleRate));
 		for (size_t i = 0; i < buffer.frameCount; i += hopSize)
 		{
 			synthesisMagnitudes.Reset();
@@ -1096,7 +1096,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateTriangleWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double hN = 0.5 * (frameCount - 1);
 		const double hL = hN + 1.0;
 		for (size_t i = 0; i < frameCount; i++)
@@ -1133,7 +1133,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateParzenWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double hN = 0.5 * (frameCount - 1);
 		const double hL = hN + 0.5;
 		const double qL = hL * 0.5;
@@ -1169,7 +1169,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateWelchWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double hN = 0.5 * (frameCount - 1);
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1192,7 +1192,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateSineWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1215,7 +1215,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateHannWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1238,7 +1238,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateHammingWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1261,7 +1261,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateBlackmanWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1284,7 +1284,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateExactBlackmanWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1307,7 +1307,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateNuttallWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1330,7 +1330,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateBlackmanNuttallWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1353,7 +1353,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateBlackmanHarrisWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1376,7 +1376,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateFlatTopWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1400,7 +1400,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateGaussianWindow(size_t frameCount, double sigma)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double hN = 0.5 * (frameCount - 1);
 		const double shN = sigma * hN;
 		for (size_t i = 0; i < frameCount; i++)
@@ -1438,7 +1438,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateTukeyWindow(size_t frameCount, double alpha)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = (frameCount - 1);
 		const double hN = 0.5 * N;
 		const double aN = alpha * N;
@@ -1475,7 +1475,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateBartlettHannWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1498,7 +1498,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateHannPoissonWindow(size_t frameCount, double alpha)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -1523,7 +1523,7 @@ namespace HephAudio
 	}
 	AudioBuffer AudioProcessor::GenerateLanczosWindow(size_t frameCount)
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
+		AudioBuffer buffer = AudioBuffer(frameCount,AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(double) * 8, 0));
 		const double N = frameCount - 1;
 		double pix = 1.0;
 		for (size_t i = 0; i < frameCount; i++)

@@ -1,5 +1,5 @@
 #ifdef __ANDROID__
-#include "AndroidAudio.h"
+#include "AndroidAudioSLES.h"
 #include "AudioProcessor.h"
 
 #define ANDROIDAUDIO_EXCPT(slres, androidAudio, method, message) if(slres != 0) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(slres, method, message)); throw AudioException(slres, method, message); }
@@ -11,11 +11,11 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudio::AndroidAudio() : INativeAudio()
+		AndroidAudioSLES::AndroidAudioSLES() : INativeAudio()
 		{
-			if (__ANDROID_API__ < 21)
+			if (__ANDROID_API__ < 14)
 			{
-				throw AudioException(E_FAIL, L"AndroidAudio::AndroidAudio", L"Api level must be 21 or greater.");
+				throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"Api level must be 14 or greater.");
 			}
 			audioEngineObject = nullptr;
 			audioEngine = nullptr;
@@ -31,11 +31,11 @@ namespace HephAudio
 			engineOption.data = SL_BOOLEAN_TRUE;
 			SLInterfaceID engineInterfaceIds = SL_IID_ENGINE;
 			SLboolean engineInterfaceBools = SL_BOOLEAN_TRUE;
-			ANDROIDAUDIO_EXCPT(slCreateEngine(&audioEngineObject, 1, &engineOption, 1, &engineInterfaceIds, &engineInterfaceBools), this, L"AndroidAudio::AndroidAudio", L"An error occurred whilst creating the audio engine object.");
-			ANDROIDAUDIO_EXCPT((*audioEngineObject)->Realize(audioEngineObject, SL_BOOLEAN_FALSE), this, L"AndroidAudio::AndroidAudio", L"An error occurred whilst creating the audio engine object.");
-			ANDROIDAUDIO_EXCPT((*audioEngineObject)->GetInterface(audioEngineObject, SL_IID_ENGINE, &audioEngine), this, L"AndroidAudio::AndroidAudio", L"An error occurred whilst getting the audio engine interface.");
+			ANDROIDAUDIO_EXCPT(slCreateEngine(&audioEngineObject, 1, &engineOption, 1, &engineInterfaceIds, &engineInterfaceBools), this, L"AndroidAudioSLES::AndroidAudioSLES", L"An error occurred whilst creating the audio engine object.");
+			ANDROIDAUDIO_EXCPT((*audioEngineObject)->Realize(audioEngineObject, SL_BOOLEAN_FALSE), this, L"AndroidAudioSLES::AndroidAudioSLES", L"An error occurred whilst creating the audio engine object.");
+			ANDROIDAUDIO_EXCPT((*audioEngineObject)->GetInterface(audioEngineObject, SL_IID_ENGINE, &audioEngine), this, L"AndroidAudioSLES::AndroidAudioSLES", L"An error occurred whilst getting the audio engine interface.");
 		}
-		AndroidAudio::~AndroidAudio()
+		AndroidAudioSLES::~AndroidAudioSLES()
 		{
 			disposing = true;
 			JoinRenderThread();
@@ -45,15 +45,15 @@ namespace HephAudio
 			StopCapturing();
 			(*audioEngineObject)->Destroy(audioEngineObject);
 		}
-		void AndroidAudio::SetMasterVolume(double volume)
+		void AndroidAudioSLES::SetMasterVolume(double volume)
 		{
 			masterVolume = volume;
 		}
-		double AndroidAudio::GetMasterVolume() const
+		double AndroidAudioSLES::GetMasterVolume() const
 		{
 			return masterVolume;
 		}
-		void AndroidAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
+		void AndroidAudioSLES::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			StopRendering();
 			SLDataSource dataSource;
@@ -68,23 +68,23 @@ namespace HephAudio
 			SLDataSink dataSink;
 			SLObjectItf outputMixObject;
 			SLDataLocator_OutputMix outputMixLocator;
-			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateOutputMix(audioEngine, &outputMixObject, 0, nullptr, nullptr), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating audio player.");
-			ANDROIDAUDIO_EXCPT((*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating audio player.");
+			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateOutputMix(audioEngine, &outputMixObject, 0, nullptr, nullptr), this, L"AndroidAudioSLES::InitializeRender", L"An error occurred whilst creating audio player.");
+			ANDROIDAUDIO_EXCPT((*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE), this, L"AndroidAudioSLES::InitializeRender", L"An error occurred whilst creating audio player.");
 			outputMixLocator.locatorType = SL_DATALOCATOR_OUTPUTMIX;
 			outputMixLocator.outputMix = outputMixObject;
 			dataSink.pLocator = &outputMixLocator;
 			dataSink.pFormat = &pcmFormat;
 			SLboolean audioPlayerBools[2] = { SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE };
 			SLInterfaceID audioPlayerIIDs[2] = { SL_IID_PLAY, SL_IID_BUFFERQUEUE };
-			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateAudioPlayer(audioEngine, &audioPlayerObject, &dataSource, &dataSink, 2, audioPlayerIIDs, audioPlayerBools), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating audio player.");
-			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->Realize(audioPlayerObject, SL_BOOLEAN_FALSE), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating audio player.");
-			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->GetInterface(audioPlayerObject, SL_IID_PLAY, &audioPlayer), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating audio player.");
+			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateAudioPlayer(audioEngine, &audioPlayerObject, &dataSource, &dataSink, 2, audioPlayerIIDs, audioPlayerBools), this, L"AndroidAudioSLES::InitializeRender", L"An error occurred whilst creating audio player.");
+			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->Realize(audioPlayerObject, SL_BOOLEAN_FALSE), this, L"AndroidAudioSLES::InitializeRender", L"An error occurred whilst creating audio player.");
+			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->GetInterface(audioPlayerObject, SL_IID_PLAY, &audioPlayer), this, L"AndroidAudioSLES::InitializeRender", L"An error occurred whilst creating audio player.");
 			SLBufferQueueItf bufferQueue;
-			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->GetInterface(audioPlayerObject, SL_IID_BUFFERQUEUE, &bufferQueue), this, L"AndroidAudio::InitializeRender", L"An error occurred whilst creating render buffer.");
+			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->GetInterface(audioPlayerObject, SL_IID_BUFFERQUEUE, &bufferQueue), this, L"AndroidAudioSLES::InitializeRender", L"An error occurred whilst creating render buffer.");
 			isRenderInitialized = true;
-			renderThread = std::thread(&AndroidAudio::RenderData, this, bufferQueue);
+			renderThread = std::thread(&AndroidAudioSLES::RenderData, this, bufferQueue);
 		}
-		void AndroidAudio::StopRendering()
+		void AndroidAudioSLES::StopRendering()
 		{
 			if (isRenderInitialized)
 			{
@@ -96,8 +96,9 @@ namespace HephAudio
 				}
 			}
 		}
-		void AndroidAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
+		void AndroidAudioSLES::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
+			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"AndroidAudioSLES does not support this method, use AndroidAudio instead.");
 			StopCapturing();
 			SLDataLocator_IODevice deviceLocator;
 			deviceLocator.locatorType = SL_DATALOCATOR_IODEVICE;
@@ -114,7 +115,7 @@ namespace HephAudio
 			void* dataBuffer = malloc(captureBufferSize);
 			if (dataBuffer == nullptr)
 			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudio::InitializeCapture", L"Insufficient memory."));
+				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudioSLES::InitializeCapture", L"Insufficient memory."));
 				return;
 			}
 			SLDataLocator_Address addressLocator;
@@ -124,22 +125,22 @@ namespace HephAudio
 			dataSink.pLocator = &addressLocator;
 			dataSink.pFormat = &pcmFormat;
 			SLboolean audiorecordertrue = SL_BOOLEAN_TRUE;
-			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateAudioRecorder(audioEngine, &audioRecorderObject, &dataSource, &dataSink, 1, &SL_IID_RECORD, &audiorecordertrue), this, L"AndroidAudio::InitializeCapture", L"An error occurred whilst initializing capture.");
-			ANDROIDAUDIO_EXCPT((*audioRecorderObject)->Realize(audioRecorderObject, SL_BOOLEAN_FALSE), this, L"AndroidAudio::InitializeCapture", L"An error occurred whilst initializing capture.");
-			ANDROIDAUDIO_EXCPT((*audioRecorderObject)->GetInterface(audioRecorderObject, SL_IID_RECORD, &audioRecorder), this, L"AndroidAudio::InitializeCapture", L"An error occurred whilst initializing capture.");
+			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateAudioRecorder(audioEngine, &audioRecorderObject, &dataSource, &dataSink, 1, &SL_IID_RECORD, &audiorecordertrue), this, L"AndroidAudioSLES::InitializeCapture", L"An error occurred whilst initializing capture.");
+			ANDROIDAUDIO_EXCPT((*audioRecorderObject)->Realize(audioRecorderObject, SL_BOOLEAN_FALSE), this, L"AndroidAudioSLES::InitializeCapture", L"An error occurred whilst initializing capture.");
+			ANDROIDAUDIO_EXCPT((*audioRecorderObject)->GetInterface(audioRecorderObject, SL_IID_RECORD, &audioRecorder), this, L"AndroidAudioSLES::InitializeCapture", L"An error occurred whilst initializing capture.");
 			CallbackContext context;
 			context.pAndroidAudio = this;
 			context.pDataBase = (SLint8*)dataBuffer;
 			context.pData = context.pDataBase;
 			context.size = captureBufferSize;
-			ANDROIDAUDIO_EXCPT((*audioRecorder)->RegisterCallback(audioRecorder, &AndroidAudio::RecordEventCallback, &context), this, L"AndroidAudio::InitializeCapture", L"An error occurred whilst initializing capture.");
-			ANDROIDAUDIO_EXCPT((*audioRecorder)->SetPositionUpdatePeriod(audioRecorder, 200), this, L"AndroidAudio::InitializeCapture", L"An error occurred whilst initializing capture."); // update callback every 200 ms.
-			ANDROIDAUDIO_EXCPT((*audioRecorder)->SetCallbackEventsMask(audioRecorder, SL_RECORDEVENT_HEADATNEWPOS), this, L"AndroidAudio::InitializeCapture", L"An error occurred whilst initializing capture.");
+			ANDROIDAUDIO_EXCPT((*audioRecorder)->RegisterCallback(audioRecorder, &AndroidAudioSLES::RecordEventCallback, &context), this, L"AndroidAudioSLES::InitializeCapture", L"An error occurred whilst initializing capture.");
+			ANDROIDAUDIO_EXCPT((*audioRecorder)->SetPositionUpdatePeriod(audioRecorder, 200), this, L"AndroidAudioSLES::InitializeCapture", L"An error occurred whilst initializing capture."); // update callback every 200 ms.
+			ANDROIDAUDIO_EXCPT((*audioRecorder)->SetCallbackEventsMask(audioRecorder, SL_RECORDEVENT_HEADATNEWPOS), this, L"AndroidAudioSLES::InitializeCapture", L"An error occurred whilst initializing capture.");
 			captureFormat = format;
 			isCaptureInitialized = true;
-			captureThread = std::thread(&AndroidAudio::CaptureData, this, dataBuffer);
+			captureThread = std::thread(&AndroidAudioSLES::CaptureData, this, dataBuffer);
 		}
-		void AndroidAudio::StopCapturing()
+		void AndroidAudioSLES::StopCapturing()
 		{
 			if (isCaptureInitialized)
 			{
@@ -151,28 +152,28 @@ namespace HephAudio
 				}
 			}
 		}
-		void AndroidAudio::SetDisplayName(std::wstring displayName)
+		void AndroidAudioSLES::SetDisplayName(std::wstring displayName)
 		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudio::SetDisplayName", L"AndroidAudio does not support this method."));
+			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::SetDisplayName", L"AndroidAudioSLES does not support this method."));
 		}
-		void AndroidAudio::SetIconPath(std::wstring iconPath)
+		void AndroidAudioSLES::SetIconPath(std::wstring iconPath)
 		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudio::SetIconPath", L"AndroidAudio does not support this method."));
+			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::SetIconPath", L"AndroidAudioSLES does not support this method."));
 		}
-		AudioDevice AndroidAudio::GetDefaultAudioDevice(AudioDeviceType deviceType) const
+		AudioDevice AndroidAudioSLES::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudio::GetDefaultAudioDevice", L"AndroidAudio does not support this method."));
+			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::GetDefaultAudioDevice", L"AndroidAudioSLES does not support this method."));
 		}
-		std::vector<AudioDevice> AndroidAudio::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
+		std::vector<AudioDevice> AndroidAudioSLES::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
 		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudio::GetAudioDevices", L"AndroidAudio does not support this method."));
+			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::GetAudioDevices", L"AndroidAudioSLES does not support this method."));
 		}
-		void AndroidAudio::RenderData(SLBufferQueueItf bufferQueue)
+		void AndroidAudioSLES::RenderData(SLBufferQueueItf bufferQueue)
 		{
 			void* audioBuffer = malloc(renderBufferSize);
 			if (audioBuffer == nullptr)
 			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudio", L"Insufficient memory."));
+				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudioSLES", L"Insufficient memory."));
 				return;
 			}
 			memset(audioBuffer, 0, renderBufferSize);
@@ -181,27 +182,27 @@ namespace HephAudio
 			context.pDataBase = (SLint8*)audioBuffer;
 			context.pData = context.pDataBase;
 			context.size = renderBufferSize;
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*bufferQueue)->RegisterCallback(bufferQueue, &AndroidAudio::BufferQueueCallback, &context), this, L"AndroidAudio", L"An error occurred whilst rendering data.");
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*bufferQueue)->Enqueue(bufferQueue, context.pData, renderBufferSize * 0.01), this, L"AndroidAudio", L"An error occurred whilst rendering data.");
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PLAYING), this, L"AndroidAudio", L"An error occurred whilst rendering data.");
+			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*bufferQueue)->RegisterCallback(bufferQueue, &AndroidAudioSLES::BufferQueueCallback, &context), this, L"AndroidAudioSLES", L"An error occurred whilst rendering data.");
+			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*bufferQueue)->Enqueue(bufferQueue, context.pData, renderBufferSize * 0.01), this, L"AndroidAudioSLES", L"An error occurred whilst rendering data.");
+			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PLAYING), this, L"AndroidAudioSLES", L"An error occurred whilst rendering data.");
 			while (!disposing && isRenderInitialized);
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED), this, L"AndroidAudio", L"An error occurred whilst rendering data.");
+			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED), this, L"AndroidAudioSLES", L"An error occurred whilst rendering data.");
 		RENDER_EXIT:
 			free(audioBuffer);
 		}
-		void AndroidAudio::CaptureData(void* dataBuffer)
+		void AndroidAudioSLES::CaptureData(void* dataBuffer)
 		{
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_RECORDING), this, L"AndroidAudio", L"An error occurred whilst capturing data.");
+			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_RECORDING), this, L"AndroidAudioSLES", L"An error occurred whilst capturing data.");
 			while (!disposing && isCaptureInitialized);
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_STOPPED), this, L"AndroidAudio", L"An error occurred whilst capturing data.");
+			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_STOPPED), this, L"AndroidAudioSLES", L"An error occurred whilst capturing data.");
 		CAPTURE_EXIT:
 			free(dataBuffer);
 		}
-		double AndroidAudio::GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const
+		double AndroidAudioSLES::GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const
 		{
 			return INativeAudio::GetFinalAOVolume(audioObject) * masterVolume;
 		}
-		SLDataFormat_PCM AndroidAudio::ToSLFormat(AudioFormatInfo& formatInfo)
+		SLDataFormat_PCM AndroidAudioSLES::ToSLFormat(AudioFormatInfo& formatInfo)
 		{
 			SLDataFormat_PCM pcmFormat;
 			pcmFormat.formatType = SL_DATAFORMAT_PCM;
@@ -213,7 +214,7 @@ namespace HephAudio
 			pcmFormat.endianness = SL_BYTEORDER_LITTLEENDIAN;
 			return pcmFormat;
 		}
-		void AndroidAudio::BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext)
+		void AndroidAudioSLES::BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext)
 		{
 			CallbackContext* pCallbackContext = (CallbackContext*)pContext;
 			if (pCallbackContext != nullptr)
@@ -225,7 +226,7 @@ namespace HephAudio
 				SLresult slres = (*bufferQueue)->Enqueue(bufferQueue, pCallbackContext->pData, dataBuffer.Size());
 				if (slres != 0)
 				{
-					RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(E_FAIL, L"AndroidAudio", L"An error occurred whilst rendering data."));
+					RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(E_FAIL, L"AndroidAudioSLES", L"An error occurred whilst rendering data."));
 					return;
 				}
 				pCallbackContext->pData += dataBuffer.Size();
@@ -235,7 +236,7 @@ namespace HephAudio
 				}
 			}
 		}
-		void AndroidAudio::RecordEventCallback(SLRecordItf audioRecorder, void* pContext, SLuint32 e)
+		void AndroidAudioSLES::RecordEventCallback(SLRecordItf audioRecorder, void* pContext, SLuint32 e)
 		{
 			CallbackContext* pCallbackContext = (CallbackContext*)pContext;
 			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->OnCapture != nullptr)
@@ -253,7 +254,7 @@ namespace HephAudio
 					SLresult slres = (*audioRecorder)->SetMarkerPosition(audioRecorder, 0);
 					if (slres != 0)
 					{
-						RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(E_FAIL, L"AndroidAudio", L"An error occurred whilst capturing data."));
+						RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(E_FAIL, L"AndroidAudioSLES", L"An error occurred whilst capturing data."));
 					}
 				}
 			}

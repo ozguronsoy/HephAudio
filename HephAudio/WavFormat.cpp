@@ -20,7 +20,7 @@ namespace HephAudio
 				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
 				{
 					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
-					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE || wfx.formatTag == WAVE_FORMAT_ALAW || wfx.formatTag == WAVE_FORMAT_MULAW)
+					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
 					{
 						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
 						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);

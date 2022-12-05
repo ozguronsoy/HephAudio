@@ -122,7 +122,7 @@ namespace HephAudio
 		{
 			std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
 			ao->name = name;
-			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAV_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(double) * 2, renderFormat.sampleRate));
+			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(double) * 2, renderFormat.sampleRate));
 			ao->constant = true;
 			audioObjects.push_back(ao);
 			return ao;
