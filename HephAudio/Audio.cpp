@@ -45,7 +45,9 @@ namespace HephAudio
 			pNativeAudio = new WinAudioDS();
 		}
 #elif defined(__ANDROID__)
+#if __ANDROID_API__ >= 9 && // __ANDROID_API__ < 26
 		pNativeAudio = new AndroidAudio();
+#endif
 #endif
 	}
 	Audio::~Audio()

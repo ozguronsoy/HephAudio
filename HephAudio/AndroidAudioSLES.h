@@ -3,19 +3,20 @@
 #include "framework.h"
 #include "INativeAudio.h"
 #include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
 
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses OpenSL ES, min api target = 14. Use AndroidAudioA for api level 26 or greater (uses AAudio).
+		// Uses OpenSL ES, min api target = 9. Use AndroidAudioA for api level 26 or greater (uses AAudio).
 		class AndroidAudioSLES : public INativeAudio
 		{
 		protected:
 			struct CallbackContext {
 				AndroidAudioSLES* pAndroidAudio;
-				SLint8* pDataBase; // Base adress of local audio data storage
-				SLint8* pData; // Current adress of local audio data storage
+				SLint8* pDataBase; // Base address of local audio data storage
+				SLint8* pData; // Current address of local audio data storage
 				SLuint32 size;
 			};
 		protected:
@@ -23,9 +24,9 @@ namespace HephAudio
 			SLEngineItf audioEngine;
 			SLObjectItf audioPlayerObject;
 			SLPlayItf audioPlayer;
+			SLVolumeItf masterVolumeObject;
 			SLObjectItf audioRecorderObject;
 			SLRecordItf audioRecorder;
-			double masterVolume;
 			uint32_t renderBufferSize;
 			uint32_t captureBufferSize;
 		public:
@@ -46,8 +47,7 @@ namespace HephAudio
 		protected:
 			virtual void RenderData(SLBufferQueueItf bufferQueue);
 			virtual void CaptureData(void* dataBuffer);
-			virtual double GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const;
-			virtual SLDataFormat_PCM ToSLFormat(AudioFormatInfo& formatInfo);
+			virtual SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);
 			static void RecordEventCallback(SLRecordItf audioRecorder, void* pContext, SLuint32 e);
 		};
