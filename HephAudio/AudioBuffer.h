@@ -33,7 +33,7 @@ namespace HephAudio
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
 		~AudioBuffer();
-		// Only for WAVE_FORMAT_IEEE_FLOAT.
+		// Only for WAVE_FORMAT_HEPHAUDIO.
 		AudioFrame operator[](const size_t& frameIndex) const;
 		AudioBuffer operator-() const;
 		AudioBuffer& operator=(const AudioBuffer& rhs);

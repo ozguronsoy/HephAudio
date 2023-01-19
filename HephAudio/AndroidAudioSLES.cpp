@@ -98,7 +98,7 @@ namespace HephAudio
 		}
 		void AndroidAudioSLES::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
-			//throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"AndroidAudioSLES does not support this method, use AndroidAudio instead.");
+			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"AndroidAudioSLES does not support this method, use AndroidAudio instead.");
 			StopCapturing();
 			SLDataLocator_IODevice deviceLocator;
 			deviceLocator.locatorType = SL_DATALOCATOR_IODEVICE;

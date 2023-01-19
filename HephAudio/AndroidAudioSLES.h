@@ -9,7 +9,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses OpenSL ES, min api target = 9. Use AndroidAudioA for api level 26 or greater (uses AAudio).
+		// Uses OpenSL ES, min api target = 9. Use AndroidAudioA for api level 27 or greater (uses AAudio).
 		class AndroidAudioSLES : public INativeAudio
 		{
 		protected:
