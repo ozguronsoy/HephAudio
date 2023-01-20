@@ -32,6 +32,16 @@ namespace HephAudio
 	{
 		pNativeAudio->OnCapture = handler;
 	}
+#ifdef __ANDROID__
+	Audio::Audio(JNIEnv* env)
+	{
+#if __ANDROID_API__ >= 27
+		pNativeAudio = new AndroidAudioA(env);
+#elif __ANDROID_API__ >= 9
+		pNativeAudio = new AndroidAudioSLES();
+#endif
+	}
+#else
 	Audio::Audio()
 	{
 		pNativeAudio = nullptr;
@@ -44,14 +54,9 @@ namespace HephAudio
 		{
 			pNativeAudio = new WinAudioDS();
 		}
-#elif defined(__ANDROID__)
-#if __ANDROID_API__ >= 27
-		pNativeAudio = new AndroidAudioA();
-#elif __ANDROID_API__ >= 9
-		pNativeAudio = new AndroidAudioSLES();
-#endif
 #endif
 	}
+#endif
 	Audio::~Audio()
 	{
 		if (pNativeAudio != nullptr)

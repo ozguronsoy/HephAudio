@@ -10,7 +10,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioA::AndroidAudioA() : INativeAudio()
+		AndroidAudioA::AndroidAudioA(JNIEnv* env) : AndroidAudioBase(env)
 		{
 #if __ANDROID_API__ < 27
 			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioA", L"The minimum supported Api level is 26.");
@@ -77,6 +77,7 @@ namespace HephAudio
 			if (device != nullptr)
 			{
 				AAudioStreamBuilder_setDeviceId(streamBuilder, std::stoi(device->id));
+				renderDeviceId = device->id;
 			}
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pRenderStream), this, L"AndroidAudioA::InitializeRender", L"An error occurred whilst opening the render stream.");
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, L"AndroidAudioA::InitializeRender", L"An error occurred whilst deleting the stream builder.");
@@ -133,6 +134,7 @@ namespace HephAudio
 			if (device != nullptr)
 			{
 				AAudioStreamBuilder_setDeviceId(streamBuilder, std::stoi(device->id));
+				captureDeviceId = device->id;
 			}
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pCaptureStream), this, L"AndroidAudioA::InitializeCapture", L"An error occurred whilst opening the capture stream.");
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, L"AndroidAudioA::InitializeCapture", L"An error occurred whilst deleting the stream builder.");
@@ -157,14 +159,6 @@ namespace HephAudio
 		void AndroidAudioA::SetIconPath(std::wstring iconPath)
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioA::SetIconPath", L"AndroidAudioA does not support this method."));
-		}
-		AudioDevice AndroidAudioA::GetDefaultAudioDevice(AudioDeviceType deviceType) const
-		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioA::GetDefaultAudioDevice", L"AndroidAudioA does not support this method."));
-		}
-		std::vector<AudioDevice> AndroidAudioA::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
-		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioA::GetAudioDevices", L"AndroidAudioA does not support this method."));
 		}
 		void AndroidAudioA::RenderData()
 		{

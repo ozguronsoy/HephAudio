@@ -1,6 +1,9 @@
 #pragma once
 #include "framework.h"
 #include "INativeAudio.h"
+#ifdef __ANDROID__
+#include <jni.h>
+#endif
 
 namespace HephAudio
 {
@@ -27,7 +30,11 @@ namespace HephAudio
 		void SetOnAudioDeviceRemovedHandler(AudioDeviceEventHandler handler);
 		void SetOnCaptureHandler(AudioCaptureEventHandler handler);
 	public:
+#ifdef __ANDROID__
+		Audio(JNIEnv* env);
+#else
 		Audio();
+#endif
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
