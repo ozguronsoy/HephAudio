@@ -38,7 +38,7 @@ namespace HephAudio
 #if __ANDROID_API__ >= 27
 		pNativeAudio = new AndroidAudioA(env);
 #elif __ANDROID_API__ >= 9
-		pNativeAudio = new AndroidAudioSLES();
+		pNativeAudio = new AndroidAudioSLES(env);
 #endif
 	}
 #else

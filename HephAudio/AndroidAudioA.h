@@ -1,7 +1,7 @@
 #pragma once
 #ifdef __ANDROID__
 #include "framework.h"
-#include "INativeAudio.h"
+#include "AndroidAudioBase.h"
 #include <aaudio/AAudio.h>
 
 namespace HephAudio
@@ -9,7 +9,7 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses AAudio, min api target = 27. Use AndroidAudioSLES for api level 26 or lower (min 9) (uses OpenSL ES).
-		class AndroidAudioA : public INativeAudio
+		class AndroidAudioA : public AndroidAudioBase
 		{
 		private:
 			AAudioStream* pRenderStream;
@@ -18,7 +18,7 @@ namespace HephAudio
 			size_t captureBufferFrameCount;
 			double masterVolume;
 		public:
-			AndroidAudioA();
+			AndroidAudioA(JNIEnv* env);
 			AndroidAudioA(const AndroidAudioA&) = delete;
 			AndroidAudioA& operator=(const AndroidAudioA&) = delete;
 			virtual ~AndroidAudioA();
@@ -30,8 +30,6 @@ namespace HephAudio
 			virtual void StopCapturing() override;
 			virtual void SetDisplayName(std::wstring displayName) override;
 			virtual void SetIconPath(std::wstring iconPath) override;
-			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const override;
-			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const override;
 		protected:
 			virtual void RenderData();
 			virtual void CaptureData();

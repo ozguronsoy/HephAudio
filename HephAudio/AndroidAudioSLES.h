@@ -1,7 +1,7 @@
 #pragma once
 #ifdef __ANDROID__
 #include "framework.h"
-#include "INativeAudio.h"
+#include "AndroidAudioBase.h"
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 
@@ -10,7 +10,7 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses OpenSL ES, min api target = 9. Use AndroidAudioA for api level 27 or greater (uses AAudio).
-		class AndroidAudioSLES : public INativeAudio
+		class AndroidAudioSLES : public AndroidAudioBase
 		{
 		protected:
 			struct CallbackContext {
@@ -30,7 +30,7 @@ namespace HephAudio
 			uint32_t renderBufferSize;
 			uint32_t captureBufferSize;
 		public:
-			AndroidAudioSLES();
+			AndroidAudioSLES(JNIEnv* env);
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
 			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
 			virtual ~AndroidAudioSLES();
@@ -42,8 +42,6 @@ namespace HephAudio
 			virtual void StopCapturing();
 			virtual void SetDisplayName(std::wstring displayName);
 			virtual void SetIconPath(std::wstring iconPath);
-			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
-			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const;
 		protected:
 			virtual void RenderData(SLBufferQueueItf bufferQueue);
 			virtual void CaptureData(void* dataBuffer);

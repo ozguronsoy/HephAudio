@@ -10,7 +10,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioSLES::AndroidAudioSLES() : INativeAudio()
+		AndroidAudioSLES::AndroidAudioSLES(JNIEnv* env) : AndroidAudioBase(env)
 		{
 #if __ANDROID_API__ < 9
 			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"The minimum supported Api level is 9.");
@@ -87,6 +87,7 @@ namespace HephAudio
 			if (isRenderInitialized)
 			{
 				isRenderInitialized = false;
+				renderDeviceId = L"";
 				JoinRenderThread();
 				if (audioPlayerObject != nullptr)
 				{
@@ -144,6 +145,7 @@ namespace HephAudio
 			if (isCaptureInitialized)
 			{
 				isCaptureInitialized = false;
+				captureDeviceId = L"";
 				JoinCaptureThread();
 				if (audioRecorderObject != nullptr)
 				{
@@ -158,14 +160,6 @@ namespace HephAudio
 		void AndroidAudioSLES::SetIconPath(std::wstring iconPath)
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::SetIconPath", L"AndroidAudioSLES does not support this method."));
-		}
-		AudioDevice AndroidAudioSLES::GetDefaultAudioDevice(AudioDeviceType deviceType) const
-		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::GetDefaultAudioDevice", L"AndroidAudioSLES does not support this method."));
-		}
-		std::vector<AudioDevice> AndroidAudioSLES::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
-		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::GetAudioDevices", L"AndroidAudioSLES does not support this method."));
 		}
 		void AndroidAudioSLES::RenderData(SLBufferQueueItf bufferQueue)
 		{
