@@ -293,6 +293,7 @@ namespace HephAudio
 			if (isRenderInitialized)
 			{
 				isRenderInitialized = false; // Set this to false to stop rendering.
+				renderDeviceId = L"";
 				JoinRenderThread();
 				WINAUDIO_EXCPT(pSessionControl->UnregisterAudioSessionNotification(&sessionEvents), this, L"WinAudio::StopRendering", L"An error occurred whilst stopping render.");
 				pSessionControl == nullptr;
@@ -345,6 +346,7 @@ namespace HephAudio
 			if (isCaptureInitialized)
 			{
 				isCaptureInitialized = false; // Set this to false to stop capturing.
+				captureDeviceId = L"";
 				JoinCaptureThread();
 			}
 		}

@@ -37,8 +37,6 @@ namespace HephAudio
 			JoinRenderThread();
 			JoinCaptureThread();
 			JoinQueueThreads();
-			StopRendering();
-			StopCapturing();
 			(*audioEngineObject)->Destroy(audioEngineObject);
 		}
 		void AndroidAudioSLES::SetMasterVolume(double volume)
