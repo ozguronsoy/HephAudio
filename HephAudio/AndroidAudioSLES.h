@@ -30,7 +30,7 @@ namespace HephAudio
 			uint32_t renderBufferSize;
 			uint32_t captureBufferSize;
 		public:
-			AndroidAudioSLES(JNIEnv* env);
+			AndroidAudioSLES(JavaVM* jvm);
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
 			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
 			virtual ~AndroidAudioSLES();

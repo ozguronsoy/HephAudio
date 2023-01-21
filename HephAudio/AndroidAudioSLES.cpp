@@ -10,7 +10,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioSLES::AndroidAudioSLES(JNIEnv* env) : AndroidAudioBase(env)
+		AndroidAudioSLES::AndroidAudioSLES(JavaVM* jvm) : AndroidAudioBase(jvm)
 		{
 #if __ANDROID_API__ < 9
 			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"The minimum supported Api level is 9.");

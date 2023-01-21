@@ -33,12 +33,12 @@ namespace HephAudio
 		pNativeAudio->OnCapture = handler;
 	}
 #ifdef __ANDROID__
-	Audio::Audio(JNIEnv* env)
+	Audio::Audio(JavaVM* jvm)
 	{
 #if __ANDROID_API__ >= 27
-		pNativeAudio = new AndroidAudioA(env);
+		pNativeAudio = new AndroidAudioA(jvm);
 #elif __ANDROID_API__ >= 9
-		pNativeAudio = new AndroidAudioSLES(env);
+		pNativeAudio = new AndroidAudioSLES(jvm);
 #endif
 	}
 #else

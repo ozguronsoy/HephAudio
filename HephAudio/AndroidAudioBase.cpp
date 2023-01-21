@@ -1,20 +1,34 @@
-#include "AndroidAudioBase.h"
 #ifdef __ANDROID__
+#include "AndroidAudioBase.h"
 
 namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioBase::AndroidAudioBase(JNIEnv* env) : INativeAudio()
+		AndroidAudioBase::AndroidAudioBase(JavaVM* jvm) : INativeAudio()
 		{
-			this->env = env;
+			if (jvm == nullptr)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"AndroidAudioBase::AndroidAudioBase", L"jvm cannot be nullptr."));
+				throw AudioException(E_INVALIDARG, L"AndroidAudioBase::AndroidAudioBase", L"jvm cannot be nullptr.");
+			}
+			this->jvm = jvm;
+			JNIEnv* env = nullptr;
+			GetEnv(&env);
+			EnumerateAudioDevices(env);
+			deviceThread = std::thread(&AndroidAudioBase::CheckAudioDevices, this);
+		}
+		AndroidAudioBase::~AndroidAudioBase()
+		{
+			disposing = true;
+			JoinDeviceThread();
 		}
 		AudioDevice AndroidAudioBase::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 		{
 			std::vector<AudioDevice> audioDevices = GetAudioDevices(deviceType, false);
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
-				if (audioDevices.at(i).isDefault)
+				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
 				{
 					return audioDevices.at(i);
 				}
@@ -23,11 +37,34 @@ namespace HephAudio
 		}
 		std::vector<AudioDevice> AndroidAudioBase::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
 		{
-#if __ANDROID_API__ < 23
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioBase::GetAudioDevices", L"The minimum API level that supports audio device enumeration is 23."));
-			return std::vector<AudioDevice>();
-#else
-			std::vector<AudioDevice> audioDevices;
+			std::vector<AudioDevice> result;
+			if (deviceType == AudioDeviceType::Null)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"WinAudioDS::GetAudioDevices", L"DeviceType must not be Null."));
+				return result;
+			}
+			mutex.lock();
+			for (size_t i = 0; i < audioDevices.size(); i++)
+			{
+				if ((audioDevices.at(i).type & deviceType) != AudioDeviceType::Null)
+				{
+					result.push_back(audioDevices.at(i));
+				}
+			}
+			mutex.unlock();
+			return result;
+		}
+		void AndroidAudioBase::JoinDeviceThread()
+		{
+			if (deviceThread.joinable())
+			{
+				deviceThread.join();
+			}
+		}
+		void AndroidAudioBase::EnumerateAudioDevices(JNIEnv* env)
+		{
+#if __ANDROID_API__ >= 23
+			audioDevices.clear();
 			jclass audioManagerClass = env->FindClass("android/media/AudioManager");
 			jobject audioManagerObject = env->AllocObject(audioManagerClass);
 			jmethodID getDevicesMethodId = env->GetMethodID(audioManagerClass, "getDevices", "(I)[Landroid/media/AudioDeviceInfo;");
@@ -39,24 +76,105 @@ namespace HephAudio
 				jclass audioDeviceClass = env->GetObjectClass(audioDeviceObject);
 				jmethodID isSinkMethodId = env->GetMethodID(audioDeviceClass, "isSink", "()Z");
 				jboolean isSink = env->CallBooleanMethod(audioDeviceObject, isSinkMethodId);
-				if ((isSink && (deviceType & AudioDeviceType::Render) == AudioDeviceType::Render) || (!isSink && (deviceType & AudioDeviceType::Capture) == AudioDeviceType::Capture))
+				jmethodID getIdMethodId = env->GetMethodID(audioDeviceClass, "getId", "()I");
+				jint deviceId = env->CallIntMethod(audioDeviceObject, getIdMethodId);
+				jmethodID getNameMethodId = env->GetMethodID(audioDeviceClass, "getProductName", "()Ljava/lang/CharSequence;");
+				jobject deviceNameObject = env->CallObjectMethod(audioDeviceObject, getNameMethodId);
+				jclass deviceNameClass = env->GetObjectClass(deviceNameObject);
+				jmethodID toStringMethodId = env->GetMethodID(deviceNameClass, "toString", "()Ljava/lang/String;");
+				jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
+				AudioDevice audioDevice;
+				audioDevice.id = std::to_wstring(deviceId);
+				audioDevice.name = JStringToWString(env, deviceName);
+				audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
+				audioDevice.isDefault = false;
+				audioDevices.push_back(audioDevice);
+				env->DeleteLocalRef(audioDeviceObject);
+				env->DeleteLocalRef(deviceNameObject);
+				env->DeleteLocalRef(audioDeviceClass);
+				env->DeleteLocalRef(deviceNameClass);
+				env->DeleteLocalRef(deviceName);
+			}
+			env->DeleteLocalRef(audioDeviceArray);
+			env->DeleteLocalRef(audioManagerObject);
+			env->DeleteLocalRef(audioManagerClass);
+#endif
+		}
+		void AndroidAudioBase::CheckAudioDevices()
+		{
+			JNIEnv* env = nullptr;
+			GetEnv(&env);
+			constexpr uint32_t period = 100; // In ms.
+			auto start = std::chrono::high_resolution_clock::now();
+			auto deltaTime = std::chrono::milliseconds(0);
+			while (!disposing)
+			{
+				deltaTime = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - start);
+				if (deltaTime >= std::chrono::milliseconds(period))
 				{
-					jmethodID getIdMethodId = env->GetMethodID(audioDeviceClass, "getId", "()I");
-					jint deviceId = env->CallIntMethod(audioDeviceObject, getIdMethodId);
-					jmethodID getNameMethodId = env->GetMethodID(audioDeviceClass, "getProductName", "()Ljava/lang/CharSequence;");
-					jobject deviceNameObject = env->CallObjectMethod(audioDeviceObject, getNameMethodId);
-					jmethodID toStringMethodId = env->GetMethodID(env->GetObjectClass(deviceNameObject), "toString", "()Ljava/lang/String;");
-					jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
-					AudioDevice audioDevice;
-					audioDevice.id = std::to_wstring(deviceId);
-					audioDevice.name = JStringToWString(env, deviceName);
-					audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
-					audioDevice.isDefault = false;
-					audioDevices.push_back(audioDevice);
+					mutex.lock();
+					std::vector<AudioDevice> oldDevices = audioDevices;
+					EnumerateAudioDevices(env);
+					mutex.unlock();
+					if (OnAudioDeviceAdded != nullptr)
+					{
+						for (size_t i = 0; i < audioDevices.size(); i++)
+						{
+							for (size_t j = 0; j < oldDevices.size(); j++)
+							{
+								if (audioDevices.at(i).id == oldDevices.at(j).id)
+								{
+									goto ADD_BREAK;
+								}
+							}
+							OnAudioDeviceAdded(audioDevices.at(i));
+						ADD_BREAK:;
+						}
+					}
+					AudioDevice* removedDevice = nullptr;
+					for (size_t i = 0; i < oldDevices.size(); i++)
+					{
+						for (size_t j = 0; j < audioDevices.size(); j++)
+						{
+							if (oldDevices.at(i).id == audioDevices.at(j).id)
+							{
+								goto REMOVE_BREAK;
+							}
+						}
+						removedDevice = &oldDevices.at(i);
+						if (isRenderInitialized && oldDevices.at(i).type == AudioDeviceType::Render && (renderDeviceId == L"" || removedDevice->id == renderDeviceId))
+						{
+							InitializeRender(nullptr, renderFormat);
+						}
+						if (isCaptureInitialized && oldDevices.at(i).type == AudioDeviceType::Capture && (captureDeviceId == L"" || removedDevice->id == captureDeviceId))
+						{
+							InitializeCapture(nullptr, captureFormat);
+						}
+						if (OnAudioDeviceRemoved != nullptr)
+						{
+							OnAudioDeviceRemoved(*removedDevice);
+						}
+					REMOVE_BREAK:;
+					}
+				}
+				start = std::chrono::high_resolution_clock::now();
+			}
+		}
+		void AndroidAudioBase::GetEnv(JNIEnv** pEnv) const
+		{
+			jint jniResult = jvm->GetEnv((void**)pEnv, JNI_VERSION_1_6);
+			if (jniResult == JNI_EDETACHED)
+			{
+				jniResult = jvm->AttachCurrentThread(pEnv, nullptr);
+				if (jniResult != JNI_OK)
+				{
+					RAISE_AUDIO_EXCPT(this, AudioException(jniResult, L"AndroidAudioBase::GetAudioDevices", L"Failed to attach to the current thread."));
 				}
 			}
-			return audioDevices;
-#endif
+			else if (jniResult != JNI_OK)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(jniResult, L"AndroidAudioBase::GetAudioDevices", L"Could not get the current jni environment."));
+			}
 		}
 		std::wstring AndroidAudioBase::JStringToWString(JNIEnv* env, jstring jStr) const
 		{

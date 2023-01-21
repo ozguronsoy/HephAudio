@@ -234,13 +234,13 @@ namespace HephAudio
 		}
 		void WinAudioDS::EnumerateAudioDevices()
 		{
-			const uint32_t period = 100; // In ms.
+			constexpr uint32_t period = 100; // In ms.
 			auto start = std::chrono::high_resolution_clock::now();
-			auto passedTime = std::chrono::milliseconds(0);
+			auto deltaTime = std::chrono::milliseconds(0);
 			while (!disposing)
 			{
-				passedTime = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - start);
-				if (passedTime >= std::chrono::milliseconds(period))
+				deltaTime = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - start);
+				if (deltaTime >= std::chrono::milliseconds(period))
 				{
 					std::vector<AudioDevice> oldDevices = audioDevices;
 					AudioDevice oldDefaultRender = GetDefaultAudioDevice(AudioDeviceType::Render);
@@ -288,11 +288,11 @@ namespace HephAudio
 							}
 						}
 						removedDevice = &oldDevices.at(i);
-						if (removedDevice->id == renderDeviceId)
+						if (isRenderInitialized && oldDevices.at(i).type == AudioDeviceType::Render && (renderDeviceId == L"" || removedDevice->id == renderDeviceId))
 						{
 							InitializeRender(nullptr, renderFormat);
 						}
-						if (removedDevice->id == captureDeviceId)
+						if (isCaptureInitialized && oldDevices.at(i).type == AudioDeviceType::Capture && (captureDeviceId == L"" || removedDevice->id == captureDeviceId))
 						{
 							InitializeCapture(nullptr, captureFormat);
 						}
@@ -303,6 +303,7 @@ namespace HephAudio
 					REMOVE_BREAK:;
 					}
 				}
+				start = std::chrono::high_resolution_clock::now();
 			}
 		}
 		void WinAudioDS::RenderData()

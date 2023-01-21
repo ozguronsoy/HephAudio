@@ -31,7 +31,7 @@ namespace HephAudio
 		void SetOnCaptureHandler(AudioCaptureEventHandler handler);
 	public:
 #ifdef __ANDROID__
-		Audio(JNIEnv* env);
+		Audio(JavaVM* jvm);
 #else
 		Audio();
 #endif

@@ -10,7 +10,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioA::AndroidAudioA(JNIEnv* env) : AndroidAudioBase(env)
+		AndroidAudioA::AndroidAudioA(JavaVM* jvm) : AndroidAudioBase(jvm)
 		{
 #if __ANDROID_API__ < 27
 			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioA", L"The minimum supported Api level is 26.");
@@ -182,6 +182,7 @@ namespace HephAudio
 			}
 		RENDER_EXIT:
 			AAudioStream_requestStop(pRenderStream);
+			AAudioStream_waitForStateChange(pRenderStream, AAUDIO_STREAM_STATE_STOPPING, &currentState, stateChangeTimeoutNanos);
 		}
 		void AndroidAudioA::CaptureData()
 		{
@@ -210,6 +211,7 @@ namespace HephAudio
 			}
 		CAPTURE_EXIT:
 			AAudioStream_requestStop(pCaptureStream);
+			AAudioStream_waitForStateChange(pCaptureStream, AAUDIO_STREAM_STATE_STOPPING, &currentState, stateChangeTimeoutNanos);
 		}
 		double AndroidAudioA::GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const
 		{
