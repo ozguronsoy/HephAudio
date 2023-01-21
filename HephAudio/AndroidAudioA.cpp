@@ -27,6 +27,8 @@ namespace HephAudio
 			JoinRenderThread();
 			JoinCaptureThread();
 			JoinQueueThreads();
+			StopRendering();
+			StopCapturing();
 		}
 		void AndroidAudioA::SetMasterVolume(double volume)
 		{
@@ -89,8 +91,8 @@ namespace HephAudio
 				isRenderInitialized = false;
 				renderDeviceId = L"";
 				renderBufferFrameCount = 0;
-				JoinRenderThread();
 				ANDROIDAUDIO_EXCPT(AAudioStream_close(pRenderStream), this, L"AndroidAudioA::StopRendering", L"An error occurred whilst closing the render stream.");
+				JoinRenderThread();
 				pRenderStream = nullptr;
 			}
 		}
@@ -147,8 +149,8 @@ namespace HephAudio
 				isCaptureInitialized = false;
 				captureDeviceId = L"";
 				captureBufferFrameCount = 0;
-				JoinCaptureThread();
 				ANDROIDAUDIO_EXCPT(AAudioStream_close(pCaptureStream), this, L"AndroidAudioA::StopCapturing", L"An error occurred whilst closing the capture stream.");
+				JoinCaptureThread();
 				pCaptureStream = nullptr;
 			}
 		}

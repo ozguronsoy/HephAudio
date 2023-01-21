@@ -234,7 +234,7 @@ namespace HephAudio
 		}
 		void WinAudioDS::EnumerateAudioDevices()
 		{
-			constexpr uint32_t period = 100; // In ms.
+			constexpr uint32_t period = 250; // In ms.
 			auto start = std::chrono::high_resolution_clock::now();
 			auto deltaTime = std::chrono::milliseconds(0);
 			while (!disposing)
@@ -302,8 +302,8 @@ namespace HephAudio
 						}
 					REMOVE_BREAK:;
 					}
+					start = std::chrono::high_resolution_clock::now();
 				}
-				start = std::chrono::high_resolution_clock::now();
 			}
 		}
 		void WinAudioDS::RenderData()
