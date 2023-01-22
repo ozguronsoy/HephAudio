@@ -44,10 +44,10 @@ namespace HephAudio
 			virtual void SetIconPath(std::wstring iconPath);
 		protected:
 			virtual void RenderData(SLBufferQueueItf bufferQueue);
-			virtual void CaptureData(void* dataBuffer);
+			virtual void CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue);
 			virtual SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);
-			static void RecordEventCallback(SLRecordItf audioRecorder, void* pContext, SLuint32 e);
+			static void RecordEventCallback(SLAndroidSimpleBufferQueueItf simpleBufferQueue, void* pContext);
 		};
 	}
 }
