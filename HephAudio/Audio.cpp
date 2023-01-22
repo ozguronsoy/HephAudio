@@ -1,9 +1,12 @@
 #include "Audio.h"
 #include "WinAudio.h"
 #include "WinAudioDS.h"
+#include "AndroidAudioA.h"
 #include "AndroidAudioSLES.h"
 #if defined(_WIN32)
 #include <VersionHelpers.h>
+#elif defined(__ANDROID__)
+#include <android/api-level.h>
 #endif
 
 namespace HephAudio
@@ -35,11 +38,15 @@ namespace HephAudio
 #ifdef __ANDROID__
 	Audio::Audio(JavaVM* jvm)
 	{
-#if __ANDROID_API__ >= 27
-		pNativeAudio = new AndroidAudioA(jvm);
-#elif __ANDROID_API__ >= 9
-		pNativeAudio = new AndroidAudioSLES(jvm);
-#endif
+		const uint32_t androidApiLevel = android_get_device_api_level();
+		if (androidApiLevel >= 27)
+		{
+			pNativeAudio = new AndroidAudioA(jvm);
+		}
+		else
+		{
+			pNativeAudio = new AndroidAudioSLES(jvm);
+		}
 	}
 #else
 	Audio::Audio()

@@ -12,9 +12,11 @@ namespace HephAudio
 	{
 		AndroidAudioSLES::AndroidAudioSLES(JavaVM* jvm) : AndroidAudioBase(jvm)
 		{
-#if __ANDROID_API__ < 9
-			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"The minimum supported Api level is 9.");
-#endif
+			if (deviceApiLevel < 16)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"The minimum supported Api level is 16."));
+				throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioSLES", L"The minimum supported Api level is 16.");
+			}
 			audioEngineObject = nullptr;
 			audioEngine = nullptr;
 			audioPlayerObject = nullptr;

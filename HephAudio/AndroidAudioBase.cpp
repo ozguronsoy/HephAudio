@@ -7,16 +7,24 @@ namespace HephAudio
 	{
 		AndroidAudioBase::AndroidAudioBase(JavaVM* jvm) : INativeAudio()
 		{
-			if (jvm == nullptr)
-			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"AndroidAudioBase::AndroidAudioBase", L"jvm cannot be nullptr."));
-				throw AudioException(E_INVALIDARG, L"AndroidAudioBase::AndroidAudioBase", L"jvm cannot be nullptr.");
-			}
 			this->jvm = jvm;
-			JNIEnv* env = nullptr;
-			GetEnv(&env);
-			EnumerateAudioDevices(env);
-			deviceThread = std::thread(&AndroidAudioBase::CheckAudioDevices, this);
+			deviceApiLevel = android_get_device_api_level();
+			if (deviceApiLevel == -1)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudioBase::AndroidAudioBase", L"An error occurred whilst getting the current device's api level."));
+			}
+			else if (deviceApiLevel >= 23)
+			{
+				if (jvm == nullptr)
+				{
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"AndroidAudioBase::AndroidAudioBase", L"jvm cannot be nullptr."));
+					throw AudioException(E_INVALIDARG, L"AndroidAudioBase::AndroidAudioBase", L"jvm cannot be nullptr.");
+				}
+				JNIEnv* env = nullptr;
+				GetEnv(&env);
+				EnumerateAudioDevices(env);
+				deviceThread = std::thread(&AndroidAudioBase::CheckAudioDevices, this);
+			}
 		}
 		AndroidAudioBase::~AndroidAudioBase()
 		{
@@ -63,42 +71,42 @@ namespace HephAudio
 		}
 		void AndroidAudioBase::EnumerateAudioDevices(JNIEnv* env)
 		{
-#if __ANDROID_API__ >= 23
-			audioDevices.clear();
-			jclass audioManagerClass = env->FindClass("android/media/AudioManager");
-			jobject audioManagerObject = env->AllocObject(audioManagerClass);
-			jmethodID getDevicesMethodId = env->GetMethodID(audioManagerClass, "getDevices", "(I)[Landroid/media/AudioDeviceInfo;");
-			jarray audioDeviceArray = (jarray)env->CallObjectMethod(audioManagerObject, getDevicesMethodId, 3);
-			jsize audioDeviceCount = env->GetArrayLength(audioDeviceArray);
-			for (jsize i = 0; i < audioDeviceCount; i++)
+			if (deviceApiLevel >= 23)
 			{
-				jobject audioDeviceObject = env->GetObjectArrayElement((jobjectArray)audioDeviceArray, i);
-				jclass audioDeviceClass = env->GetObjectClass(audioDeviceObject);
-				jmethodID isSinkMethodId = env->GetMethodID(audioDeviceClass, "isSink", "()Z");
-				jboolean isSink = env->CallBooleanMethod(audioDeviceObject, isSinkMethodId);
-				jmethodID getIdMethodId = env->GetMethodID(audioDeviceClass, "getId", "()I");
-				jint deviceId = env->CallIntMethod(audioDeviceObject, getIdMethodId);
-				jmethodID getNameMethodId = env->GetMethodID(audioDeviceClass, "getProductName", "()Ljava/lang/CharSequence;");
-				jobject deviceNameObject = env->CallObjectMethod(audioDeviceObject, getNameMethodId);
-				jclass deviceNameClass = env->GetObjectClass(deviceNameObject);
-				jmethodID toStringMethodId = env->GetMethodID(deviceNameClass, "toString", "()Ljava/lang/String;");
-				jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
-				AudioDevice audioDevice;
-				audioDevice.id = std::to_wstring(deviceId);
-				audioDevice.name = JStringToWString(env, deviceName);
-				audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
-				audioDevice.isDefault = false;
-				audioDevices.push_back(audioDevice);
-				env->DeleteLocalRef(audioDeviceObject);
-				env->DeleteLocalRef(deviceNameObject);
-				env->DeleteLocalRef(audioDeviceClass);
-				env->DeleteLocalRef(deviceNameClass);
-				env->DeleteLocalRef(deviceName);
+				audioDevices.clear();
+				jclass audioManagerClass = env->FindClass("android/media/AudioManager");
+				jobject audioManagerObject = env->AllocObject(audioManagerClass);
+				jmethodID getDevicesMethodId = env->GetMethodID(audioManagerClass, "getDevices", "(I)[Landroid/media/AudioDeviceInfo;");
+				jarray audioDeviceArray = (jarray)env->CallObjectMethod(audioManagerObject, getDevicesMethodId, 3);
+				jsize audioDeviceCount = env->GetArrayLength(audioDeviceArray);
+				for (jsize i = 0; i < audioDeviceCount; i++) {
+					jobject audioDeviceObject = env->GetObjectArrayElement((jobjectArray)audioDeviceArray, i);
+					jclass audioDeviceClass = env->GetObjectClass(audioDeviceObject);
+					jmethodID isSinkMethodId = env->GetMethodID(audioDeviceClass, "isSink", "()Z");
+					jboolean isSink = env->CallBooleanMethod(audioDeviceObject, isSinkMethodId);
+					jmethodID getIdMethodId = env->GetMethodID(audioDeviceClass, "getId", "()I");
+					jint deviceId = env->CallIntMethod(audioDeviceObject, getIdMethodId);
+					jmethodID getNameMethodId = env->GetMethodID(audioDeviceClass, "getProductName", "()Ljava/lang/CharSequence;");
+					jobject deviceNameObject = env->CallObjectMethod(audioDeviceObject, getNameMethodId);
+					jclass deviceNameClass = env->GetObjectClass(deviceNameObject);
+					jmethodID toStringMethodId = env->GetMethodID(deviceNameClass, "toString", "()Ljava/lang/String;");
+					jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
+					AudioDevice audioDevice;
+					audioDevice.id = std::to_wstring(deviceId);
+					audioDevice.name = JStringToWString(env, deviceName);
+					audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
+					audioDevice.isDefault = false;
+					audioDevices.push_back(audioDevice);
+					env->DeleteLocalRef(audioDeviceObject);
+					env->DeleteLocalRef(deviceNameObject);
+					env->DeleteLocalRef(audioDeviceClass);
+					env->DeleteLocalRef(deviceNameClass);
+					env->DeleteLocalRef(deviceName);
+				}
+				env->DeleteLocalRef(audioDeviceArray);
+				env->DeleteLocalRef(audioManagerObject);
+				env->DeleteLocalRef(audioManagerClass);
 			}
-			env->DeleteLocalRef(audioDeviceArray);
-			env->DeleteLocalRef(audioManagerObject);
-			env->DeleteLocalRef(audioManagerClass);
-#endif
 		}
 		void AndroidAudioBase::CheckAudioDevices()
 		{

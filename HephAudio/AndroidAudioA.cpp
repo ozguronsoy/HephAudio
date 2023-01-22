@@ -12,9 +12,11 @@ namespace HephAudio
 	{
 		AndroidAudioA::AndroidAudioA(JavaVM* jvm) : AndroidAudioBase(jvm)
 		{
-#if __ANDROID_API__ < 27
-			throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioA", L"The minimum supported Api level is 26.");
-#endif
+			if (deviceApiLevel < 27)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioA", L"The minimum supported Api level is 27."));
+				throw AudioException(E_FAIL, L"AndroidAudioSLES::AndroidAudioA", L"The minimum supported Api level is 27.");
+			}
 			pRenderStream = nullptr;
 			pCaptureStream = nullptr;
 			renderBufferFrameCount = 0;
@@ -44,30 +46,33 @@ namespace HephAudio
 			AAudioStreamBuilder* streamBuilder;
 			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, L"AndroidAudioA::InitializeRender", L"An error occurred whilst creating the stream builder.");
 			renderFormat = format;
-#if __ANDROID_API__ >= 31
-			switch (format.bitsPerSample)
+			if (deviceApiLevel >= 31)
 			{
-			case 16:
-				renderFormat.bitsPerSample = 16;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-				break;
-			case 24:
-				renderFormat.bitsPerSample = 24;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
-				break;
-			case 32:
-				renderFormat.bitsPerSample = 32;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
-				break;
-			default:
-				renderFormat.bitsPerSample = 16;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-				break;
+				switch (format.bitsPerSample)
+				{
+				case 16:
+					renderFormat.bitsPerSample = 16;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+					break;
+				case 24:
+					renderFormat.bitsPerSample = 24;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
+					break;
+				case 32:
+					renderFormat.bitsPerSample = 32;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
+					break;
+				default:
+					renderFormat.bitsPerSample = 16;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+					break;
+				}
 			}
-#else
-			renderFormat.bitsPerSample = 16;
-			AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-#endif
+			else
+			{
+				renderFormat.bitsPerSample = 16;
+				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+			}
 			renderBufferFrameCount = renderFormat.ByteRate();
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_OUTPUT);
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
@@ -102,30 +107,33 @@ namespace HephAudio
 			AAudioStreamBuilder* streamBuilder;
 			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, L"AndroidAudioA::InitializeCapture", L"An error occurred whilst creating the stream builder.");
 			captureFormat = format;
-#if __ANDROID_API__ >= 31
-			switch (format.bitsPerSample)
+			if (deviceApiLevel >= 31)
 			{
-			case 16:
-				captureFormat.bitsPerSample = 16;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-				break;
-			case 24:
-				captureFormat.bitsPerSample = 24;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
-				break;
-			case 32:
-				captureFormat.bitsPerSample = 32;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
-				break;
-			default:
-				captureFormat.bitsPerSample = 16;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-				break;
+				switch (format.bitsPerSample)
+				{
+				case 16:
+					captureFormat.bitsPerSample = 16;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+					break;
+				case 24:
+					captureFormat.bitsPerSample = 24;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
+					break;
+				case 32:
+					captureFormat.bitsPerSample = 32;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
+					break;
+				default:
+					captureFormat.bitsPerSample = 16;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+					break;
+				}
 			}
-#else
-			captureFormat.bitsPerSample = 16;
-			AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-#endif
+			else
+			{
+				captureFormat.bitsPerSample = 16;
+				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+			}
 			captureBufferFrameCount = captureFormat.ByteRate();
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_INPUT);
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);

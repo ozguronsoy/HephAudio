@@ -3,6 +3,7 @@
 #include "INativeAudio.h"
 #include <mutex>
 #include <jni.h>
+#include <android/api-level.h>
 
 namespace HephAudio
 {
@@ -12,6 +13,7 @@ namespace HephAudio
 		{
 		protected:
 			JavaVM* jvm;
+			uint32_t deviceApiLevel;
 			std::vector<AudioDevice> audioDevices;
 			std::thread deviceThread;
 			mutable std::mutex mutex;
