@@ -60,11 +60,11 @@ namespace HephAudio
 		void Set(double value, size_t frameIndex, uint8_t channel);
 		AudioBuffer GetSubBuffer(size_t frameIndex, size_t frameCount) const;
 		// Joins the given buffer to the end of the current buffer.
-		void Join(AudioBuffer buffer);
-		void Insert(AudioBuffer buffer, size_t frameIndex);
+		void Join(const AudioBuffer& buffer);
+		void Insert(const AudioBuffer& buffer, size_t frameIndex);
 		void Cut(size_t frameIndex, size_t frameCount);
-		void Replace(AudioBuffer buffer, size_t frameIndex);
-		void Replace(AudioBuffer buffer, size_t frameIndex, size_t frameCount);
+		void Replace(const AudioBuffer& buffer, size_t frameIndex);
+		void Replace(const AudioBuffer& buffer, size_t frameIndex, size_t frameCount);
 		// Sets all samples in the buffer to 0.
 		void Reset();
 		void Resize(size_t newFrameCount);

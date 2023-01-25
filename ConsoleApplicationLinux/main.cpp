@@ -1,7 +1,9 @@
 #include <cstdio>
+#include <random>
 
 int main()
 {
-    printf("hello from %s!\n", "ConsoleApplicationLinux");
+    srand(time(nullptr));
+    printf("Hello, World! %d", rand() % 10 + 1);
     return 0;
 }

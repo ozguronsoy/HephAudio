@@ -23,9 +23,9 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
 	pao->OnRender = OnRender;
-	pao->loopCount = 0u;
+	pao->loopCount = 1u;
 	PrintDeltaTime("Load File");
 
 	pao->pause = false;
@@ -34,6 +34,7 @@ int main()
 	std::cin >> a;
 	delete audio;
 	pao = nullptr;
+	tempBuffer.~AudioBuffer();
 	std::cin >> a;
 	return 0;
 }
