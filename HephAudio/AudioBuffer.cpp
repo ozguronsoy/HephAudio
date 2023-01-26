@@ -331,7 +331,7 @@ namespace HephAudio
 			{
 				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Insert", L"Insufficient memory.");
 			}
-			memset(tempPtr, 0, newSize); // if the oldSize is greater than the frameIndexSize, make sure the padded data is set to 0.
+			memset(tempPtr, 0, newSize); // if the oldSize is greater than the frameIndexAsBytes, make sure the padded data is set to 0.
 			
 			// copy from 0 to insert start index.
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
@@ -436,7 +436,7 @@ namespace HephAudio
 				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + replacedSize, (uint8_t*)this->pAudioData + padding, oldSize - padding);
 			}
 
-			free(pAudioData);
+			free(this->pAudioData);
 			this->pAudioData = tempPtr;
 		}
 		else
