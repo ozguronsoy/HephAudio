@@ -28,6 +28,7 @@ namespace HephAudio
 #pragma region Sound Effects
 	public:
 		static void Reverse(AudioBuffer& buffer);
+		static void ReverseRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex);
 		static void Echo(AudioBuffer& buffer, EchoInfo info);
 		static void EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info);
 		static void LinearPanning(AudioBuffer& buffer, double panningFactor);
