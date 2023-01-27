@@ -223,84 +223,44 @@ namespace HephAudio
 	}
 	void AudioProcessor::Echo(AudioBuffer& buffer, EchoInfo info)
 	{
-		if (info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
-		struct EchoKeyPoints
-		{
-			size_t startFrameIndex;
-			size_t endFrameIndex;
-			double factor;
-		};
 		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
 		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * echoEndPosition - echoStartFrame);
-		size_t resultBufferFrameCount = buffer.frameCount;
-		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
-		for (size_t i = 0; i < keyPoints.size(); i++) // Find echo key points.
+		buffer.Resize(echoStartFrame + delayFrameCount * info.reflectionCount + echoBuffer.frameCount);
+		double factor = info.volumeFactor;
+		size_t startFrameIndex = echoStartFrame + delayFrameCount;
+		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.volumeFactor, startFrameIndex += delayFrameCount)
 		{
-			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + 1);
-			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoBuffer.frameCount - 1;
-			keyPoints.at(i).factor = pow(info.volumeFactor, i + 1.0);
-			if (keyPoints.at(i).endFrameIndex >= resultBufferFrameCount)
+			const size_t endFrameIndex = startFrameIndex + echoBuffer.frameCount;
+			for (size_t j = startFrameIndex; j < endFrameIndex; j++)
 			{
-				resultBufferFrameCount = keyPoints.at(i).endFrameIndex + 1;
-			}
-		}
-		buffer.Resize(resultBufferFrameCount);
-		for (size_t i = keyPoints.at(0).startFrameIndex; i < buffer.frameCount; i++)
-		{
-			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-			{
-				for (size_t k = 0; k < keyPoints.size(); k++)
+				for (size_t k = 0; k < buffer.formatInfo.channelCount; k++)
 				{
-					if (i >= keyPoints.at(k).startFrameIndex && i <= keyPoints.at(k).endFrameIndex)
-					{
-						buffer[i][j] += echoBuffer[i - keyPoints.at(k).startFrameIndex][j] * keyPoints.at(k).factor;
-					}
+					buffer[j][k] += echoBuffer[j - startFrameIndex][k] * factor;
 				}
 			}
 		}
 	}
 	void AudioProcessor::EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
 	{
-		if (subBuffer.frameCount == 0 || info.reflectionCount == 0 || info.volumeFactor == 0.0 || info.echoStartPosition < 0 || info.echoStartPosition >= 1.0 || info.reflectionDelay < 0) { return; }
-		struct EchoKeyPoints
-		{
-			size_t startFrameIndex;
-			size_t endFrameIndex;
-			double factor;
-		};
 		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
 		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
 		const size_t echoFrameCount = originalBuffer.frameCount * echoEndPosition - echoStartFrame;
-		std::vector<EchoKeyPoints> keyPoints(info.reflectionCount);
-		size_t erasedKeyPointsCount = 0;
-		for (int64_t i = 0; i < keyPoints.size(); i++) // Find echo key points.
+		const size_t subBufferEndFrameIndex = subBufferFrameIndex + subBuffer.frameCount;
+		double factor = info.volumeFactor;
+		size_t startFrameIndex = echoStartFrame + delayFrameCount;
+		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.volumeFactor, startFrameIndex += delayFrameCount)
 		{
-			keyPoints.at(i).startFrameIndex = echoStartFrame + delayFrameCount * (i + erasedKeyPointsCount + 1);
-			keyPoints.at(i).endFrameIndex = keyPoints.at(i).startFrameIndex + echoFrameCount - 1;
-			keyPoints.at(i).factor = pow(info.volumeFactor, i + erasedKeyPointsCount + 1.0);
-			if (keyPoints.at(i).startFrameIndex > subBufferFrameIndex + subBuffer.frameCount || keyPoints.at(i).endFrameIndex < subBufferFrameIndex) // Remove keyPoints if not needed to reduce the total loop count.
+			const size_t endFrameIndex = startFrameIndex + echoFrameCount;
+			if (subBufferFrameIndex >= startFrameIndex)
 			{
-				keyPoints.erase(keyPoints.begin() + i);
-				i--;
-				erasedKeyPointsCount++;
-			}
-		}
-		if (keyPoints.size() > 0)
-		{
-			const AudioBuffer echoBuffer = originalBuffer.GetSubBuffer(echoStartFrame, subBuffer.frameCount + subBufferFrameIndex - keyPoints.at(0).startFrameIndex);
-			for (size_t i = 0, cursor = subBufferFrameIndex; i < subBuffer.frameCount; i++, cursor++)
-			{
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+				for (size_t j = subBufferFrameIndex, jo = j - startFrameIndex; j < subBufferEndFrameIndex && jo < originalBuffer.frameCount; j++, jo++)
 				{
-					for (size_t k = 0; k < keyPoints.size(); k++)
+					for (size_t k = 0; k < subBuffer.formatInfo.channelCount; k++)
 					{
-						if (cursor >= keyPoints.at(k).startFrameIndex && cursor <= keyPoints.at(k).endFrameIndex)
-						{
-							subBuffer[i][j] += echoBuffer[cursor - keyPoints.at(k).startFrameIndex][j] * keyPoints.at(k).factor;
-						}
+						subBuffer[j - subBufferFrameIndex][k] += originalBuffer[jo][k] * factor;
 					}
 				}
 			}

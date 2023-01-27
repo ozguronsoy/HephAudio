@@ -10,9 +10,11 @@ using namespace HephAudio::Native;
 void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
+bool IsFinishedPlaying(IAudioObject* sender);
 double PrintDeltaTime(const char* label);
 
 Audio* audio;
+EchoInfo ei;
 int main()
 {
 	audio = new Audio();
@@ -25,19 +27,19 @@ int main()
 
 	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
 	pao->OnRender = OnRender;
+	pao->IsFinishedPlaying = IsFinishedPlaying;
 	pao->loopCount = 1u;
 	PrintDeltaTime("Load File");
 
-	EchoInfo ei;
 	ei.echoStartPosition = 0.0;
 	ei.echoEndPosition = 1.0;
 	ei.reflectionCount = 5;
 	ei.reflectionDelay = pao->buffer.CalculateDuration() * 0.5;
-	ei.volumeFactor = 0.25;
+	ei.volumeFactor = 0.5;
 
-	PrintDeltaTime(nullptr);
-	AudioProcessor::Echo(pao->buffer, ei);
-	PrintDeltaTime("Echo");
+	//PrintDeltaTime(nullptr);
+	//AudioProcessor::Echo(pao->buffer, ei);
+	//PrintDeltaTime("Echo");
 
 	pao->pause = false;
 
@@ -59,6 +61,13 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
+	PrintDeltaTime(nullptr);
+	AudioProcessor::EchoRT(sender->buffer, subBuffer, subBufferFrameIndex, ei);
+	PrintDeltaTime("Echo");
+}
+bool IsFinishedPlaying(IAudioObject* sender)
+{
+	return sender->frameIndex >= ei.CalculateAudioBufferFrameCount(sender->buffer);
 }
 double PrintDeltaTime(const char* label)
 {

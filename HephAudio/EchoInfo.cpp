@@ -12,12 +12,11 @@ namespace HephAudio
 	}
 	size_t EchoInfo::CalculateAudioBufferFrameCount(const AudioBuffer& buffer) const
 	{
-		const size_t originalBufferFrameCount = buffer.FrameCount();
 		const size_t delayFrameCount = buffer.FormatInfo().sampleRate * this->reflectionDelay;
-		const size_t echoStartFrame = originalBufferFrameCount * this->echoStartPosition;
+		const size_t echoStartFrame = buffer.FrameCount() * this->echoStartPosition;
 		const double echoEndPosition = this->echoEndPosition > this->echoStartPosition ? this->echoEndPosition : 1.0;
-		const size_t echoBufferFrameCount = originalBufferFrameCount * echoEndPosition - echoStartFrame;
+		const size_t echoBufferFrameCount = buffer.FrameCount() * echoEndPosition - echoStartFrame;
 		const size_t resultBufferFrameCount = echoStartFrame + delayFrameCount * this->reflectionCount + echoBufferFrameCount;
-		return resultBufferFrameCount > originalBufferFrameCount ? resultBufferFrameCount : originalBufferFrameCount;
+		return resultBufferFrameCount > buffer.FrameCount() ? resultBufferFrameCount : buffer.FrameCount();
 	}
 }
