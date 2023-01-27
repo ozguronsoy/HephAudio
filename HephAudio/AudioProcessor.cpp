@@ -137,15 +137,12 @@ namespace HephAudio
 	}
 	std::vector<AudioBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
 	{
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, 1, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
-		std::vector<AudioBuffer> channels(buffer.formatInfo.channelCount, AudioBuffer(buffer.frameCount, resultFormat));
-		const size_t sampleSize = buffer.formatInfo.bitsPerSample * 0.125;
-		const size_t frameSize = buffer.formatInfo.FrameSize();
+		std::vector<AudioBuffer> channels(buffer.formatInfo.channelCount, AudioBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, 1, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate)));
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
-				memcpy((uint8_t*)channels.at(j).pAudioData + i * sampleSize, (uint8_t*)buffer.pAudioData + i * frameSize + j * sampleSize, sampleSize);
+				channels.at(j)[i][0] = buffer[i][j];
 			}
 		}
 		return channels;
@@ -153,21 +150,12 @@ namespace HephAudio
 	AudioBuffer AudioProcessor::MergeChannels(const std::vector<AudioBuffer>& channels)
 	{
 		if (channels.size() == 0) { return AudioBuffer(0, AudioFormatInfo()); }
-		for (size_t i = 0; i < channels.size() - 1; i++)
-		{
-			if (channels.at(i).formatInfo != channels.at(i + 1).formatInfo)
-			{
-				throw AudioException(E_FAIL, L"AudioProcessor::MergeChannels", L"All channels must have the same audio format.");
-			}
-		}
 		AudioBuffer resultBuffer(channels.at(0).frameCount, AudioFormatInfo(channels.at(0).formatInfo.formatTag, channels.size(), channels.at(0).formatInfo.bitsPerSample, channels.at(0).formatInfo.sampleRate));
-		const size_t sampleSize = resultBuffer.formatInfo.bitsPerSample * 0.125;
-		const size_t frameSize = resultBuffer.formatInfo.FrameSize();
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
 			{
-				memcpy((uint8_t*)resultBuffer.pAudioData + i * frameSize + j * sampleSize, (uint8_t*)channels.at(j).pAudioData + i * sampleSize, sampleSize);
+				resultBuffer[i][j] = channels.at(j)[i][0];
 			}
 		}
 		return resultBuffer;
@@ -229,7 +217,7 @@ namespace HephAudio
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
 				subBuffer[i][j] = originalBuffer[reversedFrameIndex + frameCount - i - 1][j];
-				subBuffer[subBuffer.frameCount - i - 1][j] = originalBuffer[reversedFrameIndex + i][j];
+				subBuffer[frameCount - i - 1][j] = originalBuffer[reversedFrameIndex + i][j];
 			}
 		}
 	}
@@ -303,8 +291,7 @@ namespace HephAudio
 		if (keyPoints.size() > 0)
 		{
 			const AudioBuffer echoBuffer = originalBuffer.GetSubBuffer(echoStartFrame, subBuffer.frameCount + subBufferFrameIndex - keyPoints.at(0).startFrameIndex);
-			size_t cursor = subBufferFrameIndex;
-			for (size_t i = 0; i < subBuffer.frameCount; i++)
+			for (size_t i = 0, cursor = subBufferFrameIndex; i < subBuffer.frameCount; i++, cursor++)
 			{
 				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 				{
@@ -316,7 +303,6 @@ namespace HephAudio
 						}
 					}
 				}
-				cursor++;
 			}
 		}
 	}
