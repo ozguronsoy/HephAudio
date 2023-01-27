@@ -14,6 +14,6 @@ namespace HephAudio
 	}
 	bool Category::operator!=(const Category& rhs) const
 	{
-		return !(*this == rhs);
+		return this->name != rhs.name;
 	}
 }

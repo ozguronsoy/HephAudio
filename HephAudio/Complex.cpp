@@ -43,7 +43,7 @@ namespace HephAudio
 	Complex Complex::operator/(const Complex& rhs) const
 	{
 		Complex result;
-		const double denomiter = pow(rhs.real, 2) + pow(rhs.imaginary, 2);
+		const double denomiter = rhs.real * rhs.real + rhs.imaginary * rhs.imaginary;
 		result.real = (this->real * rhs.real + this->imaginary * rhs.imaginary) / denomiter;
 		result.imaginary = (this->imaginary * rhs.real - this->real * rhs.imaginary) / denomiter;
 		return result;
@@ -103,6 +103,6 @@ namespace HephAudio
 	}
 	bool Complex::operator!=(const double& rhs) const
 	{
-		return !(*this == rhs);
+		return this->imaginary != 0 || this->real != rhs;
 	}
 }

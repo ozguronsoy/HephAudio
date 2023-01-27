@@ -6,31 +6,31 @@ namespace HephAudio
 {
 	IAudioObject::IAudioObject()
 	{
-		filePath = L"";
-		name = L"";
-		pause = false;
-		mute = false;
-		constant = false;
-		loopCount = 1;
-		volume = 1.0;
-		categories = std::vector<std::wstring>(0);
-		buffer = AudioBuffer();
-		frameIndex = 0;
-		queueName = L"";
-		queueIndex = 0;
-		queueDelay = 0;
-		windowType = AudioWindowType::RectangleWindow;
-		GetSubBuffer = OnGetSubBuffer;
-		IsFinishedPlaying = OnIsFinishedPlaying;
-		OnRender = nullptr;
+		this->filePath = L"";
+		this->name = L"";
+		this->pause = false;
+		this->mute = false;
+		this->constant = false;
+		this->loopCount = 1;
+		this->volume = 1.0;
+		this->categories = std::vector<std::wstring>(0);
+		this->buffer = AudioBuffer();
+		this->frameIndex = 0;
+		this->queueName = L"";
+		this->queueIndex = 0;
+		this->queueDelay = 0;
+		this->windowType = AudioWindowType::RectangleWindow;
+		this->GetSubBuffer = OnGetSubBuffer;
+		this->IsFinishedPlaying = OnIsFinishedPlaying;
+		this->OnRender = nullptr;
 	}
 	bool IAudioObject::IsPlaying() const
 	{
-		return !pause && !IsInQueue();
+		return !this->pause && !this->IsInQueue();
 	}
 	bool IAudioObject::IsInQueue() const
 	{
-		return queueName != L"" && queueIndex > 0;
+		return this->queueName != L"" && this->queueIndex > 0;
 	}
 	AudioBuffer IAudioObject::OnGetSubBuffer(IAudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex)
 	{

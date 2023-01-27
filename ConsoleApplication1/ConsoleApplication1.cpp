@@ -23,10 +23,21 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 1u;
 	PrintDeltaTime("Load File");
+
+	EchoInfo ei;
+	ei.echoStartPosition = 0.0;
+	ei.echoEndPosition = 1.0;
+	ei.reflectionCount = 5;
+	ei.reflectionDelay = pao->buffer.CalculateDuration() * 0.5;
+	ei.volumeFactor = 0.25;
+
+	PrintDeltaTime(nullptr);
+	AudioProcessor::Echo(pao->buffer, ei);
+	PrintDeltaTime("Echo");
 
 	pao->pause = false;
 

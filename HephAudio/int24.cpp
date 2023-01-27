@@ -5,7 +5,7 @@ namespace HephAudio
 {
 	int24::int24()
 	{
-		memset(bytes, 0, sizeof(int24));
+		memset(this->bytes, 0, sizeof(int24));
 	}
 	int24::int24(const int24& rhs)
 	{
@@ -13,17 +13,17 @@ namespace HephAudio
 	}
 	int24::int24(const int32_t& rhs)
 	{
-		bytes[0] = rhs & 0x000000FF;
-		bytes[1] = (rhs & 0x0000FF00) >> 8;
-		bytes[2] = (rhs & 0x00FF0000) >> 16;
+		this->bytes[0] = rhs & 0x000000FF;
+		this->bytes[1] = (rhs & 0x0000FF00) >> 8;
+		this->bytes[2] = (rhs & 0x00FF0000) >> 16;
 	}
 	int24::operator int32_t() const
 	{
-		return bytes[2] & 0x80 ? ((0xFF000000) | (bytes[2] << 16) | (bytes[1] << 8) | (bytes[0])) : ((bytes[2] << 16) | (bytes[1] << 8) | (bytes[0]));
+		return this->bytes[2] & 0x80 ? ((0xFF000000) | (this->bytes[2] << 16) | (this->bytes[1] << 8) | (this->bytes[0])) : ((this->bytes[2] << 16) | (this->bytes[1] << 8) | (this->bytes[0]));
 	}
 	int24 int24::operator-()
 	{
-		return (~*this + 1);
+		return (~(*this) + 1);
 	}
 	int24& int24::operator=(const int24& rhs)
 	{

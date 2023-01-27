@@ -17,19 +17,19 @@ namespace HephAudio
 	}
 	bool AudioFormatInfo::operator!=(const AudioFormatInfo& rhs) const
 	{
-		return !((*this) == rhs);
+		return this->formatTag != rhs.formatTag || this->bitsPerSample != rhs.bitsPerSample || this->channelCount != rhs.channelCount || this->sampleRate != rhs.sampleRate;
 	}
 	uint16_t AudioFormatInfo::FrameSize() const noexcept
 	{
-		return channelCount * bitsPerSample / 8;
+		return this->channelCount * this->bitsPerSample * 0.125;
 	}
 	uint32_t AudioFormatInfo::BitRate() const noexcept
 	{
-		return ByteRate() * 8;
+		return this->ByteRate() * 8;
 	}
 	uint32_t AudioFormatInfo::ByteRate() const noexcept
 	{
-		return sampleRate * FrameSize();
+		return this->sampleRate * this->FrameSize();
 	}
 #ifdef _WIN32
 	AudioFormatInfo::AudioFormatInfo(const WAVEFORMATEX& wfx)
