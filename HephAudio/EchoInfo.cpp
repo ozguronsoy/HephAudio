@@ -14,9 +14,8 @@ namespace HephAudio
 	{
 		const size_t delayFrameCount = buffer.FormatInfo().sampleRate * this->reflectionDelay;
 		const size_t echoStartFrame = buffer.FrameCount() * this->echoStartPosition;
-		const double echoEndPosition = this->echoEndPosition > this->echoStartPosition ? this->echoEndPosition : 1.0;
-		const size_t echoBufferFrameCount = buffer.FrameCount() * echoEndPosition - echoStartFrame;
+		const size_t echoBufferFrameCount = buffer.FrameCount() * this->echoEndPosition - echoStartFrame;
 		const size_t resultBufferFrameCount = echoStartFrame + delayFrameCount * this->reflectionCount + echoBufferFrameCount;
-		return resultBufferFrameCount > buffer.FrameCount() ? resultBufferFrameCount : buffer.FrameCount();
+		return max(resultBufferFrameCount, buffer.FrameCount());
 	}
 }

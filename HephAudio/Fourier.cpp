@@ -52,26 +52,6 @@ namespace HephAudio
 			}
 		}
 	}
-	double Fourier::Magnitude(Complex sample)
-	{
-		return sqrt(MagnitudeSquared(sample));
-	}
-	double Fourier::MagnitudeSquared(Complex sample)
-	{
-		return sample.real * sample.real + sample.imaginary * sample.imaginary;
-	}
-	double Fourier::Phase(Complex sample)
-	{
-		return atan2(sample.imaginary, sample.real);
-	}
-	double Fourier::Decibels(Complex sample)
-	{
-		if (sample.real == 0 && sample.imaginary == 0)
-		{
-			return 0;
-		}
-		return 20.0 * log10(MagnitudeSquared(sample));
-	}
 	double Fourier::FrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency)
 	{
 		return round(frequency * fftSize / sampleRate);

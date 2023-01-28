@@ -105,4 +105,16 @@ namespace HephAudio
 	{
 		return this->imaginary != 0 || this->real != rhs;
 	}
+	double Complex::Magnitude() const noexcept
+	{
+		return sqrt(this->MagnitudeSquared());
+	}
+	double Complex::MagnitudeSquared() const noexcept
+	{
+		return this->real * this->real + this->imaginary * this->imaginary;
+	}
+	double Complex::Phase() const noexcept
+	{
+		return atan2(this->imaginary, this->real);
+	}
 }

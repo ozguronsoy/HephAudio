@@ -10,11 +10,9 @@ using namespace HephAudio::Native;
 void OnException(AudioException ex, AudioExceptionThread t);
 void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
-bool IsFinishedPlaying(IAudioObject* sender);
 double PrintDeltaTime(const char* label);
 
 Audio* audio;
-EchoInfo ei;
 int main()
 {
 	audio = new Audio();
@@ -25,21 +23,10 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("Init Render");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav");
+	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
-	pao->IsFinishedPlaying = IsFinishedPlaying;
 	pao->loopCount = 1u;
 	PrintDeltaTime("Load File");
-
-	ei.echoStartPosition = 0.0;
-	ei.echoEndPosition = 1.0;
-	ei.reflectionCount = 5;
-	ei.reflectionDelay = pao->buffer.CalculateDuration() * 0.5;
-	ei.volumeFactor = 0.5;
-
-	//PrintDeltaTime(nullptr);
-	//AudioProcessor::Echo(pao->buffer, ei);
-	//PrintDeltaTime("Echo");
 
 	pao->pause = false;
 
@@ -61,13 +48,6 @@ void SetToDefaultDevice(AudioDevice device)
 }
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
-	PrintDeltaTime(nullptr);
-	AudioProcessor::EchoRT(sender->buffer, subBuffer, subBufferFrameIndex, ei);
-	PrintDeltaTime("Echo");
-}
-bool IsFinishedPlaying(IAudioObject* sender)
-{
-	return sender->frameIndex >= ei.CalculateAudioBufferFrameCount(sender->buffer);
 }
 double PrintDeltaTime(const char* label)
 {

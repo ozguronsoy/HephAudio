@@ -31,5 +31,8 @@ namespace HephAudio
 		Complex& operator/=(const double& rhs);
 		bool operator==(const double& rhs) const;
 		bool operator!=(const double& rhs) const;
+		double Magnitude() const noexcept;
+		double MagnitudeSquared() const noexcept;
+		double Phase() const noexcept;
 	};
 }

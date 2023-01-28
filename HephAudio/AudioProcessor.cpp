@@ -48,7 +48,7 @@ namespace HephAudio
 					sample *= 2.0;
 					sample -= 1.0;
 				}
-				resultBuffer.Set(sample, i, j); // Get the normailzed data from current buffer and set it in the result buffer. (AudioBuffer will do the rest)
+				resultBuffer.Set(sample, i, j);
 			}
 		}
 		buffer = resultBuffer;
@@ -58,7 +58,7 @@ namespace HephAudio
 		if (buffer.formatInfo.channelCount == outputChannelCount) { return; }
 		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, outputChannelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
 		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
-		for (size_t i = 0; i < buffer.frameCount; i++) // For each frame, find the average value and then set all the result channels to it.
+		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			double averageValue = 0.0f;
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -225,8 +225,7 @@ namespace HephAudio
 	{
 		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
-		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
-		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * echoEndPosition - echoStartFrame);
+		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * info.echoEndPosition - echoStartFrame);
 		buffer.Resize(echoStartFrame + delayFrameCount * info.reflectionCount + echoBuffer.frameCount);
 		double factor = info.volumeFactor;
 		size_t startFrameIndex = echoStartFrame + delayFrameCount;
@@ -246,8 +245,7 @@ namespace HephAudio
 	{
 		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay;
 		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
-		const double echoEndPosition = info.echoEndPosition > info.echoStartPosition ? info.echoEndPosition : 1.0;
-		const size_t echoFrameCount = originalBuffer.frameCount * echoEndPosition - echoStartFrame;
+		const size_t echoFrameCount = originalBuffer.frameCount * info.echoEndPosition - echoStartFrame;
 		const size_t subBufferEndFrameIndex = subBufferFrameIndex + subBuffer.frameCount;
 		double factor = info.volumeFactor;
 		size_t startFrameIndex = echoStartFrame + delayFrameCount;
@@ -592,13 +590,13 @@ namespace HephAudio
 				Fourier::FFT_Forward(complexBuffer, fftSize);
 				for (size_t k = 0; k < nyquistFrequency; k++)
 				{
-					const double phase = Fourier::Phase(complexBuffer[k]);
+					const double phase = complexBuffer[k].Phase();
 					double phaseRemainder = phase - lastAnalysisPhases[k][j] - twopi * k * hopSize / fftSize;
 					phaseRemainder = phaseRemainder >= 0 ? (fmod(phaseRemainder + PI, twopi) - PI) : (fmod(phaseRemainder - PI, -twopi) + PI);
 					const size_t newBin = floor(k * shiftFactor + 0.5);
 					if (newBin < nyquistFrequency)
 					{
-						synthesisMagnitudes[newBin][j] += Fourier::Magnitude(complexBuffer[k]);
+						synthesisMagnitudes[newBin][j] += complexBuffer[k].Magnitude();
 						synthesisFrequencies[newBin][j] = (k + phaseRemainder * fftSize / twopi / hopSize) * shiftFactor;
 					}
 					lastAnalysisPhases[k][j] = phase;
