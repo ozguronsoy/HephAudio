@@ -1,6 +1,6 @@
 #pragma once
 #include "framework.h"
-#include <string>
+#include "StringBuffer.h"
 
 namespace HephAudio
 {
@@ -16,9 +16,9 @@ namespace HephAudio
 		ConsoleLogger() = delete;
 		ConsoleLogger(const ConsoleLogger&) = delete;
 		ConsoleLogger& operator=(const ConsoleLogger&) = delete;
-		static void Log(const char* message, const char* logLevel);
-		static void LogLine(const char* message, const char* logLevel);
+		static void Log(StringBuffer message, const char* logLevel);
+		static void LogLine(StringBuffer message, const char* logLevel);
 	private:
-		static std::string CurrentTimeToString();
+		static StringBuffer CurrentTimeToString(StringType stringType);
 	};
 }

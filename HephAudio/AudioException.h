@@ -1,5 +1,6 @@
 #pragma once
 #include "framework.h"
+#include "StringBuffer.h"
 #include <string>
 
 namespace HephAudio
@@ -8,10 +9,9 @@ namespace HephAudio
 	{
 	private:
 		int32_t errorCode;
-		std::wstring method; // Method name that exception has occurred.
-		std::wstring message;
-		mutable std::string errorString;
-		mutable std::wstring errorWString;
+		StringBuffer method; // Method name that exception has occurred.
+		StringBuffer message;
+		mutable StringBuffer errorString;
 	public:
 		AudioException();
 		AudioException(int32_t errorCode, const wchar_t* method, const wchar_t* message);

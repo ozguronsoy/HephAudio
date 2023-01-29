@@ -11,7 +11,7 @@ using namespace HephAudio::Native;
 
 void OnException(AudioException ex, AudioExceptionThread t);
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
-double PrintDeltaTime(const char* label);
+double PrintDeltaTime(StringBuffer label);
 
 Audio* audio;
 int main()
@@ -28,6 +28,9 @@ int main()
 	pao->OnRender = OnRender;
 	pao->loopCount = 1u;
 	PrintDeltaTime("file loaded in");
+
+	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, [](double f) -> double { return 0.0; });
+	PrintDeltaTime("filter applied in");
 
 	pao->pause = false;
 
@@ -52,17 +55,16 @@ void OnException(AudioException ex, AudioExceptionThread t)
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
 }
-double PrintDeltaTime(const char* label)
+double PrintDeltaTime(StringBuffer label)
 {
 	const double dt = StopWatch::DeltaTime(StopWatch::milli);
-	std::string message = label;
-	message += " ";
+	label += " ";
 	std::ostringstream dts;
 	dts.precision(4);
 	dts << std::fixed << dt;
-	message += dts.str();
-	message += " ms";
-	ConsoleLogger::LogLine(message.c_str(), ConsoleLogger::info);
+	label += dts.str().c_str();
+	label += " ms";
+	ConsoleLogger::LogLine(label, ConsoleLogger::info);
 	StopWatch::Reset();
 	return dt;
 }

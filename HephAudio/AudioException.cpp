@@ -1,5 +1,5 @@
 #include "AudioException.h"
-#include <exception>
+#include <string>
 #include <sstream>
 #include <iomanip>
 
@@ -10,26 +10,26 @@ namespace HephAudio
 		this->errorCode = 0;
 		this->method = L"";
 		this->message = L"";
-		this->errorString = "";
-		this->errorWString = L"";
+		this->errorString = L"";
 	}
 	AudioException::AudioException(int32_t errorCode, const wchar_t* method, const wchar_t* message)
 	{
 		this->errorCode = errorCode;
 		this->method = method;
 		this->message = message;
-		this->errorString = "";
-		this->errorWString = L"";
+		this->errorString = L"";
 	}
 	const char* AudioException::ToString() const
 	{
-		this->errorString = "Audio Exception " + this->ErrorCodeToHex() + " (" + std::to_string(this->errorCode) + ")\nMethod: " + std::string(this->method.begin(), this->method.end()) + "\nMessage: " + std::string(this->message.begin(), this->message.end());
-		return errorString.c_str();
+		StringBuffer tempMethod = StringBuffer(this->method, StringType::Normal);
+		StringBuffer tempMessage = StringBuffer(this->message, StringType::Normal);
+		this->errorString = ("Audio Exception " + this->ErrorCodeToHex() + " (" + std::to_string(this->errorCode) + ")\nMethod: " + tempMethod.c_str() + "\nMessage: " + tempMessage.c_str()).c_str();
+		return this->errorString.c_str();
 	}
 	const wchar_t* AudioException::ToWString() const
 	{
-		this->errorWString = L"Audio Exception " + this->ErrorCodeToHexW() + L" (" + std::to_wstring(this->errorCode) + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
-		return this->errorWString.c_str();
+		this->errorString = (L"Audio Exception " + this->ErrorCodeToHexW() + L" (" + std::to_wstring(this->errorCode) + L")\nMethod: " + this->method.wc_str() + L"\nMessage: " + this->message.wc_str()).c_str();
+		return this->errorString.wc_str();
 	}
 	std::string AudioException::ErrorCodeToHex() const
 	{
