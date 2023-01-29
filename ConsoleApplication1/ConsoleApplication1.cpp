@@ -3,30 +3,34 @@
 #include <Audio.h>
 #include <AudioProcessor.h>
 #include <Fourier.h>
+#include <ConsoleLogger.h>
+#include <StopWatch.h>
 
 using namespace HephAudio;
 using namespace HephAudio::Native;
 
 void OnException(AudioException ex, AudioExceptionThread t);
-void SetToDefaultDevice(AudioDevice device);
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 double PrintDeltaTime(const char* label);
 
 Audio* audio;
 int main()
 {
+	StopWatch::Start();
 	audio = new Audio();
 	audio->SetOnExceptionHandler(OnException);
-	audio->SetOnDefaultAudioDeviceChangeHandler(SetToDefaultDevice);
 
-	PrintDeltaTime(nullptr);
+	StopWatch::Reset();
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
-	PrintDeltaTime("Init Render");
+	PrintDeltaTime("render initialized in");
 
 	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 1u;
-	PrintDeltaTime("Load File");
+	PrintDeltaTime("file loaded in");
+
+	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, [](double f) -> double { return 0.0; });
+	PrintDeltaTime("filter applied in");
 
 	pao->pause = false;
 
@@ -34,33 +38,34 @@ int main()
 	std::cin >> a;
 	delete audio;
 	pao = nullptr;
+	StopWatch::Stop();
 	std::cin >> a;
+
 	return 0;
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::wcout << std::endl << std::endl << ex.WhatW() << std::endl << std::endl;
-}
-void SetToDefaultDevice(AudioDevice device)
-{
-	std::cout << "Is current device: " << (device.id == audio->GetRenderDevice().id) << "\n";
-	audio->InitializeRender(nullptr, audio->GetRenderFormat());
+	std::string str = ex.What();
+	size_t pos = str.find('\n', 0);
+	str.insert(pos + 1, 12, ' ');
+	pos = str.find('\n', pos + 1);
+	str.insert(pos + 1, 12, ' ');
+	ConsoleLogger::Log(str.c_str(), ConsoleLogger::error);
 }
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
 }
 double PrintDeltaTime(const char* label)
 {
-	static std::chrono::high_resolution_clock clock;
-	static std::chrono::steady_clock::time_point t1 = clock.now();
-	static std::chrono::steady_clock::time_point t2 = t1;
-	static double dt = 0.0;
-	t2 = clock.now();
-	dt = (t2 - t1).count() * 1.0e-6;
-	if (label != nullptr)
-	{
-		std::cout << label << ": " << dt << "ms\n";
-	}
-	t1 = t2 = clock.now();
+	const double dt = StopWatch::DeltaTime(StopWatch::milli);
+	std::string message = label;
+	message += " ";
+	std::ostringstream dts;
+	dts.precision(4);
+	dts << std::fixed << dt;
+	message += dts.str();
+	message += " ms";
+	ConsoleLogger::LogLine(message.c_str(), ConsoleLogger::info);
+	StopWatch::Reset();
 	return dt;
 }

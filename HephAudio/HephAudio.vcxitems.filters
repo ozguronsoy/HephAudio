@@ -108,6 +108,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioBase.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ConsoleLogger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StopWatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
@@ -181,6 +187,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioBase.cpp">
       <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ConsoleLogger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StopWatch.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

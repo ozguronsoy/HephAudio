@@ -29,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Category.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ConsoleLogger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)INativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StopWatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
@@ -57,6 +59,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ConsoleLogger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
@@ -64,6 +67,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StopWatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />

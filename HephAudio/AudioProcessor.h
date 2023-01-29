@@ -13,6 +13,10 @@ namespace HephAudio
 	private:
 		static constexpr size_t defaultHopSize = 1024u;
 		static constexpr size_t defaultFFTSize = 4096u;
+	public:
+		AudioProcessor() = delete;
+		AudioProcessor(const AudioProcessor&) = delete;
+		AudioProcessor& operator=(const AudioProcessor&) = delete;
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		static void ConvertBPS(AudioBuffer& buffer, uint16_t outputBps);
