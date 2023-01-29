@@ -8,20 +8,20 @@ namespace HephAudio
 		std::thread::id currentThreadId = std::this_thread::get_id();
 		if (!timePoints.contains(currentThreadId))
 		{
-			timePoints[currentThreadId] = clock.now();
+			timePoints[currentThreadId] = std::chrono::high_resolution_clock::now();
 		}
 	}
 	void StopWatch::Reset()
 	{
-		timePoints[std::this_thread::get_id()] = clock.now();
+		timePoints[std::this_thread::get_id()] = std::chrono::high_resolution_clock::now();
 	}
 	double StopWatch::DeltaTime()
 	{
-		return (clock.now() - timePoints[std::this_thread::get_id()]).count() * 1e-9;
+		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9;
 	}
 	double StopWatch::DeltaTime(double prefix)
 	{
-		return (clock.now() - timePoints[std::this_thread::get_id()]).count() * 1e-9 / prefix;
+		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9 / prefix;
 	}
 	void StopWatch::Stop()
 	{

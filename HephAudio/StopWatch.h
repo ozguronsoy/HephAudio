@@ -13,7 +13,6 @@ namespace HephAudio
 		static constexpr double micro = 1e-6;
 		static constexpr double milli = 1e-3;
 	private:
-		static std::chrono::high_resolution_clock clock;
 		static std::map<std::thread::id, std::chrono::steady_clock::time_point> timePoints;
 	public:
 		StopWatch() = delete;

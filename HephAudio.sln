@@ -65,6 +65,7 @@ Global
 		SolutionGuid = {87395B32-3B90-4400-A819-A5506CD066AF}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		HephAudio\HephAudio.vcxitems*{1fed3ba0-f498-4338-922d-67023cd6012b}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{bb93f558-91d0-4736-88af-56a3ad9532e9}*SharedItemsImports = 9
 		HephAudio\HephAudio.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
 	EndGlobalSection
