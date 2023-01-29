@@ -4,18 +4,21 @@
 
 namespace HephAudio
 {
-	struct AudioException
+	struct AudioException final
 	{
-		long hr;
+	private:
+		int32_t errorCode;
 		std::wstring method; // Method name that exception has occurred.
 		std::wstring message;
+		mutable std::string errorString;
+		mutable std::wstring errorWString;
+	public:
 		AudioException();
-		AudioException(long hr, std::wstring method, std::wstring message);
-		virtual ~AudioException() = default;
-		virtual std::string What() const;
-		virtual std::wstring WhatW() const;
-	protected:
-		virtual std::string HRToHex(long hr) const;
-		virtual std::wstring HRToHexW(long hr) const;
+		AudioException(int32_t errorCode, const wchar_t* method, const wchar_t* message);
+		const char* ToString() const;
+		const wchar_t* ToWString() const;
+	private:
+		std::string ErrorCodeToHex() const;
+		std::wstring ErrorCodeToHexW() const;
 	};
 }

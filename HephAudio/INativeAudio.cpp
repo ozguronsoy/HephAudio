@@ -48,7 +48,7 @@ namespace HephAudio
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
 				if (format == nullptr)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::Play", L"File format '" + audioFile.Extension() + L"' not supported."));
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::Play", (L"File format '" + audioFile.Extension() + L"' not supported.").c_str()));
 					return nullptr;
 				}
 				std::shared_ptr<IAudioObject> ao = std::shared_ptr<IAudioObject>(new IAudioObject());
@@ -92,7 +92,7 @@ namespace HephAudio
 						Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
 						if (format == nullptr)
 						{
-							throw AudioException(E_INVALIDARG, L"INativeAudio::Play", L"File format '" + audioFile.Extension() + L"' not supported.");
+							throw AudioException(E_INVALIDARG, L"INativeAudio::Play", (L"File format '" + audioFile.Extension() + L"' not supported.").c_str());
 						}
 						ao->buffer = format->ReadFile(audioFile);
 					}
@@ -307,7 +307,7 @@ namespace HephAudio
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
 				if (format == nullptr)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::SaveToFile", L"File format '" + AudioFile::GetFileExtension(filePath) + L"' not supported."));
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio::SaveToFile", (L"File format '" + AudioFile::GetFileExtension(filePath) + L"' not supported.").c_str()));
 					return false;
 				}
 				return format->SaveToFile(filePath, buffer, overwrite);
@@ -416,7 +416,7 @@ namespace HephAudio
 							Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
 							if (format == nullptr)
 							{
-								RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio", L"File format '" + audioFile.Extension() + L"' not supported."));
+								RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"INativeAudio", (L"File format '" + audioFile.Extension() + L"' not supported.").c_str()));
 								return;
 							}
 							qao->buffer = format->ReadFile(audioFile);

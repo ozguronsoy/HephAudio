@@ -7,34 +7,40 @@ namespace HephAudio
 {
 	AudioException::AudioException()
 	{
-		this->hr = 0;
+		this->errorCode = 0;
 		this->method = L"";
 		this->message = L"";
+		this->errorString = "";
+		this->errorWString = L"";
 	}
-	AudioException::AudioException(long hr, std::wstring method, std::wstring message)
+	AudioException::AudioException(int32_t errorCode, const wchar_t* method, const wchar_t* message)
 	{
-		this->hr = hr;
+		this->errorCode = errorCode;
 		this->method = method;
 		this->message = message;
+		this->errorString = "";
+		this->errorWString = L"";
 	}
-	std::string AudioException::HRToHex(long hr) const
+	const char* AudioException::ToString() const
+	{
+		this->errorString = "Audio Exception " + this->ErrorCodeToHex() + " (" + std::to_string(this->errorCode) + ")\nMethod: " + std::string(this->method.begin(), this->method.end()) + "\nMessage: " + std::string(this->message.begin(), this->message.end());
+		return errorString.c_str();
+	}
+	const wchar_t* AudioException::ToWString() const
+	{
+		this->errorWString = L"Audio Exception " + this->ErrorCodeToHexW() + L" (" + std::to_wstring(this->errorCode) + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
+		return this->errorWString.c_str();
+	}
+	std::string AudioException::ErrorCodeToHex() const
 	{
 		std::stringstream ss;
-		ss << "0x" << std::setfill('0') << std::setw(sizeof(long) * 2) << std::hex << hr;
+		ss << "0x" << std::setfill('0') << std::setw(sizeof(int64_t)) << std::hex << this->errorCode;
 		return ss.str();
 	}
-	std::wstring AudioException::HRToHexW(long hr) const
+	std::wstring AudioException::ErrorCodeToHexW() const
 	{
 		std::wstringstream ss;
-		ss << L"0x" << std::setfill(L'0') << std::setw(sizeof(long) * 2) << std::hex << hr;
+		ss << L"0x" << std::setfill(L'0') << std::setw(sizeof(int64_t)) << std::hex << this->errorCode;
 		return ss.str();
-	}
-	std::string AudioException::What() const
-	{
-		return ("Audio Exception " + HRToHex(hr) + " (" + std::to_string(hr) + ")\nMethod: " + std::string(method.begin(), method.end()) + "\nMessage: " + std::string(message.begin(), message.end()));
-	}
-	std::wstring AudioException::WhatW() const
-	{
-		return L"Audio Exception " + HRToHexW(hr) + L" (" + std::to_wstring(hr) + L")\nMethod: " + method + L"\nMessage: " + message;
 	}
 }

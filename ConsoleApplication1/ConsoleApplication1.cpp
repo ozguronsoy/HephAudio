@@ -29,9 +29,6 @@ int main()
 	pao->loopCount = 1u;
 	PrintDeltaTime("file loaded in");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, [](double f) -> double { return 0.0; });
-	PrintDeltaTime("filter applied in");
-
 	pao->pause = false;
 
 	std::string a;
@@ -45,11 +42,11 @@ int main()
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::string str = ex.What();
+	std::string str = ex.ToString();
 	size_t pos = str.find('\n', 0);
-	str.insert(pos + 1, 12, ' ');
+	str.insert(pos + 1, 21, ' ');
 	pos = str.find('\n', pos + 1);
-	str.insert(pos + 1, 12, ' ');
+	str.insert(pos + 1, 21, ' ');
 	ConsoleLogger::Log(str.c_str(), ConsoleLogger::error);
 }
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
