@@ -32,7 +32,6 @@ int main()
 	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, [](double f) -> double { return 0.0; });
 	PrintDeltaTime("filter applied in");
 
-
 	pao->pause = false;
 
 	std::string a;
