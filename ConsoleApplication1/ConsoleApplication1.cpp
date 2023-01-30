@@ -12,6 +12,7 @@ using namespace HephAudio::Native;
 void OnException(AudioException ex, AudioExceptionThread t);
 void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 double PrintDeltaTime(StringBuffer label);
+double FVM(double f) { return 0.0; }
 
 Audio* audio;
 int main()
@@ -29,7 +30,7 @@ int main()
 	pao->loopCount = 1u;
 	PrintDeltaTime("file loaded in");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, [](double f) -> double { return 0.0; });
+	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
 	PrintDeltaTime("filter applied in");
 
 	pao->pause = false;
