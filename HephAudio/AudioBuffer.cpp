@@ -300,11 +300,8 @@ namespace HephAudio
 				return;
 			}
 
-			// reallocate memory with the combined size and copy the rhs's data to the end of the current buffer's data.
-			const size_t oldSize = this->Size();
-			this->frameCount += buffer.frameCount;
-
-			void* tempPtr = realloc(this->pAudioData, this->Size());
+			// allocate memory with the combined size and copy the rhs's data to the end of the current buffer's data.
+			void* tempPtr = malloc(this->Size() + buffer.frameCount * this->formatInfo.FrameSize());
 			if (tempPtr == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
@@ -313,9 +310,12 @@ namespace HephAudio
 			// ensure both buffers have the same format.
 			AudioBuffer tempBuffer = buffer;
 			tempBuffer.SetFormat(this->formatInfo);
-			
-			memcpy((uint8_t*)tempPtr + oldSize, tempBuffer.pAudioData, tempBuffer.Size());
+
+			memcpy((uint8_t*)tempPtr + this->Size(), tempBuffer.pAudioData, tempBuffer.Size());
+
+			free(this->pAudioData);
 			this->pAudioData = tempPtr;
+			this->frameCount += buffer.frameCount;
 		}
 	}
 	void AudioBuffer::Insert(const AudioBuffer& buffer, size_t frameIndex)
@@ -323,16 +323,16 @@ namespace HephAudio
 		if (buffer.frameCount > 0)
 		{
 			const size_t oldSize = this->Size();
-			this->frameCount = frameIndex > this->frameCount ? (buffer.frameCount + frameIndex) : (this->frameCount + buffer.frameCount);
-			const size_t newSize = this->Size();
-			
+			const size_t newFrameCount = frameIndex > this->frameCount ? (buffer.frameCount + frameIndex) : (this->frameCount + buffer.frameCount);
+			const size_t newSize = newFrameCount * this->formatInfo.FrameSize();
+
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Insert", L"Insufficient memory.");
 			}
-			memset(tempPtr, 0, newSize); // if the oldSize is greater than the frameIndexAsBytes, make sure the padded data is set to 0.
-			
+			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
+
 			// copy from 0 to insert start index.
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
 			if (frameIndexAsBytes > 0 && oldSize > 0)
@@ -355,13 +355,14 @@ namespace HephAudio
 
 			free(this->pAudioData);
 			this->pAudioData = tempPtr;
+			this->frameCount = newFrameCount;
 		}
 	}
 	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount)
 	{
 		if (frameCount > 0 && frameIndex < this->frameCount)
 		{
-			
+
 			if (frameIndex + frameCount > this->frameCount) // to prevent overcutting.
 			{
 				frameCount = this->frameCount - frameIndex;
@@ -398,50 +399,47 @@ namespace HephAudio
 	}
 	void AudioBuffer::Replace(const AudioBuffer& buffer, size_t frameIndex, size_t frameCount)
 	{
-		if (buffer.frameCount > 0 && frameCount > 0 && frameIndex < this->frameCount)
+		if (frameCount > 0)
 		{
-			const size_t oldSize = this->Size();
-			this->frameCount += buffer.frameCount - frameCount;
-			const size_t newSize = this->Size();
+			const size_t newFrameCount = frameIndex > this->frameCount ? (frameCount + frameIndex) : (this->frameCount + frameCount);
+			const size_t newSize = newFrameCount * this->formatInfo.FrameSize();
 
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Replace", L"Insufficient memory.");
 			}
+			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
 			// copy from 0 to replace start index.
-			const size_t frameIndexAsBytes = frameIndex * formatInfo.FrameSize();
+			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
 			if (frameIndex > 0)
 			{
-				memcpy(tempPtr, this->pAudioData, frameIndexAsBytes);
+				memcpy(tempPtr, this->pAudioData, frameIndexAsBytes > this->Size() ? this->Size() : frameIndexAsBytes);
 			}
 
 			// ensure both buffers have the same format.
-			AudioBuffer tempBuffer = buffer;
-			tempBuffer.SetFormat(formatInfo);
+			AudioBuffer tempBuffer = buffer.GetSubBuffer(0, frameCount);
+			tempBuffer.SetFormat(this->formatInfo);
 			const size_t tempBufferSize = tempBuffer.Size();
 
 			// copy the replace data.
 			const size_t replacedSize = frameIndexAsBytes + tempBufferSize >= newSize ? newSize - frameIndexAsBytes : tempBufferSize;
 			if (replacedSize > 0)
 			{
-				memcpy((uint8_t*)tempPtr + frameIndexAsBytes, buffer.pAudioData, replacedSize);
+				memcpy((uint8_t*)tempPtr + frameIndexAsBytes, tempBuffer.pAudioData, replacedSize);
 			}
 
 			// copy the remaining data.
 			if (frameIndex + frameCount < this->frameCount)
 			{
-				const size_t padding = frameIndexAsBytes + frameCount * formatInfo.FrameSize();
-				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + replacedSize, (uint8_t*)this->pAudioData + padding, oldSize - padding);
+				const size_t padding = frameIndexAsBytes + frameCount * this->formatInfo.FrameSize();
+				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + replacedSize, (uint8_t*)this->pAudioData + padding, this->Size() - padding);
 			}
 
 			free(this->pAudioData);
 			this->pAudioData = tempPtr;
-		}
-		else
-		{
-			this->Insert(buffer, frameIndex);
+			this->frameCount = newFrameCount;
 		}
 	}
 	void AudioBuffer::Reset()

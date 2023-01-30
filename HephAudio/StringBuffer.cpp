@@ -297,15 +297,14 @@ namespace HephAudio
 	}
 	StringBuffer& StringBuffer::operator+=(const char* rhs)
 	{
-		const size_t oldTotalSize = this->TotalSize();
 		size_t rhsSize = 0;
 		while (rhs[rhsSize] != '\0') // find the character count
 		{
 			rhsSize++;
 		}
-		this->size += rhsSize;
+		const size_t newTotalSize = this->TotalSize() + rhsSize * this->charSize;
 
-		char* tempPtr = (char*)realloc(this->pData, this->TotalSize() + this->charSize);
+		char* tempPtr = (char*)realloc(this->pData, newTotalSize + this->charSize);
 		if (tempPtr == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator+=", L"Insufficient memory.");
@@ -313,28 +312,28 @@ namespace HephAudio
 
 		if (this->charSize != sizeof(char))
 		{
-			mbstowcs((wchar_t*)(tempPtr + oldTotalSize), rhs, rhsSize + 1);
+			mbstowcs((wchar_t*)(tempPtr + this->TotalSize()), rhs, rhsSize + 1);
 		}
 		else
 		{
-			memcpy(tempPtr + oldTotalSize, rhs, rhsSize + sizeof(char));
+			memcpy(tempPtr + this->TotalSize(), rhs, rhsSize + sizeof(char));
 		}
 
 		this->pData = tempPtr;
+		this->size += rhsSize;
 
 		return *this;
 	}
 	StringBuffer& StringBuffer::operator+=(const wchar_t* rhs)
 	{
-		const size_t oldTotalSize = this->TotalSize();
 		size_t rhsSize = 0;
 		while (rhs[rhsSize] != L'\0') // find the character count
 		{
 			rhsSize++;
 		}
-		this->size += rhsSize;
+		const size_t newTotalSize = this->TotalSize() + rhsSize * this->charSize;
 
-		char* tempPtr = (char*)realloc(this->pData, this->TotalSize() + this->charSize);
+		char* tempPtr = (char*)realloc(this->pData, newTotalSize + this->charSize);
 		if (tempPtr == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator+=", L"Insufficient memory.");
@@ -342,23 +341,23 @@ namespace HephAudio
 
 		if (this->charSize != sizeof(wchar_t))
 		{
-			wcstombs(tempPtr + oldTotalSize, rhs, rhsSize + 1);
+			wcstombs(tempPtr + this->TotalSize(), rhs, rhsSize + 1);
 		}
 		else
 		{
-			memcpy(tempPtr + oldTotalSize, rhs, rhsSize * sizeof(wchar_t) + sizeof(wchar_t));
+			memcpy(tempPtr + this->TotalSize(), rhs, rhsSize * sizeof(wchar_t) + sizeof(wchar_t));
 		}
 
 		this->pData = tempPtr;
+		this->size += rhsSize;
 
 		return *this;
 	}
 	StringBuffer& StringBuffer::operator+=(const StringBuffer& rhs)
 	{
-		const size_t oldTotalSize = this->TotalSize();
-		this->size += rhs.size;
+		const size_t newTotalSize = this->TotalSize() + rhs.size * this->charSize;
 
-		char* tempPtr = (char*)realloc(this->pData, this->TotalSize() + this->charSize);
+		char* tempPtr = (char*)realloc(this->pData, newTotalSize + this->charSize);
 		if (tempPtr == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator+=", L"Insufficient memory.");
@@ -368,19 +367,21 @@ namespace HephAudio
 		{
 			if (this->charSize == sizeof(char))
 			{
-				wcstombs(tempPtr + oldTotalSize, (wchar_t*)rhs.pData, rhs.size + 1);
+				wcstombs(tempPtr + this->TotalSize(), (wchar_t*)rhs.pData, rhs.size + 1);
 			}
 			else
 			{
-				mbstowcs((wchar_t*)(tempPtr + oldTotalSize), rhs.pData, rhs.size + 1);
+				mbstowcs((wchar_t*)(tempPtr + this->TotalSize()), rhs.pData, rhs.size + 1);
 			}
 		}
 		else
 		{
-			memcpy(tempPtr + oldTotalSize, rhs.pData, rhs.TotalSize() + rhs.charSize);
+			memcpy(tempPtr + this->TotalSize(), rhs.pData, rhs.TotalSize() + rhs.charSize);
 		}
 
 		this->pData = tempPtr;
+		this->size += rhs.size;
+
 		return *this;
 	}
 	char* StringBuffer::c_str() const

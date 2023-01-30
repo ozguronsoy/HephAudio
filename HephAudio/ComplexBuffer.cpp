@@ -228,18 +228,18 @@ namespace HephAudio
 				return;
 			}
 
-			// reallocate memory with the combined size and copy the rhs's data to the end of the current buffer's data.
-			const size_t oldSize = this->Size();
-			this->frameCount += buffer.frameCount;
-
-			Complex* tempPtr = (Complex*)realloc(this->pComplexData, this->Size());
+			// allocate memory with the combined size and copy the rhs's data to the end of the current buffer's data.
+			void* tempPtr = malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Join", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
 			}
 
-			memcpy((uint8_t*)tempPtr + oldSize, buffer.pComplexData, buffer.Size());
-			this->pComplexData = tempPtr;
+			memcpy((uint8_t*)tempPtr + this->Size(), buffer.pComplexData, buffer.Size());
+
+			free(this->pComplexData);
+			this->pComplexData = (Complex*)tempPtr;
+			this->frameCount += buffer.frameCount;
 		}
 	}
 	void ComplexBuffer::Insert(const ComplexBuffer& buffer, size_t frameIndex)
@@ -247,15 +247,15 @@ namespace HephAudio
 		if (buffer.frameCount > 0)
 		{
 			const size_t oldSize = this->Size();
-			this->frameCount = frameIndex > this->frameCount ? (buffer.frameCount + frameIndex) : (this->frameCount + buffer.frameCount);
-			const size_t newSize = this->Size();
+			const size_t newFrameCount = frameIndex > this->frameCount ? (buffer.frameCount + frameIndex) : (this->frameCount + buffer.frameCount);
+			const size_t newSize = newFrameCount * sizeof(Complex);
 
-			Complex* tempPtr = (Complex*)malloc(newSize);
+			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Insert", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Insert", L"Insufficient memory.");
 			}
-			memset(tempPtr, 0, newSize); // if the oldSize is greater than the frameIndexAsBytes, make sure the padded data is set to 0.
+			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
 			// copy from 0 to insert start index.
 			const size_t frameIndexAsBytes = frameIndex * sizeof(Complex);
@@ -273,7 +273,8 @@ namespace HephAudio
 			}
 
 			free(this->pComplexData);
-			this->pComplexData = tempPtr;
+			this->pComplexData = (Complex*)tempPtr;
+			this->frameCount = newFrameCount;
 		}
 	}
 	void ComplexBuffer::Cut(size_t frameIndex, size_t frameCount)
@@ -317,27 +318,31 @@ namespace HephAudio
 	}
 	void ComplexBuffer::Replace(const ComplexBuffer& buffer, size_t frameIndex, size_t frameCount)
 	{
-		if (buffer.frameCount > 0 && frameCount > 0 && frameIndex < this->frameCount)
+		if (frameCount > 0)
 		{
-			const size_t oldSize = this->Size();
-			this->frameCount += buffer.frameCount - frameCount;
-			const size_t newSize = this->Size();
+			const size_t newFrameCount = frameIndex > this->frameCount ? (frameCount + frameIndex) : (this->frameCount + frameCount);
+			const size_t newSize = newFrameCount * sizeof(Complex);
 
-			Complex* tempPtr = (Complex*)malloc(newSize);
+			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Replace", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Replace", L"Insufficient memory.");
 			}
+			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
 			// copy from 0 to replace start index.
 			const size_t frameIndexAsBytes = frameIndex * sizeof(Complex);
 			if (frameIndex > 0)
 			{
-				memcpy(tempPtr, this->pComplexData, frameIndexAsBytes);
+				memcpy(tempPtr, this->pComplexData, frameIndexAsBytes > this->Size() ? this->Size() : frameIndexAsBytes);
 			}
 
+			// ensure both buffers have the same format.
+			ComplexBuffer tempBuffer = buffer.GetSubBuffer(0, frameCount);
+			const size_t tempBufferSize = tempBuffer.Size();
+
 			// copy the replace data.
-			const size_t replacedSize = frameIndexAsBytes + buffer.Size() >= newSize ? newSize - frameIndexAsBytes : buffer.Size();
+			const size_t replacedSize = frameIndexAsBytes + tempBufferSize >= newSize ? newSize - frameIndexAsBytes : tempBufferSize;
 			if (replacedSize > 0)
 			{
 				memcpy((uint8_t*)tempPtr + frameIndexAsBytes, buffer.pComplexData, replacedSize);
@@ -347,15 +352,12 @@ namespace HephAudio
 			if (frameIndex + frameCount < this->frameCount)
 			{
 				const size_t padding = frameIndexAsBytes + frameCount * sizeof(Complex);
-				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + replacedSize, (uint8_t*)this->pComplexData + padding, oldSize - padding);
+				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + replacedSize, (uint8_t*)this->pComplexData + padding, this->Size() - padding);
 			}
 
 			free(this->pComplexData);
-			this->pComplexData = tempPtr;
-		}
-		else
-		{
-			this->Insert(buffer, frameIndex);
+			this->pComplexData = (Complex*)tempPtr;
+			this->frameCount = newFrameCount;
 		}
 	}
 	void ComplexBuffer::Reset()
