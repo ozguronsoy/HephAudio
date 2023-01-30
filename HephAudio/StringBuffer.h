@@ -53,6 +53,8 @@ namespace HephAudio
 		size_t Find(const char* const& str, const size_t& offset) const;
 		size_t Find(const wchar_t* const& wstr, const size_t& offset) const;
 		size_t Find(const StringBuffer& str, const size_t& offset) const;
+		void ToLower();
+		void ToUpper();
 		void* Begin() const noexcept;
 		void* End() const;
 	private:

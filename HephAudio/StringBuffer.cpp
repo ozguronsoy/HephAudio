@@ -599,6 +599,40 @@ namespace HephAudio
 	{
 		return str.charSize == sizeof(char) ? this->Find(str.pData, offset) : this->Find((wchar_t*)str.pData, offset);
 	}
+	void StringBuffer::ToLower()
+	{
+		if (this->charSize == sizeof(char))
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				this->pData[i] = tolower(this->pData[i]);
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				((wchar_t*)this->pData)[i] = towlower(((wchar_t*)this->pData)[i]);
+			}
+		}
+	}
+	void StringBuffer::ToUpper()
+	{
+		if (this->charSize == sizeof(char))
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				this->pData[i] = toupper(this->pData[i]);
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				((wchar_t*)this->pData)[i] = towupper(((wchar_t*)this->pData)[i]);
+			}
+		}
+	}
 	void* StringBuffer::Begin() const noexcept
 	{
 		return this->pData;
