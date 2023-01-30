@@ -11,7 +11,7 @@ namespace HephAudio
 		this->size = 0;
 		this->pData = nullptr;
 	}
-	StringBuffer::StringBuffer(const char* str)
+	StringBuffer::StringBuffer(const char* const& str)
 	{
 		this->charSize = sizeof(char);
 		this->size = 0;
@@ -36,7 +36,7 @@ namespace HephAudio
 			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
 		}
 	}
-	StringBuffer::StringBuffer(const wchar_t* str)
+	StringBuffer::StringBuffer(const wchar_t* const& str)
 	{
 		this->charSize = sizeof(wchar_t);
 		this->size = 0;
@@ -116,7 +116,7 @@ namespace HephAudio
 	{
 		return this->wc_str();
 	}
-	StringBuffer& StringBuffer::operator=(const char* rhs)
+	StringBuffer& StringBuffer::operator=(const char* const& rhs)
 	{
 		this->~StringBuffer();
 
@@ -145,7 +145,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::operator=(const wchar_t* rhs)
+	StringBuffer& StringBuffer::operator=(const wchar_t* const& rhs)
 	{
 		this->~StringBuffer();
 
@@ -200,7 +200,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer StringBuffer::operator+(const char* rhs) const
+	StringBuffer StringBuffer::operator+(const char* const& rhs) const
 	{
 		size_t rhsSize = 0;
 		while (rhs[rhsSize] != '\0') // find the character count
@@ -231,7 +231,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::operator+(const wchar_t* rhs) const
+	StringBuffer StringBuffer::operator+(const wchar_t* const& rhs) const
 	{
 		size_t rhsSize = 0;
 		while (rhs[rhsSize] != L'\0') // find the character count
@@ -295,7 +295,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer& StringBuffer::operator+=(const char* rhs)
+	StringBuffer& StringBuffer::operator+=(const char* const& rhs)
 	{
 		size_t rhsSize = 0;
 		while (rhs[rhsSize] != '\0') // find the character count
@@ -324,7 +324,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::operator+=(const wchar_t* rhs)
+	StringBuffer& StringBuffer::operator+=(const wchar_t* const& rhs)
 	{
 		size_t rhsSize = 0;
 		while (rhs[rhsSize] != L'\0') // find the character count
@@ -384,6 +384,30 @@ namespace HephAudio
 
 		return *this;
 	}
+	bool StringBuffer::operator==(const char* const& rhs) const
+	{
+		return this->charSize == sizeof(char) && strncmp(this->pData, rhs, this->size) == 0;
+	}
+	bool StringBuffer::operator==(const wchar_t* const& rhs) const
+	{
+		return this->charSize == sizeof(wchar_t) && wcsncmp((wchar_t*)this->pData, (wchar_t*)rhs, this->size) == 0;
+	}
+	bool StringBuffer::operator==(const StringBuffer& rhs) const
+	{
+		return this->charSize == rhs.charSize && this->size == rhs.size && memcmp(this->pData, rhs.pData, this->TotalSize()) == 0;
+	}
+	bool StringBuffer::operator!=(const char* const& rhs) const
+	{
+		return this->charSize != sizeof(char) || strncmp(this->pData, rhs, this->size) != 0;
+	}
+	bool StringBuffer::operator!=(const wchar_t* const& rhs) const
+	{
+		return this->charSize != sizeof(wchar_t) || wcsncmp((wchar_t*)this->pData, (wchar_t*)rhs, this->size) != 0;
+	}
+	bool StringBuffer::operator!=(const StringBuffer& rhs) const
+	{
+		return this->charSize != rhs.charSize || this->size != rhs.size || memcmp(this->pData, rhs.pData, this->TotalSize()) != 0;
+	}
 	char* StringBuffer::c_str() const
 	{
 		return (char*)this->pData;
@@ -424,6 +448,36 @@ namespace HephAudio
 			this->pData = tempPtr;
 			this->charSize = newCharSize;
 		}
+	}
+	bool StringBuffer::CompareContent(const char* const& rhs) const
+	{
+		if (this->charSize == sizeof(char))
+		{
+			return *this == rhs;
+		}
+
+		const StringBuffer tempBuffer = StringBuffer(*this, StringType::Normal);
+		return tempBuffer == rhs;
+	}
+	bool StringBuffer::CompareContent(const wchar_t* const& rhs) const
+	{
+		if (this->charSize == sizeof(wchar_t))
+		{
+			return *this == rhs;
+		}
+
+		const StringBuffer tempBuffer = StringBuffer(*this, StringType::Wide);
+		return tempBuffer == rhs;
+	}
+	bool StringBuffer::CompareContent(const StringBuffer& rhs) const
+	{
+		if (this->charSize == rhs.charSize)
+		{
+			return *this == rhs;
+		}
+
+		const StringBuffer tempBuffer = StringBuffer(rhs, this->GetStringType());
+		return *this == tempBuffer;
 	}
 	void* StringBuffer::Begin() const noexcept
 	{
