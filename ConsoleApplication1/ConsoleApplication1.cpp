@@ -30,8 +30,8 @@ int main()
 	pao->loopCount = 1u;
 	PrintDeltaTime("file loaded in");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
-	PrintDeltaTime("filter applied in");
+	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
+	//PrintDeltaTime("filter applied in");
 
 	pao->pause = false;
 
@@ -60,7 +60,7 @@ double PrintDeltaTime(StringBuffer label)
 {
 	const double dt = StopWatch::DeltaTime(StopWatch::milli);
 	label += " ";
-	std::ostringstream dts;
+	std::stringstream dts;
 	dts.precision(4);
 	dts << std::fixed << dt;
 	label += dts.str().c_str();
