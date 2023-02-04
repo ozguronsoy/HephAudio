@@ -1,7 +1,6 @@
 #include "StringBuffer.h"
 #include "AudioException.h"
 #include <cstring>
-#include <iostream>
 
 namespace HephAudio
 {
@@ -54,7 +53,7 @@ namespace HephAudio
 			return;
 		}
 
-		while ((wchar_t)str[this->size] != L'\0') // find the character count
+		while (str[this->size] != L'\0') // find the character count
 		{
 			this->size++;
 		}

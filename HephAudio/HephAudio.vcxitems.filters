@@ -25,12 +25,15 @@
     <Filter Include="Header Files\NativeAudio">
       <UniqueIdentifier>{28bbd6b8-db48-4d3f-b928-cdc7c7e87297}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Buffers">
+      <UniqueIdentifier>{230b06ca-9ac1-4a9e-9a14-5541193c2745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Buffers">
+      <UniqueIdentifier>{4df69e4e-064b-41d4-abfc-05786bf33ed0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h">
@@ -99,9 +102,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioA.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
@@ -115,13 +115,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h">
+      <Filter>Header Files\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
+      <Filter>Header Files\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -182,9 +185,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioA.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
@@ -198,7 +198,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
+      <Filter>Source Files\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp">
+      <Filter>Source Files\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
