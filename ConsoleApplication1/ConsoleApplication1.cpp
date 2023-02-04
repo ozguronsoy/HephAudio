@@ -37,10 +37,6 @@ int main()
 
 	pao->pause = false;
 
-	StringBuffer sb = "Hello,";
-	sb += L" World!";
-	ConsoleLogger::LogLine(sb, ConsoleLogger::debug);
-
 	std::string a;
 	std::cin >> a;
 	delete audio;

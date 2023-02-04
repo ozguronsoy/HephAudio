@@ -33,8 +33,8 @@ namespace HephAudio
 		StringBuffer operator+(const char* const& rhs) const;
 		StringBuffer operator+(const wchar_t* const& rhs) const;
 		StringBuffer operator+(const StringBuffer& rhs) const;
-		StringBuffer operator+=(const char& rhs);
-		StringBuffer operator+=(const wchar_t& rhs);
+		StringBuffer& operator+=(const char& rhs);
+		StringBuffer& operator+=(const wchar_t& rhs);
 		StringBuffer& operator+=(const char* const& rhs);
 		StringBuffer& operator+=(const wchar_t* const& rhs);
 		StringBuffer& operator+=(const StringBuffer& rhs);

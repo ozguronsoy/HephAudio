@@ -331,7 +331,7 @@ namespace HephAudio
 		}
 		return *this + rhs.wc_str();
 	}
-	StringBuffer StringBuffer::operator+=(const char& rhs)
+	StringBuffer& StringBuffer::operator+=(const char& rhs)
 	{
 		const size_t newTotalSize = this->TotalSize() + this->charSize;
 
@@ -357,7 +357,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer StringBuffer::operator+=(const wchar_t& rhs)
+	StringBuffer& StringBuffer::operator+=(const wchar_t& rhs)
 	{
 		const size_t newTotalSize = this->TotalSize() + this->charSize;
 
