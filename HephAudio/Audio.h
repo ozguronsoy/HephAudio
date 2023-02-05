@@ -16,19 +16,17 @@ namespace HephAudio
 		class NativeAudio;
 	}
 
-	using namespace HephAudio::Native;
-
 	class Audio final
 	{
 	private:
-		NativeAudio* pNativeAudio;
+		HephAudio::Native::NativeAudio* pNativeAudio;
 	public:
 		Formats::AudioFormats* GetAudioFormats() const;
-		void SetOnExceptionHandler(AudioExceptionEventHandler handler);
-		void SetOnDefaultAudioDeviceChangeHandler(AudioDeviceEventHandler handler);
-		void SetOnAudioDeviceAddedHandler(AudioDeviceEventHandler handler);
-		void SetOnAudioDeviceRemovedHandler(AudioDeviceEventHandler handler);
-		void SetOnCaptureHandler(AudioCaptureEventHandler handler);
+		void SetOnExceptionHandler(HephAudio::Native::AudioExceptionEventHandler handler);
+		void SetOnDefaultAudioDeviceChangeHandler(HephAudio::Native::AudioDeviceEventHandler handler);
+		void SetOnAudioDeviceAddedHandler(HephAudio::Native::AudioDeviceEventHandler handler);
+		void SetOnAudioDeviceRemovedHandler(HephAudio::Native::AudioDeviceEventHandler handler);
+		void SetOnCaptureHandler(HephAudio::Native::AudioCaptureEventHandler handler);
 	public:
 #ifdef __ANDROID__
 		Audio(JavaVM* jvm);
@@ -38,7 +36,7 @@ namespace HephAudio
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
-		NativeAudio* GetNativeAudio() const;
+		HephAudio::Native::NativeAudio* GetNativeAudio() const;
 		std::shared_ptr<AudioObject> Play(std::wstring filePath);
 		std::shared_ptr<AudioObject> Play(std::wstring filePath, bool isPaused);
 		std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount);

@@ -9,6 +9,8 @@
 #include <android/api-level.h>
 #endif
 
+using namespace HephAudio::Native;
+
 namespace HephAudio
 {
 	Formats::AudioFormats* Audio::GetAudioFormats() const
