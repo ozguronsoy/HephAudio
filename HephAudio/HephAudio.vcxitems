@@ -35,7 +35,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)INativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h" />
@@ -64,7 +64,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp" />

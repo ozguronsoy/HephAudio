@@ -76,47 +76,47 @@ namespace HephAudio
 	{
 		return pNativeAudio;
 	}
-	std::shared_ptr<IAudioObject> Audio::Play(std::wstring filePath)
+	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath)
 	{
 		return pNativeAudio->Play(filePath);
 	}
-	std::shared_ptr<IAudioObject> Audio::Play(std::wstring filePath, bool isPaused)
+	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath, bool isPaused)
 	{
 		return pNativeAudio->Play(filePath, isPaused);
 	}
-	std::shared_ptr<IAudioObject> Audio::Play(std::wstring filePath, uint32_t loopCount)
+	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath, uint32_t loopCount)
 	{
 		return pNativeAudio->Play(filePath, loopCount);
 	}
-	std::shared_ptr<IAudioObject> Audio::Play(std::wstring filePath, uint32_t loopCount, bool isPaused)
+	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath, uint32_t loopCount, bool isPaused)
 	{
 		return pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<IAudioObject>> Audio::Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths)
 	{
 		return pNativeAudio->Queue(queueName, queueDelay, filePaths);
 	}
-	std::shared_ptr<IAudioObject> Audio::Load(std::wstring filePath)
+	std::shared_ptr<AudioObject> Audio::Load(std::wstring filePath)
 	{
 		return pNativeAudio->Load(filePath);
 	}
-	std::shared_ptr<IAudioObject> Audio::CreateAO(std::wstring name, size_t bufferFrameCount)
+	std::shared_ptr<AudioObject> Audio::CreateAO(std::wstring name, size_t bufferFrameCount)
 	{
 		return pNativeAudio->CreateAO(name, bufferFrameCount);
 	}
-	bool Audio::DestroyAO(std::shared_ptr<IAudioObject> audioObject)
+	bool Audio::DestroyAO(std::shared_ptr<AudioObject> audioObject)
 	{
 		return pNativeAudio->DestroyAO(audioObject);
 	}
-	bool Audio::AOExists(std::shared_ptr<IAudioObject> audioObject) const
+	bool Audio::AOExists(std::shared_ptr<AudioObject> audioObject) const
 	{
 		return pNativeAudio->AOExists(audioObject);
 	}
-	void Audio::SetAOPosition(std::shared_ptr<IAudioObject> audioObject, double position)
+	void Audio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, double position)
 	{
 		pNativeAudio->SetAOPosition(audioObject, position);
 	}
-	double Audio::GetAOPosition(std::shared_ptr<IAudioObject> audioObject) const
+	double Audio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
 	{
 		return pNativeAudio->GetAOPosition(audioObject);
 	}

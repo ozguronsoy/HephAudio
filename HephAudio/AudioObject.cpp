@@ -1,10 +1,10 @@
-#include "IAudioObject.h"
+#include "AudioObject.h"
 #include "AudioException.h"
 #include "AudioProcessor.h"
 
 namespace HephAudio
 {
-	IAudioObject::IAudioObject()
+	AudioObject::AudioObject()
 	{
 		this->filePath = L"";
 		this->name = L"";
@@ -24,15 +24,15 @@ namespace HephAudio
 		this->IsFinishedPlaying = OnIsFinishedPlaying;
 		this->OnRender = nullptr;
 	}
-	bool IAudioObject::IsPlaying() const
+	bool AudioObject::IsPlaying() const
 	{
 		return !this->pause && !this->IsInQueue();
 	}
-	bool IAudioObject::IsInQueue() const
+	bool AudioObject::IsInQueue() const
 	{
 		return this->queueName != L"" && this->queueIndex > 0;
 	}
-	AudioBuffer IAudioObject::OnGetSubBuffer(IAudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex)
+	AudioBuffer AudioObject::OnGetSubBuffer(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex)
 	{
 		*outFrameIndex = sender->frameIndex;
 		AudioBuffer subBuffer = sender->buffer.GetSubBuffer(sender->frameIndex, nFramesToRender);
@@ -96,7 +96,7 @@ namespace HephAudio
 		}
 		return subBuffer;
 	}
-	bool IAudioObject::OnIsFinishedPlaying(IAudioObject* sender)
+	bool AudioObject::OnIsFinishedPlaying(AudioObject* sender)
 	{
 		return sender->frameIndex >= sender->buffer.FrameCount();
 	}

@@ -3,7 +3,7 @@
 #include "AudioDevice.h"
 #include "AudioException.h"
 #include "Category.h"
-#include "IAudioObject.h"
+#include "AudioObject.h"
 #include "AudioFormats.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
@@ -29,7 +29,7 @@ namespace HephAudio
 		class INativeAudio
 		{
 		protected:
-			std::vector<std::shared_ptr<IAudioObject>> audioObjects;
+			std::vector<std::shared_ptr<AudioObject>> audioObjects;
 			Categories categories;
 			std::thread::id mainThreadId;
 			std::thread renderThread;
@@ -57,17 +57,17 @@ namespace HephAudio
 			INativeAudio(const INativeAudio&) = delete;
 			INativeAudio& operator=(const INativeAudio&) = delete;
 			virtual ~INativeAudio() = default;
-			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath);
-			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, bool isPaused);
-			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount);
-			virtual std::shared_ptr<IAudioObject> Play(std::wstring filePath, uint32_t loopCount, bool isPaused);
-			virtual std::vector<std::shared_ptr<IAudioObject>> Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths);
-			virtual std::shared_ptr<IAudioObject> Load(std::wstring filePath);
-			virtual std::shared_ptr<IAudioObject> CreateAO(std::wstring name, size_t bufferFrameCount);
-			virtual bool DestroyAO(std::shared_ptr<IAudioObject> audioObject);
-			virtual bool AOExists(std::shared_ptr<IAudioObject> audioObject) const;
-			virtual void SetAOPosition(std::shared_ptr<IAudioObject> audioObject, double position);
-			virtual double GetAOPosition(std::shared_ptr<IAudioObject> audioObject) const;
+			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath);
+			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath, bool isPaused);
+			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount);
+			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount, bool isPaused);
+			virtual std::vector<std::shared_ptr<AudioObject>> Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths);
+			virtual std::shared_ptr<AudioObject> Load(std::wstring filePath);
+			virtual std::shared_ptr<AudioObject> CreateAO(std::wstring name, size_t bufferFrameCount);
+			virtual bool DestroyAO(std::shared_ptr<AudioObject> audioObject);
+			virtual bool AOExists(std::shared_ptr<AudioObject> audioObject) const;
+			virtual void SetAOPosition(std::shared_ptr<AudioObject> audioObject, double position);
+			virtual double GetAOPosition(std::shared_ptr<AudioObject> audioObject) const;
 			virtual void PauseCapture(bool pause);
 			virtual bool IsCapturePaused() const noexcept;
 			virtual void SetMasterVolume(double volume) = 0;
@@ -98,12 +98,12 @@ namespace HephAudio
 			virtual void JoinCaptureThread();
 			virtual void JoinQueueThreads();
 			virtual AudioExceptionThread GetCurrentThread() const;
-			virtual std::vector<std::shared_ptr<IAudioObject>> GetQueue(std::wstring queueName) const;
+			virtual std::vector<std::shared_ptr<AudioObject>> GetQueue(std::wstring queueName) const;
 			virtual void PlayNextInQueue(std::wstring queueName, uint32_t queueDelay, uint32_t decreaseQueueIndex);
 			// Mixes audio objects that are currently playing into one buffer.
 			virtual void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
 			virtual size_t GetAOCountToMix() const;
-			virtual double GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const;
+			virtual double GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const;
 		};
 #define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio != nullptr && pNativeAudio->OnException != nullptr) { pNativeAudio->OnException(audioException, pNativeAudio->GetCurrentThread()); }
 	}

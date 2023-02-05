@@ -10,7 +10,7 @@ using namespace HephAudio;
 using namespace HephAudio::Native;
 
 void OnException(AudioException ex, AudioExceptionThread t);
-void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
+void OnRender(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 double PrintDeltaTime(StringBuffer label);
 double FVM(double f) { return 0.0; }
 void HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction);
@@ -26,7 +26,7 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("render initialized in");
 
-	std::shared_ptr<IAudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<AudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 1u;
 	PrintDeltaTime("file loaded in");
@@ -55,7 +55,7 @@ void OnException(AudioException ex, AudioExceptionThread t)
 	str.insert(pos + 1, 21, ' ');
 	ConsoleLogger::Log(str.c_str(), ConsoleLogger::error);
 }
-void OnRender(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
+void OnRender(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount)
 {
 }
 double PrintDeltaTime(StringBuffer label)

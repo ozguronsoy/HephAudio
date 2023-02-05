@@ -27,11 +27,11 @@ namespace HephAudio
 		HannPoissonWindow = 0x10,
 		LanczosWindow = 0x11
 	};
-	struct IAudioObject;
-	typedef AudioBuffer(*AudioGetSubBufferEventHandler)(IAudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
-	typedef bool (*AudioIsFinishedPlayingEventHandler)(IAudioObject* sender);
-	typedef void (*AudioRenderEventHandler)(IAudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
-	struct IAudioObject
+	struct AudioObject;
+	typedef AudioBuffer(*AudioGetSubBufferEventHandler)(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
+	typedef bool (*AudioIsFinishedPlayingEventHandler)(AudioObject* sender);
+	typedef void (*AudioRenderEventHandler)(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
+	struct AudioObject
 	{
 		std::wstring filePath;
 		std::wstring name;
@@ -80,12 +80,12 @@ namespace HephAudio
 		/// Called each time before mixing the audio data.
 		/// </summary>
 		AudioRenderEventHandler OnRender;
-		IAudioObject();
-		virtual ~IAudioObject() = default;
+		AudioObject();
+		virtual ~AudioObject() = default;
 		virtual bool IsPlaying() const;
 		virtual bool IsInQueue() const;
 	private:
-		static AudioBuffer OnGetSubBuffer(IAudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
-		static bool OnIsFinishedPlaying(IAudioObject* sender);
+		static AudioBuffer OnGetSubBuffer(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
+		static bool OnIsFinishedPlaying(AudioObject* sender);
 	};
 }

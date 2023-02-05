@@ -69,7 +69,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioObject.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h">
@@ -149,7 +149,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)IAudioObject.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp">
