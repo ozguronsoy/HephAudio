@@ -19,7 +19,7 @@ namespace HephAudio
 	public:
 		StringBuffer();
 		StringBuffer(const char* const& str);
-		StringBuffer(const wchar_t* const& str);
+		StringBuffer(const wchar_t* const& wstr);
 		StringBuffer(const StringBuffer& rhs);
 		StringBuffer(const StringBuffer& rhs, StringType stringType);
 		~StringBuffer();
