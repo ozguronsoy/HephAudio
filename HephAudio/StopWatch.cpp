@@ -6,7 +6,7 @@ namespace HephAudio
 	void StopWatch::Start()
 	{
 		std::thread::id currentThreadId = std::this_thread::get_id();
-		if (!timePoints.contains(currentThreadId))
+		if (timePoints.find(currentThreadId) == timePoints.end())
 		{
 			timePoints[currentThreadId] = std::chrono::high_resolution_clock::now();
 		}
@@ -26,7 +26,7 @@ namespace HephAudio
 	void StopWatch::Stop()
 	{
 		std::thread::id currentThreadId = std::this_thread::get_id();
-		if (timePoints.contains(currentThreadId))
+		if (timePoints.find(currentThreadId) != timePoints.end())
 		{
 			timePoints.erase(currentThreadId);
 		}
