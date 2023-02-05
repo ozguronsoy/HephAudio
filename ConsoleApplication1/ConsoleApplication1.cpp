@@ -60,13 +60,13 @@ void OnRender(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrame
 }
 double PrintDeltaTime(StringBuffer label)
 {
-	const double dt = StopWatch::DeltaTime(StopWatch::milli);
+	const double dt = StopWatch::DeltaTime(StopWatch::micro);
 	label += " ";
 	std::stringstream dts;
 	dts.precision(4);
 	dts << std::fixed << dt;
 	label += dts.str().c_str();
-	label += " ms";
+	label += " us";
 	ConsoleLogger::LogLine(label, ConsoleLogger::info);
 	StopWatch::Reset();
 	return dt;

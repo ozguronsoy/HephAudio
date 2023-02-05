@@ -935,3 +935,29 @@ namespace HephAudio
 		return this->size * this->charSize;
 	}
 }
+HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs)
+{
+	HephAudio::StringBuffer result = "";
+	result += lhs;
+	result += rhs;
+	return result;
+}
+HephAudio::StringBuffer operator+(const wchar_t& lhs, const HephAudio::StringBuffer& rhs)
+{
+	HephAudio::StringBuffer result = "";
+	result += lhs;
+	result += rhs;
+	return result;
+}
+HephAudio::StringBuffer operator+(const char* const& lhs, const HephAudio::StringBuffer& rhs)
+{
+	HephAudio::StringBuffer result = lhs;
+	result += rhs;
+	return result;
+}
+HephAudio::StringBuffer operator+(const wchar_t* const& lhs, const HephAudio::StringBuffer& rhs)
+{
+	HephAudio::StringBuffer result = lhs;
+	result += rhs;
+	return result;
+}
