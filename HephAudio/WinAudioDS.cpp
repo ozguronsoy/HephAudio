@@ -23,7 +23,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		WinAudioDS::WinAudioDS() : INativeAudio()
+		WinAudioDS::WinAudioDS() : NativeAudio()
 		{
 			CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 			pDirectSound = nullptr;

@@ -223,9 +223,9 @@ namespace HephAudio
 			AAudioStream_requestStop(pCaptureStream);
 			AAudioStream_waitForStateChange(pCaptureStream, AAUDIO_STREAM_STATE_STOPPING, &currentState, stateChangeTimeoutNanos);
 		}
-		double AndroidAudioA::GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const
+		double AndroidAudioA::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
 		{
-			return INativeAudio::GetFinalAOVolume(audioObject) * masterVolume;
+			return NativeAudio::GetFinalAOVolume(audioObject) * masterVolume;
 		}
 	}
 }

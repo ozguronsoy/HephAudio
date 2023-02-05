@@ -1,7 +1,7 @@
 #pragma once
 #ifdef _WIN32
 #include "framework.h"
-#include "INativeAudio.h"
+#include "NativeAudio.h"
 #include <wrl.h>
 #include <Mmdeviceapi.h>
 #include <Functiondiscoverykeys_devpkey.h>
@@ -14,7 +14,7 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses WASAPI. Use WinAudioDS if you have Windows XP or lower.
-		class WinAudio : public INativeAudio
+		class WinAudio : public NativeAudio
 		{
 #pragma region Audio Session Events
 		protected:

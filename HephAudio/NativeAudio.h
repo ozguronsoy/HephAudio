@@ -26,7 +26,7 @@ namespace HephAudio
 		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
 		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
 		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
-		class INativeAudio
+		class NativeAudio
 		{
 		protected:
 			std::vector<std::shared_ptr<AudioObject>> audioObjects;
@@ -53,10 +53,10 @@ namespace HephAudio
 			AudioDeviceEventHandler OnAudioDeviceRemoved;
 			AudioCaptureEventHandler OnCapture;
 		public:
-			INativeAudio();
-			INativeAudio(const INativeAudio&) = delete;
-			INativeAudio& operator=(const INativeAudio&) = delete;
-			virtual ~INativeAudio() = default;
+			NativeAudio();
+			NativeAudio(const NativeAudio&) = delete;
+			NativeAudio& operator=(const NativeAudio&) = delete;
+			virtual ~NativeAudio() = default;
 			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath);
 			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath, bool isPaused);
 			virtual std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount);

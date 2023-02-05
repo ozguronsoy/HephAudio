@@ -1,6 +1,6 @@
 #pragma once
 #ifdef __ANDROID__
-#include "INativeAudio.h"
+#include "NativeAudio.h"
 #include <mutex>
 #include <jni.h>
 #include <android/api-level.h>
@@ -9,7 +9,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		class AndroidAudioBase : public INativeAudio
+		class AndroidAudioBase : public NativeAudio
 		{
 		protected:
 			JavaVM* jvm;

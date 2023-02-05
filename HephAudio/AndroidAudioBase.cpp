@@ -5,7 +5,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioBase::AndroidAudioBase(JavaVM* jvm) : INativeAudio()
+		AndroidAudioBase::AndroidAudioBase(JavaVM* jvm) : NativeAudio()
 		{
 			this->jvm = jvm;
 			deviceApiLevel = android_get_device_api_level();

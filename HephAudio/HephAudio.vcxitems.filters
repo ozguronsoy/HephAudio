@@ -75,7 +75,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)INativeAudio.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h">
@@ -152,7 +152,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)INativeAudio.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp">

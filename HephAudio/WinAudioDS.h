@@ -1,7 +1,7 @@
 #pragma once
 #ifdef _WIN32
 #include "framework.h"
-#include "INativeAudio.h"
+#include "NativeAudio.h"
 #include <wrl.h>
 #include <dsound.h>
 #include <mmeapi.h>
@@ -11,7 +11,7 @@ namespace HephAudio
 	namespace Native
 	{
 		// Uses DirectSound. Use WinAudio if you have Windows Vista or higher.
-		class WinAudioDS : public INativeAudio
+		class WinAudioDS : public NativeAudio
 		{
 		protected:
 			HWND hwnd;

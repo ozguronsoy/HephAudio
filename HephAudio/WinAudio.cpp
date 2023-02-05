@@ -184,7 +184,7 @@ namespace HephAudio
 			return S_OK;
 		}
 #pragma endregion
-		WinAudio::WinAudio() : INativeAudio()
+		WinAudio::WinAudio() : NativeAudio()
 		{
 			if (!IsWindowsVistaOrGreater())
 			{

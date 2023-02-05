@@ -1,6 +1,6 @@
 #pragma once
 #include "framework.h"
-#include "INativeAudio.h"
+#include "NativeAudio.h"
 #ifdef __ANDROID__
 #include <jni.h>
 #endif
@@ -13,7 +13,7 @@ namespace HephAudio
 		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
 		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
 		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
-		class INativeAudio;
+		class NativeAudio;
 	}
 
 	using namespace HephAudio::Native;
@@ -21,7 +21,7 @@ namespace HephAudio
 	class Audio final
 	{
 	private:
-		INativeAudio* pNativeAudio;
+		NativeAudio* pNativeAudio;
 	public:
 		Formats::AudioFormats* GetAudioFormats() const;
 		void SetOnExceptionHandler(AudioExceptionEventHandler handler);
@@ -38,7 +38,7 @@ namespace HephAudio
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
-		INativeAudio* GetNativeAudio() const;
+		NativeAudio* GetNativeAudio() const;
 		std::shared_ptr<AudioObject> Play(std::wstring filePath);
 		std::shared_ptr<AudioObject> Play(std::wstring filePath, bool isPaused);
 		std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount);

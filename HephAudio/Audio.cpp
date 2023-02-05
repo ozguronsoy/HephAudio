@@ -72,7 +72,7 @@ namespace HephAudio
 			pNativeAudio = nullptr;
 		}
 	}
-	INativeAudio* Audio::GetNativeAudio() const
+	NativeAudio* Audio::GetNativeAudio() const
 	{
 		return pNativeAudio;
 	}

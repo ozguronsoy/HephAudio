@@ -33,7 +33,7 @@ namespace HephAudio
 		protected:
 			virtual void RenderData();
 			virtual void CaptureData();
-			virtual double GetFinalAOVolume(std::shared_ptr<IAudioObject> audioObject) const override;
+			virtual double GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const override;
 		};
 	}
 }
