@@ -13,6 +13,7 @@ namespace HephAudio
 		ComplexBuffer();
 		ComplexBuffer(size_t frameCount);
 		ComplexBuffer(const ComplexBuffer& rhs);
+		ComplexBuffer(ComplexBuffer&& rhs) noexcept;
 		~ComplexBuffer();
 		/// <summary>
 		/// Returns the complex number at the given index.
@@ -29,6 +30,10 @@ namespace HephAudio
 		/// Copies the rhs buffer.
 		/// </summary>
 		ComplexBuffer& operator=(const ComplexBuffer& rhs);
+		/// <summary>
+		/// Moves the rhs buffer.
+		/// </summary>
+		ComplexBuffer& operator=(ComplexBuffer&& rhs) noexcept;
 		/// <summary>
 		/// Appends the rhs to the current buffer and returns it as a new buffer.
 		/// </summary>

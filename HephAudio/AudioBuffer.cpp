@@ -65,6 +65,16 @@ namespace HephAudio
 			this->pAudioData = nullptr;
 		}
 	}
+	AudioBuffer::AudioBuffer(AudioBuffer&& rhs) noexcept
+	{
+		this->frameCount = rhs.frameCount;
+		this->formatInfo = rhs.formatInfo;
+		this->pAudioData = rhs.pAudioData;
+
+		rhs.frameCount = 0;
+		rhs.formatInfo = AudioFormatInfo();
+		rhs.pAudioData = nullptr;
+	}
 	AudioBuffer::~AudioBuffer()
 	{
 		this->frameCount = 0;
@@ -93,23 +103,43 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator=(const AudioBuffer& rhs)
 	{
-		this->~AudioBuffer(); // destroy the current buffer to avoid memory leaks.
-
-		this->formatInfo = rhs.formatInfo;
-		this->frameCount = rhs.frameCount;
-
-		if (rhs.frameCount > 0)
+		if (this->pAudioData != rhs.pAudioData)
 		{
-			this->pAudioData = malloc(rhs.Size());
-			if (this->pAudioData == nullptr)
+			this->~AudioBuffer(); // destroy the current buffer to avoid memory leaks.
+
+			this->formatInfo = rhs.formatInfo;
+			this->frameCount = rhs.frameCount;
+
+			if (rhs.frameCount > 0)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::operator=", L"Insufficient memory.");
+				this->pAudioData = malloc(rhs.Size());
+				if (this->pAudioData == nullptr)
+				{
+					throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::operator=", L"Insufficient memory.");
+				}
+				memcpy(this->pAudioData, rhs.pAudioData, rhs.Size());
 			}
-			memcpy(this->pAudioData, rhs.pAudioData, rhs.Size());
+			else
+			{
+				this->pAudioData = nullptr;
+			}
 		}
-		else
+
+		return *this;
+	}
+	AudioBuffer& AudioBuffer::operator=(AudioBuffer&& rhs) noexcept
+	{
+		if (this != &rhs)
 		{
-			this->pAudioData = nullptr;
+			this->~AudioBuffer();
+
+			this->frameCount = rhs.frameCount;
+			this->formatInfo = rhs.formatInfo;
+			this->pAudioData = rhs.pAudioData;
+
+			rhs.frameCount = 0;
+			rhs.formatInfo = AudioFormatInfo();
+			rhs.pAudioData = nullptr;
 		}
 
 		return *this;

@@ -32,6 +32,7 @@ namespace HephAudio
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
 		AudioBuffer(const AudioBuffer& rhs);
+		AudioBuffer(AudioBuffer&& rhs) noexcept;
 		~AudioBuffer();
 		/// <summary>
 		/// Returns the audio frame at the given index.
@@ -48,6 +49,10 @@ namespace HephAudio
 		/// Copies the rhs buffer.
 		/// </summary>
 		AudioBuffer& operator=(const AudioBuffer& rhs);
+		/// <summary>
+		/// Moves the rhs buffer.
+		/// </summary>
+		AudioBuffer& operator=(AudioBuffer&& rhs) noexcept;
 		/// <summary>
 		/// Appends the rhs to the current buffer and returns it as a new buffer.
 		/// </summary>

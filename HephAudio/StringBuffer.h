@@ -22,12 +22,14 @@ namespace HephAudio
 		StringBuffer(const wchar_t* const& wstr);
 		StringBuffer(const StringBuffer& rhs);
 		StringBuffer(const StringBuffer& rhs, StringType stringType);
+		StringBuffer(StringBuffer&& rhs) noexcept;
 		~StringBuffer();
 		operator char* () const;
 		operator wchar_t* () const;
 		StringBuffer& operator=(const char* const& rhs);
 		StringBuffer& operator=(const wchar_t* const& rhs);
 		StringBuffer& operator=(const StringBuffer& rhs);
+		StringBuffer& operator=(StringBuffer&& rhs) noexcept;
 		StringBuffer operator+(const char& rhs) const;
 		StringBuffer operator+(const wchar_t& rhs) const;
 		StringBuffer operator+(const char* const& rhs) const;

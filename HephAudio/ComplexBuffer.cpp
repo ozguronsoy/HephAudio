@@ -48,6 +48,14 @@ namespace HephAudio
 			this->pComplexData = nullptr;
 		}
 	}
+	ComplexBuffer::ComplexBuffer(ComplexBuffer&& rhs) noexcept
+	{
+		this->frameCount = rhs.frameCount;
+		this->pComplexData = rhs.pComplexData;
+
+		rhs.frameCount = 0;
+		rhs.pComplexData = nullptr;
+	}
 	ComplexBuffer::~ComplexBuffer()
 	{
 		this->frameCount = 0;
@@ -72,22 +80,40 @@ namespace HephAudio
 	}
 	ComplexBuffer& ComplexBuffer::operator=(const ComplexBuffer& rhs)
 	{
-		this->~ComplexBuffer(); // destroy the current buffer to avoid memory leaks.
-
-		this->frameCount = rhs.frameCount;
-
-		if (rhs.frameCount > 0)
+		if (this->pComplexData != rhs.pComplexData)
 		{
-			this->pComplexData = (Complex*)malloc(rhs.Size());
-			if (this->pComplexData == nullptr)
+			this->~ComplexBuffer(); // destroy the current buffer to avoid memory leaks.
+
+			this->frameCount = rhs.frameCount;
+
+			if (rhs.frameCount > 0)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::operator=", L"Insufficient memory.");
+				this->pComplexData = (Complex*)malloc(rhs.Size());
+				if (this->pComplexData == nullptr)
+				{
+					throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::operator=", L"Insufficient memory.");
+				}
+				memcpy(this->pComplexData, rhs.pComplexData, rhs.Size());
 			}
-			memcpy(this->pComplexData, rhs.pComplexData, rhs.Size());
+			else
+			{
+				this->pComplexData = nullptr;
+			}
 		}
-		else
+
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator=(ComplexBuffer&& rhs) noexcept
+	{
+		if (this != &rhs)
 		{
-			this->pComplexData = nullptr;
+			this->~ComplexBuffer();
+
+			this->frameCount = rhs.frameCount;
+			this->pComplexData = rhs.pComplexData;
+
+			rhs.frameCount = 0;
+			rhs.pComplexData = nullptr;
 		}
 
 		return *this;

@@ -125,6 +125,16 @@ namespace HephAudio
 			}
 		}
 	}
+	StringBuffer::StringBuffer(StringBuffer&& rhs) noexcept
+	{
+		this->charSize = rhs.charSize;
+		this->size = rhs.size;
+		this->pData = rhs.pData;
+
+		rhs.charSize = 0;
+		rhs.size = 0;
+		rhs.pData = nullptr;
+	}
 	StringBuffer::~StringBuffer()
 	{
 		this->size = 0;
@@ -145,105 +155,131 @@ namespace HephAudio
 	}
 	StringBuffer& StringBuffer::operator=(const char* const& rhs)
 	{
-		this->~StringBuffer();
-
-		this->charSize = sizeof(char);
-
-		if (rhs == nullptr)
+		if (this->pData != rhs)
 		{
-			this->size = 0;
-			this->pData = (char*)malloc(this->charSize);
-			if (this->pData != nullptr)
+			this->~StringBuffer();
+
+			this->charSize = sizeof(char);
+
+			if (rhs == nullptr)
 			{
-				memset(this->pData, 0, this->charSize);
+				this->size = 0;
+				this->pData = (char*)malloc(this->charSize);
+				if (this->pData != nullptr)
+				{
+					memset(this->pData, 0, this->charSize);
+				}
+				else
+				{
+					throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
+				}
+				return *this;
 			}
-			else
-			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
-			}
-			return *this;
-		}
 
-		this->size = strlen(rhs);
+			this->size = strlen(rhs);
 
-		this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-		if (this->pData != nullptr)
-		{
-			memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
-		}
-		else
-		{
-			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator=", L"Insufficient memory.");
-		}
-
-		return *this;
-	}
-	StringBuffer& StringBuffer::operator=(const wchar_t* const& rhs)
-	{
-		this->~StringBuffer();
-
-		this->charSize = sizeof(wchar_t);
-		
-		if (rhs == nullptr)
-		{
-			this->size = 0;
-			this->pData = (char*)malloc(this->charSize);
-			if (this->pData != nullptr)
-			{
-				memset(this->pData, 0, this->charSize);
-			}
-			else
-			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
-			}
-			return *this;
-		}
-
-		this->size = wcslen(rhs);
-
-		this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-		if (this->pData != nullptr)
-		{
-			memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
-		}
-		else
-		{
-			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator=", L"Insufficient memory.");
-		}
-
-		return *this;
-	}
-	StringBuffer& StringBuffer::operator=(const StringBuffer& rhs)
-	{
-		this->~StringBuffer(); // destroy the current string to prevent memory leaks.
-
-		this->charSize = rhs.charSize;
-		this->size = rhs.size;
-
-		if (rhs.size > 0)
-		{
 			this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
 			if (this->pData != nullptr)
 			{
-				memcpy(this->pData, rhs.pData, this->TotalSize() + this->charSize);
+				memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
 			}
 			else
 			{
 				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator=", L"Insufficient memory.");
 			}
 		}
-		else
+
+		return *this;
+	}
+	StringBuffer& StringBuffer::operator=(const wchar_t* const& rhs)
+	{
+		if ((wchar_t*)this->pData != rhs)
 		{
-			this->size = 0;
-			this->pData = (char*)malloc(this->charSize);
+			this->~StringBuffer();
+
+			this->charSize = sizeof(wchar_t);
+
+			if (rhs == nullptr)
+			{
+				this->size = 0;
+				this->pData = (char*)malloc(this->charSize);
+				if (this->pData != nullptr)
+				{
+					memset(this->pData, 0, this->charSize);
+				}
+				else
+				{
+					throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
+				}
+				return *this;
+			}
+
+			this->size = wcslen(rhs);
+
+			this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
 			if (this->pData != nullptr)
 			{
-				memset(this->pData, 0, this->charSize);
+				memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
 			}
 			else
 			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator=", L"Insufficient memory.");
 			}
+		}
+
+		return *this;
+	}
+	StringBuffer& StringBuffer::operator=(const StringBuffer& rhs)
+	{
+		if (this->pData != rhs.pData)
+		{
+			this->~StringBuffer(); // destroy the current string to prevent memory leaks.
+
+			this->charSize = rhs.charSize;
+			this->size = rhs.size;
+
+			if (rhs.size > 0)
+			{
+				this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
+				if (this->pData != nullptr)
+				{
+					memcpy(this->pData, rhs.pData, this->TotalSize() + this->charSize);
+				}
+				else
+				{
+					throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator=", L"Insufficient memory.");
+				}
+			}
+			else
+			{
+				this->size = 0;
+				this->pData = (char*)malloc(this->charSize);
+				if (this->pData != nullptr)
+				{
+					memset(this->pData, 0, this->charSize);
+				}
+				else
+				{
+					throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
+				}
+			}
+		}
+
+		return *this;
+	}
+	StringBuffer& StringBuffer::operator=(StringBuffer&& rhs) noexcept
+	{
+		if (this != &rhs)
+		{
+			this->~StringBuffer();
+
+			this->charSize = rhs.charSize;
+			this->size = rhs.size;
+			this->pData = rhs.pData;
+
+			rhs.charSize = 0;
+			rhs.size = 0;
+			rhs.pData = nullptr;
 		}
 
 		return *this;
