@@ -83,6 +83,15 @@ namespace HephAudio
 		void* End() const;
 	private:
 		size_t TotalSize() const noexcept;
+	public:
+		static StringBuffer ToString(const short& value);
+		static StringBuffer ToString(const unsigned short& value);
+		static StringBuffer ToString(const int& value);
+		static StringBuffer ToString(const unsigned int& value);
+		static StringBuffer ToString(const long long& value);
+		static StringBuffer ToString(const unsigned long long& value);
+		static StringBuffer ToString(const double& value);
+		static StringBuffer ToString(const double& value, size_t precision);
 	};
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs);

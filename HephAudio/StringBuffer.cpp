@@ -4,6 +4,9 @@
 #include <string>
 #include <memory>
 
+#define DECIMAL 10
+#define HEX 16
+
 namespace HephAudio
 {
 	StringBuffer::StringBuffer()
@@ -982,6 +985,80 @@ namespace HephAudio
 	size_t StringBuffer::TotalSize() const noexcept
 	{
 		return this->size * this->charSize;
+	}
+	StringBuffer StringBuffer::ToString(const short& value)
+	{
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_itoa(value, buffer, DECIMAL);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const unsigned short& value)
+	{
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_ultoa(value, buffer, DECIMAL);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const int& value)
+	{
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_itoa(value, buffer, DECIMAL);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const unsigned int& value)
+	{
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_ultoa(value, buffer, DECIMAL);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const long long& value)
+	{
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_i64toa(value, buffer, DECIMAL);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const unsigned long long& value)
+	{
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_ui64toa(value, buffer, DECIMAL);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const double& value)
+	{
+		return StringBuffer::ToString(value, 4);
+	}
+	StringBuffer StringBuffer::ToString(const double& value, size_t precision)
+	{
+		double temp = value;
+		while (temp >= 1.0)
+		{
+			temp /= 10.0;
+			precision++;
+		}
+
+		char buffer[_CVTBUFSIZE]{ 0 };
+		_gcvt(value, precision, buffer);
+
+		StringBuffer result = buffer;
+
+		return result;
 	}
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs)

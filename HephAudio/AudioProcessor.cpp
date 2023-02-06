@@ -1,6 +1,7 @@
 #include "AudioProcessor.h"
 #include "AudioException.h"
 #include "Fourier.h"
+#include <thread>
 
 #pragma region Helper Methods
 constexpr int sgn(double x)
@@ -744,6 +745,66 @@ namespace HephAudio
 					buffer[l][j] += complexBuffer[k].real * hannWindow[k][0] / fftSize;
 				}
 			}
+		}
+	}
+	void AudioProcessor::HighPassFilterMT(AudioBuffer& buffer, double cutoffFreq, FilterVolumeFunction volumeFunction)
+	{
+		HighPassFilterMT(buffer, defaultHopSize, defaultFFTSize, cutoffFreq, volumeFunction);
+	}
+	void AudioProcessor::HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, FilterVolumeFunction volumeFunction)
+	{
+		constexpr auto applyFilter = [](AudioBuffer* buffer, AudioBuffer* window, size_t hopSize, size_t fftSize, size_t stopIndex, FilterVolumeFunction volumeFunction)
+		{
+			AudioBuffer tempBuffer = *buffer;
+			buffer->Reset();
+			for (size_t i = 0; i < buffer->frameCount; i += hopSize)
+			{
+				ComplexBuffer complexBuffer = Fourier::FFT_Forward(tempBuffer.GetSubBuffer(i, fftSize), fftSize);
+				for (int64_t j = stopIndex; j >= 0; j--)
+				{
+					complexBuffer[j] *= volumeFunction(Fourier::IndexToFrequency(buffer->formatInfo.sampleRate, fftSize, j));
+					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+				}
+				Fourier::FFT_Inverse(complexBuffer, false);
+				for (size_t j = 0, k = i; j < fftSize && k < buffer->frameCount; j++, k++)
+				{
+					(*buffer)[k][0] += complexBuffer[j].real * (*window)[j][0] / fftSize;
+				}
+			}
+		};
+
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const uint64_t stopIndex = Fourier::FrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
+
+		std::vector<AudioBuffer*> channels;
+		std::vector<std::thread> threads;
+
+		AudioBuffer hannWindow = AudioProcessor::GenerateHannWindow(fftSize);
+
+		for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+		{
+			AudioBuffer* channel = new AudioBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, 1, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate));
+			for (size_t j = 0; j < buffer.frameCount; j++)
+			{
+				(*channel)[j][0] = buffer[j][i];
+			}
+			channels.push_back(channel);
+			threads.push_back(std::thread(applyFilter, channel, &hannWindow, hopSize, fftSize, stopIndex, volumeFunction));
+		}
+
+		for (size_t i = 0; i < threads.size(); i++)
+		{
+			if (threads.at(i).joinable())
+			{
+				threads.at(i).join();
+			}
+
+			for (size_t j = 0; j < buffer.frameCount; j++)
+			{
+				buffer[j][i] = (*channels.at(i))[j][0];
+			}
+
+			delete channels.at(i);
 		}
 	}
 	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, double cutoffFreq, FilterVolumeFunction volumeFunction)
