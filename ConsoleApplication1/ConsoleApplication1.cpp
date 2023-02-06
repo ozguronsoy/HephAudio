@@ -25,20 +25,38 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("render initialized in");
 
-	std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
-	pao->OnRender = OnRender;
-	pao->loopCount = 1u;
-	PrintDeltaTime("file loaded in");
+	//std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	//pao->OnRender = OnRender;
+	//pao->loopCount = 1u;
+	//PrintDeltaTime("file loaded in");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
-	PrintDeltaTime("filter");
+	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
+	//AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
+	//PrintDeltaTime("filter");
 
-	pao->pause = false;
+	//pao->pause = false;
+
+	short s = INT16_MIN;
+	unsigned short us = UINT16_MAX;
+
+	int i = INT32_MIN;
+	unsigned int ui = UINT32_MAX;
+
+	long long l = INT64_MIN;
+	unsigned long long ul = UINT64_MAX;
+
+	ConsoleLogger::LogLine("short: " + StringBuffer::ToString(s), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("unsigned short: " + StringBuffer::ToString(us), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("int: " + StringBuffer::ToString(i), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("unsigned int: " + StringBuffer::ToString(ui), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("long long: " + StringBuffer::ToString(l), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("unsigned long long: " + StringBuffer::ToString(ul), ConsoleLogger::debug);
+
 
 	std::string a;
 	std::cin >> a;
 	delete audio;
-	pao = nullptr;
+	//pao = nullptr;
 	StopWatch::Stop();
 	std::cin >> a;
 
@@ -59,7 +77,7 @@ void OnRender(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrame
 double PrintDeltaTime(StringBuffer label)
 {
 	const double dt = StopWatch::DeltaTime(StopWatch::milli);
-	label += " " + StringBuffer::ToString(dt, 4);
+	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
 	ConsoleLogger::LogLine(label, ConsoleLogger::info);
 	StopWatch::Reset();

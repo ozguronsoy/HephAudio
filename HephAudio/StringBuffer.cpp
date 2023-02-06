@@ -4,8 +4,7 @@
 #include <string>
 #include <memory>
 
-#define DECIMAL 10
-#define HEX 16
+#define TO_STRING_BUFFER_SIZE 500
 
 namespace HephAudio
 {
@@ -988,8 +987,8 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const short& value)
 	{
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_itoa(value, buffer, DECIMAL);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%hd", value);
 
 		StringBuffer result = buffer;
 
@@ -997,8 +996,8 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const unsigned short& value)
 	{
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_ultoa(value, buffer, DECIMAL);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%hu", value);
 
 		StringBuffer result = buffer;
 
@@ -1006,8 +1005,8 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const int& value)
 	{
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_itoa(value, buffer, DECIMAL);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%d", value);
 
 		StringBuffer result = buffer;
 
@@ -1015,8 +1014,8 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const unsigned int& value)
 	{
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_ultoa(value, buffer, DECIMAL);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%u", value);
 
 		StringBuffer result = buffer;
 
@@ -1024,8 +1023,8 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const long long& value)
 	{
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_i64toa(value, buffer, DECIMAL);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%lld", value);
 
 		StringBuffer result = buffer;
 
@@ -1033,8 +1032,8 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const unsigned long long& value)
 	{
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_ui64toa(value, buffer, DECIMAL);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%llu", value);
 
 		StringBuffer result = buffer;
 
@@ -1046,15 +1045,11 @@ namespace HephAudio
 	}
 	StringBuffer StringBuffer::ToString(const double& value, size_t precision)
 	{
-		double temp = value;
-		while (temp >= 1.0)
-		{
-			temp /= 10.0;
-			precision++;
-		}
+		char format[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(format, "%c.%dlf", '%', precision);
 
-		char buffer[_CVTBUFSIZE]{ 0 };
-		_gcvt(value, precision, buffer);
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, format, value);
 
 		StringBuffer result = buffer;
 
