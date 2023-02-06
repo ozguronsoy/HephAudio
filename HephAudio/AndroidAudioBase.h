@@ -29,7 +29,7 @@ namespace HephAudio
 			virtual void EnumerateAudioDevices(JNIEnv* env);
 			virtual void CheckAudioDevices();
 			virtual void GetEnv(JNIEnv** pEnv) const;
-			virtual std::wstring JStringToWString(JNIEnv* env, jstring jStr) const;
+			virtual StringBuffer JStringToWString(JNIEnv* env, jstring jStr) const;
 		};
 	}
 }

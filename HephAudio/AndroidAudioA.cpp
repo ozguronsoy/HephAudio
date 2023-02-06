@@ -81,7 +81,7 @@ namespace HephAudio
 			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, renderBufferFrameCount);
 			if (device != nullptr)
 			{
-				AAudioStreamBuilder_setDeviceId(streamBuilder, std::stoi(device->id));
+				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::Normal ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
 				renderDeviceId = device->id;
 			}
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pRenderStream), this, L"AndroidAudioA::InitializeRender", L"An error occurred whilst opening the render stream.");
@@ -142,7 +142,7 @@ namespace HephAudio
 			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, captureBufferFrameCount);
 			if (device != nullptr)
 			{
-				AAudioStreamBuilder_setDeviceId(streamBuilder, std::stoi(device->id));
+				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::Normal ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
 				captureDeviceId = device->id;
 			}
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pCaptureStream), this, L"AndroidAudioA::InitializeCapture", L"An error occurred whilst opening the capture stream.");
@@ -162,11 +162,11 @@ namespace HephAudio
 				pCaptureStream = nullptr;
 			}
 		}
-		void AndroidAudioA::SetDisplayName(std::wstring displayName)
+		void AndroidAudioA::SetDisplayName(StringBuffer displayName)
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioA::SetDisplayName", L"AndroidAudioA does not support this method."));
 		}
-		void AndroidAudioA::SetIconPath(std::wstring iconPath)
+		void AndroidAudioA::SetIconPath(StringBuffer iconPath)
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioA::SetIconPath", L"AndroidAudioA does not support this method."));
 		}

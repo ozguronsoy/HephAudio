@@ -28,8 +28,8 @@ namespace HephAudio
 			virtual void StopRendering() override;
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			virtual void StopCapturing() override;
-			virtual void SetDisplayName(std::wstring displayName) override;
-			virtual void SetIconPath(std::wstring iconPath) override;
+			virtual void SetDisplayName(StringBuffer displayName) override;
+			virtual void SetIconPath(StringBuffer iconPath) override;
 		protected:
 			virtual void RenderData();
 			virtual void CaptureData();

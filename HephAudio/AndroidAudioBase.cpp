@@ -92,7 +92,7 @@ namespace HephAudio
 					jmethodID toStringMethodId = env->GetMethodID(deviceNameClass, "toString", "()Ljava/lang/String;");
 					jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
 					AudioDevice audioDevice;
-					audioDevice.id = std::to_wstring(deviceId);
+					audioDevice.id = std::to_wstring(deviceId).c_str();
 					audioDevice.name = JStringToWString(env, deviceName);
 					audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
 					audioDevice.isDefault = false;
@@ -184,14 +184,14 @@ namespace HephAudio
 				RAISE_AUDIO_EXCPT(this, AudioException(jniResult, L"AndroidAudioBase::GetAudioDevices", L"Could not get the current jni environment."));
 			}
 		}
-		std::wstring AndroidAudioBase::JStringToWString(JNIEnv* env, jstring jStr) const
+		StringBuffer AndroidAudioBase::JStringToWString(JNIEnv* env, jstring jStr) const
 		{
 			std::wstring value;
 			const jchar* raw = env->GetStringChars(jStr, 0);
 			jsize len = env->GetStringLength(jStr);
 			value.assign(raw, raw + len);
 			env->ReleaseStringChars(jStr, raw);
-			return value;
+			return value.c_str();
 		}
 	}
 }

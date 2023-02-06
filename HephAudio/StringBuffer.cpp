@@ -1,6 +1,7 @@
 #include "StringBuffer.h"
 #include "AudioException.h"
 #include <cstring>
+#include <string>
 #include <memory>
 
 namespace HephAudio

@@ -141,11 +141,11 @@ namespace HephAudio
 				}
 			}
 		}
-		void AndroidAudioSLES::SetDisplayName(std::wstring displayName)
+		void AndroidAudioSLES::SetDisplayName(StringBuffer displayName)
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::SetDisplayName", L"AndroidAudioSLES does not support this method."));
 		}
-		void AndroidAudioSLES::SetIconPath(std::wstring iconPath)
+		void AndroidAudioSLES::SetIconPath(StringBuffer iconPath)
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"AndroidAudioSLES::SetIconPath", L"AndroidAudioSLES does not support this method."));
 		}

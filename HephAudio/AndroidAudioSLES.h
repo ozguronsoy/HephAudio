@@ -40,8 +40,8 @@ namespace HephAudio
 			virtual void StopRendering();
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopCapturing();
-			virtual void SetDisplayName(std::wstring displayName);
-			virtual void SetIconPath(std::wstring iconPath);
+			virtual void SetDisplayName(StringBuffer displayName);
+			virtual void SetIconPath(StringBuffer iconPath);
 		protected:
 			virtual void RenderData(SLBufferQueueItf bufferQueue);
 			virtual void CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue);

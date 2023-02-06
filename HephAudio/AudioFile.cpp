@@ -42,7 +42,12 @@ namespace HephAudio
 	void AudioFile::Read(StringBuffer filePath)
 	{
 		Release(true, true);
+#if defined(__ANDROID__)
+		filePath.SetStringType(StringType::Normal);
+		pFile = fopen(filePath, "rb");
+#else
 		pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read.
+#endif
 		if (pFile == nullptr)
 		{
 			throw AudioException(errno, L"AudioFile::Read", L"An error occurred whilst opening the file.");
@@ -96,7 +101,12 @@ namespace HephAudio
 	}
 	bool AudioFile::FileExists(StringBuffer filePath)
 	{
+#if defined(__ANDROID__)
+		filePath.SetStringType(StringType::Normal);
+		FILE* pFile = fopen(filePath, "rb");
+#else
 		FILE* pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read operations (b = open as a binary file).
+#endif
 		if (pFile != nullptr)
 		{
 			fclose(pFile);
@@ -114,11 +124,21 @@ namespace HephAudio
 		newFile->filePath = filePath;
 		if (overwrite) // open file for write operations (b = open as a binary file, x = don't overwrite if the file already exists).
 		{
+#if defined(__ANDROID__)
+			filePath.SetStringType(StringType::Normal);
+			newFile->pFile = fopen(filePath, "wb");
+#else
 			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wb") : _wfopen(filePath, L"wb");
+#endif
 		}
 		else
 		{
+#if defined(__ANDROID__)
+			filePath.SetStringType(StringType::Normal);
+			newFile->pFile = fopen(filePath, "wbx");
+#else
 			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wbx") : _wfopen(filePath, L"wbx");
+#endif
 		}
 		if (newFile->pFile == nullptr)
 		{
