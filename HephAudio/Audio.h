@@ -37,13 +37,13 @@ namespace HephAudio
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
 		HephAudio::Native::NativeAudio* GetNativeAudio() const;
-		std::shared_ptr<AudioObject> Play(std::wstring filePath);
-		std::shared_ptr<AudioObject> Play(std::wstring filePath, bool isPaused);
-		std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount);
-		std::shared_ptr<AudioObject> Play(std::wstring filePath, uint32_t loopCount, bool isPaused);
-		std::vector<std::shared_ptr<AudioObject>> Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths);
-		std::shared_ptr<AudioObject> Load(std::wstring filePath);
-		std::shared_ptr<AudioObject> CreateAO(std::wstring name, size_t bufferFrameCount);
+		std::shared_ptr<AudioObject> Play(StringBuffer filePath);
+		std::shared_ptr<AudioObject> Play(StringBuffer filePath, bool isPaused);
+		std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount);
+		std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount, bool isPaused);
+		std::vector<std::shared_ptr<AudioObject>> Queue(StringBuffer queueName, uint32_t queueDelay, std::vector<StringBuffer> filePaths);
+		std::shared_ptr<AudioObject> Load(StringBuffer filePath);
+		std::shared_ptr<AudioObject> CreateAO(StringBuffer name, size_t bufferFrameCount);
 		bool DestroyAO(std::shared_ptr<AudioObject> audioObject);
 		bool AOExists(std::shared_ptr<AudioObject> audioObject) const;
 		void SetAOPosition(std::shared_ptr<AudioObject> audioObject, double position);
@@ -52,13 +52,13 @@ namespace HephAudio
 		bool IsCapturePaused() const noexcept;
 		void SetMasterVolume(double volume);
 		double GetMasterVolume() const;
-		void SetCategoryVolume(std::wstring categoryName, double newVolume);
-		double GetCategoryVolume(std::wstring categoryName) const;
+		void SetCategoryVolume(StringBuffer categoryName, double newVolume);
+		double GetCategoryVolume(StringBuffer categoryName) const;
 		void RegisterCategory(Category category);
-		void UnregisterCategory(std::wstring categoryName);
-		bool CategoryExists(std::wstring categoryName) const;
-		void Skip(std::wstring queueName, bool applyDelay);
-		void Skip(size_t skipCount, std::wstring queueName, bool applyDelay);
+		void UnregisterCategory(StringBuffer categoryName);
+		bool CategoryExists(StringBuffer categoryName) const;
+		void Skip(StringBuffer queueName, bool applyDelay);
+		void Skip(size_t skipCount, StringBuffer queueName, bool applyDelay);
 		AudioFormatInfo GetRenderFormat() const;
 		AudioFormatInfo GetCaptureFormat() const;
 		void InitializeRender(AudioDevice* device, AudioFormatInfo format);
@@ -66,16 +66,16 @@ namespace HephAudio
 		void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 		void StopCapturing();
 #if (defined(_WIN32) && defined(_WIN32_WINNT_VISTA))
-		void SetDisplayName(std::wstring displayName);
-		void SetIconPath(std::wstring iconPath);
+		void SetDisplayName(StringBuffer displayName);
+		void SetIconPath(StringBuffer iconPath);
 #endif
 #if defined(_WIN32)
-		AudioDevice GetAudioDeviceById(std::wstring deviceId) const;
+		AudioDevice GetAudioDeviceById(StringBuffer deviceId) const;
 		AudioDevice GetRenderDevice() const;
 		AudioDevice GetCaptureDevice() const;
 		AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 		std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const;
 #endif
-		bool SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat);
+		bool SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat);
 	};
 }

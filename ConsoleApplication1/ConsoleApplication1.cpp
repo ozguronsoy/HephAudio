@@ -26,14 +26,14 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("render initialized in");
 
-	std::shared_ptr<AudioObject> pao = audio->Load(L"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
 	pao->OnRender = OnRender;
 	pao->loopCount = 1u;
 	PrintDeltaTime("file loaded in");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
+	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
 	//HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
-	PrintDeltaTime("filter");
+	//PrintDeltaTime("filter");
 
 	pao->pause = false;
 
@@ -48,7 +48,7 @@ int main()
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::string str = ex.ToString();
+	std::string str = (char*)ex;
 	size_t pos = str.find('\n', 0);
 	str.insert(pos + 1, 21, ' ');
 	pos = str.find('\n', pos + 1);

@@ -4,31 +4,32 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		std::vector<std::wstring> AudioFormats::SplitExtensions(std::wstring extension)
+		std::vector<StringBuffer> AudioFormats::SplitExtensions(StringBuffer extension)
 		{
-			std::vector<std::wstring> splitExtensions;
+			std::vector<StringBuffer> splitExtensions;
 			uint32_t cursor = 0;
 			while (true)
 			{
-				const size_t pos = extension.find(' ', cursor);
-				splitExtensions.push_back(extension.substr(cursor, pos - cursor));
-				cursor = pos + 1;
-				if (pos == std::wstring::npos)
+				const size_t pos = extension.Find(' ', cursor);
+				if (pos == StringBuffer::npos)
 				{
-					break;
+					splitExtensions.push_back(extension.SubString(cursor, extension.Size() - cursor));
+					return splitExtensions;
 				}
+				splitExtensions.push_back(extension.SubString(cursor, pos - cursor));
+				cursor = pos + 1;
 			}
 			return splitExtensions;
 		}
-		bool AudioFormats::CompareExtensions(std::wstring lhs, std::wstring rhs)
+		bool AudioFormats::CompareExtensions(StringBuffer lhs, StringBuffer rhs)
 		{
-			std::vector<std::wstring> lhse = SplitExtensions(lhs);
-			std::vector<std::wstring> rhse = SplitExtensions(rhs);
+			std::vector<StringBuffer> lhse = SplitExtensions(lhs);
+			std::vector<StringBuffer> rhse = SplitExtensions(rhs);
 			for (size_t i = 0; i < lhse.size(); i++)
 			{
 				for (size_t j = 0; j < rhse.size(); j++)
 				{
-					if (lhse.at(i) == rhse.at(j))
+					if (lhse.at(i).CompareContent(rhse.at(j)))
 					{
 						return true;
 					}
@@ -75,7 +76,7 @@ namespace HephAudio
 			}
 			return nullptr;
 		}
-		IAudioFormat* AudioFormats::GetAudioFormat(std::wstring filePath)
+		IAudioFormat* AudioFormats::GetAudioFormat(StringBuffer filePath)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{

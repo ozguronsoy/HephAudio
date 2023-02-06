@@ -10,9 +10,9 @@ namespace HephAudio
 		{
 		public:
 			virtual ~Mp3Format() = default;
-			std::wstring Extension() const noexcept;
+			StringBuffer Extension() const noexcept;
 			AudioBuffer ReadFile(const AudioFile& file) const;
-			bool SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const;
+			bool SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const;
 		protected:
 			uint32_t LocateAudioData(void* audioFileBuffer) const;
 			std::vector<uint8_t> ReadAudioFrame(void* audioFileBuffer, uint32_t frameStart, uint32_t* frameLength) const;

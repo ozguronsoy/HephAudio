@@ -181,12 +181,12 @@ namespace HephAudio
 				pDirectSoundCapture = nullptr;
 			}
 		}
-		void WinAudioDS::SetDisplayName(std::wstring displayName)
+		void WinAudioDS::SetDisplayName(StringBuffer displayName)
 		{
 			if (disposing) { return; }
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"WinAudioDS::SetDisplayName", L"WinAudioDS does not support this method, use WinAudio instead."));
 		}
-		void WinAudioDS::SetIconPath(std::wstring iconPath)
+		void WinAudioDS::SetIconPath(StringBuffer iconPath)
 		{
 			if (disposing) { return; }
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, L"WinAudioDS::SetIconPath", L"WinAudioDS does not support this method, use WinAudio instead."));
@@ -432,7 +432,7 @@ namespace HephAudio
 				WINAUDIODS_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, L"WinAudioDS::WinAudioDS", L"An error occurred whilst enumerating render devices."); // Get default render device id.
 				AudioDevice device = AudioDevice();
 				device.id = GuidToWString(lpGuid);
-				device.name = std::wstring(lpcstrDescription);
+				device.name = StringBuffer(lpcstrDescription);
 				device.type = AudioDeviceType::Render;
 				device.isDefault = device.id == GuidToWString(&defaultDeviceId);
 				wads->audioDevices.push_back(device);
@@ -460,14 +460,14 @@ namespace HephAudio
 				WINAUDIODS_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, L"WinAudioDS::WinAudioDS", L"An error occurred whilst enumerating capture devices."); // Get default capture device id.
 				AudioDevice device = AudioDevice();
 				device.id = GuidToWString(lpGuid);
-				device.name = std::wstring(lpcstrDescription);
+				device.name = StringBuffer(lpcstrDescription);
 				device.type = AudioDeviceType::Capture;
 				device.isDefault = device.id == GuidToWString(&defaultDeviceId);
 				wads->audioDevices.push_back(device);
 			}
 			return TRUE;
 		}
-		std::string WinAudioDS::GuidToString(LPGUID guid)
+		StringBuffer WinAudioDS::GuidToString(LPGUID guid)
 		{
 			std::stringstream ss;
 			ss << std::noshowbase << std::setfill('0') << std::setw(sizeof(unsigned long) * 2) << std::hex << guid->Data1 << "-";
@@ -481,9 +481,9 @@ namespace HephAudio
 			ss << std::noshowbase << std::setfill('0') << std::setw(sizeof(unsigned char) * 2) << std::hex << (int)guid->Data4[5];
 			ss << std::noshowbase << std::setfill('0') << std::setw(sizeof(unsigned char) * 2) << std::hex << (int)guid->Data4[6];
 			ss << std::noshowbase << std::setfill('0') << std::setw(sizeof(unsigned char) * 2) << std::hex << (int)guid->Data4[7];
-			return ss.str();
+			return ss.str().c_str();
 		}
-		std::wstring WinAudioDS::GuidToWString(LPGUID guid)
+		StringBuffer WinAudioDS::GuidToWString(LPGUID guid)
 		{
 			std::wstringstream wss;
 			wss << std::noshowbase << std::setfill(L'0') << std::setw(sizeof(unsigned long) * 2) << std::hex << guid->Data1 << "-";
@@ -497,38 +497,38 @@ namespace HephAudio
 			wss << std::noshowbase << std::setfill(L'0') << std::setw(sizeof(unsigned char) * 2) << std::hex << (int)guid->Data4[5];
 			wss << std::noshowbase << std::setfill(L'0') << std::setw(sizeof(unsigned char) * 2) << std::hex << (int)guid->Data4[6];
 			wss << std::noshowbase << std::setfill(L'0') << std::setw(sizeof(unsigned char) * 2) << std::hex << (int)guid->Data4[7];
-			return wss.str();
+			return wss.str().c_str();
 		}
-		GUID WinAudioDS::StringToGuid(std::string str)
+		GUID WinAudioDS::StringToGuid(StringBuffer str)
 		{
 			GUID guid = GUID();
-			guid.Data1 = std::stoul(str.substr(0, 8), nullptr, 16);
-			guid.Data2 = std::stoi(str.substr(9, 4), nullptr, 16);
-			guid.Data3 = std::stoi(str.substr(14, 4), nullptr, 16);
-			guid.Data4[0] = std::stoi(str.substr(19, 2), nullptr, 16);
-			guid.Data4[1] = std::stoi(str.substr(21, 2), nullptr, 16);
-			guid.Data4[2] = std::stoi(str.substr(24, 2), nullptr, 16);
-			guid.Data4[3] = std::stoi(str.substr(26, 2), nullptr, 16);
-			guid.Data4[4] = std::stoi(str.substr(28, 2), nullptr, 16);
-			guid.Data4[5] = std::stoi(str.substr(30, 2), nullptr, 16);
-			guid.Data4[6] = std::stoi(str.substr(32, 2), nullptr, 16);
-			guid.Data4[7] = std::stoi(str.substr(34, 2), nullptr, 16);
+			guid.Data1 = std::stoul(str.SubString(0, 8).c_str(), nullptr, 16);
+			guid.Data2 = std::stoi(str.SubString(9, 4).c_str(), nullptr, 16);
+			guid.Data3 = std::stoi(str.SubString(14, 4).c_str(), nullptr, 16);
+			guid.Data4[0] = std::stoi(str.SubString(19, 2).c_str(), nullptr, 16);
+			guid.Data4[1] = std::stoi(str.SubString(21, 2).c_str(), nullptr, 16);
+			guid.Data4[2] = std::stoi(str.SubString(24, 2).c_str(), nullptr, 16);
+			guid.Data4[3] = std::stoi(str.SubString(26, 2).c_str(), nullptr, 16);
+			guid.Data4[4] = std::stoi(str.SubString(28, 2).c_str(), nullptr, 16);
+			guid.Data4[5] = std::stoi(str.SubString(30, 2).c_str(), nullptr, 16);
+			guid.Data4[6] = std::stoi(str.SubString(32, 2).c_str(), nullptr, 16);
+			guid.Data4[7] = std::stoi(str.SubString(34, 2).c_str(), nullptr, 16);
 			return guid;
 		}
-		GUID WinAudioDS::WStringToGuid(std::wstring str)
+		GUID WinAudioDS::WStringToGuid(StringBuffer str)
 		{
 			GUID guid = GUID();
-			guid.Data1 = std::stoul(str.substr(0, 8), nullptr, 16);
-			guid.Data2 = std::stoi(str.substr(9, 4), nullptr, 16);
-			guid.Data3 = std::stoi(str.substr(14, 4), nullptr, 16);
-			guid.Data4[0] = std::stoi(str.substr(19, 2), nullptr, 16);
-			guid.Data4[1] = std::stoi(str.substr(21, 2), nullptr, 16);
-			guid.Data4[2] = std::stoi(str.substr(24, 2), nullptr, 16);
-			guid.Data4[3] = std::stoi(str.substr(26, 2), nullptr, 16);
-			guid.Data4[4] = std::stoi(str.substr(28, 2), nullptr, 16);
-			guid.Data4[5] = std::stoi(str.substr(30, 2), nullptr, 16);
-			guid.Data4[6] = std::stoi(str.substr(32, 2), nullptr, 16);
-			guid.Data4[7] = std::stoi(str.substr(34, 2), nullptr, 16);
+			guid.Data1 = std::stoul(str.SubString(0, 8).wc_str(), nullptr, 16);
+			guid.Data2 = std::stoi(str.SubString(9, 4).wc_str(), nullptr, 16);
+			guid.Data3 = std::stoi(str.SubString(14, 4).wc_str(), nullptr, 16);
+			guid.Data4[0] = std::stoi(str.SubString(19, 2).wc_str(), nullptr, 16);
+			guid.Data4[1] = std::stoi(str.SubString(21, 2).wc_str(), nullptr, 16);
+			guid.Data4[2] = std::stoi(str.SubString(24, 2).wc_str(), nullptr, 16);
+			guid.Data4[3] = std::stoi(str.SubString(26, 2).wc_str(), nullptr, 16);
+			guid.Data4[4] = std::stoi(str.SubString(28, 2).wc_str(), nullptr, 16);
+			guid.Data4[5] = std::stoi(str.SubString(30, 2).wc_str(), nullptr, 16);
+			guid.Data4[6] = std::stoi(str.SubString(32, 2).wc_str(), nullptr, 16);
+			guid.Data4[7] = std::stoi(str.SubString(34, 2).wc_str(), nullptr, 16);
 			return guid;
 		}
 		LRESULT CALLBACK WinAudioDS::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

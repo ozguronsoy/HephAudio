@@ -11,7 +11,7 @@ namespace HephAudio
 		dataBuffer = nullptr;
 		filePath = L"";
 	}
-	AudioFile::AudioFile(std::wstring filePath) : AudioFile()
+	AudioFile::AudioFile(StringBuffer filePath) : AudioFile()
 	{
 		this->Read(filePath);
 	}
@@ -23,11 +23,11 @@ namespace HephAudio
 	{
 		return fileSize;
 	}
-	std::wstring AudioFile::Name() const noexcept
+	StringBuffer AudioFile::Name() const noexcept
 	{
 		return GetFileName(filePath);
 	}
-	std::wstring AudioFile::Extension() const noexcept
+	StringBuffer AudioFile::Extension() const noexcept
 	{
 		return GetFileExtension(filePath);
 	}
@@ -39,10 +39,10 @@ namespace HephAudio
 	{
 		return pFile == nullptr && dataBuffer == nullptr && fileSize == 0u;
 	}
-	void AudioFile::Read(std::wstring filePath)
+	void AudioFile::Read(StringBuffer filePath)
 	{
 		Release(true, true);
-		pFile = fopen(std::string(filePath.begin(), filePath.end()).c_str(), "rb"); // open file for read.
+		pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read.
 		if (pFile == nullptr)
 		{
 			throw AudioException(errno, L"AudioFile::Read", L"An error occurred whilst opening the file.");
@@ -94,9 +94,9 @@ namespace HephAudio
 			filePath = L"";
 		}
 	}
-	bool AudioFile::FileExists(std::wstring filePath)
+	bool AudioFile::FileExists(StringBuffer filePath)
 	{
-		FILE* pFile = fopen(std::string(filePath.begin(), filePath.end()).c_str(), "rb"); // open file for read operations (b = open as a binary file).
+		FILE* pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read operations (b = open as a binary file).
 		if (pFile != nullptr)
 		{
 			fclose(pFile);
@@ -104,7 +104,7 @@ namespace HephAudio
 		}
 		return false;
 	}
-	std::shared_ptr<AudioFile> AudioFile::CreateNew(std::wstring filePath, bool overwrite)
+	std::shared_ptr<AudioFile> AudioFile::CreateNew(StringBuffer filePath, bool overwrite)
 	{
 		if (!overwrite && FileExists(filePath))
 		{
@@ -114,11 +114,11 @@ namespace HephAudio
 		newFile->filePath = filePath;
 		if (overwrite) // open file for write operations (b = open as a binary file, x = don't overwrite if the file already exists).
 		{
-			newFile->pFile = fopen(std::string(filePath.begin(), filePath.end()).c_str(), "wb");
+			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wb") : _wfopen(filePath, L"wb");
 		}
 		else
 		{
-			newFile->pFile = fopen(std::string(filePath.begin(), filePath.end()).c_str(), "wbx");
+			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wbx") : _wfopen(filePath, L"wbx");
 		}
 		if (newFile->pFile == nullptr)
 		{
@@ -126,32 +126,32 @@ namespace HephAudio
 		}
 		return newFile;
 	}
-	std::wstring AudioFile::GetFileName(std::wstring filePath)
+	StringBuffer AudioFile::GetFileName(StringBuffer filePath)
 	{
 		uint32_t cursor = 0;
 		while (true)
 		{
-			const size_t pos = filePath.find(L"\\", cursor);
-			if (pos == std::wstring::npos)
+			const size_t pos = filePath.Find("\\", cursor);
+			if (pos == StringBuffer::npos)
 			{
 				break;
 			}
 			cursor = pos + 1;
 		}
-		return filePath.substr(cursor, filePath.size() - cursor);
+		return filePath.SubString(cursor, filePath.Size() - cursor);
 	}
-	std::wstring AudioFile::GetFileExtension(std::wstring filePath)
+	StringBuffer AudioFile::GetFileExtension(StringBuffer filePath)
 	{
 		uint32_t cursor = 0;
 		while (true)
 		{
-			const size_t pos = filePath.find(L".", cursor);
-			if (pos == std::wstring::npos)
+			const size_t pos = filePath.Find(".", cursor);
+			if (pos == StringBuffer::npos)
 			{
 				break;
 			}
 			cursor = pos + 1;
 		}
-		return filePath.substr(cursor - 1, filePath.size() - cursor + 1);
+		return filePath.SubString(cursor - 1, filePath.Size() - cursor + 1);
 	}
 }

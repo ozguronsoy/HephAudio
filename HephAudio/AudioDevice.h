@@ -1,6 +1,7 @@
 #pragma once
 #include "framework.h"
-#include <string>
+#include "StringBuffer.h"
+#include <cinttypes>
 
 namespace HephAudio
 {
@@ -13,9 +14,9 @@ namespace HephAudio
 	};
 	struct AudioDevice
 	{
-		std::wstring id;
-		std::wstring name;
-		std::wstring description;
+		StringBuffer id;
+		StringBuffer name;
+		StringBuffer description;
 		AudioDeviceType type;
 		bool isDefault;
 		AudioDevice()

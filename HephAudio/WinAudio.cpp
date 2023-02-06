@@ -258,13 +258,13 @@ namespace HephAudio
 			}
 			else
 			{
-				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id.c_str(), &pDevice), this, L"WinAudio::InitializeRender", L"An error occurred whilst getting the render device.");
+				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id, &pDevice), this, L"WinAudio::InitializeRender", L"An error occurred whilst getting the render device.");
 			}
 			LPWSTR deviceId = nullptr;
 			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), this, L"WinAudio::InitializeRender", L"An error occurred whilst getting the render device.");
 			if (deviceId != nullptr)
 			{
-				renderDeviceId = std::wstring(deviceId);
+				renderDeviceId = deviceId;
 				CoTaskMemFree(deviceId);
 			}
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pAudioClient.GetAddressOf()), this, L"WinAudio::InitializeRender", L"An error occurred whilst activating the render device.");
@@ -314,13 +314,13 @@ namespace HephAudio
 			}
 			else
 			{
-				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id.c_str(), &pDevice), this, L"WinAudio::InitializeCapture", L"An error occurred whilst getting the device.");
+				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id, &pDevice), this, L"WinAudio::InitializeCapture", L"An error occurred whilst getting the device.");
 			}
 			LPWSTR deviceId = nullptr;
 			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), this, L"WinAudio::InitializeCapture", L"An error occurred whilst getting the device.");
 			if (deviceId != nullptr)
 			{
-				captureDeviceId = std::wstring(deviceId);
+				captureDeviceId = deviceId;
 				CoTaskMemFree(deviceId);
 			}
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), this, L"WinAudio::InitializeCapture", L"An error occurred whilst activating the device.");
@@ -350,20 +350,20 @@ namespace HephAudio
 				JoinCaptureThread();
 			}
 		}
-		void WinAudio::SetDisplayName(std::wstring displayName)
+		void WinAudio::SetDisplayName(StringBuffer displayName)
 		{
 			if (!disposing && pSessionControl != nullptr)
 			{
 				this->displayName = displayName;
-				WINAUDIO_EXCPT(pSessionControl->SetDisplayName(displayName.c_str(), nullptr), this, L"WinAudio::SetDisplayName", L"An error occurred whilst setting the display name.");
+				WINAUDIO_EXCPT(pSessionControl->SetDisplayName(displayName, nullptr), this, L"WinAudio::SetDisplayName", L"An error occurred whilst setting the display name.");
 			}
 		}
-		void WinAudio::SetIconPath(std::wstring iconPath)
+		void WinAudio::SetIconPath(StringBuffer iconPath)
 		{
 			if (pSessionControl != nullptr)
 			{
 				this->iconPath = iconPath;
-				WINAUDIO_EXCPT(pSessionControl->SetIconPath(iconPath.c_str(), nullptr), this, L"WinAudio::SetIconPath", L"An error occurred whilst setting the icon path.");
+				WINAUDIO_EXCPT(pSessionControl->SetIconPath(iconPath, nullptr), this, L"WinAudio::SetIconPath", L"An error occurred whilst setting the icon path.");
 			}
 		}
 		AudioDevice WinAudio::GetDefaultAudioDevice(AudioDeviceType deviceType) const
@@ -432,13 +432,13 @@ namespace HephAudio
 				WINAUDIO_EXCPT(pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDefaultRender), this, L"WinAudio::GetAudioDevices", L"An error occurred whilst getting the default render device id.");
 				WINAUDIO_EXCPT(pDefaultRender->GetId(&defaultRenderId), this, L"WinAudio::GetAudioDevices", L"An error occurred whilst getting the default render device id.");
 			}
-			std::wstring defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
+			StringBuffer defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
 			if ((deviceType & AudioDeviceType::Capture) == AudioDeviceType::Capture) // Get default capture devices id, we will use it later to identify the default capture device.
 			{
 				WINAUDIO_EXCPT(pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDefaultCapture), this, L"WinAudio::GetAudioDevices", L"An error occurred whilst getting the default capture device id.");
 				WINAUDIO_EXCPT(pDefaultCapture->GetId(&defaultCaptureId), this, L"WinAudio::GetAudioDevices", L"An error occurred whilst getting the default capture device id.");
 			}
-			std::wstring defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
+			StringBuffer defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
 			UINT deviceCount = 0;
 			WINAUDIO_EXCPT(pCollection->GetCount(&deviceCount), this, L"WinAudio::GetAudioDevices", L"An error occurred whilst getting the device count.");
 			for (UINT i = 0; i < deviceCount; i++)

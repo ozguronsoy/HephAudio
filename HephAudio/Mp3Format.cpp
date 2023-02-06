@@ -8,7 +8,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		std::wstring Mp3Format::Extension() const noexcept
+		StringBuffer Mp3Format::Extension() const noexcept
 		{
 			return L".mp3";
 		}
@@ -33,7 +33,7 @@ namespace HephAudio
 			}
 			throw AudioException(E_NOTIMPL, L"Mp3Format::ReadFile", L"Not implemented.");
 		}
-		bool Mp3Format::SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const
+		bool Mp3Format::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			throw AudioException(E_NOTIMPL, L"Mp3Format::SaveToFile", L"Not implemented.");
 		}

@@ -1,16 +1,16 @@
 #pragma once
 #include "framework.h"
-#include <string>
+#include "StringBuffer.h"
 #include <vector>
 
 namespace HephAudio
 {
 	struct Category
 	{
-		std::wstring name;
+		StringBuffer name;
 		double volume;
 		Category();
-		Category(std::wstring name, double volume);
+		Category(StringBuffer name, double volume);
 		virtual ~Category() = default;
 		bool operator==(const Category& rhs) const;
 		bool operator!=(const Category& rhs) const;

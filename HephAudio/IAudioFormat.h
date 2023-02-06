@@ -3,7 +3,7 @@
 #include "AudioBuffer.h"
 #include "AudioFile.h"
 #include "AudioFormatInfo.h"
-#include <string>
+#include "StringBuffer.h"
 #include <memory>
 
 namespace HephAudio
@@ -21,12 +21,12 @@ namespace HephAudio
 		public:
 			virtual ~IAudioFormat() = default;
 			// Gets the extension of the current format.
-			virtual std::wstring Extension() const noexcept = 0;
+			virtual StringBuffer Extension() const noexcept = 0;
 			// Reads audio data from the given file and converts it to a pcm buffer.
 			// File format must be the current format or this method will return an empty buffer.
 			virtual AudioBuffer ReadFile(const AudioFile& file) const = 0;
 			// Converts pcm buffer to current format and then writes it into a file.
-			virtual bool SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const = 0;
+			virtual bool SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const = 0;
 			static Endian GetSystemEndian()
 			{
 				int32_t n = 1;

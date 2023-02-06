@@ -13,7 +13,7 @@ namespace HephAudio
 		this->constant = false;
 		this->loopCount = 1;
 		this->volume = 1.0;
-		this->categories = std::vector<std::wstring>(0);
+		this->categories = std::vector<StringBuffer>(0);
 		this->buffer = AudioBuffer();
 		this->frameIndex = 0;
 		this->queueName = L"";

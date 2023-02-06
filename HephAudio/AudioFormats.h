@@ -13,8 +13,8 @@ namespace HephAudio
 		{
 		private:
 			std::vector<IAudioFormat*> formats;
-			std::vector<std::wstring> SplitExtensions(std::wstring extension);
-			bool CompareExtensions(std::wstring lhs, std::wstring rhs);
+			std::vector<StringBuffer> SplitExtensions(StringBuffer extension);
+			bool CompareExtensions(StringBuffer lhs, StringBuffer rhs);
 		public:
 			AudioFormats();
 			AudioFormats(const AudioFormats&) = delete;
@@ -23,7 +23,7 @@ namespace HephAudio
 		public:
 			void RegisterFormat(IAudioFormat* format);
 			IAudioFormat* GetAudioFormat(AudioFile& file);
-			IAudioFormat* GetAudioFormat(std::wstring filePath);
+			IAudioFormat* GetAudioFormat(StringBuffer filePath);
 		};
 	}
 }

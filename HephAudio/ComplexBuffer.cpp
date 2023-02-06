@@ -1,5 +1,6 @@
 #include "ComplexBuffer.h"
 #include "AudioException.h"
+#include <memory>
 
 namespace HephAudio
 {

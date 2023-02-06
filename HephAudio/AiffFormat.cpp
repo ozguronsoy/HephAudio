@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		std::wstring AiffFormat::Extension() const noexcept
+		StringBuffer AiffFormat::Extension() const noexcept
 		{
 			return L".aiff .aifc .aif";
 		}
@@ -137,7 +137,7 @@ namespace HephAudio
 			AudioProcessor::ConvertPcmToInnerFormat(buffer);
 			return buffer;
 		}
-		bool AiffFormat::SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const
+		bool AiffFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			if (!overwrite && AudioFile::FileExists(filePath))
 			{
@@ -159,7 +159,7 @@ namespace HephAudio
 			const uint32_t comm = *(uint32_t*)"COMM";
 			const uint32_t ssnd = *(uint32_t*)"SSND";
 			const uint32_t compressionType = GetSystemEndian() == Endian::Big ? *(uint32_t*)"NONE" : *(uint32_t*)"sowt";
-			const std::string compressionName = "not compressed";
+			const StringBuffer compressionName = "not compressed";
 			uint8_t* newBuffer = (uint8_t*)malloc(fullFileSize);
 			if (newBuffer != nullptr)
 			{
@@ -184,7 +184,7 @@ namespace HephAudio
 				memcpy(newBuffer + 40, &srBits, 8);
 				memset(newBuffer + 48, 0, 2);
 				memcpy(newBuffer + 50, &compressionType, 4);
-				memcpy(newBuffer + 54, &compressionName.at(0), 14);
+				memcpy(newBuffer + 54, compressionName.c_str(), 14);
 				memcpy(newBuffer + 68, &ssnd, 4);
 				memcpy(newBuffer + 72, &sndByteCount, 4);
 				memset(newBuffer + 76, 0, 8);

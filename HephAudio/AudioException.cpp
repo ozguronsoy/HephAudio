@@ -10,37 +10,33 @@ namespace HephAudio
 		this->errorCode = 0;
 		this->method = L"";
 		this->message = L"";
-		this->errorString = L"";
 	}
-	AudioException::AudioException(int32_t errorCode, const wchar_t* method, const wchar_t* message)
+	AudioException::AudioException(int32_t errorCode, StringBuffer&& method, StringBuffer&& message)
 	{
 		this->errorCode = errorCode;
 		this->method = method;
 		this->message = message;
-		this->errorString = L"";
 	}
-	const char* AudioException::ToString() const
+	AudioException::operator char* () const
 	{
-		StringBuffer tempMethod = StringBuffer(this->method, StringType::Normal);
-		StringBuffer tempMessage = StringBuffer(this->message, StringType::Normal);
-		this->errorString = ("Audio Exception " + this->ErrorCodeToHex() + " (" + std::to_string(this->errorCode) + ")\nMethod: " + tempMethod.c_str() + "\nMessage: " + tempMessage.c_str()).c_str();
-		return this->errorString.c_str();
+		return "Audio Exception " + this->ErrorCodeToHex() + " (" + std::to_string(this->errorCode).c_str() + ")\nMethod: " + this->method + "\nMessage: " + this->message;
 	}
-	const wchar_t* AudioException::ToWString() const
+	AudioException::operator wchar_t* () const
 	{
-		this->errorString = (L"Audio Exception " + this->ErrorCodeToHexW() + L" (" + std::to_wstring(this->errorCode) + L")\nMethod: " + this->method.wc_str() + L"\nMessage: " + this->message.wc_str()).c_str();
-		return this->errorString.wc_str();
+		return L"Audio Exception " + this->ErrorCodeToHex() + L" (" + std::to_wstring(this->errorCode).c_str() + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
 	}
-	std::string AudioException::ErrorCodeToHex() const
+	StringBuffer AudioException::ToString(StringType stringType) const
+	{
+		if (stringType == StringType::Normal)
+		{
+			return this->operator char *();
+		}
+		return this->operator wchar_t* ();
+	}
+	StringBuffer AudioException::ErrorCodeToHex() const
 	{
 		std::stringstream ss;
 		ss << "0x" << std::setfill('0') << std::setw(sizeof(int64_t)) << std::hex << this->errorCode;
-		return ss.str();
-	}
-	std::wstring AudioException::ErrorCodeToHexW() const
-	{
-		std::wstringstream ss;
-		ss << L"0x" << std::setfill(L'0') << std::setw(sizeof(int64_t)) << std::hex << this->errorCode;
-		return ss.str();
+		return ss.str().c_str();
 	}
 }

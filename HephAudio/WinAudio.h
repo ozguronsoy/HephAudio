@@ -78,8 +78,8 @@ namespace HephAudio
 			virtual void StopRendering();
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopCapturing();
-			virtual void SetDisplayName(std::wstring displayName);
-			virtual void SetIconPath(std::wstring iconPath);
+			virtual void SetDisplayName(StringBuffer displayName);
+			virtual void SetIconPath(StringBuffer iconPath);
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const;
 		protected:

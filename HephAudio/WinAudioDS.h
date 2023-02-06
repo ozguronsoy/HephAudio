@@ -32,8 +32,8 @@ namespace HephAudio
 			virtual void StopRendering();
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopCapturing();
-			virtual void SetDisplayName(std::wstring displayName);
-			virtual void SetIconPath(std::wstring iconPath);
+			virtual void SetDisplayName(StringBuffer displayName);
+			virtual void SetIconPath(StringBuffer iconPath);
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const;
 		protected:
@@ -46,10 +46,10 @@ namespace HephAudio
 			static BOOL CALLBACK RenderDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
 			// lpContext = a pointer to the current WinAudioDS that calls this method.
 			static BOOL CALLBACK CaptureDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
-			static std::string GuidToString(LPGUID guid);
-			static std::wstring GuidToWString(LPGUID guid);
-			static GUID StringToGuid(std::string str);
-			static GUID WStringToGuid(std::wstring str);
+			static StringBuffer GuidToString(LPGUID guid);
+			static StringBuffer GuidToWString(LPGUID guid);
+			static GUID StringToGuid(StringBuffer str);
+			static GUID WStringToGuid(StringBuffer str);
 			static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		};
 	}

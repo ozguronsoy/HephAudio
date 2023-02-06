@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		std::wstring WavFormat::Extension() const noexcept
+		StringBuffer WavFormat::Extension() const noexcept
 		{
 			return L".wav .wave";
 		}
@@ -100,7 +100,7 @@ namespace HephAudio
 			AudioProcessor::ConvertPcmToInnerFormat(resultBuffer);
 			return resultBuffer;
 		}
-		bool WavFormat::SaveToFile(std::wstring filePath, AudioBuffer& buffer, bool overwrite) const
+		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			if (!overwrite && AudioFile::FileExists(filePath))
 			{

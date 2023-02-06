@@ -1,6 +1,6 @@
 #pragma once
 #include "framework.h"
-#include <string>
+#include "StringBuffer.h"
 #include <memory>
 
 namespace HephAudio
@@ -11,26 +11,26 @@ namespace HephAudio
 		FILE* pFile;
 		uint32_t fileSize;
 		void* dataBuffer;
-		std::wstring filePath;
+		StringBuffer filePath;
 	public:
 		AudioFile();
-		AudioFile(std::wstring filePath);
+		AudioFile(StringBuffer filePath);
 		AudioFile(const AudioFile&) = delete;
 		AudioFile& operator=(const AudioFile&) = delete;
 		~AudioFile();
 		uint32_t Size() const noexcept;
-		std::wstring Name() const noexcept;
-		std::wstring Extension() const noexcept;
+		StringBuffer Name() const noexcept;
+		StringBuffer Extension() const noexcept;
 		void* GetInnerBufferAddress() const noexcept;
 		bool IsEmpty() const noexcept;
-		void Read(std::wstring filePath);
+		void Read(StringBuffer filePath);
 		void Write(void* dataBuffer, size_t fileSize);
 	private:
 		void Release(bool releaseFile, bool releaseDataBuffer);
 	public:
-		static bool FileExists(std::wstring filePath);
-		static std::shared_ptr<AudioFile> CreateNew(std::wstring filePath, bool overwrite);
-		static std::wstring GetFileName(std::wstring filePath);
-		static std::wstring GetFileExtension(std::wstring filePath);
+		static bool FileExists(StringBuffer filePath);
+		static std::shared_ptr<AudioFile> CreateNew(StringBuffer filePath, bool overwrite);
+		static StringBuffer GetFileName(StringBuffer filePath);
+		static StringBuffer GetFileExtension(StringBuffer filePath);
 	};
 }

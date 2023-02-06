@@ -1,7 +1,7 @@
 #pragma once
 #include "framework.h"
 #include "AudioBuffer.h"
-#include <string>
+#include "StringBuffer.h"
 #include <vector>
 
 namespace HephAudio
@@ -33,8 +33,8 @@ namespace HephAudio
 	typedef void (*AudioRenderEventHandler)(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 	struct AudioObject
 	{
-		std::wstring filePath;
-		std::wstring name;
+		StringBuffer filePath;
+		StringBuffer name;
 		bool pause;
 		bool mute;
 		/// <summary>
@@ -49,7 +49,7 @@ namespace HephAudio
 		/// Setting the volume to more than 1 might cause some glitching in audio.
 		/// </summary>
 		double volume;
-		std::vector<std::wstring> categories;
+		std::vector<StringBuffer> categories;
 		AudioBuffer buffer;
 		/// <summary>
 		/// Starting frame to get sub buffer before the next render.
@@ -58,7 +58,7 @@ namespace HephAudio
 		/// <summary>
 		/// There can be more than one queue, if empty the audio object is not in queue.
 		/// </summary>
-		std::wstring queueName;
+		StringBuffer queueName;
 		/// <summary>
 		/// Position of the audio object on the queue, if equals to 0 its currently playing.
 		/// </summary>

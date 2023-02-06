@@ -3,7 +3,7 @@
 namespace HephAudio
 {
 	Category::Category() : Category(L"", 0.0) {}
-	Category::Category(std::wstring name, double volume)
+	Category::Category(StringBuffer name, double volume)
 	{
 		this->name = name;
 		this->volume = volume;

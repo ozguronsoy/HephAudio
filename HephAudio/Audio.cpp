@@ -78,31 +78,31 @@ namespace HephAudio
 	{
 		return pNativeAudio;
 	}
-	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath)
+	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath)
 	{
 		return pNativeAudio->Play(filePath);
 	}
-	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath, bool isPaused)
+	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, bool isPaused)
 	{
 		return pNativeAudio->Play(filePath, isPaused);
 	}
-	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath, uint32_t loopCount)
+	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount)
 	{
 		return pNativeAudio->Play(filePath, loopCount);
 	}
-	std::shared_ptr<AudioObject> Audio::Play(std::wstring filePath, uint32_t loopCount, bool isPaused)
+	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount, bool isPaused)
 	{
 		return pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(std::wstring queueName, uint32_t queueDelay, std::vector<std::wstring> filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, uint32_t queueDelay, std::vector<StringBuffer> filePaths)
 	{
 		return pNativeAudio->Queue(queueName, queueDelay, filePaths);
 	}
-	std::shared_ptr<AudioObject> Audio::Load(std::wstring filePath)
+	std::shared_ptr<AudioObject> Audio::Load(StringBuffer filePath)
 	{
 		return pNativeAudio->Load(filePath);
 	}
-	std::shared_ptr<AudioObject> Audio::CreateAO(std::wstring name, size_t bufferFrameCount)
+	std::shared_ptr<AudioObject> Audio::CreateAO(StringBuffer name, size_t bufferFrameCount)
 	{
 		return pNativeAudio->CreateAO(name, bufferFrameCount);
 	}
@@ -138,11 +138,11 @@ namespace HephAudio
 	{
 		return pNativeAudio->GetMasterVolume();
 	}
-	void Audio::SetCategoryVolume(std::wstring categoryName, double newVolume)
+	void Audio::SetCategoryVolume(StringBuffer categoryName, double newVolume)
 	{
 		pNativeAudio->SetCategoryVolume(categoryName, newVolume);
 	}
-	double Audio::GetCategoryVolume(std::wstring categoryName) const
+	double Audio::GetCategoryVolume(StringBuffer categoryName) const
 	{
 		return pNativeAudio->GetCategoryVolume(categoryName);
 	}
@@ -150,19 +150,19 @@ namespace HephAudio
 	{
 		pNativeAudio->RegisterCategory(category);
 	}
-	void Audio::UnregisterCategory(std::wstring categoryName)
+	void Audio::UnregisterCategory(StringBuffer categoryName)
 	{
 		pNativeAudio->UnregisterCategory(categoryName);
 	}
-	bool Audio::CategoryExists(std::wstring categoryName) const
+	bool Audio::CategoryExists(StringBuffer categoryName) const
 	{
 		return pNativeAudio->CategoryExists(categoryName);
 	}
-	void Audio::Skip(std::wstring queueName, bool applyDelay)
+	void Audio::Skip(StringBuffer queueName, bool applyDelay)
 	{
 		pNativeAudio->Skip(queueName, applyDelay);
 	}
-	void Audio::Skip(size_t skipCount, std::wstring queueName, bool applyDelay)
+	void Audio::Skip(size_t skipCount, StringBuffer queueName, bool applyDelay)
 	{
 		pNativeAudio->Skip(skipCount, queueName, applyDelay);
 	}
@@ -191,17 +191,17 @@ namespace HephAudio
 		pNativeAudio->StopCapturing();
 	}
 #if (defined(_WIN32) && defined(_WIN32_WINNT_VISTA))
-	void Audio::SetDisplayName(std::wstring displayName)
+	void Audio::SetDisplayName(StringBuffer displayName)
 	{
 		pNativeAudio->SetDisplayName(displayName);
 	}
-	void Audio::SetIconPath(std::wstring iconPath)
+	void Audio::SetIconPath(StringBuffer iconPath)
 	{
 		pNativeAudio->SetIconPath(iconPath);
 	}
 #endif
 #if defined(_WIN32)
-	AudioDevice Audio::GetAudioDeviceById(std::wstring deviceId) const
+	AudioDevice Audio::GetAudioDeviceById(StringBuffer deviceId) const
 	{
 		return pNativeAudio->GetAudioDeviceById(deviceId);
 	}
@@ -222,7 +222,7 @@ namespace HephAudio
 		return pNativeAudio->GetAudioDevices(deviceType, includeInactive);
 	}
 #endif
-	bool Audio::SaveToFile(std::wstring filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
+	bool Audio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
 	{
 		return pNativeAudio->SaveToFile(filePath, overwrite, buffer, targetFormat);
 	}
