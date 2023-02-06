@@ -106,5 +106,6 @@ namespace HephAudio
 			virtual double GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const;
 		};
 #define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio != nullptr && pNativeAudio->OnException != nullptr) { pNativeAudio->OnException(audioException, pNativeAudio->GetCurrentThread()); }
+		StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t);
 	}
 }

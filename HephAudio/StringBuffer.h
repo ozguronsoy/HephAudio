@@ -47,7 +47,9 @@ namespace HephAudio
 		bool operator!=(const wchar_t* const& rhs) const;
 		bool operator!=(const StringBuffer& rhs) const;
 		char* c_str() const;
+		char* fc_str();
 		wchar_t* wc_str() const;
+		wchar_t* fwc_str();
 		size_t Size() const noexcept;
 		StringType GetStringType() const noexcept;
 		void SetStringType(StringType newType);

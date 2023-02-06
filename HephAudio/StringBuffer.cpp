@@ -545,8 +545,18 @@ namespace HephAudio
 	{
 		return (char*)this->pData;
 	}
+	char* StringBuffer::fc_str()
+	{
+		this->SetStringType(StringType::Normal);
+		return (char*)this->pData;
+	}
 	wchar_t* StringBuffer::wc_str() const
 	{
+		return (wchar_t*)this->pData;
+	}
+	wchar_t* StringBuffer::fwc_str()
+	{
+		this->SetStringType(StringType::Wide);
 		return (wchar_t*)this->pData;
 	}
 	size_t StringBuffer::Size() const noexcept

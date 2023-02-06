@@ -78,9 +78,10 @@ namespace HephAudio
 		}
 		IAudioFormat* AudioFormats::GetAudioFormat(StringBuffer filePath)
 		{
+			const StringBuffer fileExtension = AudioFile::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (CompareExtensions(AudioFile::GetFileExtension(filePath), formats.at(i)->Extension()))
+				if (CompareExtensions(fileExtension, formats.at(i)->Extension()))
 				{
 					return formats.at(i);
 				}

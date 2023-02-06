@@ -32,8 +32,8 @@ int main()
 	PrintDeltaTime("file loaded in");
 
 	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
-	//HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
-	//PrintDeltaTime("filter");
+	HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
+	PrintDeltaTime("filter");
 
 	pao->pause = false;
 
@@ -48,7 +48,7 @@ int main()
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::string str = (char*)ex;
+	std::string str = ("[" + AudioExceptionThreadName(t) + "] " + (char*)ex).fc_str();
 	size_t pos = str.find('\n', 0);
 	str.insert(pos + 1, 21, ' ');
 	pos = str.find('\n', pos + 1);

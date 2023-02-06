@@ -523,5 +523,21 @@ namespace HephAudio
 			}
 			return result;
 		}
+		StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t)
+		{
+			switch (t)
+			{
+			case AudioExceptionThread::MainThread:
+				return "Main thread";
+			case AudioExceptionThread::RenderThread:
+				return "Render thread";
+			case AudioExceptionThread::CaptureThread:
+				return "Capture thread";
+			case AudioExceptionThread::QueueThread:
+				return "Queue thread";
+			default:
+				return "Unknown thread";
+			}
+		}
 	}
 }

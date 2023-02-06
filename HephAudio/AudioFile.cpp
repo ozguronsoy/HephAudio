@@ -43,8 +43,7 @@ namespace HephAudio
 	{
 		Release(true, true);
 #if defined(__ANDROID__)
-		filePath.SetStringType(StringType::Normal);
-		pFile = fopen(filePath, "rb");
+		pFile = fopen(filePath.fc_str(), "rb");
 #else
 		pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read.
 #endif
@@ -102,8 +101,7 @@ namespace HephAudio
 	bool AudioFile::FileExists(StringBuffer filePath)
 	{
 #if defined(__ANDROID__)
-		filePath.SetStringType(StringType::Normal);
-		FILE* pFile = fopen(filePath, "rb");
+		FILE* pFile = fopen(filePath.fc_str(), "rb");
 #else
 		FILE* pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read operations (b = open as a binary file).
 #endif
@@ -125,8 +123,7 @@ namespace HephAudio
 		if (overwrite) // open file for write operations (b = open as a binary file, x = don't overwrite if the file already exists).
 		{
 #if defined(__ANDROID__)
-			filePath.SetStringType(StringType::Normal);
-			newFile->pFile = fopen(filePath, "wb");
+			newFile->pFile = fopen(filePath.fc_str(), "wb");
 #else
 			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wb") : _wfopen(filePath, L"wb");
 #endif
@@ -134,8 +131,7 @@ namespace HephAudio
 		else
 		{
 #if defined(__ANDROID__)
-			filePath.SetStringType(StringType::Normal);
-			newFile->pFile = fopen(filePath, "wbx");
+			newFile->pFile = fopen(filePath.fc_str(), "wbx");
 #else
 			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wbx") : _wfopen(filePath, L"wbx");
 #endif
@@ -148,30 +144,24 @@ namespace HephAudio
 	}
 	StringBuffer AudioFile::GetFileName(StringBuffer filePath)
 	{
-		uint32_t cursor = 0;
-		while (true)
+		size_t cursor = 0;
+		size_t pos = StringBuffer::npos;
+		do
 		{
-			const size_t pos = filePath.Find("\\", cursor);
-			if (pos == StringBuffer::npos)
-			{
-				break;
-			}
 			cursor = pos + 1;
-		}
+			pos = filePath.Find('\\', cursor);
+		} while (pos != StringBuffer::npos);
 		return filePath.SubString(cursor, filePath.Size() - cursor);
 	}
 	StringBuffer AudioFile::GetFileExtension(StringBuffer filePath)
 	{
-		uint32_t cursor = 0;
-		while (true)
+		size_t cursor = 0;
+		size_t pos = StringBuffer::npos;
+		do 
 		{
-			const size_t pos = filePath.Find(".", cursor);
-			if (pos == StringBuffer::npos)
-			{
-				break;
-			}
 			cursor = pos + 1;
-		}
+			pos = filePath.Find('.', cursor);
+		} while (pos != StringBuffer::npos);
 		return filePath.SubString(cursor - 1, filePath.Size() - cursor + 1);
 	}
 }
