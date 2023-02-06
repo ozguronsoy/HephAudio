@@ -25,16 +25,16 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("render initialized in");
 
-	//std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
-	//pao->OnRender = OnRender;
-	//pao->loopCount = 1u;
-	//PrintDeltaTime("file loaded in");
+	std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	pao->OnRender = OnRender;
+	pao->loopCount = 1u;
+	PrintDeltaTime("file loaded in");
 
 	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
 	//AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
 	//PrintDeltaTime("filter");
 
-	//pao->pause = false;
+	pao->pause = false;
 
 	short s = INT16_MIN;
 	unsigned short us = UINT16_MAX;
@@ -45,13 +45,19 @@ int main()
 	long long l = INT64_MIN;
 	unsigned long long ul = UINT64_MAX;
 
-	ConsoleLogger::LogLine("short: " + StringBuffer::ToString(s), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned short: " + StringBuffer::ToString(us), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("int: " + StringBuffer::ToString(i), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned int: " + StringBuffer::ToString(ui), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("long long: " + StringBuffer::ToString(l), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned long long: " + StringBuffer::ToString(ul), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("short: " + StringBuffer::ToHexString(s), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("unsigned short: " + StringBuffer::ToHexString(us), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("int: " + StringBuffer::ToHexString(i), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("unsigned int: " + StringBuffer::ToHexString(ui), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("long long: " + StringBuffer::ToHexString(l), ConsoleLogger::debug);
+	ConsoleLogger::LogLine("unsigned long long: " + StringBuffer::ToHexString(ul), ConsoleLogger::debug);
 
+
+	std::vector<AudioDevice> audioDevices = audio->GetAudioDevices(AudioDeviceType::All, true);
+	for (size_t i = 0; i < audioDevices.size(); i++)
+	{
+		ConsoleLogger::LogLine("(" + audioDevices.at(i).id + ") " + audioDevices.at(i).name, ConsoleLogger::debug);
+	}
 
 	std::string a;
 	std::cin >> a;
@@ -64,7 +70,7 @@ int main()
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::string str = ("[" + AudioExceptionThreadName(t) + "] " + (char*)ex).fc_str();
+	std::string str = ("[" + AudioExceptionThreadName(t) + "] " + (wchar_t*)ex).fc_str();
 	size_t pos = str.find('\n', 0);
 	str.insert(pos + 1, 21, ' ');
 	pos = str.find('\n', pos + 1);

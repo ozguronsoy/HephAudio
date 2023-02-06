@@ -17,7 +17,5 @@ namespace HephAudio
 		operator char* () const;
 		operator wchar_t* () const;
 		StringBuffer ToString(StringType stringType) const;
-	private:
-		StringBuffer ErrorCodeToHex() const;
 	};
 }

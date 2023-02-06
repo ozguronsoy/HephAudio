@@ -47,9 +47,7 @@ namespace HephAudio
 			// lpContext = a pointer to the current WinAudioDS that calls this method.
 			static BOOL CALLBACK CaptureDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
 			static StringBuffer GuidToString(LPGUID guid);
-			static StringBuffer GuidToWString(LPGUID guid);
 			static GUID StringToGuid(StringBuffer str);
-			static GUID WStringToGuid(StringBuffer str);
 			static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		};
 	}

@@ -1,7 +1,4 @@
 #include "AudioException.h"
-#include <string>
-#include <sstream>
-#include <iomanip>
 
 namespace HephAudio
 {
@@ -19,24 +16,20 @@ namespace HephAudio
 	}
 	AudioException::operator char* () const
 	{
-		return "Audio Exception " + this->ErrorCodeToHex() + " (" + std::to_string(this->errorCode).c_str() + ")\nMethod: " + this->method + "\nMessage: " + this->message;
+		return "Audio Exception " + StringBuffer::ToHexString(errorCode) + " (" + StringBuffer::ToString(this->errorCode) + ")\nMethod: " + this->method + "\nMessage: " + this->message;
 	}
 	AudioException::operator wchar_t* () const
 	{
-		return L"Audio Exception " + this->ErrorCodeToHex() + L" (" + std::to_wstring(this->errorCode).c_str() + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
+		StringBuffer hexCode = StringBuffer::ToHexString(this->errorCode);
+		hexCode.SetStringType(StringType::Wide);
+		return L"Audio Exception " + hexCode + L" (" + StringBuffer::ToString(this->errorCode) + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
 	}
 	StringBuffer AudioException::ToString(StringType stringType) const
 	{
 		if (stringType == StringType::Normal)
 		{
-			return this->operator char *();
+			return this->operator char* ();
 		}
 		return this->operator wchar_t* ();
-	}
-	StringBuffer AudioException::ErrorCodeToHex() const
-	{
-		std::stringstream ss;
-		ss << "0x" << std::setfill('0') << std::setw(sizeof(int64_t)) << std::hex << this->errorCode;
-		return ss.str().c_str();
 	}
 }

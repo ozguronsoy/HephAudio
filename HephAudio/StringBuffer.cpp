@@ -1021,6 +1021,24 @@ namespace HephAudio
 
 		return result;
 	}
+	StringBuffer StringBuffer::ToString(const long& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%ld", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToString(const unsigned long& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%lu", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
 	StringBuffer StringBuffer::ToString(const long long& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
@@ -1050,6 +1068,78 @@ namespace HephAudio
 
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, format, value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const short& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#hX", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const unsigned short& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#hX", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const int& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#X", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const unsigned int& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#X", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const long& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#lX", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const unsigned long& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#lX", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const long long& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#llX", value);
+
+		StringBuffer result = buffer;
+
+		return result;
+	}
+	StringBuffer StringBuffer::ToHexString(const unsigned long long& value)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%#llX", value);
 
 		StringBuffer result = buffer;
 

@@ -88,10 +88,20 @@ namespace HephAudio
 		static StringBuffer ToString(const unsigned short& value);
 		static StringBuffer ToString(const int& value);
 		static StringBuffer ToString(const unsigned int& value);
+		static StringBuffer ToString(const long& value);
+		static StringBuffer ToString(const unsigned long& value);
 		static StringBuffer ToString(const long long& value);
 		static StringBuffer ToString(const unsigned long long& value);
 		static StringBuffer ToString(const double& value);
 		static StringBuffer ToString(const double& value, size_t precision);
+		static StringBuffer ToHexString(const short& value);
+		static StringBuffer ToHexString(const unsigned short& value);
+		static StringBuffer ToHexString(const int& value);
+		static StringBuffer ToHexString(const unsigned int& value);
+		static StringBuffer ToHexString(const long& value);
+		static StringBuffer ToHexString(const unsigned long& value);
+		static StringBuffer ToHexString(const long long& value);
+		static StringBuffer ToHexString(const unsigned long long& value);
 	};
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs);
