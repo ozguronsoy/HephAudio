@@ -25,69 +25,21 @@ int main()
 	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 	PrintDeltaTime("render initialized in");
 
-	//std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
-	//pao->OnRender = OnRender;
-	//pao->loopCount = 1u;
-	//PrintDeltaTime("file loaded in");
+	std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	pao->OnRender = OnRender;
+	pao->loopCount = 1u;
+	PrintDeltaTime("file loaded in");
 
-	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
-	//AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
-	//PrintDeltaTime("filter");
+	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
+	AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
+	PrintDeltaTime("filter");
 
-	//pao->pause = false;
-
-	int16_t s = INT16_MIN;
-	uint16_t us = UINT16_MAX;
-
-	int32_t i = INT32_MIN;
-	uint32_t ui = UINT32_MAX;
-
-	int64_t l = INT64_MIN;
-	uint64_t ul = UINT64_MAX;
-
-	StringBuffer ss = StringBuffer::ToHexString(s);
-	StringBuffer uss = StringBuffer::ToHexString(us);
-	StringBuffer is = StringBuffer::ToHexString(i);
-	StringBuffer uis = StringBuffer::ToHexString(ui);
-	StringBuffer ls = StringBuffer::ToHexString(l);
-	StringBuffer uls = StringBuffer::ToHexString(ul);
-
-	printf("\n\n");
-	ConsoleLogger::LogLine("short: " + ss, ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned short: " + uss, ConsoleLogger::debug);
-	ConsoleLogger::LogLine("int: " + is, ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned int: " + uis, ConsoleLogger::debug);
-	ConsoleLogger::LogLine("long long: " + ls, ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned long long: " + uls, ConsoleLogger::debug);
-
-	s = us = i = ui = l = ul = 0;
-
-	s = StringBuffer::HexStringToI16(ss);
-	us = StringBuffer::HexStringToUI16(uss);
-	i = StringBuffer::HexStringToI32(is);
-	ui = StringBuffer::HexStringToUI32(uis);
-	l = StringBuffer::HexStringToI64(ls);
-	ul = StringBuffer::HexStringToUI64(uls);
-
-	printf("\n\n");
-	ConsoleLogger::LogLine("short: " + StringBuffer::ToString(s), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned short: " + StringBuffer::ToString(us), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("int: " + StringBuffer::ToString(i), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned int: " + StringBuffer::ToString(ui), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("long long: " + StringBuffer::ToString(l), ConsoleLogger::debug);
-	ConsoleLogger::LogLine("unsigned long long: " + StringBuffer::ToString(ul), ConsoleLogger::debug);
-	printf("\n\n");
-
-	std::vector<AudioDevice> audioDevices = audio->GetAudioDevices(AudioDeviceType::All, true);
-	for (size_t i = 0; i < audioDevices.size(); i++)
-	{
-		ConsoleLogger::LogLine("(" + audioDevices.at(i).id + ") " + audioDevices.at(i).name, ConsoleLogger::debug);
-	}
+	pao->pause = false;
 
 	std::string a;
 	std::cin >> a;
 	delete audio;
-	//pao = nullptr;
+	pao = nullptr;
 	StopWatch::Stop();
 	std::cin >> a;
 
@@ -107,9 +59,9 @@ void OnRender(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrame
 }
 double PrintDeltaTime(StringBuffer label)
 {
-	const double dt = StopWatch::DeltaTime(StopWatch::milli);
+	const double dt = StopWatch::DeltaTime(StopWatch::micro);
 	label = label + " " + StringBuffer::ToString(dt, 4);
-	label += " ms";
+	label += " us";
 	ConsoleLogger::LogLine(label, ConsoleLogger::info);
 	StopWatch::Reset();
 	return dt;

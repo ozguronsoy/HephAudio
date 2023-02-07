@@ -99,6 +99,12 @@ namespace HephAudio
 		static StringBuffer ToHexString(const uint32_t& value);
 		static StringBuffer ToHexString(const int64_t& value);
 		static StringBuffer ToHexString(const uint64_t& value);
+		static int16_t StringToI16(StringBuffer string);
+		static uint16_t StringToUI16(StringBuffer string);
+		static int32_t StringToI32(StringBuffer string);
+		static uint32_t StringToUI32(StringBuffer string);
+		static int64_t StringToI64(StringBuffer string);
+		static uint64_t StringToUI64(StringBuffer string);
 		static int16_t HexStringToI16(StringBuffer hexString);
 		static uint16_t HexStringToUI16(StringBuffer hexString);
 		static int32_t HexStringToI32(StringBuffer hexString);

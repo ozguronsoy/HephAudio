@@ -1109,6 +1109,42 @@ namespace HephAudio
 
 		return result;
 	}
+	int16_t StringBuffer::StringToI16(StringBuffer string)
+	{
+		int16_t number = 0;
+		sscanf(string.fc_str(), "%hd", &number);
+		return number;
+	}
+	uint16_t StringBuffer::StringToUI16(StringBuffer string)
+	{
+		uint16_t number = 0;
+		sscanf(string.fc_str(), "%hu", &number);
+		return number;
+	}
+	int32_t StringBuffer::StringToI32(StringBuffer string)
+	{
+		int32_t number = 0;
+		sscanf(string.fc_str(), "%d", &number);
+		return number;
+	}
+	uint32_t StringBuffer::StringToUI32(StringBuffer string)
+	{
+		uint32_t number = 0;
+		sscanf(string.fc_str(), "%u", &number);
+		return number;
+	}
+	int64_t StringBuffer::StringToI64(StringBuffer string)
+	{
+		int64_t number = 0;
+		sscanf(string.fc_str(), "%lld", &number);
+		return number;
+	}
+	uint64_t StringBuffer::StringToUI64(StringBuffer string)
+	{
+		uint64_t number = 0;
+		sscanf(string.fc_str(), "%llu", &number);
+		return number;
+	}
 	int16_t StringBuffer::HexStringToI16(StringBuffer hexString)
 	{
 		int16_t number = 0;
