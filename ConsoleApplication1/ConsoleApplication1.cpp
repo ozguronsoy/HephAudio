@@ -18,28 +18,28 @@ Audio* audio;
 int main()
 {
 	StopWatch::Start();
-	audio = new Audio();
-	audio->SetOnExceptionHandler(OnException);
+	//audio = new Audio();
+	//audio->SetOnExceptionHandler(OnException);
 
-	StopWatch::Reset();
-	audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
-	PrintDeltaTime("render initialized in");
+	//StopWatch::Reset();
+	//audio->InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	//PrintDeltaTime("render initialized in");
 
-	std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
-	pao->OnRender = OnRender;
-	pao->loopCount = 1u;
-	PrintDeltaTime("file loaded in");
+	//std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
+	//pao->OnRender = OnRender;
+	//pao->loopCount = 1u;
+	//PrintDeltaTime("file loaded in");
 
-	AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
-	AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
-	PrintDeltaTime("filter");
+	////AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
+	//AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
+	//PrintDeltaTime("filter");
 
-	pao->pause = false;
+	//pao->pause = false;
 
 	std::string a;
 	std::cin >> a;
 	delete audio;
-	pao = nullptr;
+	//pao = nullptr;
 	StopWatch::Stop();
 	std::cin >> a;
 
@@ -59,9 +59,9 @@ void OnRender(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrame
 }
 double PrintDeltaTime(StringBuffer label)
 {
-	const double dt = StopWatch::DeltaTime(StopWatch::micro);
+	const double dt = StopWatch::DeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
-	label += " us";
+	label += " ms";
 	ConsoleLogger::LogLine(label, ConsoleLogger::info);
 	StopWatch::Reset();
 	return dt;
