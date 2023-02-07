@@ -1,10 +1,6 @@
 #ifdef _WIN32
 #include "WinAudioDS.h"
 #include "AudioProcessor.h"
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
 
 #pragma comment (lib, "Dsound.lib")
 #pragma comment(lib,"dxguid.lib")
@@ -470,7 +466,7 @@ namespace HephAudio
 		StringBuffer WinAudioDS::GuidToString(LPGUID guid)
 		{
 			StringBuffer result = "";
-			StringBuffer temp = StringBuffer::ToHexString(guid->Data1);
+			StringBuffer temp = StringBuffer::ToHexString((uint32_t)guid->Data1);
 			temp.ToLower();
 			result += temp.SubString(2, temp.Size() - 2) + "-";
 
@@ -502,17 +498,17 @@ namespace HephAudio
 		GUID WinAudioDS::StringToGuid(StringBuffer str)
 		{
 			GUID guid = GUID();
-			guid.Data1 = std::stoul(str.SubString(0, 8).c_str(), nullptr, 16);
-			guid.Data2 = std::stoi(str.SubString(9, 4).c_str(), nullptr, 16);
-			guid.Data3 = std::stoi(str.SubString(14, 4).c_str(), nullptr, 16);
-			guid.Data4[0] = std::stoi(str.SubString(19, 2).c_str(), nullptr, 16);
-			guid.Data4[1] = std::stoi(str.SubString(21, 2).c_str(), nullptr, 16);
-			guid.Data4[2] = std::stoi(str.SubString(24, 2).c_str(), nullptr, 16);
-			guid.Data4[3] = std::stoi(str.SubString(26, 2).c_str(), nullptr, 16);
-			guid.Data4[4] = std::stoi(str.SubString(28, 2).c_str(), nullptr, 16);
-			guid.Data4[5] = std::stoi(str.SubString(30, 2).c_str(), nullptr, 16);
-			guid.Data4[6] = std::stoi(str.SubString(32, 2).c_str(), nullptr, 16);
-			guid.Data4[7] = std::stoi(str.SubString(34, 2).c_str(), nullptr, 16);
+			guid.Data1 = StringBuffer::HexStringToUI32(str.SubString(0, 8));
+			guid.Data2 = StringBuffer::HexStringToUI16(str.SubString(9, 4));
+			guid.Data3 = StringBuffer::HexStringToUI16(str.SubString(14, 4));
+			guid.Data4[0] = StringBuffer::HexStringToUI16(str.SubString(19, 2));
+			guid.Data4[1] = StringBuffer::HexStringToUI16(str.SubString(21, 2));
+			guid.Data4[2] = StringBuffer::HexStringToUI16(str.SubString(24, 2));
+			guid.Data4[3] = StringBuffer::HexStringToUI16(str.SubString(26, 2));
+			guid.Data4[4] = StringBuffer::HexStringToUI16(str.SubString(28, 2));
+			guid.Data4[5] = StringBuffer::HexStringToUI16(str.SubString(30, 2));
+			guid.Data4[6] = StringBuffer::HexStringToUI16(str.SubString(32, 2));
+			guid.Data4[7] = StringBuffer::HexStringToUI16(str.SubString(34, 2));
 			return guid;
 		}
 		LRESULT CALLBACK WinAudioDS::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
