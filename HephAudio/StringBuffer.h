@@ -5,7 +5,7 @@
 
 namespace HephAudio
 {
-	enum class StringType
+	enum class StringType : uint8_t
 	{
 		Normal,
 		Wide
@@ -139,6 +139,11 @@ namespace HephAudio
 		static uint32_t HexStringToUI32(StringBuffer hexString);
 		static int64_t HexStringToI64(StringBuffer hexString);
 		static uint64_t HexStringToUI64(StringBuffer hexString);
+		static StringBuffer Join(const char& separator, const std::vector<StringBuffer>& strings);
+		static StringBuffer Join(const wchar_t& separator, const std::vector<StringBuffer>& strings);
+		static StringBuffer Join(const char* const& separator, const std::vector<StringBuffer>& strings);
+		static StringBuffer Join(const wchar_t* const& separator, const std::vector<StringBuffer>& strings);
+		static StringBuffer Join(const StringBuffer& separator, const std::vector<StringBuffer>& strings);
 	};
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs);

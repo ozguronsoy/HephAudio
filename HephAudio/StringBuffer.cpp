@@ -1302,6 +1302,134 @@ namespace HephAudio
 		sscanf(hexString.fc_str(), "%llX", &number);
 		return number;
 	}
+	StringBuffer StringBuffer::Join(const char& separator, const std::vector<StringBuffer>& strings)
+	{
+		char buffer[2] = { separator, '\0' };
+		return StringBuffer::Join(buffer, strings);
+	}
+	StringBuffer StringBuffer::Join(const wchar_t& separator, const std::vector<StringBuffer>& strings)
+	{
+		wchar_t buffer[2] = { separator, L'\0' };
+		return StringBuffer::Join(buffer, strings);
+	}
+	StringBuffer StringBuffer::Join(const char* const& separator, const std::vector<StringBuffer>& strings)
+	{
+		if (strings.size() > 0)
+		{
+			constexpr auto copyString = [](char* const& pTemp, const StringBuffer& str) -> void
+			{
+				if (str.pData != nullptr)
+				{
+					if (str.charSize == sizeof(char))
+					{
+						memcpy(pTemp, str.pData, str.size * sizeof(char));
+					}
+					else
+					{
+						wcstombs(pTemp, (wchar_t*)str.pData, str.size);
+					}
+				}
+			};
+
+			const size_t separatorSize = strlen(separator);
+			const size_t separatorTotalSize = separatorSize * sizeof(char);
+			size_t resultSize = separatorSize * (strings.size() - 1);
+
+			for (size_t i = 0; i < strings.size(); i++)
+			{
+				resultSize += strings.at(i).size;
+			}
+
+			char* pTemp = (char*)malloc(resultSize * sizeof(char) + sizeof(char));
+			if (pTemp == nullptr)
+			{
+				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::Join", L"Insufficient memory.");
+			}
+
+			copyString(pTemp, strings.at(0));
+			size_t cursor = strings.at(0).size;
+
+			for (size_t i = 1; i < strings.size(); i++)
+			{
+				memcpy(pTemp + cursor, separator, separatorTotalSize);
+				cursor += separatorSize;
+
+				copyString(pTemp + cursor, strings.at(i));
+				cursor += strings.at(i).size;
+			}
+
+			pTemp[resultSize] = '\0';
+			StringBuffer result = pTemp;
+			free(pTemp);
+
+			return result;
+		}
+
+		return "";
+	}
+	StringBuffer StringBuffer::Join(const wchar_t* const& separator, const std::vector<StringBuffer>& strings)
+	{
+		if (strings.size() > 0)
+		{
+			constexpr auto copyString = [](wchar_t* const& pTemp, const StringBuffer& str) -> void
+			{
+				if (str.pData != nullptr)
+				{
+					if (str.charSize == sizeof(wchar_t))
+					{
+						memcpy(pTemp, str.pData, str.size * sizeof(wchar_t));
+					}
+					else
+					{
+						mbstowcs(pTemp, str.pData, str.size);
+					}
+				}
+			};
+
+			const size_t separatorSize = wcslen(separator);
+			const size_t separatorTotalSize = separatorSize * sizeof(wchar_t);
+			size_t resultSize = separatorSize * (strings.size() - 1);
+
+			for (size_t i = 0; i < strings.size(); i++)
+			{
+				resultSize += strings.at(i).size;
+			}
+
+			wchar_t* pTemp = (wchar_t*)malloc(resultSize * sizeof(wchar_t) + sizeof(wchar_t));
+			if (pTemp == nullptr)
+			{
+				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::Join", L"Insufficient memory.");
+			}
+
+			copyString(pTemp, strings.at(0));
+			size_t cursor = strings.at(0).size;
+
+			for (size_t i = 1; i < strings.size(); i++)
+			{
+				memcpy(pTemp + cursor, separator, separatorTotalSize);
+				cursor += separatorSize;
+
+				copyString(pTemp + cursor, strings.at(i));
+				cursor += strings.at(i).size;
+			}
+
+			pTemp[resultSize] = L'\0';
+			StringBuffer result = pTemp;
+			free(pTemp);
+
+			return result;
+		}
+
+		return L"";
+	}
+	StringBuffer StringBuffer::Join(const StringBuffer& separator, const std::vector<StringBuffer>& strings)
+	{
+		if (separator.charSize == sizeof(char))
+		{
+			return StringBuffer::Join(separator.c_str(), strings);
+		}
+		return StringBuffer::Join(separator.wc_str(), strings);
+	}
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs)
 {
