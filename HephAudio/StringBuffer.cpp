@@ -778,22 +778,6 @@ namespace HephAudio
 	{
 		return this->Find(str, 0) != StringBuffer::npos;
 	}
-	void StringBuffer::Clear()
-	{
-		const size_t charSize = this->charSize;
-		this->~StringBuffer();
-		this->charSize = charSize;
-
-		this->pData = (char*)malloc(this->charSize);
-		if (this->pData != nullptr)
-		{
-			memset(this->pData, 0, this->charSize);
-		}
-		else
-		{
-			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::Clear", L"Insufficient memory.");
-		}
-	}
 	std::vector<StringBuffer> StringBuffer::Split(const char& c) const
 	{
 		char buffer[2] = { c, '\0' };
@@ -855,33 +839,52 @@ namespace HephAudio
 	}
 	std::vector<StringBuffer> StringBuffer::Split(const StringBuffer& str) const
 	{
-		if (this->charSize == sizeof(char))
+		if (str.charSize == sizeof(char))
 		{
 			return this->Split(str.c_str());
 		}
 		return this->Split(str.wc_str());
 	}
-	void StringBuffer::Reverse()
+	void StringBuffer::RemoveAt(size_t index)
 	{
-		const size_t hs = this->size * 0.5;
+		this->RemoveAt(index, 1);
+	}
+	void StringBuffer::RemoveAt(size_t index, size_t size)
+	{
+		if (index >= this->size)
+		{
+			throw AudioException(E_INVALIDARG, L"StringBuffer::RemoveAt", L"Index out of bounds.");
+		}
+
+		if (index + size >= this->size)
+		{
+			size = this->size - index;
+		}
+
+		char* tempPtr = (char*)malloc(this->TotalSize());
+		if (tempPtr == nullptr)
+		{
+			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::RemoveAt", L"Insufficient memory.");
+		}
+		const size_t firstPartTotalSize = index * this->charSize;
+		const size_t removedTotalSize = size * this->charSize;
+
+		memcpy(tempPtr, this->pData, firstPartTotalSize);
+		memcpy(tempPtr + firstPartTotalSize, this->pData + firstPartTotalSize + removedTotalSize, this->TotalSize() - firstPartTotalSize - removedTotalSize + this->charSize);
+
+		this->size -= size;
+
 		if (this->charSize == sizeof(char))
 		{
-			for (size_t i = 0, ir = this->size - 1; i < hs; i++, ir--)
-			{
-				const char temp = this->pData[i];
-				this->pData[i] = this->pData[ir];
-				this->pData[ir] = temp;
-			}
+			tempPtr[this->size] = '\0';
 		}
 		else
 		{
-			for (size_t i = 0, ir = this->size - 1; i < hs; i++, ir--)
-			{
-				const wchar_t temp = ((wchar_t*)this->pData)[i];
-				((wchar_t*)this->pData)[i] = ((wchar_t*)this->pData)[ir];
-				((wchar_t*)this->pData)[ir] = temp;
-			}
+			((wchar_t*)tempPtr)[this->size] = L'\0';
 		}
+
+		free(this->pData);
+		this->pData = tempPtr;
 	}
 	void StringBuffer::ReplaceAt(size_t index, const char& c)
 	{
@@ -904,28 +907,8 @@ namespace HephAudio
 
 		if (strSize == 0)
 		{
-			char* tempPtr = (char*)malloc(this->TotalSize());
-			if (tempPtr == nullptr)
-			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::ReplaceAt", L"Insufficient memory.");
-			}
-			const size_t firstPartTotalSize = index * this->charSize;
-
-			memcpy(tempPtr, this->pData, firstPartTotalSize);
-			memcpy(tempPtr + firstPartTotalSize, this->pData + firstPartTotalSize + this->charSize, this->TotalSize() - firstPartTotalSize);
-
-			if (this->charSize == sizeof(char))
-			{
-				tempPtr[this->size] = '\0';
-			}
-			else
-			{
-				((wchar_t*)tempPtr)[this->size] = L'\0';
-			}
-
-			free(this->pData);
-			this->pData = tempPtr;
-			this->size--;
+			this->RemoveAt(index);
+			return;
 		}
 
 		if (index + strSize >= this->size)
@@ -963,28 +946,8 @@ namespace HephAudio
 
 		if (strSize == 0)
 		{
-			char* tempPtr = (char*)malloc(this->TotalSize());
-			if (tempPtr == nullptr)
-			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::ReplaceAt", L"Insufficient memory.");
-			}
-			const size_t firstPartTotalSize = index * this->charSize;
-
-			memcpy(tempPtr, this->pData, firstPartTotalSize);
-			memcpy(tempPtr + firstPartTotalSize, this->pData + firstPartTotalSize + this->charSize, this->TotalSize() - firstPartTotalSize);
-
-			if (this->charSize == sizeof(char))
-			{
-				tempPtr[this->size] = '\0';
-			}
-			else
-			{
-				((wchar_t*)tempPtr)[this->size] = L'\0';
-			}
-
-			free(this->pData);
-			this->pData = tempPtr;
-			this->size--;
+			this->RemoveAt(index);
+			return;
 		}
 
 		if (index + strSize >= this->size)
@@ -1020,6 +983,81 @@ namespace HephAudio
 		else
 		{
 			this->ReplaceAt(index, str.wc_str());
+		}
+	}
+	void StringBuffer::Remove(const char& c)
+	{
+		char buffer[2] = { c, '\0' };
+		return this->Remove(buffer);
+	}
+	void StringBuffer::Remove(const wchar_t& wc)
+	{
+		wchar_t buffer[2] = { wc, L'\0' };
+		return this->Remove(buffer);
+	}
+	void StringBuffer::Remove(const char* const& str)
+	{
+		const size_t index = this->Find(str);
+		if (index != StringBuffer::npos)
+		{
+			this->RemoveAt(index, strlen(str));
+		}
+	}
+	void StringBuffer::Remove(const wchar_t* const& wstr)
+	{
+		const size_t index = this->Find(wstr);
+		if (index != StringBuffer::npos)
+		{
+			this->RemoveAt(index, wcslen(wstr));
+		}
+	}
+	void StringBuffer::Remove(const StringBuffer& str)
+	{
+		if (str.charSize == sizeof(char))
+		{
+			this->Remove(str.c_str());
+		}
+		else
+		{
+			this->Remove(str.wc_str());
+		}
+	}
+	void StringBuffer::Clear()
+	{
+		const size_t charSize = this->charSize;
+		this->~StringBuffer();
+		this->charSize = charSize;
+
+		this->pData = (char*)malloc(this->charSize);
+		if (this->pData != nullptr)
+		{
+			memset(this->pData, 0, this->charSize);
+		}
+		else
+		{
+			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::Clear", L"Insufficient memory.");
+		}
+	}
+	void StringBuffer::Reverse()
+	{
+		const size_t hs = this->size * 0.5;
+		if (this->charSize == sizeof(char))
+		{
+			for (size_t i = 0, ir = this->size - 1; i < hs; i++, ir--)
+			{
+				const char temp = this->pData[i];
+				this->pData[i] = this->pData[ir];
+				this->pData[ir] = temp;
+			}
+		}
+		else
+		{
+			for (size_t i = 0, ir = this->size - 1; i < hs; i++, ir--)
+			{
+				const wchar_t temp = ((wchar_t*)this->pData)[i];
+				((wchar_t*)this->pData)[i] = ((wchar_t*)this->pData)[ir];
+				((wchar_t*)this->pData)[ir] = temp;
+			}
 		}
 	}
 	void StringBuffer::ToLower()

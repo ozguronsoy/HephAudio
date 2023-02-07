@@ -92,6 +92,13 @@ namespace HephAudio
 		std::vector<StringBuffer> Split(const char* const& str) const;
 		std::vector<StringBuffer> Split(const wchar_t* const& wstr) const;
 		std::vector<StringBuffer> Split(const StringBuffer& str) const;
+		void RemoveAt(size_t index);
+		void RemoveAt(size_t index, size_t size);
+		void Remove(const char& c);
+		void Remove(const wchar_t& wc);
+		void Remove(const char* const& str);
+		void Remove(const wchar_t* const& wstr);
+		void Remove(const StringBuffer& str);
 		void ReplaceAt(size_t index, const char& c);
 		void ReplaceAt(size_t index, const wchar_t& wc);
 		void ReplaceAt(size_t index, const char* const& str);
