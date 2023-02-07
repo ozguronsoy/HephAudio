@@ -1,5 +1,6 @@
 #pragma once
 #include "framework.h"
+#include <cinttypes>
 
 namespace HephAudio
 {
@@ -84,24 +85,26 @@ namespace HephAudio
 	private:
 		size_t TotalSize() const noexcept;
 	public:
-		static StringBuffer ToString(const short& value);
-		static StringBuffer ToString(const unsigned short& value);
-		static StringBuffer ToString(const int& value);
-		static StringBuffer ToString(const unsigned int& value);
-		static StringBuffer ToString(const long& value);
-		static StringBuffer ToString(const unsigned long& value);
-		static StringBuffer ToString(const long long& value);
-		static StringBuffer ToString(const unsigned long long& value);
+		static StringBuffer ToString(const int16_t& value);
+		static StringBuffer ToString(const uint16_t& value);
+		static StringBuffer ToString(const int32_t& value);
+		static StringBuffer ToString(const uint32_t& value);
+		static StringBuffer ToString(const int64_t& value);
+		static StringBuffer ToString(const uint64_t& value);
 		static StringBuffer ToString(const double& value);
 		static StringBuffer ToString(const double& value, size_t precision);
-		static StringBuffer ToHexString(const short& value);
-		static StringBuffer ToHexString(const unsigned short& value);
-		static StringBuffer ToHexString(const int& value);
-		static StringBuffer ToHexString(const unsigned int& value);
-		static StringBuffer ToHexString(const long& value);
-		static StringBuffer ToHexString(const unsigned long& value);
-		static StringBuffer ToHexString(const long long& value);
-		static StringBuffer ToHexString(const unsigned long long& value);
+		static StringBuffer ToHexString(const int16_t& value);
+		static StringBuffer ToHexString(const uint16_t& value);
+		static StringBuffer ToHexString(const int32_t& value);
+		static StringBuffer ToHexString(const uint32_t& value);
+		static StringBuffer ToHexString(const int64_t& value);
+		static StringBuffer ToHexString(const uint64_t& value);
+		static int16_t HexStringToI16(StringBuffer hexString);
+		static uint16_t HexStringToUI16(StringBuffer hexString);
+		static int32_t HexStringToI32(StringBuffer hexString);
+		static uint32_t HexStringToUI32(StringBuffer hexString);
+		static int64_t HexStringToI64(StringBuffer hexString);
+		static uint64_t HexStringToUI64(StringBuffer hexString);
 	};
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs);

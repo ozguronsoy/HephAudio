@@ -985,7 +985,7 @@ namespace HephAudio
 	{
 		return this->size * this->charSize;
 	}
-	StringBuffer StringBuffer::ToString(const short& value)
+	StringBuffer StringBuffer::ToString(const int16_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%hd", value);
@@ -994,7 +994,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const unsigned short& value)
+	StringBuffer StringBuffer::ToString(const uint16_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%hu", value);
@@ -1003,7 +1003,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const int& value)
+	StringBuffer StringBuffer::ToString(const int32_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%d", value);
@@ -1012,7 +1012,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const unsigned int& value)
+	StringBuffer StringBuffer::ToString(const uint32_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%u", value);
@@ -1021,25 +1021,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const long& value)
-	{
-		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
-		sprintf(buffer, "%ld", value);
-
-		StringBuffer result = buffer;
-
-		return result;
-	}
-	StringBuffer StringBuffer::ToString(const unsigned long& value)
-	{
-		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
-		sprintf(buffer, "%lu", value);
-
-		StringBuffer result = buffer;
-
-		return result;
-	}
-	StringBuffer StringBuffer::ToString(const long long& value)
+	StringBuffer StringBuffer::ToString(const int64_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%lld", value);
@@ -1048,7 +1030,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const unsigned long long& value)
+	StringBuffer StringBuffer::ToString(const uint64_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%llu", value);
@@ -1073,7 +1055,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const short& value)
+	StringBuffer StringBuffer::ToHexString(const int16_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%#hX", value);
@@ -1082,7 +1064,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const unsigned short& value)
+	StringBuffer StringBuffer::ToHexString(const uint16_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%#hX", value);
@@ -1091,7 +1073,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const int& value)
+	StringBuffer StringBuffer::ToHexString(const int32_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%#X", value);
@@ -1100,7 +1082,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const unsigned int& value)
+	StringBuffer StringBuffer::ToHexString(const uint32_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%#X", value);
@@ -1109,25 +1091,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const long& value)
-	{
-		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
-		sprintf(buffer, "%#lX", value);
-
-		StringBuffer result = buffer;
-
-		return result;
-	}
-	StringBuffer StringBuffer::ToHexString(const unsigned long& value)
-	{
-		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
-		sprintf(buffer, "%#lX", value);
-
-		StringBuffer result = buffer;
-
-		return result;
-	}
-	StringBuffer StringBuffer::ToHexString(const long long& value)
+	StringBuffer StringBuffer::ToHexString(const int64_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%#llX", value);
@@ -1136,7 +1100,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const unsigned long long& value)
+	StringBuffer StringBuffer::ToHexString(const uint64_t& value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%#llX", value);
@@ -1144,6 +1108,42 @@ namespace HephAudio
 		StringBuffer result = buffer;
 
 		return result;
+	}
+	int16_t StringBuffer::HexStringToI16(StringBuffer hexString)
+	{
+		int16_t number = 0;
+		sscanf(hexString.fc_str(), "%hX", &number);
+		return number;
+	}
+	uint16_t StringBuffer::HexStringToUI16(StringBuffer hexString)
+	{
+		uint16_t number = 0;
+		sscanf(hexString.fc_str(), "%hX", &number);
+		return number;
+	}
+	int32_t StringBuffer::HexStringToI32(StringBuffer hexString)
+	{
+		int32_t number = 0;
+		sscanf(hexString.fc_str(), "%X", &number);
+		return number;
+	}
+	uint32_t StringBuffer::HexStringToUI32(StringBuffer hexString)
+	{
+		uint32_t number = 0;
+		sscanf(hexString.fc_str(), "%X", &number);
+		return number;
+	}
+	int64_t StringBuffer::HexStringToI64(StringBuffer hexString)
+	{
+		int64_t number = 0;
+		sscanf(hexString.fc_str(), "%llX", &number);
+		return number;
+	}
+	uint64_t StringBuffer::HexStringToUI64(StringBuffer hexString)
+	{
+		uint64_t number = 0;
+		sscanf(hexString.fc_str(), "%llX", &number);
+		return number;
 	}
 }
 HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs)
