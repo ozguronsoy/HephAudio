@@ -4,27 +4,10 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		std::vector<StringBuffer> AudioFormats::SplitExtensions(StringBuffer extension)
-		{
-			std::vector<StringBuffer> splitExtensions;
-			uint32_t cursor = 0;
-			while (true)
-			{
-				const size_t pos = extension.Find(' ', cursor);
-				if (pos == StringBuffer::npos)
-				{
-					splitExtensions.push_back(extension.SubString(cursor, extension.Size() - cursor));
-					return splitExtensions;
-				}
-				splitExtensions.push_back(extension.SubString(cursor, pos - cursor));
-				cursor = pos + 1;
-			}
-			return splitExtensions;
-		}
 		bool AudioFormats::CompareExtensions(StringBuffer lhs, StringBuffer rhs)
 		{
-			std::vector<StringBuffer> lhse = SplitExtensions(lhs);
-			std::vector<StringBuffer> rhse = SplitExtensions(rhs);
+			std::vector<StringBuffer> lhse = lhs.Split(' ');
+			std::vector<StringBuffer> rhse = rhs.Split(' ');
 			for (size_t i = 0; i < lhse.size(); i++)
 			{
 				for (size_t j = 0; j < rhse.size(); j++)

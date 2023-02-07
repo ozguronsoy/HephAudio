@@ -144,24 +144,12 @@ namespace HephAudio
 	}
 	StringBuffer AudioFile::GetFileName(StringBuffer filePath)
 	{
-		size_t cursor = 0;
-		size_t pos = StringBuffer::npos;
-		do
-		{
-			cursor = pos + 1;
-			pos = filePath.Find('\\', cursor);
-		} while (pos != StringBuffer::npos);
-		return filePath.SubString(cursor, filePath.Size() - cursor);
+		std::vector<StringBuffer> sfp = filePath.Split('\\');
+		return sfp.at(sfp.size() - 1);
 	}
 	StringBuffer AudioFile::GetFileExtension(StringBuffer filePath)
 	{
-		size_t cursor = 0;
-		size_t pos = StringBuffer::npos;
-		do 
-		{
-			cursor = pos + 1;
-			pos = filePath.Find('.', cursor);
-		} while (pos != StringBuffer::npos);
-		return filePath.SubString(cursor - 1, filePath.Size() - cursor + 1);
+		std::vector<StringBuffer> sfp = filePath.Split('.');
+		return '.' + sfp.at(sfp.size() - 1);
 	}
 }

@@ -13,7 +13,6 @@ namespace HephAudio
 		{
 		private:
 			std::vector<IAudioFormat*> formats;
-			std::vector<StringBuffer> SplitExtensions(StringBuffer extension);
 			bool CompareExtensions(StringBuffer lhs, StringBuffer rhs);
 		public:
 			AudioFormats();

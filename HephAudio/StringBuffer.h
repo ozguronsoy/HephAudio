@@ -1,6 +1,7 @@
 #pragma once
 #include "framework.h"
 #include <cinttypes>
+#include <vector>
 
 namespace HephAudio
 {
@@ -86,6 +87,11 @@ namespace HephAudio
 		bool Contains(const char* const& str) const;
 		bool Contains(const wchar_t* const& wstr) const;
 		bool Contains(const StringBuffer& str) const;
+		std::vector<StringBuffer> Split(const char& c) const;
+		std::vector<StringBuffer> Split(const wchar_t& wc) const;
+		std::vector<StringBuffer> Split(const char* const& str) const;
+		std::vector<StringBuffer> Split(const wchar_t* const& wstr) const;
+		std::vector<StringBuffer> Split(const StringBuffer& str) const;
 		void ReplaceAt(size_t index, const char& c);
 		void ReplaceAt(size_t index, const wchar_t& wc);
 		void ReplaceAt(size_t index, const char* const& str);
