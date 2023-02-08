@@ -8,6 +8,20 @@
 
 namespace HephAudio
 {
+	StringBuffer::StringBuffer(size_t size, size_t charSize)
+	{
+		this->charSize = charSize;
+		this->size = size;
+		this->pData = (char*)malloc(this->TotalSize() + this->charSize);
+		if (this->pData != nullptr)
+		{
+			memset(this->pData + this->TotalSize(), 0, this->charSize);
+		}
+		else
+		{
+			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::StringBuffer", L"Insufficient memory.");
+		}
+	}
 	StringBuffer::StringBuffer()
 	{
 		this->charSize = sizeof(char);
@@ -344,15 +358,7 @@ namespace HephAudio
 	{
 		const size_t rhsSize = strlen(rhs);
 
-		StringBuffer result;
-		result.charSize = this->charSize;
-		result.size = this->size + rhsSize;
-
-		result.pData = (char*)malloc(result.TotalSize() + result.charSize);
-		if (result.pData == nullptr)
-		{
-			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator+", L"Insufficient memory.");
-		}
+		StringBuffer result = StringBuffer(this->size + rhsSize, this->charSize);
 
 		memcpy(result.pData, this->pData, this->TotalSize()); // copy *this except the \0 char
 
@@ -371,15 +377,7 @@ namespace HephAudio
 	{
 		const size_t rhsSize = wcslen(rhs);
 
-		StringBuffer result;
-		result.charSize = this->charSize;
-		result.size = this->size + rhsSize;
-
-		result.pData = (char*)malloc(result.TotalSize() + result.charSize);
-		if (result.pData == nullptr)
-		{
-			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator+", L"Insufficient memory.");
-		}
+		StringBuffer result = StringBuffer(this->size + rhsSize, this->charSize);
 
 		memcpy(result.pData, this->pData, this->TotalSize()); // copy *this except the \0 char
 
@@ -474,6 +472,42 @@ namespace HephAudio
 		{
 			*this += rhs.wc_str();
 		}
+
+		return *this;
+	}
+	StringBuffer StringBuffer::operator*(const uint32_t& rhs) const
+	{
+		StringBuffer result = StringBuffer(this->size * rhs, this->charSize);
+		
+		const size_t resultTotalSize = result.TotalSize();
+		const size_t thisTotalSize = this->TotalSize();
+
+		for (size_t i = 0; i < resultTotalSize; i += thisTotalSize)
+		{
+			memcpy(result.pData + i, this->pData, thisTotalSize);
+		}
+
+		return result;
+	}
+	StringBuffer& StringBuffer::operator*=(const uint32_t& rhs)
+	{
+		const size_t oldTotalSize = this->TotalSize();
+		this->size *= rhs;
+		const size_t newTotalSize = this->TotalSize();
+
+		char* tempPtr = (char*)realloc(this->pData, newTotalSize + this->charSize);
+		if (tempPtr == nullptr)
+		{
+			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::operator*=", L"Insufficient memory.");
+		}
+
+		for (size_t i = 0; i < newTotalSize; i += oldTotalSize)
+		{
+			memcpy(tempPtr + i, this->pData, oldTotalSize);
+		}
+		memset(tempPtr + newTotalSize, 0, this->charSize);
+
+		this->pData = tempPtr;
 
 		return *this;
 	}
@@ -643,20 +677,11 @@ namespace HephAudio
 			throw AudioException(E_INVALIDARG, L"StringBuffer::SubString", L"Index out of bounds.");
 		}
 
-		const size_t subStringTotalSize = size * this->charSize;
+		StringBuffer subString = StringBuffer(size, this->charSize);
+		const size_t subStringTotalSize = subString.TotalSize();
 
-		void* tempPtr = (void*)malloc(subStringTotalSize + this->charSize);
-		if (tempPtr == nullptr)
-		{
-			throw AudioException(E_OUTOFMEMORY, L"StringBuffer::SubString", L"Insufficient memory.");
-		}
-
-		memcpy(tempPtr, this->pData + startIndex * this->charSize, subStringTotalSize);
-		memset((char*)tempPtr + subStringTotalSize, 0, this->charSize);
-
-		StringBuffer subString = (this->charSize == sizeof(char)) ? StringBuffer((char*)tempPtr) : StringBuffer((wchar_t*)tempPtr);
-
-		free(tempPtr);
+		memcpy(subString.pData, this->pData + startIndex * this->charSize, subStringTotalSize);
+		memset((char*)subString.pData + subStringTotalSize, 0, this->charSize);
 
 		return subString;
 	}
@@ -1316,17 +1341,17 @@ namespace HephAudio
 	{
 		if (strings.size() > 0)
 		{
-			constexpr auto copyString = [](char* const& pTemp, const StringBuffer& str) -> void
+			constexpr auto copyString = [](char* const& tempPtr, const StringBuffer& str) -> void
 			{
 				if (str.pData != nullptr)
 				{
 					if (str.charSize == sizeof(char))
 					{
-						memcpy(pTemp, str.pData, str.size * sizeof(char));
+						memcpy(tempPtr, str.pData, str.size * sizeof(char));
 					}
 					else
 					{
-						wcstombs(pTemp, (wchar_t*)str.pData, str.size);
+						wcstombs(tempPtr, (wchar_t*)str.pData, str.size);
 					}
 				}
 			};
@@ -1340,27 +1365,19 @@ namespace HephAudio
 				resultSize += strings.at(i).size;
 			}
 
-			char* pTemp = (char*)malloc(resultSize * sizeof(char) + sizeof(char));
-			if (pTemp == nullptr)
-			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::Join", L"Insufficient memory.");
-			}
+			StringBuffer result = StringBuffer(resultSize, sizeof(char));
 
-			copyString(pTemp, strings.at(0));
+			copyString(result.pData, strings.at(0));
 			size_t cursor = strings.at(0).size;
 
 			for (size_t i = 1; i < strings.size(); i++)
 			{
-				memcpy(pTemp + cursor, separator, separatorTotalSize);
+				memcpy(result.pData + cursor, separator, separatorTotalSize);
 				cursor += separatorSize;
 
-				copyString(pTemp + cursor, strings.at(i));
+				copyString(result.pData + cursor, strings.at(i));
 				cursor += strings.at(i).size;
 			}
-
-			pTemp[resultSize] = '\0';
-			StringBuffer result = pTemp;
-			free(pTemp);
 
 			return result;
 		}
@@ -1371,17 +1388,17 @@ namespace HephAudio
 	{
 		if (strings.size() > 0)
 		{
-			constexpr auto copyString = [](wchar_t* const& pTemp, const StringBuffer& str) -> void
+			constexpr auto copyString = [](wchar_t* const& tempPtr, const StringBuffer& str) -> void
 			{
 				if (str.pData != nullptr)
 				{
 					if (str.charSize == sizeof(wchar_t))
 					{
-						memcpy(pTemp, str.pData, str.size * sizeof(wchar_t));
+						memcpy(tempPtr, str.pData, str.size * sizeof(wchar_t));
 					}
 					else
 					{
-						mbstowcs(pTemp, str.pData, str.size);
+						mbstowcs(tempPtr, str.pData, str.size);
 					}
 				}
 			};
@@ -1395,27 +1412,19 @@ namespace HephAudio
 				resultSize += strings.at(i).size;
 			}
 
-			wchar_t* pTemp = (wchar_t*)malloc(resultSize * sizeof(wchar_t) + sizeof(wchar_t));
-			if (pTemp == nullptr)
-			{
-				throw AudioException(E_OUTOFMEMORY, L"StringBuffer::Join", L"Insufficient memory.");
-			}
+			StringBuffer result = StringBuffer(resultSize, sizeof(wchar_t));
 
-			copyString(pTemp, strings.at(0));
+			copyString((wchar_t*)result.pData, strings.at(0));
 			size_t cursor = strings.at(0).size;
 
 			for (size_t i = 1; i < strings.size(); i++)
 			{
-				memcpy(pTemp + cursor, separator, separatorTotalSize);
+				memcpy((wchar_t*)result.pData + cursor, separator, separatorTotalSize);
 				cursor += separatorSize;
 
-				copyString(pTemp + cursor, strings.at(i));
+				copyString((wchar_t*)result.pData + cursor, strings.at(i));
 				cursor += strings.at(i).size;
 			}
-
-			pTemp[resultSize] = L'\0';
-			StringBuffer result = pTemp;
-			free(pTemp);
 
 			return result;
 		}

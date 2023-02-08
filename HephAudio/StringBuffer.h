@@ -18,6 +18,8 @@ namespace HephAudio
 		size_t charSize;
 		size_t size;
 		char* pData;
+	private:
+		StringBuffer(size_t size, size_t charSize);
 	public:
 		StringBuffer();
 		StringBuffer(const char& c);
@@ -46,6 +48,8 @@ namespace HephAudio
 		StringBuffer& operator+=(const char* const& rhs);
 		StringBuffer& operator+=(const wchar_t* const& rhs);
 		StringBuffer& operator+=(const StringBuffer& rhs);
+		StringBuffer operator*(const uint32_t& rhs) const;
+		StringBuffer& operator*=(const uint32_t& rhs);
 		bool operator==(const char& rhs) const;
 		bool operator==(const wchar_t& rhs) const;
 		bool operator==(const char* const& rhs) const;

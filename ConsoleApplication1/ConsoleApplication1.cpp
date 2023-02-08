@@ -47,7 +47,7 @@ int main()
 }
 void OnException(AudioException ex, AudioExceptionThread t)
 {
-	std::string str = ("[" + AudioExceptionThreadName(t) + "] " + (wchar_t*)ex).fc_str();
+	std::string str = ("[" + AudioExceptionThreadName(t) + "] " + (char*)ex).fc_str();
 	size_t pos = str.find('\n', 0);
 	str.insert(pos + 1, 21, ' ');
 	pos = str.find('\n', pos + 1);
