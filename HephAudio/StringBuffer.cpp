@@ -677,6 +677,11 @@ namespace HephAudio
 			throw AudioException(E_INVALIDARG, L"StringBuffer::SubString", L"Index out of bounds.");
 		}
 
+		if (startIndex + size > this->size)
+		{
+			size = this->size - startIndex;
+		}
+
 		StringBuffer subString = StringBuffer(size, this->charSize);
 		const size_t subStringTotalSize = subString.TotalSize();
 
@@ -881,7 +886,7 @@ namespace HephAudio
 			throw AudioException(E_INVALIDARG, L"StringBuffer::RemoveAt", L"Index out of bounds.");
 		}
 
-		if (index + size >= this->size)
+		if (index + size > this->size)
 		{
 			size = this->size - index;
 		}
@@ -911,6 +916,44 @@ namespace HephAudio
 		free(this->pData);
 		this->pData = tempPtr;
 	}
+	void StringBuffer::Remove(const char& c)
+	{
+		char buffer[2] = { c, '\0' };
+		return this->Remove(buffer);
+	}
+	void StringBuffer::Remove(const wchar_t& wc)
+	{
+		wchar_t buffer[2] = { wc, L'\0' };
+		return this->Remove(buffer);
+	}
+	void StringBuffer::Remove(const char* const& str)
+	{
+		const size_t index = this->Find(str);
+		if (index != StringBuffer::npos)
+		{
+			this->RemoveAt(index, strlen(str));
+		}
+	}
+	void StringBuffer::Remove(const wchar_t* const& wstr)
+	{
+		const size_t index = this->Find(wstr);
+		if (index != StringBuffer::npos)
+		{
+			this->RemoveAt(index, wcslen(wstr));
+		}
+	}
+	void StringBuffer::Remove(const StringBuffer& str)
+	{
+		if (str.charSize == sizeof(char))
+		{
+			this->Remove(str.c_str());
+		}
+		else
+		{
+			this->Remove(str.wc_str());
+		}
+	}
+
 	void StringBuffer::ReplaceAt(size_t index, const char& c)
 	{
 		char buffer[2] = { c, '\0' };
@@ -1008,43 +1051,6 @@ namespace HephAudio
 		else
 		{
 			this->ReplaceAt(index, str.wc_str());
-		}
-	}
-	void StringBuffer::Remove(const char& c)
-	{
-		char buffer[2] = { c, '\0' };
-		return this->Remove(buffer);
-	}
-	void StringBuffer::Remove(const wchar_t& wc)
-	{
-		wchar_t buffer[2] = { wc, L'\0' };
-		return this->Remove(buffer);
-	}
-	void StringBuffer::Remove(const char* const& str)
-	{
-		const size_t index = this->Find(str);
-		if (index != StringBuffer::npos)
-		{
-			this->RemoveAt(index, strlen(str));
-		}
-	}
-	void StringBuffer::Remove(const wchar_t* const& wstr)
-	{
-		const size_t index = this->Find(wstr);
-		if (index != StringBuffer::npos)
-		{
-			this->RemoveAt(index, wcslen(wstr));
-		}
-	}
-	void StringBuffer::Remove(const StringBuffer& str)
-	{
-		if (str.charSize == sizeof(char))
-		{
-			this->Remove(str.c_str());
-		}
-		else
-		{
-			this->Remove(str.wc_str());
 		}
 	}
 	void StringBuffer::Clear()
