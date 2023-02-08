@@ -105,7 +105,7 @@ namespace HephAudio
 			virtual size_t GetAOCountToMix() const;
 			virtual double GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const;
 		};
-#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio != nullptr && pNativeAudio->OnException != nullptr) { pNativeAudio->OnException(audioException, pNativeAudio->GetCurrentThread()); }
+#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio != nullptr && pNativeAudio->OnException != nullptr) { HEPHAUDIO_LOG_LINE((char*)('[' + AudioExceptionThreadName(pNativeAudio->GetCurrentThread()) + "] " + audioException.ToString(StringType::Normal)), ConsoleLogger::error);  pNativeAudio->OnException(audioException, pNativeAudio->GetCurrentThread()); }
 		StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t);
 	}
 }

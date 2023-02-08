@@ -1,6 +1,8 @@
 #ifdef __ANDROID__
 #include "AndroidAudioSLES.h"
 #include "AudioProcessor.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 
 #define ANDROIDAUDIO_EXCPT(slres, androidAudio, method, message) if(slres != 0) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(slres, method, message)); throw AudioException(slres, method, message); }
 #define ANDROIDAUDIO_RENDER_THREAD_EXCPT(slres, androidAudio, method, message) if(slres != 0) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(slres, method, message)); goto RENDER_EXIT; }

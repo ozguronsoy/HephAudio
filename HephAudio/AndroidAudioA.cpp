@@ -1,6 +1,8 @@
 #ifdef __ANDROID__
 #include "AndroidAudioA.h"
 #include "AudioProcessor.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 
 #define ANDROIDAUDIO_EXCPT(ares, androidAudio, method, message) if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(ares, method, message)); throw AudioException(ares, method, message); }
 #define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ares, androidAudio, method, message) if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(ares, method, message)); goto RENDER_EXIT; }

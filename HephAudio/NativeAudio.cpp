@@ -1,6 +1,8 @@
 #include "NativeAudio.h"
 #include "AudioProcessor.h"
 #include "AudioFormats.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 
 namespace HephAudio
 {
