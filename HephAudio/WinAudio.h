@@ -81,7 +81,7 @@ namespace HephAudio
 			virtual void SetDisplayName(StringBuffer displayName);
 			virtual void SetIconPath(StringBuffer iconPath);
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
-			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const;
+			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
 		protected:
 			virtual UINT32 GetRenderBufferSize() const;
 			virtual void RenderData();

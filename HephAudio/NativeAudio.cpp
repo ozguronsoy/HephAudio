@@ -318,7 +318,7 @@ namespace HephAudio
 		}
 		AudioDevice NativeAudio::GetAudioDeviceById(StringBuffer deviceId) const
 		{
-			std::vector<AudioDevice> devices = GetAudioDevices(AudioDeviceType::All, true);
+			std::vector<AudioDevice> devices = GetAudioDevices(AudioDeviceType::All);
 			for (size_t i = 0; i < devices.size(); i++)
 			{
 				if (devices.at(i).id == deviceId)

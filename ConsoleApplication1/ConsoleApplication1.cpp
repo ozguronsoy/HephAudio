@@ -31,11 +31,9 @@ int main()
 	};
 	audio->Queue("My Queue", 250.0, queue);
 
-
 	std::string a;
 	std::cin >> a;
 	audio->Skip(3, "My Queue", false);
-
 
 	std::cin >> a;
 	delete audio;

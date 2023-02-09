@@ -475,7 +475,7 @@ namespace HephAudio
 			
 			return defaultDevice;
 		}
-		std::vector<AudioDevice> WinAudio::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
+		std::vector<AudioDevice> WinAudio::GetAudioDevices(AudioDeviceType deviceType) const
 		{
 			if (disposing) { return { }; }
 
@@ -493,13 +493,8 @@ namespace HephAudio
 			ComPtr<IMMDevice> pDefaultCapture = nullptr;
 			LPWSTR defaultRenderId = nullptr;
 			LPWSTR defaultCaptureId = nullptr;
-			uint32_t deviceState = DEVICE_STATE_ACTIVE;
 
-			if (includeInactive)
-			{
-				deviceState = DEVICE_STATE_ACTIVE | DEVICE_STATE_DISABLED | DEVICE_STATE_UNPLUGGED;
-			}
-			WINAUDIO_EXCPT(pEnumerator->EnumAudioEndpoints(dataFlow, deviceState, &pCollection), this, "WinAudio::GetAudioDevices", "An error occurred whilst enumerating the devices.");
+			WINAUDIO_EXCPT(pEnumerator->EnumAudioEndpoints(dataFlow, DEVICE_STATE_ACTIVE, &pCollection), this, "WinAudio::GetAudioDevices", "An error occurred whilst enumerating the devices.");
 
 			if ((deviceType & AudioDeviceType::Render) == AudioDeviceType::Render) // Get default render devices id, we will use it later to identify the default render device.
 			{

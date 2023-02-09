@@ -33,7 +33,7 @@ namespace HephAudio
 		}
 		AudioDevice AndroidAudioBase::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 		{
-			std::vector<AudioDevice> audioDevices = GetAudioDevices(deviceType, false);
+			std::vector<AudioDevice> audioDevices = GetAudioDevices(deviceType);
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
 				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
@@ -43,7 +43,7 @@ namespace HephAudio
 			}
 			return AudioDevice();
 		}
-		std::vector<AudioDevice> AndroidAudioBase::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
+		std::vector<AudioDevice> AndroidAudioBase::GetAudioDevices(AudioDeviceType deviceType) const
 		{
 			std::vector<AudioDevice> result;
 			if (deviceType == AudioDeviceType::Null)

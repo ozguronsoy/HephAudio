@@ -247,7 +247,7 @@ namespace HephAudio
 
 			return AudioDevice();
 		}
-		std::vector<AudioDevice> WinAudioDS::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
+		std::vector<AudioDevice> WinAudioDS::GetAudioDevices(AudioDeviceType deviceType) const
 		{
 			std::vector<AudioDevice> result;
 
@@ -276,22 +276,20 @@ namespace HephAudio
 		}
 		void WinAudioDS::EnumerateAudioDevices()
 		{
-			constexpr uint32_t period = 250; // In ms.
-			auto start = std::chrono::high_resolution_clock::now();
-			auto deltaTime = std::chrono::milliseconds(0);
+			constexpr double period = 250.0; // In ms.
+			StopWatch::Start();
+			double deltaTime = 0.0;
 			HRESULT hres;
 
 			while (!disposing)
 			{
-				deltaTime = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - start);
+				deltaTime = StopWatch::DeltaTime(StopWatch::milli);
 
-				if (deltaTime >= std::chrono::milliseconds(period))
+				if (deltaTime >= period)
 				{
 					std::vector<AudioDevice> oldDevices = audioDevices;
 					AudioDevice oldDefaultRender = GetDefaultAudioDevice(AudioDeviceType::Render);
 					AudioDevice oldDefaultCapture = GetDefaultAudioDevice(AudioDeviceType::Capture);
-
-					start = std::chrono::high_resolution_clock::now();
 
 					audioDevices.clear();
 					
@@ -359,7 +357,7 @@ namespace HephAudio
 					REMOVE_BREAK:;
 					}
 
-					start = std::chrono::high_resolution_clock::now();
+					StopWatch::Reset();
 				}
 			}
 		}

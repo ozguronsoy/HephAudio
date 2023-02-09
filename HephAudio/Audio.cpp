@@ -217,9 +217,9 @@ namespace HephAudio
 	{
 		return pNativeAudio->GetDefaultAudioDevice(deviceType);
 	}
-	std::vector<AudioDevice> Audio::GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const
+	std::vector<AudioDevice> Audio::GetAudioDevices(AudioDeviceType deviceType) const
 	{
-		return pNativeAudio->GetAudioDevices(deviceType, includeInactive);
+		return pNativeAudio->GetAudioDevices(deviceType);
 	}
 #endif
 	bool Audio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)

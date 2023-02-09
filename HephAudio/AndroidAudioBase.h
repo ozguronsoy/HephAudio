@@ -23,7 +23,7 @@ namespace HephAudio
 			AndroidAudioBase& operator=(const AndroidAudioBase&) = delete;
 			virtual ~AndroidAudioBase();
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const override;
-			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType, bool includeInactive) const override;
+			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const override;
 		protected:
 			virtual void JoinDeviceThread();
 			virtual void EnumerateAudioDevices(JNIEnv* env);
