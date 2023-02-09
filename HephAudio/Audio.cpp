@@ -94,9 +94,9 @@ namespace HephAudio
 	{
 		return pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, uint32_t queueDelay, std::vector<StringBuffer> filePaths)
+	void Audio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
 	{
-		return pNativeAudio->Queue(queueName, queueDelay, filePaths);
+		pNativeAudio->Queue(queueName, queueDelay, filePaths);
 	}
 	std::shared_ptr<AudioObject> Audio::Load(StringBuffer filePath)
 	{

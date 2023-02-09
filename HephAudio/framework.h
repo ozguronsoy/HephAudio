@@ -38,7 +38,7 @@
 #define WAVE_FORMAT_HEPHAUDIO 37
 #endif
 
-#ifdef HEPHAUDIO_PERFORMANCE_LOGGING
+#ifdef HEPHAUDIO_INFO_LOGGING
 #define HEPHAUDIO_STOPWATCH_START StopWatch::Start()
 #define HEPHAUDIO_STOPWATCH_RESET StopWatch::Reset()
 #define HEPHAUDIO_STOPWATCH_DT(prefix) StopWatch::DeltaTime(prefix)

@@ -23,8 +23,6 @@ namespace HephAudio
 	{
 		WinAudioDS::WinAudioDS() : NativeAudio()
 		{
-			HEPHAUDIO_STOPWATCH_START;
-
 			CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
 			pDirectSound = nullptr;

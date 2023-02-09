@@ -10,20 +10,22 @@ namespace HephAudio
 	{
 		NativeAudio::NativeAudio()
 		{
+			HEPHAUDIO_STOPWATCH_START;
+
 			AudioFormatInfo defaultFormat = AudioFormatInfo(1, 2, 16, 48000);
 			audioObjects = std::vector<std::shared_ptr<AudioObject>>(0);
 			categories = Categories(0);
 			mainThreadId = std::this_thread::get_id();
-			renderDeviceId = L"";
-			captureDeviceId = L"";
+			renderDeviceId = "";
+			captureDeviceId = "";
 			renderFormat = defaultFormat;
 			captureFormat = defaultFormat;
 			disposing = false;
 			isRenderInitialized = false;
 			isCaptureInitialized = false;
 			isCapturePaused = false;
-			displayName = L"";
-			iconPath = L"";
+			displayName = "";
+			iconPath = "";
 			OnException = nullptr;
 			OnDefaultAudioDeviceChange = nullptr;
 			OnAudioDeviceAdded = nullptr;
@@ -46,13 +48,17 @@ namespace HephAudio
 		{
 			try
 			{
+				HEPHAUDIO_LOG_LINE("Playing \"" + AudioFile::GetFileName(filePath) + "\"", ConsoleLogger::info);
+
 				AudioFile audioFile(filePath);
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+
 				if (format == nullptr)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"NativeAudio::Play", L"File format '" + audioFile.Extension() + L"' not supported."));
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.Extension() + "' is not supported."));
 					return nullptr;
 				}
+
 				std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
 				ao->filePath = filePath;
 				ao->name = audioFile.Name();
@@ -60,6 +66,7 @@ namespace HephAudio
 				ao->loopCount = loopCount;
 				ao->pause = isPaused;
 				audioObjects.push_back(ao);
+
 				return ao;
 			}
 			catch (AudioException ex)
@@ -68,47 +75,66 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, uint32_t queueDelay, std::vector<StringBuffer> filePaths)
+		void NativeAudio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
 		{
-			if (queueName == L"")
+			HEPHAUDIO_STOPWATCH_RESET;
+			HEPHAUDIO_LOG_LINE("Adding files to the queue: " + queueName, ConsoleLogger::info);
+
+			if (queueName.CompareContent(""))
 			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"NativeAudio::Queue", L"Queue name must not be empty."));
-				return std::vector<std::shared_ptr<AudioObject>>(0);
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::Queue", "Queue name must not be empty."));
+				return;
 			}
-			std::vector<std::shared_ptr<AudioObject>> objects;
+
 			const size_t currentQueueSize = GetQueue(queueName).size();
 			size_t failedCount = 0;
+
 			for (size_t i = 0; i < filePaths.size(); i++)
 			{
-				std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
-				ao->filePath = filePaths.at(i);
-				ao->name = AudioFile::GetFileName(filePaths.at(i));
-				ao->queueName = queueName;
-				ao->queueIndex = i + currentQueueSize - failedCount;
-				ao->queueDelay = queueDelay;
-				if (ao->queueIndex == 0)
+				if (AudioFile::FileExists(filePaths.at(i)))
 				{
-					try
+					std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
+					ao->filePath = filePaths.at(i);
+					ao->name = AudioFile::GetFileName(filePaths.at(i));
+					ao->queueName = queueName;
+					ao->queueIndex = i + currentQueueSize - failedCount;
+					ao->queueDelay = queueDelay;
+
+					if (ao->queueIndex == 0)
 					{
-						AudioFile audioFile(filePaths.at(i));
-						Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
-						if (format == nullptr)
+						try
 						{
-							throw AudioException(E_INVALIDARG, L"NativeAudio::Play", L"File format '" + audioFile.Extension() + L"' not supported.");
+							AudioFile audioFile(filePaths.at(i));
+							Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+							if (format == nullptr)
+							{
+								throw AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.Extension() + "' is not supported.");
+							}
+							ao->buffer = format->ReadFile(audioFile);
 						}
-						ao->buffer = format->ReadFile(audioFile);
+						catch (AudioException ex)
+						{
+							RAISE_AUDIO_EXCPT(this, ex);
+							failedCount++;
+
+							HEPHAUDIO_LOG_LINE("Failed to add the file \"" + ao->name + "\" to the queue: " + queueName, ConsoleLogger::warning);
+
+							continue;
+						}
+
 					}
-					catch (AudioException ex)
-					{
-						RAISE_AUDIO_EXCPT(this, ex);
-						failedCount++;
-						continue;
-					}
+
+					audioObjects.push_back(ao);
+
+					HEPHAUDIO_LOG_LINE("The file \"" + ao->name + "\" is successfully added to the queue: " + queueName, ConsoleLogger::info);
 				}
-				audioObjects.push_back(ao);
-				objects.push_back(ao);
+				else
+				{
+					failedCount++;
+
+					HEPHAUDIO_LOG_LINE("Failed to add the file \"" + AudioFile::GetFileName(filePaths.at(i)) + "\" to the queue: " + queueName, ConsoleLogger::warning);
+				}
 			}
-			return objects;
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Load(StringBuffer filePath)
 		{
@@ -159,9 +185,10 @@ namespace HephAudio
 		{
 			if (position < 0.0 || position > 1.0)
 			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"NativeAudio::SetAOPosition", L"position must be between 0 and 1."));
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::SetAOPosition", "position must be between 0 and 1."));
 				return;
 			}
+
 			if (AOExists(audioObject))
 			{
 				audioObject->frameIndex = audioObject->buffer.FrameCount() * position;
@@ -241,33 +268,43 @@ namespace HephAudio
 		void NativeAudio::Skip(size_t skipCount, StringBuffer queueName, bool applyDelay)
 		{
 			if (skipCount == 0) { return; }
+
 			std::vector<std::shared_ptr<AudioObject>> queue = GetQueue(queueName);
+
 			if (queue.size() <= skipCount) // Skip all queue.
 			{
 				for (size_t i = 0; i < queue.size(); i++)
 				{
+					HEPHAUDIO_LOG_LINE("Skipped the file: \"" + queue.at(i)->name + "\"", ConsoleLogger::info);
+
 					DestroyAO(queue.at(i));
 				}
 			}
 			else
 			{
 				uint32_t queueDelay = 0u;
+
 				for (size_t i = 0; i < skipCount; i++)
 				{
+					HEPHAUDIO_LOG_LINE("Skipped the file \"" + queue.at(i)->name + "\"", ConsoleLogger::info);
+
 					std::shared_ptr<AudioObject> qao = queue.at(i);
+
 					if (qao->queueIndex == 0)
 					{
 						queueDelay = qao->queueDelay;
 					}
+
 					DestroyAO(queue.at(i));
 				}
+
 				if (applyDelay && queueDelay > 0)
 				{
 					queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay, skipCount));
 				}
 				else
 				{
-					PlayNextInQueue(queueName, queueDelay, skipCount);
+					PlayNextInQueue(queueName, 0, skipCount);
 				}
 			}
 		}
@@ -306,12 +343,15 @@ namespace HephAudio
 				AudioProcessor::ConvertSampleRate(buffer, targetFormat.sampleRate);
 				AudioProcessor::ConvertBPS(buffer, targetFormat.bitsPerSample);
 				AudioProcessor::ConvertChannels(buffer, targetFormat.channelCount);
+
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
+
 				if (format == nullptr)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"NativeAudio::SaveToFile", L"File format '" + AudioFile::GetFileExtension(filePath) + L"' not supported."));
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::SaveToFile", "File format '" + AudioFile::GetFileExtension(filePath) + L"' is not supported."));
 					return false;
 				}
+
 				return format->SaveToFile(filePath, buffer, overwrite);
 			}
 			catch (AudioException ex)
@@ -347,6 +387,7 @@ namespace HephAudio
 		AudioExceptionThread NativeAudio::GetCurrentThread() const
 		{
 			std::thread::id currentThreadId = std::this_thread::get_id();
+
 			if (currentThreadId == mainThreadId)
 			{
 				return AudioExceptionThread::MainThread;
@@ -359,6 +400,7 @@ namespace HephAudio
 			{
 				return AudioExceptionThread::CaptureThread;
 			}
+
 			for (size_t i = 0; i < queueThreads.size(); i++)
 			{
 				if (currentThreadId == queueThreads.at(i).get_id())
@@ -366,12 +408,14 @@ namespace HephAudio
 					return AudioExceptionThread::QueueThread;
 				}
 			}
+
 			return AudioExceptionThread::Other;
 		}
 		std::vector<std::shared_ptr<AudioObject>> NativeAudio::GetQueue(StringBuffer queueName) const
 		{
 			std::vector<std::shared_ptr<AudioObject>> queue = std::vector<std::shared_ptr<AudioObject>>(0);
-			if (queueName != L"")
+
+			if (!queueName.CompareContent(""))
 			{
 				for (size_t i = 0; i < audioObjects.size(); i++)
 				{
@@ -382,78 +426,94 @@ namespace HephAudio
 					}
 				}
 			}
+
 			return queue;
 		}
-		void NativeAudio::PlayNextInQueue(StringBuffer queueName, uint32_t queueDelay, uint32_t decreaseQueueIndex)
+		void NativeAudio::PlayNextInQueue(StringBuffer queueName, double queueDelay, uint32_t decreaseQueueIndex)
 		{
-			if (queueName != L"")
+			if (!queueName.CompareContent(""))
 			{
 				std::vector<std::shared_ptr<AudioObject>> queue = GetQueue(queueName);
+
 				if (queue.size() > 0 && queueDelay > 0)
 				{
-					auto start = std::chrono::high_resolution_clock::now();
-					auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - start);
-					while (deltaTime < std::chrono::milliseconds(queueDelay))
+					StopWatch::Reset();
+					auto deltaTime = 0.0;
+
+					while (!disposing && deltaTime < queueDelay)
 					{
-						if (disposing)
-						{
-							return;
-						}
-						deltaTime = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::high_resolution_clock::now() - start);
+						deltaTime = StopWatch::DeltaTime(StopWatch::milli);
 					}
 				}
-				for (size_t i = 0; i < queue.size(); i++)
+
+				if (!disposing)
 				{
-					std::shared_ptr<AudioObject> qao = queue.at(i);
-					if (qao->queueIndex < decreaseQueueIndex)
+					for (size_t i = 0; i < queue.size(); i++)
 					{
-						RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"NativeAudio", L"Queue is empty."));
-						return;
-					}
-					if (qao->queueIndex == decreaseQueueIndex)
-					{
-						try
+						std::shared_ptr<AudioObject> qao = queue.at(i);
+
+						if (qao->queueIndex < decreaseQueueIndex)
 						{
-							AudioFile audioFile(qao->filePath);
-							Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
-							if (format == nullptr)
+							RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio", "Queue is empty."));
+							return;
+						}
+
+						if (qao->queueIndex == decreaseQueueIndex)
+						{
+							try
 							{
-								RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, L"NativeAudio", L"File format '" + audioFile.Extension() + L"' not supported."));
-								return;
+								HEPHAUDIO_LOG_LINE("Playing the next file \"" + qao->name + "\" in queue: " + qao->queueName, ConsoleLogger::info);
+
+								AudioFile audioFile(qao->filePath);
+								Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+
+								if (format == nullptr)
+								{
+									RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio", "File format '" + audioFile.Extension() + "' is not supported."));
+									return;
+								}
+
+								qao->buffer = format->ReadFile(audioFile);
 							}
-							qao->buffer = format->ReadFile(audioFile);
+							catch (AudioException ex)
+							{
+								RAISE_AUDIO_EXCPT(this, ex);
+							}
 						}
-						catch (AudioException ex)
-						{
-							RAISE_AUDIO_EXCPT(this, ex);
-						}
+
+						qao->queueIndex -= decreaseQueueIndex;
 					}
-					qao->queueIndex -= decreaseQueueIndex;
 				}
 			}
 		}
 		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
 			const double aoFactor = 1.0 / GetAOCountToMix();
+
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
 				std::shared_ptr<AudioObject> audioObject = audioObjects.at(i);
+
 				if (audioObject->IsPlaying())
 				{
 					const double volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
 					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
 					size_t frameIndex = 0;
+
 					if (audioObject->GetSubBuffer == nullptr)
 					{
-						AudioException exception = AudioException(E_INVALIDARG, L"NativeAudio::Mix", L"AudioObject::GetSubBuffer method must not be null, if a custom method is not necessary use the default method.");
+						AudioException exception = AudioException(E_INVALIDARG, "NativeAudio::Mix", "AudioObject::GetSubBuffer method must not be null, if a custom method is not necessary use the default method.");
 						RAISE_AUDIO_EXCPT(this, exception);
 						throw exception;
 					}
+
 					AudioBuffer subBuffer = audioObject->GetSubBuffer(audioObject.get(), nFramesToRead, &frameIndex);
+
 					if (audioObject->OnRender != nullptr)
 					{
 						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex, frameCount);
 					}
+
 					for (size_t j = 0; j < frameCount && j < subBuffer.FrameCount(); j++)
 					{
 						for (size_t k = 0; k < renderFormat.channelCount; k++)
@@ -461,26 +521,40 @@ namespace HephAudio
 							outputBuffer.Set(outputBuffer.Get(j, k) + subBuffer[j][k] * volume, j, k);
 						}
 					}
+
 					if (!audioObject->constant)
 					{
 						audioObject->frameIndex += nFramesToRead;
+
 						if (audioObject->IsFinishedPlaying == nullptr)
 						{
-							AudioException exception = AudioException(E_INVALIDARG, L"NativeAudio::Mix", L"AudioObject::IsFinishedPlaying method must not be null, if a custom method is not necessary use the default method.");
+							AudioException exception = AudioException(E_INVALIDARG, "NativeAudio::Mix", "AudioObject::IsFinishedPlaying method must not be null, if a custom method is not necessary use the default method.");
 							RAISE_AUDIO_EXCPT(this, exception);
 							throw exception;
 						}
+
 						if (audioObject->IsFinishedPlaying(audioObject.get()))
 						{
 							if (audioObject->loopCount == 1) // Finish playing.
 							{
 								StringBuffer queueName = audioObject->queueName;
 								uint32_t queueDelay = audioObject->queueDelay;
+
 								audioObjects.erase(audioObjects.begin() + i);
 								i--;
-								if (queueName != L"")
+
+								HEPHAUDIO_LOG_LINE("Finished playing the file \"" + audioObject->name + "\"", ConsoleLogger::info);
+
+								if (!queueName.CompareContent(""))
 								{
-									queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay, 1));
+									if (queueDelay > 0)
+									{
+										queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay, 1));
+									}
+									else
+									{
+										PlayNextInQueue(queueName, 0, 1);
+									}
 								}
 							}
 							else
@@ -511,7 +585,9 @@ namespace HephAudio
 		double NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
 		{
 			if (audioObject == nullptr || audioObject->mute) { return 0.0; }
+
 			double result = audioObject->volume;
+
 			for (size_t i = 0; i < categories.size(); i++) // Calculate category volume.
 			{
 				for (size_t j = 0; j < audioObject->categories.size(); j++)

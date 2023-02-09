@@ -61,7 +61,7 @@ namespace HephAudio
 			virtual std::shared_ptr<AudioObject> Play(StringBuffer filePath, bool isPaused);
 			virtual std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount);
 			virtual std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount, bool isPaused);
-			virtual std::vector<std::shared_ptr<AudioObject>> Queue(StringBuffer queueName, uint32_t queueDelay, std::vector<StringBuffer> filePaths);
+			virtual void Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths);
 			virtual std::shared_ptr<AudioObject> Load(StringBuffer filePath);
 			virtual std::shared_ptr<AudioObject> CreateAO(StringBuffer name, size_t bufferFrameCount);
 			virtual bool DestroyAO(std::shared_ptr<AudioObject> audioObject);
@@ -99,7 +99,7 @@ namespace HephAudio
 			virtual void JoinQueueThreads();
 			virtual AudioExceptionThread GetCurrentThread() const;
 			virtual std::vector<std::shared_ptr<AudioObject>> GetQueue(StringBuffer queueName) const;
-			virtual void PlayNextInQueue(StringBuffer queueName, uint32_t queueDelay, uint32_t decreaseQueueIndex);
+			virtual void PlayNextInQueue(StringBuffer queueName, double queueDelay, uint32_t decreaseQueueIndex);
 			// Mixes audio objects that are currently playing into one buffer.
 			virtual void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
 			virtual size_t GetAOCountToMix() const;

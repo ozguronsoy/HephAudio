@@ -66,7 +66,7 @@ namespace HephAudio
 		/// <summary>
 		/// In milliseconds.
 		/// </summary>
-		uint32_t queueDelay;
+		double queueDelay;
 		AudioWindowType windowType;
 		/// <summary>
 		/// Called each time before mixing to get the desired audio data for rendering.

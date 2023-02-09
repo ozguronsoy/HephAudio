@@ -17,29 +17,28 @@ double FVM(double f) { return 0.0; }
 Audio* audio;
 int main()
 {
-	StopWatch::Start();
 	audio = new Audio();
 	audio->SetOnExceptionHandler(OnException);
 
-	StopWatch::Reset();
 	AudioDevice drd = audio->GetDefaultAudioDevice(AudioDeviceType::Render);
 	audio->InitializeRender(&drd, AudioFormatInfo(1, 2, 32, 48000));
 	audio->InitializeCapture(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 
-	std::shared_ptr<AudioObject> pao = audio->Load("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav");
-	pao->OnRender = OnRender;
-	pao->loopCount = 1u;
+	std::vector<StringBuffer> queue = {
+		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\deneme.wav", 
+		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\Fatima.wav", 
+		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\asdf.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\deneme2.wav" 
+	};
+	audio->Queue("My Queue", 250.0, queue);
 
-	//AudioProcessor::HighPassFilter(pao->buffer, 512, 1024, 1000.0, FVM);
-	AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, 1000.0, FVM);
-
-	pao->pause = false;
 
 	std::string a;
 	std::cin >> a;
+	audio->Skip(3, "My Queue", false);
+
+
+	std::cin >> a;
 	delete audio;
-	pao = nullptr;
-	StopWatch::Stop();
 	std::cin >> a;
 
 	return 0;

@@ -190,8 +190,6 @@ namespace HephAudio
 #pragma endregion
 		WinAudio::WinAudio() : NativeAudio()
 		{
-			HEPHAUDIO_STOPWATCH_START;
-
 			if (!IsWindowsVistaOrGreater())
 			{
 				throw AudioException(E_NOINTERFACE, "WinAudio", L"OS version must be at least Windows Vista.");

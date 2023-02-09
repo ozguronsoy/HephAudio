@@ -6,8 +6,8 @@ namespace HephAudio
 {
 	AudioObject::AudioObject()
 	{
-		this->filePath = L"";
-		this->name = L"";
+		this->filePath = "";
+		this->name = "";
 		this->pause = false;
 		this->mute = false;
 		this->constant = false;
@@ -16,9 +16,9 @@ namespace HephAudio
 		this->categories = std::vector<StringBuffer>(0);
 		this->buffer = AudioBuffer();
 		this->frameIndex = 0;
-		this->queueName = L"";
+		this->queueName = "";
 		this->queueIndex = 0;
-		this->queueDelay = 0;
+		this->queueDelay = 0.0;
 		this->windowType = AudioWindowType::RectangleWindow;
 		this->GetSubBuffer = OnGetSubBuffer;
 		this->IsFinishedPlaying = OnIsFinishedPlaying;
@@ -30,7 +30,7 @@ namespace HephAudio
 	}
 	bool AudioObject::IsInQueue() const
 	{
-		return this->queueName != L"" && this->queueIndex > 0;
+		return !this->queueName.CompareContent("") && this->queueIndex > 0;
 	}
 	AudioBuffer AudioObject::OnGetSubBuffer(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex)
 	{
