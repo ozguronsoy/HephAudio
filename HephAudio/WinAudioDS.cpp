@@ -278,14 +278,11 @@ namespace HephAudio
 		{
 			constexpr double period = 250.0; // In ms.
 			StopWatch::Start();
-			double deltaTime = 0.0;
 			HRESULT hres;
 
 			while (!disposing)
 			{
-				deltaTime = StopWatch::DeltaTime(StopWatch::milli);
-
-				if (deltaTime >= period)
+				if (StopWatch::DeltaTime(StopWatch::milli) >= period)
 				{
 					std::vector<AudioDevice> oldDevices = audioDevices;
 					AudioDevice oldDefaultRender = GetDefaultAudioDevice(AudioDeviceType::Render);

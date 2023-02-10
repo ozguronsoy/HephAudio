@@ -144,7 +144,11 @@ namespace HephAudio
 	}
 	StringBuffer AudioFile::GetFileName(StringBuffer filePath)
 	{
+#if defined(__ANDROID__)
+		std::vector<StringBuffer> sfp = filePath.Split('/');
+#else
 		std::vector<StringBuffer> sfp = filePath.Split('\\');
+#endif
 		return sfp.at(sfp.size() - 1);
 	}
 	StringBuffer AudioFile::GetFileExtension(StringBuffer filePath)
