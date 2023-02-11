@@ -2,6 +2,9 @@
 #include "framework.h"
 #include "AudioBuffer.h"
 #include "StringBuffer.h"
+#include "AudioEvent.h"
+#include "AudioRenderEventArgs.h"
+#include "AudioRenderEventResult.h"
 #include <vector>
 
 namespace HephAudio
@@ -27,10 +30,6 @@ namespace HephAudio
 		HannPoissonWindow = 0x10,
 		LanczosWindow = 0x11
 	};
-	struct AudioObject;
-	typedef AudioBuffer(*AudioGetSubBufferEventHandler)(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
-	typedef bool (*AudioIsFinishedPlayingEventHandler)(AudioObject* sender);
-	typedef void (*AudioRenderEventHandler)(AudioObject* sender, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t renderFrameCount);
 	struct AudioObject
 	{
 		StringBuffer filePath;
@@ -69,23 +68,14 @@ namespace HephAudio
 		double queueDelay;
 		AudioWindowType windowType;
 		/// <summary>
-		/// Called each time before mixing to get the desired audio data for rendering.
-		/// </summary>
-		AudioGetSubBufferEventHandler GetSubBuffer;
-		/// <summary>
-		/// Called each time after mixing to check whether the audio object finished rendering all its data.
-		/// </summary>
-		AudioIsFinishedPlayingEventHandler IsFinishedPlaying;
-		/// <summary>
 		/// Called each time before mixing the audio data.
 		/// </summary>
-		AudioRenderEventHandler OnRender;
+		AudioEvent OnRender;
 		AudioObject();
 		virtual ~AudioObject() = default;
 		virtual bool IsPlaying() const;
 		virtual bool IsInQueue() const;
 	private:
-		static AudioBuffer OnGetSubBuffer(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex);
-		static bool OnIsFinishedPlaying(AudioObject* sender);
+		static void OnRenderHandler(AudioEventArgs* pArgs, AudioEventResult* pResult);
 	};
 }

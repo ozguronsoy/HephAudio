@@ -17,25 +17,21 @@ namespace HephAudio
 	{
 		return &pNativeAudio->audioFormats;
 	}
-	void Audio::SetOnExceptionHandler(AudioExceptionEventHandler handler)
+	void Audio::SetOnExceptionHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnException = handler;
+		pNativeAudio->OnException += handler;
 	}
-	void Audio::SetOnDefaultAudioDeviceChangeHandler(AudioDeviceEventHandler handler)
+	void Audio::SetOnAudioDeviceAddedHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnDefaultAudioDeviceChange = handler;
+		pNativeAudio->OnAudioDeviceAdded += handler;
 	}
-	void Audio::SetOnAudioDeviceAddedHandler(AudioDeviceEventHandler handler)
+	void Audio::SetOnAudioDeviceRemovedHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnAudioDeviceAdded = handler;
+		pNativeAudio->OnAudioDeviceRemoved += handler;
 	}
-	void Audio::SetOnAudioDeviceRemovedHandler(AudioDeviceEventHandler handler)
+	void Audio::SetOnCaptureHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnAudioDeviceRemoved = handler;
-	}
-	void Audio::SetOnCaptureHandler(AudioCaptureEventHandler handler)
-	{
-		pNativeAudio->OnCapture = handler;
+		pNativeAudio->OnCapture += handler;
 	}
 #ifdef __ANDROID__
 	Audio::Audio(JavaVM* jvm)
@@ -94,9 +90,9 @@ namespace HephAudio
 	{
 		return pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	void Audio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
 	{
-		pNativeAudio->Queue(queueName, queueDelay, filePaths);
+		return pNativeAudio->Queue(queueName, queueDelay, filePaths);
 	}
 	std::shared_ptr<AudioObject> Audio::Load(StringBuffer filePath)
 	{

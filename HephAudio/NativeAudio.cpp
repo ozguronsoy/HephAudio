@@ -26,11 +26,7 @@ namespace HephAudio
 			isCapturePaused = false;
 			displayName = "";
 			iconPath = "";
-			OnException = nullptr;
-			OnDefaultAudioDeviceChange = nullptr;
-			OnAudioDeviceAdded = nullptr;
-			OnAudioDeviceRemoved = nullptr;
-			OnCapture = nullptr;
+			audioExceptionEventArgs = AudioExceptionEventArgs();
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Play(StringBuffer filePath)
 		{
@@ -75,7 +71,7 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		void NativeAudio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
+		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG_LINE("Adding files to the queue: " + queueName, ConsoleLogger::info);
@@ -83,10 +79,11 @@ namespace HephAudio
 			if (queueName.CompareContent(""))
 			{
 				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::Queue", "Queue name must not be empty."));
-				return;
+				return std::vector<std::shared_ptr<AudioObject>>();
 			}
 
 			const size_t currentQueueSize = GetQueue(queueName).size();
+			std::vector<std::shared_ptr<AudioObject>> queuedAudioObjects = std::vector<std::shared_ptr<AudioObject>>(currentQueueSize);
 			size_t failedCount = 0;
 
 			for (size_t i = 0; i < filePaths.size(); i++)
@@ -125,6 +122,7 @@ namespace HephAudio
 					}
 
 					audioObjects.push_back(ao);
+					queuedAudioObjects.push_back(ao);
 
 					HEPHAUDIO_LOG_LINE("The file \"" + ao->name + "\" is successfully added to the queue: " + queueName, ConsoleLogger::info);
 				}
@@ -135,6 +133,8 @@ namespace HephAudio
 					HEPHAUDIO_LOG_LINE("Failed to add the file \"" + AudioFile::GetFileName(filePaths.at(i)) + "\" to the queue: " + queueName, ConsoleLogger::warning);
 				}
 			}
+
+			return queuedAudioObjects;
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Load(StringBuffer filePath)
 		{
@@ -330,19 +330,36 @@ namespace HephAudio
 		}
 		AudioDevice NativeAudio::GetRenderDevice() const
 		{
-			return GetAudioDeviceById(renderDeviceId);
+			AudioDevice renderDevice = GetAudioDeviceById(renderDeviceId);
+			if (renderDevice.id != renderDeviceId)
+			{
+				renderDevice.id = renderDeviceId;
+				renderDevice.name = renderDevice.description = "REMOVED";
+				renderDevice.type = AudioDeviceType::Render;
+			}
+			return renderDevice;
 		}
 		AudioDevice NativeAudio::GetCaptureDevice() const
 		{
-			return GetAudioDeviceById(captureDeviceId);
+			AudioDevice captureDevice = GetAudioDeviceById(captureDeviceId);
+			if (captureDevice.id != captureDeviceId)
+			{
+				captureDevice.id = captureDeviceId;
+				captureDevice.name = captureDevice.description = "REMOVED";
+				captureDevice.type = AudioDeviceType::Capture;
+			}
+			return captureDevice;
 		}
 		bool NativeAudio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
 		{
 			try
 			{
-				AudioProcessor::ConvertSampleRate(buffer, targetFormat.sampleRate);
-				AudioProcessor::ConvertBPS(buffer, targetFormat.bitsPerSample);
-				AudioProcessor::ConvertChannels(buffer, targetFormat.channelCount);
+				if (buffer.FormatInfo() != targetFormat)
+				{
+					AudioProcessor::ConvertSampleRate(buffer, targetFormat.sampleRate);
+					AudioProcessor::ConvertBPS(buffer, targetFormat.bitsPerSample);
+					AudioProcessor::ConvertChannels(buffer, targetFormat.channelCount);
+				}
 
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
 
@@ -497,43 +514,25 @@ namespace HephAudio
 				if (audioObject->IsPlaying())
 				{
 					const double volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
-					const size_t nFramesToRead = ceil((double)frameCount * (double)audioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
-					size_t frameIndex = 0;
 
-					if (audioObject->GetSubBuffer == nullptr)
+					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, audioObject.get(), frameCount);
+					AudioRenderEventResult rResult;
+					if (audioObject->OnRender)
 					{
-						AudioException exception = AudioException(E_INVALIDARG, "NativeAudio::Mix", "AudioObject::GetSubBuffer method must not be null, if a custom method is not necessary use the default method.");
-						RAISE_AUDIO_EXCPT(this, exception);
-						throw exception;
+						audioObject->OnRender(&rArgs, &rResult);
 					}
 
-					AudioBuffer subBuffer = audioObject->GetSubBuffer(audioObject.get(), nFramesToRead, &frameIndex);
-
-					if (audioObject->OnRender != nullptr)
-					{
-						audioObject->OnRender(audioObject.get(), subBuffer, frameIndex, frameCount);
-					}
-
-					for (size_t j = 0; j < frameCount && j < subBuffer.FrameCount(); j++)
+					for (size_t j = 0; j < frameCount && j < rResult.renderBuffer.FrameCount(); j++)
 					{
 						for (size_t k = 0; k < renderFormat.channelCount; k++)
 						{
-							outputBuffer.Set(outputBuffer.Get(j, k) + subBuffer[j][k] * volume, j, k);
+							outputBuffer.Set(outputBuffer.Get(j, k) + rResult.renderBuffer[j][k] * volume, j, k);
 						}
 					}
 
 					if (!audioObject->constant)
 					{
-						audioObject->frameIndex += nFramesToRead;
-
-						if (audioObject->IsFinishedPlaying == nullptr)
-						{
-							AudioException exception = AudioException(E_INVALIDARG, "NativeAudio::Mix", "AudioObject::IsFinishedPlaying method must not be null, if a custom method is not necessary use the default method.");
-							RAISE_AUDIO_EXCPT(this, exception);
-							throw exception;
-						}
-
-						if (audioObject->IsFinishedPlaying(audioObject.get()))
+						if (rResult.isFinishedPlaying)
 						{
 							if (audioObject->loopCount == 1) // Finish playing.
 							{

@@ -20,9 +20,7 @@ namespace HephAudio
 		this->queueIndex = 0;
 		this->queueDelay = 0.0;
 		this->windowType = AudioWindowType::RectangleWindow;
-		this->GetSubBuffer = OnGetSubBuffer;
-		this->IsFinishedPlaying = OnIsFinishedPlaying;
-		this->OnRender = nullptr;
+		this->OnRender += OnRenderHandler;
 	}
 	bool AudioObject::IsPlaying() const
 	{
@@ -32,72 +30,74 @@ namespace HephAudio
 	{
 		return !this->queueName.CompareContent("") && this->queueIndex > 0;
 	}
-	AudioBuffer AudioObject::OnGetSubBuffer(AudioObject* sender, size_t nFramesToRender, size_t* outFrameIndex)
+	void AudioObject::OnRenderHandler(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	{
-		*outFrameIndex = sender->frameIndex;
-		AudioBuffer subBuffer = sender->buffer.GetSubBuffer(sender->frameIndex, nFramesToRender);
-		switch (sender->windowType)
+		AudioObject* pAudioObject = (AudioObject*)pArgs->pAudioObject;
+		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
+		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+
+		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
+
+		switch (pAudioObject->windowType)
 		{
 		case AudioWindowType::RectangleWindow:
 			break;
 		case AudioWindowType::TriangleWindow:
-			AudioProcessor::ApplyTriangleWindow(subBuffer);
+			AudioProcessor::ApplyTriangleWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::ParzenWindow:
-			AudioProcessor::ApplyParzenWindow(subBuffer);
+			AudioProcessor::ApplyParzenWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::WelchWindow:
-			AudioProcessor::ApplyWelchWindow(subBuffer);
+			AudioProcessor::ApplyWelchWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::SineWindow:
-			AudioProcessor::ApplySineWindow(subBuffer);
+			AudioProcessor::ApplySineWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::HannWindow:
-			AudioProcessor::ApplyHannWindow(subBuffer);
+			AudioProcessor::ApplyHannWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::HammingWindow:
-			AudioProcessor::ApplyHammingWindow(subBuffer);
+			AudioProcessor::ApplyHammingWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::BlackmanWindow:
-			AudioProcessor::ApplyBlackmanWindow(subBuffer);
+			AudioProcessor::ApplyBlackmanWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::ExactBlackmanWindow:
-			AudioProcessor::ApplyExactBlackmanWindow(subBuffer);
+			AudioProcessor::ApplyExactBlackmanWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::NuttallWindow:
-			AudioProcessor::ApplyNuttallWindow(subBuffer);
+			AudioProcessor::ApplyNuttallWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::BlackmanNuttallWindow:
-			AudioProcessor::ApplyBlackmanNuttallWindow(subBuffer);
+			AudioProcessor::ApplyBlackmanNuttallWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::BlackmanHarrisWindow:
-			AudioProcessor::ApplyBlackmanHarrisWindow(subBuffer);
+			AudioProcessor::ApplyBlackmanHarrisWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::FlatTopWindow:
-			AudioProcessor::ApplyFlatTopWindow(subBuffer);
+			AudioProcessor::ApplyFlatTopWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::GaussianWindow:
-			AudioProcessor::ApplyGaussianWindow(subBuffer, 0.4);
+			AudioProcessor::ApplyGaussianWindow(pRenderResult->renderBuffer, 0.4);
 			break;
 		case AudioWindowType::TukeyWindow:
-			AudioProcessor::ApplyTukeyWindow(subBuffer, 0.5);
+			AudioProcessor::ApplyTukeyWindow(pRenderResult->renderBuffer, 0.5);
 			break;
 		case AudioWindowType::BartlettHannWindow:
-			AudioProcessor::ApplyBartlettHannWindow(subBuffer);
+			AudioProcessor::ApplyBartlettHannWindow(pRenderResult->renderBuffer);
 			break;
 		case AudioWindowType::HannPoissonWindow:
-			AudioProcessor::ApplyHannPoissonWindow(subBuffer, 2.0);
+			AudioProcessor::ApplyHannPoissonWindow(pRenderResult->renderBuffer, 2.0);
 			break;
 		case AudioWindowType::LanczosWindow:
-			AudioProcessor::ApplyLanczosWindow(subBuffer);
+			AudioProcessor::ApplyLanczosWindow(pRenderResult->renderBuffer);
 			break;
 		default:
 			break;
 		}
-		return subBuffer;
-	}
-	bool AudioObject::OnIsFinishedPlaying(AudioObject* sender)
-	{
-		return sender->frameIndex >= sender->buffer.FrameCount();
+		
+		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
+		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
 	}
 }

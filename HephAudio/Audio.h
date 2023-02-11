@@ -9,10 +9,6 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		enum class AudioExceptionThread : uint8_t;
-		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
-		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
-		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
 		class NativeAudio;
 	}
 
@@ -22,11 +18,10 @@ namespace HephAudio
 		HephAudio::Native::NativeAudio* pNativeAudio;
 	public:
 		Formats::AudioFormats* GetAudioFormats() const;
-		void SetOnExceptionHandler(HephAudio::Native::AudioExceptionEventHandler handler);
-		void SetOnDefaultAudioDeviceChangeHandler(HephAudio::Native::AudioDeviceEventHandler handler);
-		void SetOnAudioDeviceAddedHandler(HephAudio::Native::AudioDeviceEventHandler handler);
-		void SetOnAudioDeviceRemovedHandler(HephAudio::Native::AudioDeviceEventHandler handler);
-		void SetOnCaptureHandler(HephAudio::Native::AudioCaptureEventHandler handler);
+		void SetOnExceptionHandler(AudioEventHandler handler);
+		void SetOnAudioDeviceAddedHandler(AudioEventHandler handler);
+		void SetOnAudioDeviceRemovedHandler(AudioEventHandler handler);
+		void SetOnCaptureHandler(AudioEventHandler handler);
 	public:
 #ifdef __ANDROID__
 		Audio(JavaVM* jvm);
@@ -41,7 +36,7 @@ namespace HephAudio
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath, bool isPaused);
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount);
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount, bool isPaused);
-		void Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths);
+		std::vector<std::shared_ptr<AudioObject>> Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths);
 		std::shared_ptr<AudioObject> Load(StringBuffer filePath);
 		std::shared_ptr<AudioObject> CreateAO(StringBuffer name, size_t bufferFrameCount);
 		bool DestroyAO(std::shared_ptr<AudioObject> audioObject);

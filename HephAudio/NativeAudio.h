@@ -7,7 +7,10 @@
 #include "AudioFormats.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
-#include "Audio.h"
+#include "AudioEvent.h"
+#include "AudioExceptionEventArgs.h"
+#include "AudioDeviceEventArgs.h"
+#include "AudioCaptureEventArgs.h"
 #include <vector>
 #include <thread>
 
@@ -15,17 +18,6 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		enum class AudioExceptionThread : uint8_t
-		{
-			MainThread = 0x00,
-			RenderThread = 0x01,
-			CaptureThread = 0x02,
-			QueueThread = 0x04,
-			Other = 0xFF
-		};
-		typedef void (*AudioExceptionEventHandler)(AudioException exception, AudioExceptionThread exceptionThread);
-		typedef void (*AudioDeviceEventHandler)(AudioDevice device);
-		typedef void (*AudioCaptureEventHandler)(AudioBuffer& capturedDataBuffer);
 		class NativeAudio
 		{
 		protected:
@@ -45,13 +37,13 @@ namespace HephAudio
 			bool isCapturePaused;
 			StringBuffer displayName;
 			StringBuffer iconPath;
+			mutable AudioExceptionEventArgs audioExceptionEventArgs;
 		public:
 			Formats::AudioFormats audioFormats;
-			AudioExceptionEventHandler OnException;
-			AudioDeviceEventHandler OnDefaultAudioDeviceChange;
-			AudioDeviceEventHandler OnAudioDeviceAdded;
-			AudioDeviceEventHandler OnAudioDeviceRemoved;
-			AudioCaptureEventHandler OnCapture;
+			AudioEvent OnException;
+			AudioEvent OnAudioDeviceAdded;
+			AudioEvent OnAudioDeviceRemoved;
+			AudioEvent OnCapture;
 		public:
 			NativeAudio();
 			NativeAudio(const NativeAudio&) = delete;
@@ -61,7 +53,7 @@ namespace HephAudio
 			virtual std::shared_ptr<AudioObject> Play(StringBuffer filePath, bool isPaused);
 			virtual std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount);
 			virtual std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount, bool isPaused);
-			virtual void Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths);
+			virtual std::vector<std::shared_ptr<AudioObject>> Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths);
 			virtual std::shared_ptr<AudioObject> Load(StringBuffer filePath);
 			virtual std::shared_ptr<AudioObject> CreateAO(StringBuffer name, size_t bufferFrameCount);
 			virtual bool DestroyAO(std::shared_ptr<AudioObject> audioObject);
@@ -105,7 +97,7 @@ namespace HephAudio
 			virtual size_t GetAOCountToMix() const;
 			virtual double GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const;
 		};
-#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio != nullptr && pNativeAudio->OnException != nullptr) { HEPHAUDIO_LOG_LINE((char*)('[' + AudioExceptionThreadName(pNativeAudio->GetCurrentThread()) + "] " + audioException.ToString(StringType::Normal)), ConsoleLogger::error);  pNativeAudio->OnException(audioException, pNativeAudio->GetCurrentThread()); }
+#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio->OnException) { pNativeAudio->audioExceptionEventArgs = AudioExceptionEventArgs(pNativeAudio, audioException, pNativeAudio->GetCurrentThread()); pNativeAudio->OnException(&pNativeAudio->audioExceptionEventArgs, nullptr); }
 		StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t);
 	}
 }

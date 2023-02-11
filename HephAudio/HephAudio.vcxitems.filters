@@ -31,6 +31,21 @@
     <Filter Include="Header Files\Buffers">
       <UniqueIdentifier>{4df69e4e-064b-41d4-abfc-05786bf33ed0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Events">
+      <UniqueIdentifier>{242ac56b-00c4-4282-ba24-06be01d4bd40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{b3bf1938-9041-43a1-b499-f657218be0f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Events\Args">
+      <UniqueIdentifier>{21cab1f0-6e19-48e2-9eec-7c21178e4bc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Events\Args">
+      <UniqueIdentifier>{88dd4d2d-b3d2-4ebf-bf4d-f893a15cf28e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Events\Results">
+      <UniqueIdentifier>{fee30d6f-5a01-4043-9a4d-bff499127af7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h">
@@ -123,6 +138,30 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
       <Filter>Header Files\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEvent.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventResult.h">
+      <Filter>Header Files\Events\Results</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h">
+      <Filter>Header Files\Events\Results</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioExceptionEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -205,6 +244,24 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp">
       <Filter>Source Files\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEvent.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioExceptionEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
