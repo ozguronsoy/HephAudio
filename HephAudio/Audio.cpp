@@ -118,6 +118,14 @@ namespace HephAudio
 	{
 		return pNativeAudio->GetAOPosition(audioObject);
 	}
+	std::shared_ptr<AudioObject> Audio::GetAO(StringBuffer aoName) const
+	{
+		return pNativeAudio->GetAO(aoName);
+	}
+	std::shared_ptr<AudioObject> Audio::GetAO(StringBuffer queueName, size_t index) const
+	{
+		return pNativeAudio->GetAO(queueName, index);
+	}
 	void Audio::PauseCapture(bool pause)
 	{
 		pNativeAudio->PauseCapture(pause);

@@ -262,6 +262,8 @@ namespace HephAudio
 				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
 			}
 
+			memcpy(tempPtr, this->pComplexData, this->Size());
+
 			memcpy((uint8_t*)tempPtr + this->Size(), buffer.pComplexData, buffer.Size());
 
 			free(this->pComplexData);

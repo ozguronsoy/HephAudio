@@ -523,15 +523,15 @@ namespace HephAudio
 	}
 	bool StringBuffer::operator==(const char* const& rhs) const
 	{
-		return this->charSize == sizeof(char) && strncmp(this->pData, rhs, this->size) == 0;
+		return rhs != nullptr && this->charSize == sizeof(char) && this->size == strlen(rhs) && strncmp(this->pData, rhs, this->size) == 0;
 	}
 	bool StringBuffer::operator==(const wchar_t* const& rhs) const
 	{
-		return this->charSize == sizeof(wchar_t) && wcsncmp((wchar_t*)this->pData, (wchar_t*)rhs, this->size) == 0;
+		return rhs != nullptr && this->charSize == sizeof(wchar_t) && this->size == wcslen(rhs) && wcsncmp((wchar_t*)this->pData, rhs, this->size) == 0;
 	}
 	bool StringBuffer::operator==(const StringBuffer& rhs) const
 	{
-		return this->charSize == rhs.charSize && this->size == rhs.size && memcmp(this->pData, rhs.pData, this->TotalSize()) == 0;
+		return rhs.charSize == sizeof(char) ? this->operator==(rhs.c_str()) : this->operator==(rhs.wc_str());
 	}
 	bool StringBuffer::operator!=(const char& rhs) const
 	{
@@ -545,15 +545,15 @@ namespace HephAudio
 	}
 	bool StringBuffer::operator!=(const char* const& rhs) const
 	{
-		return this->charSize != sizeof(char) || strncmp(this->pData, rhs, this->size) != 0;
+		return rhs == nullptr || this->charSize != sizeof(char) || this->size != strlen(rhs) || strncmp(this->pData, rhs, this->size) != 0;
 	}
 	bool StringBuffer::operator!=(const wchar_t* const& rhs) const
 	{
-		return this->charSize != sizeof(wchar_t) || wcsncmp((wchar_t*)this->pData, (wchar_t*)rhs, this->size) != 0;
+		return rhs == nullptr || this->charSize != sizeof(wchar_t) || this->size != wcslen(rhs) || wcsncmp((wchar_t*)this->pData, (wchar_t*)rhs, this->size) != 0;
 	}
 	bool StringBuffer::operator!=(const StringBuffer& rhs) const
 	{
-		return this->charSize != rhs.charSize || this->size != rhs.size || memcmp(this->pData, rhs.pData, this->TotalSize()) != 0;
+		return rhs.charSize == sizeof(char) ? this->operator!=(rhs.c_str()) : this->operator!=(rhs.wc_str());
 	}
 	char* StringBuffer::c_str() const
 	{
@@ -1313,6 +1313,12 @@ namespace HephAudio
 	{
 		uint64_t number = 0;
 		sscanf(string.fc_str(), "%llu", &number);
+		return number;
+	}
+	double StringBuffer::StringToDouble(StringBuffer string)
+	{
+		double number = 0;
+		sscanf(string.fc_str(), "%lf", &number);
 		return number;
 	}
 	int16_t StringBuffer::HexStringToI16(StringBuffer hexString)

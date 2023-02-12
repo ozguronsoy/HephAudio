@@ -337,6 +337,8 @@ namespace HephAudio
 				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
 			}
 
+			memcpy(tempPtr, this->pAudioData, this->Size());
+
 			// ensure both buffers have the same format.
 			AudioBuffer tempBuffer = buffer;
 			tempBuffer.SetFormat(this->formatInfo);

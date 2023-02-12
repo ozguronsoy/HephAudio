@@ -43,6 +43,8 @@ namespace HephAudio
 		bool AOExists(std::shared_ptr<AudioObject> audioObject) const;
 		void SetAOPosition(std::shared_ptr<AudioObject> audioObject, double position);
 		double GetAOPosition(std::shared_ptr<AudioObject> audioObject) const;
+		std::shared_ptr<AudioObject> GetAO(StringBuffer aoName) const;
+		std::shared_ptr<AudioObject> GetAO(StringBuffer queueName, size_t index) const;
 		void PauseCapture(bool pause);
 		bool IsCapturePaused() const noexcept;
 		void SetMasterVolume(double volume);

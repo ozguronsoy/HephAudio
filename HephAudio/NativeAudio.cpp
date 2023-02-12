@@ -202,6 +202,33 @@ namespace HephAudio
 			}
 			return -1.0;
 		}
+		std::shared_ptr<AudioObject> NativeAudio::GetAO(StringBuffer aoName) const
+		{
+			for (size_t i = 0; i < audioObjects.size(); i++)
+			{
+				if (audioObjects.at(i)->name == aoName)
+				{
+					return audioObjects.at(i);
+				}
+			}
+			return nullptr;
+		}
+		std::shared_ptr<AudioObject> NativeAudio::GetAO(StringBuffer queueName, size_t index) const
+		{
+			size_t count = 0;
+			for (size_t i = 0; i < audioObjects.size(); i++)
+			{
+				if (audioObjects.at(i)->queueName == queueName)
+				{
+					if (count == index)
+					{
+						return audioObjects.at(i);
+					}
+					count++;
+				}
+			}
+			return nullptr;
+		}
 		void NativeAudio::PauseCapture(bool pause)
 		{
 			isCapturePaused = pause;

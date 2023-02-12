@@ -17,6 +17,7 @@ void RenderBlackened(AudioEventArgs* pArgs, AudioEventResult* pResult);
 double PrintDeltaTime(StringBuffer label);
 double FVM(double f) { return 0.0; }
 
+constexpr const char* queueName = "My Queue";
 int main()
 {
 	Audio audio = Audio();
@@ -27,31 +28,61 @@ int main()
 	AudioDevice drd = audio.GetDefaultAudioDevice(AudioDeviceType::Render);
 	audio.InitializeRender(&drd, AudioFormatInfo(1, 2, 32, 48000));
 
-	std::vector<StringBuffer> queue = {
+	std::vector<StringBuffer> filesToQueue = {
 		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\deneme.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\blackened.wav",
 		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\Fatima.wav",
 		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\asdf.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\deneme2.wav"
 	};
-	std::vector<std::shared_ptr<AudioObject>> paos = audio.Queue("My Queue", 250.0, queue);
+	std::vector<std::shared_ptr<AudioObject>> paos = audio.Queue(queueName, 250.0, filesToQueue);
+	audio.RegisterCategory(Category(queueName, 1.0));
 
 	for (size_t i = 0; i < paos.size(); i++)
 	{
-		paos.at(i)->OnRender.Clear();
+		paos.at(i)->categories.push_back(queueName);
 		if (paos.at(i)->name == "blackened.wav")
 		{
-			paos.at(i)->OnRender += RenderBlackened;
+			paos.at(i)->OnRender = RenderBlackened;
 		}
 		else
 		{
-			paos.at(i)->OnRender += OnRender;
+			paos.at(i)->OnRender = OnRender;
+		}
+	}
+	filesToQueue.clear();
+	paos.clear();
+
+	std::string a;
+	StringBuffer sb = "";
+	while (sb != "exit")
+	{
+		std::getline(std::cin, a);
+		sb = a.c_str();
+		sb.ToLower();
+		if (sb.Contains("skip"))
+		{
+			uint32_t skipCount = StringBuffer::StringToUI32(sb.SubString(sb.Find(' '), 10));
+			audio.Skip(skipCount, queueName, false);
+		}
+		else if (sb.Contains("volume"))
+		{
+			double volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			audio.SetCategoryVolume(queueName, volume);
+		}
+		else if (sb.Contains("position"))
+		{
+			double position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			audio.SetAOPosition(audio.GetAO(queueName, 0), position);
+		}
+		else if (sb == "pause")
+		{
+			audio.GetAO(queueName, 0)->pause = true;
+		}
+		else if (sb == "resume")
+		{
+			audio.GetAO(queueName, 0)->pause = false;
 		}
 	}
 
-	std::string a;
-	std::cin >> a;
-	audio.Skip(2, "My Queue", false);
-
-	std::cin >> a;
 	return 0;
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)

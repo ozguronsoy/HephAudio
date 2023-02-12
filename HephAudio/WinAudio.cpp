@@ -610,17 +610,16 @@ namespace HephAudio
 		}
 		void WinAudio::CaptureData(ComPtr<IAudioClient3> pCaptureAudioClient, ComPtr<IAudioSessionManager2> pSessionManager)
 		{
-			constexpr REFERENCE_TIME reftimesPerSec = 10000000;
-			constexpr REFERENCE_TIME reftimesPerMilliSec = 10000 / 2;
+			constexpr REFERENCE_TIME reftimesPerSec = 1e6;
+			constexpr REFERENCE_TIME reftimesPerMilliSec = 2e3;
 
 			ComPtr<IAudioCaptureClient> pCaptureClient = nullptr;
 			ComPtr<IAudioSessionControl> pSessionControl = nullptr;
-			UINT32 bufferSize, nFramesAvailable, nBytesAvailable, packetLength;
+			UINT32 bufferSize, nFramesAvailable, packetLength;
 			BYTE* captureBuffer = nullptr;
 			DWORD flags = 0;
 			REFERENCE_TIME hnsActualDuration = 0;
 			AudioSessionEvents captureSessionEvents;
-			AudioBuffer capturedData(0, captureFormat);
 			captureSessionEvents.parent = this;
 			captureSessionEvents.type = AudioDeviceType::Capture;
 			HRESULT hres;
@@ -638,29 +637,22 @@ namespace HephAudio
 			{
 				if (!isCapturePaused && OnCapture)
 				{
-					capturedData = AudioBuffer(0, captureFormat);
 					Sleep(hnsActualDuration / reftimesPerMilliSec);
 
 					WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetNextPacketSize(&packetLength), this, "WinAudio", "An error occurred whilst capturing the samples.");
 					while (packetLength != 0)
 					{
-						if (isCapturePaused || disposing) { break; }
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetBuffer(&captureBuffer, &nFramesAvailable, &flags, nullptr, nullptr), this, "WinAudio", "An error occurred whilst capturing the samples.");
-						nBytesAvailable = nFramesAvailable * captureFormat.FrameSize();
 
 						AudioBuffer temp(nFramesAvailable, captureFormat);
-						memcpy(temp.Begin(), captureBuffer, nBytesAvailable);
-						capturedData += temp;
+						memcpy(temp.Begin(), captureBuffer, temp.Size());
+						AudioProcessor::ConvertPcmToInnerFormat(temp);
+						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
+						OnCapture(&captureEventArgs, nullptr);
 
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->ReleaseBuffer(nFramesAvailable), this, "WinAudio", "An error occurred whilst capturing the samples.");
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetNextPacketSize(&packetLength), this, "WinAudio", "An error occurred whilst capturing the samples.");
 					}
-				
-					AudioBuffer temp = capturedData;
-					AudioProcessor::ConvertPcmToInnerFormat(temp);
-					AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
-
-					OnCapture(&captureEventArgs, nullptr);
 				}
 			}
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->Stop(), this, "WinAudio", "An error occurred whilst capturing the samples.");

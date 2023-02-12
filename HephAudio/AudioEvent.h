@@ -16,6 +16,7 @@ namespace HephAudio
 		AudioEvent();
 		operator bool() const;
 		void operator()(AudioEventArgs* pArgs, AudioEventResult* pResult) const;
+		AudioEvent& operator=(const AudioEventHandler& handler);
 		AudioEvent& operator+=(const AudioEventHandler& handler);
 		AudioEvent& operator-=(const AudioEventHandler& handler);
 		void AddEventHandler(AudioEventHandler handler);

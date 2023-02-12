@@ -16,6 +16,12 @@ namespace HephAudio
 	{
 		this->Invoke(pArgs, pResult);
 	}
+	AudioEvent& AudioEvent::operator=(const AudioEventHandler& handler)
+	{
+		this->Clear();
+		this->AddEventHandler(handler);
+		return *this;
+	}
 	AudioEvent& AudioEvent::operator+=(const AudioEventHandler& handler)
 	{
 		this->AddEventHandler(handler);
