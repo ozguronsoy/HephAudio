@@ -109,8 +109,8 @@ namespace HephAudio
 					jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
 
 					AudioDevice audioDevice;
-					audioDevice.id = std::to_wstring(deviceId).c_str();
-					audioDevice.name = JStringToWString(env, deviceName);
+					audioDevice.id = StringBuffer::ToString(deviceId).c_str();
+					audioDevice.name = JStringToString(env, deviceName);
 					audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
 					audioDevice.isDefault = false;
 					audioDevices.push_back(audioDevice);
@@ -133,6 +133,8 @@ namespace HephAudio
 			StopWatch::Start();
 			JNIEnv* env = nullptr;
 			GetEnv(&env);
+			AudioDevice d;
+			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, d);
 
 			while (!disposing)
 			{
@@ -143,7 +145,7 @@ namespace HephAudio
 					EnumerateAudioDevices(env);
 					mutex.unlock();
 
-					if (OnAudioDeviceAdded != nullptr)
+					if (OnAudioDeviceAdded)
 					{
 						for (size_t i = 0; i < audioDevices.size(); i++)
 						{
@@ -154,40 +156,29 @@ namespace HephAudio
 									goto ADD_BREAK;
 								}
 							}
-							OnAudioDeviceAdded(audioDevices.at(i));
+							deviceEventArgs.audioDevice = audioDevices.at(i);
+							OnAudioDeviceAdded(&deviceEventArgs, nullptr);
 						ADD_BREAK:;
 						}
 					}
 
-					AudioDevice* removedDevice = nullptr;
-					for (size_t i = 0; i < oldDevices.size(); i++)
+					if (OnAudioDeviceRemoved)
 					{
-						for (size_t j = 0; j < audioDevices.size(); j++)
+						for (size_t i = 0; i < oldDevices.size(); i++)
 						{
-							if (oldDevices.at(i).id == audioDevices.at(j).id)
+							for (size_t j = 0; j < audioDevices.size(); j++)
 							{
-								goto REMOVE_BREAK;
+								if (oldDevices.at(i).id == audioDevices.at(j).id)
+								{
+									goto REMOVE_BREAK;
+								}
 							}
+							deviceEventArgs.audioDevice = oldDevices.at(i);
+							OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
+						REMOVE_BREAK:;
 						}
-
-						removedDevice = &oldDevices.at(i);
-
-						if (isRenderInitialized && oldDevices.at(i).type == AudioDeviceType::Render && (renderDeviceId.CompareContent("") || removedDevice->id == renderDeviceId))
-						{
-							InitializeRender(nullptr, renderFormat);
-						}
-
-						if (isCaptureInitialized && oldDevices.at(i).type == AudioDeviceType::Capture && (captureDeviceId.CompareContent("") || removedDevice->id == captureDeviceId))
-						{
-							InitializeCapture(nullptr, captureFormat);
-						}
-
-						if (OnAudioDeviceRemoved != nullptr)
-						{
-							OnAudioDeviceRemoved(*removedDevice);
-						}
-					REMOVE_BREAK:;
 					}
+
 					StopWatch::Reset();
 				}
 			}
@@ -208,9 +199,9 @@ namespace HephAudio
 				RAISE_AUDIO_EXCPT(this, AudioException(jniResult, "AndroidAudioBase::GetAudioDevices", "Could not get the current jni environment."));
 			}
 		}
-		StringBuffer AndroidAudioBase::JStringToWString(JNIEnv* env, jstring jStr) const
+		StringBuffer AndroidAudioBase::JStringToString(JNIEnv* env, jstring jStr) const
 		{
-			std::wstring value;
+			std::string value;
 			const jchar* raw = env->GetStringChars(jStr, 0);
 			jsize len = env->GetStringLength(jStr);
 			value.assign(raw, raw + len);

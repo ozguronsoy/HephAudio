@@ -285,7 +285,7 @@ namespace HephAudio
 		void AndroidAudioSLES::RecordEventCallback(SLAndroidSimpleBufferQueueItf simpleBufferQueue, void* pContext)
 		{
 			CallbackContext* pCallbackContext = (CallbackContext*)pContext;
-			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->isCaptureInitialized && pCallbackContext->pAndroidAudio->OnCapture != nullptr)
+			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->isCaptureInitialized && pCallbackContext->pAndroidAudio->OnCapture)
 			{
 				const uint32_t captureCallbackSize = pCallbackContext->size * 0.01;
 				const uint32_t captureCallbackFrameCount = captureCallbackSize / pCallbackContext->pAndroidAudio->captureFormat.FrameSize();
@@ -294,7 +294,8 @@ namespace HephAudio
 				memcpy(captureBuffer.Begin(), pCallbackContext->pData, captureCallbackSize);
 
 				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer);
-				pCallbackContext->pAndroidAudio->OnCapture(captureBuffer);
+				AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
+				pCallbackContext->pAndroidAudio->OnCapture(&captureEventArgs, nullptr);
 
 				SLresult slres = (*simpleBufferQueue)->Enqueue(simpleBufferQueue, pCallbackContext->pData, captureCallbackSize);
 				if (slres != 0)

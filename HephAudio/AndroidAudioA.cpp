@@ -106,6 +106,11 @@ namespace HephAudio
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pRenderStream), this, "AndroidAudioA::InitializeRender", "An error occurred whilst opening the render stream.");
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, "AndroidAudioA::InitializeRender", "An error occurred whilst deleting the stream builder.");
 
+			if (device == nullptr)
+			{
+				renderDeviceId = StringBuffer::ToString(AAudioStream_getDeviceId(pRenderStream));
+			}
+
 			isRenderInitialized = true;
 			renderThread = std::thread(&AndroidAudioA::RenderData, this);
 
@@ -183,6 +188,11 @@ namespace HephAudio
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pCaptureStream), this, "AndroidAudioA::InitializeCapture", "An error occurred whilst opening the capture stream.");
 			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, "AndroidAudioA::InitializeCapture", "An error occurred whilst deleting the stream builder.");
 
+			if (device == nullptr)
+			{
+				captureDeviceId = StringBuffer::ToString(AAudioStream_getDeviceId(pCaptureStream));
+			}
+
 			isCaptureInitialized = true;
 			captureThread = std::thread(&AndroidAudioA::CaptureData, this);
 
@@ -242,8 +252,8 @@ namespace HephAudio
 		}
 		void AndroidAudioA::CaptureData()
 		{
-			constexpr uint64_t stateChangeTimeoutNanos = 200 * 1000000;
-			constexpr uint64_t readTimeoutNanos = 10 * 1000000;
+			constexpr uint64_t stateChangeTimeoutNanos = 200e6;
+			constexpr uint64_t readTimeoutNanos = 10e6;
 
 			AudioBuffer dataBuffer = AudioBuffer(captureFormat.sampleRate * 0.01, captureFormat);
 			aaudio_result_t  ares;
@@ -263,11 +273,12 @@ namespace HephAudio
 					goto CAPTURE_EXIT;
 				}
 
-				if (OnCapture != nullptr)
+				if (OnCapture)
 				{
 					AudioBuffer tempBuffer = dataBuffer;
 					AudioProcessor::ConvertPcmToInnerFormat(tempBuffer);
-					OnCapture(tempBuffer);
+					AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, tempBuffer);
+					OnCapture(&captureEventArgs, nullptr);
 				}
 
 				dataBuffer.Reset();

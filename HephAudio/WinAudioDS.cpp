@@ -310,25 +310,21 @@ namespace HephAudio
 						}
 					}
 
-					AudioDevice* removedDevice = nullptr;
-					for (size_t i = 0; i < oldDevices.size(); i++)
+					if (OnAudioDeviceRemoved)
 					{
-						for (size_t j = 0; j < audioDevices.size(); j++)
+						for (size_t i = 0; i < oldDevices.size(); i++)
 						{
-							if (oldDevices.at(i).id == audioDevices.at(j).id)
+							for (size_t j = 0; j < audioDevices.size(); j++)
 							{
-								goto REMOVE_BREAK;
+								if (oldDevices.at(i).id == audioDevices.at(j).id)
+								{
+									goto REMOVE_BREAK;
+								}
 							}
-						}
-
-						removedDevice = &oldDevices.at(i);
-
-						if (OnAudioDeviceRemoved)
-						{
-							deviceEventArgs.audioDevice = *removedDevice;
+							deviceEventArgs.audioDevice = oldDevices.at(i);
 							OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
+						REMOVE_BREAK:;
 						}
-					REMOVE_BREAK:;
 					}
 
 					StopWatch::Reset();
