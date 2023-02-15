@@ -73,7 +73,7 @@ namespace HephAudio
 			}
 			return format;
 		}
-		AudioBuffer AiffFormat::ReadFile(const AudioFile& file) const
+		void AiffFormat::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
 		{
 			uint32_t frameCount = 0;
 			Endian audioDataEndian;
@@ -101,13 +101,13 @@ namespace HephAudio
 				}
 			}
 			cursor += 16;
-			AudioBuffer buffer(frameCount, format);
-			memcpy(buffer.Begin(), (uint8_t*)audioFileBuffer + cursor, buffer.Size());
+			outBuffer = AudioBuffer(frameCount, format);
+			memcpy(outBuffer.Begin(), (uint8_t*)audioFileBuffer + cursor, outBuffer.Size());
 			if (audioDataEndian != GetSystemEndian() && format.bitsPerSample != 8) // switch bytes.
 			{
-				uint8_t* innerBuffer = (uint8_t*)buffer.Begin();
+				uint8_t* innerBuffer = (uint8_t*)outBuffer.Begin();
 				const uint32_t sampleSize = format.bitsPerSample / 8;
-				for (size_t i = 0; i < buffer.Size(); i += sampleSize)
+				for (size_t i = 0; i < outBuffer.Size(); i += sampleSize)
 				{
 					switch (sampleSize)
 					{
@@ -134,8 +134,7 @@ namespace HephAudio
 					}
 				}
 			}
-			AudioProcessor::ConvertPcmToInnerFormat(buffer);
-			return buffer;
+			AudioProcessor::ConvertPcmToInnerFormat(outBuffer);
 		}
 		bool AiffFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{

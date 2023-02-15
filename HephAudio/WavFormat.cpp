@@ -59,18 +59,18 @@ namespace HephAudio
 			}
 			return wfx;
 		}
-		AudioBuffer WavFormat::ReadFile(const AudioFile& file) const
+		void WavFormat::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
 		{
 			size_t audioDataSize;
 			AudioFormatInfo waveFormat = ReadFormatInfo(file, audioDataSize);
 			size_t frameCount = audioDataSize / waveFormat.FrameSize();
-			AudioBuffer resultBuffer = AudioBuffer(frameCount, waveFormat);
-			memcpy(resultBuffer.Begin(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
+			outBuffer = AudioBuffer(frameCount, waveFormat);
+			memcpy(outBuffer.Begin(), (uint8_t*)file.GetInnerBufferAddress() + waveFormat.headerSize, audioDataSize);
 			if (GetSystemEndian() == Endian::Big && waveFormat.bitsPerSample != 8) // switch bytes.
 			{
-				uint8_t* innerBuffer = (uint8_t*)resultBuffer.Begin();
+				uint8_t* innerBuffer = (uint8_t*)outBuffer.Begin();
 				const uint32_t sampleSize = waveFormat.bitsPerSample / 8;
-				for (size_t i = 0; i < resultBuffer.Size(); i += sampleSize)
+				for (size_t i = 0; i < outBuffer.Size(); i += sampleSize)
 				{
 					switch (sampleSize)
 					{
@@ -97,8 +97,7 @@ namespace HephAudio
 					}
 				}
 			}
-			AudioProcessor::ConvertPcmToInnerFormat(resultBuffer);
-			return resultBuffer;
+			AudioProcessor::ConvertPcmToInnerFormat(outBuffer);
 		}
 		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{

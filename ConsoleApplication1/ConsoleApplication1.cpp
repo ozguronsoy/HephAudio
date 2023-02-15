@@ -13,73 +13,100 @@ void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceAdded(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
-void RenderBlackened(AudioEventArgs* pArgs, AudioEventResult* pResult);
 double PrintDeltaTime(StringBuffer label);
 double FVM(double f) { return 0.0; }
 
-constexpr const char* queueName = "My Queue";
 int main()
 {
+	StringBuffer audioPath = "C:\\Users\\ozgur\\Desktop\\AudioFiles\\";
+
 	Audio audio = Audio();
 	audio.SetOnExceptionHandler(OnException);
 	audio.SetOnAudioDeviceAddedHandler(OnDeviceAdded);
 	audio.SetOnAudioDeviceRemovedHandler(OnDeviceRemoved);
 
-	AudioDevice drd = audio.GetDefaultAudioDevice(AudioDeviceType::Render);
-	audio.InitializeRender(&drd, AudioFormatInfo(1, 2, 32, 48000));
-
-	std::vector<StringBuffer> filesToQueue = {
-		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\piano2.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\deneme.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\blackened.wav",
-		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\Gate of Steiner.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\Fatima.wav",
-		"C:\\Users\\ozgur\\Desktop\\AudioFiles\\asdf.wav", "C:\\Users\\ozgur\\Desktop\\AudioFiles\\deneme2.wav"
-	};
-	std::vector<std::shared_ptr<AudioObject>> paos = audio.Queue(queueName, 250.0, filesToQueue);
-	audio.RegisterCategory(Category(queueName, 1.0));
-
-	for (size_t i = 0; i < paos.size(); i++)
-	{
-		paos.at(i)->categories.push_back(queueName);
-		if (paos.at(i)->name == "blackened.wav")
-		{
-			paos.at(i)->OnRender = RenderBlackened;
-		}
-		else
-		{
-			paos.at(i)->OnRender = OnRender;
-		}
-	}
-	filesToQueue.clear();
-	paos.clear();
+	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 
 	std::string a;
 	StringBuffer sb = "";
-	while (sb != "exit")
+	while (sb != "exit" && sb != "quit")
 	{
 		std::getline(std::cin, a);
 		sb = a.c_str();
-		sb.ToLower();
-		if (sb.Contains("skip"))
+		if (sb.Contains("path"))
 		{
-			uint32_t skipCount = StringBuffer::StringToUI32(sb.SubString(sb.Find(' '), 10));
-			audio.Skip(skipCount, queueName, false);
+			if (sb == "path")
+			{
+				ConsoleLogger::LogLine(audioPath, ConsoleLogger::info);
+			}
+			else
+			{
+				audioPath = sb.Split(' ').at(1);
+			}
+		}
+		else if (sb.Contains("play"))
+		{
+			audio.Play(audioPath + sb.Split('\"').at(1))->OnRender = OnRender;
+		}
+		else if (sb.Contains("load"))
+		{
+			audio.Load(audioPath + sb.Split('\"').at(1))->pause = false;
 		}
 		else if (sb.Contains("volume"))
 		{
 			double volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
-			audio.SetCategoryVolume(queueName, volume);
+			audio.GetAO("", 0)->volume = volume;
 		}
 		else if (sb.Contains("position"))
 		{
 			double position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
-			audio.SetAOPosition(audio.GetAO(queueName, 0), position);
+			audio.SetAOPosition(audio.GetAO("", 0), position);
 		}
 		else if (sb == "pause")
 		{
-			audio.GetAO(queueName, 0)->pause = true;
+			audio.GetAO("", 0)->pause = true;
 		}
 		else if (sb == "resume")
 		{
-			audio.GetAO(queueName, 0)->pause = false;
+			audio.GetAO("", 0)->pause = false;
+		}
+		else if (sb == "reverse")
+		{
+			StopWatch::Reset();
+			AudioProcessor::Reverse(audio.GetAO("", 0)->buffer);
+			PrintDeltaTime("reverse applied in");
+		}
+		else if (sb.Contains("filter"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			double f1 = StringBuffer::StringToDouble(params.at(2));
+			double f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
+
+			if (params.at(1) == "hp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1, FVM);
+				PrintDeltaTime("high-pass filter applied in");
+			}
+			else if (params.at(1) == "lp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1, FVM);
+				PrintDeltaTime("low-pass filter applied in");
+			}
+			else if (params.at(1) == "bp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2, FVM);
+				PrintDeltaTime("band-pass filter applied in");
+			}
+			else if (params.at(1) == "bc")
+			{
+				StopWatch::Reset();
+				AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2, FVM);
+				PrintDeltaTime("band-cut filter applied in");
+			}
 		}
 	}
 
@@ -133,29 +160,12 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	pAudioObject->frameIndex += readFrameCount;
 	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
 }
-void RenderBlackened(AudioEventArgs* pArgs, AudioEventResult* pResult)
-{
-	NativeAudio* pNativeAudio = (NativeAudio*)pArgs->pNativeAudio;
-	AudioObject* pAudioObject = (AudioObject*)pArgs->pAudioObject;
-	AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
-	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
-
-	const size_t readFrameCount = (double)pRenderArgs->renderFrameCount * pAudioObject->buffer.FormatInfo().sampleRate / pNativeAudio->GetRenderFormat().sampleRate;
-
-	pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount);
-
-	AudioProcessor::ReverseRT(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex);
-	AudioProcessor::ConvertSampleRate(pRenderResult->renderBuffer, pNativeAudio->GetRenderFormat().sampleRate, pRenderArgs->renderFrameCount);
-
-	pAudioObject->frameIndex += readFrameCount;
-	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
-}
 double PrintDeltaTime(StringBuffer label)
 {
 	const double dt = StopWatch::DeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
-	ConsoleLogger::LogLine(label, ConsoleLogger::debug);
+	ConsoleLogger::LogLine(label, ConsoleLogger::success);
 	StopWatch::Reset();
 	return dt;
 }

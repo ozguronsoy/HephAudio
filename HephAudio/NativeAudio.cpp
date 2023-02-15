@@ -58,7 +58,7 @@ namespace HephAudio
 				std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
 				ao->filePath = filePath;
 				ao->name = audioFile.Name();
-				ao->buffer = format->ReadFile(audioFile);
+				format->ReadFile(audioFile, ao->buffer);
 				ao->loopCount = loopCount;
 				ao->pause = isPaused;
 				audioObjects.push_back(ao);
@@ -107,7 +107,7 @@ namespace HephAudio
 							{
 								throw AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.Extension() + "' is not supported.");
 							}
-							ao->buffer = format->ReadFile(audioFile);
+							format->ReadFile(audioFile, ao->buffer);
 						}
 						catch (AudioException ex)
 						{
@@ -517,7 +517,7 @@ namespace HephAudio
 									return;
 								}
 
-								qao->buffer = format->ReadFile(audioFile);
+								format->ReadFile(audioFile, qao->buffer);
 							}
 							catch (AudioException ex)
 							{

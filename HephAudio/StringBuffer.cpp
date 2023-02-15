@@ -187,7 +187,7 @@ namespace HephAudio
 	{
 		this->size = 0;
 		this->charSize = 0;
-		if (this->pData == nullptr)
+		if (this->pData != nullptr)
 		{
 			free(this->pData);
 			this->pData = nullptr;

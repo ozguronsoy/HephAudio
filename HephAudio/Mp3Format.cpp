@@ -12,7 +12,7 @@ namespace HephAudio
 		{
 			return L".mp3";
 		}
-		AudioBuffer Mp3Format::ReadFile(const AudioFile& file) const
+		void Mp3Format::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
 		{
 			void* audioFileBuffer = file.GetInnerBufferAddress();
 			uint32_t cursor = LocateAudioData(audioFileBuffer);
