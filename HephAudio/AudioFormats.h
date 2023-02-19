@@ -3,7 +3,6 @@
 #include "IAudioFormat.h"
 #include "WavFormat.h"
 #include "AiffFormat.h"
-#include "Mp3Format.h"
 
 namespace HephAudio
 {

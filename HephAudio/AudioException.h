@@ -11,6 +11,7 @@ namespace HephAudio
 		int32_t errorCode;
 		StringBuffer method; // Method name that exception has occurred.
 		StringBuffer message;
+		mutable StringBuffer resultMessage;
 	public:
 		AudioException();
 		AudioException(int32_t errorCode, StringBuffer&& method, StringBuffer&& message);

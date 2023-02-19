@@ -16,13 +16,15 @@ namespace HephAudio
 	}
 	AudioException::operator char* () const
 	{
-		return "Audio Exception " + StringBuffer::ToHexString(errorCode) + " (" + StringBuffer::ToString(this->errorCode) + ")\nMethod: " + this->method + "\nMessage: " + this->message;
+		this->resultMessage = "Audio Exception " + StringBuffer::ToHexString(errorCode) + " (" + StringBuffer::ToString(this->errorCode) + ")\nMethod: " + this->method + "\nMessage: " + this->message;
+		return this->resultMessage;
 	}
 	AudioException::operator wchar_t* () const
 	{
 		StringBuffer hexCode = StringBuffer::ToHexString(this->errorCode);
 		hexCode.SetStringType(StringType::Wide);
-		return L"Audio Exception " + hexCode + L" (" + StringBuffer::ToString(this->errorCode) + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
+		this->resultMessage = L"Audio Exception " + hexCode + L" (" + StringBuffer::ToString(this->errorCode) + L")\nMethod: " + this->method + L"\nMessage: " + this->message;
+		return this->resultMessage;
 	}
 	StringBuffer AudioException::ToString(StringType stringType) const
 	{

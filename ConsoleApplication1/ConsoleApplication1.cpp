@@ -46,7 +46,17 @@ int main()
 		}
 		else if (sb.Contains("play"))
 		{
-			audio.Play(audioPath + sb.Split('\"').at(1))->OnRender = OnRender;
+			StringBuffer arg1 = sb.Split(' ').at(1);
+			bool isNumber = true;
+			for (size_t i = 0; i < arg1.Size(); i++)
+			{
+				if (!isdigit(arg1.c_str()[i]))
+				{
+					isNumber = false;
+					break;
+				}
+			}
+			audio.Play(audioPath + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1)->OnRender = OnRender;
 		}
 		else if (sb.Contains("load"))
 		{

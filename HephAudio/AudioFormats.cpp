@@ -24,7 +24,6 @@ namespace HephAudio
 		{
 			formats.push_back(new WavFormat());
 			formats.push_back(new AiffFormat());
-			formats.push_back(new Mp3Format());
 		}
 		AudioFormats::~AudioFormats()
 		{
@@ -52,7 +51,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (CompareExtensions(file.Extension(), formats.at(i)->Extension()))
+				if (formats.at(i)->Extension().Contains(file.Extension()))
 				{
 					return formats.at(i);
 				}
@@ -64,7 +63,7 @@ namespace HephAudio
 			const StringBuffer fileExtension = AudioFile::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (CompareExtensions(fileExtension, formats.at(i)->Extension()))
+				if (formats.at(i)->Extension().Contains(fileExtension));
 				{
 					return formats.at(i);
 				}

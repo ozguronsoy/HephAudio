@@ -45,7 +45,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StopWatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringBuffer.h" />
@@ -80,7 +79,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StopWatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringBuffer.cpp" />
