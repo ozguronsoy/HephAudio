@@ -53,12 +53,12 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG_LINE("AndroidAudioSLES destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
-		void AndroidAudioSLES::SetMasterVolume(double volume)
+		void AndroidAudioSLES::SetMasterVolume(HEPHAUDIO_DOUBLE volume)
 		{
 			SLresult slres;
 			ANDROIDAUDIO_EXCPT((*masterVolumeObject)->SetVolumeLevel(masterVolumeObject, 2000 * log10(abs(volume))), this, L"AndroidAudioSLES::SetMasterVolume", L"An error occurred whilst setting the master volume.");
 		}
-		double AndroidAudioSLES::GetMasterVolume() const
+		HEPHAUDIO_DOUBLE AndroidAudioSLES::GetMasterVolume() const
 		{
 			SLresult slres;
 			SLmillibel volume = 0;

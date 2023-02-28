@@ -5,11 +5,15 @@ namespace HephAudio
 {
 	struct Complex
 	{
-		double real;
-		double imaginary;
+		HEPHAUDIO_DOUBLE real;
+		HEPHAUDIO_DOUBLE imaginary;
 		Complex();
-		Complex(double real, double imaginary);
+		Complex(HEPHAUDIO_DOUBLE real, HEPHAUDIO_DOUBLE imaginary);
+		Complex(const Complex& rhs);
+		Complex(Complex&& rhs) noexcept;
 		virtual ~Complex() = default;
+		Complex& operator=(const Complex& rhs);
+		Complex& operator=(Complex&& rhs) noexcept;
 		Complex operator-() const;
 		Complex operator+(const Complex& rhs) const;
 		Complex& operator+=(const Complex& rhs);
@@ -21,18 +25,18 @@ namespace HephAudio
 		Complex& operator/=(const Complex& rhs);
 		bool operator==(const Complex& rhs) const;
 		bool operator!=(const Complex& rhs) const;
-		Complex operator+(const double& rhs) const;
-		Complex& operator+=(const double& rhs);
-		Complex operator-(const double& rhs) const;
-		Complex& operator-=(const double& rhs);
-		Complex operator*(const double& rhs) const;
-		Complex& operator*=(const double& rhs);
-		Complex operator/(const double& rhs) const;
-		Complex& operator/=(const double& rhs);
-		bool operator==(const double& rhs) const;
-		bool operator!=(const double& rhs) const;
-		double Magnitude() const noexcept;
-		double MagnitudeSquared() const noexcept;
-		double Phase() const noexcept;
+		Complex operator+(const HEPHAUDIO_DOUBLE& rhs) const;
+		Complex& operator+=(const HEPHAUDIO_DOUBLE& rhs);
+		Complex operator-(const HEPHAUDIO_DOUBLE& rhs) const;
+		Complex& operator-=(const HEPHAUDIO_DOUBLE& rhs);
+		Complex operator*(const HEPHAUDIO_DOUBLE& rhs) const;
+		Complex& operator*=(const HEPHAUDIO_DOUBLE& rhs);
+		Complex operator/(const HEPHAUDIO_DOUBLE& rhs) const;
+		Complex& operator/=(const HEPHAUDIO_DOUBLE& rhs);
+		bool operator==(const HEPHAUDIO_DOUBLE& rhs) const;
+		bool operator!=(const HEPHAUDIO_DOUBLE& rhs) const;
+		HEPHAUDIO_DOUBLE Magnitude() const noexcept;
+		HEPHAUDIO_DOUBLE MagnitudeSquared() const noexcept;
+		HEPHAUDIO_DOUBLE Phase() const noexcept;
 	};
 }

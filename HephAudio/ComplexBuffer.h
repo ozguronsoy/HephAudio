@@ -72,23 +72,23 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
 		/// <returns>Resulting buffer</returns>
-		ComplexBuffer operator*(const double& rhs) const;
+		ComplexBuffer operator*(const HEPHAUDIO_DOUBLE& rhs) const;
 		/// <summary>
 		/// Multiplies all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
-		ComplexBuffer& operator*=(const double& rhs);
+		ComplexBuffer& operator*=(const HEPHAUDIO_DOUBLE& rhs);
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs, then returns the result as a new complex buffer.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
 		/// <returns>Resulting buffer</returns>
-		ComplexBuffer operator/(const double& rhs) const;
+		ComplexBuffer operator/(const HEPHAUDIO_DOUBLE& rhs) const;
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
-		ComplexBuffer& operator/=(const double& rhs);
+		ComplexBuffer& operator/=(const HEPHAUDIO_DOUBLE& rhs);
 		/// <summary>
 		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
 		/// </summary>
@@ -111,7 +111,7 @@ namespace HephAudio
 		/// Returns the number of frames the buffer consists of.
 		/// </summary>
 		/// <returns>Number of frames the buffer consists of</returns>
-		size_t FrameCount() const noexcept;
+		const size_t& FrameCount() const noexcept;
 		/// <summary>
 		/// Gets the desired portion of the complex buffer as a new buffer.
 		/// </summary>

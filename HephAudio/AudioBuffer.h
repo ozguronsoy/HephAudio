@@ -12,12 +12,12 @@ namespace HephAudio
 	{
 		friend class AudioBuffer;
 	private:
-		double* pAudioData;
+		HEPHAUDIO_DOUBLE* pAudioData;
 		size_t frameIndex;
 		size_t channelCount;
 		AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount);
 	public:
-		double& operator[](const size_t& channel) const;
+		HEPHAUDIO_DOUBLE& operator[](const size_t& channel) const;
 	};
 #pragma endregion
 #pragma region Audio Buffer
@@ -69,23 +69,23 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
 		/// <returns>Resulting buffer</returns>
-		AudioBuffer operator*(const double& rhs) const;
+		AudioBuffer operator*(const HEPHAUDIO_DOUBLE& rhs) const;
 		/// <summary>
 		/// Multiplies all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
-		AudioBuffer& operator*=(const double& rhs);
+		AudioBuffer& operator*=(const HEPHAUDIO_DOUBLE& rhs);
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs, then returns the result as a new audio buffer.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
 		/// <returns>Resulting buffer</returns>
-		AudioBuffer operator/(const double& rhs) const;
+		AudioBuffer operator/(const HEPHAUDIO_DOUBLE& rhs) const;
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
-		AudioBuffer& operator/=(const double& rhs);
+		AudioBuffer& operator/=(const HEPHAUDIO_DOUBLE& rhs);
 		/// <summary>
 		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
 		/// </summary>
@@ -115,14 +115,14 @@ namespace HephAudio
 		/// <param name="frameIndex">Position of the frame which contains the sample</param>
 		/// <param name="channel">Position of the sample within the frame</param>
 		/// <returns>The normalized sample</returns>
-		double Get(size_t frameIndex, uint8_t channel) const;
+		HEPHAUDIO_DOUBLE Get(size_t frameIndex, uint8_t channel) const;
 		/// <summary>
 		/// Sets the normalized sample at the given position.
 		/// </summary>
 		/// <param name="value">Normalized audio sample</param>
 		/// <param name="frameIndex">Position of the frame which contains the sample</param>
 		/// <param name="channel">Position of the sample within the frame</param>
-		void Set(double value, size_t frameIndex, uint8_t channel);
+		void Set(HEPHAUDIO_DOUBLE value, size_t frameIndex, uint8_t channel);
 		/// <summary>
 		/// Gets the desired portion of the audio data, also known as a rectangular window, as a new buffer.
 		/// </summary>
@@ -173,13 +173,13 @@ namespace HephAudio
 		/// Calculates how long the audio data is in seconds.
 		/// </summary>
 		/// <returns>The length of the audio data in seconds</returns>
-		double CalculateDuration() const noexcept;
+		HEPHAUDIO_DOUBLE CalculateDuration() const noexcept;
 		/// <summary>
 		/// Calculates the corresponding frame with the given time.
 		/// </summary>
 		/// <param name="ts">Time in seconds</param>
 		/// <returns>The frame that corresponds to the given time</returns>
-		size_t CalculateFrameIndex(double ts) const noexcept;
+		size_t CalculateFrameIndex(HEPHAUDIO_DOUBLE ts) const noexcept;
 		/// <summary>
 		/// Gets the audio format info.
 		/// </summary>
@@ -207,14 +207,14 @@ namespace HephAudio
 		/// <param name="frameCount">Number of frames the audio data consists of</param>
 		/// <param name="formatInfo">The audio format which will be used in calculation</param>
 		/// <returns>The length of the audio data in seconds</returns>
-		static double CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
+		static HEPHAUDIO_DOUBLE CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
 		/// <summary>
 		/// Calculates the corresponding frame with the given time.
 		/// </summary>
 		/// <param name="ts">Time in seconds</param>
 		/// <param name="formatInfo">The audio format which will be used in calculation</param>
 		/// <returns>The frame that corresponds to the given time</returns>
-		static size_t CalculateFrameIndex(double ts, AudioFormatInfo formatInfo) noexcept;
+		static size_t CalculateFrameIndex(HEPHAUDIO_DOUBLE ts, AudioFormatInfo formatInfo) noexcept;
 	};
 #pragma endregion
 }

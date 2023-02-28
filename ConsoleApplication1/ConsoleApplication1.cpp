@@ -13,8 +13,7 @@ void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceAdded(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
-double PrintDeltaTime(StringBuffer label);
-double FVM(double f) { return 0.0; }
+HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label);
 
 int main()
 {
@@ -60,16 +59,18 @@ int main()
 		}
 		else if (sb.Contains("load"))
 		{
+			StopWatch::Reset();
 			audio.Load(audioPath + sb.Split('\"').at(1))->pause = false;
+			PrintDeltaTime("File loaded in");
 		}
 		else if (sb.Contains("volume"))
 		{
-			double volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			HEPHAUDIO_DOUBLE volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
 			audio.GetAO("", 0)->volume = volume;
 		}
 		else if (sb.Contains("position"))
 		{
-			double position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			HEPHAUDIO_DOUBLE position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
 			audio.SetAOPosition(audio.GetAO("", 0), position);
 		}
 		else if (sb == "pause")
@@ -90,31 +91,31 @@ int main()
 		{
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			std::vector<StringBuffer> params = sb.Split(' ');
-			double f1 = StringBuffer::StringToDouble(params.at(2));
-			double f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
+			HEPHAUDIO_DOUBLE f1 = StringBuffer::StringToDouble(params.at(2));
+			HEPHAUDIO_DOUBLE f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
 
 			if (params.at(1) == "hp")
 			{
 				StopWatch::Reset();
-				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1, FVM);
+				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
 				PrintDeltaTime("high-pass filter applied in");
 			}
 			else if (params.at(1) == "lp")
 			{
 				StopWatch::Reset();
-				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1, FVM);
+				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1);
 				PrintDeltaTime("low-pass filter applied in");
 			}
 			else if (params.at(1) == "bp")
 			{
 				StopWatch::Reset();
-				AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2, FVM);
+				AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2);
 				PrintDeltaTime("band-pass filter applied in");
 			}
 			else if (params.at(1) == "bc")
 			{
 				StopWatch::Reset();
-				AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2, FVM);
+				AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2);
 				PrintDeltaTime("band-cut filter applied in");
 			}
 		}
@@ -161,7 +162,7 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
 	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
 
-	const size_t readFrameCount = (double)pRenderArgs->renderFrameCount * pAudioObject->buffer.FormatInfo().sampleRate / pNativeAudio->GetRenderFormat().sampleRate;
+	const size_t readFrameCount = (HEPHAUDIO_DOUBLE)pRenderArgs->renderFrameCount * pAudioObject->buffer.FormatInfo().sampleRate / pNativeAudio->GetRenderFormat().sampleRate;
 
 	pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount);
 
@@ -170,9 +171,9 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	pAudioObject->frameIndex += readFrameCount;
 	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
 }
-double PrintDeltaTime(StringBuffer label)
+HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label)
 {
-	const double dt = StopWatch::DeltaTime(StopWatch::milli);
+	const HEPHAUDIO_DOUBLE dt = StopWatch::DeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
 	ConsoleLogger::LogLine(label, ConsoleLogger::success);

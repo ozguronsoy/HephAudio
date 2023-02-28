@@ -22,8 +22,11 @@ namespace HephAudio
 		}
 		AudioFormats::AudioFormats()
 		{
-			formats.push_back(new WavFormat());
-			formats.push_back(new AiffFormat());
+			formats =
+			{
+				new WavFormat(),
+				new AiffFormat()
+			};
 		}
 		AudioFormats::~AudioFormats()
 		{

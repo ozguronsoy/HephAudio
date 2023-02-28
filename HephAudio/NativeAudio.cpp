@@ -71,7 +71,7 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, double queueDelay, const std::vector<StringBuffer>& filePaths)
+		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, HEPHAUDIO_DOUBLE queueDelay, const std::vector<StringBuffer>& filePaths)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG_LINE("Adding files to the queue: " + queueName, ConsoleLogger::info);
@@ -150,7 +150,7 @@ namespace HephAudio
 		{
 			std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
 			ao->name = name;
-			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(double) * 2, renderFormat.sampleRate));
+			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(HEPHAUDIO_DOUBLE) * 2, renderFormat.sampleRate));
 			ao->constant = true;
 			audioObjects.push_back(ao);
 			return ao;
@@ -181,7 +181,7 @@ namespace HephAudio
 			}
 			return false;
 		}
-		void NativeAudio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, double position)
+		void NativeAudio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, HEPHAUDIO_DOUBLE position)
 		{
 			if (position < 0.0 || position > 1.0)
 			{
@@ -194,11 +194,11 @@ namespace HephAudio
 				audioObject->frameIndex = audioObject->buffer.FrameCount() * position;
 			}
 		}
-		double NativeAudio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
+		HEPHAUDIO_DOUBLE NativeAudio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
 		{
 			if (AOExists(audioObject))
 			{
-				return (double)audioObject->frameIndex / (double)audioObject->buffer.FrameCount();
+				return (HEPHAUDIO_DOUBLE)audioObject->frameIndex / (HEPHAUDIO_DOUBLE)audioObject->buffer.FrameCount();
 			}
 			return -1.0;
 		}
@@ -237,7 +237,7 @@ namespace HephAudio
 		{
 			return isCapturePaused;
 		}
-		void NativeAudio::SetCategoryVolume(StringBuffer categoryName, double newVolume)
+		void NativeAudio::SetCategoryVolume(StringBuffer categoryName, HEPHAUDIO_DOUBLE newVolume)
 		{
 			for (size_t i = 0; i < categories.size(); i++)
 			{
@@ -248,7 +248,7 @@ namespace HephAudio
 				}
 			}
 		}
-		double NativeAudio::GetCategoryVolume(StringBuffer categoryName) const
+		HEPHAUDIO_DOUBLE NativeAudio::GetCategoryVolume(StringBuffer categoryName) const
 		{
 			for (size_t i = 0; i < categories.size(); i++)
 			{
@@ -473,7 +473,7 @@ namespace HephAudio
 
 			return queue;
 		}
-		void NativeAudio::PlayNextInQueue(StringBuffer queueName, double queueDelay, uint32_t decreaseQueueIndex)
+		void NativeAudio::PlayNextInQueue(StringBuffer queueName, HEPHAUDIO_DOUBLE queueDelay, uint32_t decreaseQueueIndex)
 		{
 			if (!queueName.CompareContent(""))
 			{
@@ -532,7 +532,7 @@ namespace HephAudio
 		}
 		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
-			const double aoFactor = 1.0 / GetAOCountToMix();
+			const HEPHAUDIO_DOUBLE aoFactor = 1.0 / GetAOCountToMix();
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
@@ -540,7 +540,7 @@ namespace HephAudio
 
 				if (audioObject->IsPlaying())
 				{
-					const double volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
+					const HEPHAUDIO_DOUBLE volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
 
 					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, audioObject.get(), frameCount);
 					AudioRenderEventResult rResult;
@@ -608,11 +608,11 @@ namespace HephAudio
 			}
 			return result;
 		}
-		double NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
+		HEPHAUDIO_DOUBLE NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
 		{
 			if (audioObject == nullptr || audioObject->mute) { return 0.0; }
 
-			double result = audioObject->volume;
+			HEPHAUDIO_DOUBLE result = audioObject->volume;
 
 			for (size_t i = 0; i < categories.size(); i++) // Calculate category volume.
 			{

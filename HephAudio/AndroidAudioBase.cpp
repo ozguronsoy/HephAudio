@@ -129,7 +129,7 @@ namespace HephAudio
 		}
 		void AndroidAudioBase::CheckAudioDevices()
 		{
-			constexpr double period = 250.0; // In ms.
+			constexpr HEPHAUDIO_DOUBLE period = 250.0; // In ms.
 			StopWatch::Start();
 			JNIEnv* env = nullptr;
 			GetEnv(&env);

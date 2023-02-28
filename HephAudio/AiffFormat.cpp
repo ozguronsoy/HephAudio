@@ -8,70 +8,7 @@ namespace HephAudio
 	{
 		StringBuffer AiffFormat::Extension() const noexcept
 		{
-			return L".aiff .aifc .aif";
-		}
-		AudioFormatInfo AiffFormat::ReadFormatInfo(const AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
-		{
-			AudioFormatInfo format = AudioFormatInfo();
-			void* audioFileBuffer = inFile.GetInnerBufferAddress();
-			outEndian = Endian::Big;
-			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"FORM")
-			{
-				const uint32_t formType = Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian());
-				if (formType == *(uint32_t*)"AIFF" || formType == *(uint32_t*)"AIFC")
-				{
-					uint32_t cursor = 12;
-					if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) == *(uint32_t*)"FVER") // ignore version.
-					{
-						cursor += 12;
-					}
-					if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) == *(uint32_t*)"COMM")
-					{
-						uint32_t commSize = Read<uint32_t>(audioFileBuffer, cursor + 4, Endian::Big);
-						if (commSize % 2 == 1)
-						{
-							commSize += 1; // Chunk size must be an even number, if not a padding byte is added. The padding byte is not included in chunk size, thus add one.
-						}
-						uint32_t nextChunk = cursor + commSize + 8;
-						cursor += 8;
-						format.channelCount = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
-						cursor += 2;
-						outFrameCount = Read<uint32_t>(audioFileBuffer, cursor, Endian::Big);
-						cursor += 4;
-						format.bitsPerSample = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
-						cursor += 2;
-						SampleRateFrom64(Read<uint64_t>(audioFileBuffer, cursor, Endian::Big), &format);
-						cursor += 10;
-						if (formType == *(uint32_t*)"AIFC")
-						{
-							const uint32_t compressionType = Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian());
-							if (compressionType != *(uint32_t*)"NONE" && compressionType != *(uint32_t*)"sowt")
-							{
-								throw AudioException(E_FAIL, L"AiffFormat", L"Compressed AIFF files are not supported.");
-							}
-							if (compressionType == *(uint32_t*)"sowt")
-							{
-								outEndian = Endian::Little;
-							}
-						}
-						format.formatTag = 1;
-						format.headerSize = nextChunk;
-					}
-					else
-					{
-						throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
-					}
-				}
-				else
-				{
-					throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
-				}
-			}
-			else
-			{
-				throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
-			}
-			return format;
+			return ".aiff .aifc .aif";
 		}
 		void AiffFormat::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
 		{
@@ -197,6 +134,69 @@ namespace HephAudio
 				return true;
 			}
 			return false;
+		}
+		AudioFormatInfo AiffFormat::ReadFormatInfo(const AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
+		{
+			AudioFormatInfo format = AudioFormatInfo();
+			void* audioFileBuffer = inFile.GetInnerBufferAddress();
+			outEndian = Endian::Big;
+			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"FORM")
+			{
+				const uint32_t formType = Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian());
+				if (formType == *(uint32_t*)"AIFF" || formType == *(uint32_t*)"AIFC")
+				{
+					uint32_t cursor = 12;
+					if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) == *(uint32_t*)"FVER") // ignore version.
+					{
+						cursor += 12;
+					}
+					if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) == *(uint32_t*)"COMM")
+					{
+						uint32_t commSize = Read<uint32_t>(audioFileBuffer, cursor + 4, Endian::Big);
+						if (commSize % 2 == 1)
+						{
+							commSize += 1; // Chunk size must be an even number, if not a padding byte is added. The padding byte is not included in chunk size, thus add one.
+						}
+						uint32_t nextChunk = cursor + commSize + 8;
+						cursor += 8;
+						format.channelCount = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
+						cursor += 2;
+						outFrameCount = Read<uint32_t>(audioFileBuffer, cursor, Endian::Big);
+						cursor += 4;
+						format.bitsPerSample = Read<uint16_t>(audioFileBuffer, cursor, Endian::Big);
+						cursor += 2;
+						SampleRateFrom64(Read<uint64_t>(audioFileBuffer, cursor, Endian::Big), &format);
+						cursor += 10;
+						if (formType == *(uint32_t*)"AIFC")
+						{
+							const uint32_t compressionType = Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian());
+							if (compressionType != *(uint32_t*)"NONE" && compressionType != *(uint32_t*)"sowt")
+							{
+								throw AudioException(E_FAIL, L"AiffFormat", L"Compressed AIFF files are not supported.");
+							}
+							if (compressionType == *(uint32_t*)"sowt")
+							{
+								outEndian = Endian::Little;
+							}
+						}
+						format.formatTag = 1;
+						format.headerSize = nextChunk;
+					}
+					else
+					{
+						throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
+					}
+				}
+				else
+				{
+					throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
+				}
+			}
+			else
+			{
+				throw AudioException(E_FAIL, L"AiffFormat", L"Failed to read the aiff file. File might be corrupted.");
+			}
+			return format;
 		}
 		void AiffFormat::SampleRateFrom64(uint64_t srBits, AudioFormatInfo* format) const
 		{

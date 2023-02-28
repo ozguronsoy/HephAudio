@@ -8,56 +8,7 @@ namespace HephAudio
 	{
 		StringBuffer WavFormat::Extension() const noexcept
 		{
-			return L".wav .wave";
-		}
-		AudioFormatInfo WavFormat::ReadFormatInfo(const AudioFile& file, size_t& audioDataSize) const
-		{
-			void* audioFileBuffer = file.GetInnerBufferAddress();
-			uint32_t subChunkSize, nextChunk = 0;
-			AudioFormatInfo wfx = AudioFormatInfo();
-			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"RIFF")
-			{
-				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
-				{
-					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
-					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
-					{
-						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
-						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
-						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
-						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
-						{
-							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
-						}
-						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
-						nextChunk = subChunkSize + 20;
-						while (Read<uint32_t>(audioFileBuffer, nextChunk, GetSystemEndian()) != *(uint32_t*)"data")
-						{
-							const uint32_t chunkSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
-							if (nextChunk + chunkSize + 8 >= file.Size())
-							{
-								throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
-							}
-							nextChunk += chunkSize + 8;
-						}
-						audioDataSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
-						wfx.headerSize = nextChunk + 8;
-					}
-					else
-					{
-						throw AudioException(E_FAIL, L"WavFormat", L"Compression not supported.");
-					}
-				}
-				else
-				{
-					throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
-				}
-			}
-			else
-			{
-				throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
-			}
-			return wfx;
+			return ".wav .wave";
 		}
 		void WavFormat::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
 		{
@@ -149,6 +100,55 @@ namespace HephAudio
 				return true;
 			}
 			return false;
+		}
+		AudioFormatInfo WavFormat::ReadFormatInfo(const AudioFile& file, size_t& audioDataSize) const
+		{
+			void* audioFileBuffer = file.GetInnerBufferAddress();
+			uint32_t subChunkSize, nextChunk = 0;
+			AudioFormatInfo wfx = AudioFormatInfo();
+			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"RIFF")
+			{
+				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
+				{
+					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
+					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
+					{
+						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
+						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
+						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
+						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
+						{
+							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
+						}
+						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
+						nextChunk = subChunkSize + 20;
+						while (Read<uint32_t>(audioFileBuffer, nextChunk, GetSystemEndian()) != *(uint32_t*)"data")
+						{
+							const uint32_t chunkSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
+							if (nextChunk + chunkSize + 8 >= file.Size())
+							{
+								throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
+							}
+							nextChunk += chunkSize + 8;
+						}
+						audioDataSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
+						wfx.headerSize = nextChunk + 8;
+					}
+					else
+					{
+						throw AudioException(E_FAIL, L"WavFormat", L"Compression not supported.");
+					}
+				}
+				else
+				{
+					throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
+				}
+			}
+			else
+			{
+				throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
+			}
+			return wfx;
 		}
 	}
 }

@@ -47,7 +47,7 @@ namespace HephAudio
 		/// <summary>
 		/// Setting the volume to more than 1 might cause some glitching in audio.
 		/// </summary>
-		double volume;
+		HEPHAUDIO_DOUBLE volume;
 		std::vector<StringBuffer> categories;
 		AudioBuffer buffer;
 		/// <summary>
@@ -65,7 +65,7 @@ namespace HephAudio
 		/// <summary>
 		/// In milliseconds.
 		/// </summary>
-		double queueDelay;
+		HEPHAUDIO_DOUBLE queueDelay;
 		AudioWindowType windowType;
 		/// <summary>
 		/// Called each time before mixing the audio data.

@@ -4,10 +4,32 @@
 namespace HephAudio
 {
 	Complex::Complex() : Complex(0.0, 0.0) {}
-	Complex::Complex(double real, double imaginary)
+	Complex::Complex(HEPHAUDIO_DOUBLE real, HEPHAUDIO_DOUBLE imaginary)
 	{
 		this->real = real;
 		this->imaginary = imaginary;
+	}
+	Complex::Complex(const Complex& rhs)
+	{
+		this->real = rhs.real;
+		this->imaginary = rhs.imaginary;
+	}
+	Complex::Complex(Complex&& rhs) noexcept
+	{
+		this->real = (HEPHAUDIO_DOUBLE&&)rhs.real;
+		this->imaginary = (HEPHAUDIO_DOUBLE&&)rhs.imaginary;
+	}
+	Complex& Complex::operator=(const Complex& rhs)
+	{
+		this->real = rhs.real;
+		this->imaginary = rhs.imaginary;
+		return *this;
+	}
+	Complex& Complex::operator=(Complex&& rhs) noexcept
+	{
+		this->real = (HEPHAUDIO_DOUBLE&&)rhs.real;
+		this->imaginary = (HEPHAUDIO_DOUBLE&&)rhs.imaginary;
+		return *this;
 	}
 	Complex Complex::operator-() const
 	{
@@ -43,7 +65,7 @@ namespace HephAudio
 	Complex Complex::operator/(const Complex& rhs) const
 	{
 		Complex result;
-		const double denomiter = rhs.real * rhs.real + rhs.imaginary * rhs.imaginary;
+		const HEPHAUDIO_DOUBLE denomiter = rhs.real * rhs.real + rhs.imaginary * rhs.imaginary;
 		result.real = (this->real * rhs.real + this->imaginary * rhs.imaginary) / denomiter;
 		result.imaginary = (this->imaginary * rhs.real - this->real * rhs.imaginary) / denomiter;
 		return result;
@@ -61,59 +83,59 @@ namespace HephAudio
 	{
 		return !(*this == rhs);
 	}
-	Complex Complex::operator+(const double& rhs) const
+	Complex Complex::operator+(const HEPHAUDIO_DOUBLE& rhs) const
 	{
 		return Complex(this->real + rhs, this->imaginary);
 	}
-	Complex& Complex::operator+=(const double& rhs)
+	Complex& Complex::operator+=(const HEPHAUDIO_DOUBLE& rhs)
 	{
 		*this = *this + rhs;
 		return *this;
 	}
-	Complex Complex::operator-(const double& rhs) const
+	Complex Complex::operator-(const HEPHAUDIO_DOUBLE& rhs) const
 	{
 		return Complex(this->real - rhs, this->imaginary);
 	}
-	Complex& Complex::operator-=(const double& rhs)
+	Complex& Complex::operator-=(const HEPHAUDIO_DOUBLE& rhs)
 	{
 		*this = *this - rhs;
 		return *this;
 	}
-	Complex Complex::operator*(const double& rhs) const
+	Complex Complex::operator*(const HEPHAUDIO_DOUBLE& rhs) const
 	{
 		return Complex(this->real * rhs, this->imaginary * rhs);
 	}
-	Complex& Complex::operator*=(const double& rhs)
+	Complex& Complex::operator*=(const HEPHAUDIO_DOUBLE& rhs)
 	{
 		*this = *this * rhs;
 		return *this;
 	}
-	Complex Complex::operator/(const double& rhs) const
+	Complex Complex::operator/(const HEPHAUDIO_DOUBLE& rhs) const
 	{
 		return Complex(this->real / rhs, this->imaginary / rhs);
 	}
-	Complex& Complex::operator/=(const double& rhs)
+	Complex& Complex::operator/=(const HEPHAUDIO_DOUBLE& rhs)
 	{
 		*this = *this / rhs;
 		return *this;
 	}
-	bool Complex::operator==(const double& rhs) const
+	bool Complex::operator==(const HEPHAUDIO_DOUBLE& rhs) const
 	{
 		return this->imaginary == 0 && this->real == rhs;
 	}
-	bool Complex::operator!=(const double& rhs) const
+	bool Complex::operator!=(const HEPHAUDIO_DOUBLE& rhs) const
 	{
 		return this->imaginary != 0 || this->real != rhs;
 	}
-	double Complex::Magnitude() const noexcept
+	HEPHAUDIO_DOUBLE Complex::Magnitude() const noexcept
 	{
 		return sqrt(this->MagnitudeSquared());
 	}
-	double Complex::MagnitudeSquared() const noexcept
+	HEPHAUDIO_DOUBLE Complex::MagnitudeSquared() const noexcept
 	{
 		return this->real * this->real + this->imaginary * this->imaginary;
 	}
-	double Complex::Phase() const noexcept
+	HEPHAUDIO_DOUBLE Complex::Phase() const noexcept
 	{
 		return atan2(this->imaginary, this->real);
 	}

@@ -8,9 +8,9 @@ namespace HephAudio
 	struct Category
 	{
 		StringBuffer name;
-		double volume;
+		HEPHAUDIO_DOUBLE volume;
 		Category();
-		Category(StringBuffer name, double volume);
+		Category(StringBuffer name, HEPHAUDIO_DOUBLE volume);
 		virtual ~Category() = default;
 		bool operator==(const Category& rhs) const;
 		bool operator!=(const Category& rhs) const;

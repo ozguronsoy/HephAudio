@@ -15,7 +15,7 @@
 #endif
 
 #ifndef PI
-#define PI 3.14159265358979323846
+#define PI ((HEPHAUDIO_DOUBLE)3.14159265358979323846)
 #endif
 
 #ifndef E_FAIL
@@ -38,6 +38,15 @@
 #define WAVE_FORMAT_HEPHAUDIO 37
 #endif
 
+#ifndef HEPHAUDIO_DOUBLE
+#ifdef HEPHAUDIO_HIGH_PRECISION
+#define HEPHAUDIO_DOUBLE double
+#else
+#define HEPHAUDIO_DOUBLE float
+#endif
+#endif
+
+#ifndef HEPHAUDIO_STOPWATCH_START
 #ifdef HEPHAUDIO_INFO_LOGGING
 #define HEPHAUDIO_STOPWATCH_START StopWatch::Start()
 #define HEPHAUDIO_STOPWATCH_RESET StopWatch::Reset()
@@ -52,4 +61,5 @@
 #define HEPHAUDIO_STOPWATCH_STOP
 #define HEPHAUDIO_LOG(logMessage, logType)
 #define HEPHAUDIO_LOG_LINE(logMessage, logType)
+#endif
 #endif
