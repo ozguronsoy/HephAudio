@@ -40,6 +40,8 @@ namespace HephAudio
 		static void SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase);
 		static void TriangleWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase);
 		static void TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase);
+		static void HardClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE clippingLevel);
+		static void SoftClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE alpha);
 		static void Normalize(AudioBuffer& buffer, HEPHAUDIO_DOUBLE peakAmplitude);
 		static void RmsNormalize(AudioBuffer& buffer, HEPHAUDIO_DOUBLE desiredRms);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);

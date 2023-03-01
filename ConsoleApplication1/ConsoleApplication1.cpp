@@ -90,6 +90,30 @@ int main()
 			AudioProcessor::Reverse(audio.GetAO("", 0)->buffer);
 			PrintDeltaTime("reverse applied in");
 		}
+		else if (sb == "normalize")
+		{
+			StopWatch::Reset();
+			AudioProcessor::Normalize(audio.GetAO("", 0)->buffer, 1.0);
+			PrintDeltaTime("normalized in");
+		}
+		else if (sb.Contains("distortion"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			HEPHAUDIO_DOUBLE clippingLevel = StringBuffer::StringToDouble(params.at(2));
+			if (params.at(1) == "hc")
+			{
+				StopWatch::Reset();
+				AudioProcessor::HardClipDistortion(pao->buffer, clippingLevel);
+				PrintDeltaTime("hard-clipping distortion applied in");
+			}
+			else if (params.at(1) == "sc")
+			{
+				StopWatch::Reset();
+				AudioProcessor::SoftClipDistortion(pao->buffer, clippingLevel);
+				PrintDeltaTime("soft-clipping distortion applied in");
+			}
+		}
 		else if (sb.Contains("filter"))
 		{
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);

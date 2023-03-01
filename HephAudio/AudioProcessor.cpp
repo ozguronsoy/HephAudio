@@ -4,17 +4,13 @@
 #include <thread>
 
 #pragma region Helper Methods
-constexpr int sgn(HEPHAUDIO_DOUBLE x)
+constexpr HEPHAUDIO_DOUBLE sgn(HEPHAUDIO_DOUBLE x)
 {
-	if (x > 0)
+	if (x >= 0)
 	{
 		return 1.0;
 	}
-	if (x < 0)
-	{
-		return -1.0;
-	}
-	return 0.0;
+	return -1.0;
 }
 inline HEPHAUDIO_DOUBLE DecibelToGain(HEPHAUDIO_DOUBLE decibel)
 {
@@ -376,6 +372,38 @@ namespace HephAudio
 		if (sumOfSamplesSquared != 0.0)
 		{
 			buffer *= desiredRms * sqrt(buffer.frameCount / sumOfSamplesSquared);
+		}
+	}
+	void AudioProcessor::HardClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE clippingLevel)
+	{
+		clippingLevel = abs(clippingLevel);
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				HEPHAUDIO_DOUBLE& sample = buffer[i][j];
+				if (sample > clippingLevel)
+				{
+					sample = clippingLevel;
+				}
+				else if (sample < -clippingLevel)
+				{
+					sample = -clippingLevel;
+				}
+			}
+		}
+	}
+	void AudioProcessor::SoftClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE alpha)
+	{
+		constexpr HEPHAUDIO_DOUBLE twoOverPi = 2.0 / PI;
+		alpha = max(alpha, 1.0);
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				HEPHAUDIO_DOUBLE& sample = buffer[i][j];
+				sample = twoOverPi * atan(alpha * sample);
+			}
 		}
 	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
