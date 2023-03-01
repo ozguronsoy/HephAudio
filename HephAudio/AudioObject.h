@@ -5,6 +5,7 @@
 #include "AudioEvent.h"
 #include "AudioRenderEventArgs.h"
 #include "AudioRenderEventResult.h"
+#include "AudioFinishedPlayingEventArgs.h"
 #include <vector>
 
 namespace HephAudio
@@ -71,6 +72,7 @@ namespace HephAudio
 		/// Called each time before mixing the audio data.
 		/// </summary>
 		AudioEvent OnRender;
+		AudioEvent OnFinishedPlaying;
 		AudioObject();
 		virtual ~AudioObject() = default;
 		virtual bool IsPlaying() const;

@@ -241,7 +241,7 @@ namespace HephAudio
 			{
 				frameCount = this->frameCount - frameIndex;
 			}
-			memcpy(subBuffer.pComplexData, this->pComplexData + frameIndex, subBuffer.Size());
+			memcpy(subBuffer.pComplexData, this->pComplexData + frameIndex, frameCount * sizeof(Complex));
 		}
 		return subBuffer;
 	}

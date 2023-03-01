@@ -544,10 +544,7 @@ namespace HephAudio
 
 					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, audioObject.get(), frameCount);
 					AudioRenderEventResult rResult;
-					if (audioObject->OnRender)
-					{
-						audioObject->OnRender(&rArgs, &rResult);
-					}
+					audioObject->OnRender(&rArgs, &rResult);
 
 					for (size_t j = 0; j < frameCount && j < rResult.renderBuffer.FrameCount(); j++)
 					{
@@ -563,6 +560,9 @@ namespace HephAudio
 						{
 							if (audioObject->loopCount == 1) // Finish playing.
 							{
+								AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, audioObject.get(), 0);
+								audioObject->OnFinishedPlaying(&ofpArgs, nullptr);
+
 								StringBuffer queueName = audioObject->queueName;
 								uint32_t queueDelay = audioObject->queueDelay;
 
@@ -585,10 +585,11 @@ namespace HephAudio
 							}
 							else
 							{
-								if (audioObject->loopCount > 0) // 0 is infinite loop.
-								{
-									audioObject->loopCount--;
-								}
+								audioObject->loopCount--;
+
+								AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, audioObject.get(), audioObject->loopCount);
+								audioObject->OnFinishedPlaying(&ofpArgs, nullptr);
+
 								audioObject->frameIndex = 0;
 							}
 						}

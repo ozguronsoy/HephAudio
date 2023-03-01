@@ -13,6 +13,7 @@ void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceAdded(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
+void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label);
 
 int main()
@@ -55,12 +56,14 @@ int main()
 					break;
 				}
 			}
-			audio.Play(audioPath + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1)->OnRender = OnRender;
+			std::shared_ptr<AudioObject> pao = audio.Play(audioPath + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1);
+			pao->OnRender = OnRender;
+			pao->OnFinishedPlaying = OnFinishedPlaying;
 		}
 		else if (sb.Contains("load"))
 		{
 			StopWatch::Reset();
-			audio.Load(audioPath + sb.Split('\"').at(1))->pause = false;
+			audio.Load(audioPath + sb.Split('\"').at(1))->OnFinishedPlaying = OnFinishedPlaying;
 			PrintDeltaTime("File loaded in");
 		}
 		else if (sb.Contains("volume"))
@@ -94,17 +97,17 @@ int main()
 			HEPHAUDIO_DOUBLE f1 = StringBuffer::StringToDouble(params.at(2));
 			HEPHAUDIO_DOUBLE f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
 
-			if (params.at(1) == "hp")
-			{
-				StopWatch::Reset();
-				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
-				PrintDeltaTime("high-pass filter applied in");
-			}
-			else if (params.at(1) == "lp")
+			if (params.at(1) == "lp")
 			{
 				StopWatch::Reset();
 				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1);
 				PrintDeltaTime("low-pass filter applied in");
+			}
+			else if (params.at(1) == "hp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
+				PrintDeltaTime("high-pass filter applied in");
 			}
 			else if (params.at(1) == "bp")
 			{
@@ -170,6 +173,16 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult)
 
 	pAudioObject->frameIndex += readFrameCount;
 	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+}
+void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult)
+{
+	AudioObject* pAudioObject = (AudioObject*)pArgs->pAudioObject;
+	AudioFinishedPlayingEventArgs* pFinishedPlayingArgs = (AudioFinishedPlayingEventArgs*)pArgs;
+
+	if (pFinishedPlayingArgs->remainingLoopCount > 0)
+	{
+		ConsoleLogger::LogLine("The track \"" + pAudioObject->name + "\" is starting over, number of remaning loops: " + StringBuffer::ToString(pFinishedPlayingArgs->remainingLoopCount), ConsoleLogger::debug);
+	}
 }
 HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label)
 {

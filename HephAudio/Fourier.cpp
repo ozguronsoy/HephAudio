@@ -78,18 +78,16 @@ namespace HephAudio
 		ReverseBits(complexBuffer, fftSize);
 		const size_t p = log2(fftSize);
 		Complex a = Complex(-1.0, 0.0);
-		size_t j, k;
-		Complex b, temp;
 		for (size_t i = 0; i < p; i++)
 		{
 			const size_t s = (1 << i);
 			const size_t s2 = s << 1;
-			b = Complex(1.0, 0.0);
-			for (j = 0; j < s; j++)
+			Complex b = Complex(1.0, 0.0);
+			for (size_t j = 0; j < s; j++)
 			{
-				for (k = j; k < fftSize; k += s2)
+				for (size_t k = j; k < fftSize; k += s2)
 				{
-					temp = b * complexBuffer[k + s];
+					const Complex temp = b * complexBuffer[k + s];
 					complexBuffer[k + s] = complexBuffer[k] - temp;
 					complexBuffer[k] += temp;
 				}

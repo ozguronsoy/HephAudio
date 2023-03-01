@@ -99,7 +99,7 @@ namespace HephAudio
 			virtual size_t GetAOCountToMix() const;
 			virtual HEPHAUDIO_DOUBLE GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const;
 		};
-#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) if(pNativeAudio->OnException) { pNativeAudio->audioExceptionEventArgs = AudioExceptionEventArgs(pNativeAudio, audioException, pNativeAudio->GetCurrentThread()); pNativeAudio->OnException(&pNativeAudio->audioExceptionEventArgs, nullptr); }
+#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) pNativeAudio->audioExceptionEventArgs = AudioExceptionEventArgs(pNativeAudio, audioException, pNativeAudio->GetCurrentThread()); pNativeAudio->OnException(&pNativeAudio->audioExceptionEventArgs, nullptr)
 		StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t);
 	}
 }

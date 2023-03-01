@@ -159,6 +159,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -255,6 +258,9 @@
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
   </ItemGroup>
