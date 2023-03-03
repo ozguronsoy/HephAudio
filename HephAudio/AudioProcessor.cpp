@@ -298,11 +298,11 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::SineWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::SineWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
 	{
 		SineWaveTremoloRT(buffer, 0, frequency, depth, phase);
 	}
-	void AudioProcessor::SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
 	{
 		constexpr HEPHAUDIO_DOUBLE twopi = PI * 2.0;
 		const HEPHAUDIO_DOUBLE w = twopi * frequency;
@@ -318,11 +318,11 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::TriangleWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::TriangleWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
 	{
 		TriangleWaveTremoloRT(buffer, 0, frequency, depth, phase);
 	}
-	void AudioProcessor::TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
 	{
 		constexpr HEPHAUDIO_DOUBLE twopi = PI * 2.0;
 		constexpr HEPHAUDIO_DOUBLE twoOverPi = 2.0 / PI;
@@ -374,9 +374,9 @@ namespace HephAudio
 			buffer *= desiredRms * sqrt(buffer.frameCount / sumOfSamplesSquared);
 		}
 	}
-	void AudioProcessor::HardClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE clippingLevel)
+	void AudioProcessor::HardClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE clippingLevel_dB)
 	{
-		clippingLevel = abs(clippingLevel);
+		const HEPHAUDIO_DOUBLE clippingLevel = DecibelToGain(clippingLevel_dB);
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -397,6 +397,7 @@ namespace HephAudio
 	{
 		constexpr HEPHAUDIO_DOUBLE twoOverPi = 2.0 / PI;
 		alpha = max(alpha, 1.0);
+
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -405,6 +406,68 @@ namespace HephAudio
 				sample = twoOverPi * atan(alpha * sample);
 			}
 		}
+	}
+	void AudioProcessor::Overdrive(AudioBuffer& buffer, HEPHAUDIO_DOUBLE drive)
+	{
+		constexpr HEPHAUDIO_DOUBLE piOverTwo = PI / 2.0;
+		const HEPHAUDIO_DOUBLE a = sin(drive * piOverTwo);
+		const HEPHAUDIO_DOUBLE k = 2.0 * a / (1.0 - a);
+
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				HEPHAUDIO_DOUBLE& sample = buffer[i][j];
+				sample = (1.0 + k) * sample / (1.0 + k * abs(sample));
+			}
+		}
+	}
+	void AudioProcessor::Fuzz(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE alpha)
+	{
+		const HEPHAUDIO_DOUBLE& wetFactor = depth;
+		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
+
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				HEPHAUDIO_DOUBLE& sample = buffer[i][j];
+				if (sample > 0)
+				{
+					sample = wetFactor * (1.0 - exp(alpha * sample)) + dryFactor * sample;
+				}
+				else
+				{
+					sample = wetFactor * (-1.0 + exp(alpha * sample)) + dryFactor * sample;
+				}
+			}
+		}
+	}
+	void AudioProcessor::Flanger(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE delay_ms, HEPHAUDIO_DOUBLE rate, HEPHAUDIO_DOUBLE phase)
+	{
+		constexpr HEPHAUDIO_DOUBLE twopi = 2.0 * PI;
+		constexpr HEPHAUDIO_DOUBLE a = 0.7;
+		const size_t maxSampleDelay = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
+		const HEPHAUDIO_DOUBLE w = twopi * rate;
+		const HEPHAUDIO_DOUBLE dt = 1.0 / buffer.formatInfo.sampleRate;
+		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5 * a;
+		const HEPHAUDIO_DOUBLE dryFactor = a - wetFactor;
+		HEPHAUDIO_DOUBLE t = dt * (maxSampleDelay + 1);
+		
+		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, maxSampleDelay * buffer.formatInfo.FrameSize());
+
+		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++, t += dt)
+		{
+			const size_t currentDelay = round(abs(sin(w * t + phase)) * maxSampleDelay);
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				const HEPHAUDIO_DOUBLE& sample = buffer[i][j];
+				resultBuffer[i][j] = wetFactor * (sample + buffer[i - currentDelay][j]) + dryFactor * sample;
+			}
+		}
+
+		buffer = std::move(resultBuffer);
 	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
 	{

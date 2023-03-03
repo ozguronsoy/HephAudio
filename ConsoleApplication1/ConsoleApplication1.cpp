@@ -5,6 +5,7 @@
 #include <Fourier.h>
 #include <ConsoleLogger.h>
 #include <StopWatch.h>
+#include <shlobj.h>
 
 using namespace HephAudio;
 using namespace HephAudio::Native;
@@ -15,10 +16,15 @@ void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label);
+int Run(Audio& audio, StringBuffer& audioPath);
 
 int main()
 {
-	StringBuffer audioPath = "C:\\Users\\ozgur\\Desktop\\AudioFiles\\";
+	wchar_t desktopPath[MAX_PATH + 1];
+	SHGetFolderPath(NULL, CSIDL_DESKTOP, NULL, 0, desktopPath);
+	StringBuffer audioPath = desktopPath;
+	audioPath.SetStringType(StringType::Normal);
+	audioPath += '\\';
 
 	Audio audio = Audio();
 	audio.SetOnExceptionHandler(OnException);
@@ -27,128 +33,7 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 
-	std::string a;
-	StringBuffer sb = "";
-	while (sb != "exit" && sb != "quit")
-	{
-		std::getline(std::cin, a);
-		sb = a.c_str();
-		if (sb.Contains("path"))
-		{
-			if (sb == "path")
-			{
-				ConsoleLogger::LogLine(audioPath, ConsoleLogger::info);
-			}
-			else
-			{
-				audioPath = sb.Split(' ').at(1);
-			}
-		}
-		else if (sb.Contains("play"))
-		{
-			StringBuffer arg1 = sb.Split(' ').at(1);
-			bool isNumber = true;
-			for (size_t i = 0; i < arg1.Size(); i++)
-			{
-				if (!isdigit(arg1.c_str()[i]))
-				{
-					isNumber = false;
-					break;
-				}
-			}
-			std::shared_ptr<AudioObject> pao = audio.Play(audioPath + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1);
-			pao->OnRender = OnRender;
-			pao->OnFinishedPlaying = OnFinishedPlaying;
-		}
-		else if (sb.Contains("load"))
-		{
-			StopWatch::Reset();
-			audio.Load(audioPath + sb.Split('\"').at(1))->OnFinishedPlaying = OnFinishedPlaying;
-			PrintDeltaTime("File loaded in");
-		}
-		else if (sb.Contains("volume"))
-		{
-			HEPHAUDIO_DOUBLE volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
-			audio.GetAO("", 0)->volume = volume;
-		}
-		else if (sb.Contains("position"))
-		{
-			HEPHAUDIO_DOUBLE position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
-			audio.SetAOPosition(audio.GetAO("", 0), position);
-		}
-		else if (sb == "pause")
-		{
-			audio.GetAO("", 0)->pause = true;
-		}
-		else if (sb == "resume")
-		{
-			audio.GetAO("", 0)->pause = false;
-		}
-		else if (sb == "reverse")
-		{
-			StopWatch::Reset();
-			AudioProcessor::Reverse(audio.GetAO("", 0)->buffer);
-			PrintDeltaTime("reverse applied in");
-		}
-		else if (sb == "normalize")
-		{
-			StopWatch::Reset();
-			AudioProcessor::Normalize(audio.GetAO("", 0)->buffer, 1.0);
-			PrintDeltaTime("normalized in");
-		}
-		else if (sb.Contains("distortion"))
-		{
-			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
-			std::vector<StringBuffer> params = sb.Split(' ');
-			HEPHAUDIO_DOUBLE clippingLevel = StringBuffer::StringToDouble(params.at(2));
-			if (params.at(1) == "hc")
-			{
-				StopWatch::Reset();
-				AudioProcessor::HardClipDistortion(pao->buffer, clippingLevel);
-				PrintDeltaTime("hard-clipping distortion applied in");
-			}
-			else if (params.at(1) == "sc")
-			{
-				StopWatch::Reset();
-				AudioProcessor::SoftClipDistortion(pao->buffer, clippingLevel);
-				PrintDeltaTime("soft-clipping distortion applied in");
-			}
-		}
-		else if (sb.Contains("filter"))
-		{
-			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
-			std::vector<StringBuffer> params = sb.Split(' ');
-			HEPHAUDIO_DOUBLE f1 = StringBuffer::StringToDouble(params.at(2));
-			HEPHAUDIO_DOUBLE f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
-
-			if (params.at(1) == "lp")
-			{
-				StopWatch::Reset();
-				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1);
-				PrintDeltaTime("low-pass filter applied in");
-			}
-			else if (params.at(1) == "hp")
-			{
-				StopWatch::Reset();
-				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
-				PrintDeltaTime("high-pass filter applied in");
-			}
-			else if (params.at(1) == "bp")
-			{
-				StopWatch::Reset();
-				AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2);
-				PrintDeltaTime("band-pass filter applied in");
-			}
-			else if (params.at(1) == "bc")
-			{
-				StopWatch::Reset();
-				AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2);
-				PrintDeltaTime("band-cut filter applied in");
-			}
-		}
-	}
-
-	return 0;
+	return Run(audio, audioPath);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
 {
@@ -216,4 +101,172 @@ HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label)
 	ConsoleLogger::LogLine(label, ConsoleLogger::success);
 	StopWatch::Reset();
 	return dt;
+}
+int Run(Audio& audio, StringBuffer& audioPath)
+{
+	std::string a;
+	StringBuffer sb = "";
+	while (sb != "exit" && sb != "quit")
+	{
+		std::getline(std::cin, a);
+		sb = a.c_str();
+		if (sb.Contains("path"))
+		{
+			if (sb == "path")
+			{
+				ConsoleLogger::LogLine(audioPath, ConsoleLogger::info);
+			}
+			else
+			{
+				audioPath = sb.Split('"').at(1);
+			}
+		}
+		else if (sb.Contains("play"))
+		{
+			StringBuffer arg1 = sb.Split(' ').at(1);
+			bool isNumber = true;
+			for (size_t i = 0; i < arg1.Size(); i++)
+			{
+				if (!isdigit(arg1.c_str()[i]))
+				{
+					isNumber = false;
+					break;
+				}
+			}
+			std::shared_ptr<AudioObject> pao = audio.Play(audioPath + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1);
+			pao->OnRender = OnRender;
+			pao->OnFinishedPlaying = OnFinishedPlaying;
+		}
+		else if (sb.Contains("load"))
+		{
+			StopWatch::Reset();
+			audio.Load(audioPath + sb.Split('\"').at(1))->OnFinishedPlaying = OnFinishedPlaying;
+			PrintDeltaTime("File loaded in");
+		}
+		else if (sb.Contains("volume"))
+		{
+			HEPHAUDIO_DOUBLE volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			audio.GetAO("", 0)->volume = volume;
+		}
+		else if (sb.Contains("position"))
+		{
+			HEPHAUDIO_DOUBLE position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			audio.SetAOPosition(audio.GetAO("", 0), position);
+		}
+		else if (sb == "pause")
+		{
+			audio.GetAO("", 0)->pause = true;
+		}
+		else if (sb == "resume")
+		{
+			audio.GetAO("", 0)->pause = false;
+		}
+		else if (sb == "reverse")
+		{
+			StopWatch::Reset();
+			AudioProcessor::Reverse(audio.GetAO("", 0)->buffer);
+			PrintDeltaTime("reverse applied in");
+		}
+		else if (sb == "normalize")
+		{
+			StopWatch::Reset();
+			AudioProcessor::Normalize(audio.GetAO("", 0)->buffer, 1.0);
+			PrintDeltaTime("normalized in");
+		}
+		else if (sb.Contains("distortion"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			HEPHAUDIO_DOUBLE distortionParam = StringBuffer::StringToDouble(params.at(2));
+			if (params.at(1) == "hc")
+			{
+				StopWatch::Reset();
+				AudioProcessor::HardClipDistortion(pao->buffer, distortionParam);
+				PrintDeltaTime("hard-clipping distortion applied in");
+			}
+			else if (params.at(1) == "sc")
+			{
+				StopWatch::Reset();
+				AudioProcessor::SoftClipDistortion(pao->buffer, distortionParam);
+				PrintDeltaTime("soft-clipping distortion applied in");
+			}
+			else if (params.at(1) == "od")
+			{
+				StopWatch::Reset();
+				AudioProcessor::Overdrive(pao->buffer, distortionParam);
+				PrintDeltaTime("overdrive applied in");
+			}
+			else if (params.at(1) == "fz")
+			{
+				HEPHAUDIO_DOUBLE alpha = StringBuffer::StringToDouble(params.at(3));
+				StopWatch::Reset();
+				AudioProcessor::Fuzz(pao->buffer, distortionParam, alpha);
+				PrintDeltaTime("fuzz applied in");
+			}
+		}
+		else if (sb.Contains("flanger"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			HEPHAUDIO_DOUBLE depth = StringBuffer::StringToDouble(params.at(1));
+			HEPHAUDIO_DOUBLE delay = StringBuffer::StringToDouble(params.at(2));
+			HEPHAUDIO_DOUBLE rate = StringBuffer::StringToDouble(params.at(3));
+			HEPHAUDIO_DOUBLE phase = StringBuffer::StringToDouble(params.at(4));
+			const bool originalState = pao->pause;
+
+			pao->pause = true;
+			StopWatch::Reset();
+			AudioProcessor::Flanger(pao->buffer, depth, delay, rate, phase);
+			PrintDeltaTime("flanger applied in");
+			pao->pause = originalState;
+		}
+		else if (sb.Contains("filter"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			HEPHAUDIO_DOUBLE f1 = StringBuffer::StringToDouble(params.at(2));
+			HEPHAUDIO_DOUBLE f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
+
+			if (params.at(1) == "lp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1);
+				PrintDeltaTime("low-pass filter applied in");
+			}
+			else if (params.at(1) == "hp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
+				PrintDeltaTime("high-pass filter applied in");
+			}
+			else if (params.at(1) == "bp")
+			{
+				StopWatch::Reset();
+				AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2);
+				PrintDeltaTime("band-pass filter applied in");
+			}
+			else if (params.at(1) == "bc")
+			{
+				StopWatch::Reset();
+				AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2);
+				PrintDeltaTime("band-cut filter applied in");
+			}
+		}
+		else if (sb == "original")
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			const bool originalState = pao->pause;
+			pao->pause = true;
+			pao->buffer.Resize(0);
+			StopWatch::Reset();
+			AudioFile audioFile = AudioFile(pao->filePath);
+			Formats::IAudioFormat* audioFormat = audio.GetAudioFormats()->GetAudioFormat(pao->filePath);
+			audioFormat->ReadFile(audioFile, pao->buffer);
+			pao->buffer.SetFormat(audio.GetRenderFormat());
+			PrintDeltaTime("removed all effects in");
+			pao->pause = originalState;
+		}
+	}
+
+	return 0;
 }

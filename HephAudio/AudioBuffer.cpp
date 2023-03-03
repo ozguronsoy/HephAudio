@@ -493,13 +493,25 @@ namespace HephAudio
 	{
 		if (newFrameCount != this->frameCount)
 		{
-			void* tempPtr = realloc(this->pAudioData, newFrameCount * this->formatInfo.FrameSize());
-			if (tempPtr == nullptr)
+			if (newFrameCount == 0)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Resize", L"Insufficient memory.");
+				this->frameCount = 0;
+				if (this->pAudioData != nullptr)
+				{
+					free(this->pAudioData);
+					this->pAudioData = nullptr;
+				}
 			}
-			this->pAudioData = tempPtr;
-			this->frameCount = newFrameCount;
+			else
+			{
+				void* tempPtr = realloc(this->pAudioData, newFrameCount * this->formatInfo.FrameSize());
+				if (tempPtr == nullptr)
+				{
+					throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Resize", L"Insufficient memory.");
+				}
+				this->pAudioData = tempPtr;
+				this->frameCount = newFrameCount;
+			}
 		}
 	}
 	HEPHAUDIO_DOUBLE AudioBuffer::CalculateDuration() const noexcept

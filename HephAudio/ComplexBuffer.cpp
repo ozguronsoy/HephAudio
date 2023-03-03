@@ -397,13 +397,25 @@ namespace HephAudio
 	{
 		if (newFrameCount != this->frameCount)
 		{
-			Complex* tempPtr = (Complex*)realloc(this->pComplexData, newFrameCount * sizeof(Complex));
-			if (tempPtr == nullptr)
+			if (newFrameCount == 0)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Resize", L"Insufficient memory.");
+				this->frameCount = 0;
+				if (this->pComplexData != nullptr)
+				{
+					free(this->pComplexData);
+					this->pComplexData = nullptr;
+				}
 			}
-			this->pComplexData = tempPtr;
-			this->frameCount = newFrameCount;
+			else
+			{
+				Complex* tempPtr = (Complex*)realloc(this->pComplexData, newFrameCount * sizeof(Complex));
+				if (tempPtr == nullptr)
+				{
+					throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Resize", L"Insufficient memory.");
+				}
+				this->pComplexData = tempPtr;
+				this->frameCount = newFrameCount;
+			}
 		}
 	}
 	Complex* const& ComplexBuffer::Begin() const noexcept
