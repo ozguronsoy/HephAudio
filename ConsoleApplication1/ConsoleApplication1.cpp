@@ -20,12 +20,17 @@ int Run(Audio& audio, StringBuffer& audioPath);
 
 int main()
 {
-	wchar_t desktopPath[MAX_PATH + 1];
-	SHGetFolderPath(NULL, CSIDL_DESKTOP, NULL, 0, desktopPath);
-	StringBuffer audioPath = desktopPath;
-	audioPath.SetStringType(StringType::Normal);
-	audioPath += '\\';
+	HANDLE stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD outMode = 0;
+	GetConsoleMode(stdoutHandle, &outMode);
 
+	SetConsoleMode(stdoutHandle, outMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
+	wchar_t desktopPath[MAX_PATH + 1];
+	SHGetFolderPathW(NULL, CSIDL_DESKTOP, NULL, 0, desktopPath);
+	StringBuffer audioPath = desktopPath;
+	audioPath += '\\';
+	audioPath += "AudioFiles\\";
 	Audio audio = Audio();
 	audio.SetOnExceptionHandler(OnException);
 	audio.SetOnAudioDeviceAddedHandler(OnDeviceAdded);
@@ -104,15 +109,15 @@ HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label)
 }
 int Run(Audio& audio, StringBuffer& audioPath)
 {
-	std::string a;
+	std::wstring a;
 	StringBuffer sb = "";
-	while (sb != "exit" && sb != "quit")
+	while (sb != L"exit" && sb != L"quit")
 	{
-		std::getline(std::cin, a);
+	std:getline(std::wcin, a);
 		sb = a.c_str();
 		if (sb.Contains("path"))
 		{
-			if (sb == "path")
+			if (sb == L"path")
 			{
 				ConsoleLogger::LogLine(audioPath, ConsoleLogger::info);
 			}
@@ -127,7 +132,7 @@ int Run(Audio& audio, StringBuffer& audioPath)
 			bool isNumber = true;
 			for (size_t i = 0; i < arg1.Size(); i++)
 			{
-				if (!isdigit(arg1.c_str()[i]))
+				if (!isdigit(arg1.wc_str()[i]))
 				{
 					isNumber = false;
 					break;
@@ -153,21 +158,21 @@ int Run(Audio& audio, StringBuffer& audioPath)
 			HEPHAUDIO_DOUBLE position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
 			audio.SetAOPosition(audio.GetAO("", 0), position);
 		}
-		else if (sb == "pause")
+		else if (sb == L"pause")
 		{
 			audio.GetAO("", 0)->pause = true;
 		}
-		else if (sb == "resume")
+		else if (sb == L"resume")
 		{
 			audio.GetAO("", 0)->pause = false;
 		}
-		else if (sb == "reverse")
+		else if (sb == L"reverse")
 		{
 			StopWatch::Reset();
 			AudioProcessor::Reverse(audio.GetAO("", 0)->buffer);
 			PrintDeltaTime("reverse applied in");
 		}
-		else if (sb == "normalize")
+		else if (sb == L"normalize")
 		{
 			StopWatch::Reset();
 			AudioProcessor::Normalize(audio.GetAO("", 0)->buffer, 1.0);
@@ -178,25 +183,25 @@ int Run(Audio& audio, StringBuffer& audioPath)
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			std::vector<StringBuffer> params = sb.Split(' ');
 			HEPHAUDIO_DOUBLE distortionParam = StringBuffer::StringToDouble(params.at(2));
-			if (params.at(1) == "hc")
+			if (params.at(1) == L"hc")
 			{
 				StopWatch::Reset();
 				AudioProcessor::HardClipDistortion(pao->buffer, distortionParam);
 				PrintDeltaTime("hard-clipping distortion applied in");
 			}
-			else if (params.at(1) == "sc")
+			else if (params.at(1) == L"sc")
 			{
 				StopWatch::Reset();
 				AudioProcessor::SoftClipDistortion(pao->buffer, distortionParam);
 				PrintDeltaTime("soft-clipping distortion applied in");
 			}
-			else if (params.at(1) == "od")
+			else if (params.at(1) == L"od")
 			{
 				StopWatch::Reset();
 				AudioProcessor::Overdrive(pao->buffer, distortionParam);
 				PrintDeltaTime("overdrive applied in");
 			}
-			else if (params.at(1) == "fz")
+			else if (params.at(1) == L"fz")
 			{
 				HEPHAUDIO_DOUBLE alpha = StringBuffer::StringToDouble(params.at(3));
 				StopWatch::Reset();
@@ -227,32 +232,32 @@ int Run(Audio& audio, StringBuffer& audioPath)
 			HEPHAUDIO_DOUBLE f1 = StringBuffer::StringToDouble(params.at(2));
 			HEPHAUDIO_DOUBLE f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
 
-			if (params.at(1) == "lp")
+			if (params.at(1) == L"lp")
 			{
 				StopWatch::Reset();
 				AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1);
 				PrintDeltaTime("low-pass filter applied in");
 			}
-			else if (params.at(1) == "hp")
+			else if (params.at(1) == L"hp")
 			{
 				StopWatch::Reset();
 				AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
 				PrintDeltaTime("high-pass filter applied in");
 			}
-			else if (params.at(1) == "bp")
+			else if (params.at(1) == L"bp")
 			{
 				StopWatch::Reset();
 				AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2);
 				PrintDeltaTime("band-pass filter applied in");
 			}
-			else if (params.at(1) == "bc")
+			else if (params.at(1) == L"bc")
 			{
 				StopWatch::Reset();
 				AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2);
 				PrintDeltaTime("band-cut filter applied in");
 			}
 		}
-		else if (sb == "original")
+		else if (sb == L"original")
 		{
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			const bool originalState = pao->pause;

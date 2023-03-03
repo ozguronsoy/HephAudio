@@ -46,6 +46,12 @@
     <Filter Include="Header Files\Events\Results">
       <UniqueIdentifier>{fee30d6f-5a01-4043-9a4d-bff499127af7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Oscillators">
+      <UniqueIdentifier>{6aa74870-c719-4d8f-855f-b0362054fbd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Oscillators">
+      <UniqueIdentifier>{b830d0cf-bd31-42c7-9f99-313d1eae36e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h">
@@ -162,6 +168,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)OscillatorBase.h">
+      <Filter>Header Files\Oscillators</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h">
+      <Filter>Header Files\Oscillators</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.h">
+      <Filter>Header Files\Oscillators</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.h">
+      <Filter>Header Files\Oscillators</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.h">
+      <Filter>Header Files\Oscillators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -262,6 +283,21 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)OscillatorBase.cpp">
+      <Filter>Source Files\Oscillators</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp">
+      <Filter>Source Files\Oscillators</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.cpp">
+      <Filter>Source Files\Oscillators</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.cpp">
+      <Filter>Source Files\Oscillators</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.cpp">
+      <Filter>Source Files\Oscillators</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,25 +3,6 @@
 #include "Fourier.h"
 #include <thread>
 
-#pragma region Helper Methods
-constexpr HEPHAUDIO_DOUBLE sgn(HEPHAUDIO_DOUBLE x)
-{
-	if (x >= 0)
-	{
-		return 1.0;
-	}
-	return -1.0;
-}
-inline HEPHAUDIO_DOUBLE DecibelToGain(HEPHAUDIO_DOUBLE decibel)
-{
-	return pow(10.0, decibel * 0.05);
-}
-inline HEPHAUDIO_DOUBLE GainToDecibel(HEPHAUDIO_DOUBLE gain)
-{
-	return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
-}
-#pragma endregion
-
 namespace HephAudio
 {
 #pragma region Converts, Mix, Split/Merge Channels
@@ -298,44 +279,48 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::SineWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::SineWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
 	{
-		SineWaveTremoloRT(buffer, 0, frequency, depth, phase);
+		SineWaveTremoloRT(buffer, 0, frequency, depth, phase_deg);
 	}
-	void AudioProcessor::SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
 	{
 		constexpr HEPHAUDIO_DOUBLE twopi = PI * 2.0;
+		const HEPHAUDIO_DOUBLE phase_rad = DegToRad(phase_deg);
 		const HEPHAUDIO_DOUBLE w = twopi * frequency;
 		const HEPHAUDIO_DOUBLE dt = 1.0 / subBuffer.formatInfo.sampleRate;
 		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5;
 		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
 		HEPHAUDIO_DOUBLE t = subBufferFrameIndex * dt;
+
 		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
 		{
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
-				subBuffer[i][j] *= wetFactor * sin(w * t + phase) + dryFactor;
+				subBuffer[i][j] *= wetFactor * sin(w * t + phase_rad) + dryFactor;
 			}
 		}
 	}
-	void AudioProcessor::TriangleWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::TriangleWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
 	{
-		TriangleWaveTremoloRT(buffer, 0, frequency, depth, phase);
+		TriangleWaveTremoloRT(buffer, 0, frequency, depth, phase_deg);
 	}
-	void AudioProcessor::TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
 	{
 		constexpr HEPHAUDIO_DOUBLE twopi = PI * 2.0;
 		constexpr HEPHAUDIO_DOUBLE twoOverPi = 2.0 / PI;
+		const HEPHAUDIO_DOUBLE phase_rad = DegToRad(phase_deg);
 		const HEPHAUDIO_DOUBLE w = twopi * frequency;
 		const HEPHAUDIO_DOUBLE dt = 1.0 / subBuffer.formatInfo.sampleRate;
 		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5;
 		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
 		HEPHAUDIO_DOUBLE t = subBufferFrameIndex * dt;
+
 		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
 		{
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
-				subBuffer[i][j] *= wetFactor * twoOverPi * asin(sin(w * t + phase)) + dryFactor;
+				subBuffer[i][j] *= wetFactor * twoOverPi * asin(sin(w * t + phase_rad)) + dryFactor;
 			}
 		}
 	}
@@ -343,6 +328,7 @@ namespace HephAudio
 	{
 		HEPHAUDIO_DOUBLE maxSample = 0.0;
 		HEPHAUDIO_DOUBLE currentSample = 0.0;
+
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -354,6 +340,7 @@ namespace HephAudio
 				}
 			}
 		}
+
 		if (maxSample != 0.0 && maxSample != peakAmplitude)
 		{
 			buffer *= peakAmplitude / maxSample;
@@ -362,6 +349,7 @@ namespace HephAudio
 	void AudioProcessor::RmsNormalize(AudioBuffer& buffer, HEPHAUDIO_DOUBLE desiredRms)
 	{
 		HEPHAUDIO_DOUBLE sumOfSamplesSquared = 0.0;
+
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -369,6 +357,7 @@ namespace HephAudio
 				sumOfSamplesSquared += buffer[i][j] * buffer[i][j];
 			}
 		}
+
 		if (sumOfSamplesSquared != 0.0)
 		{
 			buffer *= desiredRms * sqrt(buffer.frameCount / sumOfSamplesSquared);
@@ -443,27 +432,26 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Flanger(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE delay_ms, HEPHAUDIO_DOUBLE rate, HEPHAUDIO_DOUBLE phase)
+	void AudioProcessor::Flanger(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE delay_ms, HEPHAUDIO_DOUBLE rate, HEPHAUDIO_DOUBLE phase_deg)
 	{
 		constexpr HEPHAUDIO_DOUBLE twopi = 2.0 * PI;
-		constexpr HEPHAUDIO_DOUBLE a = 0.7;
 		const size_t maxSampleDelay = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
+		const HEPHAUDIO_DOUBLE phase_rad = DegToRad(phase_deg);
 		const HEPHAUDIO_DOUBLE w = twopi * rate;
 		const HEPHAUDIO_DOUBLE dt = 1.0 / buffer.formatInfo.sampleRate;
-		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5 * a;
-		const HEPHAUDIO_DOUBLE dryFactor = a - wetFactor;
+		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5;
+		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
 		HEPHAUDIO_DOUBLE t = dt * (maxSampleDelay + 1);
-		
+
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
 		memcpy(resultBuffer.pAudioData, buffer.pAudioData, maxSampleDelay * buffer.formatInfo.FrameSize());
 
 		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++, t += dt)
 		{
-			const size_t currentDelay = round(abs(sin(w * t + phase)) * maxSampleDelay);
+			const size_t currentDelay = round(abs(sin(w * t + phase_rad)) * maxSampleDelay);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
-				const HEPHAUDIO_DOUBLE& sample = buffer[i][j];
-				resultBuffer[i][j] = wetFactor * (sample + buffer[i - currentDelay][j]) + dryFactor * sample;
+				resultBuffer[i][j] = wetFactor * buffer[i - currentDelay][j] + dryFactor * buffer[i][j];
 			}
 		}
 

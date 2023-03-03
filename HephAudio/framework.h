@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
@@ -7,7 +8,6 @@
 #endif
 
 #ifdef __ANDROID__
-#include <cmath>
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) > (b)) ? (b) : (a))
 #define WAVE_FORMAT_PCM 1
@@ -63,3 +63,34 @@
 #define HEPHAUDIO_LOG_LINE(logMessage, logType)
 #endif
 #endif
+
+#pragma region Helper Methods
+inline constexpr HEPHAUDIO_DOUBLE sgn(HEPHAUDIO_DOUBLE x)
+{
+	if (x > 0)
+	{
+		return 1.0;
+	}
+	else if (x < 0)
+	{
+		return -1.0;
+	}
+	return 0.0;
+}
+inline HEPHAUDIO_DOUBLE DecibelToGain(HEPHAUDIO_DOUBLE decibel)
+{
+	return pow(10.0, decibel * 0.05);
+}
+inline HEPHAUDIO_DOUBLE GainToDecibel(HEPHAUDIO_DOUBLE gain)
+{
+	return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
+}
+inline HEPHAUDIO_DOUBLE RadToDeg(HEPHAUDIO_DOUBLE rad)
+{
+	return rad * 180.0 / PI;
+}
+inline HEPHAUDIO_DOUBLE DegToRad(HEPHAUDIO_DOUBLE deg)
+{
+	return deg * PI / 180.0;
+}
+#pragma endregion

@@ -96,8 +96,11 @@ namespace HephAudio
 		default:
 			break;
 		}
-		
-		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
-		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+
+		if (!pAudioObject->constant)
+		{
+			pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
+			pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+		}
 	}
 }
