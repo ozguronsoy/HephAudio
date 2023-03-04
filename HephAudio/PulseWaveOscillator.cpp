@@ -2,12 +2,13 @@
 
 namespace HephAudio
 {
-	PulseWaveOscillator::PulseWaveOscillator(const uint32_t& sampleRate) : PulseWaveOscillator(0.5, 1500.0, sampleRate, 0, AngleUnit::Radian) {}
+	PulseWaveOscillator::PulseWaveOscillator(const uint32_t& sampleRate) : PulseWaveOscillator(1.0, 1500.0, sampleRate, 0, AngleUnit::Radian) {}
 	PulseWaveOscillator::PulseWaveOscillator(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit)
 		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit)
 	{
 		this->SetDutyCycle(0.2);
 		this->SetOrder(10);
+		this->UpdateEta();
 	}
 	HEPHAUDIO_DOUBLE PulseWaveOscillator::Oscillate(const size_t& frameIndex) const noexcept
 	{
@@ -22,9 +23,13 @@ namespace HephAudio
 
 		sample *= 2.0 * this->peakAmplitude / PI;
 		sample += this->peakAmplitude * this->dutyCycle - 0.5;
-		sample *= 2.0;
+		sample *= 2.0 * this->eta;
 
 		return sample;
+	}
+	void PulseWaveOscillator::SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept
+	{
+		OscillatorBase::SetPeakAmplitude(peakAmplitude);
 	}
 	const HEPHAUDIO_DOUBLE& PulseWaveOscillator::GetDutyCycle() const noexcept
 	{
@@ -32,10 +37,7 @@ namespace HephAudio
 	}
 	void PulseWaveOscillator::SetDutyCycle(HEPHAUDIO_DOUBLE dutyCycle) noexcept
 	{
-		if (dutyCycle >= 0.0 && dutyCycle <= 1.0)
-		{
-			this->dutyCycle = dutyCycle;
-		}
+		this->dutyCycle = dutyCycle;
 	}
 	const HEPHAUDIO_DOUBLE& PulseWaveOscillator::GetPulseWidth() const noexcept
 	{
@@ -48,5 +50,22 @@ namespace HephAudio
 	void PulseWaveOscillator::SetOrder(uint32_t order) noexcept
 	{
 		this->order = order;
+	}
+	void PulseWaveOscillator::UpdateEta() noexcept
+	{
+		const size_t frameCount = ceil(this->sampleRate / this->frequency);
+		HEPHAUDIO_DOUBLE maxSample = 0.0;
+		this->eta = 1.0;
+
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			const HEPHAUDIO_DOUBLE currentSample = abs(this->Oscillate(i));
+			if (currentSample > maxSample)
+			{
+				maxSample = currentSample;
+			}
+		}
+
+		this->eta = 1.0 / maxSample;
 	}
 }

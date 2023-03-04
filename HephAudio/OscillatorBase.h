@@ -24,15 +24,15 @@ namespace HephAudio
 	public:
 		virtual ~OscillatorBase() = default;
 		virtual HEPHAUDIO_DOUBLE Oscillate(const size_t& frameIndex) const noexcept = 0;
-		const HEPHAUDIO_DOUBLE& GetPeakAmplitude() const noexcept;
-		void SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept;
-		const HEPHAUDIO_DOUBLE& GetFrequency() const noexcept;
-		void SetFrequency(HEPHAUDIO_DOUBLE frequency) noexcept;
-		const HEPHAUDIO_DOUBLE& GetPhase(AngleUnit angleUnit) const noexcept;
-		void SetPhase(HEPHAUDIO_DOUBLE phase, AngleUnit angleUnit) noexcept;
-		const uint32_t& GetSampleRate() const noexcept;
-		void SetSampleRate(uint32_t sampleRate) noexcept;
+		virtual const HEPHAUDIO_DOUBLE& GetPeakAmplitude() const noexcept;
+		virtual void SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept;
+		virtual const HEPHAUDIO_DOUBLE& GetFrequency() const noexcept;
+		virtual void SetFrequency(HEPHAUDIO_DOUBLE frequency) noexcept;
+		virtual const HEPHAUDIO_DOUBLE& GetPhase(AngleUnit angleUnit) const noexcept;
+		virtual void SetPhase(HEPHAUDIO_DOUBLE phase, AngleUnit angleUnit) noexcept;
+		virtual const uint32_t& GetSampleRate() const noexcept;
+		virtual void SetSampleRate(uint32_t sampleRate) noexcept;
 	protected:
-		void UpdateW() noexcept;
+		virtual void UpdateW() noexcept;
 	};
 }
