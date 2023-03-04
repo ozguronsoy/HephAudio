@@ -5,8 +5,8 @@ namespace HephAudio
 	OscillatorBase::OscillatorBase(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit)
 	{
 		this->SetPeakAmplitude(peakAmplitude);
-		this->SetFrequency(frequency);
 		this->SetSampleRate(sampleRate);
+		this->SetFrequency(frequency);
 		this->SetPhase(phase, angleUnit);
 	}
 	const HEPHAUDIO_DOUBLE& OscillatorBase::GetPeakAmplitude() const noexcept
@@ -28,6 +28,7 @@ namespace HephAudio
 	void OscillatorBase::SetFrequency(HEPHAUDIO_DOUBLE frequency) noexcept
 	{
 		this->frequency = frequency;
+		this->UpdateW();
 	}
 	const HEPHAUDIO_DOUBLE& OscillatorBase::GetPhase(AngleUnit angleUnit) const noexcept
 	{
@@ -43,6 +44,11 @@ namespace HephAudio
 	}
 	void OscillatorBase::SetSampleRate(uint32_t sampleRate) noexcept
 	{
-		this->sampleRate = sampleRate;
+		this->sampleRate = sampleRate > 0 ? sampleRate : 48e3;
+		this->UpdateW();
+	}
+	void OscillatorBase::UpdateW() noexcept
+	{
+		this->w_sample = 2.0 * PI * this->frequency / this->sampleRate;
 	}
 }

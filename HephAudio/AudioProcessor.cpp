@@ -279,48 +279,21 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::SineWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
+	void AudioProcessor::Tremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, const OscillatorBase& lfo)
 	{
-		SineWaveTremoloRT(buffer, 0, frequency, depth, phase_deg);
+		AudioProcessor::TremoloRT(buffer, 0, depth, lfo);
 	}
-	void AudioProcessor::SineWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
+	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, const OscillatorBase& lfo)
 	{
-		constexpr HEPHAUDIO_DOUBLE twopi = PI * 2.0;
-		const HEPHAUDIO_DOUBLE phase_rad = DegToRad(phase_deg);
-		const HEPHAUDIO_DOUBLE w = twopi * frequency;
-		const HEPHAUDIO_DOUBLE dt = 1.0 / subBuffer.formatInfo.sampleRate;
 		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5;
 		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
-		HEPHAUDIO_DOUBLE t = subBufferFrameIndex * dt;
 
-		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
+		for (size_t i = 0, t_sample = subBufferFrameIndex; i < subBuffer.frameCount; i++, t_sample++)
 		{
+			const HEPHAUDIO_DOUBLE lfoSample = lfo.Oscillate(t_sample);
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
-				subBuffer[i][j] *= wetFactor * sin(w * t + phase_rad) + dryFactor;
-			}
-		}
-	}
-	void AudioProcessor::TriangleWaveTremolo(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
-	{
-		TriangleWaveTremoloRT(buffer, 0, frequency, depth, phase_deg);
-	}
-	void AudioProcessor::TriangleWaveTremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE phase_deg)
-	{
-		constexpr HEPHAUDIO_DOUBLE twopi = PI * 2.0;
-		constexpr HEPHAUDIO_DOUBLE twoOverPi = 2.0 / PI;
-		const HEPHAUDIO_DOUBLE phase_rad = DegToRad(phase_deg);
-		const HEPHAUDIO_DOUBLE w = twopi * frequency;
-		const HEPHAUDIO_DOUBLE dt = 1.0 / subBuffer.formatInfo.sampleRate;
-		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5;
-		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
-		HEPHAUDIO_DOUBLE t = subBufferFrameIndex * dt;
-
-		for (size_t i = 0; i < subBuffer.frameCount; i++, t += dt)
-		{
-			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-			{
-				subBuffer[i][j] *= wetFactor * twoOverPi * asin(sin(w * t + phase_rad)) + dryFactor;
+				subBuffer[i][j] *= wetFactor * lfoSample + dryFactor;
 			}
 		}
 	}
@@ -432,23 +405,19 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Flanger(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE delay_ms, HEPHAUDIO_DOUBLE rate, HEPHAUDIO_DOUBLE phase_deg)
+	void AudioProcessor::Flanger(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE delay_ms, const OscillatorBase& lfo)
 	{
 		constexpr HEPHAUDIO_DOUBLE twopi = 2.0 * PI;
 		const size_t maxSampleDelay = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
-		const HEPHAUDIO_DOUBLE phase_rad = DegToRad(phase_deg);
-		const HEPHAUDIO_DOUBLE w = twopi * rate;
-		const HEPHAUDIO_DOUBLE dt = 1.0 / buffer.formatInfo.sampleRate;
 		const HEPHAUDIO_DOUBLE wetFactor = depth * 0.5;
 		const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
-		HEPHAUDIO_DOUBLE t = dt * (maxSampleDelay + 1);
 
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
 		memcpy(resultBuffer.pAudioData, buffer.pAudioData, maxSampleDelay * buffer.formatInfo.FrameSize());
 
-		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++, t += dt)
+		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay = round(abs(sin(w * t + phase_rad)) * maxSampleDelay);
+			const size_t currentDelay = round(abs(lfo.Oscillate(i)) * maxSampleDelay);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = wetFactor * buffer[i - currentDelay][j] + dryFactor * buffer[i][j];

@@ -7,6 +7,6 @@ namespace HephAudio
 		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit) {}
 	HEPHAUDIO_DOUBLE TriangleWaveOscillator::Oscillate(const size_t& frameIndex) const noexcept
 	{
-		return this->peakAmplitude * 2.0 / PI * asin(sin(2.0 * PI * this->frequency * frameIndex / this->sampleRate));
+		return this->peakAmplitude * (2.0 / PI) * asin(sin(this->w_sample * frameIndex));
 	}
 }

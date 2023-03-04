@@ -7,6 +7,6 @@ namespace HephAudio
 		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit) {}
 	HEPHAUDIO_DOUBLE SquareWaveOscillator::Oscillate(const size_t& frameIndex) const noexcept
 	{
-		return this->peakAmplitude * sgn(sin(2.0 * PI * this->frequency * frameIndex / this->sampleRate + this->phase_rad));
+		return this->peakAmplitude * sgn(sin(this->w_sample * frameIndex + this->phase_rad));
 	}
 }

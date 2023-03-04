@@ -12,11 +12,13 @@ namespace HephAudio
 	};
 	class OscillatorBase
 	{
+		friend class AudioProcessor;
 	protected:
 		HEPHAUDIO_DOUBLE peakAmplitude;
 		HEPHAUDIO_DOUBLE frequency;
 		HEPHAUDIO_DOUBLE phase_rad;
-		uint32_t sampleRate;
+		HEPHAUDIO_DOUBLE sampleRate;
+		HEPHAUDIO_DOUBLE w_sample;
 	protected:
 		OscillatorBase(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit);
 	public:
@@ -30,5 +32,7 @@ namespace HephAudio
 		void SetPhase(HEPHAUDIO_DOUBLE phase, AngleUnit angleUnit) noexcept;
 		const uint32_t& GetSampleRate() const noexcept;
 		void SetSampleRate(uint32_t sampleRate) noexcept;
+	protected:
+		void UpdateW() noexcept;
 	};
 }

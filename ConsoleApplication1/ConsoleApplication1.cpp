@@ -17,6 +17,7 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioPath);
+AudioBuffer GeneratePulseWave(HEPHAUDIO_DOUBLE amplitude, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE dutyCycle, size_t order);
 
 int main()
 {
@@ -37,6 +38,10 @@ int main()
 	audio.SetOnAudioDeviceRemovedHandler(OnDeviceRemoved);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+
+	auto pao = audio.Load(audioPath + "piano2.wav");
+	pao->buffer = GeneratePulseWave(1.0, 220.0, 0.2, 10);
+	pao->pause = false;
 
 	return Run(audio, audioPath);
 }
@@ -221,7 +226,7 @@ int Run(Audio& audio, StringBuffer& audioPath)
 
 			pao->pause = true;
 			StopWatch::Reset();
-			AudioProcessor::Flanger(pao->buffer, depth, delay, rate, phase);
+			AudioProcessor::Flanger(pao->buffer, depth, delay, SineWaveOscillator(1.0, rate, pao->buffer.FormatInfo().sampleRate, phase, AngleUnit::Degree));
 			PrintDeltaTime("flanger applied in");
 			pao->pause = originalState;
 		}
@@ -274,4 +279,32 @@ int Run(Audio& audio, StringBuffer& audioPath)
 	}
 
 	return 0;
+}
+AudioBuffer GeneratePulseWave(HEPHAUDIO_DOUBLE amplitude, HEPHAUDIO_DOUBLE frequency, HEPHAUDIO_DOUBLE dutyCycle, size_t order)
+{
+	AudioBuffer buffer = AudioBuffer(48e3 * 3, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 2, sizeof(HEPHAUDIO_DOUBLE) * 8, 48e3));
+	const HEPHAUDIO_DOUBLE w_sample = 2.0 * PI * frequency / 48e3;
+	const HEPHAUDIO_DOUBLE sumCoefficient = 2.0 * amplitude / PI;
+	const HEPHAUDIO_DOUBLE ad = amplitude * dutyCycle;
+	const HEPHAUDIO_DOUBLE pid = PI * dutyCycle;
+
+	for (size_t i = 0; i < buffer.FrameCount(); i++)
+	{
+		HEPHAUDIO_DOUBLE sample = 0;
+		const HEPHAUDIO_DOUBLE wt = w_sample * i;
+		for (size_t n = 1; n < order + 1; n++)
+		{
+			sample += (1.0 / n) * sin(pid * n) * cos(wt * n);
+		}
+		sample *= sumCoefficient;
+		sample += ad - 0.5;
+		sample *= 2;
+
+		for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++)
+		{
+			buffer[i][j] = sample;
+		}
+	}
+
+	return buffer;
 }
