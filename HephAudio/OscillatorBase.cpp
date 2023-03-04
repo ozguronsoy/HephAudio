@@ -15,11 +15,7 @@ namespace HephAudio
 	}
 	void OscillatorBase::SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept
 	{
-		this->peakAmplitude = abs(peakAmplitude);
-		if (this->peakAmplitude > 1.0)
-		{
-			this->peakAmplitude = 1.0;
-		}
+		this->peakAmplitude = peakAmplitude;
 	}
 	const HEPHAUDIO_DOUBLE& OscillatorBase::GetFrequency() const noexcept
 	{
@@ -44,7 +40,7 @@ namespace HephAudio
 	}
 	void OscillatorBase::SetSampleRate(uint32_t sampleRate) noexcept
 	{
-		this->sampleRate = sampleRate > 0 ? sampleRate : 48e3;
+		this->sampleRate = sampleRate;
 		this->UpdateW();
 	}
 	void OscillatorBase::UpdateW() noexcept

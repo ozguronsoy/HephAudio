@@ -183,6 +183,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.h">
       <Filter>Header Files\Oscillators</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.h">
+      <Filter>Header Files\Oscillators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -297,6 +300,9 @@
       <Filter>Source Files\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.cpp">
+      <Filter>Source Files\Oscillators</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.cpp">
       <Filter>Source Files\Oscillators</Filter>
     </ClCompile>
   </ItemGroup>

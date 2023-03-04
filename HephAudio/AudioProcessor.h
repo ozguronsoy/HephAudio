@@ -7,6 +7,7 @@
 #include "SquareWaveOscillator.h"
 #include "TriangleWaveOscillator.h"
 #include "SawToothWaveOscillator.h"
+#include "PulseWaveOscillator.h"
 
 namespace HephAudio
 {
