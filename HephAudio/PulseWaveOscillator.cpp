@@ -2,7 +2,7 @@
 
 namespace HephAudio
 {
-	PulseWaveOscillator::PulseWaveOscillator(const uint32_t& sampleRate) : PulseWaveOscillator(1.0, 1500.0, sampleRate, 0, AngleUnit::Radian) {}
+	PulseWaveOscillator::PulseWaveOscillator(const uint32_t& sampleRate) : PulseWaveOscillator(0.5, 1500.0, sampleRate, 0, AngleUnit::Radian) {}
 	PulseWaveOscillator::PulseWaveOscillator(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit)
 		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit)
 	{
@@ -21,9 +21,9 @@ namespace HephAudio
 			sample += sin(pid * n) * cos(wt * n + this->phase_rad) / n;
 		}
 
-		sample *= 2.0 * this->peakAmplitude / PI;
-		sample += this->peakAmplitude * this->dutyCycle - 0.5;
-		sample *= 2.0 * this->eta;
+		sample *= 2.0 / PI;
+		sample += this->dutyCycle;
+		sample *= this->peakAmplitude * this->eta;
 
 		return sample;
 	}
@@ -54,7 +54,7 @@ namespace HephAudio
 	void PulseWaveOscillator::UpdateEta() noexcept
 	{
 		const size_t frameCount = ceil(this->sampleRate / this->frequency);
-		HEPHAUDIO_DOUBLE maxSample = 0.0;
+		HEPHAUDIO_DOUBLE maxSample = 1.0;
 		this->eta = 1.0;
 
 		for (size_t i = 0; i < frameCount; i++)
