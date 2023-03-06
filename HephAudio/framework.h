@@ -39,7 +39,7 @@
 #endif
 
 #ifndef HEPHAUDIO_DOUBLE
-#ifdef HEPHAUDIO_HIGH_PRECISION
+#ifndef HEPHAUDIO_HIGH_PRECISION
 #define HEPHAUDIO_DOUBLE double
 #else
 #define HEPHAUDIO_DOUBLE float
