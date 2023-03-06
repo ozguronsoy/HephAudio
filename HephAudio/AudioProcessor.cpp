@@ -299,21 +299,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::Normalize(AudioBuffer& buffer, HEPHAUDIO_DOUBLE peakAmplitude)
 	{
-		HEPHAUDIO_DOUBLE maxSample = 0.0;
-		HEPHAUDIO_DOUBLE currentSample = 0.0;
-
-		for (size_t i = 0; i < buffer.frameCount; i++)
-		{
-			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-			{
-				currentSample = abs(buffer[i][j]);
-				if (currentSample > maxSample)
-				{
-					maxSample = currentSample;
-				}
-			}
-		}
-
+		HEPHAUDIO_DOUBLE maxSample = buffer.AbsMax();
 		if (maxSample != 0.0 && maxSample != peakAmplitude)
 		{
 			buffer *= peakAmplitude / maxSample;
@@ -333,7 +319,7 @@ namespace HephAudio
 
 		if (sumOfSamplesSquared != 0.0)
 		{
-			buffer *= desiredRms * sqrt(buffer.frameCount / sumOfSamplesSquared);
+			buffer *= desiredRms * sqrt(buffer.frameCount * buffer.formatInfo.channelCount / sumOfSamplesSquared);
 		}
 	}
 	void AudioProcessor::HardClipDistortion(AudioBuffer& buffer, HEPHAUDIO_DOUBLE clippingLevel_dB)

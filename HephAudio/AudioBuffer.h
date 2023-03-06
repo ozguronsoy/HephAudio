@@ -170,6 +170,26 @@ namespace HephAudio
 		/// <param name="newFrameCount">The new number of frames the buffer will consist of</param>
 		void Resize(size_t newFrameCount);
 		/// <summary>
+		/// Finds the sample with the smallest value in the buffer.
+		/// </summary>
+		/// <returns>The sample with the smallest value.</returns>
+		HEPHAUDIO_DOUBLE Min() const noexcept;
+		/// <summary>
+		/// Finds the sample with the biggest value in the buffer.
+		/// </summary>
+		/// <returns>The sample with the biggest value.</returns>
+		HEPHAUDIO_DOUBLE Max() const noexcept;
+		/// <summary>
+		/// Finds the sample with the biggest absolute value in the buffer.
+		/// </summary>
+		/// <returns>The sample with the absolute biggest value.</returns>
+		HEPHAUDIO_DOUBLE AbsMax() const noexcept;
+		/// <summary>
+		/// Calculates the root mean square of the buffer.
+		/// </summary>
+		/// <returns>the rms of the buffer.</returns>
+		HEPHAUDIO_DOUBLE Rms() const noexcept;
+		/// <summary>
 		/// Calculates how long the audio data is in seconds.
 		/// </summary>
 		/// <returns>The length of the audio data in seconds</returns>
@@ -190,7 +210,15 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="newFormat">New format</param>
 		void SetFormat(AudioFormatInfo newFormat);
+		/// <summary>
+		/// Changes the number of channels the buffer has.
+		/// </summary>
+		/// <param name="newChannelCount">New channel count</param>
 		void SetChannelCount(uint16_t newChannelCount);
+		/// <summary>
+		/// Changes the sample rate of the buffer.
+		/// </summary>
+		/// <param name="newSampleRate">New sample rate</param>
 		void SetSampleRate(uint32_t newSampleRate);
 		/// <summary>
 		/// Gets the start of the audio data.

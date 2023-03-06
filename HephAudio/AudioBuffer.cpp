@@ -514,6 +514,66 @@ namespace HephAudio
 			}
 		}
 	}
+	HEPHAUDIO_DOUBLE AudioBuffer::Min() const noexcept
+	{
+		HEPHAUDIO_DOUBLE minSample = INT32_MAX;
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			{
+				const HEPHAUDIO_DOUBLE& currentSample = (*this)[i][j];
+				if (currentSample < minSample)
+				{
+					minSample = currentSample;
+				}
+			}
+		}
+		return minSample;
+	}
+	HEPHAUDIO_DOUBLE AudioBuffer::Max() const noexcept
+	{
+		HEPHAUDIO_DOUBLE maxSample = INT32_MIN;
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			{
+				const HEPHAUDIO_DOUBLE& currentSample = (*this)[i][j];
+				if (currentSample > maxSample)
+				{
+					maxSample = currentSample;
+				}
+			}
+		}
+		return maxSample;
+	}
+	HEPHAUDIO_DOUBLE AudioBuffer::AbsMax() const noexcept
+	{
+		HEPHAUDIO_DOUBLE maxSample = INT32_MIN;
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			{
+				HEPHAUDIO_DOUBLE currentSample = abs((*this)[i][j]);
+				if (currentSample > maxSample)
+				{
+					maxSample = currentSample;
+				}
+			}
+		}
+		return maxSample;
+	}
+	HEPHAUDIO_DOUBLE AudioBuffer::Rms() const noexcept
+	{
+		HEPHAUDIO_DOUBLE sumOfSamplesSquared = 0.0;
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			{
+				sumOfSamplesSquared += (*this)[i][j] * (*this)[i][j];
+			}
+		}
+		return sqrt(sumOfSamplesSquared / this->frameCount / this->formatInfo.channelCount);
+	}
 	HEPHAUDIO_DOUBLE AudioBuffer::CalculateDuration() const noexcept
 	{
 		return CalculateDuration(this->frameCount, this->formatInfo);

@@ -38,15 +38,6 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
 
-	auto pao = audio.Load(audioPath + "Gate of Steiner.wav");
-	const OscillatorBase& oscillator = SineWaveOscillator(1.0, 0.8, pao->buffer.FormatInfo().sampleRate, 0.0);
-
-	StopWatch::Reset();
-	AudioProcessor::Wah(pao->buffer, 1.0, 0.05, 250, 4000, oscillator);
-	PrintDeltaTime("WAH-WAH effect applied in");
-
-	pao->pause = false;
-
 	return Run(audio, audioPath);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
