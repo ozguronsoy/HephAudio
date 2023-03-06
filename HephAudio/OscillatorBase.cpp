@@ -9,6 +9,21 @@ namespace HephAudio
 		this->SetFrequency(frequency);
 		this->SetPhase(phase, angleUnit);
 	}
+	AudioBuffer OscillatorBase::GenerateBuffer(size_t frameCount) const noexcept
+	{
+		return this->GenerateBuffer(0, frameCount);
+	}
+	AudioBuffer OscillatorBase::GenerateBuffer(const size_t& frameIndex, size_t frameCount) const noexcept
+	{
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(HEPHAUDIO_DOUBLE) * 8, this->sampleRate));
+
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			buffer[i][0] = this->Oscillate(i + frameIndex);
+		}
+
+		return buffer;
+	}
 	const HEPHAUDIO_DOUBLE& OscillatorBase::GetPeakAmplitude() const noexcept
 	{
 		return this->peakAmplitude;

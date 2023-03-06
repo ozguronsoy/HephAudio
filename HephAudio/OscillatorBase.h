@@ -1,5 +1,6 @@
 #pragma once
 #include "framework.h"
+#include "AudioBuffer.h"
 #include <cmath>
 #include <cinttypes>
 
@@ -17,13 +18,15 @@ namespace HephAudio
 		HEPHAUDIO_DOUBLE peakAmplitude;
 		HEPHAUDIO_DOUBLE frequency;
 		HEPHAUDIO_DOUBLE phase_rad;
-		HEPHAUDIO_DOUBLE sampleRate;
+		uint32_t sampleRate;
 		HEPHAUDIO_DOUBLE w_sample;
 	protected:
 		OscillatorBase(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit);
 	public:
 		virtual ~OscillatorBase() = default;
 		virtual HEPHAUDIO_DOUBLE Oscillate(const size_t& frameIndex) const noexcept = 0;
+		virtual AudioBuffer GenerateBuffer(size_t frameCount) const noexcept;
+		virtual AudioBuffer GenerateBuffer(const size_t& frameIndex, size_t frameCount) const noexcept;
 		virtual const HEPHAUDIO_DOUBLE& GetPeakAmplitude() const noexcept;
 		virtual void SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept;
 		virtual const HEPHAUDIO_DOUBLE& GetFrequency() const noexcept;

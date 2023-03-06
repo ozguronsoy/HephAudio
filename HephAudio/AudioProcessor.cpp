@@ -426,6 +426,56 @@ namespace HephAudio
 
 		buffer = std::move(resultBuffer);
 	}
+	void AudioProcessor::Wah(AudioBuffer& buffer, HEPHAUDIO_DOUBLE depth, HEPHAUDIO_DOUBLE damping, HEPHAUDIO_DOUBLE fcmin, HEPHAUDIO_DOUBLE fcmax, const OscillatorBase& lfo)
+	{
+		if (buffer.frameCount > 0)
+		{
+			const HEPHAUDIO_DOUBLE wetFactor = depth;
+			const HEPHAUDIO_DOUBLE dryFactor = 1.0 - wetFactor;
+			const HEPHAUDIO_DOUBLE fcdelta = fcmax - fcmin;
+			HEPHAUDIO_DOUBLE fc = fcdelta * abs(lfo.Oscillate(0)) + fcmin;
+			HEPHAUDIO_DOUBLE alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
+			AudioBuffer lowPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+			AudioBuffer bandPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+			AudioBuffer highPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+
+			for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+			{
+				highPassBuffer[0][i] = buffer[0][i];
+				bandPassBuffer[0][i] = alpha * buffer[0][i];
+				lowPassBuffer[0][i] = alpha * bandPassBuffer[0][i];
+			}
+
+			for (size_t i = 1; i < buffer.frameCount; i++)
+			{
+				fc = fcdelta * abs(lfo.Oscillate(i)) + fcmin;
+				alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					highPassBuffer[i][j] = buffer[i][j] - lowPassBuffer[i - 1][j] - 2.0 * damping * bandPassBuffer[i - 1][j];
+					bandPassBuffer[i][j] = alpha * highPassBuffer[i][j] + bandPassBuffer[i - 1][j];
+					lowPassBuffer[i][j] = alpha * bandPassBuffer[i][j] + lowPassBuffer[i - 1][j];
+				}
+			}
+
+			HEPHAUDIO_DOUBLE maxSample = 0.0;
+			for (size_t i = 0; i < buffer.frameCount; i++)
+			{
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					buffer[i][j] = wetFactor * bandPassBuffer[i][j] + dryFactor * buffer[i][j];
+					if (abs(buffer[i][j]) > maxSample)
+					{
+						maxSample = abs(buffer[i][j]);
+					}
+				}
+			}
+			if (maxSample > 1.0)
+			{
+				buffer /= maxSample;
+			}
+		}
+	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
 	{
 		Equalizer(buffer, defaultHopSize, defaultFFTSize, infos);
