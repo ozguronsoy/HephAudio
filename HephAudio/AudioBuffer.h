@@ -190,6 +190,8 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="newFormat">New format</param>
 		void SetFormat(AudioFormatInfo newFormat);
+		void SetChannelCount(uint16_t newChannelCount);
+		void SetSampleRate(uint32_t newSampleRate);
 		/// <summary>
 		/// Gets the start of the audio data.
 		/// </summary>

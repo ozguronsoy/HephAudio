@@ -538,6 +538,28 @@ namespace HephAudio
 			this->formatInfo = newFormat;
 		}
 	}
+	void AudioBuffer::SetChannelCount(uint16_t newChannelCount)
+	{
+		if (newChannelCount != this->formatInfo.channelCount)
+		{
+			if (this->frameCount > 0)
+			{
+				AudioProcessor::ConvertChannels(*this, newChannelCount);
+			}
+			this->formatInfo.channelCount = newChannelCount;
+		}
+	}
+	void AudioBuffer::SetSampleRate(uint32_t newSampleRate)
+	{
+		if (newSampleRate != this->formatInfo.sampleRate)
+		{
+			if (this->frameCount > 0)
+			{
+				AudioProcessor::ConvertChannels(*this, newSampleRate);
+			}
+			this->formatInfo.sampleRate = newSampleRate;
+		}
+	}
 	void* const& AudioBuffer::Begin() const noexcept
 	{
 		return this->pAudioData;
