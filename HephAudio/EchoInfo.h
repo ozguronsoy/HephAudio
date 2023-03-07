@@ -11,21 +11,21 @@ namespace HephAudio
 		/// <summary>
 		/// The delay (in seconds) between each reflection.
 		/// </summary>
-		HEPHAUDIO_DOUBLE reflectionDelay;
+		hephaudio_float reflectionDelay;
 		/// <summary>
 		/// The volume loss between each reflaction.
 		/// </summary>
-		HEPHAUDIO_DOUBLE volumeFactor;
+		hephaudio_float volumeFactor;
 		/// <summary>
 		/// The beginning of the audio data which will be used as echo.
 		/// Must be between 0 and 1.
 		/// </summary>
-		HEPHAUDIO_DOUBLE echoStartPosition;
+		hephaudio_float echoStartPosition;
 		/// <summary>
 		/// The end of the audio data which will be used as echo.
 		/// Must be greater than echoStartPosition and must be between 0 and 1.
 		/// </summary>
-		HEPHAUDIO_DOUBLE echoEndPosition;
+		hephaudio_float echoEndPosition;
 		EchoInfo();
 		virtual ~EchoInfo() = default;
 		/// <summary>

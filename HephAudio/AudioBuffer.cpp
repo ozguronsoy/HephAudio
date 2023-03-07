@@ -7,11 +7,11 @@ namespace HephAudio
 #pragma region Audio Frame
 	AudioFrame::AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount)
 	{
-		this->pAudioData = (HEPHAUDIO_DOUBLE*)pAudioData;
+		this->pAudioData = (hephaudio_float*)pAudioData;
 		this->frameIndex = frameIndex;
 		this->channelCount = channelCount;
 	}
-	HEPHAUDIO_DOUBLE& AudioFrame::operator[](const size_t& channel) const
+	hephaudio_float& AudioFrame::operator[](const size_t& channel) const
 	{
 		return *(this->pAudioData + this->frameIndex * this->channelCount + channel);
 	}
@@ -169,7 +169,7 @@ namespace HephAudio
 		this->Join(rhs);
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator*(const HEPHAUDIO_DOUBLE& rhs) const
+	AudioBuffer AudioBuffer::operator*(const hephaudio_float& rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -181,7 +181,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator*=(const HEPHAUDIO_DOUBLE& rhs)
+	AudioBuffer& AudioBuffer::operator*=(const hephaudio_float& rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -192,7 +192,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator/(const HEPHAUDIO_DOUBLE& rhs) const
+	AudioBuffer AudioBuffer::operator/(const hephaudio_float& rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -204,7 +204,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator/=(const HEPHAUDIO_DOUBLE& rhs)
+	AudioBuffer& AudioBuffer::operator/=(const hephaudio_float& rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -231,7 +231,7 @@ namespace HephAudio
 	{
 		return this->frameCount;
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::Get(size_t frameIndex, uint8_t channel) const
+	hephaudio_float AudioBuffer::Get(size_t frameIndex, uint8_t channel) const
 	{
 		const uint8_t sampleSize = this->formatInfo.bitsPerSample / 8;
 		switch (this->formatInfo.bitsPerSample)
@@ -240,19 +240,19 @@ namespace HephAudio
 		{
 			uint8_t result = 0;
 			memcpy(&result, (uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, sampleSize);
-			return max(min((HEPHAUDIO_DOUBLE)result / (HEPHAUDIO_DOUBLE)UINT8_MAX, 1.0), -1.0);
+			return max(min((hephaudio_float)result / (hephaudio_float)UINT8_MAX, 1.0), -1.0);
 		}
 		case 16:
 		{
 			int16_t result = 0;
 			memcpy(&result, (uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, sampleSize);
-			return max(min((HEPHAUDIO_DOUBLE)result / (HEPHAUDIO_DOUBLE)INT16_MAX, 1.0), -1.0);
+			return max(min((hephaudio_float)result / (hephaudio_float)INT16_MAX, 1.0), -1.0);
 		}
 		case 24:
 		{
 			int24 result;
 			memcpy(&result, (uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, sampleSize);
-			return max(min((HEPHAUDIO_DOUBLE)result / (HEPHAUDIO_DOUBLE)INT24_MAX, 1.0), -1.0);
+			return max(min((hephaudio_float)result / (hephaudio_float)INT24_MAX, 1.0), -1.0);
 		}
 		case 32:
 		{
@@ -262,7 +262,7 @@ namespace HephAudio
 			}
 			int32_t result = 0;
 			memcpy(&result, (uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, sampleSize);
-			return max(min((HEPHAUDIO_DOUBLE)result / (HEPHAUDIO_DOUBLE)INT32_MAX, 1.0), -1.0);
+			return max(min((hephaudio_float)result / (hephaudio_float)INT32_MAX, 1.0), -1.0);
 		}
 		case 64:
 		{
@@ -273,26 +273,26 @@ namespace HephAudio
 		}
 		return 0.0f;
 	}
-	void AudioBuffer::Set(HEPHAUDIO_DOUBLE value, size_t frameIndex, uint8_t channel)
+	void AudioBuffer::Set(hephaudio_float value, size_t frameIndex, uint8_t channel)
 	{
 		const uint8_t sampleSize = this->formatInfo.bitsPerSample / 8;
 		switch (this->formatInfo.bitsPerSample)
 		{
 		case 8:
 		{
-			const uint8_t result = max(min(value * (HEPHAUDIO_DOUBLE)UINT8_MAX, UINT8_MAX), 0u);
+			const uint8_t result = max(min(value * (hephaudio_float)UINT8_MAX, UINT8_MAX), 0u);
 			memcpy((uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, &result, sampleSize);
 		}
 		break;
 		case 16:
 		{
-			const int16_t result = max(min(value * (HEPHAUDIO_DOUBLE)INT16_MAX, INT16_MAX), INT16_MIN);
+			const int16_t result = max(min(value * (hephaudio_float)INT16_MAX, INT16_MAX), INT16_MIN);
 			memcpy((uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, &result, sampleSize);
 		}
 		break;
 		case 24:
 		{
-			int24 result = max(min(value * (HEPHAUDIO_DOUBLE)INT24_MAX, INT24_MAX), INT24_MIN);
+			int24 result = max(min(value * (hephaudio_float)INT24_MAX, INT24_MAX), INT24_MIN);
 			memcpy((uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, &result, sampleSize);
 		}
 		break;
@@ -304,7 +304,7 @@ namespace HephAudio
 			}
 			else
 			{
-				const int32_t result = max(min(value * (HEPHAUDIO_DOUBLE)INT32_MAX, INT32_MAX), INT32_MIN);
+				const int32_t result = max(min(value * (hephaudio_float)INT32_MAX, INT32_MAX), INT32_MIN);
 				memcpy((uint8_t*)this->pAudioData + frameIndex * this->formatInfo.FrameSize() + channel * sampleSize, &result, sampleSize);
 			}
 		}
@@ -514,14 +514,14 @@ namespace HephAudio
 			}
 		}
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::Min() const noexcept
+	hephaudio_float AudioBuffer::Min() const noexcept
 	{
-		HEPHAUDIO_DOUBLE minSample = INT32_MAX;
+		hephaudio_float minSample = INT32_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
-				const HEPHAUDIO_DOUBLE& currentSample = (*this)[i][j];
+				const hephaudio_float& currentSample = (*this)[i][j];
 				if (currentSample < minSample)
 				{
 					minSample = currentSample;
@@ -530,14 +530,14 @@ namespace HephAudio
 		}
 		return minSample;
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::Max() const noexcept
+	hephaudio_float AudioBuffer::Max() const noexcept
 	{
-		HEPHAUDIO_DOUBLE maxSample = INT32_MIN;
+		hephaudio_float maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
-				const HEPHAUDIO_DOUBLE& currentSample = (*this)[i][j];
+				const hephaudio_float& currentSample = (*this)[i][j];
 				if (currentSample > maxSample)
 				{
 					maxSample = currentSample;
@@ -546,14 +546,14 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::AbsMax() const noexcept
+	hephaudio_float AudioBuffer::AbsMax() const noexcept
 	{
-		HEPHAUDIO_DOUBLE maxSample = INT32_MIN;
+		hephaudio_float maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
-				HEPHAUDIO_DOUBLE currentSample = abs((*this)[i][j]);
+				hephaudio_float currentSample = abs((*this)[i][j]);
 				if (currentSample > maxSample)
 				{
 					maxSample = currentSample;
@@ -562,9 +562,9 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::Rms() const noexcept
+	hephaudio_float AudioBuffer::Rms() const noexcept
 	{
-		HEPHAUDIO_DOUBLE sumOfSamplesSquared = 0.0;
+		hephaudio_float sumOfSamplesSquared = 0.0;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -574,11 +574,11 @@ namespace HephAudio
 		}
 		return sqrt(sumOfSamplesSquared / this->frameCount / this->formatInfo.channelCount);
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::CalculateDuration() const noexcept
+	hephaudio_float AudioBuffer::CalculateDuration() const noexcept
 	{
 		return CalculateDuration(this->frameCount, this->formatInfo);
 	}
-	size_t AudioBuffer::CalculateFrameIndex(HEPHAUDIO_DOUBLE ts) const noexcept
+	size_t AudioBuffer::CalculateFrameIndex(hephaudio_float ts) const noexcept
 	{
 		return CalculateFrameIndex(ts, this->formatInfo);
 	}
@@ -628,15 +628,15 @@ namespace HephAudio
 	{
 		return (uint8_t*)this->pAudioData + this->Size();
 	}
-	HEPHAUDIO_DOUBLE AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept
+	hephaudio_float AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept
 	{
 		if (formatInfo.ByteRate() == 0) { return 0.0; }
-		return (HEPHAUDIO_DOUBLE)frameCount * (HEPHAUDIO_DOUBLE)formatInfo.FrameSize() / (HEPHAUDIO_DOUBLE)formatInfo.ByteRate();
+		return (hephaudio_float)frameCount * (hephaudio_float)formatInfo.FrameSize() / (hephaudio_float)formatInfo.ByteRate();
 	}
-	size_t AudioBuffer::CalculateFrameIndex(HEPHAUDIO_DOUBLE ts, AudioFormatInfo formatInfo) noexcept
+	size_t AudioBuffer::CalculateFrameIndex(hephaudio_float ts, AudioFormatInfo formatInfo) noexcept
 	{
 		if (formatInfo.FrameSize() == 0) { return 0.0; }
-		return ts * (HEPHAUDIO_DOUBLE)formatInfo.ByteRate() / (HEPHAUDIO_DOUBLE)formatInfo.FrameSize();
+		return ts * (hephaudio_float)formatInfo.ByteRate() / (hephaudio_float)formatInfo.FrameSize();
 	}
 #pragma endregion
 }

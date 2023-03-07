@@ -15,11 +15,11 @@ namespace HephAudio
 	{
 		timePoints[std::this_thread::get_id()] = std::chrono::high_resolution_clock::now();
 	}
-	HEPHAUDIO_DOUBLE StopWatch::DeltaTime()
+	hephaudio_float StopWatch::DeltaTime()
 	{
 		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9;
 	}
-	HEPHAUDIO_DOUBLE StopWatch::DeltaTime(HEPHAUDIO_DOUBLE prefix)
+	hephaudio_float StopWatch::DeltaTime(hephaudio_float prefix)
 	{
 		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9 / prefix;
 	}

@@ -15,8 +15,8 @@ namespace HephAudio
 		static void FFT_Forward(ComplexBuffer& complexBuffer, size_t fftSize);
 		static void FFT_Inverse(AudioBuffer& audioBuffer, ComplexBuffer& complexBuffer);
 		static void FFT_Inverse(ComplexBuffer& complexBuffer, bool scale);
-		static HEPHAUDIO_DOUBLE FrequencyToIndex(size_t sampleRate, size_t fftSize, HEPHAUDIO_DOUBLE frequency);
-		static HEPHAUDIO_DOUBLE IndexToFrequency(size_t sampleRate, size_t fftSize, size_t index);
+		static hephaudio_float FrequencyToIndex(size_t sampleRate, size_t fftSize, hephaudio_float frequency);
+		static hephaudio_float IndexToFrequency(size_t sampleRate, size_t fftSize, size_t index);
 		static size_t CalculateFFTSize(size_t bufferSize);
 	private:
 		static void ReverseBits(ComplexBuffer& complexBuffer, const size_t& fftSize);

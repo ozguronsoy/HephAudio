@@ -15,7 +15,7 @@ void OnDeviceAdded(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
-HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label);
+hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioPath);
 
 int main()
@@ -79,7 +79,7 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
 	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
 
-	const size_t readFrameCount = (HEPHAUDIO_DOUBLE)pRenderArgs->renderFrameCount * pAudioObject->buffer.FormatInfo().sampleRate / pNativeAudio->GetRenderFormat().sampleRate;
+	const size_t readFrameCount = (hephaudio_float)pRenderArgs->renderFrameCount * pAudioObject->buffer.FormatInfo().sampleRate / pNativeAudio->GetRenderFormat().sampleRate;
 
 	pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount);
 
@@ -98,9 +98,9 @@ void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult)
 		ConsoleLogger::LogLine("The track \"" + pAudioObject->name + "\" is starting over, number of remaning loops: " + StringBuffer::ToString(pFinishedPlayingArgs->remainingLoopCount), ConsoleLogger::debug);
 	}
 }
-HEPHAUDIO_DOUBLE PrintDeltaTime(StringBuffer label)
+hephaudio_float PrintDeltaTime(StringBuffer label)
 {
-	const HEPHAUDIO_DOUBLE dt = StopWatch::DeltaTime(StopWatch::milli);
+	const hephaudio_float dt = StopWatch::DeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
 	ConsoleLogger::LogLine(label, ConsoleLogger::success);
@@ -150,12 +150,12 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		}
 		else if (sb.Contains("volume"))
 		{
-			HEPHAUDIO_DOUBLE volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			hephaudio_float volume = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
 			audio.GetAO("", 0)->volume = volume;
 		}
 		else if (sb.Contains("position"))
 		{
-			HEPHAUDIO_DOUBLE position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
+			hephaudio_float position = StringBuffer::StringToDouble(sb.SubString(sb.Find(' '), 10));
 			audio.SetAOPosition(audio.GetAO("", 0), position);
 		}
 		else if (sb == L"pause")
@@ -182,7 +182,7 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		{
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			std::vector<StringBuffer> params = sb.Split(' ');
-			HEPHAUDIO_DOUBLE distortionParam = StringBuffer::StringToDouble(params.at(2));
+			hephaudio_float distortionParam = StringBuffer::StringToDouble(params.at(2));
 			if (params.at(1) == L"hc")
 			{
 				StopWatch::Reset();
@@ -203,7 +203,7 @@ int Run(Audio& audio, StringBuffer& audioPath)
 			}
 			else if (params.at(1) == L"fz")
 			{
-				HEPHAUDIO_DOUBLE alpha = StringBuffer::StringToDouble(params.at(3));
+				hephaudio_float alpha = StringBuffer::StringToDouble(params.at(3));
 				StopWatch::Reset();
 				AudioProcessor::Fuzz(pao->buffer, distortionParam, alpha);
 				PrintDeltaTime("fuzz applied in");
@@ -213,10 +213,10 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		{
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			std::vector<StringBuffer> params = sb.Split(' ');
-			HEPHAUDIO_DOUBLE depth = StringBuffer::StringToDouble(params.at(1));
-			HEPHAUDIO_DOUBLE delay = StringBuffer::StringToDouble(params.at(2));
-			HEPHAUDIO_DOUBLE rate = StringBuffer::StringToDouble(params.at(3));
-			HEPHAUDIO_DOUBLE phase = StringBuffer::StringToDouble(params.at(4));
+			hephaudio_float depth = StringBuffer::StringToDouble(params.at(1));
+			hephaudio_float delay = StringBuffer::StringToDouble(params.at(2));
+			hephaudio_float rate = StringBuffer::StringToDouble(params.at(3));
+			hephaudio_float phase = StringBuffer::StringToDouble(params.at(4));
 			const bool originalState = pao->pause;
 
 			pao->pause = true;
@@ -229,8 +229,8 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		{
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			std::vector<StringBuffer> params = sb.Split(' ');
-			HEPHAUDIO_DOUBLE f1 = StringBuffer::StringToDouble(params.at(2));
-			HEPHAUDIO_DOUBLE f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
+			hephaudio_float f1 = StringBuffer::StringToDouble(params.at(2));
+			hephaudio_float f2 = params.size() > 3 ? StringBuffer::StringToDouble(params.at(3)) : 0.0;
 
 			if (params.at(1) == L"lp")
 			{

@@ -5,11 +5,11 @@ namespace HephAudio
 {
 	struct EqualizerInfo
 	{
-		HEPHAUDIO_DOUBLE f1;
-		HEPHAUDIO_DOUBLE f2;
-		HEPHAUDIO_DOUBLE (*amplitudeFunction)(HEPHAUDIO_DOUBLE frequency);
+		hephaudio_float f1;
+		hephaudio_float f2;
+		hephaudio_float (*amplitudeFunction)(hephaudio_float frequency);
 		EqualizerInfo();
-		EqualizerInfo(HEPHAUDIO_DOUBLE f1, HEPHAUDIO_DOUBLE f2, HEPHAUDIO_DOUBLE (*amplitudeFunction)(HEPHAUDIO_DOUBLE frequency));
+		EqualizerInfo(hephaudio_float f1, hephaudio_float f2, hephaudio_float (*amplitudeFunction)(hephaudio_float frequency));
 		virtual ~EqualizerInfo() = default;
 	};
 }

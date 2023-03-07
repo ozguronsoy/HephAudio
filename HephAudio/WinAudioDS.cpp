@@ -74,7 +74,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG_LINE("WinAudioDS destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
-		void WinAudioDS::SetMasterVolume(HEPHAUDIO_DOUBLE volume)
+		void WinAudioDS::SetMasterVolume(hephaudio_float volume)
 		{
 			if (!disposing && isRenderInitialized)
 			{
@@ -83,14 +83,14 @@ namespace HephAudio
 				waveOutSetVolume(nullptr, dv);
 			}
 		}
-		HEPHAUDIO_DOUBLE WinAudioDS::GetMasterVolume() const
+		hephaudio_float WinAudioDS::GetMasterVolume() const
 		{
 			if (!disposing && isRenderInitialized)
 			{
 				DWORD dv;
 				waveOutGetVolume(nullptr, &dv);
 				const uint16_t usv = dv & 0x0000FFFF;
-				return (HEPHAUDIO_DOUBLE)usv / (HEPHAUDIO_DOUBLE)UINT16_MAX;
+				return (hephaudio_float)usv / (hephaudio_float)UINT16_MAX;
 			}
 			return -1.0;
 		}
@@ -276,7 +276,7 @@ namespace HephAudio
 		}
 		void WinAudioDS::EnumerateAudioDevices()
 		{
-			constexpr HEPHAUDIO_DOUBLE period = 250.0; // In ms.
+			constexpr hephaudio_float period = 250.0; // In ms.
 			StopWatch::Start();
 			AudioDevice d;
 			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, d);

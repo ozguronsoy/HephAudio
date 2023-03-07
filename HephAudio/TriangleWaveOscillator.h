@@ -8,8 +8,8 @@ namespace HephAudio
 	{
 	public:
 		TriangleWaveOscillator(const uint32_t& sampleRate);
-		TriangleWaveOscillator(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
+		TriangleWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
 		virtual ~TriangleWaveOscillator() = default;
-		virtual HEPHAUDIO_DOUBLE Oscillate(const size_t& frameIndex) const noexcept override;
+		virtual hephaudio_float Oscillate(const size_t& frameIndex) const noexcept override;
 	};
 }

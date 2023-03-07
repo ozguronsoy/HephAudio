@@ -8,17 +8,17 @@ namespace HephAudio
 	{
 	protected:
 		uint32_t order;
-		HEPHAUDIO_DOUBLE dutyCycle;
-		HEPHAUDIO_DOUBLE eta;
+		hephaudio_float dutyCycle;
+		hephaudio_float eta;
 	public:
 		PulseWaveOscillator(const uint32_t& sampleRate);
-		PulseWaveOscillator(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
+		PulseWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
 		virtual ~PulseWaveOscillator() = default;
-		virtual HEPHAUDIO_DOUBLE Oscillate(const size_t& frameIndex) const noexcept override;
-		virtual void SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept override;
-		virtual const HEPHAUDIO_DOUBLE& GetDutyCycle() const noexcept;
-		virtual void SetDutyCycle(HEPHAUDIO_DOUBLE dutyCycle) noexcept;
-		virtual const HEPHAUDIO_DOUBLE& GetPulseWidth() const noexcept;
+		virtual hephaudio_float Oscillate(const size_t& frameIndex) const noexcept override;
+		virtual void SetPeakAmplitude(hephaudio_float peakAmplitude) noexcept override;
+		virtual const hephaudio_float& GetDutyCycle() const noexcept;
+		virtual void SetDutyCycle(hephaudio_float dutyCycle) noexcept;
+		virtual const hephaudio_float& GetPulseWidth() const noexcept;
 		virtual const uint32_t& GetOrder() const noexcept;
 		virtual void SetOrder(uint32_t order) noexcept;
 		virtual void UpdateEta() noexcept;

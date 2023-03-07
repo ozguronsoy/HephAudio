@@ -72,8 +72,8 @@ namespace HephAudio
 			WinAudio(const WinAudio&) = delete;
 			WinAudio& operator=(const WinAudio&) = delete;
 			virtual ~WinAudio();
-			virtual void SetMasterVolume(HEPHAUDIO_DOUBLE volume);
-			virtual HEPHAUDIO_DOUBLE GetMasterVolume() const;
+			virtual void SetMasterVolume(hephaudio_float volume);
+			virtual hephaudio_float GetMasterVolume() const;
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			virtual void StopRendering();
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);

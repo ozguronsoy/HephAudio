@@ -72,23 +72,23 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
 		/// <returns>Resulting buffer</returns>
-		ComplexBuffer operator*(const HEPHAUDIO_DOUBLE& rhs) const;
+		ComplexBuffer operator*(const hephaudio_float& rhs) const;
 		/// <summary>
 		/// Multiplies all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
-		ComplexBuffer& operator*=(const HEPHAUDIO_DOUBLE& rhs);
+		ComplexBuffer& operator*=(const hephaudio_float& rhs);
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs, then returns the result as a new complex buffer.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
 		/// <returns>Resulting buffer</returns>
-		ComplexBuffer operator/(const HEPHAUDIO_DOUBLE& rhs) const;
+		ComplexBuffer operator/(const hephaudio_float& rhs) const;
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
-		ComplexBuffer& operator/=(const HEPHAUDIO_DOUBLE& rhs);
+		ComplexBuffer& operator/=(const hephaudio_float& rhs);
 		/// <summary>
 		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
 		/// </summary>

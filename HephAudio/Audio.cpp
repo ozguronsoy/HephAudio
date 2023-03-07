@@ -90,7 +90,7 @@ namespace HephAudio
 	{
 		return pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, HEPHAUDIO_DOUBLE queueDelay, const std::vector<StringBuffer>& filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, hephaudio_float queueDelay, const std::vector<StringBuffer>& filePaths)
 	{
 		return pNativeAudio->Queue(queueName, queueDelay, filePaths);
 	}
@@ -110,11 +110,11 @@ namespace HephAudio
 	{
 		return pNativeAudio->AOExists(audioObject);
 	}
-	void Audio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, HEPHAUDIO_DOUBLE position)
+	void Audio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, hephaudio_float position)
 	{
 		pNativeAudio->SetAOPosition(audioObject, position);
 	}
-	HEPHAUDIO_DOUBLE Audio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
+	hephaudio_float Audio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
 	{
 		return pNativeAudio->GetAOPosition(audioObject);
 	}
@@ -134,19 +134,19 @@ namespace HephAudio
 	{
 		return pNativeAudio->IsCapturePaused();
 	}
-	void Audio::SetMasterVolume(HEPHAUDIO_DOUBLE volume)
+	void Audio::SetMasterVolume(hephaudio_float volume)
 	{
 		pNativeAudio->SetMasterVolume(volume);
 	}
-	HEPHAUDIO_DOUBLE Audio::GetMasterVolume() const
+	hephaudio_float Audio::GetMasterVolume() const
 	{
 		return pNativeAudio->GetMasterVolume();
 	}
-	void Audio::SetCategoryVolume(StringBuffer categoryName, HEPHAUDIO_DOUBLE newVolume)
+	void Audio::SetCategoryVolume(StringBuffer categoryName, hephaudio_float newVolume)
 	{
 		pNativeAudio->SetCategoryVolume(categoryName, newVolume);
 	}
-	HEPHAUDIO_DOUBLE Audio::GetCategoryVolume(StringBuffer categoryName) const
+	hephaudio_float Audio::GetCategoryVolume(StringBuffer categoryName) const
 	{
 		return pNativeAudio->GetCategoryVolume(categoryName);
 	}

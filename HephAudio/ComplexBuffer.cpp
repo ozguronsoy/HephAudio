@@ -174,7 +174,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator*(const HEPHAUDIO_DOUBLE& rhs) const
+	ComplexBuffer ComplexBuffer::operator*(const hephaudio_float& rhs) const
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -183,7 +183,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator*=(const HEPHAUDIO_DOUBLE& rhs)
+	ComplexBuffer& ComplexBuffer::operator*=(const hephaudio_float& rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -191,7 +191,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator/(const HEPHAUDIO_DOUBLE& rhs) const
+	ComplexBuffer ComplexBuffer::operator/(const hephaudio_float& rhs) const
 	{
 		if (rhs == 0)
 		{
@@ -204,7 +204,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator/=(const HEPHAUDIO_DOUBLE& rhs)
+	ComplexBuffer& ComplexBuffer::operator/=(const hephaudio_float& rhs)
 	{
 		if (rhs == 0)
 		{

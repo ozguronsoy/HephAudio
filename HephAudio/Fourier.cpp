@@ -43,13 +43,13 @@ namespace HephAudio
 			complexBuffer /= complexBuffer.FrameCount();
 		}
 	}
-	HEPHAUDIO_DOUBLE Fourier::FrequencyToIndex(size_t sampleRate, size_t fftSize, HEPHAUDIO_DOUBLE frequency)
+	hephaudio_float Fourier::FrequencyToIndex(size_t sampleRate, size_t fftSize, hephaudio_float frequency)
 	{
 		return round(frequency * fftSize / sampleRate);
 	}
-	HEPHAUDIO_DOUBLE Fourier::IndexToFrequency(size_t sampleRate, size_t fftSize, size_t index)
+	hephaudio_float Fourier::IndexToFrequency(size_t sampleRate, size_t fftSize, size_t index)
 	{
-		return (HEPHAUDIO_DOUBLE)index * sampleRate / fftSize;
+		return (hephaudio_float)index * sampleRate / fftSize;
 	}
 	size_t Fourier::CalculateFFTSize(size_t bufferSize)
 	{

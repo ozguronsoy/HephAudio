@@ -1,6 +1,17 @@
 #pragma once
 #include <cmath>
 
+#ifndef HEPHAUDIO_FLOAT
+
+#ifdef HEPHAUDIO_HIGH_PRECISION
+typedef double hephaudio_float;
+#else
+typedef float hephaudio_float;
+#endif
+
+#define HEPHAUDIO_FLOAT hephaudio_float
+#endif
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files
@@ -15,7 +26,7 @@
 #endif
 
 #ifndef PI
-#define PI ((HEPHAUDIO_DOUBLE)3.14159265358979323846)
+#define PI ((hephaudio_float)3.14159265358979323846)
 #endif
 
 #ifndef E_FAIL
@@ -38,14 +49,6 @@
 #define WAVE_FORMAT_HEPHAUDIO 37
 #endif
 
-#ifndef HEPHAUDIO_DOUBLE
-#ifdef HEPHAUDIO_HIGH_PRECISION
-#define HEPHAUDIO_DOUBLE double
-#else
-#define HEPHAUDIO_DOUBLE float
-#endif
-#endif
-
 #ifndef HEPHAUDIO_STOPWATCH_START
 #ifdef HEPHAUDIO_INFO_LOGGING
 #define HEPHAUDIO_STOPWATCH_START StopWatch::Start()
@@ -65,7 +68,7 @@
 #endif
 
 #pragma region Helper Methods
-inline constexpr HEPHAUDIO_DOUBLE sgn(HEPHAUDIO_DOUBLE x)
+inline constexpr hephaudio_float sgn(hephaudio_float x)
 {
 	if (x > 0)
 	{
@@ -77,19 +80,19 @@ inline constexpr HEPHAUDIO_DOUBLE sgn(HEPHAUDIO_DOUBLE x)
 	}
 	return 0.0;
 }
-inline HEPHAUDIO_DOUBLE DecibelToGain(HEPHAUDIO_DOUBLE decibel)
+inline hephaudio_float DecibelToGain(hephaudio_float decibel)
 {
 	return pow(10.0, decibel * 0.05);
 }
-inline HEPHAUDIO_DOUBLE GainToDecibel(HEPHAUDIO_DOUBLE gain)
+inline hephaudio_float GainToDecibel(hephaudio_float gain)
 {
 	return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
 }
-inline HEPHAUDIO_DOUBLE RadToDeg(HEPHAUDIO_DOUBLE rad)
+inline hephaudio_float RadToDeg(hephaudio_float rad)
 {
 	return rad * 180.0 / PI;
 }
-inline HEPHAUDIO_DOUBLE DegToRad(HEPHAUDIO_DOUBLE deg)
+inline hephaudio_float DegToRad(hephaudio_float deg)
 {
 	return deg * PI / 180.0;
 }

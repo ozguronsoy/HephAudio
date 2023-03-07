@@ -71,7 +71,7 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, HEPHAUDIO_DOUBLE queueDelay, const std::vector<StringBuffer>& filePaths)
+		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, hephaudio_float queueDelay, const std::vector<StringBuffer>& filePaths)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG_LINE("Adding files to the queue: " + queueName, ConsoleLogger::info);
@@ -150,7 +150,7 @@ namespace HephAudio
 		{
 			std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
 			ao->name = name;
-			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(HEPHAUDIO_DOUBLE) * 8, renderFormat.sampleRate));
+			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
 			ao->constant = true;
 			audioObjects.push_back(ao);
 			return ao;
@@ -181,7 +181,7 @@ namespace HephAudio
 			}
 			return false;
 		}
-		void NativeAudio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, HEPHAUDIO_DOUBLE position)
+		void NativeAudio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, hephaudio_float position)
 		{
 			if (position < 0.0 || position > 1.0)
 			{
@@ -194,11 +194,11 @@ namespace HephAudio
 				audioObject->frameIndex = audioObject->buffer.FrameCount() * position;
 			}
 		}
-		HEPHAUDIO_DOUBLE NativeAudio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
+		hephaudio_float NativeAudio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
 		{
 			if (AOExists(audioObject))
 			{
-				return (HEPHAUDIO_DOUBLE)audioObject->frameIndex / (HEPHAUDIO_DOUBLE)audioObject->buffer.FrameCount();
+				return (hephaudio_float)audioObject->frameIndex / (hephaudio_float)audioObject->buffer.FrameCount();
 			}
 			return -1.0;
 		}
@@ -237,7 +237,7 @@ namespace HephAudio
 		{
 			return isCapturePaused;
 		}
-		void NativeAudio::SetCategoryVolume(StringBuffer categoryName, HEPHAUDIO_DOUBLE newVolume)
+		void NativeAudio::SetCategoryVolume(StringBuffer categoryName, hephaudio_float newVolume)
 		{
 			for (size_t i = 0; i < categories.size(); i++)
 			{
@@ -248,7 +248,7 @@ namespace HephAudio
 				}
 			}
 		}
-		HEPHAUDIO_DOUBLE NativeAudio::GetCategoryVolume(StringBuffer categoryName) const
+		hephaudio_float NativeAudio::GetCategoryVolume(StringBuffer categoryName) const
 		{
 			for (size_t i = 0; i < categories.size(); i++)
 			{
@@ -466,7 +466,7 @@ namespace HephAudio
 
 			return queue;
 		}
-		void NativeAudio::PlayNextInQueue(StringBuffer queueName, HEPHAUDIO_DOUBLE queueDelay, uint32_t decreaseQueueIndex)
+		void NativeAudio::PlayNextInQueue(StringBuffer queueName, hephaudio_float queueDelay, uint32_t decreaseQueueIndex)
 		{
 			if (!queueName.CompareContent(""))
 			{
@@ -525,7 +525,7 @@ namespace HephAudio
 		}
 		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
-			const HEPHAUDIO_DOUBLE aoFactor = 1.0 / GetAOCountToMix();
+			const hephaudio_float aoFactor = 1.0 / GetAOCountToMix();
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
@@ -533,7 +533,7 @@ namespace HephAudio
 
 				if (audioObject->IsPlaying())
 				{
-					const HEPHAUDIO_DOUBLE volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
+					const hephaudio_float volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
 
 					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, audioObject.get(), frameCount);
 					AudioRenderEventResult rResult;
@@ -602,11 +602,11 @@ namespace HephAudio
 			}
 			return result;
 		}
-		HEPHAUDIO_DOUBLE NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
+		hephaudio_float NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
 		{
 			if (audioObject == nullptr || audioObject->mute) { return 0.0; }
 
-			HEPHAUDIO_DOUBLE result = audioObject->volume;
+			hephaudio_float result = audioObject->volume;
 
 			for (size_t i = 0; i < categories.size(); i++) // Calculate category volume.
 			{

@@ -2,7 +2,7 @@
 
 namespace HephAudio
 {
-	OscillatorBase::OscillatorBase(const HEPHAUDIO_DOUBLE& peakAmplitude, const HEPHAUDIO_DOUBLE& frequency, const uint32_t& sampleRate, const HEPHAUDIO_DOUBLE& phase, const AngleUnit& angleUnit)
+	OscillatorBase::OscillatorBase(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit)
 	{
 		this->SetPeakAmplitude(peakAmplitude);
 		this->SetSampleRate(sampleRate);
@@ -15,7 +15,7 @@ namespace HephAudio
 	}
 	AudioBuffer OscillatorBase::GenerateBuffer(const size_t& frameIndex, size_t frameCount) const noexcept
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(HEPHAUDIO_DOUBLE) * 8, this->sampleRate));
+		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(hephaudio_float) * 8, this->sampleRate));
 
 		for (size_t i = 0; i < frameCount; i++)
 		{
@@ -24,28 +24,28 @@ namespace HephAudio
 
 		return buffer;
 	}
-	const HEPHAUDIO_DOUBLE& OscillatorBase::GetPeakAmplitude() const noexcept
+	const hephaudio_float& OscillatorBase::GetPeakAmplitude() const noexcept
 	{
 		return this->peakAmplitude;
 	}
-	void OscillatorBase::SetPeakAmplitude(HEPHAUDIO_DOUBLE peakAmplitude) noexcept
+	void OscillatorBase::SetPeakAmplitude(hephaudio_float peakAmplitude) noexcept
 	{
 		this->peakAmplitude = peakAmplitude;
 	}
-	const HEPHAUDIO_DOUBLE& OscillatorBase::GetFrequency() const noexcept
+	const hephaudio_float& OscillatorBase::GetFrequency() const noexcept
 	{
 		return this->frequency;
 	}
-	void OscillatorBase::SetFrequency(HEPHAUDIO_DOUBLE frequency) noexcept
+	void OscillatorBase::SetFrequency(hephaudio_float frequency) noexcept
 	{
 		this->frequency = frequency;
 		this->UpdateW();
 	}
-	const HEPHAUDIO_DOUBLE& OscillatorBase::GetPhase(AngleUnit angleUnit) const noexcept
+	const hephaudio_float& OscillatorBase::GetPhase(AngleUnit angleUnit) const noexcept
 	{
 		return angleUnit == AngleUnit::Radian ? this->phase_rad : RadToDeg(this->phase_rad);
 	}
-	void OscillatorBase::SetPhase(HEPHAUDIO_DOUBLE phase, AngleUnit angleUnit) noexcept
+	void OscillatorBase::SetPhase(hephaudio_float phase, AngleUnit angleUnit) noexcept
 	{
 		this->phase_rad = angleUnit == AngleUnit::Radian ? phase : DegToRad(phase);
 	}

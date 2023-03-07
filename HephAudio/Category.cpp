@@ -3,7 +3,7 @@
 namespace HephAudio
 {
 	Category::Category() : Category(L"", 0.0) {}
-	Category::Category(StringBuffer name, HEPHAUDIO_DOUBLE volume)
+	Category::Category(StringBuffer name, hephaudio_float volume)
 	{
 		this->name = name;
 		this->volume = volume;

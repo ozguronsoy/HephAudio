@@ -216,7 +216,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG_LINE("WinAudio destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
-		void WinAudio::SetMasterVolume(HEPHAUDIO_DOUBLE volume)
+		void WinAudio::SetMasterVolume(hephaudio_float volume)
 		{
 			if (pSessionManager != nullptr)
 			{
@@ -231,7 +231,7 @@ namespace HephAudio
 				WINAUDIO_EXCPT(pVolume->SetMasterVolume(volume, nullptr), this, "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
 			}
 		}
-		HEPHAUDIO_DOUBLE WinAudio::GetMasterVolume() const
+		hephaudio_float WinAudio::GetMasterVolume() const
 		{
 			if (disposing) { return -1.0; }
 
@@ -628,7 +628,7 @@ namespace HephAudio
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pSessionControl->RegisterAudioSessionNotification(&captureSessionEvents), this, "WinAudio", "An error occurred whilst registering to session notifications.");
 
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetBufferSize(&bufferSize), this, "WinAudio", "An error occurred whilst capturing the samples.");
-			hnsActualDuration = (HEPHAUDIO_DOUBLE)reftimesPerSec * bufferSize / captureFormat.sampleRate;
+			hnsActualDuration = (hephaudio_float)reftimesPerSec * bufferSize / captureFormat.sampleRate;
 
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetService(__uuidof(IAudioCaptureClient), &pCaptureClient), this, "WinAudio", "An error occurred whilst capturing the samples.");
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->Start(), this, "WinAudio", "An error occurred whilst capturing the samples.");

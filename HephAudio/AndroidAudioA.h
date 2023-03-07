@@ -16,14 +16,14 @@ namespace HephAudio
 			AAudioStream* pCaptureStream;
 			size_t renderBufferFrameCount;
 			size_t captureBufferFrameCount;
-			HEPHAUDIO_DOUBLE masterVolume;
+			hephaudio_float masterVolume;
 		public:
 			AndroidAudioA(JavaVM* jvm);
 			AndroidAudioA(const AndroidAudioA&) = delete;
 			AndroidAudioA& operator=(const AndroidAudioA&) = delete;
 			virtual ~AndroidAudioA();
-			virtual void SetMasterVolume(HEPHAUDIO_DOUBLE volume) override;
-			virtual HEPHAUDIO_DOUBLE GetMasterVolume() const override;
+			virtual void SetMasterVolume(hephaudio_float volume) override;
+			virtual hephaudio_float GetMasterVolume() const override;
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			virtual void StopRendering() override;
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
@@ -33,7 +33,7 @@ namespace HephAudio
 		protected:
 			virtual void RenderData();
 			virtual void CaptureData();
-			virtual HEPHAUDIO_DOUBLE GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const override;
+			virtual hephaudio_float GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const override;
 		};
 	}
 }
