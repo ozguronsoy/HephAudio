@@ -38,7 +38,7 @@ namespace HephAudio
 			}
 			else
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory.");
 			}
 		}
 		else
@@ -56,7 +56,7 @@ namespace HephAudio
 			this->pAudioData = malloc(rhs.Size());
 			if (this->pAudioData == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::AudioBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory.");
 			}
 			memcpy(this->pAudioData, rhs.pAudioData, rhs.Size());
 		}
@@ -115,7 +115,7 @@ namespace HephAudio
 				this->pAudioData = malloc(rhs.Size());
 				if (this->pAudioData == nullptr)
 				{
-					throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::operator=", L"Insufficient memory.");
+					throw AudioException(E_OUTOFMEMORY, "AudioBuffer::operator=", "Insufficient memory.");
 				}
 				memcpy(this->pAudioData, rhs.pAudioData, rhs.Size());
 			}
@@ -345,7 +345,7 @@ namespace HephAudio
 			void* tempPtr = malloc(this->Size() + buffer.frameCount * this->formatInfo.FrameSize());
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Join", "Insufficient memory.");
 			}
 
 			memcpy(tempPtr, this->pAudioData, this->Size());
@@ -372,7 +372,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Insert", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Insert", "Insufficient memory.");
 			}
 			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
@@ -417,7 +417,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Cut", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Cut", "Insufficient memory.");
 			}
 
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
@@ -450,7 +450,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Replace", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Replace", "Insufficient memory.");
 			}
 			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
@@ -507,7 +507,7 @@ namespace HephAudio
 				void* tempPtr = realloc(this->pAudioData, newFrameCount * this->formatInfo.FrameSize());
 				if (tempPtr == nullptr)
 				{
-					throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Resize", L"Insufficient memory.");
+					throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Resize", "Insufficient memory.");
 				}
 				this->pAudioData = tempPtr;
 				this->frameCount = newFrameCount;

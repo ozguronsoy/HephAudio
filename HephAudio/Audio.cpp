@@ -226,8 +226,8 @@ namespace HephAudio
 		return pNativeAudio->GetAudioDevices(deviceType);
 	}
 #endif
-	bool Audio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
+	bool Audio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
 	{
-		return pNativeAudio->SaveToFile(filePath, overwrite, buffer, targetFormat);
+		return pNativeAudio->SaveToFile(filePath, overwrite, buffer);
 	}
 }

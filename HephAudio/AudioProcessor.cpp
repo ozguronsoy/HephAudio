@@ -64,17 +64,16 @@ namespace HephAudio
 		}
 		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate);
 		AudioBuffer resultBuffer(targetFrameCount, resultFormat);
-		const HEPHAUDIO_DOUBLE cursorRatio = (1.0 / (targetFrameCount - 1)) * (currentFrameCount - 1);
-		HEPHAUDIO_DOUBLE cursor = 0.0;
-		for (size_t i = 0; i < targetFrameCount; i++)
+		const HEPHAUDIO_DOUBLE dc = 1.0 / srRatio;
+		HEPHAUDIO_DOUBLE c = 0.0;
+		for (size_t i = 0; i < targetFrameCount; i++, c += dc)
 		{
-			const HEPHAUDIO_DOUBLE fc = floor(cursor);
-			const HEPHAUDIO_DOUBLE factor = cursor - fc;
+			const HEPHAUDIO_DOUBLE fc = floor(c);
+			const HEPHAUDIO_DOUBLE factor = c - fc;
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = buffer[fc][j] * (1.0 - factor) + buffer[fc + 1.0][j] * factor;
 			}
-			cursor += cursorRatio;
 		}
 		buffer = std::move(resultBuffer);
 	}
@@ -506,6 +505,83 @@ namespace HephAudio
 					buffer[l][j] += complexBuffer[k].real * hannWindow[k][0] / fftSize;
 				}
 			}
+		}
+	}
+	void AudioProcessor::EqualizerMT(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos)
+	{
+		AudioProcessor::EqualizerMT(buffer, defaultHopSize, defaultFFTSize, infos);
+	}
+	void AudioProcessor::EqualizerMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos)
+	{
+		constexpr auto applyEqualizer = [](AudioBuffer* buffer, AudioBuffer* window, size_t hopSize, size_t fftSize, size_t nyquistFrequency, const std::vector<EqualizerInfo>* const infos)
+		{
+			AudioBuffer tempBuffer = *buffer;
+			buffer->Reset();
+			for (size_t i = 0; i < buffer->frameCount; i += hopSize)
+			{
+				AudioBuffer subBuffer = tempBuffer.GetSubBuffer(i, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT_Forward(subBuffer, fftSize);
+				for (size_t j = 0; j < infos->size(); j++)
+				{
+					const EqualizerInfo& info = infos->at(j);
+					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
+					if (info.f1 > info.f2)
+					{
+						higherFrequencyIndex = ceil(Fourier::FrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f1));
+						lowerFrequencyIndex = floor(Fourier::FrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f2));
+					}
+					else
+					{
+						higherFrequencyIndex = ceil(Fourier::FrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f2));
+						lowerFrequencyIndex = floor(Fourier::FrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f1));
+					}
+					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
+					for (size_t l = lowerFrequencyIndex; l <= upperBound; l++)
+					{
+						complexBuffer[l] *= info.amplitudeFunction(Fourier::IndexToFrequency(buffer->formatInfo.sampleRate, fftSize, l));
+						complexBuffer[fftSize - l - 1] = Complex(complexBuffer[l].real, -complexBuffer[l].imaginary);
+					}
+				}
+				Fourier::FFT_Inverse(complexBuffer, false);
+				for (size_t j = 0, k = i; j < fftSize && k < buffer->frameCount; j++, k++)
+				{
+					(*buffer)[k][0] += complexBuffer[j].real * (*window)[j][0] / fftSize;
+				}
+			}
+		};
+
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const size_t nyquistFrequency = fftSize * 0.5;
+
+		std::vector<AudioBuffer*> channels;
+		std::vector<std::thread> threads;
+
+		AudioBuffer hannWindow = AudioProcessor::GenerateHannWindow(fftSize);
+
+		for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+		{
+			AudioBuffer* channel = new AudioBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, 1, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate));
+			for (size_t j = 0; j < buffer.frameCount; j++)
+			{
+				(*channel)[j][0] = buffer[j][i];
+			}
+			channels.push_back(channel);
+			threads.push_back(std::thread(applyEqualizer, channel, &hannWindow, hopSize, fftSize, nyquistFrequency, &infos));
+		}
+
+		for (size_t i = 0; i < threads.size(); i++)
+		{
+			if (threads.at(i).joinable())
+			{
+				threads.at(i).join();
+			}
+
+			for (size_t j = 0; j < buffer.frameCount; j++)
+			{
+				buffer[j][i] = (*channels.at(i))[j][0];
+			}
+
+			delete channels.at(i);
 		}
 	}
 	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos)

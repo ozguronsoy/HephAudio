@@ -169,7 +169,7 @@ namespace HephAudio
 		{
 			if (!IsWindowsVistaOrGreater())
 			{
-				throw AudioException(E_NOINTERFACE, "WinAudio", L"OS version must be at least Windows Vista.");
+				throw AudioException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista.");
 			}
 
 			CoInitializeEx(nullptr, COINIT_MULTITHREADED);

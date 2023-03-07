@@ -23,7 +23,7 @@ namespace HephAudio
 			}
 			else
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::ComplexBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory.");
 			}
 		}
 		else
@@ -40,7 +40,7 @@ namespace HephAudio
 			this->pComplexData = (Complex*)malloc(rhs.Size());
 			if (this->pComplexData == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::ComplexBuffer", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory.");
 			}
 			memcpy(this->pComplexData, rhs.pComplexData, rhs.Size());
 		}
@@ -92,7 +92,7 @@ namespace HephAudio
 				this->pComplexData = (Complex*)malloc(rhs.Size());
 				if (this->pComplexData == nullptr)
 				{
-					throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::operator=", L"Insufficient memory.");
+					throw AudioException(E_OUTOFMEMORY, "ComplexBuffer::operator=", "Insufficient memory.");
 				}
 				memcpy(this->pComplexData, rhs.pComplexData, rhs.Size());
 			}
@@ -195,7 +195,7 @@ namespace HephAudio
 	{
 		if (rhs == 0)
 		{
-			throw AudioException(E_FAIL, L"ComplexBuffer::operator/", L"Divided by zero.");
+			throw AudioException(E_FAIL, "ComplexBuffer::operator/", "Divided by zero.");
 		}
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -208,7 +208,7 @@ namespace HephAudio
 	{
 		if (rhs == 0)
 		{
-			throw AudioException(E_FAIL, L"ComplexBuffer::operator/=", L"Divided by zero.");
+			throw AudioException(E_FAIL, "ComplexBuffer::operator/=", "Divided by zero.");
 		}
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -259,7 +259,7 @@ namespace HephAudio
 			void* tempPtr = malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Join", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Join", "Insufficient memory.");
 			}
 
 			memcpy(tempPtr, this->pComplexData, this->Size());
@@ -282,7 +282,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Insert", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Insert", "Insufficient memory.");
 			}
 			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
@@ -322,7 +322,7 @@ namespace HephAudio
 			Complex* tempPtr = (Complex*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Cut", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "ComplexBuffer::Cut", "Insufficient memory.");
 			}
 
 			const size_t frameIndexAsBytes = frameIndex * sizeof(Complex);
@@ -355,7 +355,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				throw AudioException(E_OUTOFMEMORY, L"AudioBuffer::Replace", L"Insufficient memory.");
+				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Replace", "Insufficient memory.");
 			}
 			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
 
@@ -411,7 +411,7 @@ namespace HephAudio
 				Complex* tempPtr = (Complex*)realloc(this->pComplexData, newFrameCount * sizeof(Complex));
 				if (tempPtr == nullptr)
 				{
-					throw AudioException(E_OUTOFMEMORY, L"ComplexBuffer::Resize", L"Insufficient memory.");
+					throw AudioException(E_OUTOFMEMORY, "ComplexBuffer::Resize", "Insufficient memory.");
 				}
 				this->pComplexData = tempPtr;
 				this->frameCount = newFrameCount;

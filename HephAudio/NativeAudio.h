@@ -86,7 +86,7 @@ namespace HephAudio
 			virtual AudioDevice GetCaptureDevice() const;
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const = 0;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const = 0;
-			virtual bool SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat);
+			virtual bool SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer);
 		protected:
 			virtual void JoinRenderThread();
 			virtual void JoinCaptureThread();

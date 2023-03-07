@@ -377,22 +377,15 @@ namespace HephAudio
 			}
 			return captureDevice;
 		}
-		bool NativeAudio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat)
+		bool NativeAudio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
 		{
 			try
 			{
-				if (buffer.FormatInfo() != targetFormat)
-				{
-					AudioProcessor::ConvertSampleRate(buffer, targetFormat.sampleRate);
-					AudioProcessor::ConvertBPS(buffer, targetFormat.bitsPerSample);
-					AudioProcessor::ConvertChannels(buffer, targetFormat.channelCount);
-				}
-
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
 
 				if (format == nullptr)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::SaveToFile", "File format '" + AudioFile::GetFileExtension(filePath) + L"' is not supported."));
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::SaveToFile", "File format '" + AudioFile::GetFileExtension(filePath) + "' is not supported."));
 					return false;
 				}
 

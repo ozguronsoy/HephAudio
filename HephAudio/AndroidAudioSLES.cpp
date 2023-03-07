@@ -33,9 +33,9 @@ namespace HephAudio
 			SLEngineOption engineOption;
 			engineOption.feature = SL_ENGINEOPTION_THREADSAFE;
 			engineOption.data = SL_BOOLEAN_TRUE;
-			ANDROIDAUDIO_EXCPT(slCreateEngine(&audioEngineObject, 1, &engineOption, 0, nullptr, nullptr), this, L"AndroidAudioSLES::AndroidAudioSLES", L"An error occurred whilst creating the audio engine object.");
-			ANDROIDAUDIO_EXCPT((*audioEngineObject)->Realize(audioEngineObject, SL_BOOLEAN_FALSE), this, L"AndroidAudioSLES::AndroidAudioSLES", L"An error occurred whilst creating the audio engine object.");
-			ANDROIDAUDIO_EXCPT((*audioEngineObject)->GetInterface(audioEngineObject, SL_IID_ENGINE, &audioEngine), this, L"AndroidAudioSLES::AndroidAudioSLES", L"An error occurred whilst getting the audio engine interface.");
+			ANDROIDAUDIO_EXCPT(slCreateEngine(&audioEngineObject, 1, &engineOption, 0, nullptr, nullptr), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst creating the audio engine object.");
+			ANDROIDAUDIO_EXCPT((*audioEngineObject)->Realize(audioEngineObject, SL_BOOLEAN_FALSE), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst creating the audio engine object.");
+			ANDROIDAUDIO_EXCPT((*audioEngineObject)->GetInterface(audioEngineObject, SL_IID_ENGINE, &audioEngine), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst getting the audio engine interface.");
 		}
 		AndroidAudioSLES::~AndroidAudioSLES()
 		{
@@ -56,13 +56,13 @@ namespace HephAudio
 		void AndroidAudioSLES::SetMasterVolume(HEPHAUDIO_DOUBLE volume)
 		{
 			SLresult slres;
-			ANDROIDAUDIO_EXCPT((*masterVolumeObject)->SetVolumeLevel(masterVolumeObject, 2000 * log10(abs(volume))), this, L"AndroidAudioSLES::SetMasterVolume", L"An error occurred whilst setting the master volume.");
+			ANDROIDAUDIO_EXCPT((*masterVolumeObject)->SetVolumeLevel(masterVolumeObject, 2000 * log10(abs(volume))), this, "AndroidAudioSLES::SetMasterVolume", "An error occurred whilst setting the master volume.");
 		}
 		HEPHAUDIO_DOUBLE AndroidAudioSLES::GetMasterVolume() const
 		{
 			SLresult slres;
 			SLmillibel volume = 0;
-			ANDROIDAUDIO_EXCPT((*masterVolumeObject)->GetVolumeLevel(masterVolumeObject, &volume), this, L"AndroidAudioSLES::GetMasterVolume", L"An error occurred whilst getting the master volume.");
+			ANDROIDAUDIO_EXCPT((*masterVolumeObject)->GetVolumeLevel(masterVolumeObject, &volume), this, "AndroidAudioSLES::GetMasterVolume", "An error occurred whilst getting the master volume.");
 			return pow(10.0, volume * 0.0005);
 		}
 		void AndroidAudioSLES::InitializeRender(AudioDevice* device, AudioFormatInfo format)
@@ -300,7 +300,7 @@ namespace HephAudio
 				SLresult slres = (*simpleBufferQueue)->Enqueue(simpleBufferQueue, pCallbackContext->pData, captureCallbackSize);
 				if (slres != 0)
 				{
-					RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(slres, L"AndroidAudioSLES", L"An error occurred whilst capturing data."));
+					RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, AudioException(slres, "AndroidAudioSLES", "An error occurred whilst capturing data."));
 					return;
 				}
 

@@ -73,6 +73,6 @@ namespace HephAudio
 		AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 		std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
 #endif
-		bool SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer, AudioFormatInfo targetFormat);
+		bool SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer);
 	};
 }
