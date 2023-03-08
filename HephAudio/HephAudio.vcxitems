@@ -39,6 +39,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FloatBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h" />
@@ -83,6 +84,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ConsoleLogger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)FloatBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OscillatorBase.cpp" />

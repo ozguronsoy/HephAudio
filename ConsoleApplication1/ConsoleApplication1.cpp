@@ -5,6 +5,7 @@
 #include <Fourier.h>
 #include <ConsoleLogger.h>
 #include <StopWatch.h>
+#include <FloatBuffer.h>
 #include <shlobj.h>
 
 using namespace HephAudio;
@@ -145,7 +146,9 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		else if (sb.Contains("load"))
 		{
 			StopWatch::Reset();
-			audio.Load(audioPath + sb.Split('\"').at(1))->OnFinishedPlaying = OnFinishedPlaying;
+			std::shared_ptr<AudioObject> pao = audio.Load(audioPath + sb.Split('\"').at(1));
+			pao->OnRender = OnRender;
+			pao->OnFinishedPlaying = OnFinishedPlaying;
 			PrintDeltaTime("File loaded in");
 		}
 		else if (sb.Contains("volume"))
@@ -259,15 +262,15 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		}
 		else if (sb == L"original")
 		{
+			StopWatch::Reset();
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			const bool originalState = pao->pause;
 			pao->pause = true;
-			pao->buffer.Resize(0);
-			StopWatch::Reset();
 			AudioFile audioFile = AudioFile(pao->filePath);
 			Formats::IAudioFormat* audioFormat = audio.GetAudioFormats()->GetAudioFormat(pao->filePath);
 			audioFormat->ReadFile(audioFile, pao->buffer);
-			pao->buffer.SetFormat(audio.GetRenderFormat());
+			pao->buffer.SetChannelCount(audio.GetRenderFormat().channelCount);
+			pao->buffer.SetSampleRate(audio.GetRenderFormat().sampleRate);
 			PrintDeltaTime("removed all effects in");
 			pao->pause = originalState;
 		}

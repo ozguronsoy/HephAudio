@@ -12,10 +12,9 @@ namespace HephAudio
 	{
 		friend class AudioBuffer;
 	private:
-		hephaudio_float* pAudioData;
+		const AudioBuffer* pAudioBuffer;
 		size_t frameIndex;
-		size_t channelCount;
-		AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount);
+		AudioFrame(const AudioBuffer* pAudioBuffer, size_t frameIndex);
 	public:
 		hephaudio_float& operator[](const size_t& channel) const;
 	};

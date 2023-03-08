@@ -186,6 +186,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.h">
       <Filter>Header Files\Oscillators</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FloatBuffer.h">
+      <Filter>Header Files\Buffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -304,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.cpp">
       <Filter>Source Files\Oscillators</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)FloatBuffer.cpp">
+      <Filter>Source Files\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,15 +5,14 @@
 namespace HephAudio
 {
 #pragma region Audio Frame
-	AudioFrame::AudioFrame(void* pAudioData, size_t frameIndex, size_t channelCount)
+	AudioFrame::AudioFrame(const AudioBuffer* pAudioBuffer, size_t frameIndex)
 	{
-		this->pAudioData = (hephaudio_float*)pAudioData;
+		this->pAudioBuffer = pAudioBuffer;
 		this->frameIndex = frameIndex;
-		this->channelCount = channelCount;
 	}
 	hephaudio_float& AudioFrame::operator[](const size_t& channel) const
 	{
-		return *(this->pAudioData + this->frameIndex * this->channelCount + channel);
+		return *((hephaudio_float*)this->pAudioBuffer->Begin() + this->frameIndex * this->pAudioBuffer->FormatInfo().channelCount + channel);
 	}
 #pragma endregion
 #pragma region Audio Buffer
@@ -87,14 +86,14 @@ namespace HephAudio
 	}
 	AudioFrame AudioBuffer::operator[](const size_t& frameIndex) const
 	{
-		return AudioFrame(pAudioData, frameIndex, formatInfo.channelCount);
+		return AudioFrame(this, frameIndex);
 	}
 	AudioBuffer AudioBuffer::operator-() const
 	{
-		AudioBuffer resultBuffer(frameCount, formatInfo);
-		for (size_t i = 0; i < frameCount; i++)
+		AudioBuffer resultBuffer(this->frameCount, this->formatInfo);
+		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = -(*this)[i][j];
 			}
@@ -342,7 +341,7 @@ namespace HephAudio
 			}
 
 			// allocate memory with the combined size and copy the rhs's data to the end of the current buffer's data.
-			void* tempPtr = malloc(this->Size() + buffer.frameCount * this->formatInfo.FrameSize());
+			void* tempPtr = malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::Join", "Insufficient memory.");
