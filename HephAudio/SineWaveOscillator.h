@@ -7,9 +7,9 @@ namespace HephAudio
 	class SineWaveOscillator : public OscillatorBase
 	{
 	public:
-		SineWaveOscillator(const uint32_t& sampleRate);
-		SineWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
+		SineWaveOscillator(uint32_t sampleRate);
+		SineWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase = 0.0, AngleUnit angleUnit = AngleUnit::Radian);
 		virtual ~SineWaveOscillator() = default;
-		virtual hephaudio_float Oscillate(const size_t& frameIndex) const noexcept override;
+		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept override;
 	};
 }

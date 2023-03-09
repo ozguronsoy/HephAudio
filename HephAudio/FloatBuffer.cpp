@@ -3,10 +3,10 @@
 
 namespace HephAudio
 {
-	FloatBuffer::FloatBuffer() : FloatBuffer(0) {}
+	FloatBuffer::FloatBuffer() : frameCount(0), pData(nullptr) {}
 	FloatBuffer::FloatBuffer(size_t frameCount)
+		: frameCount(0)
 	{
-		this->frameCount = frameCount;
 		if (this->frameCount > 0)
 		{
 			this->pData = (hephaudio_float*)malloc(this->Size());
@@ -22,8 +22,8 @@ namespace HephAudio
 		}
 	}
 	FloatBuffer::FloatBuffer(const FloatBuffer& rhs)
+		: frameCount(rhs.frameCount)
 	{
-		this->frameCount = rhs.frameCount;
 		if (this->frameCount > 0)
 		{
 			this->pData = (hephaudio_float*)malloc(this->Size());
@@ -39,10 +39,8 @@ namespace HephAudio
 		}
 	}
 	FloatBuffer::FloatBuffer(FloatBuffer&& rhs) noexcept
+		: frameCount(rhs.frameCount), pData(rhs.pData)
 	{
-		this->frameCount = rhs.frameCount;
-		this->pData = rhs.pData;
-
 		rhs.frameCount = 0;
 		rhs.pData = nullptr;
 	}
@@ -53,15 +51,6 @@ namespace HephAudio
 		{
 			free(this->pData);
 		}
-	}
-	FloatBuffer::operator AudioBuffer() const
-	{
-		AudioBuffer audioBuffer = AudioBuffer(this->frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(hephaudio_float) * 8, 48000));
-		for (size_t i = 0; i < this->frameCount; i++)
-		{
-			audioBuffer[i][0] = (*this)[i];
-		}
-		return audioBuffer;
 	}
 	hephaudio_float& FloatBuffer::operator[](const size_t& frameIndex) const
 	{
@@ -139,7 +128,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator<<(const size_t rhs) const
+	FloatBuffer FloatBuffer::operator<<(const size_t& rhs) const
 	{
 		FloatBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
@@ -148,7 +137,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator<<=(const size_t rhs)
+	FloatBuffer& FloatBuffer::operator<<=(const size_t& rhs)
 	{
 		if (this->frameCount > rhs)
 		{
@@ -161,7 +150,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator>>(const size_t rhs) const
+	FloatBuffer FloatBuffer::operator>>(const size_t& rhs) const
 	{
 		FloatBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
@@ -170,7 +159,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator>>=(const size_t rhs)
+	FloatBuffer& FloatBuffer::operator>>=(const size_t& rhs)
 	{
 		if (this->frameCount > rhs)
 		{

@@ -2,13 +2,13 @@
 
 namespace HephAudio
 {
-	SawToothWaveOscillator::SawToothWaveOscillator(const uint32_t& sampleRate) : OscillatorBase(0.05, 1500.0, sampleRate, 0, AngleUnit::Radian) {}
-	SawToothWaveOscillator::SawToothWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit)
+	SawToothWaveOscillator::SawToothWaveOscillator(uint32_t sampleRate) : OscillatorBase(0.05, 1500.0, sampleRate, 0.0, AngleUnit::Radian) {}
+	SawToothWaveOscillator::SawToothWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit)
 		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit) {}
-	hephaudio_float SawToothWaveOscillator::Oscillate(const size_t& frameIndex) const noexcept
+	hephaudio_float SawToothWaveOscillator::Oscillate(size_t t_sample) const noexcept
 	{
-		const hephaudio_float t = (hephaudio_float)frameIndex / this->sampleRate + RadToDeg(this->phase_rad);
-		const hephaudio_float ft = this->frequency * t;
-		return this->peakAmplitude * 2.0 * (ft - round(ft));
+		const hephaudio_float t_second = (hephaudio_float)t_sample / this->sampleRate + RadToDeg(this->phase_rad);
+		const hephaudio_float ft = this->frequency * t_second;
+		return this->peakAmplitude * 2.0 * (this->frequency * t_second - round(this->frequency * t_second));
 	}
 }

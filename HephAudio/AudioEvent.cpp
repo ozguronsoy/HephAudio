@@ -4,10 +4,7 @@
 
 namespace HephAudio
 {
-	AudioEvent::AudioEvent()
-	{
-		this->eventHandlers = std::vector<AudioEventHandler>(0);
-	}
+	AudioEvent::AudioEvent() : eventHandlers(std::vector<AudioEventHandler>(0)) { }
 	AudioEvent::operator bool() const
 	{
 		return this->eventHandlers.size() > 0;

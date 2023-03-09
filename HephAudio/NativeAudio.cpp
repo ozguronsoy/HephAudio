@@ -9,24 +9,13 @@ namespace HephAudio
 	namespace Native
 	{
 		NativeAudio::NativeAudio()
+			: audioObjects(std::vector<std::shared_ptr<AudioObject>>(0)), mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
+			, renderFormat(AudioFormatInfo(1, 2, 16, 48000)), captureFormat(AudioFormatInfo(1, 2, 16, 48000)), disposing(false), isRenderInitialized(false)
+			, isCaptureInitialized(false), isCapturePaused(false), displayName(""), iconPath(""), audioExceptionEventArgs(AudioExceptionEventArgs())
+			, audioFormats(Formats::AudioFormats()), OnException(AudioEvent()), OnAudioDeviceAdded(AudioEvent()), OnAudioDeviceRemoved(AudioEvent())
+			, OnCapture(AudioEvent())
 		{
 			HEPHAUDIO_STOPWATCH_START;
-
-			AudioFormatInfo defaultFormat = AudioFormatInfo(1, 2, 16, 48000);
-			audioObjects = std::vector<std::shared_ptr<AudioObject>>(0);
-			categories = Categories(0);
-			mainThreadId = std::this_thread::get_id();
-			renderDeviceId = "";
-			captureDeviceId = "";
-			renderFormat = defaultFormat;
-			captureFormat = defaultFormat;
-			disposing = false;
-			isRenderInitialized = false;
-			isCaptureInitialized = false;
-			isCapturePaused = false;
-			displayName = "";
-			iconPath = "";
-			audioExceptionEventArgs = AudioExceptionEventArgs();
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Play(StringBuffer filePath)
 		{
@@ -55,15 +44,15 @@ namespace HephAudio
 					return nullptr;
 				}
 
-				std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
-				ao->filePath = filePath;
-				ao->name = audioFile.Name();
-				format->ReadFile(audioFile, ao->buffer);
-				ao->loopCount = loopCount;
-				ao->pause = isPaused;
-				audioObjects.push_back(ao);
+				std::shared_ptr<AudioObject> pao = std::shared_ptr<AudioObject>(new AudioObject());
+				pao->filePath = filePath;
+				pao->name = audioFile.Name();
+				format->ReadFile(audioFile, pao->buffer);
+				pao->loopCount = loopCount;
+				pao->pause = isPaused;
+				audioObjects.push_back(pao);
 
-				return ao;
+				return pao;
 			}
 			catch (AudioException ex)
 			{
@@ -71,7 +60,7 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, hephaudio_float queueDelay, const std::vector<StringBuffer>& filePaths)
+		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<StringBuffer>& filePaths)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG_LINE("Adding files to the queue: " + queueName, ConsoleLogger::info);
@@ -90,14 +79,14 @@ namespace HephAudio
 			{
 				if (AudioFile::FileExists(filePaths.at(i)))
 				{
-					std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
-					ao->filePath = filePaths.at(i);
-					ao->name = AudioFile::GetFileName(filePaths.at(i));
-					ao->queueName = queueName;
-					ao->queueIndex = i + currentQueueSize - failedCount;
-					ao->queueDelay = queueDelay;
+					std::shared_ptr<AudioObject> pao = std::shared_ptr<AudioObject>(new AudioObject());
+					pao->filePath = filePaths.at(i);
+					pao->name = AudioFile::GetFileName(filePaths.at(i));
+					pao->queueName = queueName;
+					pao->queueIndex = i + currentQueueSize - failedCount;
+					pao->queueDelay_ms = queueDelay_ms;
 
-					if (ao->queueIndex == 0)
+					if (pao->queueIndex == 0)
 					{
 						try
 						{
@@ -107,24 +96,24 @@ namespace HephAudio
 							{
 								throw AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.Extension() + "' is not supported.");
 							}
-							format->ReadFile(audioFile, ao->buffer);
+							format->ReadFile(audioFile, pao->buffer);
 						}
 						catch (AudioException ex)
 						{
 							RAISE_AUDIO_EXCPT(this, ex);
 							failedCount++;
 
-							HEPHAUDIO_LOG_LINE("Failed to add the file \"" + ao->name + "\" to the queue: " + queueName, ConsoleLogger::warning);
+							HEPHAUDIO_LOG_LINE("Failed to add the file \"" + pao->name + "\" to the queue: " + queueName, ConsoleLogger::warning);
 
 							continue;
 						}
 
 					}
 
-					audioObjects.push_back(ao);
-					queuedAudioObjects.push_back(ao);
+					audioObjects.push_back(pao);
+					queuedAudioObjects.push_back(pao);
 
-					HEPHAUDIO_LOG_LINE("The file \"" + ao->name + "\" is successfully added to the queue: " + queueName, ConsoleLogger::info);
+					HEPHAUDIO_LOG_LINE("The file \"" + pao->name + "\" is successfully added to the queue: " + queueName, ConsoleLogger::info);
 				}
 				else
 				{
@@ -148,18 +137,17 @@ namespace HephAudio
 		}
 		std::shared_ptr<AudioObject> NativeAudio::CreateAO(StringBuffer name, size_t bufferFrameCount)
 		{
-			std::shared_ptr<AudioObject> ao = std::shared_ptr<AudioObject>(new AudioObject());
-			ao->name = name;
-			ao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
-			ao->constant = true;
-			audioObjects.push_back(ao);
-			return ao;
+			std::shared_ptr<AudioObject> pao = std::shared_ptr<AudioObject>(new AudioObject());
+			pao->name = name;
+			pao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
+			audioObjects.push_back(pao);
+			return pao;
 		}
-		bool NativeAudio::DestroyAO(std::shared_ptr<AudioObject> audioObject)
+		bool NativeAudio::DestroyAO(std::shared_ptr<AudioObject> pAudioObject)
 		{
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (audioObject.get() == audioObjects.at(i).get())
+				if (pAudioObject.get() == audioObjects.at(i).get())
 				{
 					audioObjects.erase(audioObjects.begin() + i);
 					return true;
@@ -167,13 +155,13 @@ namespace HephAudio
 			}
 			return false;
 		}
-		bool NativeAudio::AOExists(std::shared_ptr<AudioObject> audioObject) const
+		bool NativeAudio::AOExists(std::shared_ptr<AudioObject> pAudioObject) const
 		{
-			if (audioObject != nullptr)
+			if (pAudioObject != nullptr)
 			{
 				for (size_t i = 0; i < audioObjects.size(); i++)
 				{
-					if (audioObject.get() == audioObjects.at(i).get())
+					if (pAudioObject.get() == audioObjects.at(i).get())
 					{
 						return true;
 					}
@@ -181,7 +169,7 @@ namespace HephAudio
 			}
 			return false;
 		}
-		void NativeAudio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, hephaudio_float position)
+		void NativeAudio::SetAOPosition(std::shared_ptr<AudioObject> pAudioObject, hephaudio_float position)
 		{
 			if (position < 0.0 || position > 1.0)
 			{
@@ -189,16 +177,16 @@ namespace HephAudio
 				return;
 			}
 
-			if (AOExists(audioObject))
+			if (AOExists(pAudioObject))
 			{
-				audioObject->frameIndex = audioObject->buffer.FrameCount() * position;
+				pAudioObject->frameIndex = pAudioObject->buffer.FrameCount() * position;
 			}
 		}
-		hephaudio_float NativeAudio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
+		hephaudio_float NativeAudio::GetAOPosition(std::shared_ptr<AudioObject> pAudioObject) const
 		{
-			if (AOExists(audioObject))
+			if (AOExists(pAudioObject))
 			{
-				return (hephaudio_float)audioObject->frameIndex / (hephaudio_float)audioObject->buffer.FrameCount();
+				return (hephaudio_float)pAudioObject->frameIndex / (hephaudio_float)pAudioObject->buffer.FrameCount();
 			}
 			return -1.0;
 		}
@@ -237,57 +225,6 @@ namespace HephAudio
 		{
 			return isCapturePaused;
 		}
-		void NativeAudio::SetCategoryVolume(StringBuffer categoryName, hephaudio_float newVolume)
-		{
-			for (size_t i = 0; i < categories.size(); i++)
-			{
-				if (categories.at(i).name == categoryName)
-				{
-					categories.at(i).volume = newVolume;
-					return;
-				}
-			}
-		}
-		hephaudio_float NativeAudio::GetCategoryVolume(StringBuffer categoryName) const
-		{
-			for (size_t i = 0; i < categories.size(); i++)
-			{
-				if (categories.at(i).name == categoryName)
-				{
-					return categories.at(i).volume;
-				}
-			}
-			return 0.0;
-		}
-		void NativeAudio::RegisterCategory(Category category)
-		{
-			if (!CategoryExists(category.name))
-			{
-				categories.push_back(category);
-			}
-		}
-		void NativeAudio::UnregisterCategory(StringBuffer categoryName)
-		{
-			for (size_t i = 0; i < categories.size(); i++)
-			{
-				if (categories.at(i).name == categoryName)
-				{
-					categories.erase(categories.begin() + i);
-					return;
-				}
-			}
-		}
-		bool NativeAudio::CategoryExists(StringBuffer categoryName) const
-		{
-			for (size_t i = 0; i < categories.size(); i++)
-			{
-				if (categories.at(i).name == categoryName)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
 		void NativeAudio::Skip(StringBuffer queueName, bool applyDelay)
 		{
 			Skip(1, queueName, applyDelay);
@@ -309,7 +246,7 @@ namespace HephAudio
 			}
 			else
 			{
-				uint32_t queueDelay = 0u;
+				uint32_t queueDelay_ms = 0u;
 
 				for (size_t i = 0; i < skipCount; i++)
 				{
@@ -319,15 +256,15 @@ namespace HephAudio
 
 					if (qao->queueIndex == 0)
 					{
-						queueDelay = qao->queueDelay;
+						queueDelay_ms = qao->queueDelay_ms;
 					}
 
 					DestroyAO(queue.at(i));
 				}
 
-				if (applyDelay && queueDelay > 0)
+				if (applyDelay && queueDelay_ms > 0)
 				{
-					queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay, skipCount));
+					queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay_ms, skipCount));
 				}
 				else
 				{
@@ -456,8 +393,8 @@ namespace HephAudio
 			{
 				for (size_t i = 0; i < audioObjects.size(); i++)
 				{
-					std::shared_ptr<AudioObject> ao = audioObjects.at(i);
-					if (ao != nullptr && ao->queueName == queueName)
+					std::shared_ptr<AudioObject> pao = audioObjects.at(i);
+					if (pao != nullptr && pao->queueName == queueName)
 					{
 						queue.push_back(audioObjects.at(i));
 					}
@@ -529,15 +466,15 @@ namespace HephAudio
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				std::shared_ptr<AudioObject> audioObject = audioObjects.at(i);
+				std::shared_ptr<AudioObject> pAudioObject = audioObjects.at(i);
 
-				if (audioObject->IsPlaying())
+				if (!pAudioObject->pause && (pAudioObject->queueName.CompareContent("") || pAudioObject->queueIndex == 0))
 				{
 					const hephaudio_float volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
 
-					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, audioObject.get(), frameCount);
+					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, pAudioObject.get(), frameCount);
 					AudioRenderEventResult rResult;
-					audioObject->OnRender(&rArgs, &rResult);
+					pAudioObject->OnRender(&rArgs, &rResult);
 
 					for (size_t j = 0; j < frameCount && j < rResult.renderBuffer.FrameCount(); j++)
 					{
@@ -547,44 +484,41 @@ namespace HephAudio
 						}
 					}
 
-					if (!audioObject->constant)
+					if (rResult.isFinishedPlaying)
 					{
-						if (rResult.isFinishedPlaying)
+						if (pAudioObject->loopCount == 1) // Finish playing.
 						{
-							if (audioObject->loopCount == 1) // Finish playing.
+							AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, pAudioObject.get(), 0);
+							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
+
+							StringBuffer queueName = pAudioObject->queueName;
+							uint32_t queueDelay_ms = pAudioObject->queueDelay_ms;
+
+							audioObjects.erase(audioObjects.begin() + i);
+							i--;
+
+							HEPHAUDIO_LOG_LINE("Finished playing the file \"" + pAudioObject->name + "\"", ConsoleLogger::info);
+
+							if (!queueName.CompareContent(""))
 							{
-								AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, audioObject.get(), 0);
-								audioObject->OnFinishedPlaying(&ofpArgs, nullptr);
-
-								StringBuffer queueName = audioObject->queueName;
-								uint32_t queueDelay = audioObject->queueDelay;
-
-								audioObjects.erase(audioObjects.begin() + i);
-								i--;
-
-								HEPHAUDIO_LOG_LINE("Finished playing the file \"" + audioObject->name + "\"", ConsoleLogger::info);
-
-								if (!queueName.CompareContent(""))
+								if (queueDelay_ms > 0)
 								{
-									if (queueDelay > 0)
-									{
-										queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay, 1));
-									}
-									else
-									{
-										PlayNextInQueue(queueName, 0, 1);
-									}
+									queueThreads.push_back(std::thread(&NativeAudio::PlayNextInQueue, this, queueName, queueDelay_ms, 1));
+								}
+								else
+								{
+									PlayNextInQueue(queueName, 0, 1);
 								}
 							}
-							else
-							{
-								audioObject->loopCount--;
+						}
+						else
+						{
+							pAudioObject->loopCount--;
 
-								AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, audioObject.get(), audioObject->loopCount);
-								audioObject->OnFinishedPlaying(&ofpArgs, nullptr);
+							AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, pAudioObject.get(), pAudioObject->loopCount);
+							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
-								audioObject->frameIndex = 0;
-							}
+							pAudioObject->frameIndex = 0;
 						}
 					}
 				}
@@ -595,31 +529,16 @@ namespace HephAudio
 			size_t result = 0;
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (audioObjects.at(i)->IsPlaying())
+				if (!audioObjects.at(i)->pause && (audioObjects.at(i)->queueName.CompareContent("") || audioObjects.at(i)->queueIndex == 0))
 				{
 					result++;
 				}
 			}
 			return result;
 		}
-		hephaudio_float NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> audioObject) const
+		hephaudio_float NativeAudio::GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const
 		{
-			if (audioObject == nullptr || audioObject->mute) { return 0.0; }
-
-			hephaudio_float result = audioObject->volume;
-
-			for (size_t i = 0; i < categories.size(); i++) // Calculate category volume.
-			{
-				for (size_t j = 0; j < audioObject->categories.size(); j++)
-				{
-					if (categories.at(i).name == audioObject->categories.at(j))
-					{
-						result *= categories.at(i).volume;
-						break;
-					}
-				}
-			}
-			return result;
+			return pAudioObject->volume;
 		}
 		StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t)
 		{

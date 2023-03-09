@@ -17,7 +17,6 @@ namespace HephAudio
 		uint16_t headerSize;
 		AudioFormatInfo();
 		AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
-		virtual ~AudioFormatInfo() = default;
 		bool operator==(const AudioFormatInfo& rhs) const;
 		bool operator!=(const AudioFormatInfo& rhs) const;
 		uint16_t FrameSize() const noexcept;

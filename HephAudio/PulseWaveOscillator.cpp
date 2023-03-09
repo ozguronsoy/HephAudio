@@ -2,17 +2,16 @@
 
 namespace HephAudio
 {
-	PulseWaveOscillator::PulseWaveOscillator(const uint32_t& sampleRate) : PulseWaveOscillator(0.5, 1500.0, sampleRate, 0, AngleUnit::Radian) {}
-	PulseWaveOscillator::PulseWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit)
+	PulseWaveOscillator::PulseWaveOscillator(uint32_t sampleRate) : PulseWaveOscillator(0.5, 1500.0, sampleRate) {}
+	PulseWaveOscillator::PulseWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit)
 		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit)
+		, dutyCycle(0.2), order(10)
 	{
-		this->SetDutyCycle(0.2);
-		this->SetOrder(10);
 		this->UpdateEta();
 	}
-	hephaudio_float PulseWaveOscillator::Oscillate(const size_t& frameIndex) const noexcept
+	hephaudio_float PulseWaveOscillator::Oscillate(size_t t_sample) const noexcept
 	{
-		const hephaudio_float wt = this->w_sample * frameIndex;
+		const hephaudio_float wt = 2.0 * PI * this->frequency * t_sample / this->sampleRate;
 		const hephaudio_float pid = PI * this->dutyCycle;
 		hephaudio_float sample = 0.0;
 
@@ -27,29 +26,13 @@ namespace HephAudio
 
 		return sample;
 	}
-	void PulseWaveOscillator::SetPeakAmplitude(hephaudio_float peakAmplitude) noexcept
-	{
-		OscillatorBase::SetPeakAmplitude(peakAmplitude);
-	}
-	const hephaudio_float& PulseWaveOscillator::GetDutyCycle() const noexcept
-	{
-		return this->dutyCycle;
-	}
-	void PulseWaveOscillator::SetDutyCycle(hephaudio_float dutyCycle) noexcept
-	{
-		this->dutyCycle = dutyCycle;
-	}
-	const hephaudio_float& PulseWaveOscillator::GetPulseWidth() const noexcept
+	hephaudio_float PulseWaveOscillator::GetPulseWidth() const noexcept
 	{
 		return this->dutyCycle * this->frequency;
 	}
-	const uint32_t& PulseWaveOscillator::GetOrder() const noexcept
+	hephaudio_float PulseWaveOscillator::GetEta() const noexcept
 	{
-		return this->order;
-	}
-	void PulseWaveOscillator::SetOrder(uint32_t order) noexcept
-	{
-		this->order = order;
+		return this->eta;
 	}
 	void PulseWaveOscillator::UpdateEta() noexcept
 	{

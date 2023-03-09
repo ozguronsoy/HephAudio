@@ -2,15 +2,9 @@
 
 namespace HephAudio
 {
-	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(0, 0, 0, 0) {}
+	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(0, 0, 0, 0) { }
 	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bps, uint32_t sampleRate)
-	{
-		this->formatTag = formatTag;
-		this->channelCount = channelCount;
-		this->sampleRate = sampleRate;
-		this->bitsPerSample = bps;
-		this->headerSize = 0;
-	}
+		: formatTag(formatTag), channelCount(channelCount), bitsPerSample(bps), sampleRate(sampleRate), headerSize(0) {}
 	bool AudioFormatInfo::operator==(const AudioFormatInfo& rhs) const
 	{
 		return this->formatTag == rhs.formatTag && this->bitsPerSample == rhs.bitsPerSample && this->channelCount == rhs.channelCount && this->sampleRate == rhs.sampleRate;

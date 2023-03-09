@@ -7,9 +7,9 @@ namespace HephAudio
 	class SawToothWaveOscillator : public OscillatorBase
 	{
 	public:
-		SawToothWaveOscillator(const uint32_t& sampleRate);
-		SawToothWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
+		SawToothWaveOscillator(uint32_t sampleRate);
+		SawToothWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase = 0.0, AngleUnit angleUnit = AngleUnit::Radian);
 		virtual ~SawToothWaveOscillator() = default;
-		virtual hephaudio_float Oscillate(const size_t& frameIndex) const noexcept override;
+		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept override;
 	};
 }

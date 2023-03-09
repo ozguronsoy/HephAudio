@@ -129,11 +129,7 @@ namespace HephAudio
 	}
 	hephaudio_float Complex::Magnitude() const noexcept
 	{
-		return sqrt(this->MagnitudeSquared());
-	}
-	hephaudio_float Complex::MagnitudeSquared() const noexcept
-	{
-		return this->real * this->real + this->imaginary * this->imaginary;
+		return sqrt(this->real * this->real + this->imaginary * this->imaginary);
 	}
 	hephaudio_float Complex::Phase() const noexcept
 	{

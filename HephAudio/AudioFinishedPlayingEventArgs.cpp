@@ -3,7 +3,5 @@
 namespace HephAudio
 {
 	AudioFinishedPlayingEventArgs::AudioFinishedPlayingEventArgs(const void* pNativeAudio, void* pAudioObject, uint32_t remainingLoopCount) : AudioEventArgs(pNativeAudio, pAudioObject)
-	{
-		this->remainingLoopCount = remainingLoopCount;
-	}
+		, remainingLoopCount(remainingLoopCount) { }
 }

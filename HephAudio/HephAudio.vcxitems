@@ -32,7 +32,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Category.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ConsoleLogger.h" />
@@ -78,7 +77,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ConsoleLogger.cpp" />

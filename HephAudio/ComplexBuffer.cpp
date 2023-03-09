@@ -5,14 +5,14 @@
 namespace HephAudio
 {
 	ComplexBuffer::ComplexBuffer()
+		: frameCount(0), pComplexData(nullptr)
 	{
 		this->frameCount = 0;
 		this->pComplexData = nullptr;
 	}
 	ComplexBuffer::ComplexBuffer(size_t frameCount)
+		: frameCount(frameCount)
 	{
-		this->frameCount = frameCount;
-
 		if (frameCount > 0)
 		{
 			// allocate memory and initialize it to 0.
@@ -32,9 +32,8 @@ namespace HephAudio
 		}
 	}
 	ComplexBuffer::ComplexBuffer(const ComplexBuffer& rhs)
+		: frameCount(rhs.frameCount)
 	{
-		this->frameCount = rhs.frameCount;
-
 		if (rhs.frameCount > 0)
 		{
 			this->pComplexData = (Complex*)malloc(rhs.Size());
@@ -50,10 +49,8 @@ namespace HephAudio
 		}
 	}
 	ComplexBuffer::ComplexBuffer(ComplexBuffer&& rhs) noexcept
+		: frameCount(rhs.frameCount), pComplexData(rhs.pComplexData)
 	{
-		this->frameCount = rhs.frameCount;
-		this->pComplexData = rhs.pComplexData;
-
 		rhs.frameCount = 0;
 		rhs.pComplexData = nullptr;
 	}
@@ -228,7 +225,7 @@ namespace HephAudio
 	{
 		return this->frameCount * sizeof(Complex);
 	}
-	const size_t& ComplexBuffer::FrameCount() const noexcept
+	size_t ComplexBuffer::FrameCount() const noexcept
 	{
 		return this->frameCount;
 	}
@@ -418,7 +415,7 @@ namespace HephAudio
 			}
 		}
 	}
-	Complex* const& ComplexBuffer::Begin() const noexcept
+	Complex* ComplexBuffer::Begin() const noexcept
 	{
 		return this->pComplexData;
 	}

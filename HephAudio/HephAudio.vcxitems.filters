@@ -84,9 +84,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioException.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Category.h">
-      <Filter>Header Files\AudioStructs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
@@ -207,9 +204,6 @@
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Category.cpp">
       <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp">

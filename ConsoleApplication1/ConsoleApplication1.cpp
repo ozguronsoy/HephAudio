@@ -5,7 +5,7 @@
 #include <Fourier.h>
 #include <ConsoleLogger.h>
 #include <StopWatch.h>
-#include <FloatBuffer.h>
+#include "FloatBuffer.h"
 #include <shlobj.h>
 
 using namespace HephAudio;
@@ -18,6 +18,7 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioPath);
+void Delay(AudioBuffer& audioBuffer, const FloatBuffer& delayCoefficients);
 
 int main()
 {
@@ -37,7 +38,7 @@ int main()
 	audio.SetOnAudioDeviceAddedHandler(OnDeviceAdded);
 	audio.SetOnAudioDeviceRemovedHandler(OnDeviceRemoved);
 
-	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48000));
+	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
 	return Run(audio, audioPath);
 }

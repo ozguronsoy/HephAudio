@@ -10,73 +10,57 @@
 
 namespace HephAudio
 {
-	enum class AudioWindowType : uint8_t
-	{
-		RectangleWindow = 0x00,
-		TriangleWindow = 0x01,
-		ParzenWindow = 0x02,
-		WelchWindow = 0x03,
-		SineWindow = 0x04,
-		HannWindow = 0x05,
-		HammingWindow = 0x06,
-		BlackmanWindow = 0x07,
-		ExactBlackmanWindow = 0x08,
-		NuttallWindow = 0x09,
-		BlackmanNuttallWindow = 0x0A,
-		BlackmanHarrisWindow = 0x0B,
-		FlatTopWindow = 0x0C,
-		GaussianWindow = 0x0D,
-		TukeyWindow = 0x0E,
-		BartlettHannWindow = 0x0F,
-		HannPoissonWindow = 0x10,
-		LanczosWindow = 0x11
-	};
 	struct AudioObject
 	{
-		StringBuffer filePath;
-		StringBuffer name;
-		bool pause;
-		bool mute;
 		/// <summary>
-		/// A constant object does not finish playing until you either destroy it by calling the INativeAudio::DestroyAO method or make this false and wait until it finishes.
+		/// The path where the file is located.
 		/// </summary>
-		bool constant;
+		StringBuffer filePath;
 		/// <summary>
-		/// Set this to 0 for an infinite loop.
+		/// Name of the file with its extension.
+		/// </summary>
+		StringBuffer name;
+		/// <summary>
+		/// if true, stops playing the object.
+		/// </summary>
+		bool pause;
+		/// <summary>
+		/// The number of times the audio object will be played. Set this to "0" for infinite loop.
 		/// </summary>
 		uint32_t loopCount;
 		/// <summary>
-		/// Setting the volume to more than 1 might cause some glitching in audio.
+		/// The loudness of the audio.
 		/// </summary>
 		hephaudio_float volume;
-		std::vector<StringBuffer> categories;
+		/// <summary>
+		/// The audio data.
+		/// </summary>
 		AudioBuffer buffer;
 		/// <summary>
-		/// Starting frame to get sub buffer before the next render.
+		/// The current position of the buffer.
 		/// </summary>
 		size_t frameIndex;
 		/// <summary>
-		/// There can be more than one queue, if empty the audio object is not in queue.
+		/// The name of the queue in which the audio object is. If empty, the audio object is not in a queue.
 		/// </summary>
 		StringBuffer queueName;
 		/// <summary>
-		/// Position of the audio object on the queue, if equals to 0 its currently playing.
+		/// The position of the audio object in the queue. If equal to “0”, the object is currently playing.
 		/// </summary>
 		uint32_t queueIndex;
 		/// <summary>
-		/// In milliseconds.
+		/// The time, in milliseconds, between the end of the current object and the start of the next object in the queue.
 		/// </summary>
-		hephaudio_float queueDelay;
-		AudioWindowType windowType;
+		hephaudio_float queueDelay_ms;
 		/// <summary>
-		/// Called each time before mixing the audio data.
+		/// Called each time before mixing the audio data to the output buffer.
 		/// </summary>
 		AudioEvent OnRender;
+		/// <summary>
+		/// Called when the audio object is finished playing.
+		/// </summary>
 		AudioEvent OnFinishedPlaying;
 		AudioObject();
-		virtual ~AudioObject() = default;
-		virtual bool IsPlaying() const;
-		virtual bool IsInQueue() const;
 	private:
 		static void OnRenderHandler(AudioEventArgs* pArgs, AudioEventResult* pResult);
 	};

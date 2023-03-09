@@ -14,20 +14,11 @@ namespace HephAudio
 	};
 	struct AudioDevice
 	{
-		StringBuffer id;
-		StringBuffer name;
-		StringBuffer description;
-		AudioDeviceType type;
-		bool isDefault;
-		AudioDevice()
-		{
-			id = L"";
-			name = L"";
-			description = L"";
-			type = AudioDeviceType::Render;
-			isDefault = false;
-		}
-		virtual ~AudioDevice() = default;
+		StringBuffer id{ "" };
+		StringBuffer name{ "" };
+		StringBuffer description{ "" };
+		AudioDeviceType type{ AudioDeviceType::Render };
+		bool isDefault{ false };
 	};
 	constexpr AudioDeviceType operator|(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{

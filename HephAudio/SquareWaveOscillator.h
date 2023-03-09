@@ -7,9 +7,9 @@ namespace HephAudio
 	class SquareWaveOscillator : public OscillatorBase
 	{
 	public:
-		SquareWaveOscillator(const uint32_t& sampleRate);
-		SquareWaveOscillator(const hephaudio_float& peakAmplitude, const hephaudio_float& frequency, const uint32_t& sampleRate, const hephaudio_float& phase, const AngleUnit& angleUnit = AngleUnit::Radian);
+		SquareWaveOscillator(uint32_t sampleRate);
+		SquareWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase = 0.0, AngleUnit angleUnit = AngleUnit::Radian);
 		virtual ~SquareWaveOscillator() = default;
-		virtual hephaudio_float Oscillate(const size_t& frameIndex) const noexcept override;
+		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept override;
 	};
 }

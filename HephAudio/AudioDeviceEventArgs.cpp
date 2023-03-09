@@ -2,5 +2,5 @@
 
 namespace HephAudio
 {
-	AudioDeviceEventArgs::AudioDeviceEventArgs(const void* pNativeAudio, AudioDevice& audioDevice) : AudioEventArgs(pNativeAudio, nullptr), audioDevice(audioDevice) { }
+	AudioDeviceEventArgs::AudioDeviceEventArgs(const void* pNativeAudio, AudioDevice audioDevice) : AudioEventArgs(pNativeAudio, nullptr), audioDevice(audioDevice) { }
 }

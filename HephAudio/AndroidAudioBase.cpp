@@ -8,10 +8,9 @@ namespace HephAudio
 	namespace Native
 	{
 		AndroidAudioBase::AndroidAudioBase(JavaVM* jvm) : NativeAudio()
+			, jvm(jvm)
 		{
 			HEPHAUDIO_STOPWATCH_START;
-
-			this->jvm = jvm;
 
 			deviceApiLevel = android_get_device_api_level();
 			if (deviceApiLevel == -1)
@@ -133,8 +132,7 @@ namespace HephAudio
 			StopWatch::Start();
 			JNIEnv* env = nullptr;
 			GetEnv(&env);
-			AudioDevice d;
-			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, d);
+			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, AudioDevice());
 
 			while (!disposing)
 			{

@@ -195,13 +195,13 @@ namespace HephAudio
 	}
 	void AudioProcessor::Echo(AudioBuffer& buffer, EchoInfo info)
 	{
-		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay;
+		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay_s;
 		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
 		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * info.echoEndPosition - echoStartFrame);
 		buffer.Resize(echoStartFrame + delayFrameCount * info.reflectionCount + echoBuffer.frameCount);
-		hephaudio_float factor = info.volumeFactor;
+		hephaudio_float factor = info.decayFactor;
 		size_t startFrameIndex = echoStartFrame + delayFrameCount;
-		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.volumeFactor, startFrameIndex += delayFrameCount)
+		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.decayFactor, startFrameIndex += delayFrameCount)
 		{
 			const size_t endFrameIndex = startFrameIndex + echoBuffer.frameCount;
 			for (size_t j = startFrameIndex; j < endFrameIndex; j++)
@@ -215,13 +215,13 @@ namespace HephAudio
 	}
 	void AudioProcessor::EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
 	{
-		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay;
+		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay_s;
 		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
 		const size_t echoFrameCount = originalBuffer.frameCount * info.echoEndPosition - echoStartFrame;
 		const size_t subBufferEndFrameIndex = subBufferFrameIndex + subBuffer.frameCount;
-		hephaudio_float factor = info.volumeFactor;
+		hephaudio_float factor = info.decayFactor;
 		size_t startFrameIndex = echoStartFrame + delayFrameCount;
-		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.volumeFactor, startFrameIndex += delayFrameCount)
+		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.decayFactor, startFrameIndex += delayFrameCount)
 		{
 			const size_t endFrameIndex = startFrameIndex + echoFrameCount;
 			if (subBufferFrameIndex >= startFrameIndex)

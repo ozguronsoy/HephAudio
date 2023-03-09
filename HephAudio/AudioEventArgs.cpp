@@ -3,8 +3,5 @@
 namespace HephAudio
 {
 	AudioEventArgs::AudioEventArgs(const void* pNativeAudio, void* pAudioObject)
-	{
-		this->pNativeAudio = const_cast<void*>(pNativeAudio);
-		this->pAudioObject = pAudioObject;
-	}
+		: pNativeAudio(const_cast<void*>(pNativeAudio)), pAudioObject(pAudioObject) { }
 }

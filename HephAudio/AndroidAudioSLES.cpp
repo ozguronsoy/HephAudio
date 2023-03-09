@@ -13,26 +13,20 @@ namespace HephAudio
 	namespace Native
 	{
 		AndroidAudioSLES::AndroidAudioSLES(JavaVM* jvm) : AndroidAudioBase(jvm)
+			, audioEngineObject(nullptr), audioEngine(nullptr), audioPlayerObject(nullptr), audioPlayer(nullptr), audioRecorderObject(nullptr), audioRecorder(nullptr)
+			, masterVolumeObject(nullptr), renderBufferSize(0), captureBufferSize(0)
 		{
 			if (deviceApiLevel < 16)
 			{
 				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
 				throw AudioException(E_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16.");
 			}
-			audioEngineObject = nullptr;
-			audioEngine = nullptr;
-			audioPlayerObject = nullptr;
-			audioPlayer = nullptr;
-			audioRecorderObject = nullptr;
-			audioRecorder = nullptr;
-			masterVolumeObject = nullptr;
-			renderBufferSize = 0;
-			captureBufferSize = 0;
 
 			SLresult slres;
 			SLEngineOption engineOption;
 			engineOption.feature = SL_ENGINEOPTION_THREADSAFE;
 			engineOption.data = SL_BOOLEAN_TRUE;
+
 			ANDROIDAUDIO_EXCPT(slCreateEngine(&audioEngineObject, 1, &engineOption, 0, nullptr, nullptr), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst creating the audio engine object.");
 			ANDROIDAUDIO_EXCPT((*audioEngineObject)->Realize(audioEngineObject, SL_BOOLEAN_FALSE), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst creating the audio engine object.");
 			ANDROIDAUDIO_EXCPT((*audioEngineObject)->GetInterface(audioEngineObject, SL_IID_ENGINE, &audioEngine), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst getting the audio engine interface.");

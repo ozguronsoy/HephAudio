@@ -1,6 +1,5 @@
 #pragma once
 #include "framework.h"
-#include "AudioBuffer.h"
 
 namespace HephAudio
 {
@@ -15,7 +14,6 @@ namespace HephAudio
 		FloatBuffer(const FloatBuffer& rhs);
 		FloatBuffer(FloatBuffer&& rhs) noexcept;
 		~FloatBuffer();
-		explicit operator AudioBuffer() const;
 		hephaudio_float& operator[](const size_t& frameIndex) const;
 		FloatBuffer operator-() const;
 		FloatBuffer& operator=(const FloatBuffer& rhs);
@@ -24,10 +22,10 @@ namespace HephAudio
 		FloatBuffer& operator*=(const hephaudio_float& rhs);
 		FloatBuffer operator/(const hephaudio_float& rhs) const;
 		FloatBuffer& operator/=(const hephaudio_float& rhs);
-		FloatBuffer operator<<(const size_t rhs) const;
-		FloatBuffer& operator<<=(const size_t rhs);
-		FloatBuffer operator>>(const size_t rhs) const;
-		FloatBuffer& operator>>=(const size_t rhs);
+		FloatBuffer operator<<(const size_t& rhs) const;
+		FloatBuffer& operator<<=(const size_t& rhs);
+		FloatBuffer operator>>(const size_t& rhs) const;
+		FloatBuffer& operator>>=(const size_t& rhs);
 		bool operator!=(const FloatBuffer& rhs) const;
 		bool operator==(const FloatBuffer& rhs) const;
 		size_t Size() const noexcept;

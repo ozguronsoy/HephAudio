@@ -49,7 +49,6 @@ namespace HephAudio
 #else
 	Audio::Audio()
 	{
-		pNativeAudio = nullptr;
 #if defined(_WIN32)
 		if (IsWindowsVistaOrGreater())
 		{
@@ -90,9 +89,9 @@ namespace HephAudio
 	{
 		return pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, hephaudio_float queueDelay, const std::vector<StringBuffer>& filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<StringBuffer>& filePaths)
 	{
-		return pNativeAudio->Queue(queueName, queueDelay, filePaths);
+		return pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
 	}
 	std::shared_ptr<AudioObject> Audio::Load(StringBuffer filePath)
 	{
@@ -141,26 +140,6 @@ namespace HephAudio
 	hephaudio_float Audio::GetMasterVolume() const
 	{
 		return pNativeAudio->GetMasterVolume();
-	}
-	void Audio::SetCategoryVolume(StringBuffer categoryName, hephaudio_float newVolume)
-	{
-		pNativeAudio->SetCategoryVolume(categoryName, newVolume);
-	}
-	hephaudio_float Audio::GetCategoryVolume(StringBuffer categoryName) const
-	{
-		return pNativeAudio->GetCategoryVolume(categoryName);
-	}
-	void Audio::RegisterCategory(Category category)
-	{
-		pNativeAudio->RegisterCategory(category);
-	}
-	void Audio::UnregisterCategory(StringBuffer categoryName)
-	{
-		pNativeAudio->UnregisterCategory(categoryName);
-	}
-	bool Audio::CategoryExists(StringBuffer categoryName) const
-	{
-		return pNativeAudio->CategoryExists(categoryName);
 	}
 	void Audio::Skip(StringBuffer queueName, bool applyDelay)
 	{

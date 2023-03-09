@@ -8,9 +8,9 @@ namespace HephAudio
 	struct AudioDeviceEventArgs : public AudioEventArgs
 	{
 	public:
-		AudioDevice& audioDevice;
+		AudioDevice audioDevice;
 	public:
-		AudioDeviceEventArgs(const void* pNativeAudio, AudioDevice& audioDevice);
+		AudioDeviceEventArgs(const void* pNativeAudio, AudioDevice audioDevice);
 		virtual ~AudioDeviceEventArgs() = default;
 	};
 }

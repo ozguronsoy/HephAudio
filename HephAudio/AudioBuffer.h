@@ -86,6 +86,28 @@ namespace HephAudio
 		/// <param name="rhs">The division factor</param>
 		AudioBuffer& operator/=(const hephaudio_float& rhs);
 		/// <summary>
+		/// Creates a copy of the buffer and shifts it to the left.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		/// <returns>The shifted buffer.</returns>
+		AudioBuffer operator<<(const size_t& rhs) const;
+		/// <summary>
+		/// Shifts the buffer to the left.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		AudioBuffer& operator<<=(const size_t& rhs);
+		/// <summary>
+		/// Creates a copy of the buffer and shifts it to the right.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		/// <returns>The shifted buffer.</returns>
+		AudioBuffer operator>>(const size_t& rhs) const;
+		/// <summary>
+		/// Shifts the buffer to the right.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		AudioBuffer& operator>>=(const size_t& rhs);
+		/// <summary>
 		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
 		/// </summary>
 		/// <param name="rhs">The buffer to compare</param>
@@ -107,7 +129,7 @@ namespace HephAudio
 		/// Returns the number of frames the buffer consists of.
 		/// </summary>
 		/// <returns>Number of frames the buffer consists of</returns>
-		const size_t& FrameCount() const noexcept;
+		size_t FrameCount() const noexcept;
 		/// <summary>
 		/// Gets normalized sample from the buffer.
 		/// </summary>
@@ -198,7 +220,7 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="ts">Time in seconds</param>
 		/// <returns>The frame that corresponds to the given time</returns>
-		size_t CalculateFrameIndex(hephaudio_float ts) const noexcept;
+		size_t CalculateFrameIndex(hephaudio_float t_s) const noexcept;
 		/// <summary>
 		/// Gets the audio format info.
 		/// </summary>
@@ -223,7 +245,7 @@ namespace HephAudio
 		/// Gets the start of the audio data.
 		/// </summary>
 		/// <returns>The start of the audio data</returns>
-		void* const& Begin() const noexcept;
+		void* Begin() const noexcept;
 		/// <summary>
 		/// Gets the end of the audio data.
 		/// </summary>
@@ -243,7 +265,7 @@ namespace HephAudio
 		/// <param name="ts">Time in seconds</param>
 		/// <param name="formatInfo">The audio format which will be used in calculation</param>
 		/// <returns>The frame that corresponds to the given time</returns>
-		static size_t CalculateFrameIndex(hephaudio_float ts, AudioFormatInfo formatInfo) noexcept;
+		static size_t CalculateFrameIndex(hephaudio_float t_s, AudioFormatInfo formatInfo) noexcept;
 	};
 #pragma endregion
 }

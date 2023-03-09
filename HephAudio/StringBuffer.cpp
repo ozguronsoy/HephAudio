@@ -9,9 +9,8 @@
 namespace HephAudio
 {
 	StringBuffer::StringBuffer(size_t size, size_t charSize)
+		: charSize(charSize), size(size)
 	{
-		this->charSize = charSize;
-		this->size = size;
 		this->pData = (char*)malloc(this->TotalSize() + this->charSize);
 		if (this->pData != nullptr)
 		{
@@ -23,9 +22,8 @@ namespace HephAudio
 		}
 	}
 	StringBuffer::StringBuffer()
+		: charSize(sizeof(char)), size(0)
 	{
-		this->charSize = sizeof(char);
-		this->size = 0;
 		this->pData = (char*)malloc(this->charSize);
 		if (this->pData != nullptr)
 		{
@@ -37,9 +35,8 @@ namespace HephAudio
 		}
 	}
 	StringBuffer::StringBuffer(const char& c)
+		: charSize(sizeof(char)), size(1)
 	{
-		this->charSize = sizeof(char);
-		this->size = 1;
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData != nullptr)
 		{
@@ -52,9 +49,8 @@ namespace HephAudio
 		}
 	}
 	StringBuffer::StringBuffer(const wchar_t& wc)
+		: charSize(sizeof(wchar_t)), size(0)
 	{
-		this->charSize = sizeof(wchar_t);
-		this->size = 1;
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData != nullptr)
 		{
@@ -67,9 +63,8 @@ namespace HephAudio
 		}
 	}
 	StringBuffer::StringBuffer(const char* const& str)
+		: charSize(sizeof(char))
 	{
-		this->charSize = sizeof(char);
-
 		if (str == nullptr)
 		{
 			this->size = 0;
@@ -98,9 +93,8 @@ namespace HephAudio
 		}
 	}
 	StringBuffer::StringBuffer(const wchar_t* const& wstr)
+		: charSize(sizeof(wchar_t))
 	{
-		this->charSize = sizeof(wchar_t);
-
 		if (wstr == nullptr)
 		{
 			this->size = 0;
@@ -130,8 +124,8 @@ namespace HephAudio
 	}
 	StringBuffer::StringBuffer(const StringBuffer& str) : StringBuffer(str, str.charSize == sizeof(char) ? StringType::Normal : StringType::Wide) {}
 	StringBuffer::StringBuffer(const StringBuffer& str, StringType stringType)
+		: size(str.size)
 	{
-		this->size = str.size;
 		this->charSize = stringType == StringType::Normal ? sizeof(char) : sizeof(wchar_t);
 
 		if (str.size > 0)
@@ -174,11 +168,8 @@ namespace HephAudio
 		}
 	}
 	StringBuffer::StringBuffer(StringBuffer&& str) noexcept
+		: charSize(str.charSize), size(str.size), pData(str.pData)
 	{
-		this->charSize = str.charSize;
-		this->size = str.size;
-		this->pData = str.pData;
-
 		str.charSize = 0;
 		str.size = 0;
 		str.pData = nullptr;
@@ -606,17 +597,17 @@ namespace HephAudio
 			this->charSize = newCharSize;
 		}
 	}
-	bool StringBuffer::CompareContent(const char& c) const
+	bool StringBuffer::CompareContent(char c) const
 	{
 		char buffer[2] = { c, '\0' };
 		return this->CompareContent(buffer);
 	}
-	bool StringBuffer::CompareContent(const wchar_t& wc) const
+	bool StringBuffer::CompareContent(wchar_t wc) const
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->CompareContent(buffer);
 	}
-	bool StringBuffer::CompareContent(const char* const& str) const
+	bool StringBuffer::CompareContent(const char* str) const
 	{
 		if (this->charSize == sizeof(char))
 		{
@@ -626,7 +617,7 @@ namespace HephAudio
 		const StringBuffer tempBuffer = StringBuffer(*this, StringType::Normal);
 		return tempBuffer == str;
 	}
-	bool StringBuffer::CompareContent(const wchar_t* const& wstr) const
+	bool StringBuffer::CompareContent(const wchar_t* wstr) const
 	{
 		if (this->charSize == sizeof(wchar_t))
 		{
@@ -646,7 +637,7 @@ namespace HephAudio
 		const StringBuffer tempBuffer = StringBuffer(str, this->GetStringType());
 		return *this == tempBuffer;
 	}
-	char StringBuffer::at(const size_t& index) const
+	char StringBuffer::at(size_t index) const
 	{
 		if (this->charSize == sizeof(char))
 		{
@@ -658,7 +649,7 @@ namespace HephAudio
 
 		return c;
 	}
-	wchar_t StringBuffer::w_at(const size_t& index) const
+	wchar_t StringBuffer::w_at(size_t index) const
 	{
 		if (this->charSize == sizeof(wchar_t))
 		{
@@ -696,29 +687,29 @@ namespace HephAudio
 		subString.SetStringType(stringType);
 		return subString;
 	}
-	size_t StringBuffer::Find(const char& c) const
+	size_t StringBuffer::Find(char c) const
 	{
 		return this->Find(c, 0);
 	}
-	size_t StringBuffer::Find(const char& c, const size_t& offset) const
+	size_t StringBuffer::Find(char c, size_t offset) const
 	{
 		char buffer[2] = { c, '\0' };
 		return this->Find(buffer, offset);
 	}
-	size_t StringBuffer::Find(const wchar_t& wc) const
+	size_t StringBuffer::Find(wchar_t wc) const
 	{
 		return this->Find(wc, 0);
 	}
-	size_t StringBuffer::Find(const wchar_t& wc, const size_t& offset) const
+	size_t StringBuffer::Find(wchar_t wc, size_t offset) const
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->Find(buffer, offset);
 	}
-	size_t StringBuffer::Find(const char* const& str) const
+	size_t StringBuffer::Find(const char* str) const
 	{
 		return this->Find(str, 0);
 	}
-	size_t StringBuffer::Find(const char* const& str, const size_t& offset) const
+	size_t StringBuffer::Find(const char* str, size_t offset) const
 	{
 		if (offset >= this->size)
 		{
@@ -747,11 +738,11 @@ namespace HephAudio
 
 		return index;
 	}
-	size_t StringBuffer::Find(const wchar_t* const& wstr) const
+	size_t StringBuffer::Find(const wchar_t* wstr) const
 	{
 		return this->Find(wstr, 0);
 	}
-	size_t StringBuffer::Find(const wchar_t* const& wstr, const size_t& offset) const
+	size_t StringBuffer::Find(const wchar_t* wstr, size_t offset) const
 	{
 		if (offset >= this->size)
 		{
@@ -784,41 +775,41 @@ namespace HephAudio
 	{
 		return this->Find(str, 0);
 	}
-	size_t StringBuffer::Find(const StringBuffer& str, const size_t& offset) const
+	size_t StringBuffer::Find(const StringBuffer& str, size_t offset) const
 	{
 		return str.charSize == sizeof(char) ? this->Find(str.pData, offset) : this->Find((wchar_t*)str.pData, offset);
 	}
-	bool StringBuffer::Contains(const char& c) const
+	bool StringBuffer::Contains(char c) const
 	{
 		return this->Find(c, 0) != StringBuffer::npos;
 	}
-	bool StringBuffer::Contains(const wchar_t& wc) const
+	bool StringBuffer::Contains(wchar_t wc) const
 	{
 		return this->Find(wc, 0) != StringBuffer::npos;
 	}
-	bool StringBuffer::Contains(const char* const& str) const
+	bool StringBuffer::Contains(const char* str) const
 	{
 		return this->Find(str, 0) != StringBuffer::npos;
 	}
-	bool StringBuffer::Contains(const wchar_t* const& wstr) const
+	bool StringBuffer::Contains(const wchar_t* wstr) const
 	{
 		return this->Find(wstr, 0) != StringBuffer::npos;
 	}
-	bool StringBuffer::Contains(const StringBuffer& str) const
+	bool StringBuffer::Contains(StringBuffer str) const
 	{
 		return this->Find(str, 0) != StringBuffer::npos;
 	}
-	std::vector<StringBuffer> StringBuffer::Split(const char& c) const
+	std::vector<StringBuffer> StringBuffer::Split(char c) const
 	{
 		char buffer[2] = { c, '\0' };
 		return this->Split(buffer);
 	}
-	std::vector<StringBuffer> StringBuffer::Split(const wchar_t& wc) const
+	std::vector<StringBuffer> StringBuffer::Split(wchar_t wc) const
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->Split(buffer);
 	}
-	std::vector<StringBuffer> StringBuffer::Split(const char* const& str) const
+	std::vector<StringBuffer> StringBuffer::Split(const char* str) const
 	{
 		std::vector<StringBuffer> result;
 		const size_t strSize = strlen(str);
@@ -842,7 +833,7 @@ namespace HephAudio
 
 		return result;
 	}
-	std::vector<StringBuffer> StringBuffer::Split(const wchar_t* const& wstr) const
+	std::vector<StringBuffer> StringBuffer::Split(const wchar_t* wstr) const
 	{
 		std::vector<StringBuffer> result;
 		const size_t strSize = wcslen(wstr);
@@ -918,17 +909,17 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::Remove(const char& c)
+	StringBuffer& StringBuffer::Remove(char c)
 	{
 		char buffer[2] = { c, '\0' };
 		return this->Remove(buffer);
 	}
-	StringBuffer& StringBuffer::Remove(const wchar_t& wc)
+	StringBuffer& StringBuffer::Remove(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->Remove(buffer);
 	}
-	StringBuffer& StringBuffer::Remove(const char* const& str)
+	StringBuffer& StringBuffer::Remove(const char* str)
 	{
 		const size_t index = this->Find(str);
 		if (index != StringBuffer::npos)
@@ -937,7 +928,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	StringBuffer& StringBuffer::Remove(const wchar_t* const& wstr)
+	StringBuffer& StringBuffer::Remove(const wchar_t* wstr)
 	{
 		const size_t index = this->Find(wstr);
 		if (index != StringBuffer::npos)
@@ -958,17 +949,17 @@ namespace HephAudio
 		}
 	}
 
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const char& c)
+	StringBuffer& StringBuffer::ReplaceAt(size_t index, char c)
 	{
 		char buffer[2] = { c, '\0' };
 		return this->ReplaceAt(index, buffer);
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const wchar_t& wc)
+	StringBuffer& StringBuffer::ReplaceAt(size_t index, wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->ReplaceAt(index, buffer);
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const char* const& str)
+	StringBuffer& StringBuffer::ReplaceAt(size_t index, const char* str)
 	{
 		if (index >= this->size)
 		{
@@ -1008,7 +999,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const wchar_t* const& wstr)
+	StringBuffer& StringBuffer::ReplaceAt(size_t index, const wchar_t* wstr)
 	{
 		if (index >= this->size)
 		{
@@ -1059,17 +1050,17 @@ namespace HephAudio
 			return this->ReplaceAt(index, str.wc_str());
 		}
 	}
-	StringBuffer& StringBuffer::TrimStart(const char& c)
+	StringBuffer& StringBuffer::TrimStart(char c)
 	{
 		char buffer[2] = { c, '\0' };
 		return this->TrimStart(buffer);
 	}
-	StringBuffer& StringBuffer::TrimStart(const wchar_t& wc)
+	StringBuffer& StringBuffer::TrimStart(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->TrimStart(buffer);
 	}
-	StringBuffer& StringBuffer::TrimStart(const char* const& str)
+	StringBuffer& StringBuffer::TrimStart(const char* str)
 	{
 		const size_t strSize = strlen(str);
 		size_t iStart = 0;
@@ -1118,7 +1109,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::TrimStart(const wchar_t* const& wstr)
+	StringBuffer& StringBuffer::TrimStart(const wchar_t* wstr)
 	{
 		const size_t strSize = wcslen(wstr);
 		size_t iStart = 0;
@@ -1175,17 +1166,17 @@ namespace HephAudio
 		}
 		return this->TrimStart(str.wc_str());
 	}
-	StringBuffer& StringBuffer::TrimEnd(const char& c)
+	StringBuffer& StringBuffer::TrimEnd(char c)
 	{
 		char buffer[2] = { c, '\0' };
 		return this->TrimEnd(buffer);
 	}
-	StringBuffer& StringBuffer::TrimEnd(const wchar_t& wc)
+	StringBuffer& StringBuffer::TrimEnd(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->TrimEnd(buffer);
 	}
-	StringBuffer& StringBuffer::TrimEnd(const char* const& str)
+	StringBuffer& StringBuffer::TrimEnd(const char* str)
 	{
 		const size_t strSize = strlen(str);
 		size_t iEnd = this->size - strSize;
@@ -1234,7 +1225,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::TrimEnd(const wchar_t* const& wstr)
+	StringBuffer& StringBuffer::TrimEnd(const wchar_t* wstr)
 	{
 		const size_t strSize = wcslen(wstr);
 		size_t iEnd = this->size - strSize;
@@ -1291,17 +1282,17 @@ namespace HephAudio
 		}
 		return this->TrimEnd(str.wc_str());
 	}
-	StringBuffer& StringBuffer::Trim(const char& c)
+	StringBuffer& StringBuffer::Trim(char c)
 	{
 		char buffer[2] = { c, '\0' };
 		return this->Trim(buffer);
 	}
-	StringBuffer& StringBuffer::Trim(const wchar_t& wc)
+	StringBuffer& StringBuffer::Trim(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
 		return this->Trim(buffer);
 	}
-	StringBuffer& StringBuffer::Trim(const char* const& str)
+	StringBuffer& StringBuffer::Trim(const char* str)
 	{
 		const size_t strSize = strlen(str);
 		size_t iStart = 0;
@@ -1364,7 +1355,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	StringBuffer& StringBuffer::Trim(const wchar_t* const& wstr)
+	StringBuffer& StringBuffer::Trim(const wchar_t* wstr)
 	{
 		const size_t strSize = wcslen(wstr);
 		size_t iStart = 0;
@@ -1526,7 +1517,7 @@ namespace HephAudio
 	{
 		return this->size * this->charSize;
 	}
-	StringBuffer StringBuffer::ToString(const int16_t& value)
+	StringBuffer StringBuffer::ToString(int16_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%hd", value);
@@ -1535,7 +1526,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const uint16_t& value)
+	StringBuffer StringBuffer::ToString(uint16_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%hu", value);
@@ -1544,7 +1535,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const int32_t& value)
+	StringBuffer StringBuffer::ToString(int32_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%d", value);
@@ -1553,7 +1544,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const uint32_t& value)
+	StringBuffer StringBuffer::ToString(uint32_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%u", value);
@@ -1562,7 +1553,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const int64_t& value)
+	StringBuffer StringBuffer::ToString(int64_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%lld", value);
@@ -1571,7 +1562,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const uint64_t& value)
+	StringBuffer StringBuffer::ToString(uint64_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "%llu", value);
@@ -1580,11 +1571,11 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToString(const double& value)
+	StringBuffer StringBuffer::ToString(double value)
 	{
 		return StringBuffer::ToString(value, 4);
 	}
-	StringBuffer StringBuffer::ToString(const double& value, size_t precision)
+	StringBuffer StringBuffer::ToString(double value, size_t precision)
 	{
 		char format[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(format, "%c.%dlf", '%', precision);
@@ -1596,7 +1587,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const int8_t& value)
+	StringBuffer StringBuffer::ToHexString(int8_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%02X", value);
@@ -1605,7 +1596,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const uint8_t& value)
+	StringBuffer StringBuffer::ToHexString(uint8_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%02X", value);
@@ -1614,7 +1605,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const int16_t& value)
+	StringBuffer StringBuffer::ToHexString(int16_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%04X", value);
@@ -1623,7 +1614,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const uint16_t& value)
+	StringBuffer StringBuffer::ToHexString(uint16_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%04X", value);
@@ -1632,7 +1623,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const int32_t& value)
+	StringBuffer StringBuffer::ToHexString(int32_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%08X", value);
@@ -1641,7 +1632,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const uint32_t& value)
+	StringBuffer StringBuffer::ToHexString(uint32_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%08X", value);
@@ -1650,7 +1641,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const int64_t& value)
+	StringBuffer StringBuffer::ToHexString(int64_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%016llX", value);
@@ -1659,7 +1650,7 @@ namespace HephAudio
 
 		return result;
 	}
-	StringBuffer StringBuffer::ToHexString(const uint64_t& value)
+	StringBuffer StringBuffer::ToHexString(uint64_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
 		sprintf(buffer, "0x%016llX", value);
@@ -1746,21 +1737,21 @@ namespace HephAudio
 		sscanf(hexString.fc_str(), "%llX", &number);
 		return number;
 	}
-	StringBuffer StringBuffer::Join(const char& separator, const std::vector<StringBuffer>& strings)
+	StringBuffer StringBuffer::Join(char separator, const std::vector<StringBuffer>& strings)
 	{
 		char buffer[2] = { separator, '\0' };
 		return StringBuffer::Join(buffer, strings);
 	}
-	StringBuffer StringBuffer::Join(const wchar_t& separator, const std::vector<StringBuffer>& strings)
+	StringBuffer StringBuffer::Join(wchar_t separator, const std::vector<StringBuffer>& strings)
 	{
 		wchar_t buffer[2] = { separator, L'\0' };
 		return StringBuffer::Join(buffer, strings);
 	}
-	StringBuffer StringBuffer::Join(const char* const& separator, const std::vector<StringBuffer>& strings)
+	StringBuffer StringBuffer::Join(const char* separator, const std::vector<StringBuffer>& strings)
 	{
 		if (strings.size() > 0)
 		{
-			constexpr auto copyString = [](char* const& pTemp, const StringBuffer& str) -> void
+			constexpr auto copyString = [](char* pTemp, const StringBuffer& str) -> void
 			{
 				if (str.pData != nullptr)
 				{
@@ -1803,11 +1794,11 @@ namespace HephAudio
 
 		return "";
 	}
-	StringBuffer StringBuffer::Join(const wchar_t* const& separator, const std::vector<StringBuffer>& strings)
+	StringBuffer StringBuffer::Join(const wchar_t* separator, const std::vector<StringBuffer>& strings)
 	{
 		if (strings.size() > 0)
 		{
-			constexpr auto copyString = [](wchar_t* const& pTemp, const StringBuffer& str) -> void
+			constexpr auto copyString = [](wchar_t* pTemp, const StringBuffer& str) -> void
 			{
 				if (str.pData != nullptr)
 				{

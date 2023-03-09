@@ -111,7 +111,7 @@ namespace HephAudio
 		/// Returns the number of frames the buffer consists of.
 		/// </summary>
 		/// <returns>Number of frames the buffer consists of</returns>
-		const size_t& FrameCount() const noexcept;
+		size_t FrameCount() const noexcept;
 		/// <summary>
 		/// Gets the desired portion of the complex buffer as a new buffer.
 		/// </summary>
@@ -162,7 +162,7 @@ namespace HephAudio
 		/// Gets the start of the complex data.
 		/// </summary>
 		/// <returns>The start of the complex data</returns>
-		Complex* const& Begin() const noexcept;
+		Complex* Begin() const noexcept;
 		/// <summary>
 		/// Gets the end of the complex data.
 		/// </summary>

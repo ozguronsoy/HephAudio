@@ -14,7 +14,7 @@ namespace HephAudio
 		mutable StringBuffer resultMessage;
 	public:
 		AudioException();
-		AudioException(int32_t errorCode, StringBuffer&& method, StringBuffer&& message);
+		AudioException(int32_t errorCode, StringBuffer method, StringBuffer message);
 		operator char* () const;
 		operator wchar_t* () const;
 		StringBuffer ToString(StringType stringType) const;

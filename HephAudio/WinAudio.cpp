@@ -17,11 +17,7 @@ namespace HephAudio
 	{
 #pragma region Audio Session Events
 		WinAudio::AudioSessionEvents::AudioSessionEvents()
-		{
-			_cRef = 1;
-			parent = nullptr;
-			type = AudioDeviceType::Null;
-		}
+			: _cRef(1), parent(nullptr), type(AudioDeviceType::Null) { }
 		ULONG STDMETHODCALLTYPE WinAudio::AudioSessionEvents::AddRef()
 		{
 			return InterlockedIncrement(&_cRef);
@@ -85,10 +81,7 @@ namespace HephAudio
 #pragma endregion
 #pragma region Audio Device Events
 		WinAudio::AudioDeviceEvents::AudioDeviceEvents()
-		{
-			_cRef = 1;
-			parent = nullptr;
-		}
+			: _cRef(1), parent(nullptr) { }
 		ULONG STDMETHODCALLTYPE WinAudio::AudioDeviceEvents::AddRef()
 		{
 			return InterlockedIncrement(&_cRef);
@@ -129,8 +122,7 @@ namespace HephAudio
 		{
 			if (parent->OnAudioDeviceAdded)
 			{
-				AudioDevice device = parent->GetAudioDeviceById(pwstrDeviceId);
-				AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(parent, device);
+				AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(parent, parent->GetAudioDeviceById(pwstrDeviceId));
 				parent->OnAudioDeviceAdded(&deviceEventArgs, nullptr);
 			}
 			return S_OK;
@@ -139,8 +131,7 @@ namespace HephAudio
 		{
 			if (parent->OnAudioDeviceRemoved)
 			{
-				AudioDevice device = parent->GetAudioDeviceById(pwstrDeviceId);
-				AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(parent, device);
+				AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(parent, parent->GetAudioDeviceById(pwstrDeviceId));
 				parent->OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
 			}
 			return S_OK;
@@ -166,6 +157,7 @@ namespace HephAudio
 		}
 #pragma endregion
 		WinAudio::WinAudio() : NativeAudio()
+			, hEvent(nullptr), pAudioClient(nullptr), pSessionManager(nullptr), pSessionControl(nullptr)
 		{
 			if (!IsWindowsVistaOrGreater())
 			{
@@ -179,10 +171,6 @@ namespace HephAudio
 			deviceEvents.parent = this;
 			WINAUDIO_EXCPT(pEnumerator->RegisterEndpointNotificationCallback(&deviceEvents), this, "WinAudio", "An error occurred whilst initializing the audio device enumerator.");
 
-			hEvent = nullptr;
-			pAudioClient = nullptr;
-			pSessionManager = nullptr;
-			pSessionControl = nullptr;
 			sessionEvents.parent = this;
 			sessionEvents.type = AudioDeviceType::Render;
 		}

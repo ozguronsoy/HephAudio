@@ -22,13 +22,9 @@ namespace HephAudio
 	namespace Native
 	{
 		WinAudioDS::WinAudioDS() : NativeAudio()
+			, pDirectSound(nullptr), pDirectSoundBuffer(nullptr), pDirectSoundCapture(nullptr), pDirectSoundCaptureBuffer(nullptr)
 		{
 			CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
-			pDirectSound = nullptr;
-			pDirectSoundBuffer = nullptr;
-			pDirectSoundCapture = nullptr;
-			pDirectSoundCaptureBuffer = nullptr;
 
 			HRESULT hres;
 			WINAUDIODS_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating render devices.");
@@ -278,8 +274,7 @@ namespace HephAudio
 		{
 			constexpr hephaudio_float period = 250.0; // In ms.
 			StopWatch::Start();
-			AudioDevice d;
-			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, d);
+			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, AudioDevice());
 			HRESULT hres;
 
 			while (!disposing)

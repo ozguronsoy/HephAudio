@@ -5,12 +5,7 @@
 namespace HephAudio
 {
 	AudioFile::AudioFile()
-	{
-		pFile = nullptr;
-		fileSize = 0u;
-		dataBuffer = nullptr;
-		filePath = L"";
-	}
+		: pFile(nullptr), fileSize(0), dataBuffer(nullptr), filePath("") { }
 	AudioFile::AudioFile(StringBuffer filePath) : AudioFile()
 	{
 		this->Read(filePath);
