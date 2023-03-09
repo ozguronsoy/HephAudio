@@ -1,6 +1,7 @@
 #pragma once
 #include "framework.h"
 #include "AudioBuffer.h"
+#include "FloatBuffer.h"
 #include "EchoInfo.h"
 #include "EqualizerInfo.h"
 #include "SineWaveOscillator.h"
@@ -91,39 +92,39 @@ namespace HephAudio
 #pragma region Windows
 	public:
 		static void ApplyTriangleWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateTriangleWindow(size_t frameCount);
+		static FloatBuffer GenerateTriangleWindow(size_t frameCount);
 		static void ApplyParzenWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateParzenWindow(size_t frameCount);
+		static FloatBuffer GenerateParzenWindow(size_t frameCount);
 		static void ApplyWelchWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateWelchWindow(size_t frameCount);
+		static FloatBuffer GenerateWelchWindow(size_t frameCount);
 		static void ApplySineWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateSineWindow(size_t frameCount);
+		static FloatBuffer GenerateSineWindow(size_t frameCount);
 		static void ApplyHannWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateHannWindow(size_t frameCount);
+		static FloatBuffer GenerateHannWindow(size_t frameCount);
 		static void ApplyHammingWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateHammingWindow(size_t frameCount);
+		static FloatBuffer GenerateHammingWindow(size_t frameCount);
 		static void ApplyBlackmanWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBlackmanWindow(size_t frameCount);
+		static FloatBuffer GenerateBlackmanWindow(size_t frameCount);
 		static void ApplyExactBlackmanWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateExactBlackmanWindow(size_t frameCount);
+		static FloatBuffer GenerateExactBlackmanWindow(size_t frameCount);
 		static void ApplyNuttallWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateNuttallWindow(size_t frameCount);
+		static FloatBuffer GenerateNuttallWindow(size_t frameCount);
 		static void ApplyBlackmanNuttallWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBlackmanNuttallWindow(size_t frameCount);
+		static FloatBuffer GenerateBlackmanNuttallWindow(size_t frameCount);
 		static void ApplyBlackmanHarrisWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBlackmanHarrisWindow(size_t frameCount);
+		static FloatBuffer GenerateBlackmanHarrisWindow(size_t frameCount);
 		static void ApplyFlatTopWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateFlatTopWindow(size_t frameCount);
+		static FloatBuffer GenerateFlatTopWindow(size_t frameCount);
 		static void ApplyGaussianWindow(AudioBuffer& buffer, hephaudio_float sigma);
-		static AudioBuffer GenerateGaussianWindow(size_t frameCount, hephaudio_float sigma);
+		static FloatBuffer GenerateGaussianWindow(size_t frameCount, hephaudio_float sigma);
 		static void ApplyTukeyWindow(AudioBuffer& buffer, hephaudio_float alpha);
-		static AudioBuffer GenerateTukeyWindow(size_t frameCount, hephaudio_float alpha);
+		static FloatBuffer GenerateTukeyWindow(size_t frameCount, hephaudio_float alpha);
 		static void ApplyBartlettHannWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateBartlettHannWindow(size_t frameCount);
+		static FloatBuffer GenerateBartlettHannWindow(size_t frameCount);
 		static void ApplyHannPoissonWindow(AudioBuffer& buffer, hephaudio_float alpha);
-		static AudioBuffer GenerateHannPoissonWindow(size_t frameCount, hephaudio_float alpha);
+		static FloatBuffer GenerateHannPoissonWindow(size_t frameCount, hephaudio_float alpha);
 		static void ApplyLanczosWindow(AudioBuffer& buffer);
-		static AudioBuffer GenerateLanczosWindow(size_t frameCount);
+		static FloatBuffer GenerateLanczosWindow(size_t frameCount);
 #pragma endregion
 #pragma region Processed Buffer
 	private:

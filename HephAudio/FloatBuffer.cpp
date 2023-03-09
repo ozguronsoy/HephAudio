@@ -5,7 +5,7 @@ namespace HephAudio
 {
 	FloatBuffer::FloatBuffer() : frameCount(0), pData(nullptr) {}
 	FloatBuffer::FloatBuffer(size_t frameCount)
-		: frameCount(0)
+		: frameCount(frameCount)
 	{
 		if (this->frameCount > 0)
 		{

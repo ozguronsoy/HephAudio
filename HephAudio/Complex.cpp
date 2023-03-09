@@ -5,19 +5,12 @@ namespace HephAudio
 {
 	Complex::Complex() : Complex(0.0, 0.0) {}
 	Complex::Complex(hephaudio_float real, hephaudio_float imaginary)
-	{
-		this->real = real;
-		this->imaginary = imaginary;
-	}
+		: real(real), imaginary(imaginary) { }
 	Complex::Complex(const Complex& rhs)
-	{
-		this->real = rhs.real;
-		this->imaginary = rhs.imaginary;
-	}
+		: real(rhs.real), imaginary(rhs.imaginary) { }
 	Complex::Complex(Complex&& rhs) noexcept
+		: real(rhs.real), imaginary(rhs.imaginary)
 	{
-		this->real = (hephaudio_float&&)rhs.real;
-		this->imaginary = (hephaudio_float&&)rhs.imaginary;
 	}
 	Complex& Complex::operator=(const Complex& rhs)
 	{
@@ -27,8 +20,8 @@ namespace HephAudio
 	}
 	Complex& Complex::operator=(Complex&& rhs) noexcept
 	{
-		this->real = (hephaudio_float&&)rhs.real;
-		this->imaginary = (hephaudio_float&&)rhs.imaginary;
+		this->real = rhs.real;
+		this->imaginary = rhs.imaginary;
 		return *this;
 	}
 	Complex Complex::operator-() const

@@ -18,7 +18,6 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioPath);
-void Delay(AudioBuffer& audioBuffer, const FloatBuffer& delayCoefficients);
 
 int main()
 {
