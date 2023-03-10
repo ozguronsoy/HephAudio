@@ -298,7 +298,6 @@ namespace HephAudio
 			if (renderDevice.id != renderDeviceId)
 			{
 				renderDevice.id = renderDeviceId;
-				renderDevice.name = renderDevice.description = "REMOVED";
 				renderDevice.type = AudioDeviceType::Render;
 			}
 			return renderDevice;
@@ -309,7 +308,6 @@ namespace HephAudio
 			if (captureDevice.id != captureDeviceId)
 			{
 				captureDevice.id = captureDeviceId;
-				captureDevice.name = captureDevice.description = "REMOVED";
 				captureDevice.type = AudioDeviceType::Capture;
 			}
 			return captureDevice;

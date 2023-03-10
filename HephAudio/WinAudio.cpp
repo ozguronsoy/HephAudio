@@ -426,13 +426,6 @@ namespace HephAudio
 				PropVariantClear(&variant);
 
 			}
-			// Read device description.
-			WINAUDIO_EXCPT(pPropertyStore->GetValue(PKEY_Device_DeviceDesc, &variant), this, "WinAudio::GetDefaultAudioDevice", "An error occurred whilst reading the default devices properties.");
-			if (variant.vt != VT_EMPTY)
-			{
-				defaultDevice.description = variant.pwszVal;
-				PropVariantClear(&variant);
-			}
 
 			defaultDevice.id = defaultDeviceId;
 			defaultDevice.type = deviceType;
@@ -508,14 +501,6 @@ namespace HephAudio
 				if (variant.vt != VT_EMPTY)
 				{
 					device.name = variant.pwszVal;
-					PropVariantClear(&variant);
-				}
-
-				// Read device description.
-				WINAUDIO_EXCPT(pPropertyStore->GetValue(PKEY_Device_DeviceDesc, &variant), this, "WinAudio::GetAudioDevices", "An error occurred whilst reading the devices properties.");
-				if (variant.vt != VT_EMPTY)
-				{
-					device.description = variant.pwszVal;
 					PropVariantClear(&variant);
 				}
 

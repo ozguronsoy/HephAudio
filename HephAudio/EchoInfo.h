@@ -5,6 +5,9 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Holds the necessary information for an echo effect to be applied.
+	/// </summary>
 	struct EchoInfo
 	{
 		/// <summary>

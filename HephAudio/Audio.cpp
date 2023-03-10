@@ -15,23 +15,23 @@ namespace HephAudio
 {
 	Formats::AudioFormats* Audio::GetAudioFormats() const
 	{
-		return &pNativeAudio->audioFormats;
+		return &this->pNativeAudio->audioFormats;
 	}
 	void Audio::SetOnExceptionHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnException += handler;
+		this->pNativeAudio->OnException += handler;
 	}
 	void Audio::SetOnAudioDeviceAddedHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnAudioDeviceAdded += handler;
+		this->pNativeAudio->OnAudioDeviceAdded += handler;
 	}
 	void Audio::SetOnAudioDeviceRemovedHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnAudioDeviceRemoved += handler;
+		this->pNativeAudio->OnAudioDeviceRemoved += handler;
 	}
 	void Audio::SetOnCaptureHandler(AudioEventHandler handler)
 	{
-		pNativeAudio->OnCapture += handler;
+		this->pNativeAudio->OnCapture += handler;
 	}
 #ifdef __ANDROID__
 	Audio::Audio(JavaVM* jvm)
@@ -39,11 +39,11 @@ namespace HephAudio
 		const uint32_t androidApiLevel = android_get_device_api_level();
 		if (androidApiLevel >= 27)
 		{
-			pNativeAudio = new AndroidAudioA(jvm);
+			this->pNativeAudio = new AndroidAudioA(jvm);
 		}
 		else
 		{
-			pNativeAudio = new AndroidAudioSLES(jvm);
+			this->pNativeAudio = new AndroidAudioSLES(jvm);
 		}
 	}
 #else
@@ -52,11 +52,11 @@ namespace HephAudio
 #if defined(_WIN32)
 		if (IsWindowsVistaOrGreater())
 		{
-			pNativeAudio = new WinAudio();
+			this->pNativeAudio = new WinAudio();
 		}
 		else
 		{
-			pNativeAudio = new WinAudioDS();
+			this->pNativeAudio = new WinAudioDS();
 		}
 #endif
 	}
@@ -65,148 +65,152 @@ namespace HephAudio
 	{
 		if (pNativeAudio != nullptr)
 		{
-			delete pNativeAudio;
-			pNativeAudio = nullptr;
+			delete this->pNativeAudio;
+			this->pNativeAudio = nullptr;
 		}
+	}
+	HephAudio::Native::NativeAudio* Audio::operator->() const noexcept
+	{
+		return this->pNativeAudio;
 	}
 	NativeAudio* Audio::GetNativeAudio() const
 	{
-		return pNativeAudio;
+		return this->pNativeAudio;
 	}
 	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath)
 	{
-		return pNativeAudio->Play(filePath);
+		return this->pNativeAudio->Play(filePath);
 	}
 	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, bool isPaused)
 	{
-		return pNativeAudio->Play(filePath, isPaused);
+		return this->pNativeAudio->Play(filePath, isPaused);
 	}
 	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount)
 	{
-		return pNativeAudio->Play(filePath, loopCount);
+		return this->pNativeAudio->Play(filePath, loopCount);
 	}
 	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount, bool isPaused)
 	{
-		return pNativeAudio->Play(filePath, loopCount, isPaused);
+		return this->pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
 	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<StringBuffer>& filePaths)
 	{
-		return pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
+		return this->pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
 	}
 	std::shared_ptr<AudioObject> Audio::Load(StringBuffer filePath)
 	{
-		return pNativeAudio->Load(filePath);
+		return this->pNativeAudio->Load(filePath);
 	}
 	std::shared_ptr<AudioObject> Audio::CreateAO(StringBuffer name, size_t bufferFrameCount)
 	{
-		return pNativeAudio->CreateAO(name, bufferFrameCount);
+		return this->pNativeAudio->CreateAO(name, bufferFrameCount);
 	}
 	bool Audio::DestroyAO(std::shared_ptr<AudioObject> audioObject)
 	{
-		return pNativeAudio->DestroyAO(audioObject);
+		return this->pNativeAudio->DestroyAO(audioObject);
 	}
 	bool Audio::AOExists(std::shared_ptr<AudioObject> audioObject) const
 	{
-		return pNativeAudio->AOExists(audioObject);
+		return this->pNativeAudio->AOExists(audioObject);
 	}
 	void Audio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, hephaudio_float position)
 	{
-		pNativeAudio->SetAOPosition(audioObject, position);
+		this->pNativeAudio->SetAOPosition(audioObject, position);
 	}
 	hephaudio_float Audio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
 	{
-		return pNativeAudio->GetAOPosition(audioObject);
+		return this->pNativeAudio->GetAOPosition(audioObject);
 	}
 	std::shared_ptr<AudioObject> Audio::GetAO(StringBuffer aoName) const
 	{
-		return pNativeAudio->GetAO(aoName);
+		return this->pNativeAudio->GetAO(aoName);
 	}
 	std::shared_ptr<AudioObject> Audio::GetAO(StringBuffer queueName, size_t index) const
 	{
-		return pNativeAudio->GetAO(queueName, index);
+		return this->pNativeAudio->GetAO(queueName, index);
 	}
 	void Audio::PauseCapture(bool pause)
 	{
-		pNativeAudio->PauseCapture(pause);
+		this->pNativeAudio->PauseCapture(pause);
 	}
 	bool Audio::IsCapturePaused() const noexcept
 	{
-		return pNativeAudio->IsCapturePaused();
+		return this->pNativeAudio->IsCapturePaused();
 	}
 	void Audio::SetMasterVolume(hephaudio_float volume)
 	{
-		pNativeAudio->SetMasterVolume(volume);
+		this->pNativeAudio->SetMasterVolume(volume);
 	}
 	hephaudio_float Audio::GetMasterVolume() const
 	{
-		return pNativeAudio->GetMasterVolume();
+		return this->pNativeAudio->GetMasterVolume();
 	}
 	void Audio::Skip(StringBuffer queueName, bool applyDelay)
 	{
-		pNativeAudio->Skip(queueName, applyDelay);
+		this->pNativeAudio->Skip(queueName, applyDelay);
 	}
 	void Audio::Skip(size_t skipCount, StringBuffer queueName, bool applyDelay)
 	{
-		pNativeAudio->Skip(skipCount, queueName, applyDelay);
+		this->pNativeAudio->Skip(skipCount, queueName, applyDelay);
 	}
 	AudioFormatInfo Audio::GetRenderFormat() const
 	{
-		return pNativeAudio->GetRenderFormat();
+		return this->pNativeAudio->GetRenderFormat();
 	}
 	AudioFormatInfo Audio::GetCaptureFormat() const
 	{
-		return pNativeAudio->GetCaptureFormat();
+		return this->pNativeAudio->GetCaptureFormat();
 	}
 	void Audio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 	{
-		pNativeAudio->InitializeRender(device, format);
+		this->pNativeAudio->InitializeRender(device, format);
 	}
 	void Audio::StopRendering()
 	{
-		pNativeAudio->StopRendering();
+		this->pNativeAudio->StopRendering();
 	}
 	void Audio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 	{
-		pNativeAudio->InitializeCapture(device, format);
+		this->pNativeAudio->InitializeCapture(device, format);
 	}
 	void Audio::StopCapturing()
 	{
-		pNativeAudio->StopCapturing();
+		this->pNativeAudio->StopCapturing();
 	}
 #if (defined(_WIN32) && defined(_WIN32_WINNT_VISTA))
 	void Audio::SetDisplayName(StringBuffer displayName)
 	{
-		pNativeAudio->SetDisplayName(displayName);
+		this->pNativeAudio->SetDisplayName(displayName);
 	}
 	void Audio::SetIconPath(StringBuffer iconPath)
 	{
-		pNativeAudio->SetIconPath(iconPath);
+		this->pNativeAudio->SetIconPath(iconPath);
 	}
 #endif
 #if defined(_WIN32)
 	AudioDevice Audio::GetAudioDeviceById(StringBuffer deviceId) const
 	{
-		return pNativeAudio->GetAudioDeviceById(deviceId);
+		return this->pNativeAudio->GetAudioDeviceById(deviceId);
 	}
 	AudioDevice Audio::GetRenderDevice() const
 	{
-		return pNativeAudio->GetRenderDevice();
+		return this->pNativeAudio->GetRenderDevice();
 	}
 	AudioDevice Audio::GetCaptureDevice() const
 	{
-		return pNativeAudio->GetCaptureDevice();
+		return this->pNativeAudio->GetCaptureDevice();
 	}
 	AudioDevice Audio::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 	{
-		return pNativeAudio->GetDefaultAudioDevice(deviceType);
+		return this->pNativeAudio->GetDefaultAudioDevice(deviceType);
 	}
 	std::vector<AudioDevice> Audio::GetAudioDevices(AudioDeviceType deviceType) const
 	{
-		return pNativeAudio->GetAudioDevices(deviceType);
+		return this->pNativeAudio->GetAudioDevices(deviceType);
 	}
 #endif
 	bool Audio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
 	{
-		return pNativeAudio->SaveToFile(filePath, overwrite, buffer);
+		return this->pNativeAudio->SaveToFile(filePath, overwrite, buffer);
 	}
 }

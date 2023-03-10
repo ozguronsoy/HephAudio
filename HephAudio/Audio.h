@@ -31,6 +31,7 @@ namespace HephAudio
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
+		HephAudio::Native::NativeAudio* operator->() const noexcept;
 		HephAudio::Native::NativeAudio* GetNativeAudio() const;
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath);
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath, bool isPaused);

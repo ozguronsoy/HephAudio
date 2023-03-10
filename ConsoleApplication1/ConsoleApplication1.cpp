@@ -34,9 +34,9 @@ int main()
 	audioPath += '\\';
 	audioPath += "AudioFiles\\";
 	Audio audio = Audio();
-	audio.SetOnExceptionHandler(OnException);
-	audio.SetOnAudioDeviceAddedHandler(OnDeviceAdded);
-	audio.SetOnAudioDeviceRemovedHandler(OnDeviceRemoved);
+	audio->OnException = OnException;
+	audio->OnAudioDeviceAdded = OnDeviceAdded;
+	audio->OnAudioDeviceRemoved = OnDeviceRemoved;
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
@@ -306,6 +306,17 @@ void HPFMF(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float 
 			}
 		}
 	};
+
+	constexpr hephaudio_float maxAllowedCpuUsage = 0.8;
+	const size_t hardwareThreadCount = std::thread::hardware_concurrency(); // may return 0
+	if (threadCountPerChannel * buffer.FormatInfo().channelCount > hardwareThreadCount * maxAllowedCpuUsage)
+	{
+		threadCountPerChannel = floor(hardwareThreadCount * maxAllowedCpuUsage / buffer.FormatInfo().channelCount);
+		if (threadCountPerChannel == 0)
+		{
+			threadCountPerChannel = 1;
+		}
+	}
 
 	const uint64_t stopIndex = Fourier::FrequencyToIndex(buffer.FormatInfo().sampleRate, fftSize, cutoffFrequency);
 	std::vector<std::thread> threads = std::vector<std::thread>(buffer.FormatInfo().channelCount * threadCountPerChannel);

@@ -4,7 +4,7 @@
 namespace HephAudio
 {
 	/// <summary>
-	/// Class for holding floating point numbers.
+	/// Holds floating point numbers.
 	/// </summary>
 	class FloatBuffer final
 	{

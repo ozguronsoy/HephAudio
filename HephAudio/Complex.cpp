@@ -8,17 +8,7 @@ namespace HephAudio
 		: real(real), imaginary(imaginary) { }
 	Complex::Complex(const Complex& rhs)
 		: real(rhs.real), imaginary(rhs.imaginary) { }
-	Complex::Complex(Complex&& rhs) noexcept
-		: real(rhs.real), imaginary(rhs.imaginary)
-	{
-	}
 	Complex& Complex::operator=(const Complex& rhs)
-	{
-		this->real = rhs.real;
-		this->imaginary = rhs.imaginary;
-		return *this;
-	}
-	Complex& Complex::operator=(Complex&& rhs) noexcept
 	{
 		this->real = rhs.real;
 		this->imaginary = rhs.imaginary;
@@ -111,14 +101,6 @@ namespace HephAudio
 	{
 		*this = *this / rhs;
 		return *this;
-	}
-	bool Complex::operator==(const hephaudio_float& rhs) const
-	{
-		return this->imaginary == 0 && this->real == rhs;
-	}
-	bool Complex::operator!=(const hephaudio_float& rhs) const
-	{
-		return this->imaginary != 0 || this->real != rhs;
 	}
 	hephaudio_float Complex::Magnitude() const noexcept
 	{

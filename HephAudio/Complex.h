@@ -3,16 +3,34 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Struct for representing complex numbers.
+	/// </summary>
 	struct Complex
 	{
+		/// <summary>
+		/// The real part of the complex number.
+		/// </summary>
 		hephaudio_float real;
+		/// <summary>
+		/// The imaginary part of the complex number.
+		/// </summary>
 		hephaudio_float imaginary;
+		/// <summary>
+		/// Creates and initializes a Complex instance with default values.
+		/// </summary>
 		Complex();
+		/// <summary>
+		/// Creates and initializes a Complex instance with the provided values.
+		/// </summary>
+		/// <param name="real">The real part of the complex number.</param>
+		/// <param name="imaginary">The imaginary part of the complex number.</param>
 		Complex(hephaudio_float real, hephaudio_float imaginary);
+		/// <summary>
+		/// Creates and initializes a Complex instance with rhs's values.
+		/// </summary>
 		Complex(const Complex& rhs);
-		Complex(Complex&& rhs) noexcept;
 		Complex& operator=(const Complex& rhs);
-		Complex& operator=(Complex&& rhs) noexcept;
 		Complex operator-() const;
 		Complex operator+(const Complex& rhs) const;
 		Complex& operator+=(const Complex& rhs);
@@ -32,8 +50,6 @@ namespace HephAudio
 		Complex& operator*=(const hephaudio_float& rhs);
 		Complex operator/(const hephaudio_float& rhs) const;
 		Complex& operator/=(const hephaudio_float& rhs);
-		bool operator==(const hephaudio_float& rhs) const;
-		bool operator!=(const hephaudio_float& rhs) const;
 		/// <summary>
 		/// Calculates the magnitude of the complex number.
 		/// </summary>

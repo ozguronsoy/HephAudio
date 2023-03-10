@@ -10,6 +10,9 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Holds the necessary information for playing audio.
+	/// </summary>
 	struct AudioObject
 	{
 		/// <summary>
@@ -60,6 +63,9 @@ namespace HephAudio
 		/// Called when the audio object is finished playing.
 		/// </summary>
 		AudioEvent OnFinishedPlaying;
+		/// <summary>
+		/// Creates and initializes an AudioObject instance with default values.
+		/// </summary>
 		AudioObject();
 	private:
 		static void OnRenderHandler(AudioEventArgs* pArgs, AudioEventResult* pResult);

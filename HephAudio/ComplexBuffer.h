@@ -5,7 +5,7 @@
 namespace HephAudio
 {
 	/// <summary>
-	/// Class for holding complex numbers.
+	/// Holds complex numbers.
 	/// </summary>
 	class ComplexBuffer final
 	{

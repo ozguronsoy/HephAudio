@@ -29,7 +29,7 @@ namespace HephAudio
 #pragma endregion
 #pragma region Audio Buffer
 	/// <summary>
-	/// Class for holding audio data.
+	/// Holds audio data.
 	/// </summary>
 	class AudioBuffer final
 	{

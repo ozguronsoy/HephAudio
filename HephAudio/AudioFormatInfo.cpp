@@ -19,11 +19,11 @@ namespace HephAudio
 	}
 	uint32_t AudioFormatInfo::BitRate() const noexcept
 	{
-		return this->ByteRate() * 8;
+		return this->sampleRate * this->channelCount * this->bitsPerSample;
 	}
 	uint32_t AudioFormatInfo::ByteRate() const noexcept
 	{
-		return this->sampleRate * this->FrameSize();
+		return this->sampleRate * this->channelCount * this->bitsPerSample * 0.125;
 	}
 #ifdef _WIN32
 	AudioFormatInfo::AudioFormatInfo(const WAVEFORMATEX& wfx)
@@ -34,7 +34,7 @@ namespace HephAudio
 		this->bitsPerSample = wfx.wBitsPerSample;
 		this->headerSize = wfx.cbSize;
 	}
-	AudioFormatInfo::operator WAVEFORMATEX() const
+	AudioFormatInfo::operator WAVEFORMATEX() const noexcept
 	{
 		WAVEFORMATEX wfx;
 		wfx.wFormatTag = this->formatTag;
