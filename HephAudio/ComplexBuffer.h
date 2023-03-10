@@ -90,6 +90,28 @@ namespace HephAudio
 		/// <param name="rhs">The division factor</param>
 		ComplexBuffer& operator/=(const hephaudio_float& rhs);
 		/// <summary>
+		/// Creates a copy of the buffer and shifts it to the left.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		/// <returns>The shifted buffer.</returns>
+		ComplexBuffer operator<<(const size_t& rhs) const;
+		/// <summary>
+		/// Shifts the buffer to the left.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		ComplexBuffer& operator<<=(const size_t& rhs);
+		/// <summary>
+		/// Creates a copy of the buffer and shifts it to the right.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		/// <returns>The shifted buffer.</returns>
+		ComplexBuffer operator>>(const size_t& rhs) const;
+		/// <summary>
+		/// Shifts the buffer to the right.
+		/// </summary>
+		/// <param name="rhs">The number of frames to shift</param>
+		ComplexBuffer& operator>>=(const size_t& rhs);
+		/// <summary>
 		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
 		/// </summary>
 		/// <param name="rhs"></param>

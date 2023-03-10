@@ -172,19 +172,19 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	bool FloatBuffer::operator!=(const FloatBuffer& rhs) const
-	{
-		return this->frameCount != rhs.frameCount || memcmp(this->pData, rhs.pData, this->Size()) != 0;
-	}
 	bool FloatBuffer::operator==(const FloatBuffer& rhs) const
 	{
 		return this->frameCount == rhs.frameCount && memcmp(this->pData, rhs.pData, this->Size()) == 0;
+	}
+	bool FloatBuffer::operator!=(const FloatBuffer& rhs) const
+	{
+		return this->frameCount != rhs.frameCount || memcmp(this->pData, rhs.pData, this->Size()) != 0;
 	}
 	size_t FloatBuffer::Size() const noexcept
 	{
 		return this->frameCount * sizeof(hephaudio_float);
 	}
-	const size_t& FloatBuffer::FrameCount() const noexcept
+	size_t FloatBuffer::FrameCount() const noexcept
 	{
 		return this->frameCount;
 	}
@@ -408,7 +408,16 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	hephaudio_float* const& FloatBuffer::Begin() const noexcept
+	hephaudio_float FloatBuffer::Rms() const noexcept
+	{
+		hephaudio_float sumOfSamplesSquared = 0.0;
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			sumOfSamplesSquared += (*this)[i] * (*this)[i];
+		}
+		return sqrt(sumOfSamplesSquared / this->frameCount);
+	}
+	hephaudio_float* FloatBuffer::Begin() const noexcept
 	{
 		return this->pData;
 	}

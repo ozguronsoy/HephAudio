@@ -16,6 +16,11 @@ namespace HephAudio
 		size_t frameIndex;
 		AudioFrame(const AudioBuffer* pAudioBuffer, size_t frameIndex);
 	public:
+		/// <summary>
+		/// Returns the audio sample at the given channel.
+		/// </summary>
+		/// <param name="channel">Channel of the audio sample.</param>
+		/// <returns>The Audio sample.</returns>
 		hephaudio_float& operator[](const size_t& channel) const;
 	};
 #pragma endregion
@@ -110,16 +115,16 @@ namespace HephAudio
 		/// <summary>
 		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
 		/// </summary>
-		/// <param name="rhs">The buffer to compare</param>
-		/// <returns>true if the contents are not equal</returns>
-		bool operator!=(const AudioBuffer& rhs) const;
-		/// <summary>
-		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
-		/// </summary>
 		/// <param name="rhs"></param>
 		/// <param name="rhs">The buffer to compare</param>
 		/// <returns>true if the contents are equal</returns>
 		bool operator==(const AudioBuffer& rhs) const;
+		/// <summary>
+		/// Checks whether the contents of rhs are equal to the current buffer's contents or not.
+		/// </summary>
+		/// <param name="rhs">The buffer to compare</param>
+		/// <returns>true if the contents are not equal</returns>
+		bool operator!=(const AudioBuffer& rhs) const;
 		/// <summary>
 		/// Calculates the audio data size in bytes.
 		/// </summary>

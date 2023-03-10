@@ -213,6 +213,50 @@ namespace HephAudio
 		}
 		return *this;
 	}
+	ComplexBuffer ComplexBuffer::operator<<(const size_t& rhs) const
+	{
+		ComplexBuffer resultBuffer(this->frameCount);
+		if (this->frameCount > rhs)
+		{
+			memcpy(resultBuffer.pComplexData, this->pComplexData + rhs, (this->frameCount - rhs) * sizeof(Complex));
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer& ComplexBuffer::operator<<=(const size_t& rhs)
+	{
+		if (this->frameCount > rhs)
+		{
+			memcpy(this->pComplexData, this->pComplexData + rhs, (this->frameCount - rhs) * sizeof(Complex));
+			memset(this->pComplexData + this->frameCount - rhs, 0, rhs * sizeof(Complex));
+		}
+		else
+		{
+			this->Reset();
+		}
+		return *this;
+	}
+	ComplexBuffer ComplexBuffer::operator>>(const size_t& rhs) const
+	{
+		ComplexBuffer resultBuffer(this->frameCount);
+		if (this->frameCount > rhs)
+		{
+			memcpy(resultBuffer.pComplexData + rhs, this->pComplexData, (this->frameCount - rhs) * sizeof(Complex));
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer& ComplexBuffer::operator>>=(const size_t& rhs)
+	{
+		if (this->frameCount > rhs)
+		{
+			memcpy(this->pComplexData + rhs, this->pComplexData, (this->frameCount - rhs) * sizeof(Complex));
+			memset(this->pComplexData, 0, rhs * sizeof(Complex));
+		}
+		else
+		{
+			this->Reset();
+		}
+		return *this;
+	}
 	bool ComplexBuffer::operator==(const ComplexBuffer& rhs) const
 	{
 		return this == &rhs || (this->frameCount == rhs.frameCount && memcmp(this->pComplexData, rhs.pComplexData, this->Size()) == 0);

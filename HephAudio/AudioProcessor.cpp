@@ -418,6 +418,7 @@ namespace HephAudio
 			const hephaudio_float wetFactor = depth;
 			const hephaudio_float dryFactor = 1.0 - wetFactor;
 			const hephaudio_float fcdelta = fcmax - fcmin;
+			const hephaudio_float Q = 2.0 * damping;
 			hephaudio_float fc = fcdelta * abs(lfo.Oscillate(0)) + fcmin;
 			hephaudio_float alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
 			AudioBuffer lowPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
@@ -435,9 +436,10 @@ namespace HephAudio
 			{
 				fc = fcdelta * abs(lfo.Oscillate(i)) + fcmin;
 				alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
+
 				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 				{
-					highPassBuffer[i][j] = buffer[i][j] - lowPassBuffer[i - 1][j] - 2.0 * damping * bandPassBuffer[i - 1][j];
+					highPassBuffer[i][j] = buffer[i][j] - lowPassBuffer[i - 1][j] - Q * bandPassBuffer[i - 1][j];
 					bandPassBuffer[i][j] = alpha * highPassBuffer[i][j] + bandPassBuffer[i - 1][j];
 					lowPassBuffer[i][j] = alpha * bandPassBuffer[i][j] + lowPassBuffer[i - 1][j];
 				}

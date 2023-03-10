@@ -18,6 +18,7 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioPath);
+void HPFMF(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel);
 
 int main()
 {
@@ -277,4 +278,53 @@ int Run(Audio& audio, StringBuffer& audioPath)
 	}
 
 	return 0;
+}
+void HPFMF(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel)
+{
+	constexpr auto applyFilter = [](AudioBuffer* buffer, FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t stopIndex)
+	{
+		AudioBuffer channel = AudioBuffer(frameCount, AudioFormatInfo(buffer->FormatInfo().formatTag, 1, buffer->FormatInfo().bitsPerSample, buffer->FormatInfo().sampleRate));
+		for (size_t i = 0; i < frameCount && i + frameIndex < buffer->FrameCount(); i++)
+		{
+			channel[i][0] = (*buffer)[i + frameIndex][channelIndex];
+			(*buffer)[i + frameIndex][channelIndex] = 0;
+		}
+
+		for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+		{
+			ComplexBuffer complexBuffer = Fourier::FFT_Forward(channel.GetSubBuffer(i, fftSize), fftSize);
+			for (int64_t j = stopIndex; j >= 0; j--)
+			{
+				complexBuffer[j] = Complex();
+				complexBuffer[fftSize - j - 1] = Complex();
+			}
+
+			Fourier::FFT_Inverse(complexBuffer, false);
+			for (size_t j = 0, k = i + frameIndex; j < fftSize && k < buffer->FrameCount(); j++, k++)
+			{
+				(*buffer)[k][channelIndex] += complexBuffer[j].real * (*window)[j] / (hephaudio_float)fftSize;
+			}
+		}
+	};
+
+	const uint64_t stopIndex = Fourier::FrequencyToIndex(buffer.FormatInfo().sampleRate, fftSize, cutoffFrequency);
+	std::vector<std::thread> threads = std::vector<std::thread>(buffer.FormatInfo().channelCount * threadCountPerChannel);
+	FloatBuffer hannWindow = AudioProcessor::GenerateHannWindow(fftSize);
+	const size_t frameCountPerThread = ceil((hephaudio_float)buffer.FrameCount() / (hephaudio_float)threadCountPerChannel);
+
+	for (size_t i = 0, t = 0; i < threadCountPerChannel; i++)
+	{
+		for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++, t++)
+		{
+			threads[t] = std::thread(applyFilter, &buffer, &hannWindow, j, i * frameCountPerThread, frameCountPerThread, hopSize, fftSize, stopIndex);
+		}
+	}
+
+	for (size_t i = 0; i < threadCountPerChannel * buffer.FormatInfo().channelCount; i++)
+	{
+		if (threads[i].joinable())
+		{
+			threads[i].join();
+		}
+	}
 }
