@@ -12,55 +12,45 @@ namespace HephAudio
 		: charSize(charSize), size(size)
 	{
 		this->pData = (char*)malloc(this->TotalSize() + this->charSize);
-		if (this->pData != nullptr)
-		{
-			memset(this->pData + this->TotalSize(), 0, this->charSize);
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 		}
+		memset(this->pData + this->TotalSize(), 0, this->charSize);
 	}
 	StringBuffer::StringBuffer()
 		: charSize(sizeof(char)), size(0)
 	{
 		this->pData = (char*)malloc(this->charSize);
-		if (this->pData != nullptr)
-		{
-			this->pData[0] = '\0';
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 		}
+		this->pData[0] = '\0';
 	}
 	StringBuffer::StringBuffer(const char& c)
 		: charSize(sizeof(char)), size(1)
 	{
 		this->pData = (char*)malloc(this->charSize * 2);
-		if (this->pData != nullptr)
-		{
-			this->pData[0] = c;
-			this->pData[1] = '\0';
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 		}
+
+		this->pData[0] = c;
+		this->pData[1] = '\0';
 	}
 	StringBuffer::StringBuffer(const wchar_t& wc)
 		: charSize(sizeof(wchar_t)), size(0)
 	{
 		this->pData = (char*)malloc(this->charSize * 2);
-		if (this->pData != nullptr)
-		{
-			((wchar_t*)this->pData)[0] = wc;
-			((wchar_t*)this->pData)[1] = L'\0';
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 		}
+
+		((wchar_t*)this->pData)[0] = wc;
+		((wchar_t*)this->pData)[1] = L'\0';
 	}
 	StringBuffer::StringBuffer(const char* const& str)
 		: charSize(sizeof(char))
@@ -69,28 +59,22 @@ namespace HephAudio
 		{
 			this->size = 0;
 			this->pData = (char*)malloc(this->charSize);
-			if (this->pData != nullptr)
-			{
-				memset(this->pData, 0, this->charSize);
-			}
-			else
+			if (this->pData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 			}
+			memset(this->pData, 0, this->charSize);
 			return;
 		}
 
 		this->size = strlen(str);
 
 		this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-		if (this->pData != nullptr)
-		{
-			memcpy(this->pData, str, this->TotalSize() + this->charSize);
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 		}
+		memcpy(this->pData, str, this->TotalSize() + this->charSize);
 	}
 	StringBuffer::StringBuffer(const wchar_t* const& wstr)
 		: charSize(sizeof(wchar_t))
@@ -99,72 +83,61 @@ namespace HephAudio
 		{
 			this->size = 0;
 			this->pData = (char*)malloc(this->charSize);
-			if (this->pData != nullptr)
-			{
-				memset(this->pData, 0, this->charSize);
-			}
-			else
+			if (this->pData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 			}
+			memset(this->pData, 0, this->charSize);
 			return;
 		}
 
 		this->size = wcslen(wstr);
 
 		this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-		if (this->pData != nullptr)
-		{
-			memcpy(this->pData, wstr, this->TotalSize() + this->charSize);
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 		}
+		memcpy(this->pData, wstr, this->TotalSize() + this->charSize);
 	}
-	StringBuffer::StringBuffer(const StringBuffer& str) : StringBuffer(str, str.charSize == sizeof(char) ? StringType::Normal : StringType::Wide) {}
+	StringBuffer::StringBuffer(const StringBuffer& str) : StringBuffer(str, str.charSize == sizeof(char) ? StringType::ASCII : StringType::Wide) {}
 	StringBuffer::StringBuffer(const StringBuffer& str, StringType stringType)
 		: size(str.size)
 	{
-		this->charSize = stringType == StringType::Normal ? sizeof(char) : sizeof(wchar_t);
+		this->charSize = stringType == StringType::ASCII ? sizeof(char) : sizeof(wchar_t);
 
 		if (str.size > 0)
 		{
 			this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-			if (this->pData != nullptr)
+			if (this->pData == nullptr)
 			{
-				if (this->charSize != str.charSize)
+				throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
+			}
+
+			if (this->charSize != str.charSize)
+			{
+				if (this->charSize == sizeof(char))
 				{
-					if (this->charSize == sizeof(char))
-					{
-						wcstombs(this->pData, (wchar_t*)str.pData, str.size + 1);
-					}
-					else
-					{
-						mbstowcs((wchar_t*)this->pData, str.pData, str.size + 1);
-					}
+					wcstombs(this->pData, (wchar_t*)str.pData, str.size + 1);
 				}
 				else
 				{
-					memcpy(this->pData, str.pData, this->TotalSize() + this->charSize);
+					mbstowcs((wchar_t*)this->pData, str.pData, str.size + 1);
 				}
 			}
 			else
 			{
-				throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
+				memcpy(this->pData, str.pData, this->TotalSize() + this->charSize);
 			}
 		}
 		else
 		{
 			this->pData = (char*)malloc(this->charSize);
-			if (this->pData != nullptr)
-			{
-				memset(this->pData, 0, this->charSize);
-			}
-			else
+			if (this->pData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 			}
+			memset(this->pData, 0, this->charSize);
 		}
 	}
 	StringBuffer::StringBuffer(StringBuffer&& str) noexcept
@@ -216,28 +189,23 @@ namespace HephAudio
 			{
 				this->size = 0;
 				this->pData = (char*)malloc(this->charSize);
-				if (this->pData != nullptr)
-				{
-					memset(this->pData, 0, this->charSize);
-				}
-				else
+				if (this->pData == nullptr)
 				{
 					throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 				}
+				memset(this->pData, 0, this->charSize);
+
 				return *this;
 			}
 
 			this->size = strlen(rhs);
 
 			this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-			if (this->pData != nullptr)
-			{
-				memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
-			}
-			else
+			if (this->pData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "StringBuffer::operator=", "Insufficient memory.");
 			}
+			memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
 		}
 
 		return *this;
@@ -254,28 +222,23 @@ namespace HephAudio
 			{
 				this->size = 0;
 				this->pData = (char*)malloc(this->charSize);
-				if (this->pData != nullptr)
-				{
-					memset(this->pData, 0, this->charSize);
-				}
-				else
+				if (this->pData == nullptr)
 				{
 					throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 				}
+				memset(this->pData, 0, this->charSize);
+
 				return *this;
 			}
 
 			this->size = wcslen(rhs);
 
 			this->pData = (char*)malloc(this->TotalSize() + this->charSize); // allocate buffer and copy the string
-			if (this->pData != nullptr)
-			{
-				memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
-			}
-			else
+			if (this->pData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "StringBuffer::operator=", "Insufficient memory.");
 			}
+			memcpy(this->pData, rhs, this->TotalSize() + this->charSize);
 		}
 
 		return *this;
@@ -305,14 +268,11 @@ namespace HephAudio
 			{
 				this->size = 0;
 				this->pData = (char*)malloc(this->charSize);
-				if (this->pData != nullptr)
-				{
-					memset(this->pData, 0, this->charSize);
-				}
-				else
+				if (this->pData == nullptr)
 				{
 					throw AudioException(E_OUTOFMEMORY, "StringBuffer::StringBuffer", "Insufficient memory.");
 				}
+				memset(this->pData, 0, this->charSize);
 			}
 		}
 
@@ -552,7 +512,7 @@ namespace HephAudio
 	}
 	char* StringBuffer::fc_str()
 	{
-		this->SetStringType(StringType::Normal);
+		this->SetStringType(StringType::ASCII);
 		return (char*)this->pData;
 	}
 	wchar_t* StringBuffer::wc_str() const
@@ -570,11 +530,11 @@ namespace HephAudio
 	}
 	StringType StringBuffer::GetStringType() const noexcept
 	{
-		return this->charSize == sizeof(char) ? StringType::Normal : StringType::Wide;
+		return this->charSize == sizeof(char) ? StringType::ASCII : StringType::Wide;
 	}
 	void StringBuffer::SetStringType(StringType newType)
 	{
-		const size_t newCharSize = newType == StringType::Normal ? sizeof(char) : sizeof(wchar_t);
+		const size_t newCharSize = newType == StringType::ASCII ? sizeof(char) : sizeof(wchar_t);
 		if (this->charSize != newCharSize)
 		{
 			char* pTemp = (char*)malloc(this->size * newCharSize + newCharSize);
@@ -614,7 +574,7 @@ namespace HephAudio
 			return *this == str;
 		}
 
-		const StringBuffer tempBuffer = StringBuffer(*this, StringType::Normal);
+		const StringBuffer tempBuffer = StringBuffer(*this, StringType::ASCII);
 		return tempBuffer == str;
 	}
 	bool StringBuffer::CompareContent(const wchar_t* wstr) const
@@ -1433,14 +1393,11 @@ namespace HephAudio
 		this->charSize = charSize;
 
 		this->pData = (char*)malloc(this->charSize);
-		if (this->pData != nullptr)
-		{
-			memset(this->pData, 0, this->charSize);
-		}
-		else
+		if (this->pData == nullptr)
 		{
 			throw AudioException(E_OUTOFMEMORY, "StringBuffer::Clear", "Insufficient memory.");
 		}
+		memset(this->pData, 0, this->charSize);
 
 		return *this;
 	}

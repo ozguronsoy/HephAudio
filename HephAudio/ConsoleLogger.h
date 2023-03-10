@@ -17,7 +17,6 @@ namespace HephAudio
 		ConsoleLogger(const ConsoleLogger&) = delete;
 		ConsoleLogger& operator=(const ConsoleLogger&) = delete;
 		static void Log(StringBuffer message, const char* logLevel);
-		static void LogLine(StringBuffer message, const char* logLevel);
 	private:
 		static StringBuffer CurrentTimeToString(StringType stringType);
 	};

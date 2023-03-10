@@ -52,7 +52,7 @@ void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	str.insert(pos + 1, 21, ' ');
 	pos = str.find('\n', pos + 1);
 	str.insert(pos + 1, 21, ' ');
-	ConsoleLogger::LogLine(str.c_str(), ConsoleLogger::error);
+	ConsoleLogger::Log(str.c_str(), ConsoleLogger::error);
 }
 void OnDeviceAdded(AudioEventArgs* pArgs, AudioEventResult* pResult)
 {
@@ -97,7 +97,7 @@ void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult)
 
 	if (pFinishedPlayingArgs->remainingLoopCount > 0)
 	{
-		ConsoleLogger::LogLine("The track \"" + pAudioObject->name + "\" is starting over, number of remaning loops: " + StringBuffer::ToString(pFinishedPlayingArgs->remainingLoopCount), ConsoleLogger::debug);
+		ConsoleLogger::Log("The track \"" + pAudioObject->name + "\" is starting over, number of remaning loops: " + StringBuffer::ToString(pFinishedPlayingArgs->remainingLoopCount), ConsoleLogger::debug);
 	}
 }
 hephaudio_float PrintDeltaTime(StringBuffer label)
@@ -105,7 +105,7 @@ hephaudio_float PrintDeltaTime(StringBuffer label)
 	const hephaudio_float dt = StopWatch::DeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
-	ConsoleLogger::LogLine(label, ConsoleLogger::success);
+	ConsoleLogger::Log(label, ConsoleLogger::success);
 	StopWatch::Reset();
 	return dt;
 }
@@ -121,7 +121,7 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		{
 			if (sb == L"path")
 			{
-				ConsoleLogger::LogLine(audioPath, ConsoleLogger::info);
+				ConsoleLogger::Log(audioPath, ConsoleLogger::info);
 			}
 			else
 			{

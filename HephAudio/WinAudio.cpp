@@ -131,7 +131,12 @@ namespace HephAudio
 		{
 			if (parent->OnAudioDeviceRemoved)
 			{
-				AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(parent, parent->GetAudioDeviceById(pwstrDeviceId));
+				AudioDevice removedDevice = parent->GetAudioDeviceById(pwstrDeviceId);
+				if (!removedDevice.id.CompareContent(pwstrDeviceId))
+				{
+					removedDevice.id = pwstrDeviceId;
+				}
+				AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(parent, removedDevice);
 				parent->OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
 			}
 			return S_OK;
@@ -177,7 +182,7 @@ namespace HephAudio
 		WinAudio::~WinAudio()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG_LINE("Destructing WinAudio...", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing WinAudio...", ConsoleLogger::info);
 
 			disposing = true;
 
@@ -202,7 +207,7 @@ namespace HephAudio
 
 			CoUninitialize();
 
-			HEPHAUDIO_LOG_LINE("WinAudio destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("WinAudio destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
 		void WinAudio::SetMasterVolume(hephaudio_float volume)
 		{
@@ -239,7 +244,7 @@ namespace HephAudio
 		void WinAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG_LINE(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
 
 			if (disposing) { return; }
 
@@ -291,7 +296,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&WinAudio::RenderData, this);
 
-			HEPHAUDIO_LOG_LINE("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
 		void WinAudio::StopRendering()
 		{
@@ -305,13 +310,13 @@ namespace HephAudio
 				pSessionControl == nullptr;
 				pSessionManager == nullptr;
 				pAudioClient == nullptr;
-				HEPHAUDIO_LOG_LINE("Stopped rendering.", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", ConsoleLogger::info);
 			}
 		}
 		void WinAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG_LINE(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
 
 			if (disposing) { return; }
 			StopCapturing();
@@ -358,7 +363,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&WinAudio::CaptureData, this, pCaptureAudioClient, pSessionManager);
 
-			HEPHAUDIO_LOG_LINE("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
 		void WinAudio::StopCapturing()
 		{
@@ -367,7 +372,7 @@ namespace HephAudio
 				isCaptureInitialized = false; // Set this to false to stop capturing.
 				captureDeviceId = L"";
 				JoinCaptureThread();
-				HEPHAUDIO_LOG_LINE("Stopped capturing.", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", ConsoleLogger::info);
 			}
 		}
 		void WinAudio::SetDisplayName(StringBuffer displayName)

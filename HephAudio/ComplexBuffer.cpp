@@ -16,15 +16,12 @@ namespace HephAudio
 		if (frameCount > 0)
 		{
 			// allocate memory and initialize it to 0.
-			this->pComplexData = (Complex*)malloc(Size());
-			if (this->pComplexData != nullptr)
-			{
-				memset(this->pComplexData, 0, this->Size());
-			}
-			else
+			this->pComplexData = (Complex*)malloc(this->Size());
+			if (this->pComplexData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory.");
 			}
+			this->Reset();
 		}
 		else
 		{
@@ -56,12 +53,7 @@ namespace HephAudio
 	}
 	ComplexBuffer::~ComplexBuffer()
 	{
-		this->frameCount = 0;
-		if (this->pComplexData != nullptr)
-		{
-			free(this->pComplexData);
-			this->pComplexData = nullptr;
-		}
+		this->Empty();
 	}
 	Complex& ComplexBuffer::operator[](const size_t& index) const
 	{
@@ -440,12 +432,7 @@ namespace HephAudio
 		{
 			if (newFrameCount == 0)
 			{
-				this->frameCount = 0;
-				if (this->pComplexData != nullptr)
-				{
-					free(this->pComplexData);
-					this->pComplexData = nullptr;
-				}
+				this->Empty();
 			}
 			else
 			{
@@ -457,6 +444,15 @@ namespace HephAudio
 				this->pComplexData = tempPtr;
 				this->frameCount = newFrameCount;
 			}
+		}
+	}
+	void ComplexBuffer::Empty() noexcept
+	{
+		this->frameCount = 0;
+		if (this->pComplexData != nullptr)
+		{
+			free(this->pComplexData);
+			this->pComplexData = nullptr;
 		}
 	}
 	Complex* ComplexBuffer::Begin() const noexcept

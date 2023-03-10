@@ -33,7 +33,7 @@ namespace HephAudio
 		{
 			try
 			{
-				HEPHAUDIO_LOG_LINE("Playing \"" + AudioFile::GetFileName(filePath) + "\"", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Playing \"" + AudioFile::GetFileName(filePath) + "\"", ConsoleLogger::info);
 
 				AudioFile audioFile(filePath);
 				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
@@ -63,7 +63,7 @@ namespace HephAudio
 		std::vector<std::shared_ptr<AudioObject>> NativeAudio::Queue(StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<StringBuffer>& filePaths)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG_LINE("Adding files to the queue: " + queueName, ConsoleLogger::info);
+			HEPHAUDIO_LOG("Adding files to the queue: " + queueName, ConsoleLogger::info);
 
 			if (queueName.CompareContent(""))
 			{
@@ -103,7 +103,7 @@ namespace HephAudio
 							RAISE_AUDIO_EXCPT(this, ex);
 							failedCount++;
 
-							HEPHAUDIO_LOG_LINE("Failed to add the file \"" + pao->name + "\" to the queue: " + queueName, ConsoleLogger::warning);
+							HEPHAUDIO_LOG("Failed to add the file \"" + pao->name + "\" to the queue: " + queueName, ConsoleLogger::warning);
 
 							continue;
 						}
@@ -113,13 +113,13 @@ namespace HephAudio
 					audioObjects.push_back(pao);
 					queuedAudioObjects.push_back(pao);
 
-					HEPHAUDIO_LOG_LINE("The file \"" + pao->name + "\" is successfully added to the queue: " + queueName, ConsoleLogger::info);
+					HEPHAUDIO_LOG("The file \"" + pao->name + "\" is successfully added to the queue: " + queueName, ConsoleLogger::info);
 				}
 				else
 				{
 					failedCount++;
 
-					HEPHAUDIO_LOG_LINE("Failed to add the file \"" + AudioFile::GetFileName(filePaths.at(i)) + "\" to the queue: " + queueName, ConsoleLogger::warning);
+					HEPHAUDIO_LOG("Failed to add the file \"" + AudioFile::GetFileName(filePaths.at(i)) + "\" to the queue: " + queueName, ConsoleLogger::warning);
 				}
 			}
 
@@ -239,7 +239,7 @@ namespace HephAudio
 			{
 				for (size_t i = 0; i < queue.size(); i++)
 				{
-					HEPHAUDIO_LOG_LINE("Skipped the file: \"" + queue.at(i)->name + "\"", ConsoleLogger::info);
+					HEPHAUDIO_LOG("Skipped the file: \"" + queue.at(i)->name + "\"", ConsoleLogger::info);
 
 					DestroyAO(queue.at(i));
 				}
@@ -250,7 +250,7 @@ namespace HephAudio
 
 				for (size_t i = 0; i < skipCount; i++)
 				{
-					HEPHAUDIO_LOG_LINE("Skipped the file \"" + queue.at(i)->name + "\"", ConsoleLogger::info);
+					HEPHAUDIO_LOG("Skipped the file \"" + queue.at(i)->name + "\"", ConsoleLogger::info);
 
 					std::shared_ptr<AudioObject> qao = queue.at(i);
 
@@ -436,7 +436,7 @@ namespace HephAudio
 						{
 							try
 							{
-								HEPHAUDIO_LOG_LINE("Playing the next file \"" + qao->name + "\" in queue: " + qao->queueName, ConsoleLogger::info);
+								HEPHAUDIO_LOG("Playing the next file \"" + qao->name + "\" in queue: " + qao->queueName, ConsoleLogger::info);
 
 								AudioFile audioFile(qao->filePath);
 								Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
@@ -497,7 +497,7 @@ namespace HephAudio
 							audioObjects.erase(audioObjects.begin() + i);
 							i--;
 
-							HEPHAUDIO_LOG_LINE("Finished playing the file \"" + pAudioObject->name + "\"", ConsoleLogger::info);
+							HEPHAUDIO_LOG("Finished playing the file \"" + pAudioObject->name + "\"", ConsoleLogger::info);
 
 							if (!queueName.CompareContent(""))
 							{

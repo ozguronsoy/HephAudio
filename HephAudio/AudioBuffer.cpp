@@ -21,15 +21,12 @@ namespace HephAudio
 		if (frameCount > 0)
 		{
 			// allocate memory and initialize it to 0.
-			this->pAudioData = malloc(Size());
-			if (this->pAudioData != nullptr)
-			{
-				memset(this->pAudioData, 0, this->Size());
-			}
-			else
+			this->pAudioData = malloc(this->Size());
+			if (this->pAudioData == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory.");
 			}
+			this->Reset();
 		}
 		else
 		{
@@ -62,13 +59,8 @@ namespace HephAudio
 	}
 	AudioBuffer::~AudioBuffer()
 	{
-		this->frameCount = 0;
+		this->Empty();
 		this->formatInfo = AudioFormatInfo();
-		if (this->pAudioData != nullptr)
-		{
-			free(this->pAudioData);
-			this->pAudioData = nullptr;
-		}
 	}
 	AudioFrame AudioBuffer::operator[](const size_t& frameIndex) const
 	{
@@ -524,12 +516,7 @@ namespace HephAudio
 		{
 			if (newFrameCount == 0)
 			{
-				this->frameCount = 0;
-				if (this->pAudioData != nullptr)
-				{
-					free(this->pAudioData);
-					this->pAudioData = nullptr;
-				}
+				this->Empty();
 			}
 			else
 			{
@@ -541,6 +528,15 @@ namespace HephAudio
 				this->pAudioData = tempPtr;
 				this->frameCount = newFrameCount;
 			}
+		}
+	}
+	void AudioBuffer::Empty() noexcept
+	{
+		this->frameCount = 0;
+		if (this->pAudioData != nullptr)
+		{
+			free(this->pAudioData);
+			this->pAudioData = nullptr;
 		}
 	}
 	hephaudio_float AudioBuffer::Min() const noexcept

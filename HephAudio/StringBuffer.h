@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	enum class StringType : uint8_t
 	{
-		Normal,
+		ASCII,
 		Wide
 	};
 	class StringBuffer final

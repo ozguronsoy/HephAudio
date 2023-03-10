@@ -40,7 +40,7 @@ namespace HephAudio
 #if defined(__ANDROID__)
 		pFile = fopen(filePath.fc_str(), "rb");
 #else
-		pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read.
+		pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read.
 #endif
 		if (pFile == nullptr)
 		{
@@ -98,7 +98,7 @@ namespace HephAudio
 #if defined(__ANDROID__)
 		FILE* pFile = fopen(filePath.fc_str(), "rb");
 #else
-		FILE* pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read operations (b = open as a binary file).
+		FILE* pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read operations (b = open as a binary file).
 #endif
 		if (pFile != nullptr)
 		{
@@ -120,7 +120,7 @@ namespace HephAudio
 #if defined(__ANDROID__)
 			newFile->pFile = fopen(filePath.fc_str(), "wb");
 #else
-			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wb") : _wfopen(filePath, L"wb");
+			newFile->pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "wb") : _wfopen(filePath, L"wb");
 #endif
 		}
 		else
@@ -128,7 +128,7 @@ namespace HephAudio
 #if defined(__ANDROID__)
 			newFile->pFile = fopen(filePath.fc_str(), "wbx");
 #else
-			newFile->pFile = filePath.GetStringType() == StringType::Normal ? fopen(filePath, "wbx") : _wfopen(filePath, L"wbx");
+			newFile->pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "wbx") : _wfopen(filePath, L"wbx");
 #endif
 		}
 		if (newFile->pFile == nullptr)

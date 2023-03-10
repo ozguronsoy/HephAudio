@@ -4,16 +4,35 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Class for holding complex numbers.
+	/// </summary>
 	class ComplexBuffer final
 	{
 	private:
 		size_t frameCount;
 		Complex* pComplexData;
 	public:
+		/// <summary>
+		/// Initializes an empty buffer.
+		/// </summary>
 		ComplexBuffer();
+		/// <summary>
+		/// Initializes a buffer with "frameCount" amount of hephaudio_float instances.
+		/// </summary>
+		/// <param name="frameCount">The number of frames the buffer will consist of.</param>
 		ComplexBuffer(size_t frameCount);
+		/// <summary>
+		/// Initializes a buffer and copies the rhs buffer's content to the new buffer.
+		/// </summary>
 		ComplexBuffer(const ComplexBuffer& rhs);
+		/// <summary>
+		/// Initializes a buffer and moves the rhs buffer's contents to the new buffer.
+		/// </summary>
 		ComplexBuffer(ComplexBuffer&& rhs) noexcept;
+		/// <summary>
+		/// Frees the resources.
+		/// </summary>
 		~ComplexBuffer();
 		/// <summary>
 		/// Returns the complex number at the given index.
@@ -27,11 +46,11 @@ namespace HephAudio
 		/// <returns>The inverted complex buffer</returns>
 		ComplexBuffer operator-() const;
 		/// <summary>
-		/// Copies the rhs buffer.
+		/// Copies the rhs buffer's content to the current buffer.
 		/// </summary>
 		ComplexBuffer& operator=(const ComplexBuffer& rhs);
 		/// <summary>
-		/// Moves the rhs buffer.
+		/// Moves the rhs buffer's content to the current buffer.
 		/// </summary>
 		ComplexBuffer& operator=(ComplexBuffer&& rhs) noexcept;
 		/// <summary>
@@ -180,6 +199,10 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="newFrameCount">The new number of frames the buffer will consist of</param>
 		void Resize(size_t newFrameCount);
+		/// <summary>
+		/// Empties the buffer.
+		/// </summary>
+		void Empty() noexcept;
 		/// <summary>
 		/// Gets the start of the complex data.
 		/// </summary>

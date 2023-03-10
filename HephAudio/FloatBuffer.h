@@ -3,16 +3,35 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Class for holding floating point numbers.
+	/// </summary>
 	class FloatBuffer final
 	{
 	private:
 		size_t frameCount;
 		hephaudio_float* pData;
 	public:
+		/// <summary>
+		/// Initializes an empty buffer.
+		/// </summary>
 		FloatBuffer();
+		/// <summary>
+		/// Initializes a buffer with "frameCount" amount of hephaudio_float instances.
+		/// </summary>
+		/// <param name="frameCount">The number of frames the buffer will consist of.</param>
 		FloatBuffer(size_t frameCount);
+		/// <summary>
+		/// Initializes a buffer and copies the rhs buffer's content to the new buffer.
+		/// </summary>
 		FloatBuffer(const FloatBuffer& rhs);
+		/// <summary>
+		/// Initializes a buffer and moves the rhs buffer's contents to the new buffer.
+		/// </summary>
 		FloatBuffer(FloatBuffer&& rhs) noexcept;
+		/// <summary>
+		/// Frees the resources.
+		/// </summary>
 		~FloatBuffer();
 		/// <summary>
 		/// Returns the number at the given index.
@@ -26,11 +45,11 @@ namespace HephAudio
 		/// <returns>The inverted float buffer</returns>
 		FloatBuffer operator-() const;
 		/// <summary>
-		/// Copies the rhs buffer.
+		/// Copies the rhs buffer's content to the current buffer.
 		/// </summary>
 		FloatBuffer& operator=(const FloatBuffer& rhs);
 		/// <summary>
-		/// Moves the rhs buffer.
+		/// Moves the rhs buffer's contents to the current buffer.
 		/// </summary>
 		FloatBuffer& operator=(FloatBuffer&& rhs) noexcept;
 		/// <summary>
@@ -146,6 +165,10 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="newFrameCount">The new number of frames the buffer will consist of</param>
 		void Resize(size_t newFrameCount);
+		/// <summary>
+		/// Empties the buffer.
+		/// </summary>
+		void Empty() noexcept;
 		/// <summary>
 		/// Finds the sample with the smallest value in the buffer.
 		/// </summary>

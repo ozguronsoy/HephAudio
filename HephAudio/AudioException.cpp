@@ -7,7 +7,7 @@ namespace HephAudio
 		: errorCode(errorCode), method(method), message(message) {}
 	AudioException::operator char* () const
 	{
-		this->resultMessage = this->ToString(StringType::Normal);
+		this->resultMessage = this->ToString(StringType::ASCII);
 		return this->resultMessage;
 	}
 	AudioException::operator wchar_t* () const
@@ -17,7 +17,7 @@ namespace HephAudio
 	}
 	StringBuffer AudioException::ToString(StringType stringType) const
 	{
-		if (stringType == StringType::Normal)
+		if (stringType == StringType::ASCII)
 		{
 			return "Audio Exception " + StringBuffer::ToHexString(errorCode) + " (" + StringBuffer::ToString(this->errorCode) + ")\nMethod: " + this->method + "\nMessage: " + this->message;
 		}

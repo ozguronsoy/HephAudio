@@ -56,14 +56,13 @@ typedef float hephaudio_float;
 #define HEPHAUDIO_STOPWATCH_DT(prefix) StopWatch::DeltaTime(prefix)
 #define HEPHAUDIO_STOPWATCH_STOP StopWatch::Stop()
 #define HEPHAUDIO_LOG(logMessage, logType) ConsoleLogger::Log(logMessage, logType)
-#define HEPHAUDIO_LOG_LINE(logMessage, logType) ConsoleLogger::LogLine(logMessage, logType)
 #else
 #define HEPHAUDIO_STOPWATCH_START
 #define HEPHAUDIO_STOPWATCH_RESET
 #define HEPHAUDIO_STOPWATCH_DT(prefix)
 #define HEPHAUDIO_STOPWATCH_STOP
 #define HEPHAUDIO_LOG(logMessage, logType)
-#define HEPHAUDIO_LOG_LINE(logMessage, logType)
+#define HEPHAUDIO_LOG(logMessage, logType)
 #endif
 #endif
 

@@ -8,6 +8,9 @@ namespace HephAudio
 {
 #pragma region Audio Frame
 	class AudioBuffer;
+	/// <summary>
+	/// Struct for accessing the audio samples at the given channel of the frame.
+	/// </summary>
 	struct AudioFrame final
 	{
 		friend class AudioBuffer;
@@ -25,6 +28,9 @@ namespace HephAudio
 	};
 #pragma endregion
 #pragma region Audio Buffer
+	/// <summary>
+	/// Class for holding audio data.
+	/// </summary>
 	class AudioBuffer final
 	{
 		friend class AudioProcessor;
@@ -33,10 +39,26 @@ namespace HephAudio
 		size_t frameCount;
 		void* pAudioData;
 	public:
+		/// <summary>
+		/// Initializes an empty buffer.
+		/// </summary>
 		AudioBuffer();
+		/// <summary>
+		/// Initializes a buffer with "frameCount" amount of audio frames.
+		/// </summary>
+		/// <param name="frameCount">The number of frames the buffer will consist of.</param>
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
+		/// <summary>
+		/// Initializes a buffer and copies the rhs buffer's content to the new buffer.
+		/// </summary>
 		AudioBuffer(const AudioBuffer& rhs);
+		/// <summary>
+		/// Initializes a buffer and moves the rhs buffer's contents to the new buffer.
+		/// </summary>
 		AudioBuffer(AudioBuffer&& rhs) noexcept;
+		/// <summary>
+		/// Frees the resources.
+		/// </summary>
 		~AudioBuffer();
 		/// <summary>
 		/// Returns the audio frame at the given index.
@@ -50,11 +72,11 @@ namespace HephAudio
 		/// <returns>The inverted audio buffer</returns>
 		AudioBuffer operator-() const;
 		/// <summary>
-		/// Copies the rhs buffer.
+		/// Copies the rhs buffer's content to the current buffer.
 		/// </summary>
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		/// <summary>
-		/// Moves the rhs buffer.
+		/// Moves the rhs buffer's content to the current buffer.
 		/// </summary>
 		AudioBuffer& operator=(AudioBuffer&& rhs) noexcept;
 		/// <summary>
@@ -195,6 +217,10 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="newFrameCount">The new number of frames the buffer will consist of</param>
 		void Resize(size_t newFrameCount);
+		/// <summary>
+		/// Empties the buffer.
+		/// </summary>
+		void Empty() noexcept;
 		/// <summary>
 		/// Finds the sample with the smallest value in the buffer.
 		/// </summary>
