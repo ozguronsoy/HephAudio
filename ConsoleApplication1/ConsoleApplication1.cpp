@@ -18,7 +18,7 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioPath);
-void HPFMF(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel);
+void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel);
 
 int main()
 {
@@ -279,14 +279,14 @@ int Run(Audio& audio, StringBuffer& audioPath)
 
 	return 0;
 }
-void HPFMF(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel)
+void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel)
 {
 	constexpr auto applyFilter = [](AudioBuffer* buffer, FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t stopIndex)
 	{
-		AudioBuffer channel = AudioBuffer(frameCount, AudioFormatInfo(buffer->FormatInfo().formatTag, 1, buffer->FormatInfo().bitsPerSample, buffer->FormatInfo().sampleRate));
+		FloatBuffer channel = FloatBuffer(frameCount);
 		for (size_t i = 0; i < frameCount && i + frameIndex < buffer->FrameCount(); i++)
 		{
-			channel[i][0] = (*buffer)[i + frameIndex][channelIndex];
+			channel[i] = (*buffer)[i + frameIndex][channelIndex];
 			(*buffer)[i + frameIndex][channelIndex] = 0;
 		}
 
@@ -307,18 +307,18 @@ void HPFMF(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float 
 		}
 	};
 
-	constexpr hephaudio_float maxAllowedCpuUsage = 0.8;
-	const size_t hardwareThreadCount = std::thread::hardware_concurrency(); // may return 0
-	if (threadCountPerChannel * buffer.FormatInfo().channelCount > hardwareThreadCount * maxAllowedCpuUsage)
-	{
-		threadCountPerChannel = floor(hardwareThreadCount * maxAllowedCpuUsage / buffer.FormatInfo().channelCount);
-		if (threadCountPerChannel == 0)
-		{
-			threadCountPerChannel = 1;
-		}
-	}
+	//constexpr hephaudio_float maxAllowedCpuUsage = 0.8;
+	//const size_t hardwareThreadCount = std::thread::hardware_concurrency(); // may return 0
+	//if (threadCountPerChannel * buffer.FormatInfo().channelCount > hardwareThreadCount * maxAllowedCpuUsage)
+	//{
+	//	threadCountPerChannel = floor(hardwareThreadCount * maxAllowedCpuUsage / buffer.FormatInfo().channelCount);
+	//	if (threadCountPerChannel == 0)
+	//	{
+	//		threadCountPerChannel = 1;
+	//	}
+	//}
 
-	const uint64_t stopIndex = Fourier::FrequencyToIndex(buffer.FormatInfo().sampleRate, fftSize, cutoffFrequency);
+	const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.FormatInfo().sampleRate, fftSize, cutoffFrequency);
 	std::vector<std::thread> threads = std::vector<std::thread>(buffer.FormatInfo().channelCount * threadCountPerChannel);
 	FloatBuffer hannWindow = AudioProcessor::GenerateHannWindow(fftSize);
 	const size_t frameCountPerThread = ceil((hephaudio_float)buffer.FrameCount() / (hephaudio_float)threadCountPerChannel);

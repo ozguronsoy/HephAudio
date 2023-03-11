@@ -8,6 +8,7 @@ namespace HephAudio
 	/// </summary>
 	class FloatBuffer final
 	{
+		friend class AudioProcessor;
 	private:
 		size_t frameCount;
 		hephaudio_float* pData;

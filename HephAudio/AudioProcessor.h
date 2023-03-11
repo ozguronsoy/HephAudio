@@ -28,8 +28,8 @@ namespace HephAudio
 		static void ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate);
 		static void ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate, size_t outFrameCount);
 		static void Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers);
-		static std::vector<AudioBuffer> SplitChannels(const AudioBuffer& buffer);
-		static AudioBuffer MergeChannels(const std::vector<AudioBuffer>& channels);
+		static std::vector<FloatBuffer> SplitChannels(const AudioBuffer& buffer);
+		static AudioBuffer MergeChannels(const std::vector<FloatBuffer>& channels, uint32_t sampleRate);
 		static void ConvertPcmToInnerFormat(AudioBuffer& buffer);
 		static void ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps);
 #pragma endregion
