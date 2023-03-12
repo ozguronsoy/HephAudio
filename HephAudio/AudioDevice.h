@@ -26,7 +26,7 @@ namespace HephAudio
 		/// </summary>
 		StringBuffer name{ "" };
 		/// <summary>
-		/// Tells whether the device is for rendering or capturing audio.
+		/// Tells whether the device is an output (render) or an input (capture) audio.
 		/// </summary>
 		AudioDeviceType type{ AudioDeviceType::Render };
 		/// <summary>

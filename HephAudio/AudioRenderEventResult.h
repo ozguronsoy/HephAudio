@@ -5,12 +5,18 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Holds the audio data that will be rendered and whether the audio object finished playing.
+	/// </summary>
 	struct AudioRenderEventResult : public AudioEventResult
 	{
-	public:
-		AudioBuffer renderBuffer;
-		bool isFinishedPlaying;
-	public:
-		virtual ~AudioRenderEventResult() = default;
+		/// <summary>
+		/// The audio data that will be rendered.
+		/// </summary>
+		AudioBuffer renderBuffer{ AudioBuffer() };
+		/// <summary>
+		/// Tells whether the audio object finished playing.
+		/// </summary>
+		bool isFinishedPlaying{ false };
 	};
 }

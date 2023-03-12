@@ -5,12 +5,20 @@
 
 namespace HephAudio
 {
+	/// <summary>
+	/// Holds the necessary information to handle an audio device event.
+	/// </summary>
 	struct AudioDeviceEventArgs : public AudioEventArgs
 	{
-	public:
+		/// <summary>
+		/// The audio device that triggered the event.
+		/// </summary>
 		AudioDevice audioDevice;
-	public:
+		/// <summary>
+		/// Creates and initializes an AudioDeviceEventArgs instance.
+		/// </summary>
+		/// <param name="pNativeAudio">Pointer to the NativeAudio instance where the event occurred.</param>
+		/// <param name="audioDevice">The audio device that triggered the event.</param>
 		AudioDeviceEventArgs(const void* pNativeAudio, AudioDevice audioDevice);
-		virtual ~AudioDeviceEventArgs() = default;
 	};
 }

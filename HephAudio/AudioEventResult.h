@@ -3,7 +3,10 @@
 
 namespace HephAudio
 {
-	struct AudioEventResult 
+	/// <summary>
+	/// Base class for returning data from events.
+	/// </summary>
+	struct AudioEventResult
 	{
 		virtual ~AudioEventResult() = default;
 	};
