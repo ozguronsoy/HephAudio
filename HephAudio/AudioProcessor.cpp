@@ -753,7 +753,7 @@ namespace HephAudio
 					hephaudio_float synthesisPhase = twopi * hopSize / fftSize * synthesisFrequencies[k][j] + lastSynthesisPhases[k][j];
 					synthesisPhase = synthesisPhase >= 0 ? (fmod(synthesisPhase + PI, twopi) - PI) : (fmod(synthesisPhase - PI, -twopi) + PI);
 					complexBuffer[k] = Complex(synthesisMagnitudes[k][j] * cos(synthesisPhase), synthesisMagnitudes[k][j] * sin(synthesisPhase));
-					complexBuffer[fftSize - k - 1] = Complex(complexBuffer[k].real, -complexBuffer[k].imaginary);
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
 					lastSynthesisPhases[k][j] = synthesisPhase;
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
@@ -786,7 +786,7 @@ namespace HephAudio
 				for (size_t k = startIndex; k < nyquistFrequency; k++)
 				{
 					complexBuffer[k] = Complex(0, 0);
-					complexBuffer[fftSize - k - 1] = Complex(complexBuffer[k].real, -complexBuffer[k].imaginary);
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
@@ -817,7 +817,7 @@ namespace HephAudio
 				for (int64_t j = startIndex; j < nyquistFrequency; j++)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex();
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 
 				Fourier::FFT_Inverse(complexBuffer, false);
@@ -867,7 +867,7 @@ namespace HephAudio
 				for (size_t j = startIndex; j < nyquistFrequency; j++)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t j = 0; j < fftSize; j++)
@@ -948,7 +948,7 @@ namespace HephAudio
 				for (int64_t k = stopIndex; k >= 0; k--)
 				{
 					complexBuffer[k] = Complex();
-					complexBuffer[fftSize - k - 1] = Complex(complexBuffer[k].real, -complexBuffer[k].imaginary);
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
@@ -979,7 +979,7 @@ namespace HephAudio
 				for (int64_t j = stopIndex; j >= 0; j--)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex();
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 
 				Fourier::FFT_Inverse(complexBuffer, false);
@@ -1027,7 +1027,7 @@ namespace HephAudio
 				for (int64_t j = stopIndex; j >= 0; j--)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t j = 0; j < fftSize; j++)
@@ -1100,12 +1100,12 @@ namespace HephAudio
 				for (int64_t k = startIndex; k >= 0; k--)
 				{
 					complexBuffer[k] = Complex();
-					complexBuffer[fftSize - k - 1] = Complex(complexBuffer[k].real, -complexBuffer[k].imaginary);
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
 				}
 				for (size_t k = stopIndex; k < nyquistFrequency; k++)
 				{
 					complexBuffer[k] = Complex();
-					complexBuffer[fftSize - k - 1] = Complex(complexBuffer[k].real, -complexBuffer[k].imaginary);
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
@@ -1137,13 +1137,13 @@ namespace HephAudio
 				for (int64_t j = startIndex; j >= 0; j--)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 
 				for (size_t j = stopIndex; j < nyquistFrequency; j++)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 
 				Fourier::FFT_Inverse(complexBuffer, false);
@@ -1195,12 +1195,12 @@ namespace HephAudio
 				for (int64_t j = startIndex; j >= 0; j--)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 				for (size_t j = stopIndex; j < nyquistFrequency; j++)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t j = 0; j < fftSize; j++)
@@ -1272,7 +1272,7 @@ namespace HephAudio
 				for (size_t k = startIndex; k <= stopIndex; k++)
 				{
 					complexBuffer[k] = Complex();
-					complexBuffer[fftSize - k - 1] = Complex(complexBuffer[k].real, -complexBuffer[k].imaginary);
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
@@ -1303,7 +1303,7 @@ namespace HephAudio
 				for (size_t j = startIndex; j <= stopIndex; j++)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 
 				Fourier::FFT_Inverse(complexBuffer, false);
@@ -1354,7 +1354,7 @@ namespace HephAudio
 				for (size_t j = startIndex; j <= stopIndex; j++)
 				{
 					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = Complex(complexBuffer[j].real, -complexBuffer[j].imaginary);
+					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
 				}
 				Fourier::FFT_Inverse(complexBuffer, false);
 				for (size_t j = 0; j < fftSize; j++)

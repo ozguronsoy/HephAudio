@@ -102,6 +102,10 @@ namespace HephAudio
 		*this = *this / rhs;
 		return *this;
 	}
+	Complex Complex::Conjugate() const noexcept
+	{
+		return Complex(this->real, -this->imaginary);
+	}
 	hephaudio_float Complex::Magnitude() const noexcept
 	{
 		return sqrt(this->real * this->real + this->imaginary * this->imaginary);

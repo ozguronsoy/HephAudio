@@ -51,6 +51,11 @@ namespace HephAudio
 		Complex operator/(const hephaudio_float& rhs) const;
 		Complex& operator/=(const hephaudio_float& rhs);
 		/// <summary>
+		/// Creates the complex conjugate of the current complex number.
+		/// </summary>
+		/// <returns>The complex conjugate of the current complex number.</returns>
+		Complex Conjugate() const noexcept;
+		/// <summary>
 		/// Calculates the magnitude of the complex number.
 		/// </summary>
 		/// <returns>The magnitude of the complex number.</returns>

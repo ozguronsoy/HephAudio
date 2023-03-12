@@ -13,11 +13,16 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses WASAPI. Use WinAudioDS if you have Windows XP or lower.
+		/// <summary>
+		/// Uses WASAPI. Use WinAudioDS if you have Windows XP or lower.
+		/// </summary>
 		class WinAudio : public NativeAudio
 		{
 #pragma region Audio Session Events
 		protected:
+			/// <summary>
+			/// Implementation of the IAudioSessionEvents interface.
+			/// </summary>
 			class AudioSessionEvents final : public IAudioSessionEvents
 			{
 			private:
@@ -41,6 +46,9 @@ namespace HephAudio
 #pragma endregion
 #pragma region Audio Device Events
 		protected:
+			/// <summary>
+			/// Implementation of the IMMNotificationClient interface.
+			/// </summary>
 			class AudioDeviceEvents final : public IMMNotificationClient
 			{
 			private:
@@ -60,32 +68,54 @@ namespace HephAudio
 			};
 #pragma endregion
 		protected:
+			/// <summary>
+			/// The event handle for the render client interface.
+			/// </summary>
 			HANDLE hEvent;
+			/// <summary>
+			/// The WASAPI interface that handles the device enumeration.
+			/// </summary>
 			Microsoft::WRL::ComPtr<IMMDeviceEnumerator> pEnumerator;
-			Microsoft::WRL::ComPtr<IAudioClient3> pAudioClient;
-			Microsoft::WRL::ComPtr<IAudioSessionManager2> pSessionManager;
+			/// <summary>
+			/// The WASAPI interface used for setting and getting the master volume.
+			/// </summary>
+			Microsoft::WRL::ComPtr<IAudioSessionManager2> pRenderSessionManager;
+			/// <summary>
+			/// The WASAPI interface that notifies the WinAudio instance when a session event happens. 
+			/// </summary>
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pSessionControl;
+			/// <summary>
+			/// The instance that handles the session events.
+			/// </summary>
 			AudioSessionEvents sessionEvents;
+			/// <summary>
+			/// The instance that handles the device events.
+			/// </summary>
 			AudioDeviceEvents deviceEvents;
 		public:
+			/// <summary>
+			/// Creates and initalizes a WinAudio instance.
+			/// </summary>
 			WinAudio();
 			WinAudio(const WinAudio&) = delete;
 			WinAudio& operator=(const WinAudio&) = delete;
+			/// <summary>
+			/// Frees the WASAPI resources.
+			/// </summary>
 			virtual ~WinAudio();
-			virtual void SetMasterVolume(hephaudio_float volume);
-			virtual hephaudio_float GetMasterVolume() const;
-			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);
-			virtual void StopRendering();
-			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
-			virtual void StopCapturing();
-			virtual void SetDisplayName(StringBuffer displayName);
-			virtual void SetIconPath(StringBuffer iconPath);
-			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
-			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
+			virtual void SetMasterVolume(hephaudio_float volume) override;
+			virtual hephaudio_float GetMasterVolume() const override;
+			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
+			virtual void StopRendering() override;
+			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
+			virtual void StopCapturing() override;
+			virtual void SetDisplayName(StringBuffer displayName) override;
+			virtual void SetIconPath(StringBuffer iconPath) override;
+			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const override;
+			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const override;
 		protected:
-			virtual UINT32 GetRenderBufferSize() const;
-			virtual void RenderData();
-			virtual void CaptureData(Microsoft::WRL::ComPtr<IAudioClient3> pCaptureAudioClient, Microsoft::WRL::ComPtr<IAudioSessionManager2> pSessionManager);
+			virtual void RenderData(Microsoft::WRL::ComPtr<IAudioClient3> pRenderAudioClient);
+			virtual void CaptureData(Microsoft::WRL::ComPtr<IAudioClient3> pCaptureAudioClient, Microsoft::WRL::ComPtr<IAudioSessionManager2> pCaptureSessionManager);
 			static EDataFlow DeviceTypeToDataFlow(AudioDeviceType deviceType);
 			static AudioDeviceType DataFlowToDeviceType(EDataFlow dataFlow);
 		};

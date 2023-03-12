@@ -128,56 +128,52 @@ namespace HephAudio
 		}
 		void AndroidAudioBase::CheckAudioDevices()
 		{
-			constexpr hephaudio_float period = 250.0; // In ms.
-			StopWatch::Start();
+			constexpr std::chrono::nanoseconds period_ns = std::chrono::nanoseconds((int64_t)(250.0 * 1e6));
 			JNIEnv* env = nullptr;
 			GetEnv(&env);
 			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, AudioDevice());
 
 			while (!disposing)
 			{
-				if (StopWatch::DeltaTime(StopWatch::milli) >= period)
+				std::this_thread::sleep_for(period_ns);
+
+				mutex.lock();
+				std::vector<AudioDevice> oldDevices = audioDevices;
+				EnumerateAudioDevices(env);
+				mutex.unlock();
+
+				if (OnAudioDeviceAdded)
 				{
-					mutex.lock();
-					std::vector<AudioDevice> oldDevices = audioDevices;
-					EnumerateAudioDevices(env);
-					mutex.unlock();
-
-					if (OnAudioDeviceAdded)
+					for (size_t i = 0; i < audioDevices.size(); i++)
 					{
-						for (size_t i = 0; i < audioDevices.size(); i++)
+						for (size_t j = 0; j < oldDevices.size(); j++)
 						{
-							for (size_t j = 0; j < oldDevices.size(); j++)
+							if (audioDevices.at(i).id == oldDevices.at(j).id)
 							{
-								if (audioDevices.at(i).id == oldDevices.at(j).id)
-								{
-									goto ADD_BREAK;
-								}
+								goto ADD_BREAK;
 							}
-							deviceEventArgs.audioDevice = audioDevices.at(i);
-							OnAudioDeviceAdded(&deviceEventArgs, nullptr);
-						ADD_BREAK:;
 						}
+						deviceEventArgs.audioDevice = audioDevices.at(i);
+						OnAudioDeviceAdded(&deviceEventArgs, nullptr);
+					ADD_BREAK:;
 					}
+				}
 
-					if (OnAudioDeviceRemoved)
+				if (OnAudioDeviceRemoved)
+				{
+					for (size_t i = 0; i < oldDevices.size(); i++)
 					{
-						for (size_t i = 0; i < oldDevices.size(); i++)
+						for (size_t j = 0; j < audioDevices.size(); j++)
 						{
-							for (size_t j = 0; j < audioDevices.size(); j++)
+							if (oldDevices.at(i).id == audioDevices.at(j).id)
 							{
-								if (oldDevices.at(i).id == audioDevices.at(j).id)
-								{
-									goto REMOVE_BREAK;
-								}
+								goto REMOVE_BREAK;
 							}
-							deviceEventArgs.audioDevice = oldDevices.at(i);
-							OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
-						REMOVE_BREAK:;
 						}
+						deviceEventArgs.audioDevice = oldDevices.at(i);
+						OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
+					REMOVE_BREAK:;
 					}
-
-					StopWatch::Reset();
 				}
 			}
 		}
