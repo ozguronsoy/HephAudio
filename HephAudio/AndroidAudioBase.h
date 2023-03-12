@@ -34,7 +34,7 @@ namespace HephAudio
 			/// <summary>
 			/// Locks to prevent race condition while accessing and enumerating audio devices.
 			/// </summary>
-			mutable std::mutex mutex;
+			mutable std::mutex deviceMutex;
 		public:
 			/// <summary>
 			/// Creates and initalizes an AndroidAudioBase instance.

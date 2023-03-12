@@ -37,7 +37,7 @@ namespace HephAudio
 	void PulseWaveOscillator::UpdateEta() noexcept
 	{
 		const size_t frameCount = ceil(this->sampleRate / this->frequency);
-		hephaudio_float maxSample = 1.0;
+		hephaudio_float maxSample = this->peakAmplitude;
 		this->eta = 1.0;
 
 		for (size_t i = 0; i < frameCount; i++)
@@ -49,6 +49,6 @@ namespace HephAudio
 			}
 		}
 
-		this->eta = 1.0 / maxSample;
+		this->eta = this->peakAmplitude / maxSample;
 	}
 }

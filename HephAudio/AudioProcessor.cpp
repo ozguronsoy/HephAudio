@@ -280,7 +280,18 @@ namespace HephAudio
 	}
 	void AudioProcessor::Tremolo(AudioBuffer& buffer, hephaudio_float depth, const OscillatorBase& lfo)
 	{
-		AudioProcessor::TremoloRT(buffer, 0, depth, lfo);
+		const hephaudio_float wetFactor = depth * 0.5;
+		const hephaudio_float dryFactor = 1.0 - wetFactor;
+		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
+
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			const hephaudio_float& lfoSample = lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount];
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				buffer[i][j] *= wetFactor * lfoSample + dryFactor;
+			}
+		}
 	}
 	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, const OscillatorBase& lfo)
 	{
@@ -396,13 +407,14 @@ namespace HephAudio
 		const size_t maxSampleDelay = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
 		const hephaudio_float wetFactor = depth * 0.5;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
+		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
 
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
 		memcpy(resultBuffer.pAudioData, buffer.pAudioData, maxSampleDelay * buffer.formatInfo.FrameSize());
 
 		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay = round(abs(lfo.Oscillate(i)) * maxSampleDelay);
+			const size_t currentDelay = round(abs(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount]) * maxSampleDelay);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = wetFactor * buffer[i - currentDelay][j] + dryFactor * buffer[i][j];

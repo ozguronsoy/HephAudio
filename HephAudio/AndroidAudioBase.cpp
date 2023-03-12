@@ -38,14 +38,23 @@ namespace HephAudio
 		}
 		AudioDevice AndroidAudioBase::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 		{
-			std::vector<AudioDevice> audioDevices = GetAudioDevices(deviceType);
+			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
+				return AudioDevice();
+			}
+
+			deviceMutex.lock();
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
 				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
 				{
+					deviceMutex.unlock();
 					return audioDevices.at(i);
 				}
 			}
+			deviceMutex.unlock();
+
 			return AudioDevice();
 		}
 		std::vector<AudioDevice> AndroidAudioBase::GetAudioDevices(AudioDeviceType deviceType) const
@@ -58,7 +67,7 @@ namespace HephAudio
 				return result;
 			}
 
-			mutex.lock();
+			deviceMutex.lock();
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
 				if ((audioDevices.at(i).type & deviceType) != AudioDeviceType::Null)
@@ -66,7 +75,7 @@ namespace HephAudio
 					result.push_back(audioDevices.at(i));
 				}
 			}
-			mutex.unlock();
+			deviceMutex.unlock();
 
 			return result;
 		}
@@ -137,10 +146,10 @@ namespace HephAudio
 			{
 				std::this_thread::sleep_for(period_ns);
 
-				mutex.lock();
+				deviceMutex.lock();
 				std::vector<AudioDevice> oldDevices = audioDevices;
 				EnumerateAudioDevices(env);
-				mutex.unlock();
+				deviceMutex.unlock();
 
 				if (OnAudioDeviceAdded)
 				{

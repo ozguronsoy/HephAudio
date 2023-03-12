@@ -72,7 +72,7 @@ namespace HephAudio
 		}
 		void WinAudioDS::SetMasterVolume(hephaudio_float volume)
 		{
-			if (!disposing && isRenderInitialized)
+			if (isRenderInitialized)
 			{
 				const uint16_t usv = volume * UINT16_MAX;
 				const uint32_t dv = (usv << 16) | usv;
@@ -81,7 +81,7 @@ namespace HephAudio
 		}
 		hephaudio_float WinAudioDS::GetMasterVolume() const
 		{
-			if (!disposing && isRenderInitialized)
+			if (isRenderInitialized)
 			{
 				DWORD dv;
 				waveOutGetVolume(nullptr, &dv);
@@ -94,8 +94,6 @@ namespace HephAudio
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
-
-			if (disposing) { return; }
 
 			StopRendering();
 
@@ -157,8 +155,6 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
 
-			if (disposing) { return; }
-
 			StopCapturing();
 
 			captureFormat = format;
@@ -215,31 +211,30 @@ namespace HephAudio
 		}
 		void WinAudioDS::SetDisplayName(StringBuffer displayName)
 		{
-			if (disposing) { return; }
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, "WinAudioDS::SetDisplayName", "WinAudioDS does not support this method, use WinAudio instead."));
 		}
 		void WinAudioDS::SetIconPath(StringBuffer iconPath)
 		{
-			if (disposing) { return; }
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, "WinAudioDS::SetIconPath", "WinAudioDS does not support this method, use WinAudio instead."));
 		}
 		AudioDevice WinAudioDS::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 		{
-			if (disposing) { return AudioDevice(); }
-
 			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
 			{
 				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
 				return AudioDevice();
 			}
 
+			deviceMutex.lock();
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
 				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
 				{
+					deviceMutex.unlock();
 					return audioDevices.at(i);
 				}
 			}
+			deviceMutex.unlock();
 
 			return AudioDevice();
 		}
@@ -253,6 +248,7 @@ namespace HephAudio
 				return result;
 			}
 
+			deviceMutex.lock();
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
 				if (deviceType == AudioDeviceType::All || audioDevices.at(i).type == deviceType)
@@ -260,6 +256,7 @@ namespace HephAudio
 					result.push_back(audioDevices.at(i));
 				}
 			}
+			deviceMutex.unlock();
 
 			return result;
 		}
@@ -281,12 +278,12 @@ namespace HephAudio
 			{
 				std::this_thread::sleep_for(period_ns);
 
+				deviceMutex.lock();
 				std::vector<AudioDevice> oldDevices = audioDevices;
-
 				audioDevices.clear();
-
 				WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating render devices.");
 				WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating capture devices.");
+				deviceMutex.unlock();
 
 				if (OnAudioDeviceAdded)
 				{

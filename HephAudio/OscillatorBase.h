@@ -1,6 +1,6 @@
 #pragma once
 #include "framework.h"
-#include "AudioBuffer.h"
+#include "FloatBuffer.h"
 #include <cmath>
 #include <cinttypes>
 
@@ -23,7 +23,8 @@ namespace HephAudio
 	public:
 		virtual ~OscillatorBase() = default;
 		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept = 0;
-		virtual AudioBuffer GenerateBuffer(size_t frameCount) const noexcept;
-		virtual AudioBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
+		virtual FloatBuffer GenerateBuffer() const noexcept;
+		virtual FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;
+		virtual FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
 	};
 }

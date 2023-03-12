@@ -7,17 +7,28 @@ namespace HephAudio
 	{
 		this->phase_rad = angleUnit == AngleUnit::Radian ? phase : DegToRad(phase);
 	}
-	AudioBuffer OscillatorBase::GenerateBuffer(size_t frameCount) const noexcept
+	FloatBuffer OscillatorBase::GenerateBuffer() const noexcept
 	{
-		return this->GenerateBuffer(0, frameCount);
+		return this->GenerateBuffer(ceil(this->sampleRate / this->frequency));
 	}
-	AudioBuffer OscillatorBase::GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept
+	FloatBuffer OscillatorBase::GenerateBuffer(size_t frameCount) const noexcept
 	{
-		AudioBuffer buffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, 1, sizeof(hephaudio_float) * 8, this->sampleRate));
+		FloatBuffer buffer = FloatBuffer(frameCount);
 
 		for (size_t i = 0; i < frameCount; i++)
 		{
-			buffer[i][0] = this->Oscillate(i + frameIndex);
+			buffer[i] = this->Oscillate(i);
+		}
+
+		return buffer;
+	}
+	FloatBuffer OscillatorBase::GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept
+	{
+		FloatBuffer buffer = FloatBuffer(frameCount);
+
+		for (size_t i = 0; i < frameCount; i++)
+		{
+			buffer[i] = this->Oscillate(i + frameIndex);
 		}
 
 		return buffer;

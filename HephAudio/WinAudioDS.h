@@ -2,6 +2,7 @@
 #ifdef _WIN32
 #include "framework.h"
 #include "NativeAudio.h"
+#include <mutex>
 #include <wrl.h>
 #include <dsound.h>
 #include <mmeapi.h>
@@ -44,6 +45,10 @@ namespace HephAudio
 			/// Enumerates the audio devices periodically to detect any change in available devices.
 			/// </summary>
 			std::thread deviceThread;
+			/// <summary>
+			/// Locks to prevent race condition while accessing and enumerating audio devices.
+			/// </summary>
+			mutable std::mutex deviceMutex;
 		public:
 			/// <summary>
 			/// Creates and initalizes an WinAudioDS instance.

@@ -212,7 +212,6 @@ namespace HephAudio
 		{
 			if (pRenderSessionManager != nullptr)
 			{
-				if (disposing) { return; }
 				if (volume > 1.0) { volume = 1.0; }
 				if (volume < 0.0) { volume = 0.0; }
 
@@ -225,8 +224,6 @@ namespace HephAudio
 		}
 		hephaudio_float WinAudio::GetMasterVolume() const
 		{
-			if (disposing) { return -1.0; }
-
 			float volume = -1.0f;
 
 			if (pRenderSessionManager != nullptr)
@@ -244,8 +241,6 @@ namespace HephAudio
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
-
-			if (disposing) { return; }
 
 			StopRendering();
 
@@ -317,7 +312,6 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
 
-			if (disposing) { return; }
 			StopCapturing();
 
 			ComPtr<IAudioClient3> pCaptureAudioClient = nullptr;
@@ -376,7 +370,7 @@ namespace HephAudio
 		}
 		void WinAudio::SetDisplayName(StringBuffer displayName)
 		{
-			if (!disposing && pSessionControl != nullptr)
+			if (pSessionControl != nullptr)
 			{
 				this->displayName = displayName;
 				HRESULT hres;
@@ -394,8 +388,6 @@ namespace HephAudio
 		}
 		AudioDevice WinAudio::GetDefaultAudioDevice(AudioDeviceType deviceType) const
 		{
-			if (disposing) { return AudioDevice(); }
-
 			HRESULT hres;
 
 			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
@@ -439,8 +431,6 @@ namespace HephAudio
 		}
 		std::vector<AudioDevice> WinAudio::GetAudioDevices(AudioDeviceType deviceType) const
 		{
-			if (disposing) { return { }; }
-
 			HRESULT hres;
 
 			if (deviceType == AudioDeviceType::Null)
