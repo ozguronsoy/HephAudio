@@ -19,6 +19,7 @@ void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioRoot);
 void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel);
+void ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, hephaudio_float speedFactor);
 
 int main()
 {

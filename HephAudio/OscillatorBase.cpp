@@ -14,23 +14,19 @@ namespace HephAudio
 	FloatBuffer OscillatorBase::GenerateBuffer(size_t frameCount) const noexcept
 	{
 		FloatBuffer buffer = FloatBuffer(frameCount);
-
 		for (size_t i = 0; i < frameCount; i++)
 		{
 			buffer[i] = this->Oscillate(i);
 		}
-
 		return buffer;
 	}
 	FloatBuffer OscillatorBase::GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept
 	{
 		FloatBuffer buffer = FloatBuffer(frameCount);
-
 		for (size_t i = 0; i < frameCount; i++)
 		{
 			buffer[i] = this->Oscillate(i + frameIndex);
 		}
-
 		return buffer;
 	}
 }

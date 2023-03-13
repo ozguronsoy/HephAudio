@@ -458,7 +458,7 @@ namespace HephAudio
 				}
 			}
 
-			hephaudio_float maxSample = 0.0;
+			hephaudio_float maxSample = INT32_MIN;
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
 				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -717,6 +717,52 @@ namespace HephAudio
 				}
 			}
 		}
+	}
+	void AudioProcessor::ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, hephaudio_float speed)
+	{
+		const hephaudio_float frameCountRatio = 1.0 / speed;
+		const FloatBuffer hannWindow = AudioProcessor::GenerateHannWindow(windowSize);
+		AudioBuffer tempBuffer = AudioBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo);
+
+		if (speed <= 1.0)
+		{
+			for (size_t i = 0; i < buffer.frameCount; i += hopSize)
+			{
+				AudioBuffer subBuffer = buffer.GetSubBuffer(i, windowSize);
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					for (size_t k = 0; k < frameCountRatio; k++)
+					{
+						for (size_t l = 0, m = i * frameCountRatio + k * hopSize; l < windowSize && m < tempBuffer.frameCount; l++, m++)
+						{
+							tempBuffer[m][j] += subBuffer[l][j] * hannWindow[l];
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < buffer.frameCount; i += hopSize)
+			{
+				AudioBuffer subBuffer = buffer.GetSubBuffer(i, windowSize);
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					for (size_t k = 0, l = i*frameCountRatio; k < windowSize && l < tempBuffer.frameCount; k++, l++)
+					{
+						tempBuffer[l][j] += subBuffer[k][j] * hannWindow[k];
+					}
+				}
+			}
+		}
+
+		const hephaudio_float absMax = tempBuffer.AbsMax();
+		if (absMax > 1.0)
+		{
+			tempBuffer /= absMax;
+		}
+
+		buffer = std::move(tempBuffer);
 	}
 	void AudioProcessor::PitchShift(AudioBuffer& buffer, hephaudio_float shiftFactor)
 	{

@@ -23,8 +23,8 @@ namespace HephAudio
 	public:
 		virtual ~OscillatorBase() = default;
 		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept = 0;
-		virtual FloatBuffer GenerateBuffer() const noexcept;
-		virtual FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;
-		virtual FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
+		FloatBuffer GenerateBuffer() const noexcept;
+		FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;
+		FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
 	};
 }
