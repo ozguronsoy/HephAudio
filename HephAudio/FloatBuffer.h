@@ -202,3 +202,4 @@ namespace HephAudio
 		hephaudio_float* End() const noexcept;
 	};
 }
+HephAudio::FloatBuffer abs(const HephAudio::FloatBuffer& rhs);

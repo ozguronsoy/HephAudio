@@ -25,7 +25,6 @@ namespace HephAudio
 		/// The error message.
 		/// </summary>
 		StringBuffer message;
-	public:
 		/// <summary>
 		/// Creates and initializes an AudioException instance with default values.
 		/// </summary>

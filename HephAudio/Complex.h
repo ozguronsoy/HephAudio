@@ -6,7 +6,7 @@ namespace HephAudio
 	/// <summary>
 	/// Struct for representing complex numbers.
 	/// </summary>
-	struct Complex
+	struct Complex final
 	{
 		/// <summary>
 		/// The real part of the complex number.
@@ -67,3 +67,5 @@ namespace HephAudio
 		hephaudio_float Phase() const noexcept;
 	};
 }
+hephaudio_float abs(const HephAudio::Complex& rhs);
+hephaudio_float phase(const HephAudio::Complex& rhs);

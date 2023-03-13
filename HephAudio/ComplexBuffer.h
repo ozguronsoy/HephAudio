@@ -1,6 +1,7 @@
 #pragma once
 #include "framework.h"
 #include "Complex.h"
+#include "FloatBuffer.h"
 
 namespace HephAudio
 {
@@ -214,4 +215,6 @@ namespace HephAudio
 		/// <returns>The end of the complex data</returns>
 		Complex* End() const noexcept;
 	};
-}
+};
+HephAudio::FloatBuffer abs(const HephAudio::ComplexBuffer& rhs);
+HephAudio::FloatBuffer phase(const HephAudio::ComplexBuffer& rhs);

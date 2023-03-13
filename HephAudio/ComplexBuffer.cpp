@@ -464,3 +464,21 @@ namespace HephAudio
 		return this->pComplexData + this->frameCount;
 	}
 }
+HephAudio::FloatBuffer abs(const HephAudio::ComplexBuffer& rhs)
+{
+	HephAudio::FloatBuffer resultBuffer = HephAudio::FloatBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = rhs[i].Magnitude();
+	}
+	return resultBuffer;
+}
+HephAudio::FloatBuffer phase(const HephAudio::ComplexBuffer& rhs)
+{
+	HephAudio::FloatBuffer resultBuffer = HephAudio::FloatBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = rhs[i].Phase();
+	}
+	return resultBuffer;
+}

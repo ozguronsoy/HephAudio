@@ -115,3 +115,11 @@ namespace HephAudio
 		return atan2(this->imaginary, this->real);
 	}
 }
+hephaudio_float abs(const HephAudio::Complex& rhs)
+{
+	return rhs.Magnitude();
+}
+hephaudio_float phase(const HephAudio::Complex& rhs)
+{
+	return rhs.Phase();
+}

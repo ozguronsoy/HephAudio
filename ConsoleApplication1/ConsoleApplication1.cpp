@@ -17,7 +17,7 @@ void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult);
 void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
-int Run(Audio& audio, StringBuffer& audioPath);
+int Run(Audio& audio, StringBuffer& audioRoot);
 void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel);
 
 int main()
@@ -30,9 +30,9 @@ int main()
 
 	wchar_t desktopPath[MAX_PATH + 1];
 	SHGetFolderPathW(NULL, CSIDL_DESKTOP, NULL, 0, desktopPath);
-	StringBuffer audioPath = desktopPath;
-	audioPath += '\\';
-	audioPath += "AudioFiles\\";
+	StringBuffer audioRoot = desktopPath;
+	audioRoot += '\\';
+	audioRoot += "AudioFiles\\";
 	Audio audio = Audio();
 	audio->OnException = OnException;
 	audio->OnAudioDeviceAdded = OnDeviceAdded;
@@ -40,7 +40,7 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
-	return Run(audio, audioPath);
+	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
 {
@@ -109,7 +109,7 @@ hephaudio_float PrintDeltaTime(StringBuffer label)
 	StopWatch::Reset();
 	return dt;
 }
-int Run(Audio& audio, StringBuffer& audioPath)
+int Run(Audio& audio, StringBuffer& audioRoot)
 {
 	std::wstring a;
 	StringBuffer sb = "";
@@ -121,11 +121,11 @@ int Run(Audio& audio, StringBuffer& audioPath)
 		{
 			if (sb == L"path")
 			{
-				ConsoleLogger::Log(audioPath, ConsoleLogger::info);
+				ConsoleLogger::Log(audioRoot, ConsoleLogger::info);
 			}
 			else
 			{
-				audioPath = sb.Split('"').at(1);
+				audioRoot = sb.Split('"').at(1);
 			}
 		}
 		else if (sb.Contains("play"))
@@ -140,14 +140,14 @@ int Run(Audio& audio, StringBuffer& audioPath)
 					break;
 				}
 			}
-			std::shared_ptr<AudioObject> pao = audio.Play(audioPath + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1);
+			std::shared_ptr<AudioObject> pao = audio.Play(audioRoot + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1);
 			pao->OnRender = OnRender;
 			pao->OnFinishedPlaying = OnFinishedPlaying;
 		}
 		else if (sb.Contains("load"))
 		{
 			StopWatch::Reset();
-			std::shared_ptr<AudioObject> pao = audio.Load(audioPath + sb.Split('\"').at(1));
+			std::shared_ptr<AudioObject> pao = audio.Load(audioRoot + sb.Split('\"').at(1));
 			pao->OnRender = OnRender;
 			pao->OnFinishedPlaying = OnFinishedPlaying;
 			PrintDeltaTime("File loaded in");
@@ -307,16 +307,16 @@ void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float 
 		}
 	};
 
-	//constexpr hephaudio_float maxAllowedCpuUsage = 0.8;
-	//const size_t hardwareThreadCount = std::thread::hardware_concurrency(); // may return 0
-	//if (threadCountPerChannel * buffer.FormatInfo().channelCount > hardwareThreadCount * maxAllowedCpuUsage)
-	//{
-	//	threadCountPerChannel = floor(hardwareThreadCount * maxAllowedCpuUsage / buffer.FormatInfo().channelCount);
-	//	if (threadCountPerChannel == 0)
-	//	{
-	//		threadCountPerChannel = 1;
-	//	}
-	//}
+	constexpr hephaudio_float maxAllowedCpuUsage = 0.8;
+	const size_t hardwareThreadCount = std::thread::hardware_concurrency(); // may return 0
+	if (threadCountPerChannel * buffer.FormatInfo().channelCount > hardwareThreadCount * maxAllowedCpuUsage)
+	{
+		threadCountPerChannel = floor(hardwareThreadCount * maxAllowedCpuUsage / buffer.FormatInfo().channelCount);
+		if (threadCountPerChannel == 0)
+		{
+			threadCountPerChannel = 1;
+		}
+	}
 
 	const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.FormatInfo().sampleRate, fftSize, cutoffFrequency);
 	std::vector<std::thread> threads = std::vector<std::thread>(buffer.FormatInfo().channelCount * threadCountPerChannel);

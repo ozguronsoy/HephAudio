@@ -36,6 +36,6 @@ namespace HephAudio
 		/// Calculates the given audio buffer's frame count after the echo is applied.
 		/// </summary>
 		/// <returns>The audio buffer's frame count after the echo is applied.</returns>
-		virtual size_t CalculateAudioBufferFrameCount(const AudioBuffer& buffer) const;
+		size_t CalculateAudioBufferFrameCount(const AudioBuffer& buffer) const;
 	};
 }

@@ -407,14 +407,14 @@ namespace HephAudio
 		const size_t maxSampleDelay = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
 		const hephaudio_float wetFactor = depth * 0.5;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
-		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
+		const FloatBuffer lfoPeriodBuffer = abs(lfo.GenerateBuffer());
 
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
 		memcpy(resultBuffer.pAudioData, buffer.pAudioData, maxSampleDelay * buffer.formatInfo.FrameSize());
 
 		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay = round(abs(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount]) * maxSampleDelay);
+			const size_t currentDelay = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * maxSampleDelay);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				resultBuffer[i][j] = wetFactor * buffer[i - currentDelay][j] + dryFactor * buffer[i][j];
@@ -431,7 +431,8 @@ namespace HephAudio
 			const hephaudio_float dryFactor = 1.0 - wetFactor;
 			const hephaudio_float fcdelta = fcmax - fcmin;
 			const hephaudio_float Q = 2.0 * damping;
-			hephaudio_float fc = fcdelta * abs(lfo.Oscillate(0)) + fcmin;
+			const FloatBuffer lfoPeriodBuffer = abs(lfo.GenerateBuffer());
+			hephaudio_float fc = fcdelta * lfoPeriodBuffer[0] + fcmin;
 			hephaudio_float alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
 			AudioBuffer lowPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
 			AudioBuffer bandPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
@@ -446,7 +447,7 @@ namespace HephAudio
 
 			for (size_t i = 1; i < buffer.frameCount; i++)
 			{
-				fc = fcdelta * abs(lfo.Oscillate(i)) + fcmin;
+				fc = fcdelta * lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] + fcmin;
 				alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
 
 				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)

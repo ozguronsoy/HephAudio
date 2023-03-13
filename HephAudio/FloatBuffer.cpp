@@ -426,3 +426,12 @@ namespace HephAudio
 		return this->pData + this->frameCount;
 	}
 }
+HephAudio::FloatBuffer abs(const HephAudio::FloatBuffer& rhs)
+{
+	HephAudio::FloatBuffer resultBuffer = HephAudio::FloatBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = abs(rhs[i]);
+	}
+	return resultBuffer;
+}

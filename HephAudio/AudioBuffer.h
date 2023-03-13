@@ -300,3 +300,4 @@ namespace HephAudio
 	};
 #pragma endregion
 }
+HephAudio::AudioBuffer abs(const HephAudio::AudioBuffer& rhs);
