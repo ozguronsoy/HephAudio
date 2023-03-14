@@ -51,6 +51,7 @@ namespace HephAudio
 		static void Overdrive(AudioBuffer& buffer, hephaudio_float drive);
 		static void Fuzz(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float alpha);
 		static void Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const OscillatorBase& lfo);
+		static void FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const OscillatorBase& lfo);
 		static void Wah(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float damping, hephaudio_float fcmin, hephaudio_float fcmax, const OscillatorBase& lfo);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
@@ -137,7 +138,6 @@ namespace HephAudio
 			const AudioBuffer* pOriginalBuffer;
 			ProcessedBuffer(const AudioBuffer* pOriginalBuffer, const AudioBuffer& audioBuffer, const size_t& fStart, const size_t& hopSize);
 		};
-	public:
 		static ProcessedBuffer* GetProcessedBuffer(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart, const size_t& hopSize);
 		static void RemoveOldProcessedBuffers(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart);
 #pragma endregion

@@ -19,7 +19,6 @@ void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult);
 hephaudio_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioRoot);
 void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel);
-void ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, hephaudio_float speedFactor);
 
 int main()
 {
@@ -40,6 +39,31 @@ int main()
 	audio->OnAudioDeviceRemoved = OnDeviceRemoved;
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
+
+	auto pao = audio.Load(audioRoot + "Gate of Steiner.wav");
+	
+	pao->OnRender = [](AudioEventArgs* pArgs, AudioEventResult* pResult) -> void
+	{
+		AudioObject* pAudioObject = (AudioObject*)pArgs->pAudioObject;
+		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
+		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+
+		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
+
+		StopWatch::Reset();
+		AudioProcessor::FlangerRT(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex, 1.0, 5.0, TriangleWaveOscillator(1.0, 0.7, 48e3));
+		PrintDeltaTime("dt");
+
+		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
+		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+	};
+
+	//StopWatch::Reset();
+	//AudioProcessor::Flanger(pao->buffer, 1.0, 5.0, TriangleWaveOscillator(1.0, 0.7, 48e3));
+	//PrintDeltaTime("dt");
+
+	pao->pause = false;
+	pao = nullptr;
 
 	return Run(audio, audioRoot);
 }
@@ -103,9 +127,9 @@ void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult)
 }
 hephaudio_float PrintDeltaTime(StringBuffer label)
 {
-	const hephaudio_float dt = StopWatch::DeltaTime(StopWatch::milli);
+	const hephaudio_float dt = StopWatch::DeltaTime(StopWatch::micro);
 	label = label + " " + StringBuffer::ToString(dt, 4);
-	label += " ms";
+	label += " us";
 	ConsoleLogger::Log(label, ConsoleLogger::success);
 	StopWatch::Reset();
 	return dt;
