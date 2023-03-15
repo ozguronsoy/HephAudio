@@ -1,10 +1,10 @@
 #pragma once
 #include "framework.h"
-#include "OscillatorBase.h"
+#include "Oscillator.h"
 
 namespace HephAudio
 {
-	class TriangleWaveOscillator final : public OscillatorBase
+	class TriangleWaveOscillator final : public Oscillator
 	{
 	public:
 		TriangleWaveOscillator(uint32_t sampleRate);

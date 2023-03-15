@@ -1,10 +1,10 @@
 #pragma once
 #include "framework.h"
-#include "OscillatorBase.h"
+#include "Oscillator.h"
 
 namespace HephAudio
 {
-	class SquareWaveOscillator final : public OscillatorBase
+	class SquareWaveOscillator final : public Oscillator
 	{
 	public:
 		SquareWaveOscillator(uint32_t sampleRate);

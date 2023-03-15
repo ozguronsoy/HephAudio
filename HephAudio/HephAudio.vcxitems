@@ -44,7 +44,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)OscillatorBase.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.h" />
@@ -85,7 +85,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)FloatBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)OscillatorBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp" />

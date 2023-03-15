@@ -1,10 +1,10 @@
 #pragma once
 #include "framework.h"
-#include "OscillatorBase.h"
+#include "Oscillator.h"
 
 namespace HephAudio
 {
-	class PulseWaveOscillator final : public OscillatorBase
+	class PulseWaveOscillator final : public Oscillator
 	{
 	private:
 		hephaudio_float eta;

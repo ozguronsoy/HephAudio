@@ -640,7 +640,7 @@ namespace HephAudio
 		{
 			if (this->frameCount > 0)
 			{
-				AudioProcessor::ConvertChannels(*this, newSampleRate);
+				AudioProcessor::ConvertSampleRate(*this, newSampleRate);
 			}
 			this->formatInfo.sampleRate = newSampleRate;
 		}

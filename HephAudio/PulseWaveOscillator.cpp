@@ -4,7 +4,7 @@ namespace HephAudio
 {
 	PulseWaveOscillator::PulseWaveOscillator(uint32_t sampleRate) : PulseWaveOscillator(0.5, 1500.0, sampleRate) {}
 	PulseWaveOscillator::PulseWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit)
-		: OscillatorBase(peakAmplitude, frequency, sampleRate, phase, angleUnit)
+		: Oscillator(peakAmplitude, frequency, sampleRate, phase, angleUnit)
 		, dutyCycle(0.2), order(10)
 	{
 		this->UpdateEta();

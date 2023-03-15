@@ -165,7 +165,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)OscillatorBase.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h">
       <Filter>Header Files\Oscillators</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h">
@@ -284,7 +284,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)OscillatorBase.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp">
       <Filter>Source Files\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp">

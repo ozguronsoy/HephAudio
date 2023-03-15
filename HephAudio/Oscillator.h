@@ -11,7 +11,7 @@ namespace HephAudio
 		Degree,
 		Radian
 	};
-	class OscillatorBase
+	class Oscillator
 	{
 	public:
 		hephaudio_float peakAmplitude;
@@ -19,9 +19,9 @@ namespace HephAudio
 		hephaudio_float phase_rad;
 		uint32_t sampleRate;
 	protected:
-		OscillatorBase(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit);
+		Oscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit);
 	public:
-		virtual ~OscillatorBase() = default;
+		virtual ~Oscillator() = default;
 		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept = 0;
 		FloatBuffer GenerateBuffer() const noexcept;
 		FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;

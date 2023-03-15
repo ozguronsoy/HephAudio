@@ -1,10 +1,10 @@
 #pragma once
 #include "framework.h"
-#include "OscillatorBase.h"
+#include "Oscillator.h"
 
 namespace HephAudio
 {
-	class SawToothWaveOscillator final : public OscillatorBase
+	class SawToothWaveOscillator final : public Oscillator
 	{
 	public:
 		SawToothWaveOscillator(uint32_t sampleRate);

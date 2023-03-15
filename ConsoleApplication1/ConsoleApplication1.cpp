@@ -40,31 +40,6 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
-	auto pao = audio.Load(audioRoot + "Gate of Steiner.wav");
-	
-	pao->OnRender = [](AudioEventArgs* pArgs, AudioEventResult* pResult) -> void
-	{
-		AudioObject* pAudioObject = (AudioObject*)pArgs->pAudioObject;
-		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
-		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
-
-		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
-
-		StopWatch::Reset();
-		AudioProcessor::FlangerRT(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex, 1.0, 5.0, TriangleWaveOscillator(1.0, 0.7, 48e3));
-		PrintDeltaTime("dt");
-
-		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
-		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
-	};
-
-	//StopWatch::Reset();
-	//AudioProcessor::Flanger(pao->buffer, 1.0, 5.0, TriangleWaveOscillator(1.0, 0.7, 48e3));
-	//PrintDeltaTime("dt");
-
-	pao->pause = false;
-	pao = nullptr;
-
 	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
@@ -127,9 +102,9 @@ void OnFinishedPlaying(AudioEventArgs* pArgs, AudioEventResult* pResult)
 }
 hephaudio_float PrintDeltaTime(StringBuffer label)
 {
-	const hephaudio_float dt = StopWatch::DeltaTime(StopWatch::micro);
+	const hephaudio_float dt = StopWatch::DeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
-	label += " us";
+	label += " ms";
 	ConsoleLogger::Log(label, ConsoleLogger::success);
 	StopWatch::Reset();
 	return dt;
@@ -286,17 +261,45 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				PrintDeltaTime("band-cut filter applied in");
 			}
 		}
+		else if (sb.Contains("speed"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			const bool originalState = pao->pause;
+			const hephaudio_float originalPosition = audio.GetAOPosition(pao);
+			hephaudio_float speed = StringBuffer::StringToDouble(params.at(1));
+			pao->pause = true;
+			StopWatch::Reset();
+			AudioProcessor::ChangeSpeedTD(pao->buffer, 1440, 2880, speed);
+			audio.SetAOPosition(pao, originalPosition);
+			PrintDeltaTime("playback speed changed in");
+			pao->pause = originalState;
+		}
+		else if (sb.Contains("pitch"))
+		{
+			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
+			std::vector<StringBuffer> params = sb.Split(' ');
+			const bool originalState = pao->pause;
+			hephaudio_float shiftFactor = StringBuffer::StringToDouble(params.at(1));
+			pao->pause = true;
+			StopWatch::Reset();
+			AudioProcessor::PitchShift(pao->buffer, 1024, 4096, shiftFactor);
+			PrintDeltaTime("pitch shifted in");
+			pao->pause = originalState;
+		}
 		else if (sb == L"original")
 		{
 			StopWatch::Reset();
 			std::shared_ptr<AudioObject> pao = audio.GetAO("", 0);
 			const bool originalState = pao->pause;
+			const hephaudio_float originalPosition = audio.GetAOPosition(pao);
 			pao->pause = true;
 			AudioFile audioFile = AudioFile(pao->filePath);
 			Formats::IAudioFormat* audioFormat = audio.GetAudioFormats()->GetAudioFormat(pao->filePath);
 			audioFormat->ReadFile(audioFile, pao->buffer);
 			pao->buffer.SetChannelCount(audio.GetRenderFormat().channelCount);
 			pao->buffer.SetSampleRate(audio.GetRenderFormat().sampleRate);
+			audio.SetAOPosition(pao, originalPosition);
 			PrintDeltaTime("removed all effects in");
 			pao->pause = originalState;
 		}
@@ -306,7 +309,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 }
 void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float cutoffFrequency, size_t threadCountPerChannel)
 {
-	constexpr auto applyFilter = [](AudioBuffer* buffer, FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t stopIndex)
+	constexpr auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t stopIndex)
 	{
 		FloatBuffer channel = FloatBuffer(frameCount);
 		for (size_t i = 0; i < frameCount && i + frameIndex < buffer->FrameCount(); i++)
@@ -332,27 +335,16 @@ void HPFMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float 
 		}
 	};
 
-	constexpr hephaudio_float maxAllowedCpuUsage = 0.8;
-	const size_t hardwareThreadCount = std::thread::hardware_concurrency(); // may return 0
-	if (threadCountPerChannel * buffer.FormatInfo().channelCount > hardwareThreadCount * maxAllowedCpuUsage)
-	{
-		threadCountPerChannel = floor(hardwareThreadCount * maxAllowedCpuUsage / buffer.FormatInfo().channelCount);
-		if (threadCountPerChannel == 0)
-		{
-			threadCountPerChannel = 1;
-		}
-	}
-
 	const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.FormatInfo().sampleRate, fftSize, cutoffFrequency);
-	std::vector<std::thread> threads = std::vector<std::thread>(buffer.FormatInfo().channelCount * threadCountPerChannel);
-	FloatBuffer hannWindow = AudioProcessor::GenerateHannWindow(fftSize);
 	const size_t frameCountPerThread = ceil((hephaudio_float)buffer.FrameCount() / (hephaudio_float)threadCountPerChannel);
+	const FloatBuffer hannWindow = AudioProcessor::GenerateHannWindow(fftSize);
+	std::vector<std::thread> threads = std::vector<std::thread>(buffer.FormatInfo().channelCount * threadCountPerChannel);
 
-	for (size_t i = 0, t = 0; i < threadCountPerChannel; i++)
+	for (size_t i = 0; i < threadCountPerChannel; i++)
 	{
-		for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++, t++)
+		for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++)
 		{
-			threads[t] = std::thread(applyFilter, &buffer, &hannWindow, j, i * frameCountPerThread, frameCountPerThread, hopSize, fftSize, stopIndex);
+			threads[i * buffer.FormatInfo().channelCount + j] = std::thread(applyFilter, &buffer, &hannWindow, j, i * frameCountPerThread, frameCountPerThread, hopSize, fftSize, stopIndex);
 		}
 	}
 

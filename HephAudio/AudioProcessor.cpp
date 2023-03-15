@@ -82,7 +82,7 @@ namespace HephAudio
 		size_t outputBufferFrameCount = 0;
 		for (int64_t i = 0; i < inputBuffers.size(); i++)
 		{
-			AudioBuffer& buffer = inputBuffers.at(i);
+			AudioBuffer& buffer = inputBuffers[i];
 			if (buffer.frameCount == 0)
 			{
 				inputBuffers.erase(inputBuffers.begin() + i);
@@ -98,7 +98,7 @@ namespace HephAudio
 		outputBuffer = AudioBuffer(outputBufferFrameCount, outputFormat);
 		for (size_t i = 0; i < inputBuffers.size(); i++)
 		{
-			AudioBuffer& buffer = inputBuffers.at(i);
+			AudioBuffer& buffer = inputBuffers[i];
 			for (size_t j = 0; j < outputBuffer.frameCount; j++)
 			{
 				if (j >= buffer.frameCount) { break; }
@@ -284,9 +284,9 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Tremolo(AudioBuffer& buffer, hephaudio_float depth, const OscillatorBase& lfo)
+	void AudioProcessor::Tremolo(AudioBuffer& buffer, hephaudio_float depth, const Oscillator& lfo)
 	{
-		const hephaudio_float wetFactor = depth * 0.5;
+		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
 
@@ -299,9 +299,9 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, const OscillatorBase& lfo)
+	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, const Oscillator& lfo)
 	{
-		const hephaudio_float wetFactor = depth * 0.5;
+		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 
 		for (size_t i = 0; i < subBuffer.frameCount; i++)
@@ -310,6 +310,60 @@ namespace HephAudio
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
 				subBuffer[i][j] *= wetFactor * lfoSample + dryFactor;
+			}
+		}
+	}
+	void AudioProcessor::Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo)
+	{
+		const hephaudio_float delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		const hephaudio_float wetFactor = depth;
+		const hephaudio_float dryFactor = 1.0 - wetFactor;
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+		{
+			lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+		}
+		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			const hephaudio_float currentDelay_sample = lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample;
+			const hephaudio_float fc = floor(currentDelay_sample);
+			const hephaudio_float factor = currentDelay_sample - fc;
+
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				hephaudio_float vibratoSample = 0.0;
+				if (i + fc + 1.0 < buffer.frameCount)
+				{
+					vibratoSample = buffer[i + fc][j] * (1.0 - factor) + buffer[i + fc + 1.0][j] * factor;
+				}
+				resultBuffer[i][j] = wetFactor * vibratoSample + dryFactor * buffer[i][j];
+			}
+		}
+
+		buffer = std::move(resultBuffer);
+	}
+	void AudioProcessor::VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo)
+	{
+		const hephaudio_float delay_sample = delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
+		const hephaudio_float wetFactor = depth;
+		const hephaudio_float dryFactor = 1.0 - wetFactor;
+
+		for (size_t i = 0, t_sample = subBufferFrameIndex; i < subBuffer.frameCount; i++, t_sample++)
+		{
+			const hephaudio_float currentDelay_sample = (lfo.Oscillate(t_sample) * 0.5 + 0.5) * delay_sample;
+			const hephaudio_float fc = floor(currentDelay_sample);
+			const hephaudio_float factor = currentDelay_sample - fc;
+
+			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+			{
+				hephaudio_float vibratoSample = 0.0;
+				if (t_sample + fc + 1.0 < originalBuffer.frameCount)
+				{
+					vibratoSample = originalBuffer[t_sample + fc][j] * (1.0 - factor) + originalBuffer[t_sample + fc + 1.0][j] * factor;
+				}
+				subBuffer[i][j] = wetFactor * vibratoSample + dryFactor * originalBuffer[t_sample][j];
 			}
 		}
 	}
@@ -403,46 +457,50 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const OscillatorBase& lfo)
+	void AudioProcessor::Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo)
 	{
-		const size_t maxSampleDelay = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
-		const hephaudio_float wetFactor = depth * 0.5;
+		const size_t delay_sample = round(delay_ms * 1e-3 * buffer.formatInfo.sampleRate);
+		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
-		const FloatBuffer lfoPeriodBuffer = abs(lfo.GenerateBuffer());
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+		{
+			lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+		}
 
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-		memcpy(resultBuffer.pAudioData, buffer.pAudioData, maxSampleDelay * buffer.formatInfo.FrameSize());
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, delay_sample * buffer.formatInfo.FrameSize());
 
-		for (size_t i = maxSampleDelay + 1; i < buffer.frameCount; i++)
+		for (size_t i = delay_sample + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * maxSampleDelay);
+			const size_t currentDelay = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
-				resultBuffer[i][j] = wetFactor * buffer[i - currentDelay][j] + dryFactor * buffer[i][j];
+				resultBuffer[i][j] = wetFactor * (buffer[i - currentDelay][j] + buffer[i][j]) + dryFactor * buffer[i][j];
 			}
 		}
 
 		buffer = std::move(resultBuffer);
 	}
-	void AudioProcessor::FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const OscillatorBase& lfo)
+	void AudioProcessor::FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo)
 	{
 		const size_t maxSampleDelay = round(delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate);
 		if (subBufferFrameIndex > maxSampleDelay)
 		{
-			const hephaudio_float wetFactor = depth * 0.5;
+			const hephaudio_float wetFactor = depth;
 			const hephaudio_float dryFactor = 1.0 - wetFactor;
 
 			for (size_t i = 0; i < subBuffer.frameCount; i++)
 			{
-				const size_t currentDelay = round(abs(lfo.Oscillate(subBufferFrameIndex + i)) * maxSampleDelay);
+				const size_t currentDelay = round((lfo.Oscillate(subBufferFrameIndex + i) * 0.5 + 0.5) * maxSampleDelay);
 				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 				{
-					subBuffer[i][j] = wetFactor * originalBuffer[subBufferFrameIndex + i - currentDelay][j] + dryFactor * subBuffer[i][j];
+					subBuffer[i][j] = wetFactor * (originalBuffer[subBufferFrameIndex + i - currentDelay][j] + subBuffer[i][j]) + dryFactor * subBuffer[i][j];
 				}
 			}
 		}
 	}
-	void AudioProcessor::Wah(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float damping, hephaudio_float fcmin, hephaudio_float fcmax, const OscillatorBase& lfo)
+	void AudioProcessor::Wah(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float damping, hephaudio_float fcmin, hephaudio_float fcmax, const Oscillator& lfo)
 	{
 		if (buffer.frameCount > 0)
 		{
@@ -450,7 +508,13 @@ namespace HephAudio
 			const hephaudio_float dryFactor = 1.0 - wetFactor;
 			const hephaudio_float fcdelta = fcmax - fcmin;
 			const hephaudio_float Q = 2.0 * damping;
-			const FloatBuffer lfoPeriodBuffer = abs(lfo.GenerateBuffer());
+
+			FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+			for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+			{
+				lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+			}
+
 			hephaudio_float fc = fcdelta * lfoPeriodBuffer[0] + fcmin;
 			hephaudio_float alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
 			AudioBuffer lowPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
@@ -477,21 +541,21 @@ namespace HephAudio
 				}
 			}
 
-			hephaudio_float maxSample = INT32_MIN;
+			hephaudio_float absMax = INT32_MIN;
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
 				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 				{
 					buffer[i][j] = wetFactor * bandPassBuffer[i][j] + dryFactor * buffer[i][j];
-					if (abs(buffer[i][j]) > maxSample)
+					if (abs(buffer[i][j]) > absMax)
 					{
-						maxSample = abs(buffer[i][j]);
+						absMax = abs(buffer[i][j]);
 					}
 				}
 			}
-			if (maxSample > 1.0)
+			if (absMax > 1.0)
 			{
-				buffer /= maxSample;
+				buffer /= absMax;
 			}
 		}
 	}
@@ -516,7 +580,7 @@ namespace HephAudio
 
 				for (size_t k = 0; k < infos.size(); k++)
 				{
-					const EqualizerInfo& info = infos.at(k);
+					const EqualizerInfo& info = infos[k];
 					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
 					if (info.f1 > info.f2)
 					{
@@ -634,7 +698,7 @@ namespace HephAudio
 
 				for (size_t j = 0; j < infos.size(); j++)
 				{
-					const EqualizerInfo& info = infos.at(j);
+					const EqualizerInfo& info = infos[j];
 					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
 					if (info.f1 > info.f2)
 					{
@@ -2032,7 +2096,7 @@ namespace HephAudio
 	{
 		for (size_t i = 0; i < processedBuffers.size(); i++)
 		{
-			ProcessedBuffer*& processedBuffer = processedBuffers.at(i);
+			ProcessedBuffer*& processedBuffer = processedBuffers[i];
 			if (processedBuffer->fStart == fStart && hopSize == processedBuffer->hopSize && processedBuffer->pOriginalBuffer == pOriginalBuffer)
 			{
 				return processedBuffer;
@@ -2044,7 +2108,7 @@ namespace HephAudio
 	{
 		for (int64_t i = 0; i < processedBuffers.size(); i++)
 		{
-			ProcessedBuffer*& processedBuffer = processedBuffers.at(i);
+			ProcessedBuffer*& processedBuffer = processedBuffers[i];
 			if (processedBuffer->fStart < fStart && processedBuffer->pOriginalBuffer == pOriginalBuffer)
 			{
 				delete processedBuffer;
