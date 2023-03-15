@@ -40,6 +40,25 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
+	auto pao = audio.Load(audioRoot + "clean guitar.wav");
+	pao->loopCount = 0;
+
+	//pao->OnRender += [](AudioEventArgs* pArgs, AudioEventResult* pResult)
+	//{
+	//	AudioObject* pao = (AudioObject*)pArgs->pAudioObject;
+	//	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+
+	//	StopWatch::Reset();
+	//	AudioProcessor::FlangerRT(pao->buffer, pRenderResult->renderBuffer, pao->frameIndex - pRenderResult->renderBuffer.FrameCount(), 0.5, -1.0, 1.0, 6.0, SineWaveOscillator(1.0, 0.87, 48e3));
+	//	PrintDeltaTime("flanger");
+	//};
+
+	StopWatch::Reset();
+	AudioProcessor::Flanger(pao->buffer, 0.5, -1.0, 1.0, 6.0, SineWaveOscillator(1.0, 0.87, 48e3));
+	PrintDeltaTime("flanger");
+
+	pao->pause = false;
+
 	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
@@ -225,7 +244,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 
 			pao->pause = true;
 			StopWatch::Reset();
-			AudioProcessor::Flanger(pao->buffer, depth, delay, SineWaveOscillator(1.0, rate, pao->buffer.FormatInfo().sampleRate, phase, AngleUnit::Degree));
+			AudioProcessor::Flanger(pao->buffer, depth, -0.37, 0.3, delay, SineWaveOscillator(1.0, rate, pao->buffer.FormatInfo().sampleRate, phase, AngleUnit::Degree));
 			PrintDeltaTime("flanger applied in");
 			pao->pause = originalState;
 		}

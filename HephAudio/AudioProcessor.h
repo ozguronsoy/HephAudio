@@ -52,8 +52,8 @@ namespace HephAudio
 		static void SoftClipDistortion(AudioBuffer& buffer, hephaudio_float alpha);
 		static void Overdrive(AudioBuffer& buffer, hephaudio_float drive);
 		static void Fuzz(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float alpha);
-		static void Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo);
-		static void FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo);
+		static void Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, const Oscillator& lfo);
+		static void FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, const Oscillator& lfo);
 		static void Wah(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float damping, hephaudio_float fcmin, hephaudio_float fcmax, const Oscillator& lfo);
 		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
