@@ -49,12 +49,12 @@ int main()
 	//	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
 
 	//	StopWatch::Reset();
-	//	AudioProcessor::FlangerRT(pao->buffer, pRenderResult->renderBuffer, pao->frameIndex - pRenderResult->renderBuffer.FrameCount(), 0.5, -1.0, 1.0, 6.0, SineWaveOscillator(1.0, 0.87, 48e3));
+	//	AudioProcessor::FlangerRT(pao->buffer, pRenderResult->renderBuffer, pao->frameIndex - pRenderResult->renderBuffer.FrameCount(), 0.7, -1.0, 3.0, 8.0, SineWaveOscillator(1.0, 0.87, 48e3));
 	//	PrintDeltaTime("flanger");
 	//};
 
 	StopWatch::Reset();
-	AudioProcessor::Flanger(pao->buffer, 0.5, -1.0, 1.0, 6.0, SineWaveOscillator(1.0, 0.87, 48e3));
+	AudioProcessor::Flanger(pao->buffer, 0.7, -1.0, 3.0, 8.0, SineWaveOscillator(1.0, 0.87, 48e3));
 	PrintDeltaTime("flanger");
 
 	pao->pause = false;
