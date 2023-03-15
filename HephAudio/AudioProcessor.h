@@ -44,8 +44,8 @@ namespace HephAudio
 		static void SineLawPanning(AudioBuffer& buffer, hephaudio_float panningFactor);
 		static void Tremolo(AudioBuffer& buffer, hephaudio_float depth, const Oscillator& lfo);
 		static void TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, const Oscillator& lfo);
-		static void Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo);
-		static void VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo);
+		static void Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo);
+		static void VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo);
 		static void Normalize(AudioBuffer& buffer, hephaudio_float peakAmplitude);
 		static void RmsNormalize(AudioBuffer& buffer, hephaudio_float desiredRms);
 		static void HardClipDistortion(AudioBuffer& buffer, hephaudio_float clippingLevel_dB);

@@ -314,9 +314,9 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo)
+	void AudioProcessor::Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo)
 	{
-		const hephaudio_float delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		const hephaudio_float delay_sample = buffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
 		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
@@ -341,9 +341,9 @@ namespace HephAudio
 
 		buffer = std::move(resultBuffer);
 	}
-	void AudioProcessor::VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float delay_ms, const Oscillator& lfo)
+	void AudioProcessor::VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo)
 	{
-		const hephaudio_float delay_sample = delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
+		const hephaudio_float delay_sample = subBuffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
 		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 
@@ -472,7 +472,7 @@ namespace HephAudio
 
 		for (size_t i = delay_sample + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample + baseDelay_sample); 
+			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample + baseDelay_sample);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				const hephaudio_float wetSample = buffer[i - currentDelay_sample][j] + feedbackBuffer[j];
@@ -497,7 +497,7 @@ namespace HephAudio
 		{
 			feedbackBuffer = FloatBuffer(subBuffer.formatInfo.channelCount);
 		}
-		
+
 		const hephaudio_float baseDelay_sample = baseDelay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
 		const hephaudio_float delay_sample = delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
 

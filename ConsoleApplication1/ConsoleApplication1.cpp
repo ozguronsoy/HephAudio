@@ -49,13 +49,13 @@ int main()
 	//	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
 
 	//	StopWatch::Reset();
-	//	AudioProcessor::FlangerRT(pao->buffer, pRenderResult->renderBuffer, pao->frameIndex - pRenderResult->renderBuffer.FrameCount(), 0.7, -1.0, 3.0, 8.0, SineWaveOscillator(1.0, 0.87, 48e3));
-	//	PrintDeltaTime("flanger");
+	//	AudioProcessor::VibratoRT(pao->buffer, pRenderResult->renderBuffer, pao->frameIndex - pRenderResult->renderBuffer.FrameCount(), 1.0, 0.6, SineWaveOscillator(1.0, 1.2, 48e3));
+	//	PrintDeltaTime("vibrato");
 	//};
 
 	StopWatch::Reset();
-	AudioProcessor::Flanger(pao->buffer, 0.7, -1.0, 3.0, 8.0, SineWaveOscillator(1.0, 0.87, 48e3));
-	PrintDeltaTime("flanger");
+	AudioProcessor::Vibrato(pao->buffer, 1.0, 0.6, SineWaveOscillator(1.0, 1.2, 48e3));
+	PrintDeltaTime("vibrato");
 
 	pao->pause = false;
 
