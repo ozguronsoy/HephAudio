@@ -40,25 +40,6 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
-	auto pao = audio.Load(audioRoot + "clean guitar.wav");
-	pao->loopCount = 0;
-
-	//pao->OnRender += [](AudioEventArgs* pArgs, AudioEventResult* pResult)
-	//{
-	//	AudioObject* pao = (AudioObject*)pArgs->pAudioObject;
-	//	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
-
-	//	StopWatch::Reset();
-	//	AudioProcessor::VibratoRT(pao->buffer, pRenderResult->renderBuffer, pao->frameIndex - pRenderResult->renderBuffer.FrameCount(), 1.0, 0.6, SineWaveOscillator(1.0, 1.2, 48e3));
-	//	PrintDeltaTime("vibrato");
-	//};
-
-	StopWatch::Reset();
-	AudioProcessor::Vibrato(pao->buffer, 1.0, 0.6, SineWaveOscillator(1.0, 1.2, 48e3));
-	PrintDeltaTime("vibrato");
-
-	pao->pause = false;
-
 	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
@@ -80,6 +61,7 @@ void OnDeviceAdded(AudioEventArgs* pArgs, AudioEventResult* pResult)
 
 	if (pDeviceArgs->audioDevice.type == AudioDeviceType::Render && pDeviceArgs->audioDevice.isDefault)
 	{
+		pNativeAudio->StopRendering();
 		pNativeAudio->InitializeRender(&pDeviceArgs->audioDevice, pNativeAudio->GetRenderFormat());
 	}
 }
@@ -90,6 +72,7 @@ void OnDeviceRemoved(AudioEventArgs* pArgs, AudioEventResult* pResult)
 
 	if (pDeviceArgs->audioDevice.id == pNativeAudio->GetRenderDevice().id)
 	{
+		pNativeAudio->StopRendering();
 		pNativeAudio->InitializeRender(nullptr, pNativeAudio->GetRenderFormat());
 	}
 }
@@ -100,11 +83,11 @@ void OnRender(AudioEventArgs* pArgs, AudioEventResult* pResult)
 	AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
 	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
 
-	const size_t readFrameCount = (hephaudio_float)pRenderArgs->renderFrameCount * pAudioObject->buffer.FormatInfo().sampleRate / pNativeAudio->GetRenderFormat().sampleRate;
+	const size_t readFrameCount = (hephaudio_float)pRenderArgs->renderFrameCount * (hephaudio_float)pAudioObject->buffer.FormatInfo().sampleRate / (hephaudio_float)pNativeAudio->GetRenderFormat().sampleRate;
 
 	pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount);
 
-	AudioProcessor::ConvertSampleRate(pRenderResult->renderBuffer, pNativeAudio->GetRenderFormat().sampleRate, pRenderArgs->renderFrameCount);
+	AudioProcessor::ConvertSampleRateRT(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex, pNativeAudio->GetRenderFormat().sampleRate, pRenderArgs->renderFrameCount);
 
 	pAudioObject->frameIndex += readFrameCount;
 	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
@@ -167,7 +150,6 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 		{
 			StopWatch::Reset();
 			std::shared_ptr<AudioObject> pao = audio.Load(audioRoot + sb.Split('\"').at(1));
-			pao->OnRender = OnRender;
 			pao->OnFinishedPlaying = OnFinishedPlaying;
 			PrintDeltaTime("File loaded in");
 		}
@@ -323,6 +305,8 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 			pao->pause = originalState;
 		}
 	}
+
+	audio.StopRendering();
 
 	return 0;
 }

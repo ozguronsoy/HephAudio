@@ -8,75 +8,99 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, uint16_t outputBps)
 	{
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, outputBps, buffer.formatInfo.sampleRate);
-		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
-		for (size_t i = 0; i < buffer.frameCount; i++)
+		if (buffer.formatInfo.bitsPerSample != outputBps)
 		{
-			for (uint8_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, outputBps, buffer.formatInfo.sampleRate));
+
+			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
-				hephaudio_float sample = buffer.Get(i, j);
-				if (outputBps == 8)
+				for (uint8_t j = 0; j < buffer.formatInfo.channelCount; j++)
 				{
-					sample += 1.0;
-					sample *= 0.5;
+					hephaudio_float sample = buffer.Get(i, j);
+					if (outputBps == 8)
+					{
+						sample += 1.0;
+						sample *= 0.5;
+					}
+					else if (buffer.formatInfo.bitsPerSample == 8)
+					{
+						sample *= 2.0;
+						sample -= 1.0;
+					}
+					resultBuffer.Set(sample, i, j);
 				}
-				else if (buffer.formatInfo.bitsPerSample == 8)
-				{
-					sample *= 2.0;
-					sample -= 1.0;
-				}
-				resultBuffer.Set(sample, i, j);
 			}
+
+			buffer = std::move(resultBuffer);
 		}
-		buffer = std::move(resultBuffer);
 	}
 	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
 	{
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, outputChannelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate);
-		AudioBuffer resultBuffer(buffer.frameCount, resultFormat);
-		for (size_t i = 0; i < buffer.frameCount; i++)
+		if (buffer.formatInfo.channelCount != outputChannelCount)
 		{
-			hephaudio_float averageValue = 0.0f;
-			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, outputChannelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate));
+
+			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
-				averageValue += buffer[i][j];
+				hephaudio_float averageValue = 0.0f;
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					averageValue += buffer[i][j];
+				}
+				averageValue /= buffer.formatInfo.channelCount;
+
+				for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
+				{
+					resultBuffer[i][j] = averageValue;
+				}
 			}
-			averageValue /= buffer.formatInfo.channelCount;
-			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)
-			{
-				resultBuffer[i][j] = averageValue;
-			}
+
+			buffer = std::move(resultBuffer);
 		}
-		buffer = std::move(resultBuffer);
 	}
 	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate)
 	{
-		ConvertSampleRate(buffer, outputSampleRate, 0u);
-	}
-	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate, size_t outFrameCount)
-	{
 		const hephaudio_float srRatio = (hephaudio_float)outputSampleRate / (hephaudio_float)buffer.formatInfo.sampleRate;
-		const size_t currentFrameCount = buffer.frameCount;
-		size_t targetFrameCount = outFrameCount;
-		if (targetFrameCount == 0)
+		if (srRatio != 1.0)
 		{
-			targetFrameCount = ceil((hephaudio_float)currentFrameCount * srRatio);
-		}
-		AudioFormatInfo resultFormat = AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate);
-		AudioBuffer resultBuffer(targetFrameCount, resultFormat);
-		const hephaudio_float dc = 1.0 / srRatio;
-		hephaudio_float c = 0.0;
-		for (size_t i = 0; i < targetFrameCount; i++, c += dc)
-		{
-			const hephaudio_float fc = floor(c);
-			const hephaudio_float factor = c - fc;
-			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			const size_t targetFrameCount = ceil((hephaudio_float)buffer.frameCount * srRatio);
+			AudioBuffer resultBuffer(targetFrameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate));
+
+			for (size_t i = 0; i < targetFrameCount; i++)
 			{
-				if (fc + 1.0 >= buffer.frameCount) break;
-				resultBuffer[i][j] = buffer[fc][j] * (1.0 - factor) + buffer[fc + 1.0][j] * factor;
+				const hephaudio_float resampleIndex = i / srRatio;
+				const hephaudio_float rho = resampleIndex - floor(resampleIndex);
+
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					if (resampleIndex + 1.0 >= buffer.frameCount) break;
+					resultBuffer[i][j] = buffer[resampleIndex][j] * (1.0 - rho) + buffer[resampleIndex + 1.0][j] * rho;
+				}
+			}
+
+			buffer = std::move(resultBuffer);
+		}
+	}
+	void AudioProcessor::ConvertSampleRateRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount)
+	{
+		const hephaudio_float srRatio = (hephaudio_float)outputSampleRate / (hephaudio_float)originalBuffer.formatInfo.sampleRate;
+		if (srRatio != 1.0)
+		{
+			subBuffer.Resize(outFrameCount);
+			subBuffer.formatInfo.sampleRate = outputSampleRate;
+
+			for (size_t i = 0; i < outFrameCount; i++)
+			{
+				const hephaudio_float resampleIndex = i / srRatio + subBufferFrameIndex;
+				const hephaudio_float rho = resampleIndex - floor(resampleIndex);
+
+				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+				{
+					if (resampleIndex + 1.0 >= originalBuffer.frameCount) break;
+					subBuffer[i][j] = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
+				}
 			}
 		}
-		buffer = std::move(resultBuffer);
 	}
 	void AudioProcessor::Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers)
 	{
@@ -316,24 +340,29 @@ namespace HephAudio
 	}
 	void AudioProcessor::Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo)
 	{
-		const hephaudio_float delay_sample = buffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
+		const hephaudio_float resampleDelta = buffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
 		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
-		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
+
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+		{
+			lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+		}
+
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
 
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			const hephaudio_float currentDelay_sample = lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample;
-			const hephaudio_float fc = floor(currentDelay_sample);
-			const hephaudio_float factor = currentDelay_sample - fc;
+			const hephaudio_float resampleIndex = i + lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * resampleDelta;
+			const hephaudio_float rho = resampleIndex - floor(resampleIndex);
 
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				hephaudio_float wetSample = 0.0;
-				if (i + fc >= 0 && i + fc + 1.0 < buffer.frameCount)
+				if (resampleIndex + 1.0 < buffer.frameCount)
 				{
-					wetSample = buffer[i + fc][j] * (1.0 - factor) + buffer[i + fc + 1.0][j] * factor;
+					wetSample = buffer[resampleIndex][j] * (1.0 - rho) + buffer[resampleIndex + 1.0][j] * rho;
 				}
 				resultBuffer[i][j] = wetFactor * wetSample + dryFactor * buffer[i][j];
 			}
@@ -343,22 +372,21 @@ namespace HephAudio
 	}
 	void AudioProcessor::VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo)
 	{
-		const hephaudio_float delay_sample = subBuffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
+		const hephaudio_float resampleDelta = subBuffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
 		const hephaudio_float wetFactor = depth;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 
-		for (size_t i = 0, t_sample = subBufferFrameIndex; i < subBuffer.frameCount; i++, t_sample++)
+		for (size_t i = 0, t_sample = subBufferFrameIndex; i < subBuffer.frameCount && t_sample < originalBuffer.frameCount; i++, t_sample++)
 		{
-			const hephaudio_float currentDelay_sample = lfo.Oscillate(t_sample) * delay_sample;
-			const hephaudio_float fc = floor(currentDelay_sample);
-			const hephaudio_float factor = currentDelay_sample - fc;
+			const hephaudio_float resampleIndex = t_sample + (lfo.Oscillate(t_sample) * 0.5 + 0.5) * resampleDelta;
+			const hephaudio_float rho = resampleIndex - floor(resampleIndex);
 
 			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
 			{
 				hephaudio_float wetSample = 0.0;
-				if (t_sample + fc >= 0 && t_sample + fc + 1.0 < originalBuffer.frameCount)
+				if (resampleIndex + 1.0 < originalBuffer.frameCount)
 				{
-					wetSample = originalBuffer[t_sample + fc][j] * (1.0 - factor) + originalBuffer[t_sample + fc + 1.0][j] * factor;
+					wetSample = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
 				}
 				subBuffer[i][j] = wetFactor * wetSample + dryFactor * originalBuffer[t_sample][j];
 			}

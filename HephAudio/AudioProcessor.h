@@ -26,7 +26,7 @@ namespace HephAudio
 		static void ConvertBPS(AudioBuffer& buffer, uint16_t outputBps);
 		static void ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount);
 		static void ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate);
-		static void ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate, size_t outFrameCount);
+		static void ConvertSampleRateRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount);
 		static void Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers);
 		static std::vector<FloatBuffer> SplitChannels(const AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(const std::vector<FloatBuffer>& channels, uint32_t sampleRate);

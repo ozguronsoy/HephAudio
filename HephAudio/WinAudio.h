@@ -77,17 +77,37 @@ namespace HephAudio
 			/// </summary>
 			Microsoft::WRL::ComPtr<IMMDeviceEnumerator> pEnumerator;
 			/// <summary>
+			/// The WASAPI interface that handles the rendering.
+			/// </summary>
+			Microsoft::WRL::ComPtr<IAudioClient3> pRenderAudioClient;
+			/// <summary>
 			/// The WASAPI interface used for setting and getting the master volume.
 			/// </summary>
 			Microsoft::WRL::ComPtr<IAudioSessionManager2> pRenderSessionManager;
 			/// <summary>
-			/// The WASAPI interface that notifies the WinAudio instance when a session event happens. 
+			/// The WASAPI interface that notifies the WinAudio instance when a render session event happens. 
 			/// </summary>
-			Microsoft::WRL::ComPtr<IAudioSessionControl> pSessionControl;
+			Microsoft::WRL::ComPtr<IAudioSessionControl> pRenderSessionControl;
+			/// <summary>
+			/// The WASAPI interface that handles the capturing.
+			/// </summary>
+			Microsoft::WRL::ComPtr<IAudioClient3> pCaptureAudioClient;
+			/// <summary>
+			/// The WASAPI interface used for handling capture session events.
+			/// </summary>
+			Microsoft::WRL::ComPtr<IAudioSessionManager2> pCaptureSessionManager;
+			/// <summary>
+			/// The WASAPI interface that notifies the WinAudio instance when a capture session event happens. 
+			/// </summary>
+			Microsoft::WRL::ComPtr<IAudioSessionControl> pCaptureSessionControl;
 			/// <summary>
 			/// The instance that handles the session events.
 			/// </summary>
-			AudioSessionEvents sessionEvents;
+			AudioSessionEvents renderSessionEvents;
+			/// <summary>
+			/// The instance that handles the session events.
+			/// </summary>
+			AudioSessionEvents captureSessionEvents;
 			/// <summary>
 			/// The instance that handles the device events.
 			/// </summary>
@@ -114,8 +134,8 @@ namespace HephAudio
 			virtual AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const override;
 			virtual std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const override;
 		protected:
-			virtual void RenderData(Microsoft::WRL::ComPtr<IAudioClient3> pRenderAudioClient);
-			virtual void CaptureData(Microsoft::WRL::ComPtr<IAudioClient3> pCaptureAudioClient, Microsoft::WRL::ComPtr<IAudioSessionManager2> pCaptureSessionManager);
+			virtual void RenderData();
+			virtual void CaptureData();
 			static EDataFlow DeviceTypeToDataFlow(AudioDeviceType deviceType);
 			static AudioDeviceType DataFlowToDeviceType(EDataFlow dataFlow);
 		};
