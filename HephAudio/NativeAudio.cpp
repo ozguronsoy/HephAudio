@@ -9,25 +9,19 @@ namespace HephAudio
 	namespace Native
 	{
 		NativeAudio::NativeAudio()
-			: audioObjects(std::vector<std::shared_ptr<AudioObject>>(0)), mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
-			, renderFormat(AudioFormatInfo(1, 2, 16, 48000)), captureFormat(AudioFormatInfo(1, 2, 16, 48000)), disposing(false), isRenderInitialized(false)
-			, isCaptureInitialized(false), isCapturePaused(false), displayName(""), iconPath(""), audioExceptionEventArgs(AudioExceptionEventArgs())
-			, audioFormats(Formats::AudioFormats()), OnException(AudioEvent()), OnAudioDeviceAdded(AudioEvent()), OnAudioDeviceRemoved(AudioEvent())
-			, OnCapture(AudioEvent())
+			: mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
+			, renderFormat(AudioFormatInfo(1, 2, 16, 48000)), captureFormat(AudioFormatInfo(1, 2, 16, 48000)), disposing(false)
+			, isRenderInitialized(false), isCaptureInitialized(false), isCapturePaused(false), displayName(""), iconPath(""), deviceEnumerationPeriod_ns(1e8)
 		{
 			HEPHAUDIO_STOPWATCH_START;
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Play(StringBuffer filePath)
 		{
-			return Play(filePath, 1u, false);
-		}
-		std::shared_ptr<AudioObject> NativeAudio::Play(StringBuffer filePath, bool isPaused)
-		{
-			return Play(filePath, 1u, isPaused);
+			return this->Play(filePath, 1u, false);
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Play(StringBuffer filePath, uint32_t loopCount)
 		{
-			return Play(filePath, loopCount, false);
+			return this->Play(filePath, loopCount, false);
 		}
 		std::shared_ptr<AudioObject> NativeAudio::Play(StringBuffer filePath, uint32_t loopCount, bool isPaused)
 		{
@@ -36,7 +30,7 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Playing \"" + AudioFile::GetFileName(filePath) + "\"", ConsoleLogger::info);
 
 				AudioFile audioFile(filePath);
-				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+				Formats::IAudioFormat* format = this->audioFormats.GetAudioFormat(audioFile);
 
 				if (format == nullptr)
 				{
@@ -225,6 +219,14 @@ namespace HephAudio
 		{
 			return isCapturePaused;
 		}
+		uint64_t NativeAudio::GetDeviceEnumerationPeriod() const noexcept
+		{
+			return this->deviceEnumerationPeriod_ns;
+		}
+		void NativeAudio::SetDeviceEnumerationPeriod(uint64_t deviceEnumerationPeriod_ns) noexcept
+		{
+			this->deviceEnumerationPeriod_ns = deviceEnumerationPeriod_ns;
+		}
 		void NativeAudio::Skip(StringBuffer queueName, bool applyDelay)
 		{
 			Skip(1, queueName, applyDelay);
@@ -312,6 +314,49 @@ namespace HephAudio
 			}
 			return captureDevice;
 		}
+		AudioDevice NativeAudio::GetDefaultAudioDevice(AudioDeviceType deviceType) const
+		{
+			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
+				return AudioDevice();
+			}
+
+			deviceMutex.lock();
+			for (size_t i = 0; i < audioDevices.size(); i++)
+			{
+				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
+				{
+					deviceMutex.unlock();
+					return audioDevices.at(i);
+				}
+			}
+			deviceMutex.unlock();
+
+			return AudioDevice();
+		}
+		std::vector<AudioDevice> NativeAudio::GetAudioDevices(AudioDeviceType deviceType) const
+		{
+			std::vector<AudioDevice> result;
+
+			if (deviceType == AudioDeviceType::Null)
+			{
+				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetAudioDevices", "DeviceType must not be Null."));
+				return result;
+			}
+
+			deviceMutex.lock();
+			for (size_t i = 0; i < audioDevices.size(); i++)
+			{
+				if (deviceType == AudioDeviceType::All || audioDevices.at(i).type == deviceType)
+				{
+					result.push_back(audioDevices.at(i));
+				}
+			}
+			deviceMutex.unlock();
+
+			return result;
+		}
 		bool NativeAudio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
 		{
 			try
@@ -332,6 +377,55 @@ namespace HephAudio
 			}
 			return false;
 		}
+		void NativeAudio::CheckAudioDevices()
+		{
+			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, AudioDevice());
+
+			while (!disposing)
+			{
+				std::this_thread::sleep_for(std::chrono::nanoseconds(this->deviceEnumerationPeriod_ns));
+
+				deviceMutex.lock();
+				std::vector<AudioDevice> oldDevices = audioDevices;
+				audioDevices.clear();
+				this->EnumerateAudioDevices();
+				deviceMutex.unlock();
+
+				if (OnAudioDeviceAdded)
+				{
+					for (size_t i = 0; i < audioDevices.size(); i++)
+					{
+						for (size_t j = 0; j < oldDevices.size(); j++)
+						{
+							if (audioDevices.at(i).id == oldDevices.at(j).id)
+							{
+								goto ADD_BREAK;
+							}
+						}
+						deviceEventArgs.audioDevice = audioDevices.at(i);
+						OnAudioDeviceAdded(&deviceEventArgs, nullptr);
+					ADD_BREAK:;
+					}
+				}
+
+				if (OnAudioDeviceRemoved)
+				{
+					for (size_t i = 0; i < oldDevices.size(); i++)
+					{
+						for (size_t j = 0; j < audioDevices.size(); j++)
+						{
+							if (oldDevices.at(i).id == audioDevices.at(j).id)
+							{
+								goto REMOVE_BREAK;
+							}
+						}
+						deviceEventArgs.audioDevice = oldDevices.at(i);
+						OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
+					REMOVE_BREAK:;
+					}
+				}
+			}
+		}
 		void NativeAudio::JoinRenderThread()
 		{
 			if (renderThread.joinable())
@@ -344,6 +438,13 @@ namespace HephAudio
 			if (captureThread.joinable())
 			{
 				captureThread.join();
+			}
+		}
+		void NativeAudio::JoinDeviceThread()
+		{
+			if (deviceThread.joinable())
+			{
+				deviceThread.join();
 			}
 		}
 		void NativeAudio::JoinQueueThreads()
@@ -371,6 +472,10 @@ namespace HephAudio
 			else if (currentThreadId == captureThread.get_id())
 			{
 				return AudioExceptionThread::CaptureThread;
+			}
+			else if (currentThreadId == deviceThread.get_id())
+			{
+				return AudioExceptionThread::DeviceThread;
 			}
 
 			for (size_t i = 0; i < queueThreads.size(); i++)

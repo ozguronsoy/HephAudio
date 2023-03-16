@@ -22,7 +22,60 @@ namespace HephAudio
 
 #elif defined(__ANDROID__)
 
-		ConsoleLogger::Log(message, logLevel);
+		if (message.GetStringType() == StringType::ASCII)
+		{
+			if (logLevel == ConsoleLogger::info)
+			{
+				__android_log_print(ANDROID_LOG_INFO, "HephAudio", "%s", message.c_str());
+			}
+			else if (logLevel == ConsoleLogger::warning)
+			{
+				__android_log_print(ANDROID_LOG_WARN, "HephAudio", "%s", message.c_str());
+			}
+			else if (logLevel == ConsoleLogger::error)
+			{
+				__android_log_print(ANDROID_LOG_ERROR, "HephAudio", "%s", message.c_str());
+			}
+			else if (logLevel == ConsoleLogger::success)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, "HephAudio", "%s", message.c_str());
+			}
+			else if (logLevel == ConsoleLogger::debug)
+			{
+				__android_log_print(ANDROID_LOG_DEBUG, "HephAudio", "%s", message.c_str());
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_DEFAULT, "HephAudio", "%s", message.c_str());
+			}
+		}
+		else
+		{
+			if (logLevel == ConsoleLogger::info)
+			{
+				__android_log_print(ANDROID_LOG_INFO, "HephAudio", "%ls", message.wc_str());
+			}
+			else if (logLevel == ConsoleLogger::warning)
+			{
+				__android_log_print(ANDROID_LOG_WARN, "HephAudio", "%ls", message.wc_str());
+			}
+			else if (logLevel == ConsoleLogger::error)
+			{
+				__android_log_print(ANDROID_LOG_ERROR, "HephAudio", "%ls", message.wc_str());
+			}
+			else if (logLevel == ConsoleLogger::success)
+			{
+				__android_log_print(ANDROID_LOG_VERBOSE, "HephAudio", "%ls", message.wc_str());
+			}
+			else if (logLevel == ConsoleLogger::debug)
+			{
+				__android_log_print(ANDROID_LOG_DEBUG, "HephAudio", "%ls", message.wc_str());
+			}
+			else
+			{
+				__android_log_print(ANDROID_LOG_DEFAULT, "HephAudio", "%ls", message.wc_str());
+			}
+		}
 
 #endif
 	}

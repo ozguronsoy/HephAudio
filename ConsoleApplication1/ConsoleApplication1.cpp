@@ -40,6 +40,8 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
+	audio.Play(audioRoot + "Gate of Steiner.wav", 0, false)->OnRender = OnRender;
+
 	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)

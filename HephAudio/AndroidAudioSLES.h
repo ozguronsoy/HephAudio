@@ -12,9 +12,9 @@ namespace HephAudio
 		/// <summary>
 		/// Uses OpenSL ES, min api target = 16. Use AndroidAudioA for api level 27 or greater (uses AAudio).
 		/// </summary>
-		class AndroidAudioSLES : public AndroidAudioBase
+		class AndroidAudioSLES final : public AndroidAudioBase
 		{
-		protected:
+		private:
 			/// <summary>
 			/// Holds information to be used in a render or a capture callback.
 			/// </summary>
@@ -37,34 +37,13 @@ namespace HephAudio
 				/// </summary>
 				SLuint32 size;
 			};
-		protected:
-			/// <summary>
-			/// The object that provides access to the audio engine interface.
-			/// </summary>
+		private:
 			SLObjectItf audioEngineObject;
-			/// <summary>
-			/// The interface for creating an audio player/recorder.
-			/// </summary>
 			SLEngineItf audioEngine;
-			/// <summary>
-			/// The object that provides access to the audio player interface.
-			/// </summary>
 			SLObjectItf audioPlayerObject;
-			/// <summary>
-			/// The interface that renders the audio samples.
-			/// </summary>
 			SLPlayItf audioPlayer;
-			/// <summary>
-			/// The interface that sets or gets the master volume of the application.
-			/// </summary>
 			SLVolumeItf masterVolumeObject;
-			/// <summary>
-			/// The object that provides access to the audio recorder interface.
-			/// </summary>
 			SLObjectItf audioRecorderObject;
-			/// <summary>
-			/// The interface that captures the audio samples.
-			/// </summary>
 			SLRecordItf audioRecorder;
 			/// <summary>
 			/// The number of frames the buffer OpenSL ES uses for rendering audio samples consists of.
@@ -84,19 +63,19 @@ namespace HephAudio
 			/// <summary>
 			/// Frees the OpenSL ES resources.
 			/// </summary>
-			virtual ~AndroidAudioSLES();
-			virtual void SetMasterVolume(hephaudio_float volume);
-			virtual hephaudio_float GetMasterVolume() const;
-			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format);
-			virtual void StopRendering();
-			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
-			virtual void StopCapturing();
-			virtual void SetDisplayName(StringBuffer displayName);
-			virtual void SetIconPath(StringBuffer iconPath);
-		protected:
-			virtual void RenderData(SLBufferQueueItf bufferQueue);
-			virtual void CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue);
-			virtual SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
+			~AndroidAudioSLES();
+			void SetMasterVolume(hephaudio_float volume);
+			hephaudio_float GetMasterVolume() const;
+			void InitializeRender(AudioDevice* device, AudioFormatInfo format);
+			void StopRendering();
+			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
+			void StopCapturing();
+			void SetDisplayName(StringBuffer displayName);
+			void SetIconPath(StringBuffer iconPath);
+		private:
+			void RenderData(SLBufferQueueItf bufferQueue);
+			void CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue);
+			SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);
 			static void RecordEventCallback(SLAndroidSimpleBufferQueueItf simpleBufferQueue, void* pContext);
 		};

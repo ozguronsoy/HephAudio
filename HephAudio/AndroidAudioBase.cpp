@@ -24,11 +24,6 @@ namespace HephAudio
 					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr."));
 					throw AudioException(E_INVALIDARG, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr.");
 				}
-
-				JNIEnv* env = nullptr;
-				GetEnv(&env);
-				EnumerateAudioDevices(env);
-				deviceThread = std::thread(&AndroidAudioBase::CheckAudioDevices, this);
 			}
 		}
 		AndroidAudioBase::~AndroidAudioBase()
@@ -36,60 +31,13 @@ namespace HephAudio
 			disposing = true;
 			JoinDeviceThread();
 		}
-		AudioDevice AndroidAudioBase::GetDefaultAudioDevice(AudioDeviceType deviceType) const
-		{
-			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
-			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
-				return AudioDevice();
-			}
-
-			deviceMutex.lock();
-			for (size_t i = 0; i < audioDevices.size(); i++)
-			{
-				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
-				{
-					deviceMutex.unlock();
-					return audioDevices.at(i);
-				}
-			}
-			deviceMutex.unlock();
-
-			return AudioDevice();
-		}
-		std::vector<AudioDevice> AndroidAudioBase::GetAudioDevices(AudioDeviceType deviceType) const
-		{
-			std::vector<AudioDevice> result;
-
-			if (deviceType == AudioDeviceType::Null)
-			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "AndroidAudioBase::GetAudioDevices", "DeviceType must not be Null."));
-				return result;
-			}
-
-			deviceMutex.lock();
-			for (size_t i = 0; i < audioDevices.size(); i++)
-			{
-				if ((audioDevices.at(i).type & deviceType) != AudioDeviceType::Null)
-				{
-					result.push_back(audioDevices.at(i));
-				}
-			}
-			deviceMutex.unlock();
-
-			return result;
-		}
-		void AndroidAudioBase::JoinDeviceThread()
-		{
-			if (deviceThread.joinable())
-			{
-				deviceThread.join();
-			}
-		}
-		void AndroidAudioBase::EnumerateAudioDevices(JNIEnv* env)
+		void AndroidAudioBase::EnumerateAudioDevices()
 		{
 			if (deviceApiLevel >= 23)
 			{
+				JNIEnv* env = nullptr;
+				GetEnv(&env);
+
 				audioDevices.clear();
 
 				jclass audioManagerClass = env->FindClass("android/media/AudioManager");
@@ -133,57 +81,6 @@ namespace HephAudio
 				env->DeleteLocalRef(audioDeviceArray);
 				env->DeleteLocalRef(audioManagerObject);
 				env->DeleteLocalRef(audioManagerClass);
-			}
-		}
-		void AndroidAudioBase::CheckAudioDevices()
-		{
-			constexpr std::chrono::nanoseconds period_ns = std::chrono::nanoseconds((int64_t)(250.0 * 1e6));
-			JNIEnv* env = nullptr;
-			GetEnv(&env);
-			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, AudioDevice());
-
-			while (!disposing)
-			{
-				std::this_thread::sleep_for(period_ns);
-
-				deviceMutex.lock();
-				std::vector<AudioDevice> oldDevices = audioDevices;
-				EnumerateAudioDevices(env);
-				deviceMutex.unlock();
-
-				if (OnAudioDeviceAdded)
-				{
-					for (size_t i = 0; i < audioDevices.size(); i++)
-					{
-						for (size_t j = 0; j < oldDevices.size(); j++)
-						{
-							if (audioDevices.at(i).id == oldDevices.at(j).id)
-							{
-								goto ADD_BREAK;
-							}
-						}
-						deviceEventArgs.audioDevice = audioDevices.at(i);
-						OnAudioDeviceAdded(&deviceEventArgs, nullptr);
-					ADD_BREAK:;
-					}
-				}
-
-				if (OnAudioDeviceRemoved)
-				{
-					for (size_t i = 0; i < oldDevices.size(); i++)
-					{
-						for (size_t j = 0; j < audioDevices.size(); j++)
-						{
-							if (oldDevices.at(i).id == audioDevices.at(j).id)
-							{
-								goto REMOVE_BREAK;
-							}
-						}
-						deviceEventArgs.audioDevice = oldDevices.at(i);
-						OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
-					REMOVE_BREAK:;
-					}
-				}
 			}
 		}
 		void AndroidAudioBase::GetEnv(JNIEnv** pEnv) const

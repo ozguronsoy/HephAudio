@@ -30,6 +30,9 @@ namespace HephAudio
 			ANDROIDAUDIO_EXCPT(slCreateEngine(&audioEngineObject, 1, &engineOption, 0, nullptr, nullptr), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst creating the audio engine object.");
 			ANDROIDAUDIO_EXCPT((*audioEngineObject)->Realize(audioEngineObject, SL_BOOLEAN_FALSE), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst creating the audio engine object.");
 			ANDROIDAUDIO_EXCPT((*audioEngineObject)->GetInterface(audioEngineObject, SL_IID_ENGINE, &audioEngine), this, "AndroidAudioSLES::AndroidAudioSLES", "An error occurred whilst getting the audio engine interface.");
+
+			this->EnumerateAudioDevices();
+			this->deviceThread = std::thread(&AndroidAudioSLES::CheckAudioDevices, this);
 		}
 		AndroidAudioSLES::~AndroidAudioSLES()
 		{

@@ -24,12 +24,7 @@ namespace HephAudio
 		WinAudioDS::WinAudioDS() : NativeAudio()
 			, pDirectSound(nullptr), pDirectSoundBuffer(nullptr), pDirectSoundCapture(nullptr), pDirectSoundCaptureBuffer(nullptr)
 		{
-			CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
-			HRESULT hres;
-			WINAUDIODS_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating render devices.");
-			WINAUDIODS_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), this, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating capture devices.");
-			deviceThread = std::thread(&WinAudioDS::EnumerateAudioDevices, this);
+			CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
 			WNDCLASSEXW wndw;
 			wndw.lpfnWndProc = &WinAudioDS::WindowProc;
@@ -46,6 +41,9 @@ namespace HephAudio
 			wndw.style = 0;
 			RegisterClassExW(&wndw);
 			hwnd = CreateWindowExW(0, L"HephAudio", L"HephAudio", 0, 0, 0, 0, 0, nullptr, nullptr, DLL_INSTANCE, nullptr);
+
+			this->EnumerateAudioDevices();
+			this->deviceThread = std::thread(&WinAudioDS::CheckAudioDevices, this);
 		}
 		WinAudioDS::~WinAudioDS()
 		{
@@ -217,108 +215,11 @@ namespace HephAudio
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, "WinAudioDS::SetIconPath", "WinAudioDS does not support this method, use WinAudio instead."));
 		}
-		AudioDevice WinAudioDS::GetDefaultAudioDevice(AudioDeviceType deviceType) const
-		{
-			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
-			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
-				return AudioDevice();
-			}
-
-			deviceMutex.lock();
-			for (size_t i = 0; i < audioDevices.size(); i++)
-			{
-				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
-				{
-					deviceMutex.unlock();
-					return audioDevices.at(i);
-				}
-			}
-			deviceMutex.unlock();
-
-			return AudioDevice();
-		}
-		std::vector<AudioDevice> WinAudioDS::GetAudioDevices(AudioDeviceType deviceType) const
-		{
-			std::vector<AudioDevice> result;
-
-			if (deviceType == AudioDeviceType::Null)
-			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "WinAudioDS::GetAudioDevices", "DeviceType must not be Null."));
-				return result;
-			}
-
-			deviceMutex.lock();
-			for (size_t i = 0; i < audioDevices.size(); i++)
-			{
-				if (deviceType == AudioDeviceType::All || audioDevices.at(i).type == deviceType)
-				{
-					result.push_back(audioDevices.at(i));
-				}
-			}
-			deviceMutex.unlock();
-
-			return result;
-		}
-		void WinAudioDS::JoinDeviceThread()
-		{
-			if (deviceThread.joinable())
-			{
-				deviceThread.join();
-			}
-		}
 		void WinAudioDS::EnumerateAudioDevices()
 		{
-			constexpr std::chrono::nanoseconds period_ns = std::chrono::nanoseconds((int64_t)(100.0 * 1e6));
-			AudioDeviceEventArgs deviceEventArgs = AudioDeviceEventArgs(this, AudioDevice());
 			HRESULT hres;
-			StopWatch::Start();
-
-			while (!disposing)
-			{
-				std::this_thread::sleep_for(period_ns);
-
-				deviceMutex.lock();
-				std::vector<AudioDevice> oldDevices = audioDevices;
-				audioDevices.clear();
-				WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating render devices.");
-				WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating capture devices.");
-				deviceMutex.unlock();
-
-				if (OnAudioDeviceAdded)
-				{
-					for (size_t i = 0; i < audioDevices.size(); i++)
-					{
-						for (size_t j = 0; j < oldDevices.size(); j++)
-						{
-							if (audioDevices.at(i).id == oldDevices.at(j).id)
-							{
-								goto ADD_BREAK;
-							}
-						}
-						deviceEventArgs.audioDevice = audioDevices.at(i);
-						OnAudioDeviceAdded(&deviceEventArgs, nullptr);
-					ADD_BREAK:;
-					}
-				}
-
-				if (OnAudioDeviceRemoved)
-				{
-					for (size_t i = 0; i < oldDevices.size(); i++)
-					{
-						for (size_t j = 0; j < audioDevices.size(); j++)
-						{
-							if (oldDevices.at(i).id == audioDevices.at(j).id)
-							{
-								goto REMOVE_BREAK;
-							}
-						}
-						deviceEventArgs.audioDevice = oldDevices.at(i);
-						OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
-					REMOVE_BREAK:;
-					}
-				}
-			}
+			WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating render devices.");
+			WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating capture devices.");
 		}
 		void WinAudioDS::RenderData()
 		{

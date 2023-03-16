@@ -20,6 +20,9 @@ namespace HephAudio
 				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27."));
 				throw AudioException(E_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27.");
 			}
+
+			this->EnumerateAudioDevices();
+			this->deviceThread = std::thread(&AndroidAudioA::CheckAudioDevices, this);
 		}
 		AndroidAudioA::~AndroidAudioA()
 		{
@@ -46,7 +49,7 @@ namespace HephAudio
 		void AndroidAudioA::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
 
 			StopRendering();
 
@@ -94,7 +97,7 @@ namespace HephAudio
 
 			if (device != nullptr)
 			{
-				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::Normal ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
+				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::ASCII ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
 				renderDeviceId = device->id;
 			}
 
@@ -128,7 +131,7 @@ namespace HephAudio
 		void AndroidAudioA::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
 
 			StopCapturing();
 
@@ -176,7 +179,7 @@ namespace HephAudio
 
 			if (device != nullptr)
 			{
-				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::Normal ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
+				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::ASCII ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
 				captureDeviceId = device->id;
 			}
 

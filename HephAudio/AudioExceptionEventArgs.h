@@ -7,10 +7,11 @@ namespace HephAudio
 {
 	enum class AudioExceptionThread : uint8_t
 	{
-		MainThread = 0x00,
-		RenderThread = 0x01,
-		CaptureThread = 0x02,
-		QueueThread = 0x04,
+		MainThread = 0x01,
+		RenderThread = 0x02,
+		CaptureThread = 0x04,
+		DeviceThread = 0x08,
+		QueueThread = 0x016,
 		Other = 0xFF
 	};
 	/// <summary>
