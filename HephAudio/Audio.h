@@ -34,7 +34,6 @@ namespace HephAudio
 		HephAudio::Native::NativeAudio* operator->() const noexcept;
 		HephAudio::Native::NativeAudio* GetNativeAudio() const;
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath);
-		std::shared_ptr<AudioObject> Play(StringBuffer filePath, bool isPaused);
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount);
 		std::shared_ptr<AudioObject> Play(StringBuffer filePath, uint32_t loopCount, bool isPaused);
 		std::vector<std::shared_ptr<AudioObject>> Queue(StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<StringBuffer>& filePaths);

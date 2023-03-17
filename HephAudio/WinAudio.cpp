@@ -393,7 +393,7 @@ namespace HephAudio
 
 						AudioBuffer temp(nFramesAvailable, captureFormat);
 						memcpy(temp.Begin(), captureBuffer, temp.Size());
-						AudioProcessor::ConvertPcmToInnerFormat(temp);
+						AudioProcessor::ConvertPcmToInnerFormat(temp, AudioFile::GetSystemEndian());
 						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
 						OnCapture(&captureEventArgs, nullptr);
 

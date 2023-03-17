@@ -5,11 +5,6 @@
 
 namespace HephAudio
 {
-	enum class Endian : uint8_t
-	{
-		Little = 0,
-		Big = 1
-	};
 	enum class AudioFileOpenMode : uint8_t
 	{
 		Read = 1,

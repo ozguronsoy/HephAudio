@@ -571,7 +571,8 @@ namespace HephAudio
 		}
 		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
-			const hephaudio_float aoFactor = 1.0 / GetAOCountToMix();
+			const size_t mixedAOCount = GetAOCountToMix();
+			AudioBuffer mixBuffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
@@ -579,7 +580,7 @@ namespace HephAudio
 
 				if (!pAudioObject->pause && (pAudioObject->queueName.CompareContent("") || pAudioObject->queueIndex == 0))
 				{
-					const hephaudio_float volume = GetFinalAOVolume(audioObjects.at(i)) * aoFactor;
+					const hephaudio_float volume = GetFinalAOVolume(audioObjects.at(i)) / mixedAOCount;
 
 					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, pAudioObject.get(), frameCount);
 					AudioRenderEventResult rResult;
@@ -589,7 +590,7 @@ namespace HephAudio
 					{
 						for (size_t k = 0; k < renderFormat.channelCount; k++)
 						{
-							outputBuffer.Set(outputBuffer.Get(j, k) + rResult.renderBuffer[j][k] * volume, j, k);
+							mixBuffer[j][k] += rResult.renderBuffer[j][k] * volume;
 						}
 					}
 
@@ -632,6 +633,9 @@ namespace HephAudio
 					}
 				}
 			}
+
+			AudioProcessor::ConvertInnerToPcmFormat(mixBuffer, renderFormat.bitsPerSample, AudioFile::GetSystemEndian());
+			outputBuffer = std::move(mixBuffer);
 		}
 		size_t NativeAudio::GetAOCountToMix() const
 		{

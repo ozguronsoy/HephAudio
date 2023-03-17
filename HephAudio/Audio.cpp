@@ -81,10 +81,6 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->Play(filePath);
 	}
-	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, bool isPaused)
-	{
-		return this->pNativeAudio->Play(filePath, isPaused);
-	}
 	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount)
 	{
 		return this->pNativeAudio->Play(filePath, loopCount);

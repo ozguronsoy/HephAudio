@@ -1,6 +1,7 @@
 #include "AudioProcessor.h"
 #include "AudioException.h"
 #include "Fourier.h"
+#include "AudioFile.h"
 #include <thread>
 
 namespace HephAudio
@@ -8,31 +9,7 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, uint16_t outputBps)
 	{
-		if (buffer.formatInfo.bitsPerSample != outputBps)
-		{
-			AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, outputBps, buffer.formatInfo.sampleRate));
-
-			for (size_t i = 0; i < buffer.frameCount; i++)
-			{
-				for (uint8_t j = 0; j < buffer.formatInfo.channelCount; j++)
-				{
-					hephaudio_float sample = buffer.Get(i, j);
-					if (outputBps == 8)
-					{
-						sample += 1.0;
-						sample *= 0.5;
-					}
-					else if (buffer.formatInfo.bitsPerSample == 8)
-					{
-						sample *= 2.0;
-						sample -= 1.0;
-					}
-					resultBuffer.Set(sample, i, j);
-				}
-			}
-
-			buffer = std::move(resultBuffer);
-		}
+		throw AudioException(E_NOTIMPL, "AudioProcessor::ConvertBPS", "Not implemented.");
 	}
 	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
 	{
@@ -159,33 +136,253 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	void AudioProcessor::ConvertPcmToInnerFormat(AudioBuffer& buffer)
+	void AudioProcessor::ConvertPcmToInnerFormat(AudioBuffer& buffer, Endian pcmEndian)
 	{
 		if (buffer.formatInfo.formatTag == WAVE_FORMAT_PCM)
 		{
-			AudioBuffer tempBuffer = AudioBuffer(buffer.frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, buffer.formatInfo.channelCount, sizeof(hephaudio_float) * 8, buffer.formatInfo.sampleRate));
-			for (size_t i = 0; i < buffer.frameCount; i++)
-			{
-				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-				{
-					tempBuffer[i][j] = buffer.Get(i, j);
-				}
-			}
-			buffer = std::move(tempBuffer);
+			buffer = AudioProcessor::ConvertPcmToInnerFormat(buffer.Begin(), buffer.frameCount, buffer.formatInfo, pcmEndian);
 		}
 	}
-	void AudioProcessor::ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps)
+	AudioBuffer AudioProcessor::ConvertPcmToInnerFormat(void* buffer, size_t frameCount, AudioFormatInfo formatInfo, Endian pcmEndian)
+	{
+		AudioBuffer resultBuffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, formatInfo.channelCount, sizeof(hephaudio_float) * 8, formatInfo.sampleRate));
+
+		if (AudioFile::GetSystemEndian() != pcmEndian)
+		{
+			switch (formatInfo.bitsPerSample)
+			{
+			case 8:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						resultBuffer[i][j] = (hephaudio_float)((uint8_t*)buffer)[i * formatInfo.channelCount + j] / (hephaudio_float)UINT8_MAX;
+					}
+				}
+			}
+			break;
+			case 16:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						int16_t pcmSample = ((int16_t*)buffer)[i * formatInfo.channelCount + j];
+						AudioFile::ChangeEndian((uint8_t*)&pcmSample, 2);
+
+						resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)(INT16_MAX + 1);
+					}
+				}
+			}
+			break;
+			case 24:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						int24 pcmSample = ((int24*)buffer)[i * formatInfo.channelCount + j];
+						AudioFile::ChangeEndian((uint8_t*)&pcmSample, 3);
+
+						resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)(INT24_MAX + 1);
+					}
+				}
+			}
+			break;
+			case 32:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						int32_t pcmSample = ((int32_t*)buffer)[i * formatInfo.channelCount + j];
+						AudioFile::ChangeEndian((uint8_t*)&pcmSample, 4);
+
+						resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)(INT32_MAX + 1ull);
+					}
+				}
+			}
+			break;
+			default:
+				throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+			}
+		}
+		else
+		{
+			switch (formatInfo.bitsPerSample)
+			{
+			case 8:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						resultBuffer[i][j] = (hephaudio_float)((uint8_t*)buffer)[i * formatInfo.channelCount + j] / (hephaudio_float)UINT8_MAX;
+					}
+				}
+			}
+			break;
+			case 16:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						resultBuffer[i][j] = (hephaudio_float)((int16_t*)buffer)[i * formatInfo.channelCount + j] / (hephaudio_float)(INT16_MAX + 1);
+					}
+				}
+			}
+			break;
+			case 24:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						resultBuffer[i][j] = (hephaudio_float)((int24*)buffer)[i * formatInfo.channelCount + j] / (hephaudio_float)(INT24_MAX + 1);
+					}
+				}
+			}
+			break;
+			case 32:
+			{
+				for (size_t i = 0; i < frameCount; i++)
+				{
+					for (size_t j = 0; j < formatInfo.channelCount; j++)
+					{
+						resultBuffer[i][j] = (hephaudio_float)((int32_t*)buffer)[i * formatInfo.channelCount + j] / (hephaudio_float)(INT32_MAX + 1ull);
+					}
+				}
+			}
+			break;
+			default:
+				throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+			}
+		}
+
+		return resultBuffer;
+	}
+	void AudioProcessor::ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps, Endian pcmEndian)
 	{
 		if (buffer.formatInfo.formatTag == WAVE_FORMAT_HEPHAUDIO)
 		{
 			AudioBuffer tempBuffer = AudioBuffer(buffer.frameCount, AudioFormatInfo(WAVE_FORMAT_PCM, buffer.formatInfo.channelCount, bps, buffer.formatInfo.sampleRate));
-			for (size_t i = 0; i < buffer.frameCount; i++)
+
+			if (AudioFile::GetSystemEndian() != pcmEndian)
 			{
-				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				switch (bps)
 				{
-					tempBuffer.Set(buffer[i][j], i, j);
+				case 8:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							((uint8_t*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = (buffer[i][j] * 0.5 + 0.5) * UINT8_MAX;
+						}
+					}
+				}
+				break;
+				case 16:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							int16_t pcmSample = buffer[i][j] * (INT16_MAX + 1);
+							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 2);
+
+							((int16_t*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = pcmSample;
+						}
+					}
+				}
+				break;
+				case 24:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							int24 pcmSample = buffer[i][j] * (INT24_MAX + 1);
+							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 3);
+
+							((int24*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = pcmSample;
+						}
+					}
+				}
+				break;
+				case 32:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							int32_t pcmSample = buffer[i][j] * (INT32_MAX + 1ull);
+							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 4);
+
+							((int32_t*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = pcmSample;
+						}
+					}
+				}
+				break;
+				default:
+					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
 				}
 			}
+			else
+			{
+				switch (bps)
+				{
+				case 8:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							((uint8_t*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = (buffer[i][j] * 0.5 + 0.5) * UINT8_MAX;
+						}
+					}
+				}
+				break;
+				case 16:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							((int16_t*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = buffer[i][j] * (INT16_MAX + 1);
+						}
+					}
+				}
+				break;
+				case 24:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							((int24*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = buffer[i][j] * (INT24_MAX + 1);
+						}
+					}
+				}
+				break;
+				case 32:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+						{
+							((int32_t*)tempBuffer.Begin())[i * buffer.formatInfo.channelCount + j] = buffer[i][j] * (INT32_MAX + 1ull);
+						}
+					}
+				}
+				break;
+				default:
+					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+				}
+			}
+
 			buffer = std::move(tempBuffer);
 		}
 	}

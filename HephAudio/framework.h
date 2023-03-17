@@ -96,3 +96,9 @@ inline hephaudio_float DegToRad(hephaudio_float deg)
 	return deg * PI / 180.0;
 }
 #pragma endregion
+
+enum class Endian : uint8_t
+{
+	Little = 0,
+	Big = 1
+};

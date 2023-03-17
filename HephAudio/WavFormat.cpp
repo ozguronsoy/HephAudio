@@ -71,132 +71,18 @@ namespace HephAudio
 			uint32_t wavAudioDataSize;
 			pAudioFile->Read(&wavAudioDataSize, 4, Endian::Little);
 
-			AudioBuffer buffer = AudioBuffer(wavAudioDataSize / wavFormatInfo.FrameSize(), AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, wavFormatInfo.channelCount, sizeof(hephaudio_float) * 8, wavFormatInfo.sampleRate));
-
-			void* wavBuffer = malloc(wavAudioDataSize);
-			if (wavBuffer == nullptr)
+			const uint8_t bytesPerSample = wavFormatInfo.bitsPerSample / 8;
+			void* pPcmBuffer = malloc(wavAudioDataSize);
+			if (pPcmBuffer == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "WavFormat::ReadFile", "Insufficient memory.");
 			}
-			pAudioFile->ReadToBuffer(wavBuffer, wavFormatInfo.bitsPerSample / 8, wavAudioDataSize / (wavFormatInfo.bitsPerSample / 8));
+			pAudioFile->ReadToBuffer(pPcmBuffer, bytesPerSample, wavAudioDataSize / bytesPerSample);
+			
+			const AudioBuffer hephaudioBuffer = AudioProcessor::ConvertPcmToInnerFormat(pPcmBuffer, wavAudioDataSize / (bytesPerSample * wavFormatInfo.channelCount), wavFormatInfo, Endian::Little);
+			free(pPcmBuffer);
 
-			if (AudioFile::GetSystemEndian() != Endian::Little)
-			{
-				switch (wavFormatInfo.bitsPerSample)
-				{
-				case 8:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							buffer[i][j] = (hephaudio_float)((uint8_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)UINT8_MAX;
-						}
-					}
-				}
-				break;
-				case 16:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							int16_t wavSample = ((int16_t*)wavBuffer)[i * wavFormatInfo.channelCount + j];
-							AudioFile::ChangeEndian((uint8_t*)&wavSample, 2);
-
-							buffer[i][j] = (hephaudio_float)wavSample / (hephaudio_float)(INT16_MAX + 1);
-						}
-					}
-				}
-				break;
-				case 24:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							int24 wavSample = ((int24*)wavBuffer)[i * wavFormatInfo.channelCount + j];
-							AudioFile::ChangeEndian((uint8_t*)&wavSample, 3);
-
-							buffer[i][j] = (hephaudio_float)wavSample / (hephaudio_float)(INT24_MAX + 1);
-						}
-					}
-				}
-				break;
-				case 32:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							int32_t wavSample = ((int32_t*)wavBuffer)[i * wavFormatInfo.channelCount + j];
-							AudioFile::ChangeEndian((uint8_t*)&wavSample, 4);
-
-							buffer[i][j] = (hephaudio_float)wavSample / (hephaudio_float)(INT32_MAX + 1ull);
-						}
-					}
-				}
-				break;
-				default:
-					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
-				}
-			}
-			else
-			{
-				switch (wavFormatInfo.bitsPerSample)
-				{
-				case 8:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							buffer[i][j] = (hephaudio_float)((uint8_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)UINT8_MAX;
-						}
-					}
-				}
-				break;
-				case 16:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							buffer[i][j] = (hephaudio_float)((int16_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)(INT16_MAX + 1);
-						}
-					}
-				}
-				break;
-				case 24:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							buffer[i][j] = (hephaudio_float)((int24*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)(INT24_MAX + 1);
-						}
-					}
-				}
-				break;
-				case 32:
-				{
-					for (size_t i = 0; i < buffer.FrameCount(); i++)
-					{
-						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
-						{
-							buffer[i][j] = (hephaudio_float)((int32_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)(INT32_MAX + 1ull);
-						}
-					}
-				}
-				break;
-				default:
-					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
-				}
-			}
-
-			free(wavBuffer);
-
-			return buffer;
+			return hephaudioBuffer;
 		}
 		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{

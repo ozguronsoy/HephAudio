@@ -158,20 +158,6 @@ namespace HephAudio
 		/// <returns>Number of frames the buffer consists of</returns>
 		size_t FrameCount() const noexcept;
 		/// <summary>
-		/// Gets normalized sample from the buffer.
-		/// </summary>
-		/// <param name="frameIndex">Position of the frame which contains the sample</param>
-		/// <param name="channel">Position of the sample within the frame</param>
-		/// <returns>The normalized sample</returns>
-		hephaudio_float Get(size_t frameIndex, uint8_t channel) const;
-		/// <summary>
-		/// Sets the normalized sample at the given position.
-		/// </summary>
-		/// <param name="value">Normalized audio sample</param>
-		/// <param name="frameIndex">Position of the frame which contains the sample</param>
-		/// <param name="channel">Position of the sample within the frame</param>
-		void Set(hephaudio_float value, size_t frameIndex, uint8_t channel);
-		/// <summary>
 		/// Gets the desired portion of the audio data, also known as a rectangular window, as a new buffer.
 		/// </summary>
 		/// <param name="frameIndex">Starting position of the sub buffer</param>
