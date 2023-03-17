@@ -41,7 +41,7 @@ namespace HephAudio
 			void SetDisplayName(StringBuffer displayName) override;
 			void SetIconPath(StringBuffer iconPath) override;
 		private:
-			void EnumerateAudioDevices() override;
+			bool EnumerateAudioDevices() override;
 			void RenderData();
 			void CaptureData();
 			// lpContext = a pointer to the current WinAudioDS that calls this method.

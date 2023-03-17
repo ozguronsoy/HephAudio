@@ -12,11 +12,12 @@ namespace HephAudio
 		}
 		void AiffFormat::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
 		{
-			uint32_t frameCount = 0;
+			size_t wavHeaderSize;
+			uint32_t frameCount;
 			Endian audioDataEndian;
-			AudioFormatInfo format = ReadFormatInfo(file, frameCount, audioDataEndian);
+			AudioFormatInfo format = ReadFormatInfo(file, wavHeaderSize, frameCount, audioDataEndian);
 			void* audioFileBuffer = file.GetInnerBufferAddress();
-			uint32_t cursor = format.headerSize;
+			uint32_t cursor = wavHeaderSize;
 			while (true) // Find the sound data chunk.
 			{
 				if (Read<uint32_t>(audioFileBuffer, cursor, GetSystemEndian()) != *(uint32_t*)"SSND")
@@ -135,7 +136,7 @@ namespace HephAudio
 			}
 			return false;
 		}
-		AudioFormatInfo AiffFormat::ReadFormatInfo(const AudioFile& inFile, uint32_t& outFrameCount, Endian& outEndian) const
+		AudioFormatInfo AiffFormat::ReadFormatInfo(const AudioFile& inFile, size_t& outWavHeaderSize, uint32_t& outFrameCount, Endian& outEndian) const
 		{
 			AudioFormatInfo format = AudioFormatInfo();
 			void* audioFileBuffer = inFile.GetInnerBufferAddress();
@@ -180,7 +181,7 @@ namespace HephAudio
 							}
 						}
 						format.formatTag = 1;
-						format.headerSize = nextChunk;
+						outWavHeaderSize = nextChunk;
 					}
 					else
 					{

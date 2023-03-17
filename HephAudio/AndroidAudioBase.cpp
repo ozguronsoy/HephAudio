@@ -38,8 +38,6 @@ namespace HephAudio
 				JNIEnv* env = nullptr;
 				GetEnv(&env);
 
-				audioDevices.clear();
-
 				jclass audioManagerClass = env->FindClass("android/media/AudioManager");
 				jobject audioManagerObject = env->AllocObject(audioManagerClass);
 
@@ -82,6 +80,8 @@ namespace HephAudio
 				env->DeleteLocalRef(audioManagerObject);
 				env->DeleteLocalRef(audioManagerClass);
 			}
+
+			return NativeAudio::DEVICE_ENUMERATION_SUCCESS;
 		}
 		void AndroidAudioBase::GetEnv(JNIEnv** pEnv) const
 		{

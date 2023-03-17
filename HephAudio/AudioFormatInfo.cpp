@@ -4,7 +4,7 @@ namespace HephAudio
 {
 	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(0, 0, 0, 0) { }
 	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bps, uint32_t sampleRate)
-		: formatTag(formatTag), channelCount(channelCount), bitsPerSample(bps), sampleRate(sampleRate), headerSize(0) {}
+		: formatTag(formatTag), channelCount(channelCount), bitsPerSample(bps), sampleRate(sampleRate) {}
 	bool AudioFormatInfo::operator==(const AudioFormatInfo& rhs) const
 	{
 		return this->formatTag == rhs.formatTag && this->bitsPerSample == rhs.bitsPerSample && this->channelCount == rhs.channelCount && this->sampleRate == rhs.sampleRate;
@@ -32,7 +32,6 @@ namespace HephAudio
 		this->channelCount = wfx.nChannels;
 		this->sampleRate = wfx.nSamplesPerSec;
 		this->bitsPerSample = wfx.wBitsPerSample;
-		this->headerSize = wfx.cbSize;
 	}
 	AudioFormatInfo::operator WAVEFORMATEX() const noexcept
 	{
@@ -43,7 +42,7 @@ namespace HephAudio
 		wfx.nAvgBytesPerSec = this->ByteRate();
 		wfx.nBlockAlign = this->FrameSize();
 		wfx.wBitsPerSample = this->bitsPerSample;
-		wfx.cbSize = this->headerSize;
+		wfx.cbSize = 0;
 		return wfx;
 	}
 #endif

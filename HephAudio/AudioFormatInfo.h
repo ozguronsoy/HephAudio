@@ -30,10 +30,6 @@ namespace HephAudio
 		/// </summary>
 		uint16_t bitsPerSample;
 		/// <summary>
-		/// The size of the audio file header that contains the format information, will be removed in later versions.
-		/// </summary>
-		uint16_t headerSize;
-		/// <summary>
 		/// Creates and initializes an AudioFormatInfo instance with default values.
 		/// </summary>
 		AudioFormatInfo();

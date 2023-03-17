@@ -388,7 +388,13 @@ namespace HephAudio
 				deviceMutex.lock();
 				std::vector<AudioDevice> oldDevices = audioDevices;
 				audioDevices.clear();
-				this->EnumerateAudioDevices();
+				if (this->EnumerateAudioDevices() == NativeAudio::DEVICE_ENUMERATION_FAIL)
+				{
+					HEPHAUDIO_LOG("Device enumeration failed, terminating the device thread...", ConsoleLogger::error);
+					audioDevices = oldDevices;
+					deviceMutex.unlock();
+					return;
+				}
 				deviceMutex.unlock();
 
 				if (OnAudioDeviceAdded)
@@ -648,15 +654,17 @@ namespace HephAudio
 			switch (t)
 			{
 			case AudioExceptionThread::MainThread:
-				return "Main thread";
+				return "Main Thread";
 			case AudioExceptionThread::RenderThread:
-				return "Render thread";
+				return "Render Thread";
 			case AudioExceptionThread::CaptureThread:
-				return "Capture thread";
+				return "Capture Thread";
+			case AudioExceptionThread::DeviceThread:
+				return "Device Thread";
 			case AudioExceptionThread::QueueThread:
-				return "Queue thread";
+				return "Queue Thread";
 			default:
-				return "Unknown thread";
+				return "Unknown Thread";
 			}
 		}
 	}

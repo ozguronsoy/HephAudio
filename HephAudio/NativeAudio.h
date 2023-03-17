@@ -24,6 +24,9 @@ namespace HephAudio
 		class NativeAudio
 		{
 		protected:
+			static constexpr bool DEVICE_ENUMERATION_FAIL = false;
+			static constexpr bool DEVICE_ENUMERATION_SUCCESS = true;
+		protected:
 			/// <summary>
 			/// The internal AudioObject list.
 			/// </summary>
@@ -335,7 +338,8 @@ namespace HephAudio
 			/// <summary>
 			/// Enumerates the available audio devices and stores them in the "NativeAudio::audioDevices" vector.
 			/// </summary>
-			virtual void EnumerateAudioDevices() = 0;
+			/// <returns>false if an error occurred so the device enumeration thread can terminate.</returns>
+			virtual bool EnumerateAudioDevices() = 0;
 			/// <summary>
 			/// Enumerates the audio devices periodically to detect any change in available devices.
 			/// </summary>

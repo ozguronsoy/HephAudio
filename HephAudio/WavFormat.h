@@ -14,7 +14,7 @@ namespace HephAudio
 			void ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const override;
 			bool SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const override;
 		private:
-			AudioFormatInfo ReadFormatInfo(const AudioFile& file, size_t& audioDataSize) const;
+			AudioFormatInfo ReadFormatInfo(const AudioFile& file, size_t& wavHeaderSize, size_t& audioDataSize) const;
 		};
 	}
 }

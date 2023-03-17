@@ -45,7 +45,7 @@ namespace HephAudio
 			void SetDisplayName(StringBuffer displayName) override;
 			void SetIconPath(StringBuffer iconPath) override;
 		private:
-			void EnumerateAudioDevices() override;
+			bool EnumerateAudioDevices() override;
 			void RenderData();
 			void CaptureData();
 			static EDataFlow DeviceTypeToDataFlow(AudioDeviceType deviceType);

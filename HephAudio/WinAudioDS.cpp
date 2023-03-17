@@ -12,10 +12,11 @@ using namespace Microsoft::WRL;
 
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define DLL_INSTANCE (HINSTANCE)&__ImageBase
-#define WINAUDIODS_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(winAudioDS, AudioException(hres, method, message)); throw AudioException(hres, method, message); }
-#define WINAUDIODS_DEVICE_THREAD_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(winAudioDS, AudioException(hres, method, message)); }
-#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(winAudioDS, AudioException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(winAudioDS, AudioException(hres, method, message)); goto CAPTURE_EXIT; }
+#define WINAUDIODS_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); throw AudioException(hres, method, message); }
+#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); goto RENDER_EXIT; }
+#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); goto CAPTURE_EXIT; }
+#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(winAudioDS, AudioException(hres, method, message)); return FALSE; }
 
 namespace HephAudio
 {
@@ -117,8 +118,8 @@ namespace HephAudio
 			}
 
 			HRESULT hres;
-			WINAUDIODS_EXCPT(DirectSoundCreate(&deviceId, pDirectSound.GetAddressOf(), nullptr), this, "WinAudioDS::InitializeRender", "An error occurred whilst initializing render.");
-			WINAUDIODS_EXCPT(pDirectSound->SetCooperativeLevel(hwnd, DSSCL_PRIORITY), this, "WinAudioDS::InitializeRender", "An error occurred whilst initializing render.");
+			WINAUDIODS_EXCPT(DirectSoundCreate(&deviceId, pDirectSound.GetAddressOf(), nullptr), "WinAudioDS::InitializeRender", "An error occurred whilst initializing render.");
+			WINAUDIODS_EXCPT(pDirectSound->SetCooperativeLevel(hwnd, DSSCL_PRIORITY), "WinAudioDS::InitializeRender", "An error occurred whilst initializing render.");
 
 			DSBUFFERDESC bufferDesc = DSBUFFERDESC();
 			bufferDesc.dwSize = sizeof(DSBUFFERDESC);
@@ -128,7 +129,7 @@ namespace HephAudio
 			WAVEFORMATEX wrf = renderFormat;
 			bufferDesc.lpwfxFormat = &wrf;
 			bufferDesc.guid3DAlgorithm = GUID_NULL;
-			WINAUDIODS_EXCPT(pDirectSound->CreateSoundBuffer(&bufferDesc, pDirectSoundBuffer.GetAddressOf(), nullptr), this, "WinAudioDS::InitializeRender", "An error occurred whilst creating a render buffer.");
+			WINAUDIODS_EXCPT(pDirectSound->CreateSoundBuffer(&bufferDesc, pDirectSoundBuffer.GetAddressOf(), nullptr), "WinAudioDS::InitializeRender", "An error occurred whilst creating a render buffer.");
 
 			renderDeviceId = GuidToString(&deviceId);
 			isRenderInitialized = true;
@@ -177,7 +178,7 @@ namespace HephAudio
 			}
 
 			HRESULT hres;
-			WINAUDIODS_EXCPT(DirectSoundCaptureCreate(&deviceId, pDirectSoundCapture.GetAddressOf(), nullptr), this, "WinAudioDS::InitializeCapture", "An error occurred whilst initializing capture.");
+			WINAUDIODS_EXCPT(DirectSoundCaptureCreate(&deviceId, pDirectSoundCapture.GetAddressOf(), nullptr), "WinAudioDS::InitializeCapture", "An error occurred whilst initializing capture.");
 
 			DSCBUFFERDESC bufferDesc = DSCBUFFERDESC();
 			bufferDesc.dwSize = sizeof(DSCBUFFERDESC);
@@ -187,7 +188,7 @@ namespace HephAudio
 			bufferDesc.lpwfxFormat = &wcf;
 			bufferDesc.dwFXCount = 0;
 			bufferDesc.lpDSCFXDesc = nullptr;
-			WINAUDIODS_EXCPT(pDirectSoundCapture->CreateCaptureBuffer(&bufferDesc, pDirectSoundCaptureBuffer.GetAddressOf(), nullptr), this, "WinAudioDS::InitializeCapture", "An error occurred whilst creating a capture buffer.");
+			WINAUDIODS_EXCPT(pDirectSoundCapture->CreateCaptureBuffer(&bufferDesc, pDirectSoundCaptureBuffer.GetAddressOf(), nullptr), "WinAudioDS::InitializeCapture", "An error occurred whilst creating a capture buffer.");
 
 			captureDeviceId = GuidToString(&deviceId);
 			isCaptureInitialized = true;
@@ -215,11 +216,12 @@ namespace HephAudio
 		{
 			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, "WinAudioDS::SetIconPath", "WinAudioDS does not support this method, use WinAudio instead."));
 		}
-		void WinAudioDS::EnumerateAudioDevices()
+		bool WinAudioDS::EnumerateAudioDevices()
 		{
 			HRESULT hres;
-			WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating render devices.");
-			WINAUDIODS_DEVICE_THREAD_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), this, "WinAudioDS", "An error occurred whilst enumerating capture devices.");
+			WINAUDIODS_ENUMERATE_DEVICE_EXCPT(DirectSoundEnumerateW(&WinAudioDS::RenderDeviceEnumerationCallback, (void*)this), "WinAudioDS", "An error occurred whilst enumerating render devices.");
+			WINAUDIODS_ENUMERATE_DEVICE_EXCPT(DirectSoundCaptureEnumerateW(&WinAudioDS::CaptureDeviceEnumerationCallback, (void*)this), "WinAudioDS", "An error occurred whilst enumerating capture devices.");
+			return NativeAudio::DEVICE_ENUMERATION_SUCCESS;
 		}
 		void WinAudioDS::RenderData()
 		{
@@ -241,9 +243,9 @@ namespace HephAudio
 			}
 			notifyInfos[4].dwOffset = DSBPN_OFFSETSTOP;
 
-			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->QueryInterface(IID_IDirectSoundNotify, (void**)pDirectSoundNotify.GetAddressOf()), this, "WinAudioDS", "An error occurred whilst rendering the samples.");
-			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundNotify->SetNotificationPositions(notificationCount, notifyInfos), this, "WinAudioDS", "An error occurred whilst rendering the samples.");
-			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Play(0, 0, DSBPLAY_LOOPING), this, "WinAudioDS", "An error occurred whilst rendering the samples.");
+			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->QueryInterface(IID_IDirectSoundNotify, (void**)pDirectSoundNotify.GetAddressOf()), "WinAudioDS", "An error occurred whilst rendering the samples.");
+			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundNotify->SetNotificationPositions(notificationCount, notifyInfos), "WinAudioDS", "An error occurred whilst rendering the samples.");
+			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Play(0, 0, DSBPLAY_LOOPING), "WinAudioDS", "An error occurred whilst rendering the samples.");
 
 			while (!disposing && isRenderInitialized)
 			{
@@ -252,14 +254,14 @@ namespace HephAudio
 				{
 					Mix(dataBuffer, dataBuffer.FrameCount());
 
-					WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), this, "WinAudioDS", "An error occurred whilst rendering the samples.");
+					WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), "WinAudioDS", "An error occurred whilst rendering the samples.");
 
 					memcpy(audioPtr1, dataBuffer.Begin(), audioBytes1);
 					if (audioPtr2 != nullptr)
 					{
 						memcpy(audioPtr2, (uint8_t*)dataBuffer.Begin() + audioBytes1, audioBytes2);
 					}
-					WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), this, "WinAudioDS", "An error occurred whilst rendering the samples.");
+					WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred whilst rendering the samples.");
 
 					dataBuffer.Reset();
 				}
@@ -298,9 +300,9 @@ namespace HephAudio
 			}
 			notifyInfos[4].dwOffset = DSBPN_OFFSETSTOP;
 
-			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->QueryInterface(IID_IDirectSoundNotify, (void**)pDirectSoundNotify.GetAddressOf()), this, "WinAudioDS", "An error occurred whilst capturing the samples.");
-			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundNotify->SetNotificationPositions(notificationCount, notifyInfos), this, "WinAudioDS", "An error occurred whilst capturing the samples.");
-			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Start(DSCBSTART_LOOPING), this, "WinAudioDS", "An error occurred whilst capturing the samples.");
+			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->QueryInterface(IID_IDirectSoundNotify, (void**)pDirectSoundNotify.GetAddressOf()), "WinAudioDS", "An error occurred whilst capturing the samples.");
+			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundNotify->SetNotificationPositions(notificationCount, notifyInfos), "WinAudioDS", "An error occurred whilst capturing the samples.");
+			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Start(DSCBSTART_LOOPING), "WinAudioDS", "An error occurred whilst capturing the samples.");
 
 			while (!disposing && isCaptureInitialized)
 			{
@@ -309,8 +311,8 @@ namespace HephAudio
 					uint32_t retval = WaitForMultipleObjects(notificationCount, hEvents, FALSE, 2000);
 					if (retval == WAIT_OBJECT_0 || retval == WAIT_OBJECT_0 + 1 || retval == WAIT_OBJECT_0 + 2 || retval == WAIT_OBJECT_0 + 3 || retval == WAIT_OBJECT_0 + 4)
 					{
-						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->GetCurrentPosition(&captureCursor, &readCursor), this, "WinAudioDS", "An error occurred whilst capturing the samples.");
-						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Lock(readCursor, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, 0), this, "WinAudioDS", "An error occurred whilst capturing the samples.");
+						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->GetCurrentPosition(&captureCursor, &readCursor), "WinAudioDS", "An error occurred whilst capturing the samples.");
+						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Lock(readCursor, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, 0), "WinAudioDS", "An error occurred whilst capturing the samples.");
 
 						memcpy(dataBuffer.Begin(), audioPtr1, audioBytes1);
 						if (audioPtr2 != nullptr)
@@ -318,7 +320,7 @@ namespace HephAudio
 							memcpy((uint8_t*)dataBuffer.Begin() + audioBytes1, audioPtr2, audioBytes2);
 						}
 
-						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), this, "WinAudioDS", "An error occurred whilst capturing the samples.");
+						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred whilst capturing the samples.");
 
 						AudioBuffer tempBuffer = dataBuffer;
 						AudioProcessor::ConvertPcmToInnerFormat(tempBuffer);
@@ -362,7 +364,7 @@ namespace HephAudio
 				src.Data4[7] = 3;
 
 				HRESULT hres;
-				WINAUDIODS_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating render devices.");
+				WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating render devices.");
 
 				AudioDevice device = AudioDevice();
 				device.id = GuidToString(lpGuid);
@@ -394,7 +396,7 @@ namespace HephAudio
 				src.Data4[7] = 3;
 
 				HRESULT hres;
-				WINAUDIODS_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating capture devices."); // Get default capture device id.
+				WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, "WinAudioDS::WinAudioDS", "An error occurred whilst enumerating capture devices."); // Get default capture device id.
 
 				AudioDevice device = AudioDevice();
 				device.id = GuidToString(lpGuid);

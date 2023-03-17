@@ -38,7 +38,7 @@ namespace HephAudio
 			/// <summary>
 			/// Enumerates the audio devices using the JNI environment to handle native java calls.
 			/// </summary>
-			void EnumerateAudioDevices() override;
+			bool EnumerateAudioDevices() override;
 			/// <summary>
 			/// Gets the JNI environment.
 			/// </summary>
