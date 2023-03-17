@@ -25,7 +25,7 @@ namespace HephAudio
 			formats =
 			{
 				new WavFormat(),
-				new AiffFormat()
+				//new AiffFormat()
 			};
 		}
 		AudioFormats::~AudioFormats()
@@ -54,7 +54,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (formats.at(i)->Extension().Contains(file.Extension()))
+				if (formats.at(i)->Extension().Contains(file.FileExtension()))
 				{
 					return formats.at(i);
 				}

@@ -2,6 +2,11 @@
 #include "AudioException.h"
 #include "AudioProcessor.h"
 
+constexpr uint32_t riffID = 0x52494646; // "RIFF"
+constexpr uint32_t waveID = 0x057415645; // "WAVE"
+constexpr uint32_t fmtID = 0x666d7420; // "fmt "
+constexpr uint32_t dataID = 0x64617461; // "data"
+
 namespace HephAudio
 {
 	namespace Formats
@@ -10,145 +15,226 @@ namespace HephAudio
 		{
 			return ".wav .wave";
 		}
-		void WavFormat::ReadFile(const AudioFile& file, AudioBuffer& outBuffer) const
+		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const AudioFile* pAudioFile) const noexcept
 		{
-			size_t wavHeaderSize, audioDataSize;
-			AudioFormatInfo waveFormat = ReadFormatInfo(file, wavHeaderSize, audioDataSize);
-			size_t frameCount = audioDataSize / waveFormat.FrameSize();
-			outBuffer = AudioBuffer(frameCount, waveFormat);
-			memcpy(outBuffer.Begin(), (uint8_t*)file.GetInnerBufferAddress() + wavHeaderSize, audioDataSize);
-			if (GetSystemEndian() == Endian::Big && waveFormat.bitsPerSample != 8) // switch bytes.
+			AudioFormatInfo formatInfo;
+			uint32_t data32, chunkSize;
+
+			pAudioFile->Read(&data32, 4, Endian::Big);
+			if (data32 != riffID)
 			{
-				uint8_t* innerBuffer = (uint8_t*)outBuffer.Begin();
-				const uint32_t sampleSize = waveFormat.bitsPerSample / 8;
-				for (size_t i = 0; i < outBuffer.Size(); i += sampleSize)
+				throw AudioException(E_FAIL, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted.");
+			}
+
+			pAudioFile->IncreaseOffset(4);
+			pAudioFile->Read(&data32, 4, Endian::Big);
+			if (data32 != waveID)
+			{
+				throw AudioException(E_FAIL, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted.");
+			}
+
+			pAudioFile->Read(&data32, 4, Endian::Big);
+			while (data32 != fmtID)
+			{
+				pAudioFile->Read(&chunkSize, 4, Endian::Little);
+				if (pAudioFile->GetOffset() + chunkSize >= pAudioFile->FileSize())
 				{
-					switch (sampleSize)
+					throw AudioException(E_FAIL, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted.");
+				}
+
+				pAudioFile->IncreaseOffset(chunkSize);
+				pAudioFile->Read(&data32, 4, Endian::Big);
+			}
+
+			pAudioFile->Read(&chunkSize, 4, Endian::Little);
+			pAudioFile->Read(&formatInfo.formatTag, 2, Endian::Little);
+			pAudioFile->Read(&formatInfo.channelCount, 2, Endian::Little);
+			pAudioFile->Read(&formatInfo.sampleRate, 4, Endian::Little);
+			pAudioFile->IncreaseOffset(6);
+			pAudioFile->Read(&formatInfo.bitsPerSample, 2, Endian::Little);
+
+			pAudioFile->Read(&data32, 4, Endian::Big);
+			while (data32 != dataID)
+			{
+				uint32_t chunkSize;
+				pAudioFile->Read(&chunkSize, 4, Endian::Little);
+				pAudioFile->IncreaseOffset(chunkSize);
+				pAudioFile->Read(&data32, 4, Endian::Big);
+			}
+
+			return formatInfo;
+		}
+		AudioBuffer WavFormat::ReadFile(const AudioFile* pAudioFile) const
+		{
+			const AudioFormatInfo wavFormatInfo = ReadAudioFormatInfo(pAudioFile);
+
+			uint32_t wavAudioDataSize;
+			pAudioFile->Read(&wavAudioDataSize, 4, Endian::Little);
+
+			AudioBuffer buffer = AudioBuffer(wavAudioDataSize / wavFormatInfo.FrameSize(), AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, wavFormatInfo.channelCount, sizeof(hephaudio_float) * 8, wavFormatInfo.sampleRate));
+
+			void* wavBuffer = malloc(wavAudioDataSize);
+			if (wavBuffer == nullptr)
+			{
+				throw AudioException(E_OUTOFMEMORY, "WavFormat::ReadFile", "Insufficient memory.");
+			}
+			pAudioFile->ReadToBuffer(wavBuffer, wavFormatInfo.bitsPerSample / 8, wavAudioDataSize / (wavFormatInfo.bitsPerSample / 8));
+
+			if (AudioFile::GetSystemEndian() != Endian::Little)
+			{
+				switch (wavFormatInfo.bitsPerSample)
+				{
+				case 8:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
 					{
-					case 2:
-					{
-						uint16_t sample = Read<uint16_t>(innerBuffer, i, Endian::Little);
-						memcpy(innerBuffer + i, &sample, 2);
-					}
-					break;
-					case 3:
-					{
-						uint32_t sample = Read<uint32_t>(innerBuffer, i, Endian::Little) >> 8;
-						memcpy(innerBuffer + i, &sample, 3);
-					}
-					break;
-					case 4:
-					{
-						uint32_t sample = Read<uint32_t>(innerBuffer, i, Endian::Little);
-						memcpy(innerBuffer + i, &sample, 4);
-					}
-					break;
-					default:
-						throw AudioException(E_FAIL, L"WavFormat::ReadFile", L"Invalid bps.");
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							buffer[i][j] = (hephaudio_float)((uint8_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)UINT8_MAX;
+						}
 					}
 				}
-			}
-			AudioProcessor::ConvertPcmToInnerFormat(outBuffer);
-		}
-		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
-		{
-			if (!overwrite && AudioFile::FileExists(filePath))
-			{
-				return false;
-			}
-			std::shared_ptr<AudioFile> newFile = AudioFile::CreateNew(filePath, overwrite);
-			if (newFile == nullptr)
-			{
-				return false;
-			}
-			const size_t headerSize = 44;
-			const uint32_t dataSize = buffer.Size();
-			const size_t fullBufferSize = dataSize + headerSize;
-			uint8_t* newBuffer = (uint8_t*)malloc(fullBufferSize);
-			if (newBuffer != nullptr)
-			{
-				const uint8_t riff[4] = { 'R', 'I', 'F', 'F' };
-				const uint32_t chunkSize = ChangeEndian32(4, Endian::Little);
-				const uint8_t riffType[4] = { 'W', 'A', 'V', 'E' };
-				const uint8_t fmt[4] = { 'f', 'm', 't', ' ' };
-				const uint32_t subChunkSize = ChangeEndian32(16, Endian::Little);;
-				const uint8_t d[4] = { 'd', 'a', 't', 'a' };
-				const uint32_t dataSizeL = ChangeEndian32(dataSize, Endian::Little);
-				const AudioFormatInfo& wfx = buffer.FormatInfo();
-				const uint16_t formatTag = ChangeEndian16(wfx.formatTag, Endian::Little);
-				const uint16_t channelCount = ChangeEndian16(wfx.channelCount, Endian::Little);
-				const uint32_t sampleRate = ChangeEndian32(wfx.sampleRate, Endian::Little);
-				const uint32_t byteRate = ChangeEndian32(wfx.ByteRate(), Endian::Little);
-				const uint16_t blockAlign = ChangeEndian16(wfx.FrameSize(), Endian::Little);
-				const uint16_t bps = ChangeEndian16(wfx.bitsPerSample, Endian::Little);
-				memcpy(newBuffer, &riff, 4);
-				memcpy(newBuffer + 4, &chunkSize, 4);
-				memcpy(newBuffer + 8, &riffType, 4);
-				memcpy(newBuffer + 12, &fmt, 4);
-				memcpy(newBuffer + 16, &subChunkSize, 4);
-				memcpy(newBuffer + 20, &formatTag, 2);
-				memcpy(newBuffer + 22, &channelCount, 2);
-				memcpy(newBuffer + 24, &sampleRate, 4);
-				memcpy(newBuffer + 28, &byteRate, 4);
-				memcpy(newBuffer + 32, &blockAlign, 2);
-				memcpy(newBuffer + 34, &bps, 2);
-				memcpy(newBuffer + 36, &d, 4);
-				memcpy(newBuffer + 40, &dataSizeL, 4);
-				memcpy(newBuffer + headerSize, buffer.Begin(), dataSize);
-				newFile->Write(newBuffer, fullBufferSize);
-				free(newBuffer);
-				return true;
-			}
-			return false;
-		}
-		AudioFormatInfo WavFormat::ReadFormatInfo(const AudioFile& file, size_t& wavHeaderSize, size_t& audioDataSize) const
-		{
-			void* audioFileBuffer = file.GetInnerBufferAddress();
-			uint32_t subChunkSize, nextChunk = 0;
-			AudioFormatInfo wfx = AudioFormatInfo();
-			if (Read<uint32_t>(audioFileBuffer, 0, GetSystemEndian()) == *(uint32_t*)"RIFF")
-			{
-				if (Read<uint32_t>(audioFileBuffer, 8, GetSystemEndian()) == *(uint32_t*)"WAVE")
+				break;
+				case 16:
 				{
-					wfx.formatTag = Read<uint16_t>(audioFileBuffer, 20, Endian::Little);
-					if (wfx.formatTag == WAVE_FORMAT_PCM || wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
 					{
-						wfx.channelCount = Read<uint16_t>(audioFileBuffer, 22, Endian::Little);
-						wfx.sampleRate = Read<uint32_t>(audioFileBuffer, 24, Endian::Little);
-						wfx.bitsPerSample = Read<uint16_t>(audioFileBuffer, 34, Endian::Little);
-						if (wfx.formatTag == WAVE_FORMAT_EXTENSIBLE)
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
 						{
-							wfx.formatTag = Read<uint16_t>(audioFileBuffer, 44, Endian::Little);
+							int16_t wavSample = ((int16_t*)wavBuffer)[i * wavFormatInfo.channelCount + j];
+							AudioFile::ChangeEndian((uint8_t*)&wavSample, 2);
+
+							buffer[i][j] = (hephaudio_float)wavSample / (hephaudio_float)(INT16_MAX + 1);
 						}
-						subChunkSize = Read<uint32_t>(audioFileBuffer, 16, Endian::Little);
-						nextChunk = subChunkSize + 20;
-						while (Read<uint32_t>(audioFileBuffer, nextChunk, GetSystemEndian()) != *(uint32_t*)"data")
-						{
-							const uint32_t chunkSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
-							if (nextChunk + chunkSize + 8 >= file.Size())
-							{
-								throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
-							}
-							nextChunk += chunkSize + 8;
-						}
-						audioDataSize = Read<uint32_t>(audioFileBuffer, nextChunk + 4, Endian::Little);
-						wavHeaderSize = nextChunk + 8;
-					}
-					else
-					{
-						throw AudioException(E_FAIL, L"WavFormat", L"Compression not supported.");
 					}
 				}
-				else
+				break;
+				case 24:
 				{
-					throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							int24 wavSample = ((int24*)wavBuffer)[i * wavFormatInfo.channelCount + j];
+							AudioFile::ChangeEndian((uint8_t*)&wavSample, 3);
+
+							buffer[i][j] = (hephaudio_float)wavSample / (hephaudio_float)(INT24_MAX + 1);
+						}
+					}
+				}
+				break;
+				case 32:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							int32_t wavSample = ((int32_t*)wavBuffer)[i * wavFormatInfo.channelCount + j];
+							AudioFile::ChangeEndian((uint8_t*)&wavSample, 4);
+
+							buffer[i][j] = (hephaudio_float)wavSample / (hephaudio_float)(INT32_MAX + 1ull);
+						}
+					}
+				}
+				break;
+				default:
+					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
 				}
 			}
 			else
 			{
-				throw AudioException(E_FAIL, L"WavFormat", L"Failed to read the wav file. File might be corrupted.");
+				switch (wavFormatInfo.bitsPerSample)
+				{
+				case 8:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							buffer[i][j] = (hephaudio_float)((uint8_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)UINT8_MAX;
+						}
+					}
+				}
+				break;
+				case 16:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							buffer[i][j] = (hephaudio_float)((int16_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)(INT16_MAX + 1);
+						}
+					}
+				}
+				break;
+				case 24:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							buffer[i][j] = (hephaudio_float)((int24*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)(INT24_MAX + 1);
+						}
+					}
+				}
+				break;
+				case 32:
+				{
+					for (size_t i = 0; i < buffer.FrameCount(); i++)
+					{
+						for (size_t j = 0; j < wavFormatInfo.channelCount; j++)
+						{
+							buffer[i][j] = (hephaudio_float)((int32_t*)wavBuffer)[i * wavFormatInfo.channelCount + j] / (hephaudio_float)(INT32_MAX + 1ull);
+						}
+					}
+				}
+				break;
+				default:
+					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+				}
 			}
-			return wfx;
+
+			free(wavBuffer);
+
+			return buffer;
+		}
+		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
+		{
+			try
+			{
+				const AudioFile audioFile = AudioFile(filePath, overwrite ? AudioFileOpenMode::WriteOverride : AudioFileOpenMode::Write);
+				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
+				uint16_t data16;
+				uint32_t data32;
+
+				audioFile.Write(&riffID, 4, Endian::Big);
+				data32 = 4;
+				audioFile.Write(&data32, 4, Endian::Little);
+				audioFile.Write(&waveID, 4, Endian::Big);
+
+				audioFile.Write(&fmtID, 4, Endian::Big);
+				data32 = 16;
+				audioFile.Write(&data32, 4, Endian::Little);
+				audioFile.Write(&bufferFormatInfo.formatTag, 2, Endian::Little);
+				audioFile.Write(&bufferFormatInfo.channelCount, 2, Endian::Little);
+				audioFile.Write(&bufferFormatInfo.sampleRate, 4, Endian::Little);
+				data32 = bufferFormatInfo.ByteRate();
+				audioFile.Write(&data32, 4, Endian::Little);
+				data16 = bufferFormatInfo.FrameSize();
+				audioFile.Write(&data16, 2, Endian::Little);
+				audioFile.Write(&bufferFormatInfo.bitsPerSample, 2, Endian::Little);
+
+				audioFile.Write(&dataID, 4, Endian::Big);
+				data32 = buffer.Size();
+				audioFile.Write(&data32, 4, Endian::Little);
+				audioFile.WriteToBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.Size() / (bufferFormatInfo.bitsPerSample / 8));
+			}
+			catch (AudioException)
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

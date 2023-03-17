@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		class AiffFormat final : public IAudioFormat
+		/*class AiffFormat final : public IAudioFormat
 		{
 		public:
 			virtual ~AiffFormat() = default;
@@ -17,6 +17,6 @@ namespace HephAudio
 			AudioFormatInfo ReadFormatInfo(const AudioFile& inFile, size_t& outWavHeaderSize, uint32_t& outFrameCount, Endian& outEndian) const;
 			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo* wfx) const;
 			uint64_t SampleRateTo64(const AudioFormatInfo* const& wfx) const;
-		};
+		};*/
 	}
 }

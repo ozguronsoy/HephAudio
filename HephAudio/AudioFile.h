@@ -5,32 +5,51 @@
 
 namespace HephAudio
 {
+	enum class Endian : uint8_t
+	{
+		Little = 0,
+		Big = 1
+	};
+	enum class AudioFileOpenMode : uint8_t
+	{
+		Read = 1,
+		Write = 2,
+		WriteOverride = 4
+	};
 	class AudioFile final
 	{
 	private:
+		static Endian systemEndian;
+	private:
 		FILE* pFile;
-		uint32_t fileSize;
-		void* dataBuffer;
+		uint64_t fileSize;
 		StringBuffer filePath;
 	public:
 		AudioFile();
-		AudioFile(StringBuffer filePath);
+		AudioFile(StringBuffer filePath, AudioFileOpenMode openMode);
 		AudioFile(const AudioFile&) = delete;
 		AudioFile& operator=(const AudioFile&) = delete;
 		~AudioFile();
-		uint32_t Size() const noexcept;
-		StringBuffer Name() const noexcept;
-		StringBuffer Extension() const noexcept;
-		void* GetInnerBufferAddress() const noexcept;
-		bool IsEmpty() const noexcept;
-		void Read(StringBuffer filePath);
-		void Write(void* dataBuffer, size_t fileSize);
+		uint64_t FileSize() const noexcept;
+		StringBuffer FilePath() const;
+		StringBuffer FileName() const;
+		StringBuffer FileExtension() const;
+		uint64_t GetOffset() const noexcept;
+		void IncreaseOffset(uint64_t offset) const noexcept;
+		void DecreaseOffset(uint64_t offset) const noexcept;
+		void Read(void* pData, uint8_t dataSize, Endian endian) const;
+		void ReadToBuffer(void* pBuffer, uint8_t elementSize, uint32_t elementCount) const;
+		void Write(const void* pData, uint8_t dataSize, Endian endian) const;
+		void WriteToBuffer(const void* pData, uint8_t elementSize, uint32_t elementCount) const;
 	private:
-		void Release(bool releaseFile, bool releaseDataBuffer);
+		void OpenFile(AudioFileOpenMode openMode);
 	public:
 		static bool FileExists(StringBuffer filePath);
-		static std::shared_ptr<AudioFile> CreateNew(StringBuffer filePath, bool overwrite);
 		static StringBuffer GetFileName(StringBuffer filePath);
 		static StringBuffer GetFileExtension(StringBuffer filePath);
+		static Endian GetSystemEndian();
+		static void ChangeEndian(uint8_t* pData, uint8_t dataSize);
+	private:
+		static Endian FindSystemEndian();
 	};
 }

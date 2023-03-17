@@ -40,7 +40,17 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
-	audio.Play(audioRoot + "Gate of Steiner.wav", 0, false)->OnRender = OnRender;
+	//AudioFile readFile = AudioFile(audioRoot + "Gate of Steiner.wav", AudioFileOpenMode::Read);
+	//Formats::IAudioFormat* pAudioFormat = audio.GetAudioFormats()->GetAudioFormat(readFile.FilePath());
+	//AudioBuffer buffer = pAudioFormat->ReadFile(&readFile);
+
+	//buffer.Cut(0, buffer.FrameCount() * 0.25);
+
+	//AudioProcessor::ConvertInnerToPcmFormat(buffer, 16);
+
+	//StopWatch::Reset();
+	//pAudioFormat->SaveToFile(desktopPath + (StringBuffer)"\\deneme.wav", buffer, true);
+	//PrintDeltaTime("save completed in");
 
 	return Run(audio, audioRoot);
 }
@@ -297,9 +307,9 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 			const bool originalState = pao->pause;
 			const hephaudio_float originalPosition = audio.GetAOPosition(pao);
 			pao->pause = true;
-			AudioFile audioFile = AudioFile(pao->filePath);
+			AudioFile audioFile = AudioFile(pao->filePath, AudioFileOpenMode::Read);
 			Formats::IAudioFormat* audioFormat = audio.GetAudioFormats()->GetAudioFormat(pao->filePath);
-			audioFormat->ReadFile(audioFile, pao->buffer);
+			pao->buffer = audioFormat->ReadFile(&audioFile);
 			pao->buffer.SetChannelCount(audio.GetRenderFormat().channelCount);
 			pao->buffer.SetSampleRate(audio.GetRenderFormat().sampleRate);
 			audio.SetAOPosition(pao, originalPosition);

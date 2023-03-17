@@ -4,138 +4,117 @@
 
 namespace HephAudio
 {
+	Endian AudioFile::systemEndian = AudioFile::FindSystemEndian();
 	AudioFile::AudioFile()
-		: pFile(nullptr), fileSize(0), dataBuffer(nullptr), filePath("") { }
-	AudioFile::AudioFile(StringBuffer filePath) : AudioFile()
+		: pFile(nullptr), fileSize(0), filePath("") { }
+	AudioFile::AudioFile(StringBuffer filePath, AudioFileOpenMode openMode)
+		: pFile(nullptr), fileSize(0), filePath(filePath)
 	{
-		this->Read(filePath);
+		this->OpenFile(openMode);
+		if (this->pFile == nullptr)
+		{
+			throw AudioException((*_errno()), L"AudioFile::AudioFile", L"An error occurred whilst opening the file.");
+		}
+
+		fseek(this->pFile, 0, SEEK_END);
+		this->fileSize = ftell(this->pFile);
+		fseek(this->pFile, 0, SEEK_SET);
 	}
 	AudioFile::~AudioFile()
 	{
-		Release(true, true);
+		if (this->pFile != nullptr)
+		{
+			fclose(this->pFile);
+			this->pFile = nullptr;
+		}
 	}
-	uint32_t AudioFile::Size() const noexcept
+	uint64_t AudioFile::FileSize() const noexcept
 	{
-		return fileSize;
+		return this->fileSize;
 	}
-	StringBuffer AudioFile::Name() const noexcept
+	StringBuffer AudioFile::FilePath() const
 	{
-		return GetFileName(filePath);
+		return this->filePath;
 	}
-	StringBuffer AudioFile::Extension() const noexcept
+	StringBuffer AudioFile::FileName() const
 	{
-		return GetFileExtension(filePath);
+		return AudioFile::GetFileName(this->filePath);
 	}
-	void* AudioFile::GetInnerBufferAddress() const noexcept
+	StringBuffer AudioFile::FileExtension() const
 	{
-		return dataBuffer;
+		return AudioFile::GetFileExtension(this->filePath);
 	}
-	bool AudioFile::IsEmpty() const noexcept
+	uint64_t AudioFile::GetOffset() const noexcept
 	{
-		return pFile == nullptr && dataBuffer == nullptr && fileSize == 0u;
+		return ftell(this->pFile);
 	}
-	void AudioFile::Read(StringBuffer filePath)
+	void AudioFile::IncreaseOffset(uint64_t offset) const noexcept
 	{
-		Release(true, true);
+		fseek(this->pFile, offset, SEEK_CUR);
+	}
+	void AudioFile::DecreaseOffset(uint64_t offset) const noexcept
+	{
+		fseek(this->pFile, -(int64_t)offset, SEEK_CUR);
+	}
+	void AudioFile::Read(void* pData, uint8_t dataSize, Endian endian) const
+	{
+		fread(pData, dataSize, 1, this->pFile);
+		if (endian != AudioFile::systemEndian)
+		{
+			AudioFile::ChangeEndian((uint8_t*)pData, dataSize);
+		}
+	}
+	void AudioFile::ReadToBuffer(void* pBuffer, uint8_t elementSize, uint32_t elementCount)const
+	{
+		fread(pBuffer, elementSize, elementCount, this->pFile);
+	}
+	void AudioFile::Write(const void* pData, uint8_t dataSize, Endian endian) const
+	{
+		void* pTemp = malloc(dataSize);
+		if (pTemp == nullptr)
+		{
+			throw AudioException(E_OUTOFMEMORY, "AudioFile::Write", "Insufficient memory.");
+		}
+		memcpy(pTemp, pData, dataSize);
+
+		if (endian != AudioFile::systemEndian)
+		{
+			AudioFile::ChangeEndian((uint8_t*)pTemp, dataSize);
+		}
+		fwrite(pTemp, dataSize, 1, this->pFile);
+	}
+	void AudioFile::WriteToBuffer(const void* pData, uint8_t elementSize, uint32_t elementCount) const
+	{
+		fwrite(pData, elementSize, elementCount, this->pFile);
+	}
+	void AudioFile::OpenFile(AudioFileOpenMode openMode)
+	{
+		StringBuffer strOpenMode = "";
+		switch (openMode)
+		{
+		case AudioFileOpenMode::Read:
+			strOpenMode = "rb";
+			break;
+		case AudioFileOpenMode::Write:
+			strOpenMode = "wbx";
+			break;
+		case AudioFileOpenMode::WriteOverride:
+			strOpenMode = "wb";
+			break;
+		default:
+			throw AudioException(E_INVALIDARG, "AudioFile::AudioFile", "Invalid mode.");
+		}
+
 #if defined(__ANDROID__)
-		pFile = fopen(filePath.fc_str(), "rb");
+		this->pFile = fopen(this->filePath.fc_str(), strOpenMode.fc_str());
 #else
-		pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read.
+		this->pFile = this->filePath.GetStringType() == StringType::ASCII ? fopen(this->filePath, strOpenMode.fc_str()) : _wfopen(this->filePath, strOpenMode.fwc_str());
 #endif
-		if (pFile == nullptr)
-		{
-			throw AudioException(errno, L"AudioFile::Read", L"An error occurred whilst opening the file.");
-		}
-		this->filePath = filePath;
-		// obtain the file size.
-		fseek(pFile, 0, SEEK_END);
-		this->fileSize = ftell(pFile);
-		rewind(pFile);
-		// file size obtained.
-		this->dataBuffer = malloc(fileSize);
-		if (dataBuffer == nullptr)
-		{
-			Release(true, false);
-			throw AudioException(E_FAIL, L"AudioFile::Read", L"Insufficient memory.");
-		}
-		size_t result = fread(dataBuffer, 1, fileSize, pFile);
-		if (result != fileSize)
-		{
-			Release(true, true);
-			throw AudioException(errno, L"AudioFile::Read", L"An error occurred whilst reading the file.");
-		}
-		Release(true, false);
-	}
-	void AudioFile::Write(void* dataBuffer, size_t fileSize)
-	{
-		rewind(pFile);
-		size_t result = fwrite(dataBuffer, 1, fileSize, pFile);
-		if (result != fileSize)
-		{
-			throw AudioException(errno, L"AudioFile::Write", L"An error occurred whilst writing to the file.");
-		}
-	}
-	void AudioFile::Release(bool releaseFile, bool releaseDataBuffer)
-	{
-		if (releaseFile && pFile != nullptr)
-		{
-			fclose(pFile);
-			pFile = nullptr;
-		}
-		if (releaseDataBuffer && dataBuffer != nullptr)
-		{
-			free(dataBuffer);
-			dataBuffer = nullptr;
-		}
-		if (releaseFile && releaseDataBuffer)
-		{
-			fileSize = 0;
-			filePath = L"";
-		}
 	}
 	bool AudioFile::FileExists(StringBuffer filePath)
 	{
-#if defined(__ANDROID__)
-		FILE* pFile = fopen(filePath.fc_str(), "rb");
-#else
-		FILE* pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "rb") : _wfopen(filePath, L"rb"); // open file for read operations (b = open as a binary file).
-#endif
-		if (pFile != nullptr)
-		{
-			fclose(pFile);
-			return true;
-		}
-		return false;
-	}
-	std::shared_ptr<AudioFile> AudioFile::CreateNew(StringBuffer filePath, bool overwrite)
-	{
-		if (!overwrite && FileExists(filePath))
-		{
-			return nullptr;
-		}
-		std::shared_ptr<AudioFile> newFile = std::shared_ptr<AudioFile>(new AudioFile());
-		newFile->filePath = filePath;
-		if (overwrite) // open file for write operations (b = open as a binary file, x = don't overwrite if the file already exists).
-		{
-#if defined(__ANDROID__)
-			newFile->pFile = fopen(filePath.fc_str(), "wb");
-#else
-			newFile->pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "wb") : _wfopen(filePath, L"wb");
-#endif
-		}
-		else
-		{
-#if defined(__ANDROID__)
-			newFile->pFile = fopen(filePath.fc_str(), "wbx");
-#else
-			newFile->pFile = filePath.GetStringType() == StringType::ASCII ? fopen(filePath, "wbx") : _wfopen(filePath, L"wbx");
-#endif
-		}
-		if (newFile->pFile == nullptr)
-		{
-			throw AudioException(errno, L"AudioFile::CreateNew", L"An error occurred whilst creating the file.");
-		}
-		return newFile;
+		const AudioFile audioFile = AudioFile(filePath, AudioFileOpenMode::Read);
+		return audioFile.pFile != nullptr;
 	}
 	StringBuffer AudioFile::GetFileName(StringBuffer filePath)
 	{
@@ -150,5 +129,24 @@ namespace HephAudio
 	{
 		std::vector<StringBuffer> sfp = filePath.Split('.');
 		return '.' + sfp.at(sfp.size() - 1);
+	}
+	Endian AudioFile::GetSystemEndian()
+	{
+		return AudioFile::systemEndian;
+	}
+	void AudioFile::ChangeEndian(uint8_t* pData, uint8_t dataSize)
+	{
+		const uint8_t halfDataSize = dataSize / 2;
+		for (size_t i = 0; i < halfDataSize; i++)
+		{
+			const uint8_t temp = pData[i];
+			pData[i] = pData[dataSize - i - 1];
+			pData[dataSize - i - 1] = temp;
+		}
+	}
+	Endian AudioFile::FindSystemEndian()
+	{
+		uint16_t n = 1;
+		return (*(uint8_t*)&n == 1) ? Endian::Little : Endian::Big;
 	}
 }

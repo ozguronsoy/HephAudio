@@ -29,19 +29,19 @@ namespace HephAudio
 			{
 				HEPHAUDIO_LOG("Playing \"" + AudioFile::GetFileName(filePath) + "\"", ConsoleLogger::info);
 
-				AudioFile audioFile(filePath);
+				AudioFile audioFile(filePath, AudioFileOpenMode::Read);
 				Formats::IAudioFormat* format = this->audioFormats.GetAudioFormat(audioFile);
 
 				if (format == nullptr)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.Extension() + "' is not supported."));
+					RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported."));
 					return nullptr;
 				}
 
 				std::shared_ptr<AudioObject> pao = std::shared_ptr<AudioObject>(new AudioObject());
 				pao->filePath = filePath;
-				pao->name = audioFile.Name();
-				format->ReadFile(audioFile, pao->buffer);
+				pao->name = audioFile.FileName();
+				pao->buffer = format->ReadFile(&audioFile);
 				pao->loopCount = loopCount;
 				pao->pause = isPaused;
 				audioObjects.push_back(pao);
@@ -84,13 +84,13 @@ namespace HephAudio
 					{
 						try
 						{
-							AudioFile audioFile(filePaths.at(i));
+							AudioFile audioFile(filePaths.at(i), AudioFileOpenMode::Read);
 							Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
 							if (format == nullptr)
 							{
-								throw AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.Extension() + "' is not supported.");
+								throw AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported.");
 							}
-							format->ReadFile(audioFile, pao->buffer);
+							pao->buffer = format->ReadFile(&audioFile);
 						}
 						catch (AudioException ex)
 						{
@@ -547,16 +547,16 @@ namespace HephAudio
 							{
 								HEPHAUDIO_LOG("Playing the next file \"" + qao->name + "\" in queue: " + qao->queueName, ConsoleLogger::info);
 
-								AudioFile audioFile(qao->filePath);
+								AudioFile audioFile(qao->filePath, AudioFileOpenMode::Read);
 								Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
 
 								if (format == nullptr)
 								{
-									RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio", "File format '" + audioFile.Extension() + "' is not supported."));
+									RAISE_AUDIO_EXCPT(this, AudioException(E_INVALIDARG, "NativeAudio", "File format '" + audioFile.FileExtension() + "' is not supported."));
 									return;
 								}
 
-								format->ReadFile(audioFile, qao->buffer);
+								qao->buffer = format->ReadFile(&audioFile);
 							}
 							catch (AudioException ex)
 							{
