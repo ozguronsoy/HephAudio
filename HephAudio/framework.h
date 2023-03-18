@@ -45,10 +45,6 @@ typedef float hephaudio_float;
 #define E_OUTOFMEMORY 0x8007000E
 #endif
 
-#ifndef WAVE_FORMAT_HEPHAUDIO
-#define WAVE_FORMAT_HEPHAUDIO 37
-#endif
-
 #ifndef HEPHAUDIO_STOPWATCH_START
 #ifdef HEPHAUDIO_INFO_LOGGING
 #define HEPHAUDIO_STOPWATCH_START StopWatch::Start()

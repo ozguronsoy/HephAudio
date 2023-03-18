@@ -133,7 +133,7 @@ namespace HephAudio
 		{
 			std::shared_ptr<AudioObject> pao = std::shared_ptr<AudioObject>(new AudioObject());
 			pao->name = name;
-			pao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
+			pao->buffer = AudioBuffer(bufferFrameCount > 0 ? bufferFrameCount : renderFormat.sampleRate, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
 			audioObjects.push_back(pao);
 			return pao;
 		}
@@ -572,7 +572,7 @@ namespace HephAudio
 		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
 			const size_t mixedAOCount = GetAOCountToMix();
-			AudioBuffer mixBuffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_HEPHAUDIO, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
+			AudioBuffer mixBuffer = AudioBuffer(frameCount, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, renderFormat.channelCount, sizeof(hephaudio_float) * 8, renderFormat.sampleRate));
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{

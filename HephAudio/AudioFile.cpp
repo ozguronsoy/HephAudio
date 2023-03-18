@@ -44,15 +44,19 @@ namespace HephAudio
 	{
 		return AudioFile::GetFileExtension(this->filePath);
 	}
-	uint64_t AudioFile::GetOffset() const noexcept
+	uint64_t AudioFile::GetOffset() const
 	{
 		return ftell(this->pFile);
 	}
-	void AudioFile::IncreaseOffset(uint64_t offset) const noexcept
+	void AudioFile::SetOffset(uint64_t offset) const
+	{
+		fseek(this->pFile, offset, SEEK_SET);
+	}
+	void AudioFile::IncreaseOffset(uint64_t offset) const
 	{
 		fseek(this->pFile, offset, SEEK_CUR);
 	}
-	void AudioFile::DecreaseOffset(uint64_t offset) const noexcept
+	void AudioFile::DecreaseOffset(uint64_t offset) const
 	{
 		fseek(this->pFile, -(int64_t)offset, SEEK_CUR);
 	}

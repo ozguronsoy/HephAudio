@@ -1,6 +1,8 @@
 #include "WavFormat.h"
 #include "AudioException.h"
-#include "AudioProcessor.h"
+#include "AudioCodecManager.h"
+
+using namespace HephAudio::AudioCodecs;
 
 constexpr uint32_t riffID = 0x52494646; // "RIFF"
 constexpr uint32_t waveID = 0x057415645; // "WAVE"
@@ -11,11 +13,11 @@ namespace HephAudio
 {
 	namespace Formats
 	{
-		StringBuffer WavFormat::Extension() const noexcept
+		StringBuffer WavFormat::Extension() const
 		{
 			return ".wav .wave";
 		}
-		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const AudioFile* pAudioFile) const noexcept
+		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const AudioFile* pAudioFile) const
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32, chunkSize;
@@ -45,19 +47,33 @@ namespace HephAudio
 				pAudioFile->IncreaseOffset(chunkSize);
 				pAudioFile->Read(&data32, 4, Endian::Big);
 			}
-
 			pAudioFile->Read(&chunkSize, 4, Endian::Little);
+			const uint64_t fmtChunkEnd = pAudioFile->GetOffset() + chunkSize;
+
 			pAudioFile->Read(&formatInfo.formatTag, 2, Endian::Little);
 			pAudioFile->Read(&formatInfo.channelCount, 2, Endian::Little);
 			pAudioFile->Read(&formatInfo.sampleRate, 4, Endian::Little);
 			pAudioFile->IncreaseOffset(6);
 			pAudioFile->Read(&formatInfo.bitsPerSample, 2, Endian::Little);
 
+			if (formatInfo.formatTag == WAVE_FORMAT_EXTENSIBLE)
+			{
+				uint16_t extensionSize;
+				pAudioFile->Read(&extensionSize, 2, Endian::Little);
+				pAudioFile->IncreaseOffset(extensionSize - 16);
+				pAudioFile->Read(&formatInfo.formatTag, 2, Endian::Little);
+			}
+
+			pAudioFile->SetOffset(fmtChunkEnd);
 			pAudioFile->Read(&data32, 4, Endian::Big);
 			while (data32 != dataID)
 			{
-				uint32_t chunkSize;
 				pAudioFile->Read(&chunkSize, 4, Endian::Little);
+				if (pAudioFile->GetOffset() + chunkSize >= pAudioFile->FileSize())
+				{
+					throw AudioException(E_FAIL, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted.");
+				}
+
 				pAudioFile->IncreaseOffset(chunkSize);
 				pAudioFile->Read(&data32, 4, Endian::Big);
 			}
@@ -67,6 +83,12 @@ namespace HephAudio
 		AudioBuffer WavFormat::ReadFile(const AudioFile* pAudioFile) const
 		{
 			const AudioFormatInfo wavFormatInfo = ReadAudioFormatInfo(pAudioFile);
+
+			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(wavFormatInfo.formatTag);
+			if (pAudioCodec == nullptr)
+			{
+				throw AudioException(E_FAIL, "WavFormat::ReadFile", "Unsupported audio codec.");
+			}
 
 			uint32_t wavAudioDataSize;
 			pAudioFile->Read(&wavAudioDataSize, 4, Endian::Little);
@@ -78,8 +100,16 @@ namespace HephAudio
 				throw AudioException(E_OUTOFMEMORY, "WavFormat::ReadFile", "Insufficient memory.");
 			}
 			pAudioFile->ReadToBuffer(pPcmBuffer, bytesPerSample, wavAudioDataSize / bytesPerSample);
-			
-			const AudioBuffer hephaudioBuffer = AudioProcessor::ConvertPcmToInnerFormat(pPcmBuffer, wavAudioDataSize / (bytesPerSample * wavFormatInfo.channelCount), wavFormatInfo, Endian::Little);
+
+			EncodedBufferInfo encodedBufferInfo;
+			encodedBufferInfo.pBuffer = pPcmBuffer;
+			encodedBufferInfo.size_byte = wavAudioDataSize;
+			encodedBufferInfo.size_frame = wavAudioDataSize / wavFormatInfo.FrameSize();
+			encodedBufferInfo.formatInfo = wavFormatInfo;
+			encodedBufferInfo.endian = Endian::Little;
+
+			const AudioBuffer hephaudioBuffer = pAudioCodec->Decode(encodedBufferInfo);
+
 			free(pPcmBuffer);
 
 			return hephaudioBuffer;

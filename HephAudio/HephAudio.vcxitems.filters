@@ -52,6 +52,12 @@
     <Filter Include="Source Files\Oscillators">
       <UniqueIdentifier>{b830d0cf-bd31-42c7-9f99-313d1eae36e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AudioCodecs">
+      <UniqueIdentifier>{1843b1b5-36b6-45a6-a21a-b5e2ae31014d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AudioCodecs">
+      <UniqueIdentifier>{ca75d65b-95e5-47fc-8ce7-581e92b656ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h">
@@ -186,6 +192,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)FloatBuffer.h">
       <Filter>Header Files\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioCodec.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EncodedBufferInfo.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PcmCodec.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioCodecManager.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -304,6 +325,15 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)FloatBuffer.cpp">
       <Filter>Source Files\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)PcmCodec.cpp">
+      <Filter>Source Files\AudioCodecs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioCodecManager.cpp">
+      <Filter>Source Files\AudioCodecs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp">
+      <Filter>Source Files\AudioCodecs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

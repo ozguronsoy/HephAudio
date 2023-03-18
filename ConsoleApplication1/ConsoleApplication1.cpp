@@ -33,10 +33,12 @@ int main()
 	StringBuffer audioRoot = desktopPath;
 	audioRoot += '\\';
 	audioRoot += "AudioFiles\\";
+	
 	Audio audio = Audio();
 	audio->OnException = OnException;
 	audio->OnAudioDeviceAdded = OnDeviceAdded;
 	audio->OnAudioDeviceRemoved = OnDeviceRemoved;
+	audio->SetDeviceEnumerationPeriod(250e6);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
@@ -44,13 +46,28 @@ int main()
 	//Formats::IAudioFormat* pAudioFormat = audio.GetAudioFormats()->GetAudioFormat(readFile.FilePath());
 	//AudioBuffer buffer = pAudioFormat->ReadFile(&readFile);
 
-	//buffer.Cut(0, buffer.FrameCount() * 0.25);
+	//buffer.Cut(0, buffer.FrameCount() * 0.44);
 
-	//AudioProcessor::ConvertInnerToPcmFormat(buffer, 16);
+	//AudioProcessor::PitchShift(buffer, 1.11111111111);
+	//AudioFormatInfo formatInfo = buffer.FormatInfo();
+	//formatInfo.formatTag = WAVE_FORMAT_IEEE_FLOAT;
+	//buffer.SetFormat(formatInfo);
+	////AudioProcessor::ConvertInnerToPcmFormat(buffer, 16, Endian::Little);
 
 	//StopWatch::Reset();
 	//pAudioFormat->SaveToFile(desktopPath + (StringBuffer)"\\deneme.wav", buffer, true);
 	//PrintDeltaTime("save completed in");
+
+	StopWatch::Reset();
+	auto pao = audio.Load(desktopPath + (StringBuffer)"\\deneme.wav");
+	PrintDeltaTime("dt");
+
+	if (pao != nullptr)
+	{
+		pao->loopCount = 0;
+		pao->OnFinishedPlaying = OnFinishedPlaying;
+		pao->pause = false;
+	}
 
 	return Run(audio, audioRoot);
 }
@@ -131,6 +148,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 	{
 	std:getline(std::wcin, a);
 		sb = a.c_str();
+		if (sb.CompareContent("")) continue;
 		if (sb.Contains("path"))
 		{
 			if (sb == L"path")

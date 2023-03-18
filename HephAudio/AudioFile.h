@@ -29,9 +29,10 @@ namespace HephAudio
 		StringBuffer FilePath() const;
 		StringBuffer FileName() const;
 		StringBuffer FileExtension() const;
-		uint64_t GetOffset() const noexcept;
-		void IncreaseOffset(uint64_t offset) const noexcept;
-		void DecreaseOffset(uint64_t offset) const noexcept;
+		uint64_t GetOffset() const;
+		void SetOffset(uint64_t offset) const;
+		void IncreaseOffset(uint64_t offset) const;
+		void DecreaseOffset(uint64_t offset) const;
 		void Read(void* pData, uint8_t dataSize, Endian endian) const;
 		void ReadToBuffer(void* pBuffer, uint8_t elementSize, uint32_t elementCount) const;
 		void Write(const void* pData, uint8_t dataSize, Endian endian) const;
