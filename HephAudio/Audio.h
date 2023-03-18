@@ -17,7 +17,6 @@ namespace HephAudio
 	private:
 		HephAudio::Native::NativeAudio* pNativeAudio;
 	public:
-		Formats::AudioFormats* GetAudioFormats() const;
 		void SetOnExceptionHandler(AudioEventHandler handler);
 		void SetOnAudioDeviceAddedHandler(AudioEventHandler handler);
 		void SetOnAudioDeviceRemovedHandler(AudioEventHandler handler);

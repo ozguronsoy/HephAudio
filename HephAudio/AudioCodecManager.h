@@ -25,7 +25,7 @@ namespace HephAudio
 			/// Adds a new codec or replaces the existing one with the same tag.
 			/// </summary>
 			/// <param name="pNewCodec"></param>
-			static void AddCodec(IAudioCodec* pNewCodec);
+			static void RegisterCodec(IAudioCodec* pNewCodec);
 		};
 	}
 }

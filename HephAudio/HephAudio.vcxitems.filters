@@ -75,7 +75,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatManager.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h">
@@ -207,6 +207,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h">
       <Filter>Header Files\AudioCodecs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -248,7 +251,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatManager.cpp">
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp">
@@ -333,6 +336,9 @@
       <Filter>Source Files\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp">
+      <Filter>Source Files\AudioCodecs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp">
       <Filter>Source Files\AudioCodecs</Filter>
     </ClCompile>
   </ItemGroup>

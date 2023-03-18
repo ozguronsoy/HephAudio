@@ -13,10 +13,6 @@ using namespace HephAudio::Native;
 
 namespace HephAudio
 {
-	Formats::AudioFormats* Audio::GetAudioFormats() const
-	{
-		return &this->pNativeAudio->audioFormats;
-	}
 	void Audio::SetOnExceptionHandler(AudioEventHandler handler)
 	{
 		this->pNativeAudio->OnException += handler;

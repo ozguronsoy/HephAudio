@@ -1,6 +1,6 @@
 #include "NativeAudio.h"
 #include "AudioProcessor.h"
-#include "AudioFormats.h"
+#include "AudioFormatManager.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
@@ -30,7 +30,7 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Playing \"" + AudioFile::GetFileName(filePath) + "\"", ConsoleLogger::info);
 
 				AudioFile audioFile(filePath, AudioFileOpenMode::Read);
-				Formats::IAudioFormat* format = this->audioFormats.GetAudioFormat(audioFile);
+				Formats::IAudioFormat* format = Formats::AudioFormatManager::FindAudioFormat(audioFile);
 
 				if (format == nullptr)
 				{
@@ -85,7 +85,7 @@ namespace HephAudio
 						try
 						{
 							AudioFile audioFile(filePaths.at(i), AudioFileOpenMode::Read);
-							Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+							Formats::IAudioFormat* format = Formats::AudioFormatManager::FindAudioFormat(audioFile);
 							if (format == nullptr)
 							{
 								throw AudioException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported.");
@@ -361,7 +361,7 @@ namespace HephAudio
 		{
 			try
 			{
-				Formats::IAudioFormat* format = audioFormats.GetAudioFormat(filePath);
+				Formats::IAudioFormat* format = Formats::AudioFormatManager::FindAudioFormat(filePath);
 
 				if (format == nullptr)
 				{
@@ -548,7 +548,7 @@ namespace HephAudio
 								HEPHAUDIO_LOG("Playing the next file \"" + qao->name + "\" in queue: " + qao->queueName, ConsoleLogger::info);
 
 								AudioFile audioFile(qao->filePath, AudioFileOpenMode::Read);
-								Formats::IAudioFormat* format = audioFormats.GetAudioFormat(audioFile);
+								Formats::IAudioFormat* format = Formats::AudioFormatManager::FindAudioFormat(audioFile);
 
 								if (format == nullptr)
 								{

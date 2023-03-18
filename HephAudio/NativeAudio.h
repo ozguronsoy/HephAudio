@@ -3,7 +3,7 @@
 #include "AudioDevice.h"
 #include "AudioException.h"
 #include "AudioObject.h"
-#include "AudioFormats.h"
+#include "AudioFormatManager.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
 #include "AudioEvent.h"
@@ -108,7 +108,6 @@ namespace HephAudio
 			/// </summary>
 			mutable std::mutex deviceMutex;
 		public:
-			Formats::AudioFormats audioFormats;
 			/// <summary>
 			/// Called when an audio exception occurs.
 			/// </summary>

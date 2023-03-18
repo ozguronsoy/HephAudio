@@ -1,0 +1,82 @@
+#include "MuLawCodec.h"
+#include "AudioProcessor.h"
+
+namespace HephAudio
+{
+	namespace AudioCodecs
+	{
+		uint32_t MuLawCodec::Tag() const noexcept
+		{
+			return WAVE_FORMAT_MULAW;
+		}
+		AudioBuffer MuLawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
+		{
+			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, encodedBufferInfo.formatInfo.channelCount, sizeof(hephaudio_float) * 8, encodedBufferInfo.formatInfo.sampleRate));
+
+			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
+			{
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+				{
+					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
+					const int16_t pcmSample = MuLawCodec::MuLawToPcm(encodedSample);
+
+					resultBuffer[i][j] = (hephaudio_float)pcmSample / INT16_MAX;
+				}
+			}
+
+			return resultBuffer;
+		}
+		void MuLawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
+		{
+			AudioProcessor::ConvertSampleRate(bufferToEncode, 8000);
+			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
+			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_MULAW, encodedBufferInfo.formatInfo.channelCount, 8, 8000));
+
+			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
+			{
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+				{
+					int16_t pcmSample = bufferToEncode[i][j] * INT16_MAX;
+					const int8_t sign = (pcmSample & 0x8000) >> 8;
+					pcmSample = min(abs(pcmSample), 32635) + 132;
+					const int16_t segment = MuLawCodec::FindSegment((pcmSample & 0x7F80) >> 7);
+					((uint8_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = ~(sign | (segment << 4) | ((pcmSample >> (segment + 3)) & 0x0F));
+				}
+			}
+
+			bufferToEncode = std::move(tempBuffer);
+		}
+		int16_t MuLawCodec::MuLawToPcm(uint8_t mulawSample) const noexcept
+		{
+			const uint8_t sign = (mulawSample & 0x80) >> 7;
+			if (sign != 0)
+			{
+				mulawSample -= 128;
+			}
+			const uint8_t division = mulawSample / 16;
+			const uint8_t remainder = mulawSample % 16;
+			int16_t pcmSample = -32124;
+
+			int16_t pow2 = 1;
+			for (size_t i = 0; i < division; i++, pow2 *= 2)
+			{
+					pcmSample += (1024 / pow2) * 15;
+					pcmSample += 768 / pow2;
+			}
+			pcmSample += (1024 / pow2) * remainder;
+
+			return sign == 1 ? -pcmSample : pcmSample;
+		}
+		int16_t MuLawCodec::FindSegment(uint16_t pcmSample) const noexcept
+		{
+			for (size_t i = 7; i > 0; i--)
+			{
+				if (((pcmSample >> i) & 0x01) == 1)
+				{
+					return i;
+				}
+			}
+			return 0;
+		}
+	}
+}

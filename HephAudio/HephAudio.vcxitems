@@ -31,7 +31,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormats.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h" />
@@ -48,6 +48,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
@@ -81,7 +82,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormats.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />

@@ -38,7 +38,7 @@ namespace HephAudio
 							int16_t pcmSample = ((int16_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
 							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 2);
 
-							resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)(INT16_MAX + 1);
+							resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)INT16_MAX;
 						}
 					}
 				}
@@ -52,7 +52,7 @@ namespace HephAudio
 							int24 pcmSample = ((int24*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
 							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 3);
 
-							resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)(INT24_MAX + 1);
+							resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)INT24_MAX;
 						}
 					}
 				}
@@ -66,7 +66,7 @@ namespace HephAudio
 							int32_t pcmSample = ((int32_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
 							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 4);
 
-							resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)(INT32_MAX + 1ull);
+							resultBuffer[i][j] = (hephaudio_float)pcmSample / (hephaudio_float)INT32_MAX;
 						}
 					}
 				}
@@ -96,7 +96,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							resultBuffer[i][j] = (hephaudio_float)((int16_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j] / (hephaudio_float)(INT16_MAX + 1);
+							resultBuffer[i][j] = (hephaudio_float)((int16_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j] / (hephaudio_float)INT16_MAX;
 						}
 					}
 				}
@@ -107,7 +107,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							resultBuffer[i][j] = (hephaudio_float)((int24*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j] / (hephaudio_float)(INT24_MAX + 1);
+							resultBuffer[i][j] = (hephaudio_float)((int24*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j] / (hephaudio_float)INT24_MAX;
 						}
 					}
 				}
@@ -118,7 +118,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							resultBuffer[i][j] = (hephaudio_float)((int32_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j] / (hephaudio_float)(INT32_MAX + 1ull);
+							resultBuffer[i][j] = (hephaudio_float)((int32_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j] / (hephaudio_float)INT32_MAX;
 						}
 					}
 				}
@@ -155,7 +155,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							int16_t pcmSample = bufferToEncode[i][j] * (INT16_MAX + 1);
+							int16_t pcmSample = bufferToEncode[i][j] * INT16_MAX;
 							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 2);
 
 							((int16_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = pcmSample;
@@ -169,7 +169,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							int24 pcmSample = bufferToEncode[i][j] * (INT24_MAX + 1);
+							int24 pcmSample = bufferToEncode[i][j] * INT24_MAX;
 							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 3);
 
 							((int24*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = pcmSample;
@@ -183,7 +183,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							int32_t pcmSample = bufferToEncode[i][j] * (INT32_MAX + 1ull);
+							int32_t pcmSample = bufferToEncode[i][j] * INT32_MAX;
 							AudioFile::ChangeEndian((uint8_t*)&pcmSample, 4);
 
 							((int32_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = pcmSample;
@@ -216,7 +216,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							((int16_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j] * (INT16_MAX + 1);
+							((int16_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j] * INT16_MAX;
 						}
 					}
 				}
@@ -227,7 +227,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							((int24*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j] * (INT24_MAX + 1);
+							((int24*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j] * INT24_MAX;
 						}
 					}
 				}
@@ -238,7 +238,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							((int32_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j] * (INT32_MAX + 1ull);
+							((int32_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j] * INT32_MAX;
 						}
 					}
 				}
