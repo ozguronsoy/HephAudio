@@ -2,16 +2,18 @@
 #include "PcmCodec.h"
 #include "IEEE_FloatCodec.h"
 #include "MuLawCodec.h"
+#include "ALawCodec.h"
 #include <vector>
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		std::vector<IAudioCodec*> audioCodecs = {
 			new PcmCodec(),
 			new IEEE_FloatCodec(),
-			new MuLawCodec()
+			new MuLawCodec(),
+			new ALawCodec()
 		};
 
 		IAudioCodec* AudioCodecManager::FindCodec(uint32_t formatTag)

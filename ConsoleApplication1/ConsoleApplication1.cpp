@@ -44,36 +44,6 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
-	//AudioFile readFile = AudioFile(audioRoot + "Gate of Steiner.wav", AudioFileOpenMode::Read);
-	//Formats::IAudioFormat* pAudioFormat = Formats::AudioFormatManager::FindAudioFormat(readFile.FilePath());
-	//AudioBuffer buffer = pAudioFormat->ReadFile(&readFile);
-
-	//buffer.Cut(0, buffer.FrameCount() * 0.44);
-
-	//AudioProcessor::PitchShift(buffer, 1.11111111111);
-	//AudioCodecs::IAudioCodec* pAudioCodec = AudioCodecs::AudioCodecManager::FindCodec(WAVE_FORMAT_MULAW);
-	//AudioCodecs::EncodedBufferInfo mulawEncodedInfoBuffer;
-	//mulawEncodedInfoBuffer.formatInfo = AudioFormatInfo(WAVE_FORMAT_MULAW, buffer.FormatInfo().channelCount, 8, buffer.FormatInfo().sampleRate);
-	//mulawEncodedInfoBuffer.size_byte = buffer.Size();
-	//mulawEncodedInfoBuffer.size_frame = buffer.FrameCount();
-	//pAudioCodec->Encode(buffer, mulawEncodedInfoBuffer);
-
-	//StopWatch::Reset();
-	//pAudioFormat->SaveToFile(desktopPath + (StringBuffer)"\\denemeALAW.wav", buffer, true);
-	//PrintDeltaTime("save completed in");
-
-	StopWatch::Reset();
-	auto pao = audio.Load(desktopPath + (StringBuffer)"\\denemeMULAW.wav");
-	PrintDeltaTime("dt");
-
-	if (pao != nullptr)
-	{
-		pao->loopCount = 1;
-		pao->OnFinishedPlaying = OnFinishedPlaying;
-		pao->pause = false;
-		pao = nullptr;
-	}
-
 	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)

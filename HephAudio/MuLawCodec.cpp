@@ -3,7 +3,7 @@
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		uint32_t MuLawCodec::Tag() const noexcept
 		{
@@ -38,7 +38,7 @@ namespace HephAudio
 				{
 					int16_t pcmSample = bufferToEncode[i][j] * INT16_MAX;
 					const int8_t sign = (pcmSample & 0x8000) >> 8;
-					pcmSample = min(abs(pcmSample), 32635) + 132;
+					pcmSample = min(abs(pcmSample), 32767) + 132;
 					const int16_t segment = MuLawCodec::FindSegment((pcmSample & 0x7F80) >> 7);
 					((uint8_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = ~(sign | (segment << 4) | ((pcmSample >> (segment + 3)) & 0x0F));
 				}
@@ -57,8 +57,8 @@ namespace HephAudio
 			const uint8_t remainder = mulawSample % 16;
 			int16_t pcmSample = -32124;
 
-			int16_t pow2 = 1;
-			for (size_t i = 0; i < division; i++, pow2 *= 2)
+			uint16_t pow2 = 1;
+			for (size_t i = 0; i < division; i++, pow2 <<= 1)
 			{
 					pcmSample += (1024 / pow2) * 15;
 					pcmSample += 768 / pow2;

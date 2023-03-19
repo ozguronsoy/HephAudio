@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		/// <summary>
 		/// Class for managing the IAudioCodec instances.

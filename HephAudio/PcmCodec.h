@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		class PcmCodec final : public IAudioCodec
 		{

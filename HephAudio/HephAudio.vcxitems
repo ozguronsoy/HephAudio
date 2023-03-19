@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ALawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioA.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.h" />
@@ -67,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ALawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioA.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.cpp" />

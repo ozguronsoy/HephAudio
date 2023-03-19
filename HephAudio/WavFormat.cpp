@@ -2,7 +2,7 @@
 #include "AudioException.h"
 #include "AudioCodecManager.h"
 
-using namespace HephAudio::AudioCodecs;
+using namespace HephAudio::Codecs;
 
 constexpr uint32_t riffID = 0x52494646; // "RIFF"
 constexpr uint32_t waveID = 0x057415645; // "WAVE"

@@ -5,7 +5,7 @@
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		/// <summary>
 		/// Provides methods for decoding and encoding audio data.

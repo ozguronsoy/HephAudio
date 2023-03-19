@@ -210,6 +210,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h">
       <Filter>Header Files\AudioCodecs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ALawCodec.h">
+      <Filter>Header Files\AudioCodecs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
@@ -339,6 +342,9 @@
       <Filter>Source Files\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp">
+      <Filter>Source Files\AudioCodecs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ALawCodec.cpp">
       <Filter>Source Files\AudioCodecs</Filter>
     </ClCompile>
   </ItemGroup>

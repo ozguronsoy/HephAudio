@@ -141,26 +141,26 @@ namespace HephAudio
 	{
 		if (buffer.formatInfo.formatTag == WAVE_FORMAT_PCM)
 		{
-			AudioCodecs::EncodedBufferInfo encodedBufferInfo;
+			Codecs::EncodedBufferInfo encodedBufferInfo;
 			encodedBufferInfo.pBuffer = buffer.pAudioData;
 			encodedBufferInfo.size_byte = buffer.Size();
 			encodedBufferInfo.size_frame = buffer.frameCount;
 			encodedBufferInfo.formatInfo = buffer.formatInfo;
 			encodedBufferInfo.endian = pcmEndian;
 
-			buffer = AudioCodecs::PcmCodec().Decode(encodedBufferInfo);
+			buffer = Codecs::PcmCodec().Decode(encodedBufferInfo);
 		}
 	}
 	void AudioProcessor::ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps, Endian pcmEndian)
 	{
 		if (buffer.formatInfo.formatTag == WAVE_FORMAT_IEEE_FLOAT)
 		{
-			AudioCodecs::EncodedBufferInfo encodedBufferInfo;
+			Codecs::EncodedBufferInfo encodedBufferInfo;
 			encodedBufferInfo.size_frame = buffer.frameCount;
 			encodedBufferInfo.formatInfo = AudioFormatInfo(WAVE_FORMAT_PCM, buffer.formatInfo.channelCount, bps, buffer.formatInfo.sampleRate);
 			encodedBufferInfo.endian = pcmEndian;
 
-			AudioCodecs::PcmCodec().Encode(buffer, encodedBufferInfo);
+			Codecs::PcmCodec().Encode(buffer, encodedBufferInfo);
 		}
 	}
 #pragma endregion

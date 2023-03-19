@@ -3,7 +3,7 @@
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		uint32_t IEEE_FloatCodec::Tag() const noexcept
 		{

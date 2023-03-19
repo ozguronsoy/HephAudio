@@ -83,13 +83,37 @@ inline hephaudio_float GainToDecibel(hephaudio_float gain)
 {
 	return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
 }
-inline hephaudio_float RadToDeg(hephaudio_float rad)
+inline constexpr hephaudio_float RadToDeg(hephaudio_float rad)
 {
 	return rad * 180.0 / PI;
 }
-inline hephaudio_float DegToRad(hephaudio_float deg)
+inline constexpr hephaudio_float DegToRad(hephaudio_float deg)
 {
 	return deg * PI / 180.0;
+}
+inline constexpr hephaudio_float SemitoneToCent(hephaudio_float semitone)
+{
+	return semitone * 100.0;
+}
+inline constexpr hephaudio_float SemitoneToOctave(hephaudio_float semitone)
+{
+	return semitone / 12.0;
+}
+inline constexpr hephaudio_float CentToSemitone(hephaudio_float cent)
+{
+	return cent / 100.0;
+}
+inline constexpr hephaudio_float CentToOctave(hephaudio_float cent)
+{
+	return cent / 1200.0;
+}
+inline constexpr hephaudio_float OctaveToSemitone(hephaudio_float octave)
+{
+	return octave * 12.0;
+}
+inline constexpr hephaudio_float OctaveToCent(hephaudio_float octave)
+{
+	return octave * 1200.0;
 }
 #pragma endregion
 

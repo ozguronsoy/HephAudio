@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	namespace AudioCodecs
+	namespace Codecs
 	{
 		uint32_t PcmCodec::Tag() const noexcept
 		{
