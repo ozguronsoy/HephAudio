@@ -5,7 +5,7 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		constexpr int16_t sampleTable[128] =
+		constexpr int16_t decodeTable[128] =
 		{
 			-5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
 			-7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784,
@@ -58,7 +58,7 @@ namespace HephAudio
 				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 				{
 					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-					const int16_t pcmSample = encodedSample < 128 ? sampleTable[encodedSample] : -sampleTable[encodedSample - 128];
+					const int16_t pcmSample = encodedSample < 128 ? decodeTable[encodedSample] : -decodeTable[encodedSample - 128];
 
 					resultBuffer[i][j] = (hephaudio_float)pcmSample / INT16_MAX;
 				}
@@ -69,8 +69,13 @@ namespace HephAudio
 		void ALawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
 			AudioProcessor::ConvertSampleRate(bufferToEncode, 8000);
+			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
-			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_MULAW, encodedBufferInfo.formatInfo.channelCount, 8, 8000));
+			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_ALAW;
+			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
+			encodedBufferInfo.formatInfo.bitsPerSample = 8;
+			encodedBufferInfo.formatInfo.sampleRate = 8000;
+			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{

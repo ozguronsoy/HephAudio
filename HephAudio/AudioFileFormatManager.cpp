@@ -1,17 +1,17 @@
-#include "AudioFormatManager.h"
+#include "AudioFileFormatManager.h"
 #include "WavFormat.h"
 #include "AiffFormat.h"
 
 namespace HephAudio
 {
-	namespace Formats
+	namespace FileFormats
 	{
-		std::vector<IAudioFormat*> formats = {
+		std::vector<IAudioFileFormat*> formats = {
 					new WavFormat(),
-					//new AiffFormat()
+					new AiffFormat()
 		};
 
-		bool AudioFormatManager::CompareExtensions(StringBuffer lhs, StringBuffer rhs)
+		bool AudioFileFormatManager::CompareExtensions(StringBuffer lhs, StringBuffer rhs)
 		{
 			std::vector<StringBuffer> lhse = lhs.Split(' ');
 			std::vector<StringBuffer> rhse = rhs.Split(' ');
@@ -27,7 +27,7 @@ namespace HephAudio
 			}
 			return false;
 		}
-		void AudioFormatManager::RegisterFormat(IAudioFormat* format)
+		void AudioFileFormatManager::RegisterFileFormat(IAudioFileFormat* format)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
@@ -42,7 +42,7 @@ namespace HephAudio
 			}
 			formats.push_back(format);
 		}
-		IAudioFormat* AudioFormatManager::FindAudioFormat(AudioFile& file)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(AudioFile& file)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
@@ -53,12 +53,13 @@ namespace HephAudio
 			}
 			return nullptr;
 		}
-		IAudioFormat* AudioFormatManager::FindAudioFormat(StringBuffer filePath)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(StringBuffer filePath)
 		{
 			const StringBuffer fileExtension = AudioFile::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (formats.at(i)->Extension().Contains(fileExtension));
+
+				if (formats.at(i)->Extension().Contains(fileExtension))
 				{
 					return formats.at(i);
 				}

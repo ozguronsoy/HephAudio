@@ -32,6 +32,7 @@ namespace HephAudio
 		static AudioBuffer MergeChannels(const std::vector<FloatBuffer>& channels, uint32_t sampleRate);
 		static void ConvertPcmToInnerFormat(AudioBuffer& buffer, Endian pcmEndian);
 		static void ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps, Endian pcmEndian);
+		static void ChangeEndian(AudioBuffer& buffer);
 #pragma endregion
 #pragma region Sound Effects
 	public:

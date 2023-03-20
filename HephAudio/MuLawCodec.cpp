@@ -29,8 +29,13 @@ namespace HephAudio
 		void MuLawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
 			AudioProcessor::ConvertSampleRate(bufferToEncode, 8000);
+			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
-			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_MULAW, encodedBufferInfo.formatInfo.channelCount, 8, 8000));
+			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_MULAW;
+			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
+			encodedBufferInfo.formatInfo.bitsPerSample = 8;
+			encodedBufferInfo.formatInfo.sampleRate = 8000;
+			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
@@ -60,8 +65,8 @@ namespace HephAudio
 			uint16_t pow2 = 1;
 			for (size_t i = 0; i < division; i++, pow2 <<= 1)
 			{
-					pcmSample += (1024 / pow2) * 15;
-					pcmSample += 768 / pow2;
+				pcmSample += (1024 / pow2) * 15;
+				pcmSample += 768 / pow2;
 			}
 			pcmSample += (1024 / pow2) * remainder;
 

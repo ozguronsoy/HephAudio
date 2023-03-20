@@ -7,7 +7,7 @@
 #include <StopWatch.h>
 #include "FloatBuffer.h"
 #include <shlobj.h>
-#include "MuLawCodec.h"
+#include "AudioFileFormatManager.h"
 #include "AudioCodecManager.h"
 
 using namespace HephAudio;
@@ -305,7 +305,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				const hephaudio_float originalPosition = audio.GetAOPosition(pao);
 				pao->pause = true;
 				AudioFile audioFile = AudioFile(pao->filePath, AudioFileOpenMode::Read);
-				Formats::IAudioFormat* audioFormat = Formats::AudioFormatManager::FindAudioFormat(pao->filePath);
+				FileFormats::IAudioFileFormat* audioFormat = FileFormats::AudioFileFormatManager::FindFileFormat(pao->filePath);
 				pao->buffer = audioFormat->ReadFile(&audioFile);
 				pao->buffer.SetChannelCount(audio.GetRenderFormat().channelCount);
 				pao->buffer.SetSampleRate(audio.GetRenderFormat().sampleRate);

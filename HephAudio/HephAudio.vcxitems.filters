@@ -75,10 +75,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatManager.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFileFormat.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h">
@@ -254,7 +254,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatManager.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.cpp">
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp">

@@ -163,6 +163,61 @@ namespace HephAudio
 			Codecs::PcmCodec().Encode(buffer, encodedBufferInfo);
 		}
 	}
+	void AudioProcessor::ChangeEndian(AudioBuffer& buffer)
+	{
+		if (buffer.formatInfo.bitsPerSample > 8)
+		{
+			switch (buffer.formatInfo.bitsPerSample)
+			{
+			case 16:
+			{
+				for (size_t i = 0; i < buffer.frameCount; i++)
+				{
+					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+					{
+						AudioFile::ChangeEndian((uint8_t*)((int16_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 2);
+					}
+				}
+			}
+			break;
+			case 24:
+			{
+				for (size_t i = 0; i < buffer.frameCount; i++)
+				{
+					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+					{
+						AudioFile::ChangeEndian((uint8_t*)((int24*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 3);
+					}
+				}
+			}
+			break;
+			case 32:
+			{
+				for (size_t i = 0; i < buffer.frameCount; i++)
+				{
+					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+					{
+						AudioFile::ChangeEndian((uint8_t*)((int32_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 4);
+					}
+				}
+			}
+			break;
+			case 64:
+			{
+				for (size_t i = 0; i < buffer.frameCount; i++)
+				{
+					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+					{
+						AudioFile::ChangeEndian((uint8_t*)((int64_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 8);
+					}
+				}
+			}
+			break;
+			default:
+				break;
+			}
+		}
+	}
 #pragma endregion
 #pragma region Sound Effects
 	void AudioProcessor::Reverse(AudioBuffer& buffer)

@@ -70,7 +70,13 @@ namespace HephAudio
 		}
 		void IEEE_FloatCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.bitsPerSample, encodedBufferInfo.formatInfo.sampleRate));
+			encodedBufferInfo.size_byte = bufferToEncode.Size();
+			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
+			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_IEEE_FLOAT;
+			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
+			encodedBufferInfo.formatInfo.bitsPerSample = bufferToEncode.FormatInfo().bitsPerSample;
+			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
+			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
 			if (encodedBufferInfo.endian != AudioFile::GetSystemEndian())
 			{
@@ -119,7 +125,7 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
-							((double*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j]; 
+							((double*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j];
 						}
 					}
 				}

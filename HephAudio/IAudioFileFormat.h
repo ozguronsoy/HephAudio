@@ -8,13 +8,13 @@
 
 namespace HephAudio
 {
-	namespace Formats
+	namespace FileFormats
 	{
 		constexpr Endian operator!(const Endian& lhs) { return lhs == Endian::Big ? Endian::Little : Endian::Big; }
-		class IAudioFormat
+		class IAudioFileFormat
 		{
 		public:
-			virtual ~IAudioFormat() = default;
+			virtual ~IAudioFileFormat() = default;
 			// Gets the extension of the current format.
 			virtual StringBuffer Extension() const = 0;
 			// Reads the audio format information.

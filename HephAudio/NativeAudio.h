@@ -3,7 +3,6 @@
 #include "AudioDevice.h"
 #include "AudioException.h"
 #include "AudioObject.h"
-#include "AudioFormatManager.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
 #include "AudioEvent.h"

@@ -1,17 +1,18 @@
 #include "WavFormat.h"
 #include "AudioException.h"
 #include "AudioCodecManager.h"
+#include "AudioProcessor.h"
 
 using namespace HephAudio::Codecs;
 
 constexpr uint32_t riffID = 0x52494646; // "RIFF"
 constexpr uint32_t waveID = 0x057415645; // "WAVE"
-constexpr uint32_t fmtID = 0x666d7420; // "fmt "
+constexpr uint32_t fmtID = 0x666D7420; // "fmt "
 constexpr uint32_t dataID = 0x64617461; // "data"
 
 namespace HephAudio
 {
-	namespace Formats
+	namespace FileFormats
 	{
 		StringBuffer WavFormat::Extension() const
 		{
@@ -82,7 +83,7 @@ namespace HephAudio
 		}
 		AudioBuffer WavFormat::ReadFile(const AudioFile* pAudioFile) const
 		{
-			const AudioFormatInfo wavFormatInfo = ReadAudioFormatInfo(pAudioFile);
+			const AudioFormatInfo wavFormatInfo = this->ReadAudioFormatInfo(pAudioFile);
 
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(wavFormatInfo.formatTag);
 			if (pAudioCodec == nullptr)
@@ -94,15 +95,15 @@ namespace HephAudio
 			pAudioFile->Read(&wavAudioDataSize, 4, Endian::Little);
 
 			const uint8_t bytesPerSample = wavFormatInfo.bitsPerSample / 8;
-			void* pPcmBuffer = malloc(wavAudioDataSize);
-			if (pPcmBuffer == nullptr)
+			
+			EncodedBufferInfo encodedBufferInfo;
+			encodedBufferInfo.pBuffer = malloc(wavAudioDataSize);
+			if (encodedBufferInfo.pBuffer == nullptr)
 			{
 				throw AudioException(E_OUTOFMEMORY, "WavFormat::ReadFile", "Insufficient memory.");
 			}
-			pAudioFile->ReadToBuffer(pPcmBuffer, bytesPerSample, wavAudioDataSize / bytesPerSample);
+			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, bytesPerSample, wavAudioDataSize / bytesPerSample);
 
-			EncodedBufferInfo encodedBufferInfo;
-			encodedBufferInfo.pBuffer = pPcmBuffer;
 			encodedBufferInfo.size_byte = wavAudioDataSize;
 			encodedBufferInfo.size_frame = wavAudioDataSize / wavFormatInfo.FrameSize();
 			encodedBufferInfo.formatInfo = wavFormatInfo;
@@ -110,7 +111,7 @@ namespace HephAudio
 
 			const AudioBuffer hephaudioBuffer = pAudioCodec->Decode(encodedBufferInfo);
 
-			free(pPcmBuffer);
+			free(encodedBufferInfo.pBuffer);
 
 			return hephaudioBuffer;
 		}
@@ -143,6 +144,12 @@ namespace HephAudio
 				audioFile.Write(&dataID, 4, Endian::Big);
 				data32 = buffer.Size();
 				audioFile.Write(&data32, 4, Endian::Little);
+
+				if (AudioFile::GetSystemEndian() == Endian::Big)
+				{
+					AudioProcessor::ChangeEndian(buffer);
+				}
+
 				audioFile.WriteToBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.Size() / (bufferFormatInfo.bitsPerSample / 8));
 			}
 			catch (AudioException)

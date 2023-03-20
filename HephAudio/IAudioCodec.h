@@ -31,7 +31,7 @@ namespace HephAudio
 			/// Encodes the HephAudio buffer to the current codec.
 			/// </summary>
 			/// <param name="bufferToEncode">The hephaudio buffer to encode.</param>
-			/// <param name="encodedBufferInfo">Holds information about where and how to encode the audio data.</param>
+			/// <param name="encodedBufferInfo">Holds information about how to encode the audio data.</param>
 			virtual void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const = 0;
 		};
 	}

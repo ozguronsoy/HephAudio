@@ -1,12 +1,12 @@
 #pragma once
 #include "framework.h"
-#include "IAudioFormat.h"
+#include "IAudioFileFormat.h"
 
 namespace HephAudio
 {
-	namespace Formats
+	namespace FileFormats
 	{
-		class WavFormat final : public IAudioFormat
+		class WavFormat final : public IAudioFileFormat
 		{
 		public:
 			StringBuffer Extension() const override;

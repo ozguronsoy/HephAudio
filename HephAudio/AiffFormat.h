@@ -1,12 +1,12 @@
 #pragma once
 #include "framework.h"
-#include "IAudioFormat.h"
+#include "IAudioFileFormat.h"
 
 namespace HephAudio
 {
-	namespace Formats
+	namespace FileFormats
 	{
-		class AiffFormat final : public IAudioFormat
+		class AiffFormat final : public IAudioFileFormat
 		{
 		public:
 			StringBuffer Extension() const override;
@@ -14,8 +14,10 @@ namespace HephAudio
 			AudioBuffer ReadFile(const AudioFile* pAudioFile) const override;
 			bool SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const override;
 		private:
-			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo* wfx) const;
-			uint64_t SampleRateTo64(const AudioFormatInfo* const& wfx) const;
+			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo& formatInfo) const;
+			uint64_t SampleRateTo64(const AudioFormatInfo& formatInfo) const;
+			void FormatTagFrom32(uint32_t tagBits, AudioFormatInfo& formatInfo) const;
+			void FormatTagTo32(const AudioFormatInfo& audioFormatInfo, uint32_t& outTagBits, StringBuffer& outCompressionName) const;
 		};
 	}
 }

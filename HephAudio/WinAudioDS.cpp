@@ -1,6 +1,7 @@
 #ifdef _WIN32
 #include "WinAudioDS.h"
 #include "AudioProcessor.h"
+#include "AudioFile.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 

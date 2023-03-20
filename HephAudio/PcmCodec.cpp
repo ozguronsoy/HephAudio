@@ -132,7 +132,12 @@ namespace HephAudio
 		}
 		void PcmCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_PCM, encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.bitsPerSample, encodedBufferInfo.formatInfo.sampleRate));
+			encodedBufferInfo.size_byte = bufferToEncode.Size();
+			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
+			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_PCM;
+			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
+			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
+			AudioBuffer tempBuffer = AudioBuffer(bufferToEncode.FrameCount(), encodedBufferInfo.formatInfo);
 
 			if (encodedBufferInfo.endian != AudioFile::GetSystemEndian())
 			{

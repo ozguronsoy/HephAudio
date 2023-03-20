@@ -32,7 +32,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h" />
@@ -46,7 +46,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioCodec.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFileFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
@@ -84,7 +84,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp" />

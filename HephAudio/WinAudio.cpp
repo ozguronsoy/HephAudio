@@ -1,8 +1,9 @@
 #ifdef _WIN32
 #include "WinAudio.h"
 #include "StopWatch.h"
+#include "AudioFile.h"
 #include "ConsoleLogger.h"
-#include <AudioProcessor.h>
+#include "AudioProcessor.h"
 #include <VersionHelpers.h>
 
 using namespace Microsoft::WRL;
