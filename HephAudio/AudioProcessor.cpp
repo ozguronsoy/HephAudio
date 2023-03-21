@@ -888,14 +888,22 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::ChangeSpeedTD(AudioBuffer& buffer, hephaudio_float speed)
+	{
+		ChangeSpeedTD(buffer, buffer.formatInfo.sampleRate * 0.03, buffer.formatInfo.sampleRate * 0.06, speed);
+	}
 	void AudioProcessor::ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, hephaudio_float speed)
 	{
 		const hephaudio_float frameCountRatio = 1.0 / speed;
-		const FloatBuffer hannWindow = AudioProcessor::GenerateHannWindow(windowSize);
+		const FloatBuffer window = AudioProcessor::GenerateHannWindow(windowSize);
 		AudioBuffer tempBuffer = AudioBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo);
 
 		if (speed <= 1.0)
 		{
+			const hephaudio_float alpha = frameCountRatio - floor(frameCountRatio);
+			const size_t alphaWindowSize = ceil(windowSize * alpha);
+			const FloatBuffer alphaWindow = AudioProcessor::GenerateHannWindow(alphaWindowSize);
+
 			for (size_t i = 0; i < buffer.frameCount; i += hopSize)
 			{
 				AudioBuffer subBuffer = buffer.GetSubBuffer(i, windowSize);
@@ -905,7 +913,15 @@ namespace HephAudio
 					{
 						for (size_t l = 0, m = i * frameCountRatio + k * hopSize; l < windowSize && m < tempBuffer.frameCount; l++, m++)
 						{
-							tempBuffer[m][j] += subBuffer[l][j] * hannWindow[l];
+							tempBuffer[m][j] += subBuffer[l][j] * window[l];
+						}
+					}
+
+					if (alpha > 0)
+					{
+						for (size_t l = 0, m = i * frameCountRatio + floor(frameCountRatio) * hopSize; l < alphaWindowSize && m < tempBuffer.frameCount; l++, m++)
+						{
+							tempBuffer[m][j] += subBuffer[l + alphaWindowSize][j] * alphaWindow[l];
 						}
 					}
 				}
@@ -920,7 +936,7 @@ namespace HephAudio
 				{
 					for (size_t k = 0, l = i * frameCountRatio; k < windowSize && l < tempBuffer.frameCount; k++, l++)
 					{
-						tempBuffer[l][j] += subBuffer[k][j] * hannWindow[k];
+						tempBuffer[l][j] += subBuffer[k][j] * window[k];
 					}
 				}
 			}
@@ -936,7 +952,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::PitchShift(AudioBuffer& buffer, hephaudio_float pitchChange_semitone)
 	{
-		PitchShift(buffer, 512, 4096, pitchChange_semitone);
+		PitchShift(buffer, defaultHopSize, defaultFFTSize, pitchChange_semitone);
 	}
 	void AudioProcessor::PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float pitchChange_semitone)
 	{
@@ -1000,6 +1016,95 @@ namespace HephAudio
 				{
 					buffer[l][j] += complexBuffer[k].real * hannWindow[k] / fftSize;
 				}
+			}
+		}
+	}
+	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, hephaudio_float pitchChange_semitone)
+	{
+		PitchShiftMT(buffer, defaultHopSize, defaultFFTSize, pitchChange_semitone);
+	}
+	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float pitchChange_semitone)
+	{
+		constexpr auto applyPitchShift = [](AudioBuffer* buffer, const FloatBuffer* window, size_t channelIndex, size_t hopSize, size_t fftSize, size_t nyquistFrequency, hephaudio_float shiftFactor)
+		{
+			constexpr hephaudio_float twopi = 2.0 * PI;
+
+			FloatBuffer lastAnalysisPhases = FloatBuffer(nyquistFrequency);
+			FloatBuffer lastSynthesisPhases = FloatBuffer(nyquistFrequency);
+			FloatBuffer synthesisMagnitudes = FloatBuffer(nyquistFrequency);
+			FloatBuffer synthesisFrequencies = FloatBuffer(nyquistFrequency);
+
+			FloatBuffer channel = FloatBuffer(buffer->frameCount);
+			for (size_t i = 0; i < buffer->frameCount; i++)
+			{
+				channel[i] = (*buffer)[i][channelIndex];
+				(*buffer)[i][channelIndex] = 0;
+			}
+
+			for (size_t i = 0; i < buffer->frameCount; i += hopSize)
+			{
+				synthesisMagnitudes.Reset();
+				synthesisFrequencies.Reset();
+
+				const FloatBuffer subBuffer = channel.GetSubBuffer(i, fftSize);
+				ComplexBuffer complexBuffer = ComplexBuffer(fftSize);
+				for (size_t k = 0; k < fftSize; k++)
+				{
+					complexBuffer[k].real = subBuffer[k] * (*window)[k];
+				}
+				Fourier::FFT_Forward(complexBuffer, fftSize);
+
+				for (size_t k = 0; k < nyquistFrequency; k++)
+				{
+					const hephaudio_float phase = complexBuffer[k].Phase();
+					hephaudio_float phaseRemainder = phase - lastAnalysisPhases[k] - twopi * k * hopSize / fftSize;
+					phaseRemainder = phaseRemainder >= 0 ? (fmod(phaseRemainder + PI, twopi) - PI) : (fmod(phaseRemainder - PI, -twopi) + PI);
+
+					const size_t newBin = floor(k * shiftFactor + 0.5);
+					if (newBin < nyquistFrequency)
+					{
+						synthesisMagnitudes[newBin] += complexBuffer[k].Magnitude();
+						synthesisFrequencies[newBin] = (k + phaseRemainder * fftSize / twopi / hopSize) * shiftFactor;
+					}
+
+					lastAnalysisPhases[k] = phase;
+				}
+
+				for (size_t k = 0; k < nyquistFrequency; k++)
+				{
+					hephaudio_float synthesisPhase = twopi * hopSize / fftSize * synthesisFrequencies[k] + lastSynthesisPhases[k];
+					synthesisPhase = synthesisPhase >= 0 ? (fmod(synthesisPhase + PI, twopi) - PI) : (fmod(synthesisPhase - PI, -twopi) + PI);
+
+					complexBuffer[k] = Complex(synthesisMagnitudes[k] * cos(synthesisPhase), synthesisMagnitudes[k] * sin(synthesisPhase));
+					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
+
+					lastSynthesisPhases[k] = synthesisPhase;
+				}
+
+				Fourier::FFT_Inverse(complexBuffer, false);
+				for (size_t k = 0, l = i; k < fftSize && l < buffer->frameCount; k++, l++)
+				{
+					(*buffer)[l][channelIndex] += complexBuffer[k].real * (*window)[k] / fftSize;
+				}
+			}
+		};
+
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const size_t nyquistFrequency = fftSize * 0.5;
+		const hephaudio_float shiftFactor = pow(2.0, pitchChange_semitone / 12.0);
+		const FloatBuffer hannWindow = GenerateHannWindow(fftSize);
+		std::vector<std::thread> threads = std::vector<std::thread>(buffer.formatInfo.channelCount);
+
+		for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+		{
+			threads[i] = std::thread(applyPitchShift, &buffer, &hannWindow, i, hopSize, fftSize, nyquistFrequency, shiftFactor);
+		}
+
+		for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+		{
+			if (threads[i].joinable())
+			{
+				threads[i].join();
 			}
 		}
 	}

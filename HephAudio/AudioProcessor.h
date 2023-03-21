@@ -63,9 +63,12 @@ namespace HephAudio
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
 		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float speed);
+		static void ChangeSpeedTD(AudioBuffer& buffer, hephaudio_float speed);
 		static void ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, hephaudio_float speed);
 		static void PitchShift(AudioBuffer& buffer, hephaudio_float pitchChange_semitone);
 		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float pitchChange_semitone);
+		static void PitchShiftMT(AudioBuffer& buffer, hephaudio_float pitchChange_semitone);
+		static void PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, hephaudio_float pitchChange_semitone);
 #pragma endregion
 #pragma region Filters
 	public:

@@ -279,7 +279,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				hephaudio_float speed = StringBuffer::StringToDouble(params.at(1));
 				pao->pause = true;
 				StopWatch::Reset();
-				AudioProcessor::ChangeSpeedTD(pao->buffer, 1440, 2880, speed);
+				AudioProcessor::ChangeSpeedTD(pao->buffer, speed);
 				audio.SetAOPosition(pao, originalPosition);
 				PrintDeltaTime("playback speed changed in");
 				pao->pause = originalState;
@@ -292,7 +292,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				hephaudio_float shiftFactor = StringBuffer::StringToDouble(params.at(1));
 				pao->pause = true;
 				StopWatch::Reset();
-				AudioProcessor::PitchShift(pao->buffer, 1024, 4096, shiftFactor);
+				AudioProcessor::PitchShiftMT(pao->buffer, 1024, 4096, shiftFactor);
 				PrintDeltaTime("pitch shifted in");
 				pao->pause = originalState;
 			}
