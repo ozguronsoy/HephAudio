@@ -1,6 +1,7 @@
 #ifdef __ANDROID__
 #include "AndroidAudioSLES.h"
 #include "AudioProcessor.h"
+#include "AudioFile.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
@@ -290,7 +291,7 @@ namespace HephAudio
 				AudioBuffer captureBuffer(captureCallbackFrameCount, pCallbackContext->pAndroidAudio->captureFormat);
 				memcpy(captureBuffer.Begin(), pCallbackContext->pData, captureCallbackSize);
 
-				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer);
+				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer, AudioFile::GetSystemEndian());
 				AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
 				pCallbackContext->pAndroidAudio->OnCapture(&captureEventArgs, nullptr);
 

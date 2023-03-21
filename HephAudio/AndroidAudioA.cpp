@@ -1,6 +1,7 @@
 #ifdef __ANDROID__
 #include "AndroidAudioA.h"
 #include "AudioProcessor.h"
+#include "AudioFile.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
@@ -274,7 +275,7 @@ namespace HephAudio
 				if (OnCapture)
 				{
 					AudioBuffer tempBuffer = dataBuffer;
-					AudioProcessor::ConvertPcmToInnerFormat(tempBuffer);
+					AudioProcessor::ConvertPcmToInnerFormat(tempBuffer, AudioFile::GetSystemEndian());
 					AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, tempBuffer);
 					OnCapture(&captureEventArgs, nullptr);
 				}

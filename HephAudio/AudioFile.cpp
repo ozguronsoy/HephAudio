@@ -13,7 +13,7 @@ namespace HephAudio
 		this->OpenFile(openMode);
 		if (this->pFile == nullptr)
 		{
-			throw AudioException((*_errno()), L"AudioFile::AudioFile", L"An error occurred whilst opening the file.");
+			throw AudioException(errno, L"AudioFile::AudioFile", L"An error occurred whilst opening the file.");
 		}
 
 		fseek(this->pFile, 0, SEEK_END);
