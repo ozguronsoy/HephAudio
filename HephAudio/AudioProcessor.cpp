@@ -370,7 +370,7 @@ namespace HephAudio
 	void AudioProcessor::Vibrato(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo)
 	{
 		const hephaudio_float resampleDelta = buffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
-		const hephaudio_float wetFactor = depth;
+		const hephaudio_float wetFactor = depth * 0.5;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 
 		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
@@ -402,7 +402,7 @@ namespace HephAudio
 	void AudioProcessor::VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, hephaudio_float depth, hephaudio_float extent_semitone, const Oscillator& lfo)
 	{
 		const hephaudio_float resampleDelta = subBuffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
-		const hephaudio_float wetFactor = depth;
+		const hephaudio_float wetFactor = depth * 0.5;
 		const hephaudio_float dryFactor = 1.0 - wetFactor;
 
 		for (size_t i = 0, t_sample = subBufferFrameIndex; i < subBuffer.frameCount && t_sample < originalBuffer.frameCount; i++, t_sample++)
@@ -418,6 +418,178 @@ namespace HephAudio
 					wetSample = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
 				}
 				subBuffer[i][j] = wetFactor * wetSample + dryFactor * originalBuffer[t_sample][j];
+			}
+		}
+	}
+	void AudioProcessor::Chorus(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, hephaudio_float extent_semitone, const Oscillator& lfo)
+	{
+		const hephaudio_float baseDelay_sample = baseDelay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		const hephaudio_float delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		const hephaudio_float resampleDelta = buffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
+		const hephaudio_float wetFactor = depth * 0.5;
+		const hephaudio_float dryFactor = 1.0 - wetFactor;
+
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		FloatBuffer feedbackBuffer = FloatBuffer(buffer.formatInfo.channelCount);
+		for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+		{
+			lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+		}
+
+		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
+
+		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
+		{
+			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample + baseDelay_sample);
+			const hephaudio_float resampleIndex = (i - currentDelay_sample) + lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * resampleDelta;
+			const hephaudio_float rho = resampleIndex - floor(resampleIndex);
+
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				hephaudio_float wetSample;
+				if (resampleIndex + 1.0 < buffer.frameCount)
+				{
+					wetSample = buffer[resampleIndex][j] * (1.0 - rho) + buffer[resampleIndex + 1.0][j] * rho;
+				}
+				else
+				{
+					wetSample = buffer[i - currentDelay_sample][j] + feedbackBuffer[j];
+				}
+
+				resultBuffer[i][j] = wetFactor * wetSample + dryFactor * buffer[i][j];
+				feedbackBuffer[j] = feedbackGain * wetSample;
+			}
+		}
+
+		const hephaudio_float absMax = resultBuffer.AbsMax();
+		if (absMax > 1.0)
+		{
+			resultBuffer /= absMax;
+		}
+
+		buffer = std::move(resultBuffer);
+	}
+	void AudioProcessor::Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, const Oscillator& lfo)
+	{
+		const hephaudio_float baseDelay_sample = baseDelay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		const hephaudio_float delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		const hephaudio_float wetFactor = depth * 0.5;
+		const hephaudio_float dryFactor = 1.0 - wetFactor;
+		FloatBuffer feedbackBuffer = FloatBuffer(buffer.formatInfo.channelCount);
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+		{
+			lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+		}
+
+		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
+
+		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
+		{
+			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample + baseDelay_sample);
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				const hephaudio_float wetSample = buffer[i - currentDelay_sample][j] + feedbackBuffer[j];
+				resultBuffer[i][j] = wetFactor * wetSample + dryFactor * buffer[i][j];
+				feedbackBuffer[j] = feedbackGain * wetSample;
+			}
+		}
+
+		const hephaudio_float absMax = resultBuffer.AbsMax();
+		if (absMax > 1.0)
+		{
+			resultBuffer /= absMax;
+		}
+
+		buffer = std::move(resultBuffer);
+	}
+	void AudioProcessor::FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex,
+		hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, const Oscillator& lfo)
+	{
+		static FloatBuffer feedbackBuffer = FloatBuffer();
+		if (subBufferFrameIndex == 0 || feedbackBuffer.frameCount != subBuffer.formatInfo.channelCount)
+		{
+			feedbackBuffer = FloatBuffer(subBuffer.formatInfo.channelCount);
+		}
+
+		const hephaudio_float baseDelay_sample = baseDelay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
+		const hephaudio_float delay_sample = delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
+
+		if (subBufferFrameIndex > round(delay_sample + baseDelay_sample))
+		{
+			const hephaudio_float wetFactor = depth * 0.5;
+			const hephaudio_float dryFactor = 1.0 - wetFactor;
+
+			for (size_t i = 0; i < subBuffer.frameCount && subBufferFrameIndex + i < originalBuffer.frameCount; i++)
+			{
+				const size_t currentDelay_sample = round((lfo.Oscillate(subBufferFrameIndex + i) * 0.5 + 0.5) * delay_sample + baseDelay_ms);
+				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+				{
+					const hephaudio_float wetSample = originalBuffer[subBufferFrameIndex + i - currentDelay_sample][j] + feedbackBuffer[j];
+					subBuffer[i][j] = wetFactor * wetSample + dryFactor * originalBuffer[subBufferFrameIndex + i][j];
+					feedbackBuffer[j] = feedbackGain * wetSample;
+				}
+			}
+		}
+	}
+	void AudioProcessor::Wah(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float damping, hephaudio_float fcmin, hephaudio_float fcmax, const Oscillator& lfo)
+	{
+		if (buffer.frameCount > 0)
+		{
+			const hephaudio_float wetFactor = depth;
+			const hephaudio_float dryFactor = 1.0 - wetFactor;
+			const hephaudio_float fcdelta = fcmax - fcmin;
+			const hephaudio_float Q = 2.0 * damping;
+
+			FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+			for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
+			{
+				lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
+			}
+
+			hephaudio_float fc = fcdelta * lfoPeriodBuffer[0] + fcmin;
+			hephaudio_float alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
+			AudioBuffer lowPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+			AudioBuffer bandPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+			AudioBuffer highPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+
+			for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+			{
+				highPassBuffer[0][i] = buffer[0][i];
+				bandPassBuffer[0][i] = alpha * buffer[0][i];
+				lowPassBuffer[0][i] = alpha * bandPassBuffer[0][i];
+			}
+
+			for (size_t i = 1; i < buffer.frameCount; i++)
+			{
+				fc = fcdelta * lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] + fcmin;
+				alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
+
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					highPassBuffer[i][j] = buffer[i][j] - lowPassBuffer[i - 1][j] - Q * bandPassBuffer[i - 1][j];
+					bandPassBuffer[i][j] = alpha * highPassBuffer[i][j] + bandPassBuffer[i - 1][j];
+					lowPassBuffer[i][j] = alpha * bandPassBuffer[i][j] + lowPassBuffer[i - 1][j];
+				}
+			}
+
+			hephaudio_float absMax = INT32_MIN;
+			for (size_t i = 0; i < buffer.frameCount; i++)
+			{
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				{
+					buffer[i][j] = wetFactor * bandPassBuffer[i][j] + dryFactor * buffer[i][j];
+					if (abs(buffer[i][j]) > absMax)
+					{
+						absMax = abs(buffer[i][j]);
+					}
+				}
+			}
+			if (absMax > 1.0)
+			{
+				buffer /= absMax;
 			}
 		}
 	}
@@ -508,129 +680,6 @@ namespace HephAudio
 				{
 					sample = wetFactor * (-1.0 + exp(alpha * sample)) + dryFactor * sample;
 				}
-			}
-		}
-	}
-	void AudioProcessor::Flanger(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, const Oscillator& lfo)
-	{
-		const hephaudio_float baseDelay_sample = baseDelay_ms * 1e-3 * buffer.formatInfo.sampleRate;
-		const hephaudio_float delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
-		const hephaudio_float wetFactor = depth;
-		const hephaudio_float dryFactor = 1.0 - wetFactor;
-		FloatBuffer feedbackBuffer = FloatBuffer(buffer.formatInfo.channelCount);
-		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
-		for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
-		{
-			lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
-		}
-
-		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-		memcpy(resultBuffer.pAudioData, buffer.pAudioData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
-
-		for (size_t i = delay_sample + 1; i < buffer.frameCount; i++)
-		{
-			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] * delay_sample + baseDelay_sample);
-			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-			{
-				const hephaudio_float wetSample = buffer[i - currentDelay_sample][j] + feedbackBuffer[j];
-				resultBuffer[i][j] = wetFactor * wetSample + dryFactor * buffer[i][j];
-				feedbackBuffer[j] = feedbackGain * wetSample;
-			}
-		}
-
-		const hephaudio_float absMax = resultBuffer.AbsMax();
-		if (absMax > 1.0)
-		{
-			resultBuffer /= absMax;
-		}
-
-		buffer = std::move(resultBuffer);
-	}
-	void AudioProcessor::FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex,
-		hephaudio_float depth, hephaudio_float feedbackGain, hephaudio_float baseDelay_ms, hephaudio_float delay_ms, const Oscillator& lfo)
-	{
-		static FloatBuffer feedbackBuffer = FloatBuffer();
-		if (subBufferFrameIndex == 0 || feedbackBuffer.frameCount != subBuffer.formatInfo.channelCount)
-		{
-			feedbackBuffer = FloatBuffer(subBuffer.formatInfo.channelCount);
-		}
-
-		const hephaudio_float baseDelay_sample = baseDelay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
-		const hephaudio_float delay_sample = delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
-
-		if (subBufferFrameIndex > round(delay_sample + baseDelay_ms))
-		{
-			const hephaudio_float wetFactor = depth;
-			const hephaudio_float dryFactor = 1.0 - wetFactor;
-
-			for (size_t i = 0; i < subBuffer.frameCount && subBufferFrameIndex + i < originalBuffer.frameCount; i++)
-			{
-				const size_t currentDelay_sample = round((lfo.Oscillate(subBufferFrameIndex + i) * 0.5 + 0.5) * delay_sample + baseDelay_ms);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					const hephaudio_float wetSample = originalBuffer[subBufferFrameIndex + i - currentDelay_sample][j] + feedbackBuffer[j];
-					subBuffer[i][j] = wetFactor * wetSample + dryFactor * originalBuffer[subBufferFrameIndex + i][j];
-					feedbackBuffer[j] = feedbackGain * wetSample;
-				}
-			}
-		}
-	}
-	void AudioProcessor::Wah(AudioBuffer& buffer, hephaudio_float depth, hephaudio_float damping, hephaudio_float fcmin, hephaudio_float fcmax, const Oscillator& lfo)
-	{
-		if (buffer.frameCount > 0)
-		{
-			const hephaudio_float wetFactor = depth;
-			const hephaudio_float dryFactor = 1.0 - wetFactor;
-			const hephaudio_float fcdelta = fcmax - fcmin;
-			const hephaudio_float Q = 2.0 * damping;
-
-			FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
-			for (size_t i = 0; i < lfoPeriodBuffer.frameCount; i++)
-			{
-				lfoPeriodBuffer[i] = lfo.Oscillate(i) * 0.5 + 0.5;
-			}
-
-			hephaudio_float fc = fcdelta * lfoPeriodBuffer[0] + fcmin;
-			hephaudio_float alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
-			AudioBuffer lowPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-			AudioBuffer bandPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-			AudioBuffer highPassBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-
-			for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
-			{
-				highPassBuffer[0][i] = buffer[0][i];
-				bandPassBuffer[0][i] = alpha * buffer[0][i];
-				lowPassBuffer[0][i] = alpha * bandPassBuffer[0][i];
-			}
-
-			for (size_t i = 1; i < buffer.frameCount; i++)
-			{
-				fc = fcdelta * lfoPeriodBuffer[i % lfoPeriodBuffer.frameCount] + fcmin;
-				alpha = 2.0 * sin(PI * fc / lfo.sampleRate);
-
-				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-				{
-					highPassBuffer[i][j] = buffer[i][j] - lowPassBuffer[i - 1][j] - Q * bandPassBuffer[i - 1][j];
-					bandPassBuffer[i][j] = alpha * highPassBuffer[i][j] + bandPassBuffer[i - 1][j];
-					lowPassBuffer[i][j] = alpha * bandPassBuffer[i][j] + lowPassBuffer[i - 1][j];
-				}
-			}
-
-			hephaudio_float absMax = INT32_MIN;
-			for (size_t i = 0; i < buffer.frameCount; i++)
-			{
-				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-				{
-					buffer[i][j] = wetFactor * bandPassBuffer[i][j] + dryFactor * buffer[i][j];
-					if (abs(buffer[i][j]) > absMax)
-					{
-						absMax = abs(buffer[i][j]);
-					}
-				}
-			}
-			if (absMax > 1.0)
-			{
-				buffer /= absMax;
 			}
 		}
 	}
