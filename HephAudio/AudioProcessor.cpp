@@ -1,5 +1,5 @@
 #include "AudioProcessor.h"
-#include "AudioException.h"
+#include "HephException.h"
 #include "Fourier.h"
 #include "AudioFile.h"
 #include "PcmCodec.h"
@@ -10,7 +10,7 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, uint16_t outputBps)
 	{
-		throw AudioException(E_NOTIMPL, "AudioProcessor::ConvertBPS", "Not implemented.");
+		throw HephCommon::HephException(E_NOTIMPL, "AudioProcessor::ConvertBPS", "Not implemented.");
 	}
 	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
 	{

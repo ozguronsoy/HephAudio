@@ -70,8 +70,8 @@ namespace HephAudio
 			void StopRendering();
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			void StopCapturing();
-			void SetDisplayName(StringBuffer displayName);
-			void SetIconPath(StringBuffer iconPath);
+			void SetDisplayName(HephCommon::StringBuffer displayName);
+			void SetIconPath(HephCommon::StringBuffer iconPath);
 		private:
 			void RenderData(SLBufferQueueItf bufferQueue);
 			void CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue);

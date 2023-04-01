@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{2bebdc5a-7aca-4d72-913a-096de8148ef0}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\ConsoleLogger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\HephException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\StopWatch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\StringBuffer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\ConsoleLogger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\HephException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\StopWatch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\StringBuffer.cpp" />
+  </ItemGroup>
+</Project>

@@ -20,11 +20,11 @@ namespace HephAudio
 		/// <summary>
 		/// The unique identifier of the audio device.
 		/// </summary>
-		StringBuffer id{ "" };
+		HephCommon::StringBuffer id{ "" };
 		/// <summary>
 		/// The human-readable name of the audio device.
 		/// </summary>
-		StringBuffer name{ "" };
+		HephCommon::StringBuffer name{ "" };
 		/// <summary>
 		/// Tells whether the device is an output (render) or an input (capture) audio.
 		/// </summary>

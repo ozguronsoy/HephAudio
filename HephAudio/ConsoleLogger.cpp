@@ -5,7 +5,7 @@
 #include <android/log.h>
 #endif
 
-namespace HephAudio
+namespace HephCommon
 {
 	void ConsoleLogger::Log(StringBuffer message, const char* logLevel)
 	{

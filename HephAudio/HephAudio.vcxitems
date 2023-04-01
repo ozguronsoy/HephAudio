@@ -27,7 +27,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEvent.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventResult.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioExceptionEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h" />
@@ -36,7 +35,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)ConsoleLogger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EncodedBufferInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h" />
@@ -59,8 +57,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)StopWatch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)StringBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
@@ -79,7 +75,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioEvent.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioExceptionEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp" />
@@ -88,7 +83,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)ConsoleLogger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)FloatBuffer.cpp" />
@@ -105,8 +99,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StopWatch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StringBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />

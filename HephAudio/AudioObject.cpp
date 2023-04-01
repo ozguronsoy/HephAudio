@@ -1,5 +1,4 @@
 #include "AudioObject.h"
-#include "AudioException.h"
 #include "AudioProcessor.h"
 
 namespace HephAudio

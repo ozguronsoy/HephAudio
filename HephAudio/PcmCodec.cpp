@@ -1,5 +1,5 @@
 #include "PcmCodec.h"
-#include "AudioException.h"
+#include "HephException.h"
 #include "AudioFile.h"
 
 namespace HephAudio
@@ -72,7 +72,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+					throw HephCommon::HephException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
 				}
 			}
 			else
@@ -124,7 +124,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+					throw HephCommon::HephException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
 				}
 			}
 
@@ -197,7 +197,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+					throw HephCommon::HephException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
 				}
 			}
 			else
@@ -249,7 +249,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					throw AudioException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
+					throw HephCommon::HephException(E_FAIL, "WavFormat::ReadFile", "Invalid sample size.");
 				}
 			}
 

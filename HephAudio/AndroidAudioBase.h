@@ -48,7 +48,7 @@ namespace HephAudio
 			/// </summary>
 			/// <param name="env">The JNI environment.</param>
 			/// <param name="jStr">The java string.</param>
-			StringBuffer JStringToString(JNIEnv* env, jstring jStr) const;
+			HephCommon::StringBuffer JStringToString(JNIEnv* env, jstring jStr) const;
 		};
 	}
 }

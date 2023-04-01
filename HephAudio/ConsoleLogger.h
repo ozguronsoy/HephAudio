@@ -2,7 +2,7 @@
 #include "framework.h"
 #include "StringBuffer.h"
 
-namespace HephAudio
+namespace HephCommon
 {
 	class ConsoleLogger final
 	{

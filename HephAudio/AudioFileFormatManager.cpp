@@ -11,10 +11,10 @@ namespace HephAudio
 					new AiffFormat()
 		};
 
-		bool AudioFileFormatManager::CompareExtensions(StringBuffer lhs, StringBuffer rhs)
+		bool AudioFileFormatManager::CompareExtensions(HephCommon::StringBuffer lhs, HephCommon::StringBuffer rhs)
 		{
-			std::vector<StringBuffer> lhse = lhs.Split(' ');
-			std::vector<StringBuffer> rhse = rhs.Split(' ');
+			std::vector<HephCommon::StringBuffer> lhse = lhs.Split(' ');
+			std::vector<HephCommon::StringBuffer> rhse = rhs.Split(' ');
 			for (size_t i = 0; i < lhse.size(); i++)
 			{
 				for (size_t j = 0; j < rhse.size(); j++)
@@ -53,9 +53,9 @@ namespace HephAudio
 			}
 			return nullptr;
 		}
-		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(StringBuffer filePath)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(HephCommon::StringBuffer filePath)
 		{
-			const StringBuffer fileExtension = AudioFile::GetFileExtension(filePath);
+			const HephCommon::StringBuffer fileExtension = AudioFile::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
 

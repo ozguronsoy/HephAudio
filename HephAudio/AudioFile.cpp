@@ -1,5 +1,5 @@
 #include "AudioFile.h"
-#include "AudioException.h"
+#include "HephException.h"
 #include <errno.h>
 
 namespace HephAudio
@@ -7,13 +7,13 @@ namespace HephAudio
 	Endian AudioFile::systemEndian = AudioFile::FindSystemEndian();
 	AudioFile::AudioFile()
 		: pFile(nullptr), fileSize(0), filePath("") { }
-	AudioFile::AudioFile(StringBuffer filePath, AudioFileOpenMode openMode)
+	AudioFile::AudioFile(HephCommon::StringBuffer filePath, AudioFileOpenMode openMode)
 		: pFile(nullptr), fileSize(0), filePath(filePath)
 	{
 		this->OpenFile(openMode);
 		if (this->pFile == nullptr)
 		{
-			throw AudioException(errno, L"AudioFile::AudioFile", L"An error occurred whilst opening the file.");
+			throw HephCommon::HephException(errno, L"AudioFile::AudioFile", L"An error occurred whilst opening the file.");
 		}
 
 		fseek(this->pFile, 0, SEEK_END);
@@ -32,15 +32,15 @@ namespace HephAudio
 	{
 		return this->fileSize;
 	}
-	StringBuffer AudioFile::FilePath() const
+	HephCommon::StringBuffer AudioFile::FilePath() const
 	{
 		return this->filePath;
 	}
-	StringBuffer AudioFile::FileName() const
+	HephCommon::StringBuffer AudioFile::FileName() const
 	{
 		return AudioFile::GetFileName(this->filePath);
 	}
-	StringBuffer AudioFile::FileExtension() const
+	HephCommon::StringBuffer AudioFile::FileExtension() const
 	{
 		return AudioFile::GetFileExtension(this->filePath);
 	}
@@ -77,7 +77,7 @@ namespace HephAudio
 		void* pTemp = malloc(dataSize);
 		if (pTemp == nullptr)
 		{
-			throw AudioException(E_OUTOFMEMORY, "AudioFile::Write", "Insufficient memory.");
+			throw HephCommon::HephException(E_OUTOFMEMORY, "AudioFile::Write", "Insufficient memory.");
 		}
 		memcpy(pTemp, pData, dataSize);
 
@@ -93,7 +93,7 @@ namespace HephAudio
 	}
 	void AudioFile::OpenFile(AudioFileOpenMode openMode)
 	{
-		StringBuffer strOpenMode = "";
+		HephCommon::StringBuffer strOpenMode = "";
 		switch (openMode)
 		{
 		case AudioFileOpenMode::Read:
@@ -106,32 +106,32 @@ namespace HephAudio
 			strOpenMode = "wb";
 			break;
 		default:
-			throw AudioException(E_INVALIDARG, "AudioFile::AudioFile", "Invalid mode.");
+			throw HephCommon::HephException(E_INVALIDARG, "AudioFile::AudioFile", "Invalid mode.");
 		}
 
 #if defined(__ANDROID__)
 		this->pFile = fopen(this->filePath.fc_str(), strOpenMode.fc_str());
 #else
-		this->pFile = this->filePath.GetStringType() == StringType::ASCII ? fopen(this->filePath, strOpenMode.fc_str()) : _wfopen(this->filePath, strOpenMode.fwc_str());
+		this->pFile = this->filePath.GetStringType() == HephCommon::StringType::ASCII ? fopen(this->filePath, strOpenMode.fc_str()) : _wfopen(this->filePath, strOpenMode.fwc_str());
 #endif
 	}
-	bool AudioFile::FileExists(StringBuffer filePath)
+	bool AudioFile::FileExists(HephCommon::StringBuffer filePath)
 	{
 		const AudioFile audioFile = AudioFile(filePath, AudioFileOpenMode::Read);
 		return audioFile.pFile != nullptr;
 	}
-	StringBuffer AudioFile::GetFileName(StringBuffer filePath)
+	HephCommon::StringBuffer AudioFile::GetFileName(HephCommon::StringBuffer filePath)
 	{
 #if defined(__ANDROID__)
-		std::vector<StringBuffer> sfp = filePath.Split('/');
+		std::vector<HephCommon::StringBuffer> sfp = filePath.Split('/');
 #else
-		std::vector<StringBuffer> sfp = filePath.Split('\\');
+		std::vector<HephCommon::StringBuffer> sfp = filePath.Split('\\');
 #endif
 		return sfp.at(sfp.size() - 1);
 	}
-	StringBuffer AudioFile::GetFileExtension(StringBuffer filePath)
+	HephCommon::StringBuffer AudioFile::GetFileExtension(HephCommon::StringBuffer filePath)
 	{
-		std::vector<StringBuffer> sfp = filePath.Split('.');
+		std::vector<HephCommon::StringBuffer> sfp = filePath.Split('.');
 		return '.' + sfp.at(sfp.size() - 1);
 	}
 	Endian AudioFile::GetSystemEndian()

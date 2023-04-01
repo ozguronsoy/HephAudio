@@ -1,7 +1,7 @@
 #pragma once
 #include "framework.h"
 #include "AudioEventArgs.h"
-#include "AudioException.h"
+#include "HephException.h"
 
 namespace HephAudio
 {
@@ -22,7 +22,7 @@ namespace HephAudio
 		/// <summary>
 		/// The exception that triggered the event
 		/// </summary>
-		AudioException exception;
+		HephCommon::HephException exception;
 		/// <summary>
 		/// The thread where the exception occurred.
 		/// </summary>
@@ -37,6 +37,6 @@ namespace HephAudio
 		/// <param name="pNativeAudio">Pointer to the NativeAudio instance where the event occurred.</param>
 		/// <param name="exception">The exception that triggered the event.</param>
 		/// <param name="thread">The thread where the exception occurred.</param>
-		AudioExceptionEventArgs(const void* pNativeAudio, AudioException exception, AudioExceptionThread thread);
+		AudioExceptionEventArgs(const void* pNativeAudio, HephCommon::HephException exception, AudioExceptionThread thread);
 	};
 }

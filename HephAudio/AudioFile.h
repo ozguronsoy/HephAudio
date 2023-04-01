@@ -18,17 +18,17 @@ namespace HephAudio
 	private:
 		FILE* pFile;
 		uint64_t fileSize;
-		StringBuffer filePath;
+		HephCommon::StringBuffer filePath;
 	public:
 		AudioFile();
-		AudioFile(StringBuffer filePath, AudioFileOpenMode openMode);
+		AudioFile(HephCommon::StringBuffer filePath, AudioFileOpenMode openMode);
 		AudioFile(const AudioFile&) = delete;
 		AudioFile& operator=(const AudioFile&) = delete;
 		~AudioFile();
 		uint64_t FileSize() const noexcept;
-		StringBuffer FilePath() const;
-		StringBuffer FileName() const;
-		StringBuffer FileExtension() const;
+		HephCommon::StringBuffer FilePath() const;
+		HephCommon::StringBuffer FileName() const;
+		HephCommon::StringBuffer FileExtension() const;
 		uint64_t GetOffset() const;
 		void SetOffset(uint64_t offset) const;
 		void IncreaseOffset(uint64_t offset) const;
@@ -40,9 +40,9 @@ namespace HephAudio
 	private:
 		void OpenFile(AudioFileOpenMode openMode);
 	public:
-		static bool FileExists(StringBuffer filePath);
-		static StringBuffer GetFileName(StringBuffer filePath);
-		static StringBuffer GetFileExtension(StringBuffer filePath);
+		static bool FileExists(HephCommon::StringBuffer filePath);
+		static HephCommon::StringBuffer GetFileName(HephCommon::StringBuffer filePath);
+		static HephCommon::StringBuffer GetFileExtension(HephCommon::StringBuffer filePath);
 		static Endian GetSystemEndian();
 		static void ChangeEndian(uint8_t* pData, uint8_t dataSize);
 	private:

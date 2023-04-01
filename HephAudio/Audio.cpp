@@ -73,27 +73,27 @@ namespace HephAudio
 	{
 		return this->pNativeAudio;
 	}
-	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath)
+	std::shared_ptr<AudioObject> Audio::Play(HephCommon::StringBuffer filePath)
 	{
 		return this->pNativeAudio->Play(filePath);
 	}
-	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount)
+	std::shared_ptr<AudioObject> Audio::Play(HephCommon::StringBuffer filePath, uint32_t loopCount)
 	{
 		return this->pNativeAudio->Play(filePath, loopCount);
 	}
-	std::shared_ptr<AudioObject> Audio::Play(StringBuffer filePath, uint32_t loopCount, bool isPaused)
+	std::shared_ptr<AudioObject> Audio::Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused)
 	{
 		return this->pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<StringBuffer>& filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(HephCommon::StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths)
 	{
 		return this->pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
 	}
-	std::shared_ptr<AudioObject> Audio::Load(StringBuffer filePath)
+	std::shared_ptr<AudioObject> Audio::Load(HephCommon::StringBuffer filePath)
 	{
 		return this->pNativeAudio->Load(filePath);
 	}
-	std::shared_ptr<AudioObject> Audio::CreateAO(StringBuffer name, size_t bufferFrameCount)
+	std::shared_ptr<AudioObject> Audio::CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount)
 	{
 		return this->pNativeAudio->CreateAO(name, bufferFrameCount);
 	}
@@ -113,11 +113,11 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAOPosition(audioObject);
 	}
-	std::shared_ptr<AudioObject> Audio::GetAO(StringBuffer aoName) const
+	std::shared_ptr<AudioObject> Audio::GetAO(HephCommon::StringBuffer aoName) const
 	{
 		return this->pNativeAudio->GetAO(aoName);
 	}
-	std::shared_ptr<AudioObject> Audio::GetAO(StringBuffer queueName, size_t index) const
+	std::shared_ptr<AudioObject> Audio::GetAO(HephCommon::StringBuffer queueName, size_t index) const
 	{
 		return this->pNativeAudio->GetAO(queueName, index);
 	}
@@ -137,11 +137,11 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetMasterVolume();
 	}
-	void Audio::Skip(StringBuffer queueName, bool applyDelay)
+	void Audio::Skip(HephCommon::StringBuffer queueName, bool applyDelay)
 	{
 		this->pNativeAudio->Skip(queueName, applyDelay);
 	}
-	void Audio::Skip(size_t skipCount, StringBuffer queueName, bool applyDelay)
+	void Audio::Skip(size_t skipCount, HephCommon::StringBuffer queueName, bool applyDelay)
 	{
 		this->pNativeAudio->Skip(skipCount, queueName, applyDelay);
 	}
@@ -170,17 +170,17 @@ namespace HephAudio
 		this->pNativeAudio->StopCapturing();
 	}
 #if (defined(_WIN32) && defined(_WIN32_WINNT_VISTA))
-	void Audio::SetDisplayName(StringBuffer displayName)
+	void Audio::SetDisplayName(HephCommon::StringBuffer displayName)
 	{
 		this->pNativeAudio->SetDisplayName(displayName);
 	}
-	void Audio::SetIconPath(StringBuffer iconPath)
+	void Audio::SetIconPath(HephCommon::StringBuffer iconPath)
 	{
 		this->pNativeAudio->SetIconPath(iconPath);
 	}
 #endif
 #if defined(_WIN32)
-	AudioDevice Audio::GetAudioDeviceById(StringBuffer deviceId) const
+	AudioDevice Audio::GetAudioDeviceById(HephCommon::StringBuffer deviceId) const
 	{
 		return this->pNativeAudio->GetAudioDeviceById(deviceId);
 	}
@@ -201,7 +201,7 @@ namespace HephAudio
 		return this->pNativeAudio->GetAudioDevices(deviceType);
 	}
 #endif
-	bool Audio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
+	bool Audio::SaveToFile(HephCommon::StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
 	{
 		return this->pNativeAudio->SaveToFile(filePath, overwrite, buffer);
 	}

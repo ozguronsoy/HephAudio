@@ -9,7 +9,7 @@ namespace HephAudio
 		class AudioFileFormatManager final
 		{
 		private:
-			static bool CompareExtensions(StringBuffer lhs, StringBuffer rhs);
+			static bool CompareExtensions(HephCommon::StringBuffer lhs, HephCommon::StringBuffer rhs);
 		public:
 			AudioFileFormatManager() = delete;
 			AudioFileFormatManager(const AudioFileFormatManager&) = delete;
@@ -17,7 +17,7 @@ namespace HephAudio
 		public:
 			static void RegisterFileFormat(IAudioFileFormat* format);
 			static IAudioFileFormat* FindFileFormat(AudioFile& file);
-			static IAudioFileFormat* FindFileFormat(StringBuffer filePath);
+			static IAudioFileFormat* FindFileFormat(HephCommon::StringBuffer filePath);
 		};
 	}
 }

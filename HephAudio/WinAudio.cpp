@@ -1,17 +1,17 @@
 #ifdef _WIN32
 #include "WinAudio.h"
-#include "StopWatch.h"
 #include "AudioFile.h"
+#include "StopWatch.h"
 #include "ConsoleLogger.h"
 #include "AudioProcessor.h"
 #include <VersionHelpers.h>
 
 using namespace Microsoft::WRL;
 
-#define WINAUDIO_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); throw AudioException(hres, method, message); }
-#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); goto CAPTURE_EXIT; }
-#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, AudioException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIO_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); throw HephCommon::HephException(hres, method, message); }
+#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); goto RENDER_EXIT; }
+#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); goto CAPTURE_EXIT; }
+#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 namespace HephAudio
 {
@@ -21,7 +21,7 @@ namespace HephAudio
 		{
 			if (!IsWindowsVistaOrGreater())
 			{
-				throw AudioException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista.");
+				throw HephCommon::HephException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista.");
 			}
 
 			CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
@@ -34,7 +34,7 @@ namespace HephAudio
 		WinAudio::~WinAudio()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG("Destructing WinAudio...", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing WinAudio...", HephCommon::ConsoleLogger::info);
 
 			disposing = true;
 
@@ -51,7 +51,7 @@ namespace HephAudio
 
 			CoUninitialize();
 
-			HEPHAUDIO_LOG("WinAudio destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("WinAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
 		void WinAudio::SetMasterVolume(hephaudio_float volume)
 		{
@@ -85,7 +85,7 @@ namespace HephAudio
 		void WinAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
 
 			StopRendering();
 
@@ -133,7 +133,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&WinAudio::RenderData, this);
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
 		void WinAudio::StopRendering()
 		{
@@ -146,13 +146,13 @@ namespace HephAudio
 				pRenderSessionControl = nullptr;
 				pRenderSessionManager = nullptr;
 				pRenderAudioClient = nullptr;
-				HEPHAUDIO_LOG("Stopped rendering.", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", HephCommon::ConsoleLogger::info);
 			}
 		}
 		void WinAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
 
 			StopCapturing();
 
@@ -194,7 +194,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&WinAudio::CaptureData, this);
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
 		void WinAudio::StopCapturing()
 		{
@@ -205,10 +205,10 @@ namespace HephAudio
 				JoinCaptureThread();
 				HRESULT hres;
 				pCaptureAudioClient = nullptr;
-				HEPHAUDIO_LOG("Stopped capturing.", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", HephCommon::ConsoleLogger::info);
 			}
 		}
-		void WinAudio::SetDisplayName(StringBuffer displayName)
+		void WinAudio::SetDisplayName(HephCommon::StringBuffer displayName)
 		{
 			if (pRenderSessionControl != nullptr)
 			{
@@ -217,7 +217,7 @@ namespace HephAudio
 				WINAUDIO_EXCPT(pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
 			}
 		}
-		void WinAudio::SetIconPath(StringBuffer iconPath)
+		void WinAudio::SetIconPath(HephCommon::StringBuffer iconPath)
 		{
 			if (pRenderSessionControl != nullptr)
 			{
@@ -247,7 +247,7 @@ namespace HephAudio
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(hres, "WinAudio::GetAudioDevices", "An error occurred whilst getting the default render device id.");
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDefaultRender->GetId(&defaultRenderId), "WinAudio::GetAudioDevices", "An error occurred whilst getting the default render device id.");
 			}
-			StringBuffer defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
+			HephCommon::StringBuffer defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
 
 			// Get default capture devices id, we will use it later to identify the default capture device.
 			hres = pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDefaultCapture);
@@ -256,7 +256,7 @@ namespace HephAudio
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(hres, "WinAudio::GetAudioDevices", "An error occurred whilst getting the default capture device id.");
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDefaultCapture->GetId(&defaultCaptureId), "WinAudio::GetAudioDevices", "An error occurred whilst getting the default capture device id.");
 			}
-			StringBuffer defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
+			HephCommon::StringBuffer defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
 
 			UINT deviceCount = 0;
 			WINAUDIO_ENUMERATE_DEVICE_EXCPT(pCollection->GetCount(&deviceCount), "WinAudio::GetAudioDevices", "An error occurred whilst getting the device count.");

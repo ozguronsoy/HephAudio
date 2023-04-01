@@ -1,5 +1,4 @@
 #include "Fourier.h"
-#include "AudioException.h"
 
 namespace HephAudio
 {

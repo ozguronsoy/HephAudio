@@ -1,5 +1,5 @@
 #include "AudioEvent.h"
-#include "AudioException.h"
+#include "HephException.h"
 #include <memory>
 
 namespace HephAudio
@@ -51,7 +51,7 @@ namespace HephAudio
 	{
 		if (index >= this->eventHandlers.size())
 		{
-			throw AudioException(E_INVALIDARG, "AudioEvent::RemoveEventHandler", "Index out of bounds.");
+			throw HephCommon::HephException(E_INVALIDARG, "AudioEvent::RemoveEventHandler", "Index out of bounds.");
 		}
 
 		this->eventHandlers.erase(this->eventHandlers.begin() + index);

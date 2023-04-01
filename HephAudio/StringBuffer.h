@@ -1,9 +1,8 @@
 #pragma once
-#include "framework.h"
 #include <cinttypes>
 #include <vector>
 
-namespace HephAudio
+namespace HephCommon
 {
 	enum class StringType : uint8_t
 	{
@@ -168,7 +167,7 @@ namespace HephAudio
 		static StringBuffer Join(const StringBuffer& separator, const std::vector<StringBuffer>& strings);
 	};
 }
-HephAudio::StringBuffer operator+(const char& lhs, const HephAudio::StringBuffer& rhs);
-HephAudio::StringBuffer operator+(const wchar_t& lhs, const HephAudio::StringBuffer& rhs);
-HephAudio::StringBuffer operator+(const char* const& lhs, const HephAudio::StringBuffer& rhs);
-HephAudio::StringBuffer operator+(const wchar_t* const& lhs, const HephAudio::StringBuffer& rhs);
+HephCommon::StringBuffer operator+(const char& lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator+(const wchar_t& lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator+(const char* const& lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator+(const wchar_t* const& lhs, const HephCommon::StringBuffer& rhs);

@@ -5,9 +5,9 @@
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
-#define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(ares, method, message)); throw AudioException(ares, method, message); }
-#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(ares, method, message)); goto RENDER_EXIT; }
-#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, AudioException(ares, method, message)); goto CAPTURE_EXIT; }
+#define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, HephCommon::HephException(ares, method, message)); throw HephCommon::HephException(ares, method, message); }
+#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, HephCommon::HephException(ares, method, message)); goto RENDER_EXIT; }
+#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_AUDIO_EXCPT(androidAudio, HephCommon::HephException(ares, method, message)); goto CAPTURE_EXIT; }
 
 namespace HephAudio
 {
@@ -18,8 +18,8 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < 27)
 			{
-				RAISE_AUDIO_EXCPT(this, AudioException(E_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27."));
-				throw AudioException(E_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27.");
+				RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27."));
+				throw HephCommon::HephException(E_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27.");
 			}
 
 			this->EnumerateAudioDevices();
@@ -28,7 +28,7 @@ namespace HephAudio
 		AndroidAudioA::~AndroidAudioA()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG("Destructing AndroidAudioA...", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing AndroidAudioA...", HephCommon::ConsoleLogger::info);
 
 			disposing = true;
 			JoinRenderThread();
@@ -37,7 +37,7 @@ namespace HephAudio
 			StopRendering();
 			StopCapturing();
 
-			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
 		void AndroidAudioA::SetMasterVolume(hephaudio_float volume)
 		{
@@ -50,7 +50,7 @@ namespace HephAudio
 		void AndroidAudioA::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
 
 			StopRendering();
 
@@ -113,7 +113,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&AndroidAudioA::RenderData, this);
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
 		void AndroidAudioA::StopRendering()
 		{
@@ -126,13 +126,13 @@ namespace HephAudio
 				ANDROIDAUDIO_EXCPT(AAudioStream_close(pRenderStream), this, "AndroidAudioA::StopRendering", "An error occurred whilst closing the render stream.");
 				JoinRenderThread();
 				pRenderStream = nullptr;
-				HEPHAUDIO_LOG("Stopped rendering.", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", HephCommon::ConsoleLogger::info);
 			}
 		}
 		void AndroidAudioA::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
 
 			StopCapturing();
 
@@ -195,7 +195,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&AndroidAudioA::CaptureData, this);
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
 		void AndroidAudioA::StopCapturing()
 		{
@@ -208,16 +208,16 @@ namespace HephAudio
 				ANDROIDAUDIO_EXCPT(AAudioStream_close(pCaptureStream), this, "AndroidAudioA::StopCapturing", "An error occurred whilst closing the capture stream.");
 				JoinCaptureThread();
 				pCaptureStream = nullptr;
-				HEPHAUDIO_LOG("Stopped capturing.", ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", HephCommon::ConsoleLogger::info);
 			}
 		}
 		void AndroidAudioA::SetDisplayName(StringBuffer displayName)
 		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, "AndroidAudioA::SetDisplayName", "AndroidAudioA does not support this method."));
+			RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_NOTIMPL, "AndroidAudioA::SetDisplayName", "AndroidAudioA does not support this method."));
 		}
 		void AndroidAudioA::SetIconPath(StringBuffer iconPath)
 		{
-			RAISE_AUDIO_EXCPT(this, AudioException(E_NOTIMPL, "AndroidAudioA::SetIconPath", "AndroidAudioA does not support this method."));
+			RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_NOTIMPL, "AndroidAudioA::SetIconPath", "AndroidAudioA does not support this method."));
 		}
 		void AndroidAudioA::RenderData()
 		{
@@ -239,7 +239,7 @@ namespace HephAudio
 				aaudio_result_t result = AAudioStream_write(pRenderStream, dataBuffer.Begin(), dataBuffer.FrameCount(), writeTimeoutNanos);
 				if (result < 0)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(result, "AndroidAudioA", "An error occurred whilst rendering."));
+					RAISE_AUDIO_EXCPT(this, HephCommon::HephException(result, "AndroidAudioA", "An error occurred whilst rendering."));
 					goto RENDER_EXIT;
 				}
 
@@ -268,7 +268,7 @@ namespace HephAudio
 
 				if (result < 0)
 				{
-					RAISE_AUDIO_EXCPT(this, AudioException(result, "AndroidAudioA", "An error occurred whilst capturing."));
+					RAISE_AUDIO_EXCPT(this, HephCommon::HephException(result, "AndroidAudioA", "An error occurred whilst capturing."));
 					goto CAPTURE_EXIT;
 				}
 

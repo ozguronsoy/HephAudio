@@ -1,6 +1,6 @@
 #include "StopWatch.h"
 
-namespace HephAudio
+namespace HephCommon
 {
 	std::map<std::thread::id, std::chrono::steady_clock::time_point> StopWatch::timePoints = {};
 	void StopWatch::Start()
@@ -15,11 +15,11 @@ namespace HephAudio
 	{
 		timePoints[std::this_thread::get_id()] = std::chrono::high_resolution_clock::now();
 	}
-	hephaudio_float StopWatch::DeltaTime()
+	double StopWatch::DeltaTime()
 	{
-		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9;
+		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count();
 	}
-	hephaudio_float StopWatch::DeltaTime(hephaudio_float prefix)
+	double StopWatch::DeltaTime(double prefix)
 	{
 		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9 / prefix;
 	}

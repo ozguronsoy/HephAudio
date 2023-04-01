@@ -1,21 +1,21 @@
-#include "AudioException.h"
+#include "HephException.h"
 
-namespace HephAudio
+namespace HephCommon
 {
-	AudioException::AudioException() : AudioException(0, "", "") { }
-	AudioException::AudioException(int32_t errorCode, StringBuffer method, StringBuffer message)
+	HephException::HephException() : HephException(0, "", "") { }
+	HephException::HephException(int32_t errorCode, StringBuffer method, StringBuffer message)
 		: errorCode(errorCode), method(method), message(message) {}
-	AudioException::operator char* () const
+	HephException::operator char* () const
 	{
 		this->resultMessage = this->ToString(StringType::ASCII);
 		return this->resultMessage;
 	}
-	AudioException::operator wchar_t* () const
+	HephException::operator wchar_t* () const
 	{
 		this->resultMessage = this->ToString(StringType::Wide);
 		return this->resultMessage;
 	}
-	StringBuffer AudioException::ToString(StringType stringType) const
+	StringBuffer HephException::ToString(StringType stringType) const
 	{
 		if (stringType == StringType::ASCII)
 		{

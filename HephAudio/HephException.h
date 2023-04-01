@@ -3,12 +3,12 @@
 #include "StringBuffer.h"
 #include <cinttypes>
 
-namespace HephAudio
+namespace HephCommon
 {
 	/// <summary>
 	/// Holds the following information about an exception; the error code, the name of the method where it occurred, and the error message.
 	/// </summary>
-	struct AudioException final
+	struct HephException final
 	{
 	private:
 		mutable StringBuffer resultMessage; // formatted string to display the exception information
@@ -26,16 +26,16 @@ namespace HephAudio
 		/// </summary>
 		StringBuffer message;
 		/// <summary>
-		/// Creates and initializes an AudioException instance with default values.
+		/// Creates and initializes an HephException instance with default values.
 		/// </summary>
-		AudioException();
+		HephException();
 		/// <summary>
-		/// Creates and initializes an AudioException instance with the provided information.
+		/// Creates and initializes an HephException instance with the provided information.
 		/// </summary>
 		/// <param name="errorCode">The code of the error.</param>
 		/// <param name="method">The name of the method where the exception occurred.</param>
 		/// <param name="message">The error message.</param>
-		AudioException(int32_t errorCode, StringBuffer method, StringBuffer message);
+		HephException(int32_t errorCode, StringBuffer method, StringBuffer message);
 		/// <summary>
 		/// Combines the error information in an ASCII string.
 		/// </summary>

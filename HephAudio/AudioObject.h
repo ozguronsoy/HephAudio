@@ -18,11 +18,11 @@ namespace HephAudio
 		/// <summary>
 		/// The path where the file is located.
 		/// </summary>
-		StringBuffer filePath;
+		HephCommon::StringBuffer filePath;
 		/// <summary>
 		/// Name of the file with its extension.
 		/// </summary>
-		StringBuffer name;
+		HephCommon::StringBuffer name;
 		/// <summary>
 		/// if true, stops playing the object.
 		/// </summary>
@@ -46,7 +46,7 @@ namespace HephAudio
 		/// <summary>
 		/// The name of the queue in which the audio object is. If empty, the audio object is not in a queue.
 		/// </summary>
-		StringBuffer queueName;
+		HephCommon::StringBuffer queueName;
 		/// <summary>
 		/// The position of the audio object in the queue. If equal to “0”, the object is currently playing.
 		/// </summary>

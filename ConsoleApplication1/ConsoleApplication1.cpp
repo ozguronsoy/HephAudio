@@ -10,6 +10,7 @@
 #include "AudioFileFormatManager.h"
 #include "AudioCodecManager.h"
 
+using namespace HephCommon;
 using namespace HephAudio;
 using namespace HephAudio::Native;
 
@@ -43,11 +44,20 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
+	auto pao = audio.Load(desktopPath + (StringBuffer)"\\Last Game Chorus 2.wav");
+
+	/*StopWatch::Reset();
+	AudioProcessor::Chorus(pao->buffer, 0.8, 0, 0.5, 100.0, 2.0, SineWaveOscillator(1.0, 1.0, 48e3));
+	PrintDeltaTime("dt");*/
+
+	pao->pause = false;
+	pao = nullptr;
+
 	return Run(audio, audioRoot);
 }
 void OnException(AudioEventArgs* pArgs, AudioEventResult* pResult)
 {
-	AudioException& ex = ((AudioExceptionEventArgs*)pArgs)->exception;
+	HephException& ex = ((AudioExceptionEventArgs*)pArgs)->exception;
 	AudioExceptionThread& t = ((AudioExceptionEventArgs*)pArgs)->thread;
 
 	std::string str = ("[" + AudioExceptionThreadName(t) + "] " + (char*)ex).fc_str();

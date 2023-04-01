@@ -38,8 +38,8 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
-			void SetDisplayName(StringBuffer displayName) override;
-			void SetIconPath(StringBuffer iconPath) override;
+			void SetDisplayName(HephCommon::StringBuffer displayName) override;
+			void SetIconPath(HephCommon::StringBuffer iconPath) override;
 		private:
 			bool EnumerateAudioDevices() override;
 			void RenderData();
@@ -48,8 +48,8 @@ namespace HephAudio
 			static BOOL CALLBACK RenderDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
 			// lpContext = a pointer to the current WinAudioDS that calls this method.
 			static BOOL CALLBACK CaptureDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
-			static StringBuffer GuidToString(LPGUID guid);
-			static GUID StringToGuid(StringBuffer str);
+			static HephCommon::StringBuffer GuidToString(LPGUID guid);
+			static GUID StringToGuid(HephCommon::StringBuffer str);
 			static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		};
 	}
