@@ -1,4 +1,5 @@
 #pragma once
+#include "HephCommonFramework.h"
 #include <cinttypes>
 #include <vector>
 

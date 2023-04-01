@@ -18,6 +18,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\HephException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\StopWatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\StringBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HephCommonFramework.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\ConsoleLogger.cpp" />

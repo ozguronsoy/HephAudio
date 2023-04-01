@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephCommonFramework.h"
 #include "StringBuffer.h"
 
 namespace HephCommon
