@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include <cstdint>
 
 #define UINT24_MAX 16777215

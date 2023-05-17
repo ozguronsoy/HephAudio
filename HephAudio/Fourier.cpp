@@ -1,5 +1,7 @@
 #include "Fourier.h"
 
+using namespace HephCommon;
+
 namespace HephAudio
 {
 	ComplexBuffer Fourier::FFT_Forward(const FloatBuffer& floatBuffer)
@@ -42,13 +44,13 @@ namespace HephAudio
 			complexBuffer /= complexBuffer.FrameCount();
 		}
 	}
-	hephaudio_float Fourier::BinFrequencyToIndex(size_t sampleRate, size_t fftSize, hephaudio_float frequency)
+	heph_float Fourier::BinFrequencyToIndex(size_t sampleRate, size_t fftSize, heph_float frequency)
 	{
 		return round(frequency * fftSize / sampleRate);
 	}
-	hephaudio_float Fourier::IndexToBinFrequency(size_t sampleRate, size_t fftSize, size_t index)
+	heph_float Fourier::IndexToBinFrequency(size_t sampleRate, size_t fftSize, size_t index)
 	{
-		return (hephaudio_float)index * sampleRate / fftSize;
+		return (heph_float)index * sampleRate / fftSize;
 	}
 	size_t Fourier::CalculateFFTSize(size_t bufferSize)
 	{
@@ -76,12 +78,12 @@ namespace HephAudio
 	{
 		ReverseBits(complexBuffer, fftSize);
 		const size_t p = log2(fftSize);
-		Complex a = Complex(-1.0, 0.0);
+		Complex a = Complex(-1.0hf, 0.0hf);
 		for (size_t i = 0; i < p; i++)
 		{
 			const size_t s = (1 << i);
 			const size_t s2 = s << 1;
-			Complex b = Complex(1.0, 0.0);
+			Complex b = Complex(1.0hf, 0.0hf);
 			for (size_t j = 0; j < s; j++)
 			{
 				for (size_t k = j; k < fftSize; k += s2)
@@ -92,8 +94,8 @@ namespace HephAudio
 				}
 				b *= a;
 			}
-			a.imaginary = isForward ? -sqrt((1.0 - a.real) * 0.5) : sqrt((1.0 - a.real) * 0.5);
-			a.real = sqrt((1.0 + a.real) * 0.5);
+			a.imaginary = isForward ? -sqrt((1.0hf - a.real) * 0.5hf) : sqrt((1.0hf - a.real) * 0.5hf);
+			a.real = sqrt((1.0hf + a.real) * 0.5hf);
 		}
 	}
 }

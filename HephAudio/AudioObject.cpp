@@ -1,19 +1,21 @@
 #include "AudioObject.h"
 #include "AudioProcessor.h"
 
+using namespace HephCommon;
+
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: filePath(""), name(""), pause(false), loopCount(1), volume(1.0), buffer(AudioBuffer()), frameIndex(0), queueName(""), queueIndex(0), queueDelay_ms(0.0)
-		, OnRender(AudioEvent()), OnFinishedPlaying(AudioEvent())
+		: filePath(""), name(""), pause(false), loopCount(1), volume(1.0hf), buffer(AudioBuffer()), frameIndex(0), queueName(""), queueIndex(0), queueDelay_ms(0.0hf)
+		, OnRender(Event()), OnFinishedPlaying(Event())
 	{
 		this->OnRender += OnRenderHandler;
 	}
-	void AudioObject::OnRenderHandler(AudioEventArgs* pArgs, AudioEventResult* pResult)
+	void AudioObject::OnRenderHandler(EventArgs* pArgs, EventResult* pResult)
 	{
-		AudioObject* pAudioObject = (AudioObject*)pArgs->pAudioObject;
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
 		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
 		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;

@@ -1,7 +1,9 @@
 #include "AudioEventArgs.h"
 
+using namespace HephCommon;
+
 namespace HephAudio
 {
 	AudioEventArgs::AudioEventArgs(const void* pNativeAudio, void* pAudioObject)
-		: pNativeAudio(const_cast<void*>(pNativeAudio)), pAudioObject(pAudioObject) { }
+		: EventArgs(pNativeAudio), pNativeAudio(const_cast<void*>(pNativeAudio)), pAudioObject(pAudioObject) { }
 }

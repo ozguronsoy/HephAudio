@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "AudioBuffer.h"
 #include <cstdint>
 
@@ -17,21 +17,21 @@ namespace HephAudio
 		/// <summary>
 		/// The delay (in seconds) between each reflection.
 		/// </summary>
-		hephaudio_float reflectionDelay_s{ 0.0 };
+		heph_float reflectionDelay_s{ 0.0 };
 		/// <summary>
 		/// The volume loss between each reflection.
 		/// </summary>
-		hephaudio_float decayFactor{ 0.0 };
+		heph_float decayFactor{ 0.0 };
 		/// <summary>
 		/// The beginning of the audio data which will be used as echo.
 		/// Must be between 0 and 1.
 		/// </summary>
-		hephaudio_float echoStartPosition{ 0.0 };
+		heph_float echoStartPosition{ 0.0 };
 		/// <summary>
 		/// The end of the audio data which will be used as echo.
 		/// Must be greater than echoStartPosition and must be between 0 and 1.
 		/// </summary>
-		hephaudio_float echoEndPosition{ 1.0 };
+		heph_float echoEndPosition{ 1.0 };
 		/// <summary>
 		/// Calculates the given audio buffer's frame count after the echo is applied.
 		/// </summary>

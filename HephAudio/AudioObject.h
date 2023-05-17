@@ -1,8 +1,8 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "AudioBuffer.h"
 #include "StringBuffer.h"
-#include "AudioEvent.h"
+#include "Event.h"
 #include "AudioRenderEventArgs.h"
 #include "AudioRenderEventResult.h"
 #include "AudioFinishedPlayingEventArgs.h"
@@ -34,7 +34,7 @@ namespace HephAudio
 		/// <summary>
 		/// The loudness of the audio.
 		/// </summary>
-		hephaudio_float volume;
+		heph_float volume;
 		/// <summary>
 		/// The audio data.
 		/// </summary>
@@ -54,20 +54,20 @@ namespace HephAudio
 		/// <summary>
 		/// The time, in milliseconds, between the end of the current object and the start of the next object in the queue.
 		/// </summary>
-		hephaudio_float queueDelay_ms;
+		heph_float queueDelay_ms;
 		/// <summary>
 		/// Called each time before mixing the audio data to the output buffer.
 		/// </summary>
-		AudioEvent OnRender;
+		HephCommon::Event OnRender;
 		/// <summary>
 		/// Called when the audio object is finished playing.
 		/// </summary>
-		AudioEvent OnFinishedPlaying;
+		HephCommon::Event OnFinishedPlaying;
 		/// <summary>
 		/// Creates and initializes an AudioObject instance with default values.
 		/// </summary>
 		AudioObject();
 	private:
-		static void OnRenderHandler(AudioEventArgs* pArgs, AudioEventResult* pResult);
+		static void OnRenderHandler(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
 	};
 }

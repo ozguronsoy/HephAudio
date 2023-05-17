@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "AudioBuffer.h"
 #include "EncodedBufferInfo.h"
 

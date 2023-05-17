@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "Oscillator.h"
 
 namespace HephAudio
@@ -8,7 +8,7 @@ namespace HephAudio
 	{
 	public:
 		TriangleWaveOscillator(uint32_t sampleRate);
-		TriangleWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase = 0.0, AngleUnit angleUnit = AngleUnit::Radian);
-		hephaudio_float Oscillate(size_t t_sample) const noexcept override;
+		TriangleWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase = 0.0, AngleUnit angleUnit = AngleUnit::Radian);
+		heph_float Oscillate(size_t t_sample) const noexcept override;
 	};
 }

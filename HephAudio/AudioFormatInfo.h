@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include <cstdint>
 #ifdef _WIN32
 #include <Mmreg.h>

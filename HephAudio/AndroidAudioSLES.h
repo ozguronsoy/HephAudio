@@ -1,6 +1,6 @@
 #pragma once
 #ifdef __ANDROID__
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "AndroidAudioBase.h"
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
@@ -64,8 +64,8 @@ namespace HephAudio
 			/// Frees the OpenSL ES resources.
 			/// </summary>
 			~AndroidAudioSLES();
-			void SetMasterVolume(hephaudio_float volume);
-			hephaudio_float GetMasterVolume() const;
+			void SetMasterVolume(heph_float volume);
+			heph_float GetMasterVolume() const;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			void StopRendering();
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);

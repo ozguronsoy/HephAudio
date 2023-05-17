@@ -1,7 +1,7 @@
 #ifdef _WIN32
 #include "WinAudioDS.h"
 #include "AudioProcessor.h"
-#include "AudioFile.h"
+#include "File.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
@@ -13,11 +13,11 @@ using namespace Microsoft::WRL;
 
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define DLL_INSTANCE (HINSTANCE)&__ImageBase
-#define WINAUDIODS_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); throw HephCommon::HephException(hres, method, message); }
-#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); goto CAPTURE_EXIT; }
-#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
-#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(winAudioDS, HephCommon::HephException(hres, method, message)); return FALSE; }
+#define WINAUDIODS_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); }
+#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); goto RENDER_EXIT; }
+#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); goto CAPTURE_EXIT; }
+#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephCommon::HephException(hres, method, message)); return FALSE; }
 
 namespace HephAudio
 {
@@ -70,7 +70,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("WinAudioDS destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
-		void WinAudioDS::SetMasterVolume(hephaudio_float volume)
+		void WinAudioDS::SetMasterVolume(heph_float volume)
 		{
 			if (isRenderInitialized)
 			{
@@ -79,14 +79,14 @@ namespace HephAudio
 				waveOutSetVolume(nullptr, dv);
 			}
 		}
-		hephaudio_float WinAudioDS::GetMasterVolume() const
+		heph_float WinAudioDS::GetMasterVolume() const
 		{
 			if (isRenderInitialized)
 			{
 				DWORD dv;
 				waveOutGetVolume(nullptr, &dv);
 				const uint16_t usv = dv & 0x0000FFFF;
-				return (hephaudio_float)usv / (hephaudio_float)UINT16_MAX;
+				return (heph_float)usv / (heph_float)UINT16_MAX;
 			}
 			return -1.0;
 		}
@@ -211,11 +211,11 @@ namespace HephAudio
 		}
 		void WinAudioDS::SetDisplayName(HephCommon::StringBuffer displayName)
 		{
-			RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_NOTIMPL, "WinAudioDS::SetDisplayName", "WinAudioDS does not support this method, use WinAudio instead."));
+			RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOTIMPL, "WinAudioDS::SetDisplayName", "WinAudioDS does not support this method, use WinAudio instead."));
 		}
 		void WinAudioDS::SetIconPath(HephCommon::StringBuffer iconPath)
 		{
-			RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_NOTIMPL, "WinAudioDS::SetIconPath", "WinAudioDS does not support this method, use WinAudio instead."));
+			RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOTIMPL, "WinAudioDS::SetIconPath", "WinAudioDS does not support this method, use WinAudio instead."));
 		}
 		bool WinAudioDS::EnumerateAudioDevices()
 		{
@@ -278,7 +278,7 @@ namespace HephAudio
 			hres = pDirectSoundBuffer->Stop();
 			if (FAILED(hres))
 			{
-				RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, "WinAudioDS", "An error occurred whilst rendering the samples."));
+				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, "WinAudioDS", "An error occurred whilst rendering the samples."));
 			}
 		}
 		void WinAudioDS::CaptureData()
@@ -324,7 +324,7 @@ namespace HephAudio
 						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred whilst capturing the samples.");
 
 						AudioBuffer tempBuffer = dataBuffer;
-						AudioProcessor::ConvertPcmToInnerFormat(tempBuffer, AudioFile::GetSystemEndian());
+						AudioProcessor::ConvertPcmToInnerFormat(tempBuffer, HephCommon::File::GetSystemEndian());
 						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, tempBuffer);
 
 						OnCapture(&captureEventArgs, nullptr);
@@ -342,7 +342,7 @@ namespace HephAudio
 			hres = pDirectSoundCaptureBuffer->Stop();
 			if (FAILED(hres))
 			{
-				RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, "WinAudioDS", "An error occurred whilst capturing the samples."));
+				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, "WinAudioDS", "An error occurred whilst capturing the samples."));
 			}
 		}
 		BOOL CALLBACK WinAudioDS::RenderDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext)

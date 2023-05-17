@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{2bebdc5a-7aca-4d72-913a-096de8148ef0}</ItemsProjectGuid>
+    <ItemsProjectGuid>{de064538-da5c-4e0e-b44c-6a25c86fb48f}</ItemsProjectGuid>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -14,16 +14,31 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\ConsoleLogger.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\HephException.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\StopWatch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\HephAudio\StringBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HephCommonFramework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\ColorBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Color.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\ComplexBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Event.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\EventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\EventResult.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\FloatBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\File.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Complex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\ConsoleLogger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephCommonFramework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephMath.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\StopWatch.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\StringBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Vector.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\ConsoleLogger.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\HephException.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\StopWatch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\HephAudio\StringBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ComplexBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\Event.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\FloatBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\File.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ConsoleLogger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\HephException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\StopWatch.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\StringBuffer.cpp" />
   </ItemGroup>
 </Project>

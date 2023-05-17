@@ -60,10 +60,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)framework.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioFile.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioFramework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h">
@@ -85,9 +82,6 @@
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioDevice.h">
-      <Filter>Header Files\AudioStructs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Complex.h">
       <Filter>Header Files\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h">
@@ -126,28 +120,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioBase.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)ComplexBuffer.h">
-      <Filter>Header Files\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
       <Filter>Header Files\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEvent.h">
-      <Filter>Header Files\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventResult.h">
-      <Filter>Header Files\Events\Results</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h">
       <Filter>Header Files\Events\Results</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioExceptionEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.h">
@@ -177,9 +156,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.h">
       <Filter>Header Files\Oscillators</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)FloatBuffer.h">
-      <Filter>Header Files\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioCodec.h">
       <Filter>Header Files\AudioCodecs</Filter>
     </ClInclude>
@@ -201,11 +177,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ALawCodec.h">
       <Filter>Header Files\AudioCodecs</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
+      <Filter>Header Files\Events\Args</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -217,9 +193,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp">
       <Filter>Source Files\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Complex.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp">
       <Filter>Source Files\AudioStructs</Filter>
@@ -263,19 +236,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
       <Filter>Source Files\Buffers</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ComplexBuffer.cpp">
-      <Filter>Source Files\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEvent.cpp">
-      <Filter>Source Files\Events</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioExceptionEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.cpp">
@@ -305,9 +266,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.cpp">
       <Filter>Source Files\Oscillators</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)FloatBuffer.cpp">
-      <Filter>Source Files\Buffers</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)PcmCodec.cpp">
       <Filter>Source Files\AudioCodecs</Filter>
     </ClCompile>
@@ -322,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ALawCodec.cpp">
       <Filter>Source Files\AudioCodecs</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
+      <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "IAudioFileFormat.h"
 
 namespace HephAudio
@@ -16,7 +16,7 @@ namespace HephAudio
 			AudioFileFormatManager& operator=(const AudioFileFormatManager&) = delete;
 		public:
 			static void RegisterFileFormat(IAudioFileFormat* format);
-			static IAudioFileFormat* FindFileFormat(AudioFile& file);
+			static IAudioFileFormat* FindFileFormat(HephCommon::File& file);
 			static IAudioFileFormat* FindFileFormat(HephCommon::StringBuffer filePath);
 		};
 	}

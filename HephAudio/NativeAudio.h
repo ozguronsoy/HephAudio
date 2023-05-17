@@ -1,12 +1,11 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "AudioDevice.h"
 #include "HephException.h"
 #include "AudioObject.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
-#include "AudioEvent.h"
-#include "AudioExceptionEventArgs.h"
+#include "Event.h"
 #include "AudioDeviceEventArgs.h"
 #include "AudioCaptureEventArgs.h"
 #include <vector>
@@ -99,30 +98,22 @@ namespace HephAudio
 			/// </summary>
 			uint64_t deviceEnumerationPeriod_ns;
 			/// <summary>
-			/// Arguments for OnException.
-			/// </summary>
-			mutable AudioExceptionEventArgs audioExceptionEventArgs;
-			/// <summary>
 			/// Locks to prevent race condition while accessing and enumerating audio devices.
 			/// </summary>
 			mutable std::mutex deviceMutex;
 		public:
 			/// <summary>
-			/// Called when an audio exception occurs.
-			/// </summary>
-			AudioEvent OnException;
-			/// <summary>
 			/// Called when an audio device is connected.
 			/// </summary>
-			AudioEvent OnAudioDeviceAdded;
+			HephCommon::Event OnAudioDeviceAdded;
 			/// <summary>
 			/// Called when an audio device loses connection.
 			/// </summary>
-			AudioEvent OnAudioDeviceRemoved;
+			HephCommon::Event OnAudioDeviceRemoved;
 			/// <summary>
 			/// Called while capturing audio data.
 			/// </summary>
-			AudioEvent OnCapture;
+			HephCommon::Event OnCapture;
 		public:
 			/// <summary>
 			/// Creates and initalizes a NativeAudio instance.
@@ -162,7 +153,7 @@ namespace HephAudio
 			/// <param name="queueDelay_ms">The time, in milliseconds, between the end of the current item in the queue and the start of the next object in the queue.</param>
 			/// <param name="filePaths">The paths of the files that will be added to the queue.</param>
 			/// <returns>The shared pointers of AudioObjects that are successfully added to the queue.</returns>
-			std::vector<std::shared_ptr<AudioObject>> Queue(HephCommon::StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
+			std::vector<std::shared_ptr<AudioObject>> Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
 			/// <summary>
 			/// Loads and converts the audio file to the render format.
 			/// </summary>
@@ -193,13 +184,13 @@ namespace HephAudio
 			/// </summary>
 			/// <param name="pAudioObject">The object whose position will be changed.</param>
 			/// <param name="position">The new position of the object. Must be between 0 and 1.</param>
-			void SetAOPosition(std::shared_ptr<AudioObject> pAudioObject, hephaudio_float position);
+			void SetAOPosition(std::shared_ptr<AudioObject> pAudioObject, heph_float position);
 			/// <summary>
 			/// Gets the position of the object between 0 and 1.
 			/// </summary>
 			/// <param name="pAudioObject">The audio object.</param>
 			/// <returns>The position of the object between 0 and 1.</returns>
-			hephaudio_float GetAOPosition(std::shared_ptr<AudioObject> pAudioObject) const;
+			heph_float GetAOPosition(std::shared_ptr<AudioObject> pAudioObject) const;
 			/// <summary>
 			/// Gets the first audio object with the provided name.
 			/// </summary>
@@ -237,12 +228,12 @@ namespace HephAudio
 			/// Sets the master volume.
 			/// </summary>
 			/// <param name="volume">The new master volume.</param>
-			virtual void SetMasterVolume(hephaudio_float volume) = 0;
+			virtual void SetMasterVolume(heph_float volume) = 0;
 			/// <summary>
 			/// Gets the master volume.
 			/// </summary>
 			/// <returns>The master volume.</returns>
-			virtual hephaudio_float GetMasterVolume() const = 0;
+			virtual heph_float GetMasterVolume() const = 0;
 			/// <summary>
 			/// Skips the current playing object of the queue.
 			/// </summary>
@@ -359,10 +350,6 @@ namespace HephAudio
 			/// </summary>
 			void JoinQueueThreads();
 			/// <summary>
-			/// Finds the thread that this method is called from. Used when an exception occurs.
-			/// </summary>
-			AudioExceptionThread GetCurrentThread() const;
-			/// <summary>
 			/// Gets all the objects in the queue.
 			/// </summary>
 			/// <param name="queueName">The unique name of the queue.</param>
@@ -374,7 +361,7 @@ namespace HephAudio
 			/// <param name="queueName">The unique name of the queue.</param>
 			/// <param name="queueDelay">The delay before starting the next object.</param>
 			/// <param name="decreaseQueueIndex">The number of objects skipped.</param>
-			void PlayNextInQueue(HephCommon::StringBuffer queueName, hephaudio_float queueDelay, uint32_t decreaseQueueIndex);
+			void PlayNextInQueue(HephCommon::StringBuffer queueName, heph_float queueDelay, uint32_t decreaseQueueIndex);
 			/// <summary>
 			/// Mixes all of the playing objects into the output buffer.
 			/// </summary>
@@ -391,9 +378,7 @@ namespace HephAudio
 			/// </summary>
 			/// <param name="pAudioObject">The shared AudioObject pointer.</param>
 			/// <returns>The volume of the audio object.</returns>
-			virtual hephaudio_float GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const;
+			virtual heph_float GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const;
 		};
-#define	RAISE_AUDIO_EXCPT(pNativeAudio, audioException) pNativeAudio->audioExceptionEventArgs = AudioExceptionEventArgs(pNativeAudio, audioException, pNativeAudio->GetCurrentThread()); pNativeAudio->OnException(&pNativeAudio->audioExceptionEventArgs, nullptr)
-		HephCommon::StringBuffer AudioExceptionThreadName(const AudioExceptionThread& t);
 	}
 }

@@ -1,6 +1,6 @@
 #ifdef _WIN32
 #include "WinAudio.h"
-#include "AudioFile.h"
+#include "File.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 #include "AudioProcessor.h"
@@ -8,10 +8,10 @@
 
 using namespace Microsoft::WRL;
 
-#define WINAUDIO_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); throw HephCommon::HephException(hres, method, message); }
-#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); goto CAPTURE_EXIT; }
-#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AUDIO_EXCPT(this, HephCommon::HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIO_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); }
+#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); goto RENDER_EXIT; }
+#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); goto CAPTURE_EXIT; }
+#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 namespace HephAudio
 {
@@ -53,7 +53,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("WinAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
-		void WinAudio::SetMasterVolume(hephaudio_float volume)
+		void WinAudio::SetMasterVolume(heph_float volume)
 		{
 			if (pRenderSessionManager != nullptr)
 			{
@@ -67,7 +67,7 @@ namespace HephAudio
 				WINAUDIO_EXCPT(pVolume->SetMasterVolume(volume, nullptr), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
 			}
 		}
-		hephaudio_float WinAudio::GetMasterVolume() const
+		heph_float WinAudio::GetMasterVolume() const
 		{
 			float volume = -1.0f;
 
@@ -99,7 +99,7 @@ namespace HephAudio
 			}
 			else
 			{
-				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id, &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
+				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
 			}
 
 			LPWSTR deviceId = nullptr;
@@ -166,7 +166,7 @@ namespace HephAudio
 			}
 			else
 			{
-				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id, &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
+				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
 			}
 
 			LPWSTR deviceId = nullptr;
@@ -376,7 +376,7 @@ namespace HephAudio
 			HRESULT hres;
 
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred whilst capturing the samples.");
-			hnsActualDuration = (hephaudio_float)reftimesPerSec * bufferSize / captureFormat.sampleRate;
+			hnsActualDuration = (heph_float)reftimesPerSec * bufferSize / captureFormat.sampleRate;
 
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetService(__uuidof(IAudioCaptureClient), &pCaptureClient), "WinAudio", "An error occurred whilst capturing the samples.");
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->Start(), "WinAudio", "An error occurred whilst capturing the samples.");
@@ -394,7 +394,7 @@ namespace HephAudio
 
 						AudioBuffer temp(nFramesAvailable, captureFormat);
 						memcpy(temp.Begin(), captureBuffer, temp.Size());
-						AudioProcessor::ConvertPcmToInnerFormat(temp, AudioFile::GetSystemEndian());
+						AudioProcessor::ConvertPcmToInnerFormat(temp, HephCommon::File::GetSystemEndian());
 						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
 						OnCapture(&captureEventArgs, nullptr);
 

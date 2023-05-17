@@ -23,7 +23,7 @@ namespace HephAudio
 		{
 			return ".aiff .aifc .aif";
 		}
-		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const AudioFile* pAudioFile) const
+		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32, formType, chunkSize;
@@ -98,7 +98,7 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer AiffFormat::ReadFile(const AudioFile* pAudioFile) const
+		AudioBuffer AiffFormat::ReadFile(const HephCommon::File* pAudioFile) const
 		{
 			AudioFormatInfo audioFormatInfo = this->ReadAudioFormatInfo(pAudioFile);
 			Endian audioDataEndian = Endian::Big;
@@ -143,7 +143,7 @@ namespace HephAudio
 		{
 			try
 			{
-				const AudioFile audioFile = AudioFile(filePath, overwrite ? AudioFileOpenMode::WriteOverride : AudioFileOpenMode::Write);
+				const HephCommon::File audioFile = HephCommon::File(filePath, overwrite ? HephCommon::FileOpenMode::WriteOverride : HephCommon::FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint32_t data32, compressionType;
 				HephCommon::StringBuffer compressionName;
@@ -174,7 +174,7 @@ namespace HephAudio
 				audioFile.Write(&data32, 2, Endian::Big);
 
 				audioFile.Write(&compressionType, 4, Endian::Big);
-				audioFile.Write(compressionName.Begin(), compressionName.Size(), AudioFile::GetSystemEndian());
+				audioFile.Write(compressionName.Begin(), compressionName.Size(), HephCommon::File::GetSystemEndian());
 
 				audioFile.Write(&ssndID, 4, Endian::Big);
 				data32 = buffer.Size() + 8;
@@ -183,7 +183,7 @@ namespace HephAudio
 				audioFile.Write(&data32, 4, Endian::Big);
 				audioFile.Write(&data32, 4, Endian::Big);
 
-				if (AudioFile::GetSystemEndian() == Endian::Little)
+				if (HephCommon::File::GetSystemEndian() == Endian::Little)
 				{
 					AudioProcessor::ChangeEndian(buffer);
 				}

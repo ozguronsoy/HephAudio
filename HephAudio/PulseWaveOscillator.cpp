@@ -1,48 +1,51 @@
 #include "PulseWaveOscillator.h"
+#include "HephMath.h"
+
+using namespace HephCommon;
 
 namespace HephAudio
 {
-	PulseWaveOscillator::PulseWaveOscillator(uint32_t sampleRate) : PulseWaveOscillator(0.5, 1500.0, sampleRate) {}
-	PulseWaveOscillator::PulseWaveOscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit)
+	PulseWaveOscillator::PulseWaveOscillator(uint32_t sampleRate) : PulseWaveOscillator(0.5hf, 1500.0hf, sampleRate) {}
+	PulseWaveOscillator::PulseWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase, AngleUnit angleUnit)
 		: Oscillator(peakAmplitude, frequency, sampleRate, phase, angleUnit)
-		, dutyCycle(0.2), order(10)
+		, dutyCycle(0.2hf), order(10hf)
 	{
 		this->UpdateEta();
 	}
-	hephaudio_float PulseWaveOscillator::Oscillate(size_t t_sample) const noexcept
+	heph_float PulseWaveOscillator::Oscillate(size_t t_sample) const noexcept
 	{
-		const hephaudio_float wt = 2.0 * PI * this->frequency * t_sample / this->sampleRate;
-		const hephaudio_float pid = PI * this->dutyCycle;
-		hephaudio_float sample = 0.0;
+		const heph_float wt = 2.0hf * Math::pi * this->frequency * t_sample / this->sampleRate;
+		const heph_float pid = Math::pi * this->dutyCycle;
+		heph_float sample = 0.0hf;
 
 		for (size_t n = 1; n < this->order + 1; n++)
 		{
 			sample += sin(pid * n) * cos(wt * n + this->phase_rad) / n;
 		}
 
-		sample *= 2.0 / PI;
+		sample *= 2.0hf / Math::pi;
 		sample += this->dutyCycle;
 		sample *= this->peakAmplitude * this->eta;
 
 		return sample;
 	}
-	hephaudio_float PulseWaveOscillator::GetPulseWidth() const noexcept
+	heph_float PulseWaveOscillator::GetPulseWidth() const noexcept
 	{
 		return this->dutyCycle * this->frequency;
 	}
-	hephaudio_float PulseWaveOscillator::GetEta() const noexcept
+	heph_float PulseWaveOscillator::GetEta() const noexcept
 	{
 		return this->eta;
 	}
 	void PulseWaveOscillator::UpdateEta() noexcept
 	{
 		const size_t frameCount = ceil(this->sampleRate / this->frequency);
-		hephaudio_float maxSample = this->peakAmplitude;
-		this->eta = 1.0;
+		heph_float maxSample = this->peakAmplitude;
+		this->eta = 1.0hf;
 
 		for (size_t i = 0; i < frameCount; i++)
 		{
-			const hephaudio_float currentSample = abs(this->Oscillate(i));
+			const heph_float currentSample = abs(this->Oscillate(i));
 			if (currentSample > maxSample)
 			{
 				maxSample = currentSample;

@@ -18,7 +18,7 @@ namespace HephAudio
 		{
 			return ".wav .wave";
 		}
-		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const AudioFile* pAudioFile) const
+		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32, chunkSize;
@@ -81,7 +81,7 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer WavFormat::ReadFile(const AudioFile* pAudioFile) const
+		AudioBuffer WavFormat::ReadFile(const HephCommon::File* pAudioFile) const
 		{
 			const AudioFormatInfo wavFormatInfo = this->ReadAudioFormatInfo(pAudioFile);
 
@@ -119,7 +119,7 @@ namespace HephAudio
 		{
 			try
 			{
-				const AudioFile audioFile = AudioFile(filePath, overwrite ? AudioFileOpenMode::WriteOverride : AudioFileOpenMode::Write);
+				const HephCommon::File audioFile = HephCommon::File(filePath, overwrite ? HephCommon::FileOpenMode::WriteOverride : HephCommon::FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint16_t data16;
 				uint32_t data32;
@@ -145,7 +145,7 @@ namespace HephAudio
 				data32 = buffer.Size();
 				audioFile.Write(&data32, 4, Endian::Little);
 
-				if (AudioFile::GetSystemEndian() == Endian::Big)
+				if (HephCommon::File::GetSystemEndian() == Endian::Big)
 				{
 					AudioProcessor::ChangeEndian(buffer);
 				}

@@ -13,19 +13,15 @@ using namespace HephAudio::Native;
 
 namespace HephAudio
 {
-	void Audio::SetOnExceptionHandler(AudioEventHandler handler)
-	{
-		this->pNativeAudio->OnException += handler;
-	}
-	void Audio::SetOnAudioDeviceAddedHandler(AudioEventHandler handler)
+	void Audio::SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler)
 	{
 		this->pNativeAudio->OnAudioDeviceAdded += handler;
 	}
-	void Audio::SetOnAudioDeviceRemovedHandler(AudioEventHandler handler)
+	void Audio::SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler)
 	{
 		this->pNativeAudio->OnAudioDeviceRemoved += handler;
 	}
-	void Audio::SetOnCaptureHandler(AudioEventHandler handler)
+	void Audio::SetOnCaptureHandler(HephCommon::EventHandler handler)
 	{
 		this->pNativeAudio->OnCapture += handler;
 	}
@@ -85,7 +81,7 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->Play(filePath, loopCount, isPaused);
 	}
-	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(HephCommon::StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths)
+	std::vector<std::shared_ptr<AudioObject>> Audio::Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths)
 	{
 		return this->pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
 	}
@@ -105,11 +101,11 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->AOExists(audioObject);
 	}
-	void Audio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, hephaudio_float position)
+	void Audio::SetAOPosition(std::shared_ptr<AudioObject> audioObject, heph_float position)
 	{
 		this->pNativeAudio->SetAOPosition(audioObject, position);
 	}
-	hephaudio_float Audio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
+	heph_float Audio::GetAOPosition(std::shared_ptr<AudioObject> audioObject) const
 	{
 		return this->pNativeAudio->GetAOPosition(audioObject);
 	}
@@ -129,11 +125,11 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->IsCapturePaused();
 	}
-	void Audio::SetMasterVolume(hephaudio_float volume)
+	void Audio::SetMasterVolume(heph_float volume)
 	{
 		this->pNativeAudio->SetMasterVolume(volume);
 	}
-	hephaudio_float Audio::GetMasterVolume() const
+	heph_float Audio::GetMasterVolume() const
 	{
 		return this->pNativeAudio->GetMasterVolume();
 	}

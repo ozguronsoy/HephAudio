@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "int24.h"
 #include "AudioFormatInfo.h"
 #include <vector>
@@ -24,7 +24,7 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="channel">Channel of the audio sample.</param>
 		/// <returns>The Audio sample.</returns>
-		hephaudio_float& operator[](const size_t& channel) const;
+		heph_float& operator[](const size_t& channel) const;
 	};
 #pragma endregion
 #pragma region Audio Buffer
@@ -95,23 +95,23 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
 		/// <returns>Resulting buffer</returns>
-		AudioBuffer operator*(const hephaudio_float& rhs) const;
+		AudioBuffer operator*(const heph_float& rhs) const;
 		/// <summary>
 		/// Multiplies all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The multipication factor</param>
-		AudioBuffer& operator*=(const hephaudio_float& rhs);
+		AudioBuffer& operator*=(const heph_float& rhs);
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs, then returns the result as a new audio buffer.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
 		/// <returns>Resulting buffer</returns>
-		AudioBuffer operator/(const hephaudio_float& rhs) const;
+		AudioBuffer operator/(const heph_float& rhs) const;
 		/// <summary>
 		/// Divides all the samples in the current buffer by rhs.
 		/// </summary>
 		/// <param name="rhs">The division factor</param>
-		AudioBuffer& operator/=(const hephaudio_float& rhs);
+		AudioBuffer& operator/=(const heph_float& rhs);
 		/// <summary>
 		/// Creates a copy of the buffer and shifts it to the left.
 		/// </summary>
@@ -211,33 +211,33 @@ namespace HephAudio
 		/// Finds the sample with the smallest value in the buffer.
 		/// </summary>
 		/// <returns>The sample with the smallest value.</returns>
-		hephaudio_float Min() const noexcept;
+		heph_float Min() const noexcept;
 		/// <summary>
 		/// Finds the sample with the biggest value in the buffer.
 		/// </summary>
 		/// <returns>The sample with the biggest value.</returns>
-		hephaudio_float Max() const noexcept;
+		heph_float Max() const noexcept;
 		/// <summary>
 		/// Finds the sample with the biggest absolute value in the buffer.
 		/// </summary>
 		/// <returns>The sample with the absolute biggest value.</returns>
-		hephaudio_float AbsMax() const noexcept;
+		heph_float AbsMax() const noexcept;
 		/// <summary>
 		/// Calculates the root mean square of the buffer.
 		/// </summary>
 		/// <returns>the rms of the buffer.</returns>
-		hephaudio_float Rms() const noexcept;
+		heph_float Rms() const noexcept;
 		/// <summary>
 		/// Calculates how long the audio data is in seconds.
 		/// </summary>
 		/// <returns>The length of the audio data in seconds</returns>
-		hephaudio_float CalculateDuration() const noexcept;
+		heph_float CalculateDuration() const noexcept;
 		/// <summary>
 		/// Calculates the corresponding frame with the given time.
 		/// </summary>
 		/// <param name="ts">Time in seconds</param>
 		/// <returns>The frame that corresponds to the given time</returns>
-		size_t CalculateFrameIndex(hephaudio_float t_s) const noexcept;
+		size_t CalculateFrameIndex(heph_float t_s) const noexcept;
 		/// <summary>
 		/// Gets the audio format info.
 		/// </summary>
@@ -275,14 +275,14 @@ namespace HephAudio
 		/// <param name="frameCount">Number of frames the audio data consists of</param>
 		/// <param name="formatInfo">The audio format which will be used in calculation</param>
 		/// <returns>The length of the audio data in seconds</returns>
-		static hephaudio_float CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
+		static heph_float CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept;
 		/// <summary>
 		/// Calculates the corresponding frame with the given time.
 		/// </summary>
 		/// <param name="ts">Time in seconds</param>
 		/// <param name="formatInfo">The audio format which will be used in calculation</param>
 		/// <returns>The frame that corresponds to the given time</returns>
-		static size_t CalculateFrameIndex(hephaudio_float t_s, AudioFormatInfo formatInfo) noexcept;
+		static size_t CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo) noexcept;
 	};
 #pragma endregion
 }

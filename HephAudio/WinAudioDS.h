@@ -1,6 +1,6 @@
 #pragma once
 #ifdef _WIN32
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "NativeAudio.h"
 #include <wrl.h>
 #include <dsound.h>
@@ -32,8 +32,8 @@ namespace HephAudio
 			/// Frees the DirectSound resources.
 			/// </summary>
 			~WinAudioDS();
-			void SetMasterVolume(hephaudio_float volume) override;
-			hephaudio_float GetMasterVolume() const override;
+			void SetMasterVolume(heph_float volume) override;
+			heph_float GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;

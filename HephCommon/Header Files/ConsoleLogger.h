@@ -17,6 +17,7 @@ namespace HephCommon
 		ConsoleLogger(const ConsoleLogger&) = delete;
 		ConsoleLogger& operator=(const ConsoleLogger&) = delete;
 		static void Log(StringBuffer message, const char* logLevel);
+		static void Log(StringBuffer message, const char* logLevel, StringBuffer libName);
 	private:
 		static StringBuffer CurrentTimeToString(StringType stringType);
 	};

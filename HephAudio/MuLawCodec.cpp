@@ -11,7 +11,7 @@ namespace HephAudio
 		}
 		AudioBuffer MuLawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, encodedBufferInfo.formatInfo.channelCount, sizeof(hephaudio_float) * 8, encodedBufferInfo.formatInfo.sampleRate));
+			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, encodedBufferInfo.formatInfo.channelCount, sizeof(heph_float) * 8, encodedBufferInfo.formatInfo.sampleRate));
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
@@ -20,7 +20,7 @@ namespace HephAudio
 					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
 					const int16_t pcmSample = MuLawCodec::MuLawToPcm(encodedSample);
 
-					resultBuffer[i][j] = (hephaudio_float)pcmSample / INT16_MAX;
+					resultBuffer[i][j] = (heph_float)pcmSample / INT16_MAX;
 				}
 			}
 

@@ -1,6 +1,6 @@
 #pragma once
 #ifdef __ANDROID__
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "AndroidAudioBase.h"
 #include <aaudio/AAudio.h>
 
@@ -24,7 +24,7 @@ namespace HephAudio
 			/// The number of frames the buffer AAudio uses for capturing audio samples consists of.
 			/// </summary>
 			size_t captureBufferFrameCount;
-			hephaudio_float masterVolume;
+			heph_float masterVolume;
 		public:
 			/// <summary>
 			/// Creates and initalizes an AndroidAudioA instance.
@@ -36,8 +36,8 @@ namespace HephAudio
 			/// Frees the AAudio resources.
 			/// </summary>
 			~AndroidAudioA();
-			void SetMasterVolume(hephaudio_float volume) override;
-			hephaudio_float GetMasterVolume() const override;
+			void SetMasterVolume(heph_float volume) override;
+			heph_float GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
@@ -47,7 +47,7 @@ namespace HephAudio
 		private:
 			void RenderData();
 			void CaptureData();
-			hephaudio_float GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const override;
+			heph_float GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const override;
 		};
 	}
 }

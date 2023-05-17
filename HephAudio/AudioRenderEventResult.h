@@ -1,6 +1,6 @@
 #pragma once
-#include "framework.h"
-#include "AudioEventResult.h"
+#include "HephAudioFramework.h"
+#include "EventResult.h"
 #include "AudioBuffer.h"
 
 namespace HephAudio
@@ -8,7 +8,7 @@ namespace HephAudio
 	/// <summary>
 	/// Holds the audio data that will be rendered and whether the audio object finished playing.
 	/// </summary>
-	struct AudioRenderEventResult : public AudioEventResult
+	struct AudioRenderEventResult : public HephCommon::EventResult
 	{
 		/// <summary>
 		/// The audio data that will be rendered.

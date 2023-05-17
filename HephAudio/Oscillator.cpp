@@ -1,11 +1,14 @@
 #include "Oscillator.h"
+#include "HephMath.h"
+
+using namespace HephCommon;
 
 namespace HephAudio
 {
-	Oscillator::Oscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit)
+	Oscillator::Oscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase, AngleUnit angleUnit)
 		: peakAmplitude(peakAmplitude), sampleRate(sampleRate), frequency(frequency)
 	{
-		this->phase_rad = angleUnit == AngleUnit::Radian ? phase : DegToRad(phase);
+		this->phase_rad = angleUnit == AngleUnit::Radian ? phase : Math::DegToRad(phase);
 	}
 	FloatBuffer Oscillator::GenerateBuffer() const noexcept
 	{

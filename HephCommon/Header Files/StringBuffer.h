@@ -14,6 +14,25 @@ namespace HephCommon
 	{
 	public:
 		static constexpr size_t npos = -1;
+	public:
+		class CharAccessor final
+		{
+			friend class StringBuffer;
+		private:
+			const StringBuffer* pParent;
+			size_t index;
+			size_t charSize;
+			CharAccessor(const StringBuffer* pParent, size_t index, size_t charSize);
+		public:
+			operator char() const;
+			operator wchar_t() const;
+			CharAccessor& operator=(const char& c);
+			CharAccessor& operator=(const wchar_t& wc);
+			bool operator==(const char& c);
+			bool operator==(const wchar_t& wc);
+			bool operator!=(const char& c);
+			bool operator!=(const wchar_t& wc);
+		};
 	private:
 		size_t charSize;
 		size_t size;
@@ -30,8 +49,9 @@ namespace HephCommon
 		StringBuffer(const StringBuffer& str, StringType stringType);
 		StringBuffer(StringBuffer&& str) noexcept;
 		~StringBuffer();
-		operator char* () const;
-		operator wchar_t* () const;
+		explicit operator char* () const;
+		explicit operator wchar_t* () const;
+		CharAccessor operator[](const size_t& index) const;
 		StringBuffer& operator=(const char& rhs);
 		StringBuffer& operator=(const wchar_t& rhs);
 		StringBuffer& operator=(const char* const& rhs);
@@ -65,6 +85,7 @@ namespace HephCommon
 		wchar_t* wc_str() const;
 		wchar_t* fwc_str();
 		size_t Size() const noexcept;
+		size_t ByteSize() const noexcept;
 		StringType GetStringType() const noexcept;
 		void SetStringType(StringType newType);
 		bool CompareContent(char c) const;
@@ -72,7 +93,8 @@ namespace HephCommon
 		bool CompareContent(const char* str) const;
 		bool CompareContent(const wchar_t* wstr) const;
 		bool CompareContent(const StringBuffer& str) const;
-		char at(size_t index) const;
+		CharAccessor at(size_t index) const;
+		char c_at(size_t index) const;
 		wchar_t w_at(size_t index) const;
 		StringBuffer SubString(size_t startIndex, size_t size) const;
 		StringBuffer SubString(size_t startIndex, size_t size, StringType stringType) const;
@@ -108,6 +130,11 @@ namespace HephCommon
 		StringBuffer& ReplaceAt(size_t index, const char* str);
 		StringBuffer& ReplaceAt(size_t index, const wchar_t* wstr);
 		StringBuffer& ReplaceAt(size_t index, const StringBuffer& str);
+		StringBuffer& Insert(size_t index, char c);
+		StringBuffer& Insert(size_t index, wchar_t wc);
+		StringBuffer& Insert(size_t index, const char* str);
+		StringBuffer& Insert(size_t index, const wchar_t* wstr);
+		StringBuffer& Insert(size_t index, const StringBuffer& str);
 		StringBuffer& TrimStart(char c);
 		StringBuffer& TrimStart(wchar_t wc);
 		StringBuffer& TrimStart(const char* str);
@@ -129,8 +156,6 @@ namespace HephCommon
 		StringBuffer& ToUpper();
 		void* Begin() const noexcept;
 		void* End() const;
-	private:
-		size_t TotalSize() const noexcept;
 	public:
 		static StringBuffer ToString(int16_t value);
 		static StringBuffer ToString(uint16_t value);
@@ -167,8 +192,17 @@ namespace HephCommon
 		static StringBuffer Join(const wchar_t* separator, const std::vector<StringBuffer>& strings);
 		static StringBuffer Join(const StringBuffer& separator, const std::vector<StringBuffer>& strings);
 	};
+
 }
 HephCommon::StringBuffer operator+(const char& lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const wchar_t& lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const char* const& lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const wchar_t* const& lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator""b(char c);
+HephCommon::StringBuffer operator""B(char c);
+HephCommon::StringBuffer operator""b(wchar_t wc);
+HephCommon::StringBuffer operator""B(wchar_t wc);
+HephCommon::StringBuffer operator""b(const char* str, size_t);
+HephCommon::StringBuffer operator""B(const char* str, size_t);
+HephCommon::StringBuffer operator""b(const wchar_t* wstr, size_t);
+HephCommon::StringBuffer operator""B(const wchar_t* wstr, size_t);

@@ -1,12 +1,13 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
+#include "EventArgs.h"
 
 namespace HephAudio
 {
 	/// <summary>
 	/// Holds the necessary information to handle an audio event.
 	/// </summary>
-	struct AudioEventArgs
+	struct AudioEventArgs : public HephCommon::EventArgs
 	{
 		/// <summary>
 		/// Pointer to the NativeAudio instance where the event occurred.

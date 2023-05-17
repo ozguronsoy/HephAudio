@@ -42,7 +42,7 @@ namespace HephAudio
 			}
 			formats.push_back(format);
 		}
-		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(AudioFile& file)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(HephCommon::File& file)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
@@ -55,10 +55,9 @@ namespace HephAudio
 		}
 		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(HephCommon::StringBuffer filePath)
 		{
-			const HephCommon::StringBuffer fileExtension = AudioFile::GetFileExtension(filePath);
+			const HephCommon::StringBuffer fileExtension = HephCommon::File::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-
 				if (formats.at(i)->Extension().Contains(fileExtension))
 				{
 					return formats.at(i);

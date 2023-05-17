@@ -7,7 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudio", "HephAudio\Heph
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{E4F627E8-208E-420A-98E2-F6B3F9A25356}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephCommon", "HephCommon\HephCommon.vcxitems", "{2BEBDC5A-7ACA-4D72-913A-096DE8148EF0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephCommon", "HephCommon\HephCommon.vcxitems", "{DE064538-DA5C-4E0E-B44C-6A25C86FB48F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,8 +41,8 @@ Global
 		SolutionGuid = {87395B32-3B90-4400-A819-A5506CD066AF}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		HephCommon\HephCommon.vcxitems*{2bebdc5a-7aca-4d72-913a-096de8148ef0}*SharedItemsImports = 9
 		HephAudio\HephAudio.vcxitems*{bb93f558-91d0-4736-88af-56a3ad9532e9}*SharedItemsImports = 9
+		HephCommon\HephCommon.vcxitems*{de064538-da5c-4e0e-b44c-6a25c86fb48f}*SharedItemsImports = 9
 		HephAudio\HephAudio.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
 		HephCommon\HephCommon.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
 	EndGlobalSection

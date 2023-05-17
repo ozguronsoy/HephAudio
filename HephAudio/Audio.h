@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "NativeAudio.h"
 #ifdef __ANDROID__
 #include <jni.h>
@@ -17,10 +17,9 @@ namespace HephAudio
 	private:
 		HephAudio::Native::NativeAudio* pNativeAudio;
 	public:
-		void SetOnExceptionHandler(AudioEventHandler handler);
-		void SetOnAudioDeviceAddedHandler(AudioEventHandler handler);
-		void SetOnAudioDeviceRemovedHandler(AudioEventHandler handler);
-		void SetOnCaptureHandler(AudioEventHandler handler);
+		void SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
+		void SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
+		void SetOnCaptureHandler(HephCommon::EventHandler handler);
 	public:
 #ifdef __ANDROID__
 		Audio(JavaVM* jvm);
@@ -35,19 +34,19 @@ namespace HephAudio
 		std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath);
 		std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
 		std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
-		std::vector<std::shared_ptr<AudioObject>> Queue(HephCommon::StringBuffer queueName, hephaudio_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
+		std::vector<std::shared_ptr<AudioObject>> Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
 		std::shared_ptr<AudioObject> Load(HephCommon::StringBuffer filePath);
 		std::shared_ptr<AudioObject> CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
 		bool DestroyAO(std::shared_ptr<AudioObject> pAudioObject);
 		bool AOExists(std::shared_ptr<AudioObject> pAudioObject) const;
-		void SetAOPosition(std::shared_ptr<AudioObject> pAudioObject, hephaudio_float position);
-		hephaudio_float GetAOPosition(std::shared_ptr<AudioObject> pAudioObject) const;
+		void SetAOPosition(std::shared_ptr<AudioObject> pAudioObject, heph_float position);
+		heph_float GetAOPosition(std::shared_ptr<AudioObject> pAudioObject) const;
 		std::shared_ptr<AudioObject> GetAO(HephCommon::StringBuffer aoName) const;
 		std::shared_ptr<AudioObject> GetAO(HephCommon::StringBuffer queueName, size_t index) const;
 		void PauseCapture(bool pause);
 		bool IsCapturePaused() const noexcept;
-		void SetMasterVolume(hephaudio_float volume);
-		hephaudio_float GetMasterVolume() const;
+		void SetMasterVolume(heph_float volume);
+		heph_float GetMasterVolume() const;
 		void Skip(HephCommon::StringBuffer queueName, bool applyDelay);
 		void Skip(size_t skipCount, HephCommon::StringBuffer queueName, bool applyDelay);
 		AudioFormatInfo GetRenderFormat() const;

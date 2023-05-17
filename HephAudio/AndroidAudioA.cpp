@@ -39,11 +39,11 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
 		}
-		void AndroidAudioA::SetMasterVolume(hephaudio_float volume)
+		void AndroidAudioA::SetMasterVolume(heph_float volume)
 		{
 			masterVolume = max(0.0, min(volume, 1.0));
 		}
-		hephaudio_float AndroidAudioA::GetMasterVolume() const
+		heph_float AndroidAudioA::GetMasterVolume() const
 		{
 			return masterVolume;
 		}
@@ -286,7 +286,7 @@ namespace HephAudio
 			AAudioStream_requestStop(pCaptureStream);
 			AAudioStream_waitForStateChange(pCaptureStream, AAUDIO_STREAM_STATE_STOPPING, &currentState, stateChangeTimeoutNanos);
 		}
-		hephaudio_float AndroidAudioA::GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const
+		heph_float AndroidAudioA::GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const
 		{
 			return NativeAudio::GetFinalAOVolume(pAudioObject) * masterVolume;
 		}

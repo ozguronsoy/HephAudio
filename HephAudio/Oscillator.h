@@ -1,5 +1,5 @@
 #pragma once
-#include "framework.h"
+#include "HephAudioFramework.h"
 #include "FloatBuffer.h"
 #include <cmath>
 #include <cinttypes>
@@ -14,17 +14,17 @@ namespace HephAudio
 	class Oscillator
 	{
 	public:
-		hephaudio_float peakAmplitude;
-		hephaudio_float frequency;
-		hephaudio_float phase_rad;
+		heph_float peakAmplitude;
+		heph_float frequency;
+		heph_float phase_rad;
 		uint32_t sampleRate;
 	protected:
-		Oscillator(hephaudio_float peakAmplitude, hephaudio_float frequency, uint32_t sampleRate, hephaudio_float phase, AngleUnit angleUnit);
+		Oscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase, AngleUnit angleUnit);
 	public:
 		virtual ~Oscillator() = default;
-		virtual hephaudio_float Oscillate(size_t t_sample) const noexcept = 0;
-		FloatBuffer GenerateBuffer() const noexcept;
-		FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;
-		FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
+		virtual heph_float Oscillate(size_t t_sample) const noexcept = 0;
+		HephCommon::FloatBuffer GenerateBuffer() const noexcept;
+		HephCommon::FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;
+		HephCommon::FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
 	};
 }
