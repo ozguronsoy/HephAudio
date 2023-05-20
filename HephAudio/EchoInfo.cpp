@@ -1,4 +1,5 @@
 #include "EchoInfo.h"
+#include "HephMath.h"
 
 namespace HephAudio
 {
@@ -9,6 +10,6 @@ namespace HephAudio
 		const size_t echoStartFrame = bufferFrameCount * this->echoStartPosition;
 		const size_t echoBufferFrameCount = bufferFrameCount * this->echoEndPosition - echoStartFrame;
 		const size_t resultBufferFrameCount = echoStartFrame + delayFrameCount * this->reflectionCount + echoBufferFrameCount;
-		return max(resultBufferFrameCount, bufferFrameCount);
+		return HephCommon::Math::Max(resultBufferFrameCount, bufferFrameCount);
 	}
 }

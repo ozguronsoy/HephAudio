@@ -45,19 +45,6 @@ typedef float heph_float;
 
 #endif
 
-
-inline HEPH_CONSTEVAL heph_float operator""hf(unsigned long long int x)
-{
-	return (heph_float)x;
-}
-
-inline HEPH_CONSTEVAL heph_float operator""hf(long double x)
-{
-	return (heph_float)x;
-}
-
-
-
 enum class Endian : unsigned char
 {
 	Little = 0,

@@ -1,5 +1,6 @@
 #include "ALawCodec.h"
 #include "AudioProcessor.h"
+#include "HephMath.h"
 
 namespace HephAudio
 {
@@ -90,7 +91,7 @@ namespace HephAudio
 					else
 					{
 						mask = 0x55;
-						pcmSample = min(-pcmSample, 32767);
+						pcmSample = HephCommon::Math::Min(-pcmSample, 32767);
 					}
 
 					uint8_t compressedByte;

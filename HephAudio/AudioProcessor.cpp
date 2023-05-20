@@ -12,7 +12,7 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, uint16_t outputBps)
 	{
-		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(E_NOTIMPL, "AudioProcessor::ConvertBPS", "Not implemented."));
+		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_not_implemented, "AudioProcessor::ConvertBPS", "Not implemented."));
 	}
 	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
 	{

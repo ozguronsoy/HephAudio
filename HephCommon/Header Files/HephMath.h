@@ -425,7 +425,7 @@ namespace HephCommon
 #pragma region Literals
 inline HEPH_CONSTEVAL long double operator""rad(unsigned long long int x)
 {
-	return HephCommon::Math::RadToDeg(x);
+	return HephCommon::Math::RadToDeg((uint64_t)x);
 }
 inline HEPH_CONSTEVAL long double operator""rad(long double x)
 {
@@ -433,7 +433,7 @@ inline HEPH_CONSTEVAL long double operator""rad(long double x)
 }
 inline HEPH_CONSTEVAL long double operator""deg(unsigned long long int x)
 {
-	return HephCommon::Math::DegToRad(x);
+	return HephCommon::Math::DegToRad((uint64_t)x);
 }
 inline HEPH_CONSTEVAL long double operator""deg(long double x)
 {

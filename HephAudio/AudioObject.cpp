@@ -6,7 +6,7 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: filePath(""), name(""), pause(false), loopCount(1), volume(1.0hf), buffer(AudioBuffer()), frameIndex(0), queueName(""), queueIndex(0), queueDelay_ms(0.0hf)
+		: filePath(""), name(""), pause(false), loopCount(1), volume(1.0), buffer(AudioBuffer()), frameIndex(0), queueName(""), queueIndex(0), queueDelay_ms(0.0)
 		, OnRender(Event()), OnFinishedPlaying(Event())
 	{
 		this->OnRender += OnRenderHandler;

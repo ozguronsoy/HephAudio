@@ -1,13 +1,15 @@
 #ifdef __ANDROID__
 #include "AndroidAudioSLES.h"
 #include "AudioProcessor.h"
-#include "AudioFile.h"
+#include "File.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
-#define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AUDIO_EXCPT(androidAudio, HephCommon::HephException(slres, method, message)); throw HephCommon::HephException(slres, method, message); }
-#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AUDIO_EXCPT(androidAudio, HephCommon::HephException(slres, method, message)); goto RENDER_EXIT; }
-#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AUDIO_EXCPT(androidAudio, HephCommon::HephException(slres, method, message)); goto CAPTURE_EXIT; }
+#define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); }
+#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); goto RENDER_EXIT; }
+#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); goto CAPTURE_EXIT; }
+
+using namespace HephCommon;
 
 namespace HephAudio
 {
@@ -19,8 +21,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < 16)
 			{
-				RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
-				throw HephCommon::HephException(E_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16.");
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
 			}
 
 			SLresult slres;
@@ -38,7 +39,7 @@ namespace HephAudio
 		AndroidAudioSLES::~AndroidAudioSLES()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG("Destructing AndroidAudioSLES...", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing AndroidAudioSLES...", ConsoleLogger::info);
 
 			disposing = true;
 			JoinRenderThread();
@@ -49,7 +50,7 @@ namespace HephAudio
 
 			(*audioEngineObject)->Destroy(audioEngineObject);
 
-			HEPHAUDIO_LOG("AndroidAudioSLES destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("AndroidAudioSLES destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
 		void AndroidAudioSLES::SetMasterVolume(heph_float volume)
 		{
@@ -66,7 +67,7 @@ namespace HephAudio
 		void AndroidAudioSLES::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), ConsoleLogger::info);
 
 			StopRendering();
 
@@ -106,7 +107,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&AndroidAudioSLES::RenderData, this, bufferQueue);
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
 		void AndroidAudioSLES::StopRendering()
 		{
@@ -119,13 +120,13 @@ namespace HephAudio
 				{
 					(*audioPlayerObject)->Destroy(audioPlayerObject);
 				}
-				HEPHAUDIO_LOG("Stopped rendering.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", ConsoleLogger::info);
 			}
 		}
 		void AndroidAudioSLES::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), ConsoleLogger::info);
 
 			StopCapturing();
 
@@ -162,7 +163,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&AndroidAudioSLES::CaptureData, this, simpleBufferQueue);
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", ConsoleLogger::info);
 		}
 		void AndroidAudioSLES::StopCapturing()
 		{
@@ -175,16 +176,16 @@ namespace HephAudio
 				{
 					(*audioRecorderObject)->Destroy(audioRecorderObject);
 				}
-				HEPHAUDIO_LOG("Stopped capturing.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", ConsoleLogger::info);
 			}
 		}
 		void AndroidAudioSLES::SetDisplayName(StringBuffer displayName)
 		{
-			RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_NOTIMPL, "AndroidAudioSLES::SetDisplayName", "AndroidAudioSLES does not support this method."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioSLES::SetDisplayName", "AndroidAudioSLES does not support this method."));
 		}
 		void AndroidAudioSLES::SetIconPath(StringBuffer iconPath)
 		{
-			RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_NOTIMPL, "AndroidAudioSLES::SetIconPath", "AndroidAudioSLES does not support this method."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioSLES::SetIconPath", "AndroidAudioSLES does not support this method."));
 		}
 		void AndroidAudioSLES::RenderData(SLBufferQueueItf bufferQueue)
 		{
@@ -192,7 +193,7 @@ namespace HephAudio
 			void* audioBuffer = malloc(renderBufferSize);
 			if (audioBuffer == nullptr)
 			{
-				RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_FAIL, "AndroidAudioSLES", "Insufficient memory."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES", "Insufficient memory."));
 				return;
 			}
 			memset(audioBuffer, 0, renderBufferSize);
@@ -220,7 +221,7 @@ namespace HephAudio
 			void* audioBuffer = malloc(captureBufferSize);
 			if (audioBuffer == nullptr)
 			{
-				RAISE_AUDIO_EXCPT(this, HephCommon::HephException(E_FAIL, "AndroidAudioSLES::InitializeCapture", "Insufficient memory."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::InitializeCapture", "Insufficient memory."));
 				return;
 			}
 			memset(audioBuffer, 0, captureBufferSize);
@@ -269,7 +270,7 @@ namespace HephAudio
 				SLresult slres = (*bufferQueue)->Enqueue(bufferQueue, pCallbackContext->pData, dataBuffer.Size());
 				if (slres != 0)
 				{
-					RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, HephCommon::HephException(slres, "AndroidAudioSLES", "An error occurred whilst rendering data."));
+					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, "AndroidAudioSLES", "An error occurred whilst rendering data."));
 					return;
 				}
 
@@ -291,14 +292,14 @@ namespace HephAudio
 				AudioBuffer captureBuffer(captureCallbackFrameCount, pCallbackContext->pAndroidAudio->captureFormat);
 				memcpy(captureBuffer.Begin(), pCallbackContext->pData, captureCallbackSize);
 
-				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer, AudioFile::GetSystemEndian());
+				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer, File::GetSystemEndian());
 				AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
 				pCallbackContext->pAndroidAudio->OnCapture(&captureEventArgs, nullptr);
 
 				SLresult slres = (*simpleBufferQueue)->Enqueue(simpleBufferQueue, pCallbackContext->pData, captureCallbackSize);
 				if (slres != 0)
 				{
-					RAISE_AUDIO_EXCPT(pCallbackContext->pAndroidAudio, HephCommon::HephException(slres, "AndroidAudioSLES", "An error occurred whilst capturing data."));
+					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, "AndroidAudioSLES", "An error occurred whilst capturing data."));
 					return;
 				}
 

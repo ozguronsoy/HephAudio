@@ -8,10 +8,11 @@
 #include <windows.h>
 #endif
 
-#ifdef __ANDROID__
-#define max(a, b) (((a) > (b)) ? (a) : (b))
-#define min(a, b) (((a) > (b)) ? (b) : (a))
+#ifndef WAVE_FORMAT_PCM
 #define WAVE_FORMAT_PCM 1
+#define WAVE_FORMAT_IEEE_FLOAT 0x0003
+#define WAVE_FORMAT_ALAW 0x0006
+#define WAVE_FORMAT_MULAW 0x0007
 #define WAVE_FORMAT_EXTENSIBLE 0xFFFE
 #endif
 

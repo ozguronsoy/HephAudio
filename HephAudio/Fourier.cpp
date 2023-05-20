@@ -78,12 +78,12 @@ namespace HephAudio
 	{
 		ReverseBits(complexBuffer, fftSize);
 		const size_t p = log2(fftSize);
-		Complex a = Complex(-1.0hf, 0.0hf);
+		Complex a = Complex(-1.0, 0.0);
 		for (size_t i = 0; i < p; i++)
 		{
 			const size_t s = (1 << i);
 			const size_t s2 = s << 1;
-			Complex b = Complex(1.0hf, 0.0hf);
+			Complex b = Complex(1.0, 0.0);
 			for (size_t j = 0; j < s; j++)
 			{
 				for (size_t k = j; k < fftSize; k += s2)
@@ -94,8 +94,8 @@ namespace HephAudio
 				}
 				b *= a;
 			}
-			a.imaginary = isForward ? -sqrt((1.0hf - a.real) * 0.5hf) : sqrt((1.0hf - a.real) * 0.5hf);
-			a.real = sqrt((1.0hf + a.real) * 0.5hf);
+			a.imaginary = isForward ? -sqrt((1.0 - a.real) * 0.5) : sqrt((1.0 - a.real) * 0.5);
+			a.real = sqrt((1.0 + a.real) * 0.5);
 		}
 	}
 }

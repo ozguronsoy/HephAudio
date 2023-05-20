@@ -35,7 +35,7 @@ namespace HephAudio
 
 				if (format == nullptr)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported."));
+					RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported."));
 					return nullptr;
 				}
 
@@ -62,7 +62,7 @@ namespace HephAudio
 
 			if (queueName.CompareContent(""))
 			{
-				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "NativeAudio::Queue", "Queue name must not be empty."));
+				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio::Queue", "Queue name must not be empty."));
 				return std::vector<std::shared_ptr<AudioObject>>();
 			}
 
@@ -89,7 +89,7 @@ namespace HephAudio
 							FileFormats::IAudioFileFormat* format = FileFormats::AudioFileFormatManager::FindFileFormat(audioFile);
 							if (format == nullptr)
 							{
-								throw HephCommon::HephException(E_INVALIDARG, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported.");
+								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported."));
 							}
 							pao->buffer = format->ReadFile(&audioFile);
 						}
@@ -168,7 +168,7 @@ namespace HephAudio
 		{
 			if (position < 0.0 || position > 1.0)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "NativeAudio::SetAOPosition", "position must be between 0 and 1."));
+				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio::SetAOPosition", "position must be between 0 and 1."));
 				return;
 			}
 
@@ -319,7 +319,7 @@ namespace HephAudio
 		{
 			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
+				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
 				return AudioDevice();
 			}
 
@@ -342,7 +342,7 @@ namespace HephAudio
 
 			if (deviceType == AudioDeviceType::Null)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "WinAudioDS::GetAudioDevices", "DeviceType must not be Null."));
+				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "WinAudioDS::GetAudioDevices", "DeviceType must not be Null."));
 				return result;
 			}
 
@@ -366,7 +366,7 @@ namespace HephAudio
 
 				if (format == nullptr)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "NativeAudio::SaveToFile", "File format '" + HephCommon::File::GetFileExtension(filePath) + "' is not supported."));
+					RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio::SaveToFile", "File format '" + HephCommon::File::GetFileExtension(filePath) + "' is not supported."));
 					return false;
 				}
 
@@ -501,7 +501,7 @@ namespace HephAudio
 
 						if (qao->queueIndex < decreaseQueueIndex)
 						{
-							RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "NativeAudio", "Queue is empty."));
+							RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio", "Queue is empty."));
 							return;
 						}
 
@@ -516,7 +516,7 @@ namespace HephAudio
 
 								if (format == nullptr)
 								{
-									RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_INVALIDARG, "NativeAudio", "File format '" + audioFile.FileExtension() + "' is not supported."));
+									RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "NativeAudio", "File format '" + audioFile.FileExtension() + "' is not supported."));
 									return;
 								}
 
