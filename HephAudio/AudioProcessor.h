@@ -105,6 +105,8 @@ namespace HephAudio
 		static void BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel);
 		static void BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float lowCutoffFreq, heph_float highCutoffFreq);
 		static void BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq);
+		static void SchroederAllpassFilter(AudioBuffer& buffer, heph_float delay_ms, heph_float gain);
+		static void FeedbackCombFilter(AudioBuffer& buffer, heph_float delay_ms, heph_float gain);
 #pragma endregion
 #pragma region Windows
 	public:

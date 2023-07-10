@@ -34,6 +34,7 @@ namespace HephAudio
 	class AudioBuffer final
 	{
 		friend class AudioProcessor;
+		friend class RealTimeAudioBuffer;
 	private:
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
@@ -79,17 +80,6 @@ namespace HephAudio
 		/// Moves the rhs buffer's content to the current buffer.
 		/// </summary>
 		AudioBuffer& operator=(AudioBuffer&& rhs) noexcept;
-		/// <summary>
-		/// Appends the rhs to the current buffer and returns it as a new buffer.
-		/// </summary>
-		/// <param name="rhs">The buffer which will be joined</param>
-		/// <returns>The joint buffer</returns>
-		AudioBuffer operator+(const AudioBuffer& rhs) const;
-		/// <summary>
-		/// Appends the rhs to the current buffer.
-		/// </summary>
-		/// <param name="rhs">The buffer which will be joined</param>
-		AudioBuffer& operator+=(const AudioBuffer& rhs);
 		/// <summary>
 		/// Multiplies all the samples in the current buffer by rhs, then returns the result as a new audio buffer.
 		/// </summary>
@@ -167,8 +157,8 @@ namespace HephAudio
 		/// <summary>
 		/// Appends the given buffer to the current buffer.
 		/// </summary>
-		/// <param name="buffer">The buffer which will be joined</param>
-		void Join(const AudioBuffer& buffer);
+		/// <param name="buffer">The buffer to append.</param>
+		void Append(const AudioBuffer& buffer);
 		/// <summary>
 		/// Inserts the given buffer to the current buffer.
 		/// </summary>

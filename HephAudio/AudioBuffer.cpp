@@ -121,31 +121,6 @@ namespace HephAudio
 
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator+(const AudioBuffer& rhs) const
-	{
-		AudioBuffer resultBuffer(this->frameCount + rhs.frameCount, this->formatInfo);
-
-		if (this->pAudioData != nullptr && this->frameCount > 0)
-		{
-			memcpy(resultBuffer.pAudioData, this->pAudioData, this->Size());
-		}
-
-		if (rhs.pAudioData != nullptr && rhs.frameCount > 0)
-		{
-			// ensure both buffers have the same format.
-			AudioBuffer tempRhs = rhs;
-			tempRhs.SetFormat(this->formatInfo);
-
-			memcpy((uint8_t*)resultBuffer.pAudioData + this->Size(), rhs.pAudioData, rhs.Size());
-		}
-
-		return resultBuffer;
-	}
-	AudioBuffer& AudioBuffer::operator+=(const AudioBuffer& rhs)
-	{
-		this->Join(rhs);
-		return *this;
-	}
 	AudioBuffer AudioBuffer::operator*(const heph_float& rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
@@ -265,7 +240,7 @@ namespace HephAudio
 		}
 		return subBuffer;
 	}
-	void AudioBuffer::Join(const AudioBuffer& buffer)
+	void AudioBuffer::Append(const AudioBuffer& buffer)
 	{
 		if (buffer.frameCount > 0)
 		{

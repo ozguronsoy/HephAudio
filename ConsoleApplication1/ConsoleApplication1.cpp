@@ -9,6 +9,7 @@
 #include <shlobj.h>
 #include "AudioFileFormatManager.h"
 #include "AudioCodecManager.h"
+#include <RealTimeAudioBuffer.h>
 
 using namespace HephCommon;
 using namespace HephAudio;
@@ -45,29 +46,11 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
-	auto pao = audio.Load(audioRoot + (StringBuffer)"Gate of Steiner.wav");
-
-	std::vector<EqualizerInfo> eqiv =
-	{
-		EqualizerInfo(20, 400, [](heph_float binFreq) -> heph_float { return 0.25; }), // bass
-		EqualizerInfo(400, 2000, [](heph_float binFreq) -> heph_float { return 100.0; }), // mid
-		EqualizerInfo(2000, 20000, [](heph_float binFreq) -> heph_float { return 0.25; }), // treble
-	};
-
-	constexpr size_t hopSize = 512;
-	StopWatch::StaticReset();
-	AudioProcessor::EqualizerMT(pao->buffer, hopSize, hopSize * 4, eqiv);
-	AudioProcessor::Normalize(pao->buffer, 1.0);
-	PrintDeltaTime("equalizer applied in"b);
-
-	pao->pause = false;
-	pao = nullptr;
-
 	return Run(audio, audioRoot);
 }
 void OnException(EventArgs* pArgs, EventResult* pResult)
 {
-	HephException& ex = ((HephExceptionEventArgs*)pArgs)->exception;
+	const HephException& ex = ((HephExceptionEventArgs*)pArgs)->exception;
 
 	StringBuffer exceptionString = ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n\t\t" + ex.message;
 	ConsoleLogger::Log(exceptionString, ConsoleLogger::error);

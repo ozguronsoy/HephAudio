@@ -1904,6 +1904,38 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::SchroederAllpassFilter(AudioBuffer& buffer, heph_float delay_ms, heph_float gain)
+	{
+		const size_t delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, delay_sample * buffer.formatInfo.FrameSize());
+
+		for (size_t i = delay_sample; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				resultBuffer[i][j] = buffer[i - delay_sample][j] - gain * buffer[i][j] + gain * resultBuffer[i - delay_sample][j];
+			}
+		}
+
+		buffer = std::move(resultBuffer);
+	}
+	void AudioProcessor::FeedbackCombFilter(AudioBuffer& buffer, heph_float delay_ms, heph_float gain)
+	{
+		const size_t delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
+		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
+		memcpy(resultBuffer.pAudioData, buffer.pAudioData, delay_sample * buffer.formatInfo.FrameSize());
+
+		for (size_t i = delay_sample; i < buffer.frameCount; i++)
+		{
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				resultBuffer[i][j] = buffer[i][j] + gain * resultBuffer[i - delay_sample][j];
+			}
+		}
+
+		buffer = std::move(resultBuffer);
+	}
 #pragma endregion
 #pragma region Windows
 	void AudioProcessor::ApplyTriangleWindow(AudioBuffer& buffer)

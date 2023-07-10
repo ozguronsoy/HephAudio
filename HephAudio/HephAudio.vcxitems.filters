@@ -180,6 +180,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)RealTimeAudioBuffer.h">
+      <Filter>Header Files\Buffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -283,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)RealTimeAudioBuffer.cpp">
+      <Filter>Source Files\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
