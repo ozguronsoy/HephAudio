@@ -183,6 +183,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)RealTimeAudioBuffer.h">
       <Filter>Header Files\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -289,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)RealTimeAudioBuffer.cpp">
       <Filter>Source Files\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

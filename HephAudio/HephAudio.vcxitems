@@ -55,6 +55,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp" />
@@ -92,5 +93,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp" />
   </ItemGroup>
 </Project>

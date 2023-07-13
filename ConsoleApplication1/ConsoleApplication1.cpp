@@ -46,6 +46,8 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 
+	audio.Play("C:\\Users\\ozgur\\Desktop\\AudioFiles\\Symphony No 6.wma");
+
 	return Run(audio, audioRoot);
 }
 void OnException(EventArgs* pArgs, EventResult* pResult)

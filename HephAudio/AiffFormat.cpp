@@ -54,6 +54,8 @@ namespace HephAudio
 			uint32_t data32, formType, chunkSize;
 			uint64_t srBits;
 
+			pAudioFile->SetOffset(0);
+
 			pAudioFile->Read(&data32, 4, Endian::Big);
 			if (data32 != formID)
 			{

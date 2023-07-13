@@ -44,6 +44,8 @@ namespace HephAudio
 			AudioFormatInfo formatInfo;
 			uint32_t data32, chunkSize;
 
+			pAudioFile->SetOffset(0);
+
 			pAudioFile->Read(&data32, 4, Endian::Big);
 			if (data32 != riffID)
 			{
