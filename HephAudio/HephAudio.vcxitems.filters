@@ -58,6 +58,12 @@
     <Filter Include="Source Files\AudioCodecs">
       <UniqueIdentifier>{ca75d65b-95e5-47fc-8ce7-581e92b656ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\AudioCodecs\AudioFileMetadataReader">
+      <UniqueIdentifier>{ebafe7cf-0bf1-461f-8c25-ea82d58059e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AudioFormats\AudioFileMetadataReader">
+      <UniqueIdentifier>{a12f51a1-4d73-4351-b8e5-d8d62ebf3d8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioFramework.h">
@@ -186,6 +192,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.h">
+      <Filter>Header Files\AudioCodecs\AudioFileMetadataReader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -295,6 +304,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp">
       <Filter>Source Files\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.cpp">
+      <Filter>Source Files\AudioFormats\AudioFileMetadataReader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

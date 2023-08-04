@@ -52,6 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
@@ -90,6 +91,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />
