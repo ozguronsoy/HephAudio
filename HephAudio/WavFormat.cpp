@@ -190,7 +190,7 @@ namespace HephAudio
 		{
 			try
 			{
-				const HephCommon::File audioFile = HephCommon::File(filePath, overwrite ? HephCommon::FileOpenMode::WriteOverride : HephCommon::FileOpenMode::Write);
+				const HephCommon::File audioFile(filePath, overwrite ? HephCommon::FileOpenMode::WriteOverride : HephCommon::FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint16_t data16;
 				uint32_t data32;

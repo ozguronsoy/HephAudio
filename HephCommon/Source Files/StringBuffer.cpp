@@ -3,6 +3,7 @@
 #include <cstring>
 #include <ctype.h>
 #include <memory>
+#include <wctype.h>
 
 #define TO_STRING_BUFFER_SIZE 512
 

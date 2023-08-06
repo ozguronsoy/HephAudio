@@ -741,7 +741,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::EqualizerMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos)
 	{
-		constexpr auto applyEqualizer = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t hopSize, size_t fftSize, size_t nyquistFrequency, const std::vector<EqualizerInfo>* const infos)
+		auto applyEqualizer = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t hopSize, size_t fftSize, size_t nyquistFrequency, const std::vector<EqualizerInfo>* const infos)
 		{
 			FloatBuffer channel = FloatBuffer(buffer->frameCount);
 			for (size_t i = 0; i < buffer->frameCount; i++)
@@ -1076,7 +1076,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone)
 	{
-		constexpr auto applyPitchShift = [](AudioBuffer* buffer, const FloatBuffer* window, size_t channelIndex, size_t hopSize, size_t fftSize, size_t nyquistFrequency, heph_float shiftFactor)
+		auto applyPitchShift = [](AudioBuffer* buffer, const FloatBuffer* window, size_t channelIndex, size_t hopSize, size_t fftSize, size_t nyquistFrequency, heph_float shiftFactor)
 		{
 			constexpr heph_float twopi = 2.0 * Math::pi;
 
@@ -1209,7 +1209,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::LowPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, size_t threadCountPerChannel)
 	{
-		constexpr auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, size_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t nyquistFrequency, size_t startIndex)
+		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, size_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t nyquistFrequency, size_t startIndex)
 		{
 			FloatBuffer channel = FloatBuffer(frameCount);
 			for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
@@ -1390,7 +1390,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, size_t threadCountPerChannel)
 	{
-		constexpr auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t stopIndex)
+		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t stopIndex)
 		{
 			FloatBuffer channel = FloatBuffer(frameCount);
 			for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
@@ -1575,7 +1575,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel)
 	{
-		constexpr auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t nyquistFrequency, size_t startIndex, size_t stopIndex)
+		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t nyquistFrequency, size_t startIndex, size_t stopIndex)
 		{
 			FloatBuffer channel = FloatBuffer(frameCount);
 			for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
@@ -1769,7 +1769,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel)
 	{
-		constexpr auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t nyquistFrequency, size_t startIndex, size_t stopIndex)
+		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* window, uint16_t channelIndex, size_t frameIndex, size_t frameCount, size_t hopSize, size_t fftSize, size_t nyquistFrequency, size_t startIndex, size_t stopIndex)
 		{
 			FloatBuffer channel = FloatBuffer(frameCount);
 			for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)

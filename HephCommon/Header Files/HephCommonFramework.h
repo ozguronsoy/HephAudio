@@ -24,6 +24,14 @@
 
 
 
+#if defined(__linux__) // to include memory functions
+
+#include <cstring>
+
+#endif
+
+
+
 #if !defined(HEPH_FLOAT)
 
 #if defined(HEPH_HIGH_PRECISION_FLOAT)

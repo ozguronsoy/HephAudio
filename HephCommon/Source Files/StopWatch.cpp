@@ -1,12 +1,14 @@
 #include "StopWatch.h"
 
+#define TP_ZERO TimePoint(std::chrono::nanoseconds(0))
+
 namespace HephCommon
 {
-	std::map<std::thread::id, std::chrono::steady_clock::time_point> StopWatch::timePoints = {};
-	StopWatch::StopWatch() : tp(StopWatch::defaultTimePoint) {}
+	std::map<std::thread::id, StopWatch::TimePoint> StopWatch::timePoints = {};
+	StopWatch::StopWatch() : tp(TP_ZERO) {}
 	void StopWatch::Start()
 	{
-		if (this->tp == StopWatch::defaultTimePoint)
+		if (this->tp == TP_ZERO)
 		{
 			this->tp = std::chrono::high_resolution_clock::now();
 		}
@@ -17,7 +19,7 @@ namespace HephCommon
 	}
 	double StopWatch::DeltaTime() const
 	{
-		if (this->tp != StopWatch::defaultTimePoint)
+		if (this->tp != TP_ZERO)
 		{
 			return (std::chrono::high_resolution_clock::now() - this->tp).count() * 1e-9;
 		}
@@ -25,7 +27,7 @@ namespace HephCommon
 	}
 	double StopWatch::DeltaTime(double prefix) const
 	{
-		if (this->tp != StopWatch::defaultTimePoint)
+		if (this->tp != TP_ZERO)
 		{
 			return (std::chrono::high_resolution_clock::now() - this->tp).count() * 1e-9 / prefix;
 		}
@@ -33,7 +35,7 @@ namespace HephCommon
 	}
 	void StopWatch::Stop()
 	{
-		tp = StopWatch::defaultTimePoint;
+		tp = TP_ZERO;
 	}
 	void StopWatch::StaticStart()
 	{

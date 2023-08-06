@@ -108,12 +108,7 @@ namespace HephCommon
 		default:
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "File::File", "Invalid mode."));
 		}
-
-#if defined(__ANDROID__)
 		this->pFile = fopen(this->filePath.fc_str(), strOpenMode.fc_str());
-#else
-		this->pFile = this->filePath.GetStringType() == StringType::ASCII ? fopen(this->filePath.c_str(), strOpenMode.fc_str()) : _wfopen(this->filePath.wc_str(), strOpenMode.fwc_str());
-#endif
 	}
 	bool File::FileExists(StringBuffer filePath)
 	{
@@ -122,7 +117,7 @@ namespace HephCommon
 	}
 	StringBuffer File::GetFileName(StringBuffer filePath)
 	{
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__linux__)
 		std::vector<StringBuffer> sfp = filePath.Split('/');
 #else
 		std::vector<StringBuffer> sfp = filePath.Split('\\');

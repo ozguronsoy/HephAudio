@@ -21,7 +21,7 @@ namespace HephCommon
 		}
 		else
 		{
-			wprintf(L"\u001b[%sm%s[%s]: \033[0m%s\n", StringBuffer(logLevel, StringType::Wide).wc_str(), libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), message.wc_str());
+			printf("\u001b[%lsm%ls[%ls]: \033[0m%ls\n", StringBuffer(logLevel, StringType::Wide).wc_str(), libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), message.wc_str());
 		}
 
 #elif defined(__ANDROID__)
