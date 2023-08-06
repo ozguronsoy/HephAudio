@@ -2042,35 +2042,35 @@ HephCommon::StringBuffer operator+(const wchar_t* const& lhs, const HephCommon::
 	result += rhs;
 	return result;
 }
-HephCommon::StringBuffer operator""b(char c)
+HephCommon::StringBuffer operator""_b(char c)
 {
 	return (HephCommon::StringBuffer)c;
 }
-HephCommon::StringBuffer operator""B(char c)
+HephCommon::StringBuffer operator""_B(char c)
 {
 	return (HephCommon::StringBuffer)c;
 }
-HephCommon::StringBuffer operator""b(wchar_t wc)
+HephCommon::StringBuffer operator""_b(wchar_t wc)
 {
 	return (HephCommon::StringBuffer)wc;
 }
-HephCommon::StringBuffer operator""B(wchar_t wc)
+HephCommon::StringBuffer operator""_B(wchar_t wc)
 {
 	return (HephCommon::StringBuffer)wc;
 }
-HephCommon::StringBuffer operator""b(const char* str, size_t)
+HephCommon::StringBuffer operator""_b(const char* str, size_t)
 {
 	return (HephCommon::StringBuffer)str;
 }
-HephCommon::StringBuffer operator""B(const char* str, size_t)
+HephCommon::StringBuffer operator""_B(const char* str, size_t)
 {
 	return (HephCommon::StringBuffer)str;
 }
-HephCommon::StringBuffer operator""b(const wchar_t* wstr, size_t)
+HephCommon::StringBuffer operator""_b(const wchar_t* wstr, size_t)
 {
 	return (HephCommon::StringBuffer)wstr;
 }
-HephCommon::StringBuffer operator""B(const wchar_t* wstr, size_t)
+HephCommon::StringBuffer operator""_B(const wchar_t* wstr, size_t)
 {
 	return (HephCommon::StringBuffer)wstr;
 }

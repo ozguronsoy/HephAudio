@@ -10,7 +10,7 @@ namespace HephCommon
 	{
 		heph_float x;
 		heph_float y;
-		constexpr Vector2() : x(0.0hf), y(0.0hf) {}
+		constexpr Vector2() : x(0.0), y(0.0) {}
 		constexpr Vector2(heph_float x, heph_float y) : x(x), y(y) {}
 		constexpr Vector2(const Vector2& rhs) : x(rhs.x), y(rhs.y) {}
 		constexpr operator Vector3() const noexcept;
@@ -123,8 +123,8 @@ namespace HephCommon
 		heph_float x;
 		heph_float y;
 		heph_float z;
-		constexpr Vector3() : x(0.0hf), y(0.0hf), z(0.0hf) {}
-		constexpr Vector3(heph_float x, heph_float y) : x(x), y(y), z(0.0hf) {}
+		constexpr Vector3() : x(0.0), y(0.0), z(0.0) {}
+		constexpr Vector3(heph_float x, heph_float y) : x(x), y(y), z(0.0) {}
 		constexpr Vector3(heph_float x, heph_float y, heph_float z) : x(x), y(y), z(z) {}
 		constexpr Vector3(const Vector3& rhs) : x(rhs.x), y(rhs.y), z(rhs.z) {}
 		constexpr operator Vector2() const noexcept;

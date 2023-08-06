@@ -297,7 +297,7 @@ namespace HephCommon
 		}
 #pragma endregion
 #pragma region Mod
-		static float Mod(float a, float b) noexcept
+		static constexpr float Mod(float a, float b) noexcept
 		{
 			if ((a < 0 && b > 0) || (a > 0 && b < 0))
 			{
@@ -423,19 +423,19 @@ namespace HephCommon
 	};
 }
 #pragma region Literals
-inline HEPH_CONSTEVAL long double operator""rad(unsigned long long int x)
-{
-	return HephCommon::Math::RadToDeg((uint64_t)x);
-}
-inline HEPH_CONSTEVAL long double operator""rad(long double x)
+inline HEPH_CONSTEVAL long double operator""_rad(unsigned long long int x)
 {
 	return HephCommon::Math::RadToDeg(x);
 }
-inline HEPH_CONSTEVAL long double operator""deg(unsigned long long int x)
+inline HEPH_CONSTEVAL long double operator""_rad(long double x)
 {
-	return HephCommon::Math::DegToRad((uint64_t)x);
+	return HephCommon::Math::RadToDeg(x);
 }
-inline HEPH_CONSTEVAL long double operator""deg(long double x)
+inline HEPH_CONSTEVAL long double operator""_deg(unsigned long long int x)
+{
+	return HephCommon::Math::DegToRad(x);
+}
+inline HEPH_CONSTEVAL long double operator""_deg(long double x)
 {
 	return HephCommon::Math::DegToRad(x);
 }

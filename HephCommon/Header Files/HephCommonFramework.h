@@ -1,4 +1,5 @@
 #pragma once
+#include <cinttypes>
 
 #if !defined(CPP_VERSION)
 
@@ -44,6 +45,7 @@ typedef float heph_float;
 #endif
 
 #endif
+
 
 enum class Endian : unsigned char
 {

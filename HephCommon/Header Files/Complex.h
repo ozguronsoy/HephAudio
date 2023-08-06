@@ -152,11 +152,19 @@ inline constexpr HephCommon::Complex operator*(const heph_float& lhs, const Heph
 {
 	return rhs * lhs;
 }
-inline HEPH_CONSTEVAL HephCommon::Complex operator""j(unsigned long long int x) noexcept
+inline HEPH_CONSTEVAL HephCommon::Complex operator""_j(unsigned long long int x) noexcept
 {
 	return HephCommon::Complex(0, x);
 }
-inline HEPH_CONSTEVAL HephCommon::Complex operator""j(long double x) noexcept
+inline HEPH_CONSTEVAL HephCommon::Complex operator""_j(long double x) noexcept
+{
+	return HephCommon::Complex(0, x);
+}
+inline HEPH_CONSTEVAL HephCommon::Complex operator""_J(unsigned long long int x) noexcept
+{
+	return HephCommon::Complex(0, x);
+}
+inline HEPH_CONSTEVAL HephCommon::Complex operator""_J(long double x) noexcept
 {
 	return HephCommon::Complex(0, x);
 }
