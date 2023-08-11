@@ -195,6 +195,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.h">
       <Filter>Header Files\AudioCodecs\AudioFileMetadataReader</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -307,6 +310,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.cpp">
       <Filter>Source Files\AudioFormats\AudioFileMetadataReader</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

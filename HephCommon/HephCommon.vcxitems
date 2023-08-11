@@ -24,6 +24,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\File.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\ConsoleLogger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Guid.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephCommonFramework.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephMath.h" />

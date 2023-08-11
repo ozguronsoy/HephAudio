@@ -1,5 +1,4 @@
 #pragma once
-#include <cinttypes>
 
 #if !defined(CPP_VERSION)
 
@@ -24,9 +23,10 @@
 
 
 
-#if defined(__linux__) // to include memory functions
+#if (!defined(_MSC_VER) || defined(__INTEL_COMPILER))
 
 #include <cstring>
+#include <cinttypes>
 
 #endif
 

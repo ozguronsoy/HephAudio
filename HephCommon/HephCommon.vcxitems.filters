@@ -17,6 +17,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Color.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\ColorBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephMath.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Guid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ConsoleLogger.cpp" />

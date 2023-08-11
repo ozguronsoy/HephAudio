@@ -3,6 +3,7 @@
 #include "WinAudioDS.h"
 #include "AndroidAudioA.h"
 #include "AndroidAudioSLES.h"
+#include "LinuxAudio.h"
 #if defined(_WIN32)
 #include <VersionHelpers.h>
 #elif defined(__ANDROID__)
@@ -33,9 +34,13 @@ namespace HephAudio
 		{
 			this->pNativeAudio = new AndroidAudioA(jvm);
 		}
-		else
+		else if (androidApiLevel >= 21)
 		{
 			this->pNativeAudio = new AndroidAudioSLES(jvm);
+		}
+		else
+		{
+			this->pNativeAudio = new LinuxAudio();
 		}
 	}
 #else
@@ -50,6 +55,8 @@ namespace HephAudio
 		{
 			this->pNativeAudio = new WinAudioDS();
 		}
+#elif defined(__linux__)
+		this->pNativeAudio = new LinuxAudio();
 #endif
 	}
 #endif

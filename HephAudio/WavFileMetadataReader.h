@@ -1,6 +1,7 @@
 #pragma once
 #include "HephAudioFramework.h"
 #include "File.h"
+#include "Guid.h"
 
 namespace HephAudio
 {
@@ -19,7 +20,7 @@ namespace HephAudio
 				uint16_t cbSize{ 0 };
 				uint16_t wValidBitsPerSample{ 0 };
 				uint32_t dwChannelMask{ 0 };
-				GUID subFormat{ 0 };
+				HephCommon::Guid subFormat{ 0 };
 			};
 			struct WavFactChunk
 			{

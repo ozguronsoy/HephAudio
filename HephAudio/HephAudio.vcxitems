@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFileFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h" />
@@ -79,6 +80,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
