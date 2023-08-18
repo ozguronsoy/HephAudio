@@ -13,7 +13,7 @@ namespace HephCommon
 	}
 	void ConsoleLogger::Log(StringBuffer message, const char* logLevel, StringBuffer libName)
 	{
-#if defined(_WIN32) || (defined(__linux__) && ! defined(__ANDROID__))
+#if defined(_WIN32) || (defined(__linux__) && !defined(__ANDROID__)) || defined(__APPLE__)
 
 		if (message.GetStringType() == StringType::ASCII)
 		{

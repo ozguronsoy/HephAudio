@@ -17,7 +17,7 @@ namespace HephAudio
 {
     namespace Native
     {
-        LinuxAudio::LinuxAudio() : renderPcm(nullptr), capturePcm(nullptr)
+        LinuxAudio::LinuxAudio() : NativeAudio(), renderPcm(nullptr), capturePcm(nullptr)
         {
             this->EnumerateAudioDevices();
             this->deviceThread = std::thread(&LinuxAudio::CheckAudioDevices, this);
