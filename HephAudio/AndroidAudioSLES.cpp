@@ -292,7 +292,7 @@ namespace HephAudio
 				AudioBuffer captureBuffer(captureCallbackFrameCount, pCallbackContext->pAndroidAudio->captureFormat);
 				memcpy(captureBuffer.Begin(), pCallbackContext->pData, captureCallbackSize);
 
-				AudioProcessor::ConvertPcmToInnerFormat(captureBuffer, File::GetSystemEndian());
+				AudioProcessor::ConvertToInnerFormat(captureBuffer, File::GetSystemEndian());
 				AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
 				pCallbackContext->pAndroidAudio->OnCapture(&captureEventArgs, nullptr);
 

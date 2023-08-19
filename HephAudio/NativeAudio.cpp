@@ -601,7 +601,7 @@ namespace HephAudio
 				}
 			}
 
-			AudioProcessor::ConvertInnerToPcmFormat(mixBuffer, renderFormat.bitsPerSample, HephCommon::File::GetSystemEndian());
+			AudioProcessor::ConvertToTargetFormat(mixBuffer, renderFormat, HephCommon::File::GetSystemEndian());
 			outputBuffer = std::move(mixBuffer);
 		}
 		size_t NativeAudio::GetAOCountToMix() const

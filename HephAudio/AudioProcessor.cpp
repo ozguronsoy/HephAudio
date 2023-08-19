@@ -2,7 +2,7 @@
 #include "HephException.h"
 #include "Fourier.h"
 #include "File.h"
-#include "PcmCodec.h"
+#include "AudioCodecManager.h"
 #include <thread>
 
 using namespace HephCommon;
@@ -139,31 +139,39 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	void AudioProcessor::ConvertPcmToInnerFormat(AudioBuffer& buffer, Endian pcmEndian)
+	void AudioProcessor::ConvertToInnerFormat(AudioBuffer& buffer, Endian endian)
 	{
-		if (buffer.formatInfo.formatTag == WAVE_FORMAT_PCM)
+		Codecs::IAudioCodec* pAudioCodec = Codecs::AudioCodecManager::FindCodec(buffer.formatInfo.formatTag);
+		if (pAudioCodec == nullptr)
 		{
-			Codecs::EncodedBufferInfo encodedBufferInfo;
-			encodedBufferInfo.pBuffer = buffer.pAudioData;
-			encodedBufferInfo.size_byte = buffer.Size();
-			encodedBufferInfo.size_frame = buffer.frameCount;
-			encodedBufferInfo.formatInfo = buffer.formatInfo;
-			encodedBufferInfo.endian = pcmEndian;
-
-			buffer = Codecs::PcmCodec().Decode(encodedBufferInfo);
+			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_fail, "AudioProcessor::ConvertToInnerFormat", "Unsupported audio codec."));
 		}
+
+		Codecs::EncodedBufferInfo encodedBufferInfo;
+		encodedBufferInfo.pBuffer = buffer.pAudioData;
+		encodedBufferInfo.size_byte = buffer.Size();
+		encodedBufferInfo.size_frame = buffer.frameCount;
+		encodedBufferInfo.formatInfo = buffer.formatInfo;
+		encodedBufferInfo.endian = endian;
+
+		buffer = pAudioCodec->Decode(encodedBufferInfo);
 	}
-	void AudioProcessor::ConvertInnerToPcmFormat(AudioBuffer& buffer, size_t bps, Endian pcmEndian)
+	void AudioProcessor::ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat, Endian endian)
 	{
-		if (buffer.formatInfo.formatTag == WAVE_FORMAT_IEEE_FLOAT)
-		{
-			Codecs::EncodedBufferInfo encodedBufferInfo;
-			encodedBufferInfo.size_frame = buffer.frameCount;
-			encodedBufferInfo.formatInfo = AudioFormatInfo(WAVE_FORMAT_PCM, buffer.formatInfo.channelCount, bps, buffer.formatInfo.sampleRate);
-			encodedBufferInfo.endian = pcmEndian;
+		AudioProcessor::ConvertToInnerFormat(buffer, File::GetSystemEndian());
 
-			Codecs::PcmCodec().Encode(buffer, encodedBufferInfo);
+		Codecs::IAudioCodec* pAudioCodec = Codecs::AudioCodecManager::FindCodec(targetFormat.formatTag);
+		if (pAudioCodec == nullptr)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_fail, "AudioProcessor::ConvertToTargetFormat", "Unsupported audio codec."));
 		}
+
+		Codecs::EncodedBufferInfo encodedBufferInfo;
+		encodedBufferInfo.size_frame = buffer.frameCount;
+		encodedBufferInfo.formatInfo = targetFormat;
+		encodedBufferInfo.endian = endian;
+
+		pAudioCodec->Encode(buffer, encodedBufferInfo);
 	}
 	void AudioProcessor::ChangeEndian(AudioBuffer& buffer)
 	{

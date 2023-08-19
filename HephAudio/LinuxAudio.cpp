@@ -296,7 +296,7 @@ namespace HephAudio
 
                         AudioBuffer temp(buffer.FrameCount(), captureFormat);
                         memcpy(temp.Begin(), buffer.Begin(), temp.Size());
-                        AudioProcessor::ConvertPcmToInnerFormat(temp, HephCommon::File::GetSystemEndian());
+                        AudioProcessor::ConvertToInnerFormat(temp, HephCommon::File::GetSystemEndian());
                         AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
                         OnCapture(&captureEventArgs, nullptr);
                     }

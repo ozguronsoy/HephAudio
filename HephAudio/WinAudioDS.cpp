@@ -324,7 +324,7 @@ namespace HephAudio
 						WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred whilst capturing the samples.");
 
 						AudioBuffer tempBuffer = dataBuffer;
-						AudioProcessor::ConvertPcmToInnerFormat(tempBuffer, HephCommon::File::GetSystemEndian());
+						AudioProcessor::ConvertToInnerFormat(tempBuffer, HephCommon::File::GetSystemEndian());
 						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, tempBuffer);
 
 						OnCapture(&captureEventArgs, nullptr);

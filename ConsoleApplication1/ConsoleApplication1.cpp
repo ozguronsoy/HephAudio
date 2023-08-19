@@ -29,7 +29,7 @@ int main()
 	HANDLE stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	DWORD outMode = 0;
 	GetConsoleMode(stdoutHandle, &outMode);
-
+	
 	SetConsoleMode(stdoutHandle, outMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
 	wchar_t desktopPath[MAX_PATH + 1];
