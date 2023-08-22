@@ -12,6 +12,8 @@
 #include <RealTimeAudioBuffer.h>
 #include <WavFileMetadataReader.h>
 
+#define CAPTURE_FORMAT AudioFormatInfo(1, 2, 32, 48e3)
+
 using namespace HephCommon;
 using namespace HephAudio;
 using namespace HephAudio::Native;
@@ -20,10 +22,13 @@ void OnException(EventArgs* pArgs, EventResult* pResult);
 void OnDeviceAdded(EventArgs* pArgs, EventResult* pResult);
 void OnDeviceRemoved(EventArgs* pArgs, EventResult* pResult);
 void OnRender(EventArgs* pArgs, EventResult* pResult);
+void OnRenderCaptured(EventArgs* pArgs, EventResult* pResult);
+void OnCapture(EventArgs* pArgs, EventResult* pResult);
 void OnFinishedPlaying(EventArgs* pArgs, EventResult* pResult);
 heph_float PrintDeltaTime(StringBuffer label);
 int Run(Audio& audio, StringBuffer& audioRoot);
 
+AudioBuffer captureBuffer(0, CAPTURE_FORMAT);
 int main()
 {
 	HANDLE stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -93,6 +98,19 @@ void OnRender(EventArgs* pArgs, EventResult* pResult)
 
 	pAudioObject->frameIndex += readFrameCount;
 	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+}
+void OnRenderCaptured(EventArgs* pArgs, EventResult* pResult)
+{
+	AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
+	AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+
+	pRenderResult->renderBuffer = captureBuffer.GetSubBuffer(0, pRenderArgs->renderFrameCount);
+	captureBuffer.Cut(0, pRenderArgs->renderFrameCount);
+}
+void OnCapture(EventArgs* pArgs, EventResult* pResult)
+{
+	AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)pArgs;
+	captureBuffer.Append(pCaptureArgs->captureBuffer);
 }
 void OnFinishedPlaying(EventArgs* pArgs, EventResult* pResult)
 {

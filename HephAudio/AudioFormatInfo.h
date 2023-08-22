@@ -6,6 +6,8 @@
 #include <mmeapi.h>
 #endif
 
+#define AUDIO_FORMAT_INFO_INTERNAL(channelCount, sampleRate) AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, channelCount, sizeof(heph_float) * 8, sampleRate)
+
 namespace HephAudio
 {
 	/// <summary>

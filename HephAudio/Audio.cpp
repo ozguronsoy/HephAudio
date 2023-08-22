@@ -57,6 +57,10 @@ namespace HephAudio
 		}
 #elif defined(__linux__)
 		this->pNativeAudio = new LinuxAudio();
+#elif defined(__APPLE__)
+		this->pNativeAudio = new AppleAudio();
+#else
+		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "Audio::Audio", "Unsupported platform."));
 #endif
 	}
 #endif

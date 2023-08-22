@@ -198,6 +198,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AppleAudio.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -312,6 +315,9 @@
       <Filter>Source Files\AudioFormats\AudioFileMetadataReader</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AppleAudio.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
   </ItemGroup>

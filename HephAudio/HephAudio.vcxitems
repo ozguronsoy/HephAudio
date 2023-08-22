@@ -19,6 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioA.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AppleAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Audio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.h" />
@@ -65,6 +66,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioA.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AppleAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Audio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.cpp" />
