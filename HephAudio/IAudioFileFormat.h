@@ -11,7 +11,6 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		constexpr Endian operator!(const Endian& lhs) { return lhs == Endian::Big ? Endian::Little : Endian::Big; }
 		class IAudioFileFormat
 		{
 		public:

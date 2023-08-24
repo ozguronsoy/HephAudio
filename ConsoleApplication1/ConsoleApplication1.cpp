@@ -51,6 +51,7 @@ int main()
 	audio->SetDeviceEnumerationPeriod(250e6);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
+	audio.Play(audioRoot + "Gate of Steiner.wav");
 
 	return Run(audio, audioRoot);
 }

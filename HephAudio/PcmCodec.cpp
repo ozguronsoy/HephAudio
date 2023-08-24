@@ -1,6 +1,5 @@
 #include "PcmCodec.h"
 #include "HephException.h"
-#include "File.h"
 
 using namespace HephCommon;
 
@@ -16,7 +15,7 @@ namespace HephAudio
 		{
 			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, encodedBufferInfo.formatInfo.channelCount, sizeof(heph_float) * 8, encodedBufferInfo.formatInfo.sampleRate));
 
-			if (encodedBufferInfo.endian != File::GetSystemEndian())
+			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 			{
 				switch (encodedBufferInfo.formatInfo.bitsPerSample)
 				{
@@ -38,7 +37,7 @@ namespace HephAudio
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
 							int16_t pcmSample = ((int16_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-							File::ChangeEndian((uint8_t*)&pcmSample, 2);
+							HephCommon::ChangeEndian((uint8_t*)&pcmSample, 2);
 
 							resultBuffer[i][j] = (heph_float)pcmSample / (heph_float)INT16_MAX;
 						}
@@ -52,7 +51,7 @@ namespace HephAudio
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
 							int24 pcmSample = ((int24*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-							File::ChangeEndian((uint8_t*)&pcmSample, 3);
+							HephCommon::ChangeEndian((uint8_t*)&pcmSample, 3);
 
 							resultBuffer[i][j] = (heph_float)pcmSample / (heph_float)INT24_MAX;
 						}
@@ -66,7 +65,7 @@ namespace HephAudio
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
 							int32_t pcmSample = ((int32_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-							File::ChangeEndian((uint8_t*)&pcmSample, 4);
+							HephCommon::ChangeEndian((uint8_t*)&pcmSample, 4);
 
 							resultBuffer[i][j] = (heph_float)pcmSample / (heph_float)INT32_MAX;
 						}
@@ -141,7 +140,7 @@ namespace HephAudio
 			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
 			AudioBuffer tempBuffer = AudioBuffer(bufferToEncode.FrameCount(), encodedBufferInfo.formatInfo);
 
-			if (encodedBufferInfo.endian != File::GetSystemEndian())
+			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 			{
 				switch (encodedBufferInfo.formatInfo.bitsPerSample)
 				{
@@ -163,7 +162,7 @@ namespace HephAudio
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
 							int16_t pcmSample = bufferToEncode[i][j] * INT16_MAX;
-							File::ChangeEndian((uint8_t*)&pcmSample, 2);
+							HephCommon::ChangeEndian((uint8_t*)&pcmSample, 2);
 
 							((int16_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = pcmSample;
 						}
@@ -177,7 +176,7 @@ namespace HephAudio
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
 							int24 pcmSample = bufferToEncode[i][j] * INT24_MAX;
-							File::ChangeEndian((uint8_t*)&pcmSample, 3);
+							HephCommon::ChangeEndian((uint8_t*)&pcmSample, 3);
 
 							((int24*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = pcmSample;
 						}
@@ -191,7 +190,7 @@ namespace HephAudio
 						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 						{
 							int32_t pcmSample = bufferToEncode[i][j] * INT32_MAX;
-							File::ChangeEndian((uint8_t*)&pcmSample, 4);
+							HephCommon::ChangeEndian((uint8_t*)&pcmSample, 4);
 
 							((int32_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = pcmSample;
 						}

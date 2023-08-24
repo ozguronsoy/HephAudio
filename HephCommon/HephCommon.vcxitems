@@ -38,6 +38,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\FloatBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\File.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ConsoleLogger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\HephCommonFramework.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\HephException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\StopWatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\StringBuffer.cpp" />

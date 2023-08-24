@@ -139,7 +139,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	void AudioProcessor::ConvertToInnerFormat(AudioBuffer& buffer, Endian endian)
+	void AudioProcessor::ConvertToInnerFormat(AudioBuffer& buffer)
 	{
 		Codecs::IAudioCodec* pAudioCodec = Codecs::AudioCodecManager::FindCodec(buffer.formatInfo.formatTag);
 		if (pAudioCodec == nullptr)
@@ -152,13 +152,13 @@ namespace HephAudio
 		encodedBufferInfo.size_byte = buffer.Size();
 		encodedBufferInfo.size_frame = buffer.frameCount;
 		encodedBufferInfo.formatInfo = buffer.formatInfo;
-		encodedBufferInfo.endian = endian;
+		encodedBufferInfo.endian = buffer.formatInfo.endian;
 
 		buffer = pAudioCodec->Decode(encodedBufferInfo);
 	}
-	void AudioProcessor::ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat, Endian endian)
+	void AudioProcessor::ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat)
 	{
-		AudioProcessor::ConvertToInnerFormat(buffer, File::GetSystemEndian());
+		AudioProcessor::ConvertToInnerFormat(buffer);
 
 		Codecs::IAudioCodec* pAudioCodec = Codecs::AudioCodecManager::FindCodec(targetFormat.formatTag);
 		if (pAudioCodec == nullptr)
@@ -169,7 +169,7 @@ namespace HephAudio
 		Codecs::EncodedBufferInfo encodedBufferInfo;
 		encodedBufferInfo.size_frame = buffer.frameCount;
 		encodedBufferInfo.formatInfo = targetFormat;
-		encodedBufferInfo.endian = endian;
+		encodedBufferInfo.endian = targetFormat.endian;
 
 		pAudioCodec->Encode(buffer, encodedBufferInfo);
 	}
@@ -185,7 +185,7 @@ namespace HephAudio
 				{
 					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 					{
-						File::ChangeEndian((uint8_t*)((int16_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 2);
+						HephCommon::ChangeEndian((uint8_t*)((int16_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 2);
 					}
 				}
 			}
@@ -196,7 +196,7 @@ namespace HephAudio
 				{
 					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 					{
-						File::ChangeEndian((uint8_t*)((int24*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 3);
+						HephCommon::ChangeEndian((uint8_t*)((int24*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 3);
 					}
 				}
 			}
@@ -207,7 +207,7 @@ namespace HephAudio
 				{
 					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 					{
-						File::ChangeEndian((uint8_t*)((int32_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 4);
+						HephCommon::ChangeEndian((uint8_t*)((int32_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 4);
 					}
 				}
 			}
@@ -218,7 +218,7 @@ namespace HephAudio
 				{
 					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 					{
-						File::ChangeEndian((uint8_t*)((int64_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 8);
+						HephCommon::ChangeEndian((uint8_t*)((int64_t*)buffer.pAudioData + i * buffer.formatInfo.channelCount + j), 8);
 					}
 				}
 			}
@@ -226,6 +226,7 @@ namespace HephAudio
 			default:
 				break;
 			}
+			buffer.formatInfo.endian = !buffer.formatInfo.endian;
 		}
 	}
 #pragma endregion

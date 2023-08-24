@@ -5,6 +5,7 @@
 
 #define WAVE_FORMAT_PCM_BIG_ENDIAN (WAVE_FORMAT_PCM << 8)
 
+using namespace HephCommon;
 using namespace HephAudio::Codecs;
 
 namespace HephAudio
@@ -19,11 +20,11 @@ namespace HephAudio
 		constexpr uint32_t ssndID = 0x53534E44; // "SSND"
 		constexpr uint32_t aifc_v1 = 0xA2805140;
 
-		HephCommon::StringBuffer AiffFormat::Extension() const
+		StringBuffer AiffFormat::Extension() const
 		{
 			return ".aiff .aifc .aif";
 		}
-		size_t AiffFormat::FileFrameCount(const HephCommon::File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
+		size_t AiffFormat::FileFrameCount(const File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
 		{
 			uint32_t data32 = 0;
 
@@ -38,7 +39,7 @@ namespace HephAudio
 				}
 				if (pAudioFile->GetOffset() + data32 >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::FileFrameCount", "Failed to read the file. File might be corrupted."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::FileFrameCount", "Failed to read the file. File might be corrupted."));
 				}
 
 				pAudioFile->IncreaseOffset(data32);
@@ -48,7 +49,7 @@ namespace HephAudio
 
 			return data32 / audioFormatInfo.FrameSize();
 		}
-		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const
+		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const File* pAudioFile) const
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32, formType, chunkSize;
@@ -59,13 +60,13 @@ namespace HephAudio
 			pAudioFile->Read(&data32, 4, Endian::Big);
 			if (data32 != formID)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 			}
 			pAudioFile->IncreaseOffset(4);
 			pAudioFile->Read(&formType, 4, Endian::Big);
 			if (formType != aiffID && formType != aifcID)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 			}
 
 			pAudioFile->Read(&data32, 4, Endian::Big);
@@ -78,7 +79,7 @@ namespace HephAudio
 				}
 				if (pAudioFile->GetOffset() + chunkSize >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 				}
 
 				pAudioFile->IncreaseOffset(chunkSize);
@@ -116,7 +117,7 @@ namespace HephAudio
 				}
 				if (pAudioFile->GetOffset() + chunkSize >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 				}
 
 				pAudioFile->IncreaseOffset(chunkSize);
@@ -125,7 +126,7 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer AiffFormat::ReadFile(const HephCommon::File* pAudioFile) const
+		AudioBuffer AiffFormat::ReadFile(const File* pAudioFile) const
 		{
 			AudioFormatInfo audioFormatInfo = this->ReadAudioFormatInfo(pAudioFile);
 			Endian audioDataEndian = Endian::Big;
@@ -138,7 +139,7 @@ namespace HephAudio
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(audioFormatInfo.formatTag);
 			if (pAudioCodec == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::ReadFile", "Unsupported audio codec."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::ReadFile", "Unsupported audio codec."));
 			}
 
 			uint32_t audioDataSize;
@@ -151,7 +152,7 @@ namespace HephAudio
 			encodedBufferInfo.pBuffer = malloc(audioDataSize);
 			if (encodedBufferInfo.pBuffer == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AiffFormat::ReadFile", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AiffFormat::ReadFile", "Insufficient memory."));
 			}
 			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, bytesPerSample, audioDataSize / bytesPerSample);
 
@@ -166,7 +167,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		AudioBuffer AiffFormat::ReadFile(const HephCommon::File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer AiffFormat::ReadFile(const File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
 		{
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t audioDataSize = frameCount * audioFormatInfo.FrameSize();
@@ -182,7 +183,7 @@ namespace HephAudio
 
 			if (frameIndex > totalFrameCount)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat::ReadFile", "Frame index out of bounds."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat::ReadFile", "Frame index out of bounds."));
 				return AudioBuffer();
 			}
 			pAudioFile->IncreaseOffset(frameIndex * audioFormatInfo.FrameSize());
@@ -200,7 +201,7 @@ namespace HephAudio
 			encodedBufferInfo.pBuffer = malloc(audioDataSize);
 			if (encodedBufferInfo.pBuffer == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AiffFormat::ReadFile", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AiffFormat::ReadFile", "Insufficient memory."));
 			}
 			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, bytesPerSample, audioDataSize / bytesPerSample);
 
@@ -215,14 +216,14 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		bool AiffFormat::SaveToFile(HephCommon::StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
+		bool AiffFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			try
 			{
-				const HephCommon::File audioFile(filePath, overwrite ? HephCommon::FileOpenMode::WriteOverride : HephCommon::FileOpenMode::Write);
+				const File audioFile(filePath, overwrite ? FileOpenMode::WriteOverride : FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint32_t data32, compressionType;
-				HephCommon::StringBuffer compressionName;
+				StringBuffer compressionName;
 
 				audioFile.Write(&formID, 4, Endian::Big);
 				data32 = 4;
@@ -250,7 +251,7 @@ namespace HephAudio
 				audioFile.Write(&data32, 2, Endian::Big);
 
 				audioFile.Write(&compressionType, 4, Endian::Big);
-				audioFile.Write(compressionName.Begin(), compressionName.Size(), HephCommon::File::GetSystemEndian());
+				audioFile.Write(compressionName.Begin(), compressionName.Size(), HEPH_SYSTEM_ENDIAN);
 
 				audioFile.Write(&ssndID, 4, Endian::Big);
 				data32 = buffer.Size() + 8;
@@ -259,14 +260,14 @@ namespace HephAudio
 				audioFile.Write(&data32, 4, Endian::Big);
 				audioFile.Write(&data32, 4, Endian::Big);
 
-				if (HephCommon::File::GetSystemEndian() == Endian::Little)
+				if (bufferFormatInfo.endian == Endian::Little)
 				{
 					AudioProcessor::ChangeEndian(buffer);
 				}
 
 				audioFile.WriteToBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.FrameCount() * bufferFormatInfo.channelCount);
 			}
-			catch (HephCommon::HephException)
+			catch (HephException)
 			{
 				return false;
 			}
@@ -345,7 +346,7 @@ namespace HephAudio
 			}
 			else
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat", "Unknown sample rate."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat", "Unknown sample rate."));
 			}
 		}
 		uint64_t AiffFormat::SampleRateTo64(const AudioFormatInfo& formatInfo) const
@@ -418,7 +419,7 @@ namespace HephAudio
 			{
 				return 0x4008FA0000000000;
 			}
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat", "Unknown sample rate."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat", "Unknown sample rate."));
 		}
 		void AiffFormat::FormatTagFrom32(uint32_t tagBits, AudioFormatInfo& formatInfo) const
 		{
@@ -448,10 +449,10 @@ namespace HephAudio
 				formatInfo.bitsPerSample = 8;
 				break;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat", "Unknown codec."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat", "Unknown codec."));
 			}
 		}
-		void AiffFormat::FormatTagTo32(const AudioFormatInfo& audioFormatInfo, uint32_t& outTagBits, HephCommon::StringBuffer& outCompressionName) const
+		void AiffFormat::FormatTagTo32(const AudioFormatInfo& audioFormatInfo, uint32_t& outTagBits, StringBuffer& outCompressionName) const
 		{
 			switch (audioFormatInfo.formatTag)
 			{
@@ -480,7 +481,7 @@ namespace HephAudio
 				outCompressionName = "µLaw 2:1";
 				break;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "AiffFormat", "Codec not supported."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AiffFormat", "Codec not supported."));
 			}
 		}
 	}

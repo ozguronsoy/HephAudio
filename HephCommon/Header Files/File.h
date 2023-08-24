@@ -14,8 +14,6 @@ namespace HephCommon
 	class File final
 	{
 	private:
-		static Endian systemEndian;
-	private:
 		FILE* pFile;
 		uint64_t fileSize;
 		StringBuffer filePath;
@@ -43,9 +41,5 @@ namespace HephCommon
 		static bool FileExists(StringBuffer filePath);
 		static StringBuffer GetFileName(StringBuffer filePath);
 		static StringBuffer GetFileExtension(StringBuffer filePath);
-		static Endian GetSystemEndian();
-		static void ChangeEndian(uint8_t* pData, uint8_t dataSize);
-	private:
-		static Endian FindSystemEndian();
 	};
 }

@@ -4,7 +4,6 @@
 
 namespace HephCommon
 {
-	Endian File::systemEndian = File::FindSystemEndian();
 	File::File()
 		: pFile(nullptr), fileSize(0), filePath("") { }
 	File::File(StringBuffer filePath, FileOpenMode openMode)
@@ -63,9 +62,9 @@ namespace HephCommon
 	void File::Read(void* pData, uint8_t dataSize, Endian endian) const
 	{
 		fread(pData, dataSize, 1, this->pFile);
-		if (endian != File::systemEndian)
+		if (endian != HEPH_SYSTEM_ENDIAN)
 		{
-			File::ChangeEndian((uint8_t*)pData, dataSize);
+			HephCommon::ChangeEndian((uint8_t*)pData, dataSize);
 		}
 	}
 	void File::ReadToBuffer(void* pBuffer, uint8_t elementSize, uint32_t elementCount)const
@@ -81,9 +80,9 @@ namespace HephCommon
 		}
 		memcpy(pTemp, pData, dataSize);
 
-		if (endian != File::systemEndian)
+		if (endian != HEPH_SYSTEM_ENDIAN)
 		{
-			File::ChangeEndian((uint8_t*)pTemp, dataSize);
+			HephCommon::ChangeEndian((uint8_t*)pTemp, dataSize);
 		}
 		fwrite(pTemp, dataSize, 1, this->pFile);
 	}
@@ -117,7 +116,7 @@ namespace HephCommon
 	}
 	StringBuffer File::GetFileName(StringBuffer filePath)
 	{
-#if defined(__ANDROID__) || defined(__linux__)
+#if defined(__ANDROID__) || defined(__linux__) || defined(__APPLE__)
 		std::vector<StringBuffer> sfp = filePath.Split('/');
 #else
 		std::vector<StringBuffer> sfp = filePath.Split('\\');
@@ -128,24 +127,5 @@ namespace HephCommon
 	{
 		std::vector<StringBuffer> sfp = filePath.Split('.');
 		return '.' + sfp.at(sfp.size() - 1);
-	}
-	Endian File::GetSystemEndian()
-	{
-		return File::systemEndian;
-	}
-	void File::ChangeEndian(uint8_t* pData, uint8_t dataSize)
-	{
-		const uint8_t halfDataSize = dataSize / 2;
-		for (size_t i = 0; i < halfDataSize; i++)
-		{
-			const uint8_t temp = pData[i];
-			pData[i] = pData[dataSize - i - 1];
-			pData[dataSize - i - 1] = temp;
-		}
-	}
-	Endian File::FindSystemEndian()
-	{
-		uint16_t n = 1;
-		return (*(uint8_t*)&n == 1) ? Endian::Little : Endian::Big;
 	}
 }

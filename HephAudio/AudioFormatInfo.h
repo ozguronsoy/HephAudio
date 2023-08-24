@@ -1,12 +1,12 @@
 #pragma once
 #include "HephAudioFramework.h"
 #include <cstdint>
-#ifdef _WIN32
+#if defined(_WIN32)
 #include <Mmreg.h>
 #include <mmeapi.h>
 #endif
 
-#define AUDIO_FORMAT_INFO_INTERNAL(channelCount, sampleRate) AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, channelCount, sizeof(heph_float) * 8, sampleRate)
+#define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate) AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, channelCount, sizeof(heph_float) * 8, sampleRate, HEPH_SYSTEM_ENDIAN)
 
 namespace HephAudio
 {
@@ -32,6 +32,10 @@ namespace HephAudio
 		/// </summary>
 		uint16_t bitsPerSample;
 		/// <summary>
+		/// The endianness of the audio samples.
+		/// </summary>
+		HephCommon::Endian endian;
+		/// <summary>
 		/// Creates and initializes an AudioFormatInfo instance with default values.
 		/// </summary>
 		AudioFormatInfo();
@@ -43,6 +47,15 @@ namespace HephAudio
 		/// <param name="bps">The number of bits used to describe an audio sample.</param>
 		/// <param name="sampleRate">The number of samples (per channel) rendered or captured in one second, a.k.a sampling frequency, in Hz.</param>
 		AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
+		/// <summary>
+		/// Creates and initializes an AudioFormatInfo instance with the provided information.
+		/// </summary>
+		/// <param name="formatTag">The tag of the audio format.</param>
+		/// <param name="nChannels">The number of channels contained in the audio signal.</param>
+		/// <param name="bps">The number of bits used to describe an audio sample.</param>
+		/// <param name="sampleRate">The number of samples (per channel) rendered or captured in one second, a.k.a sampling frequency, in Hz.</param>
+		/// <param name="endian">The endianness of the audio samples.</param>
+		AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate, HephCommon::Endian endian);
 		/// <summary>
 		/// Compares the audio formats.
 		/// </summary>
@@ -70,7 +83,7 @@ namespace HephAudio
 		/// </summary>
 		/// <returns>sampleRate * bitsPerSample * channelCount / 8</returns>
 		uint32_t ByteRate() const noexcept;
-#ifdef _WIN32
+#if defined(_WIN32)
 		/// <summary>
 		/// Creates and initializes an AudioFormatInfo instance with the provided information.
 		/// </summary>

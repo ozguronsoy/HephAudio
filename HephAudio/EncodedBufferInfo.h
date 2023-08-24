@@ -30,7 +30,7 @@ namespace HephAudio
 			/// <summary>
 			/// Endianness of the encoded data.
 			/// </summary>
-			Endian endian{Endian::Little};
+			HephCommon::Endian endian{ HEPH_SYSTEM_ENDIAN };
 		};
 	}
 }

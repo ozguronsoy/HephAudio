@@ -3,6 +3,7 @@
 #include "AudioCodecManager.h"
 #include "AudioProcessor.h"
 
+using namespace HephCommon;
 using namespace HephAudio::Codecs;
 
 #define ASF_HEADER_OBJECT_ID 0x75B22630, 0x668E, 0x11CF, 0xA6D9, 0x00AA, 0x0062CE6C
@@ -16,11 +17,11 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		HephCommon::StringBuffer WmaFormat::Extension() const
+		StringBuffer WmaFormat::Extension() const
 		{
 			return ".wma";
 		}
-		size_t WmaFormat::FileFrameCount(const HephCommon::File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
+		size_t WmaFormat::FileFrameCount(const File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
 		{
 			uint64_t objectSize;
 			pAudioFile->SetOffset(30);
@@ -29,7 +30,7 @@ namespace HephAudio
 				pAudioFile->Read(&objectSize, 8, Endian::Little);
 				if (pAudioFile->GetOffset() + objectSize >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WmaFormat::FileFrameCount", "Failed to read the file. File might be corrupted."))
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::FileFrameCount", "Failed to read the file. File might be corrupted."))
 				}
 				pAudioFile->IncreaseOffset(objectSize - 24);
 			}
@@ -46,7 +47,7 @@ namespace HephAudio
 
 			return (playDuration_s - preroll_ms * 1e-3) * audioFormatInfo.sampleRate;
 		}
-		AudioFormatInfo WmaFormat::ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const
+		AudioFormatInfo WmaFormat::ReadAudioFormatInfo(const File* pAudioFile) const
 		{
 			AudioFormatInfo formatInfo;
 			uint64_t objectSize, headerObjectSize;
@@ -55,7 +56,7 @@ namespace HephAudio
 
 			if (!this->CheckGuid(pAudioFile, ASF_HEADER_OBJECT_ID))
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_not_implemented, "WmaFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."))
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "WmaFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."))
 			}
 			pAudioFile->Read(&headerObjectSize, 8, Endian::Little);
 			pAudioFile->IncreaseOffset(6); // skip the header count and the reserved bytes
@@ -65,7 +66,7 @@ namespace HephAudio
 				pAudioFile->Read(&objectSize, 8, Endian::Little);
 				if (pAudioFile->GetOffset() + objectSize >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WmaFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."))
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."))
 				}
 				pAudioFile->IncreaseOffset(objectSize - 24);
 			}
@@ -73,7 +74,7 @@ namespace HephAudio
 			pAudioFile->IncreaseOffset(8); // skip the object size (QWORD)
 			if (!this->CheckGuid(pAudioFile, ASF_AUDIO_MEDIA_OBJECT_ID))
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WmaFormat::ReadAudioFormatInfo", "Unsupported media type."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadAudioFormatInfo", "Unsupported media type."));
 			}
 			pAudioFile->IncreaseOffset(24); // skip the error correction type (GUID) and the time offset (QWORD)
 
@@ -91,19 +92,19 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer WmaFormat::ReadFile(const HephCommon::File* pAudioFile) const
+		AudioBuffer WmaFormat::ReadFile(const File* pAudioFile) const
 		{
 			const AudioFormatInfo formatInfo = this->ReadAudioFormatInfo(pAudioFile);
 
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(formatInfo.formatTag);
 			if (pAudioCodec == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WmaFormat::ReadFile", "Unsupported audio codec."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadFile", "Unsupported audio codec."));
 			}
 
 			if (!this->CheckGuid(pAudioFile, ASF_DATA_OBJECT_ID))
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WmaFormat::ReadFile", "Failed to read the file. File might be corrupted."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadFile", "Failed to read the file. File might be corrupted."));
 			}
 
 			uint64_t dataObjectSize, totalDataPackets;
@@ -117,7 +118,7 @@ namespace HephAudio
 			encodedBufferInfo.pBuffer = malloc(dataObjectSize - 50);
 			if (encodedBufferInfo.pBuffer == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "WmaFormat::ReadFile", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "WmaFormat::ReadFile", "Insufficient memory."));
 			}
 			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, 1, dataObjectSize);
 
@@ -132,15 +133,15 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		AudioBuffer WmaFormat::ReadFile(const HephCommon::File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer WmaFormat::ReadFile(const File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_not_implemented, "WmaFormat::ReadFile", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "WmaFormat::ReadFile", "Not implemented."));
 		}
-		bool WmaFormat::SaveToFile(HephCommon::StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
+		bool WmaFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_not_implemented, "WmaFormat::SaveToFile", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "WmaFormat::SaveToFile", "Not implemented."));
 		}
-		bool WmaFormat::CheckGuid(const HephCommon::File* pAudioFile, uint32_t d0, uint16_t d1, uint16_t d2, uint16_t d3, uint16_t d4, uint32_t d5)
+		bool WmaFormat::CheckGuid(const File* pAudioFile, uint32_t d0, uint16_t d1, uint16_t d2, uint16_t d3, uint16_t d4, uint32_t d5)
 		{
 			bool result = true;
 			uint32_t data32;

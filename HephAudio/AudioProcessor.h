@@ -30,8 +30,8 @@ namespace HephAudio
 		static void Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers);
 		static std::vector<HephCommon::FloatBuffer> SplitChannels(const AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(const std::vector<HephCommon::FloatBuffer>& channels, uint32_t sampleRate);
-		static void ConvertToInnerFormat(AudioBuffer& buffer, Endian endian);
-		static void ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat, Endian endian);
+		static void ConvertToInnerFormat(AudioBuffer& buffer);
+		static void ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat);
 		static void ChangeEndian(AudioBuffer& buffer);
 #pragma endregion
 #pragma region Sound Effects

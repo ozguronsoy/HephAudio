@@ -3,6 +3,7 @@
 #include "AudioCodecManager.h"
 #include "AudioProcessor.h"
 
+using namespace HephCommon;
 using namespace HephAudio::Codecs;
 
 constexpr uint32_t riffID = 0x52494646; // "RIFF"
@@ -10,15 +11,16 @@ constexpr uint32_t waveID = 0x057415645; // "WAVE"
 constexpr uint32_t fmtID = 0x666D7420; // "fmt "
 constexpr uint32_t dataID = 0x64617461; // "data"
 
+
 namespace HephAudio
 {
 	namespace FileFormats
 	{
-		HephCommon::StringBuffer WavFormat::Extension() const
+		StringBuffer WavFormat::Extension() const
 		{
 			return ".wav .wave";
 		}
-		size_t WavFormat::FileFrameCount(const HephCommon::File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
+		size_t WavFormat::FileFrameCount(const File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
 		{
 			uint32_t data32 = 0;
 
@@ -29,7 +31,7 @@ namespace HephAudio
 				pAudioFile->Read(&data32, 4, Endian::Little);
 				if (pAudioFile->GetOffset() + data32 >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::FileFrameCount", "Failed to read the file. File might be corrupted."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::FileFrameCount", "Failed to read the file. File might be corrupted."));
 				}
 
 				pAudioFile->IncreaseOffset(data32);
@@ -39,7 +41,7 @@ namespace HephAudio
 
 			return data32 / audioFormatInfo.FrameSize();
 		}
-		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const
+		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const File* pAudioFile) const
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32, chunkSize;
@@ -49,14 +51,14 @@ namespace HephAudio
 			pAudioFile->Read(&data32, 4, Endian::Big);
 			if (data32 != riffID)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 			}
 
 			pAudioFile->IncreaseOffset(4);
 			pAudioFile->Read(&data32, 4, Endian::Big);
 			if (data32 != waveID)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 			}
 
 			pAudioFile->Read(&data32, 4, Endian::Big);
@@ -65,7 +67,7 @@ namespace HephAudio
 				pAudioFile->Read(&chunkSize, 4, Endian::Little);
 				if (pAudioFile->GetOffset() + chunkSize >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 				}
 
 				pAudioFile->IncreaseOffset(chunkSize);
@@ -95,7 +97,7 @@ namespace HephAudio
 				pAudioFile->Read(&chunkSize, 4, Endian::Little);
 				if (pAudioFile->GetOffset() + chunkSize >= pAudioFile->FileSize())
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 				}
 
 				pAudioFile->IncreaseOffset(chunkSize);
@@ -104,14 +106,14 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer WavFormat::ReadFile(const HephCommon::File* pAudioFile) const
+		AudioBuffer WavFormat::ReadFile(const File* pAudioFile) const
 		{
 			const AudioFormatInfo wavFormatInfo = this->ReadAudioFormatInfo(pAudioFile);
 
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(wavFormatInfo.formatTag);
 			if (pAudioCodec == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::ReadFile", "Unsupported audio codec."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::ReadFile", "Unsupported audio codec."));
 			}
 
 			uint32_t wavAudioDataSize;
@@ -123,7 +125,7 @@ namespace HephAudio
 			encodedBufferInfo.pBuffer = malloc(wavAudioDataSize);
 			if (encodedBufferInfo.pBuffer == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "WavFormat::ReadFile", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "WavFormat::ReadFile", "Insufficient memory."));
 			}
 			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, bytesPerSample, wavAudioDataSize / bytesPerSample);
 
@@ -138,7 +140,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		AudioBuffer WavFormat::ReadFile(const HephCommon::File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer WavFormat::ReadFile(const File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
 		{
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t wavAudioDataSize = frameCount * audioFormatInfo.FrameSize();
@@ -153,7 +155,7 @@ namespace HephAudio
 
 			if (frameIndex > totalFrameCount)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "WavFormat::ReadFile", "Frame index out of bounds."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WavFormat::ReadFile", "Frame index out of bounds."));
 				return AudioBuffer();
 			}
 			pAudioFile->IncreaseOffset(frameIndex * audioFormatInfo.FrameSize());
@@ -171,7 +173,7 @@ namespace HephAudio
 			encodedBufferInfo.pBuffer = malloc(wavAudioDataSize);
 			if (encodedBufferInfo.pBuffer == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "WavFormat::ReadFile", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "WavFormat::ReadFile", "Insufficient memory."));
 			}
 			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, bytesPerSample, wavAudioDataSize / bytesPerSample);
 
@@ -186,11 +188,11 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		bool WavFormat::SaveToFile(HephCommon::StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
+		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			try
 			{
-				const HephCommon::File audioFile(filePath, overwrite ? HephCommon::FileOpenMode::WriteOverride : HephCommon::FileOpenMode::Write);
+				const File audioFile(filePath, overwrite ? FileOpenMode::WriteOverride : FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint16_t data16;
 				uint32_t data32;
@@ -216,14 +218,14 @@ namespace HephAudio
 				data32 = buffer.Size();
 				audioFile.Write(&data32, 4, Endian::Little);
 
-				if (HephCommon::File::GetSystemEndian() == Endian::Big)
+				if (bufferFormatInfo.endian == Endian::Big)
 				{
 					AudioProcessor::ChangeEndian(buffer);
 				}
 
 				audioFile.WriteToBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.Size() / (bufferFormatInfo.bitsPerSample / 8));
 			}
-			catch (HephCommon::HephException)
+			catch (HephException)
 			{
 				return false;
 			}

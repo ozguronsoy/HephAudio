@@ -1,4 +1,5 @@
 #pragma once
+#include <cinttypes>
 
 #if !defined(CPP_VERSION)
 
@@ -26,7 +27,6 @@
 #if (!defined(_MSC_VER) || defined(__INTEL_COMPILER))
 
 #include <cstring>
-#include <cinttypes>
 
 #endif
 
@@ -55,8 +55,20 @@ typedef float heph_float;
 #endif
 
 
-enum class Endian : unsigned char
+namespace HephCommon
 {
-	Little = 0,
-	Big = 1
-};
+#if !defined(HEPH_ENDIAN)
+	enum class Endian : uint8_t
+	{
+		Little = 0x00,
+		Big = 0x01,
+		Unknown = 0xFF
+	};
+	extern Endian systemEndian;
+	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
+	constexpr inline Endian operator!(const Endian& lhs) { return lhs == Endian::Unknown ? Endian::Unknown : (lhs == Endian::Big ? Endian::Little : Endian::Big); }
+#define HEPH_ENDIAN HephCommon::Endian
+#define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian
+#define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)
+#endif
+}

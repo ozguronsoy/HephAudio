@@ -1,13 +1,15 @@
 #include "WavFileMetadataReader.h"
 #include "HephException.h"
 
+using namespace HephCommon;
+
 namespace HephAudio
 {
 	namespace FileFormats
 	{
 		namespace MetadataReaders
 		{
-			void WavFileMetadataReader::Read(const HephCommon::File* pFile, WavFmtChunk* pFmtChunk, WavFactChunk* pFactChunk)
+			void WavFileMetadataReader::Read(const File* pFile, WavFmtChunk* pFmtChunk, WavFactChunk* pFactChunk)
 			{
 				pFile->SetOffset(16);
 
