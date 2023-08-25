@@ -34,7 +34,7 @@ namespace HephAudio
 	class AudioBuffer final
 	{
 		friend class AudioProcessor;
-		friend class RealTimeAudioBuffer;
+		friend class AudioStream;
 	private:
 		AudioFormatInfo formatInfo;
 		size_t frameCount;

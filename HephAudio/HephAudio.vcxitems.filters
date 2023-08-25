@@ -28,9 +28,6 @@
     <Filter Include="Source Files\Buffers">
       <UniqueIdentifier>{230b06ca-9ac1-4a9e-9a14-5541193c2745}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Buffers">
-      <UniqueIdentifier>{4df69e4e-064b-41d4-abfc-05786bf33ed0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Events">
       <UniqueIdentifier>{242ac56b-00c4-4282-ba24-06be01d4bd40}</UniqueIdentifier>
     </Filter>
@@ -126,9 +123,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioBase.h">
       <Filter>Header Files\NativeAudio</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
-      <Filter>Header Files\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h">
       <Filter>Header Files\Events\Results</Filter>
     </ClInclude>
@@ -186,9 +180,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)RealTimeAudioBuffer.h">
-      <Filter>Header Files\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h">
       <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
@@ -200,6 +191,12 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AppleAudio.h">
       <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,9 +251,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioBase.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
-      <Filter>Source Files\Buffers</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
@@ -305,9 +299,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)RealTimeAudioBuffer.cpp">
-      <Filter>Source Files\Buffers</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp">
       <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
@@ -319,6 +310,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AppleAudio.cpp">
       <Filter>Source Files\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioStream.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

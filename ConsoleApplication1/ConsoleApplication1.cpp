@@ -9,7 +9,7 @@
 #include <shlobj.h>
 #include "AudioFileFormatManager.h"
 #include "AudioCodecManager.h"
-#include <RealTimeAudioBuffer.h>
+#include <AudioStream.h>
 #include <WavFileMetadataReader.h>
 
 #define CAPTURE_FORMAT AudioFormatInfo(1, 2, 32, 48e3)

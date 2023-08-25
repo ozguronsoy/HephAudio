@@ -9,10 +9,13 @@
 
 namespace HephAudio
 {
-	class RealTimeAudioBuffer final
+	/// <summary>
+	/// Reads the audio data from the file just before rendering.
+	/// </summary>
+	class AudioStream final
 	{
 	private:
-		static std::vector<RealTimeAudioBuffer*> buffers;
+		static std::vector<AudioStream*> streams;
 	private:
 		Native::NativeAudio* pNativeAudio;
 		HephCommon::File* pFile;
@@ -21,22 +24,27 @@ namespace HephAudio
 		AudioFormatInfo formatInfo;
 		std::shared_ptr<AudioObject> pao;
 	public:
-		RealTimeAudioBuffer(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
-		RealTimeAudioBuffer(const RealTimeAudioBuffer&) = delete;
-		RealTimeAudioBuffer(RealTimeAudioBuffer&& rhs) noexcept;
-		~RealTimeAudioBuffer();
-		RealTimeAudioBuffer& operator=(const RealTimeAudioBuffer&) = delete;
-		RealTimeAudioBuffer& operator=(RealTimeAudioBuffer&& rhs) noexcept;
+		/// <summary>
+		/// Creates and initalizes an AudioStream instance.
+		/// </summary>
+		/// <param name="pNativeAudio">Pointer to the used NativeAudio instance for rendering.</param>
+		/// <param name="filePath">Path of the audio file.</param>
+		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
+		AudioStream(const AudioStream&) = delete;
+		AudioStream(AudioStream&& rhs) noexcept;
+		~AudioStream();
+		AudioStream& operator=(const AudioStream&) = delete;
+		AudioStream& operator=(AudioStream&& rhs) noexcept;
 		HephCommon::File* GetFile() const noexcept;
 		FileFormats::IAudioFileFormat* GetFileFormat() const noexcept;
 		Codecs::IAudioCodec* GetAudioCodec() const noexcept;
 		std::shared_ptr<AudioObject> GetAudioObject() const noexcept;
 		const AudioFormatInfo& GetAudioFormatInfo() const noexcept;
 		void Release() noexcept;
-		void Release(bool destroyAO) noexcept;
 	private:
-		static void RemoveFromVector(RealTimeAudioBuffer* pRtab) noexcept;
-		static RealTimeAudioBuffer* FindRTAB(const AudioObject* pAudioObject);
+		void Release(bool destroyAO) noexcept;
+		static void RemoveStream(AudioStream* pStream) noexcept;
+		static AudioStream* FindStream(const AudioObject* pAudioObject);
 		static void OnRender(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
 		static void OnFinishedPlaying(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
 	};
