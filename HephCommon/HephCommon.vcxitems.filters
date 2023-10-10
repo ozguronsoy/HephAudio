@@ -18,6 +18,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\ColorBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\HephMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Guid.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\BitStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\StreamStatus.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\JsonStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\CsvStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\XmlStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\StreamHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ConsoleLogger.cpp" />
@@ -29,5 +35,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\Event.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ComplexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\HephCommonFramework.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\BitStream.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\JsonStream.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\CsvStream.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\XmlStream.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\StreamHelpers.cpp" />
   </ItemGroup>
 </Project>

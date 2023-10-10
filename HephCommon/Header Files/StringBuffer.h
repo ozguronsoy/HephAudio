@@ -154,6 +154,7 @@ namespace HephCommon
 		StringBuffer& Reverse();
 		StringBuffer& ToLower();
 		StringBuffer& ToUpper();
+		bool IsNumber() const;
 		void* Begin() const noexcept;
 		void* End() const;
 	public:

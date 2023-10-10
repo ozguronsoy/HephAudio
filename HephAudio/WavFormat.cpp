@@ -192,7 +192,7 @@ namespace HephAudio
 		{
 			try
 			{
-				const File audioFile(filePath, overwrite ? FileOpenMode::WriteOverride : FileOpenMode::Write);
+				const File audioFile(filePath, overwrite ? FileOpenMode::Overwrite : FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint16_t data16;
 				uint32_t data32;
@@ -223,7 +223,7 @@ namespace HephAudio
 					AudioProcessor::ChangeEndian(buffer);
 				}
 
-				audioFile.WriteToBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.Size() / (bufferFormatInfo.bitsPerSample / 8));
+				audioFile.WriteFromBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.Size() / (bufferFormatInfo.bitsPerSample / 8));
 			}
 			catch (HephException)
 			{

@@ -9,6 +9,7 @@
 
 namespace HephCommon
 {
+#pragma region CharAccessor
 	StringBuffer::CharAccessor::CharAccessor(const StringBuffer* pParent, size_t index, size_t charSize) : pParent(pParent), index(index), charSize(charSize) {}
 	StringBuffer::CharAccessor::operator char() const
 	{
@@ -77,6 +78,8 @@ namespace HephCommon
 	{
 		return !this->pParent->CompareContent(wc);
 	}
+#pragma endregion
+#pragma region StringBuffer
 	StringBuffer::StringBuffer(size_t size, size_t charSize)
 		: charSize(charSize), size(size)
 	{
@@ -1676,13 +1679,61 @@ namespace HephCommon
 		}
 		return *this;
 	}
+	bool StringBuffer::IsNumber() const
+	{
+		if (this->size == 0)
+		{
+			return false;
+		}
+
+		bool hasDecimalPoint = false; // if the string contains more than one ".", return false
+
+		if (this->charSize == sizeof(char))
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				if (!isdigit(this->pData[i]) && this->pData[i] != '.')
+				{
+					return false;
+				}
+				else if (this->pData[i] == '.')
+				{
+					if (hasDecimalPoint)
+					{
+						return false;
+					}
+					hasDecimalPoint = true;
+				}
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				if (!iswdigit(((wchar_t*)this->pData)[i]) && ((wchar_t*)this->pData)[i] != L'.')
+				{
+					return false;
+				}
+				else if (((wchar_t*)this->pData)[i] == L'.')
+				{
+					if (hasDecimalPoint)
+					{
+						return false;
+					}
+					hasDecimalPoint = true;
+				}
+			}
+		}
+
+		return true;
+	}
 	void* StringBuffer::Begin() const noexcept
 	{
 		return this->pData;
 	}
 	void* StringBuffer::End() const
 	{
-		return this->pData + this->ByteSize() + this->charSize;
+		return this->pData + this->ByteSize();
 	}
 	StringBuffer StringBuffer::ToString(int16_t value)
 	{
@@ -2016,6 +2067,7 @@ namespace HephCommon
 		}
 		return StringBuffer::Join(separator.wc_str(), strings);
 	}
+#pragma endregion
 }
 HephCommon::StringBuffer operator+(const char& lhs, const HephCommon::StringBuffer& rhs)
 {

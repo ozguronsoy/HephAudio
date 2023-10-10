@@ -25,9 +25,6 @@
     <Filter Include="Header Files\NativeAudio">
       <UniqueIdentifier>{28bbd6b8-db48-4d3f-b928-cdc7c7e87297}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Buffers">
-      <UniqueIdentifier>{230b06ca-9ac1-4a9e-9a14-5541193c2745}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Events">
       <UniqueIdentifier>{242ac56b-00c4-4282-ba24-06be01d4bd40}</UniqueIdentifier>
     </Filter>
@@ -198,6 +195,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MpegFormat.h">
+      <Filter>Header Files\AudioFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -316,6 +316,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioStream.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MpegFormat.cpp">
+      <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

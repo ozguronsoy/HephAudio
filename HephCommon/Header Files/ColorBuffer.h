@@ -5,6 +5,7 @@
 namespace HephCommon
 {
 	class ColorBuffer;
+	class RgbBuffer;
 	class HslBuffer;
 	class HsvBuffer;
 	class CmykBuffer;
@@ -202,6 +203,22 @@ namespace HephCommon
 		ColorBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
 		ColorBuffer(const ColorBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		ColorBuffer(ColorBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
+		explicit operator RgbBuffer() const;
+		explicit operator HslBuffer() const;
+		explicit operator HsvBuffer() const;
+		explicit operator CmykBuffer() const;
+	};
+
+	class RgbBuffer final : public ColorBufferBase<RGB>
+	{
+	private:
+		using ColorType = RGB;
+	public:
+		RgbBuffer() : ColorBufferBase<ColorType>() {}
+		RgbBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
+		RgbBuffer(const RgbBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
+		RgbBuffer(RgbBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
+		explicit operator ColorBuffer() const;
 		explicit operator HslBuffer() const;
 		explicit operator HsvBuffer() const;
 		explicit operator CmykBuffer() const;
@@ -217,6 +234,7 @@ namespace HephCommon
 		HslBuffer(const HslBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		HslBuffer(HslBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;
+		explicit operator RgbBuffer() const;
 		explicit operator HsvBuffer() const;
 		explicit operator CmykBuffer() const;
 	};
@@ -231,6 +249,7 @@ namespace HephCommon
 		HsvBuffer(const HsvBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		HsvBuffer(HsvBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;
+		explicit operator RgbBuffer() const;
 		explicit operator HslBuffer() const;
 		explicit operator CmykBuffer() const;
 	};
@@ -245,10 +264,20 @@ namespace HephCommon
 		CmykBuffer(const CmykBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		CmykBuffer(CmykBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;
+		explicit operator RgbBuffer() const;
 		explicit operator HslBuffer() const;
 		explicit operator HsvBuffer() const;
 	};
 
+	ColorBuffer::operator RgbBuffer() const
+	{
+		RgbBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
 	ColorBuffer::operator HslBuffer() const
 	{
 		HslBuffer resultBuffer(this->frameCount);
@@ -277,9 +306,55 @@ namespace HephCommon
 		return resultBuffer;
 	}
 
+	RgbBuffer::operator ColorBuffer() const 
+	{
+		ColorBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
+	RgbBuffer::operator HslBuffer() const
+	{
+		HslBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
+	RgbBuffer::operator HsvBuffer() const
+	{
+		HsvBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
+	RgbBuffer::operator CmykBuffer() const
+	{
+		CmykBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
+
 	HslBuffer::operator ColorBuffer() const
 	{
 		ColorBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
+	HslBuffer::operator RgbBuffer() const
+	{
+		RgbBuffer resultBuffer(this->frameCount);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			resultBuffer[i] = (*this)[i];
@@ -314,6 +389,15 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
+	HsvBuffer::operator RgbBuffer() const
+	{
+		RgbBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
 	HsvBuffer::operator HslBuffer() const
 	{
 		HslBuffer resultBuffer(this->frameCount);
@@ -336,6 +420,15 @@ namespace HephCommon
 	CmykBuffer::operator ColorBuffer() const
 	{
 		ColorBuffer resultBuffer(this->frameCount);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i];
+		}
+		return resultBuffer;
+	}
+	CmykBuffer::operator RgbBuffer() const
+	{
+		RgbBuffer resultBuffer(this->frameCount);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			resultBuffer[i] = (*this)[i];

@@ -2,6 +2,7 @@
 #include "WavFormat.h"
 #include "AiffFormat.h"
 #include "WmaFormat.h"
+#include "MpegFormat.h"
 
 namespace HephAudio
 {
@@ -10,7 +11,8 @@ namespace HephAudio
 		std::vector<IAudioFileFormat*> formats = {
 					new WavFormat(),
 					new AiffFormat(),
-					new WmaFormat()
+					new WmaFormat(),
+					new MpegFormat()
 		};
 
 		bool AudioFileFormatManager::CompareExtensions(HephCommon::StringBuffer lhs, HephCommon::StringBuffer rhs)

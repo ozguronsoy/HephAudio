@@ -9,7 +9,7 @@ namespace HephCommon
 	File::File(StringBuffer filePath, FileOpenMode openMode)
 		: pFile(nullptr), fileSize(0), filePath(filePath)
 	{
-		this->OpenFile(openMode);
+		this->Open(openMode);
 		if (this->pFile == nullptr)
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, L"File::File", L"An error occurred whilst opening the file."));
@@ -21,11 +21,42 @@ namespace HephCommon
 	}
 	File::~File()
 	{
+		this->Close();
+	}
+	void File::Open(StringBuffer filePath, FileOpenMode openMode)
+	{
+		if (this->pFile == nullptr)
+		{
+			this->filePath = filePath;
+			this->Open(openMode);
+			if (this->pFile == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, L"File::File", L"An error occurred whilst opening the file."));
+			}
+
+			fseek(this->pFile, 0, SEEK_END);
+			this->fileSize = ftell(this->pFile);
+			fseek(this->pFile, 0, SEEK_SET);
+		}
+	}
+	void File::Close()
+	{
 		if (this->pFile != nullptr)
 		{
 			fclose(this->pFile);
 			this->pFile = nullptr;
 		}
+	}
+	void File::Flush()
+	{
+		if (this->pFile != nullptr)
+		{
+			fflush(this->pFile);
+		}
+	}
+	bool File::IsOpen() const noexcept
+	{
+		return this->pFile != nullptr;
 	}
 	uint64_t File::FileSize() const noexcept
 	{
@@ -86,11 +117,11 @@ namespace HephCommon
 		}
 		fwrite(pTemp, dataSize, 1, this->pFile);
 	}
-	void File::WriteToBuffer(const void* pData, uint8_t elementSize, uint32_t elementCount) const
+	void File::WriteFromBuffer(const void* pData, uint8_t elementSize, uint32_t elementCount) const
 	{
 		fwrite(pData, elementSize, elementCount, this->pFile);
 	}
-	void File::OpenFile(FileOpenMode openMode)
+	void File::Open(FileOpenMode openMode)
 	{
 		StringBuffer strOpenMode = "";
 		switch (openMode)
@@ -101,8 +132,20 @@ namespace HephCommon
 		case FileOpenMode::Write:
 			strOpenMode = "wbx";
 			break;
-		case FileOpenMode::WriteOverride:
+		case FileOpenMode::Append:
+			strOpenMode = "ab";
+			break;
+		case FileOpenMode::Overwrite:
 			strOpenMode = "wb";
+			break;
+		case (FileOpenMode::Read | FileOpenMode::Write):
+			strOpenMode = "rb+";
+			break;
+		case (FileOpenMode::Read | FileOpenMode::Append):
+			strOpenMode = "ab+";
+			break;
+		case (FileOpenMode::Read | FileOpenMode::Overwrite):
+			strOpenMode = "wb+";
 			break;
 		default:
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "File::File", "Invalid mode."));
@@ -111,8 +154,13 @@ namespace HephCommon
 	}
 	bool File::FileExists(StringBuffer filePath)
 	{
-		const File audioFile(filePath, FileOpenMode::Read);
-		return audioFile.pFile != nullptr;
+		FILE* pFile = fopen(filePath.fc_str(), "rb");
+		if (pFile != nullptr)
+		{
+			fclose(pFile);
+			return true;
+		}
+		return false;
 	}
 	StringBuffer File::GetFileName(StringBuffer filePath)
 	{
