@@ -73,99 +73,106 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer MpegFormat::Extension() const
+		StringBuffer MpegFormat::Extensions() const
 		{
 			return ".mpa .mp2 .mp3";
 		}
-		size_t MpegFormat::FileFrameCount(const HephCommon::File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
+		bool MpegFormat::CheckSignature(const File& audioFile) const
+		{
+			uint32_t data32 = 0;
+			audioFile.SetOffset(0);
+			audioFile.Read(&data32, 3, Endian::Big);
+			return data32 == ID3 || MPEG_SYNC_FRAME(data32);
+		}
+		size_t MpegFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo) const
 		{
 			size_t frameCount = 0;
-			uint32_t frameHeader;
+			uint32_t frameHeader = 0;
 
-			pAudioFile->SetOffset(0);
-			SkipID3Tag(pAudioFile);
-			SkipVBRInfoFrame(pAudioFile);
+			audioFile.SetOffset(0);
+			SkipID3Tag(audioFile);
+			SkipVBRInfoFrame(audioFile);
 
-			pAudioFile->Read(&frameHeader, 4, Endian::Big);
+			audioFile.Read(&frameHeader, 4, Endian::Big);
 			while (MPEG_SYNC_FRAME(frameHeader))
 			{
 
-				const uint64_t frameSize = MPEG_FRAME_LENGTH(MPEG_FRAME_SIZE(frameHeader), GetBitrate(pAudioFile, frameHeader), GetSampleRate(pAudioFile, frameHeader), MPEG_PADDING_BIT(frameHeader));
-				const uint64_t frameEnd = pAudioFile->GetOffset() + frameSize - 4ull;
+				const uint64_t frameSize = MPEG_FRAME_LENGTH(MPEG_FRAME_SIZE(frameHeader), GetBitrate(audioFile, frameHeader), GetSampleRate(audioFile, frameHeader), MPEG_PADDING_BIT(frameHeader));
+				const uint64_t frameEnd = audioFile.GetOffset() + frameSize - 4ull;
 
 				frameCount += MPEG_FRAME_SIZE(frameHeader);
 
-				pAudioFile->SetOffset(frameEnd);
-				pAudioFile->Read(&frameHeader, 4, Endian::Big);
+				audioFile.SetOffset(frameEnd);
+				audioFile.Read(&frameHeader, 4, Endian::Big);
 			}
 
 			return frameCount;
 		}
-		AudioFormatInfo MpegFormat::ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const
+		AudioFormatInfo MpegFormat::ReadAudioFormatInfo(const File& audioFile) const
 		{
 			AudioFormatInfo formatInfo;
-			uint32_t data32;
+			uint32_t data32 = 0;
 
-			SkipID3Tag(pAudioFile);
+			SkipID3Tag(audioFile);
 
-			pAudioFile->Read(&data32, 4, Endian::Big);
+			audioFile.Read(&data32, 4, Endian::Big);
 			if (!MPEG_SYNC_FRAME(data32))
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "MpegFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 			}
 
 			formatInfo.formatTag = WAVE_FORMAT_MPEG;
-			formatInfo.sampleRate = GetSampleRate(pAudioFile, data32);
+			formatInfo.sampleRate = GetSampleRate(audioFile, data32);
 			formatInfo.channelCount = MPEG_CHANNEL_MODE(data32) == MPEG_CHANNEL_MODE_SINGLE_CHANNEL ? 1 : 2;
 
 			return formatInfo;
 		}
-		AudioBuffer MpegFormat::ReadFile(const HephCommon::File* pAudioFile) const
+		AudioBuffer MpegFormat::ReadFile(const File& audioFile) const
 		{
-			uint32_t data32, frameHeader;
+			uint32_t data32 = 0, frameHeader = 0;
 			MpegFormat::SideInformation sideInfo;
-			const AudioFormatInfo mpegFormatInfo = ReadAudioFormatInfo(pAudioFile);
+			const AudioFormatInfo mpegFormatInfo = ReadAudioFormatInfo(audioFile);
 			AudioFormatInfo frameFormatInfo;
 			frameFormatInfo.formatTag = WAVE_FORMAT_MPEG;
 			
-			pAudioFile->SetOffset(0);
-			SkipID3Tag(pAudioFile);
-			SkipVBRInfoFrame(pAudioFile);
+			audioFile.SetOffset(0);
+			SkipID3Tag(audioFile);
+			SkipVBRInfoFrame(audioFile);
 
-			pAudioFile->Read(&frameHeader, 4, Endian::Big);
+			audioFile.Read(&frameHeader, 4, Endian::Big);
 			while (MPEG_SYNC_FRAME(frameHeader))
 			{
-				const uint32_t bitrate = GetBitrate(pAudioFile, frameHeader);
-				frameFormatInfo.sampleRate = GetSampleRate(pAudioFile, frameHeader);
+				const uint32_t bitrate = GetBitrate(audioFile, frameHeader);
+				frameFormatInfo.sampleRate = GetSampleRate(audioFile, frameHeader);
 				frameFormatInfo.channelCount = MPEG_CHANNEL_MODE(frameHeader) == MPEG_CHANNEL_MODE_SINGLE_CHANNEL ? 1 : 2;
 				const uint64_t frameSize = MPEG_FRAME_LENGTH(MPEG_FRAME_SIZE(frameHeader), bitrate, frameFormatInfo.sampleRate, MPEG_PADDING_BIT(frameHeader));
-				const uint64_t frameEnd = pAudioFile->GetOffset() + frameSize - 4ull;
+				const uint64_t frameEnd = audioFile.GetOffset() + frameSize - 4ull;
 
 				if (!MPEG_PROTECTION_BIT(frameHeader)) // skip the CRC bits
 				{
-					pAudioFile->IncreaseOffset(2);
+					audioFile.IncreaseOffset(2);
 				}
 
 				const uint32_t sideInfoSize = MPEG_SIDE_INFO_SIZE(frameHeader);
 				const uint32_t mainDataSize = frameSize - sideInfoSize - 4ull - ((!MPEG_PROTECTION_BIT(frameHeader)) * 2ull);
 
-				pAudioFile->Read(&data32, 4, Endian::Big);
-				const uint64_t mainDataBegin = pAudioFile->GetOffset() + MPEG_SIDE_INFO_MAIN_DATA_BEGIN(data32);
-				pAudioFile->DecreaseOffset(4);
+				audioFile.Read(&data32, 4, Endian::Big);
+				const uint64_t mainDataBegin = audioFile.GetOffset() + MPEG_SIDE_INFO_MAIN_DATA_BEGIN(data32);
+				audioFile.DecreaseOffset(4);
 
 				memset(&sideInfo, 0, sizeof(MpegFormat::SideInformation));
-				ReadSideInfo(pAudioFile, sideInfo, frameFormatInfo, frameHeader);
-				pAudioFile->SetOffset(mainDataBegin);
+				ReadSideInfo(audioFile, sideInfo, frameFormatInfo, frameHeader);
+				audioFile.SetOffset(mainDataBegin);
 
 				// TODO: decode main data
 
-				pAudioFile->SetOffset(frameEnd);
-				pAudioFile->Read(&frameHeader, 4, Endian::Big);
+				audioFile.SetOffset(frameEnd);
+				audioFile.Read(&frameHeader, 4, Endian::Big);
 			}
 
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "MpegFormat::ReadFile", "Not implemented"));
 		}
-		AudioBuffer MpegFormat::ReadFile(const HephCommon::File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer MpegFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "MpegFormat::ReadFile", "Not implemented"));
 		}
@@ -173,29 +180,29 @@ namespace HephAudio
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "MpegFormat::SaveToFile", "Not implemented"));
 		}
-		void MpegFormat::SkipID3Tag(const HephCommon::File* pAudioFile) const
+		void MpegFormat::SkipID3Tag(const File& audioFile) const
 		{
-			uint8_t id3Flags;
-			uint32_t data32 = 0, tagSize_byte;
+			uint8_t id3Flags = 0;
+			uint32_t data32 = 0, tagSize_byte = 0;
 
-			pAudioFile->SetOffset(0);
+			audioFile.SetOffset(0);
 
-			pAudioFile->Read(&data32, 3, Endian::Big);
+			audioFile.Read(&data32, 3, Endian::Big);
 			if (data32 != ID3)
 			{
-				pAudioFile->SetOffset(0);
-				pAudioFile->Read(&data32, 4, Endian::Big);
+				audioFile.SetOffset(0);
+				audioFile.Read(&data32, 4, Endian::Big);
 				if (!MPEG_SYNC_FRAME(data32))
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "MpegFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."));
 				}
-				pAudioFile->SetOffset(0);
+				audioFile.SetOffset(0);
 				return;
 			}
-			pAudioFile->IncreaseOffset(2);
-			pAudioFile->Read(&id3Flags, 1, Endian::Big);
+			audioFile.IncreaseOffset(2);
+			audioFile.Read(&id3Flags, 1, Endian::Big);
 
-			pAudioFile->Read(&tagSize_byte, 4, Endian::Big);
+			audioFile.Read(&tagSize_byte, 4, Endian::Big);
 			Unsynchsafe(tagSize_byte);
 
 			if ((id3Flags & 0x10) == 0x10) // footer size is excluded in the tag size.
@@ -203,14 +210,14 @@ namespace HephAudio
 				tagSize_byte += 10;
 			}
 
-			pAudioFile->SetOffset(tagSize_byte + 10); // tag size + the ID3 header size
+			audioFile.SetOffset(tagSize_byte + 10); // tag size + the ID3 header size
 		}
-		void MpegFormat::SkipVBRInfoFrame(const HephCommon::File* pAudioFile) const
+		void MpegFormat::SkipVBRInfoFrame(const File& audioFile) const
 		{
-			const uint64_t initialOffset = pAudioFile->GetOffset();
-			uint32_t frameHeader, data32;
+			const uint64_t initialOffset = audioFile.GetOffset();
+			uint32_t frameHeader = 0, data32 = 0;
 
-			pAudioFile->Read(&frameHeader, 4, Endian::Big);
+			audioFile.Read(&frameHeader, 4, Endian::Big);
 			if (!MPEG_SYNC_FRAME(frameHeader))
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "MpegFormat", "Failed to read the file. File might be corrupted."));
@@ -220,29 +227,29 @@ namespace HephAudio
 			{
 				if (MPEG_CHANNEL_MODE(frameHeader) == MPEG_CHANNEL_MODE_SINGLE_CHANNEL)
 				{
-					pAudioFile->SetOffset(initialOffset + 21);
+					audioFile.SetOffset(initialOffset + 21);
 				}
 				else
 				{
-					pAudioFile->SetOffset(initialOffset + 36);
+					audioFile.SetOffset(initialOffset + 36);
 				}
 			}
 			else
 			{
 				if (MPEG_CHANNEL_MODE(frameHeader) == MPEG_CHANNEL_MODE_SINGLE_CHANNEL)
 				{
-					pAudioFile->SetOffset(initialOffset + 13);
+					audioFile.SetOffset(initialOffset + 13);
 				}
 				else
 				{
-					pAudioFile->SetOffset(initialOffset + 21);
+					audioFile.SetOffset(initialOffset + 21);
 				}
 			}
 
-			pAudioFile->Read(&data32, 4, Endian::Big);
-			pAudioFile->SetOffset((data32 != xing) ? (initialOffset) : (initialOffset + MPEG_FRAME_LENGTH(MPEG_FRAME_SIZE(frameHeader), GetBitrate(pAudioFile, frameHeader), GetSampleRate(pAudioFile, frameHeader), MPEG_PADDING_BIT(frameHeader))));
+			audioFile.Read(&data32, 4, Endian::Big);
+			audioFile.SetOffset((data32 != xing) ? (initialOffset) : (initialOffset + MPEG_FRAME_LENGTH(MPEG_FRAME_SIZE(frameHeader), GetBitrate(audioFile, frameHeader), GetSampleRate(audioFile, frameHeader), MPEG_PADDING_BIT(frameHeader))));
 		}
-		uint32_t MpegFormat::GetBitrate(const HephCommon::File* pAudioFile, uint32_t frameHeader) const
+		uint32_t MpegFormat::GetBitrate(const File& audioFile, uint32_t frameHeader) const
 		{
 			switch (MPEG_VERSION(frameHeader))
 			{
@@ -484,7 +491,7 @@ namespace HephAudio
 				SWITCH_DEFAULT_ERROR("MpegFormat");
 			}
 		}
-		uint32_t MpegFormat::GetSampleRate(const HephCommon::File* pAudioFile, uint32_t frameHeader) const
+		uint32_t MpegFormat::GetSampleRate(const File& audioFile, uint32_t frameHeader) const
 		{
 			switch (MPEG_VERSION(frameHeader))
 			{
@@ -537,7 +544,7 @@ namespace HephAudio
 				SWITCH_DEFAULT_ERROR("MpegFormat");
 			}
 		}
-		void MpegFormat::ReadSideInfo(const HephCommon::File* pAudioFile, MpegFormat::SideInformation& sideInfo, const AudioFormatInfo& frameFormatInfo, uint32_t frameHeader) const
+		void MpegFormat::ReadSideInfo(const File& audioFile, MpegFormat::SideInformation& sideInfo, const AudioFormatInfo& frameFormatInfo, uint32_t frameHeader) const
 		{
 			uint8_t* sideInfoBuffer = (uint8_t*)malloc(MPEG_SIDE_INFO_SIZE(frameHeader));
 			if (sideInfoBuffer == nullptr)

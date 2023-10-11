@@ -17,84 +17,89 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer WmaFormat::Extension() const
+		StringBuffer WmaFormat::Extensions() const
 		{
 			return ".wma";
 		}
-		size_t WmaFormat::FileFrameCount(const File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const
+		bool WmaFormat::CheckSignature(const File& audioFile) const
 		{
-			uint64_t objectSize;
-			pAudioFile->SetOffset(30);
-			while (!this->CheckGuid(pAudioFile, ASF_FILE_PROPERTIES_OBJECT_ID))
+			audioFile.SetOffset(0);
+			return this->CheckGuid(audioFile, ASF_HEADER_OBJECT_ID);
+		}
+		size_t WmaFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo) const
+		{
+			uint64_t objectSize = 0;
+			audioFile.SetOffset(30);
+			while (!this->CheckGuid(audioFile, ASF_FILE_PROPERTIES_OBJECT_ID))
 			{
-				pAudioFile->Read(&objectSize, 8, Endian::Little);
-				if (pAudioFile->GetOffset() + objectSize >= pAudioFile->FileSize())
+				audioFile.Read(&objectSize, 8, Endian::Little);
+				if (audioFile.GetOffset() + objectSize >= audioFile.FileSize())
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::FileFrameCount", "Failed to read the file. File might be corrupted."))
 				}
-				pAudioFile->IncreaseOffset(objectSize - 24);
+				audioFile.IncreaseOffset(objectSize - 24);
 			}
-			pAudioFile->IncreaseOffset(48);
+			audioFile.IncreaseOffset(48);
 
-			uint64_t playDuration_100ns;
-			pAudioFile->Read(&playDuration_100ns, 8, Endian::Little);
+			uint64_t playDuration_100ns = 0;
+			audioFile.Read(&playDuration_100ns, 8, Endian::Little);
 			double playDuration_s = playDuration_100ns * 1e-7;
 
-			pAudioFile->IncreaseOffset(8);
+			audioFile.IncreaseOffset(8);
 
-			uint64_t preroll_ms;
-			pAudioFile->Read(&preroll_ms, 8, Endian::Little);
+			uint64_t preroll_ms = 0;
+			audioFile.Read(&preroll_ms, 8, Endian::Little);
 
 			return (playDuration_s - preroll_ms * 1e-3) * audioFormatInfo.sampleRate;
 		}
-		AudioFormatInfo WmaFormat::ReadAudioFormatInfo(const File* pAudioFile) const
+		AudioFormatInfo WmaFormat::ReadAudioFormatInfo(const File& audioFile) const
 		{
 			AudioFormatInfo formatInfo;
-			uint64_t objectSize, headerObjectSize;
+			uint64_t objectSize = 0, headerObjectSize = 0;
 
-			pAudioFile->SetOffset(0);
+			audioFile.SetOffset(0);
 
-			if (!this->CheckGuid(pAudioFile, ASF_HEADER_OBJECT_ID))
+			if (!this->CheckGuid(audioFile, ASF_HEADER_OBJECT_ID))
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "WmaFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."))
 			}
-			pAudioFile->Read(&headerObjectSize, 8, Endian::Little);
-			pAudioFile->IncreaseOffset(6); // skip the header count and the reserved bytes
+			audioFile.Read(&headerObjectSize, 8, Endian::Little);
+			audioFile.IncreaseOffset(6); // skip the header count and the reserved bytes
 
-			while (!this->CheckGuid(pAudioFile, ASF_STREAM_PROPERTIES_OBJECT_ID))
+			while (!this->CheckGuid(audioFile, ASF_STREAM_PROPERTIES_OBJECT_ID))
 			{
-				pAudioFile->Read(&objectSize, 8, Endian::Little);
-				if (pAudioFile->GetOffset() + objectSize >= pAudioFile->FileSize())
+				audioFile.Read(&objectSize, 8, Endian::Little);
+				if (audioFile.GetOffset() + objectSize >= audioFile.FileSize())
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadAudioFormatInfo", "Failed to read the file. File might be corrupted."))
 				}
-				pAudioFile->IncreaseOffset(objectSize - 24);
+				audioFile.IncreaseOffset(objectSize - 24);
 			}
 
-			pAudioFile->IncreaseOffset(8); // skip the object size (QWORD)
-			if (!this->CheckGuid(pAudioFile, ASF_AUDIO_MEDIA_OBJECT_ID))
+			audioFile.IncreaseOffset(8); // skip the object size (QWORD)
+			if (!this->CheckGuid(audioFile, ASF_AUDIO_MEDIA_OBJECT_ID))
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadAudioFormatInfo", "Unsupported media type."));
 			}
-			pAudioFile->IncreaseOffset(24); // skip the error correction type (GUID) and the time offset (QWORD)
+			audioFile.IncreaseOffset(24); // skip the error correction type (GUID) and the time offset (QWORD)
 
-			uint32_t typeSpecificDataLength;
-			pAudioFile->Read(&typeSpecificDataLength, 4, Endian::Little);
-			pAudioFile->IncreaseOffset(10); // skip to the type specific data
+			uint32_t typeSpecificDataLength = 0;
+			audioFile.Read(&typeSpecificDataLength, 4, Endian::Little);
+			audioFile.IncreaseOffset(10); // skip to the type specific data
 
-			pAudioFile->Read(&formatInfo.formatTag, 2, Endian::Little);
-			pAudioFile->Read(&formatInfo.channelCount, 2, Endian::Little);
-			pAudioFile->Read(&formatInfo.sampleRate, 4, Endian::Little);
-			pAudioFile->IncreaseOffset(6);
-			pAudioFile->Read(&formatInfo.bitsPerSample, 2, Endian::Little);
+			audioFile.Read(&formatInfo.formatTag, 2, Endian::Little);
+			audioFile.Read(&formatInfo.channelCount, 2, Endian::Little);
+			audioFile.Read(&formatInfo.sampleRate, 4, Endian::Little);
+			audioFile.IncreaseOffset(6);
+			audioFile.Read(&formatInfo.bitsPerSample, 2, Endian::Little);
 
-			pAudioFile->SetOffset(headerObjectSize);
+			audioFile.SetOffset(headerObjectSize);
 
 			return formatInfo;
 		}
-		AudioBuffer WmaFormat::ReadFile(const File* pAudioFile) const
+		AudioBuffer WmaFormat::ReadFile(const File& audioFile) const
 		{
-			const AudioFormatInfo formatInfo = this->ReadAudioFormatInfo(pAudioFile);
+			const AudioFormatInfo formatInfo = this->ReadAudioFormatInfo(audioFile);
 
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(formatInfo.formatTag);
 			if (pAudioCodec == nullptr)
@@ -102,16 +107,16 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadFile", "Unsupported audio codec."));
 			}
 
-			if (!this->CheckGuid(pAudioFile, ASF_DATA_OBJECT_ID))
+			if (!this->CheckGuid(audioFile, ASF_DATA_OBJECT_ID))
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WmaFormat::ReadFile", "Failed to read the file. File might be corrupted."));
 			}
 
-			uint64_t dataObjectSize, totalDataPackets;
-			pAudioFile->Read(&dataObjectSize, 8, Endian::Little);
-			pAudioFile->IncreaseOffset(16);
-			pAudioFile->Read(&totalDataPackets, 8, Endian::Little);
-			pAudioFile->IncreaseOffset(2);
+			uint64_t dataObjectSize = 0, totalDataPackets = 0;
+			audioFile.Read(&dataObjectSize, 8, Endian::Little);
+			audioFile.IncreaseOffset(16);
+			audioFile.Read(&totalDataPackets, 8, Endian::Little);
+			audioFile.IncreaseOffset(2);
 
 			EncodedBufferInfo encodedBufferInfo;
 			
@@ -120,7 +125,7 @@ namespace HephAudio
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "WmaFormat::ReadFile", "Insufficient memory."));
 			}
-			pAudioFile->ReadToBuffer(encodedBufferInfo.pBuffer, 1, dataObjectSize);
+			audioFile.ReadToBuffer(encodedBufferInfo.pBuffer, 1, dataObjectSize);
 
 			encodedBufferInfo.size_byte = dataObjectSize - 50;
 			encodedBufferInfo.size_frame = totalDataPackets;
@@ -133,7 +138,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		AudioBuffer WmaFormat::ReadFile(const File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer WmaFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "WmaFormat::ReadFile", "Not implemented."));
 		}
@@ -141,43 +146,43 @@ namespace HephAudio
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "WmaFormat::SaveToFile", "Not implemented."));
 		}
-		bool WmaFormat::CheckGuid(const File* pAudioFile, uint32_t d0, uint16_t d1, uint16_t d2, uint16_t d3, uint16_t d4, uint32_t d5)
+		bool WmaFormat::CheckGuid(const File& audioFile, uint32_t d0, uint16_t d1, uint16_t d2, uint16_t d3, uint16_t d4, uint32_t d5)
 		{
 			bool result = true;
-			uint32_t data32;
-			uint16_t data16;
+			uint32_t data32 = 0;
+			uint16_t data16 = 0;
 
-			pAudioFile->Read(&data32, 4, Endian::Little);
+			audioFile.Read(&data32, 4, Endian::Little);
 			if (data32 != d0)
 			{
 				result = false;
 			}
 
-			pAudioFile->Read(&data16, 2, Endian::Little);
+			audioFile.Read(&data16, 2, Endian::Little);
 			if (data16 != d1)
 			{
 				result = false;
 			}
 
-			pAudioFile->Read(&data16, 2, Endian::Little);
+			audioFile.Read(&data16, 2, Endian::Little);
 			if (data16 != d2)
 			{
 				result = false;
 			}
 
-			pAudioFile->Read(&data16, 2, Endian::Big);
+			audioFile.Read(&data16, 2, Endian::Big);
 			if (data16 != d3)
 			{
 				result = false;
 			}
 
-			pAudioFile->Read(&data16, 2, Endian::Big);
+			audioFile.Read(&data16, 2, Endian::Big);
 			if (data16 != d4)
 			{
 				result = false;
 			}
 
-			pAudioFile->Read(&data32, 4, Endian::Big);
+			audioFile.Read(&data32, 4, Endian::Big);
 			if (data32 != d5)
 			{
 				result = false;

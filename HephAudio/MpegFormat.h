@@ -33,18 +33,19 @@ namespace HephAudio
 				Granule granule1;
 			};
 		public:
-			HephCommon::StringBuffer Extension() const override;
-			size_t FileFrameCount(const HephCommon::File* pAudioFile, const AudioFormatInfo& audioFormatInfo) const override;
-			AudioFormatInfo ReadAudioFormatInfo(const HephCommon::File* pAudioFile) const override;
-			AudioBuffer ReadFile(const HephCommon::File* pAudioFile) const override;
-			AudioBuffer ReadFile(const HephCommon::File* pAudioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const override;
+			HephCommon::StringBuffer Extensions() const override;
+			bool CheckSignature(const HephCommon::File& audioFile) const override;
+			size_t FileFrameCount(const HephCommon::File& audioFile, const AudioFormatInfo& audioFormatInfo) const override;
+			AudioFormatInfo ReadAudioFormatInfo(const HephCommon::File& audioFile) const override;
+			AudioBuffer ReadFile(const HephCommon::File& audioFile) const override;
+			AudioBuffer ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const override;
 			bool SaveToFile(HephCommon::StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const override;
 		private:
-			void SkipID3Tag(const HephCommon::File* pAudioFile) const;
-			void SkipVBRInfoFrame(const HephCommon::File* pAudioFile) const;
-			uint32_t GetBitrate(const HephCommon::File* pAudioFile, uint32_t frameHeader) const;
-			uint32_t GetSampleRate(const HephCommon::File* pAudioFile, uint32_t frameHeader) const;
-			void ReadSideInfo(const HephCommon::File* pAudioFile, SideInformation& sideInfo, const AudioFormatInfo& frameFormatInfo, uint32_t frameHeader) const;
+			void SkipID3Tag(const HephCommon::File& audioFile) const;
+			void SkipVBRInfoFrame(const HephCommon::File& audioFile) const;
+			uint32_t GetBitrate(const HephCommon::File& audioFile, uint32_t frameHeader) const;
+			uint32_t GetSampleRate(const HephCommon::File& audioFile, uint32_t frameHeader) const;
+			void ReadSideInfo(const HephCommon::File& audioFile, SideInformation& sideInfo, const AudioFormatInfo& frameFormatInfo, uint32_t frameHeader) const;
 			static void Unsynchsafe(uint32_t& data32) noexcept;
 		};
 	}

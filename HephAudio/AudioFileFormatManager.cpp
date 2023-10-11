@@ -15,29 +15,12 @@ namespace HephAudio
 					new MpegFormat()
 		};
 
-		bool AudioFileFormatManager::CompareExtensions(HephCommon::StringBuffer lhs, HephCommon::StringBuffer rhs)
-		{
-			std::vector<HephCommon::StringBuffer> lhse = lhs.Split(' ');
-			std::vector<HephCommon::StringBuffer> rhse = rhs.Split(' ');
-			for (size_t i = 0; i < lhse.size(); i++)
-			{
-				for (size_t j = 0; j < rhse.size(); j++)
-				{
-					if (lhse.at(i).CompareContent(rhse.at(j)))
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
 		void AudioFileFormatManager::RegisterFileFormat(IAudioFileFormat* format)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				// If format is already registered, remove it and add the new format.
-				// This is for when a user wants to implement his/her own format.
-				if (CompareExtensions(format->Extension(), formats.at(i)->Extension()))
+				// If format is already registered, remove it and add the new implementation.
+				if (format->Extensions().Contains(formats.at(i)->Extensions()))
 				{
 					delete formats.at(i);
 					formats.erase(formats.begin() + i);
@@ -46,11 +29,11 @@ namespace HephAudio
 			}
 			formats.push_back(format);
 		}
-		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(HephCommon::File& file)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(const HephCommon::File& file)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (formats.at(i)->Extension().Contains(file.FileExtension()))
+				if (formats.at(i)->CheckSignature(file))
 				{
 					return formats.at(i);
 				}
@@ -62,7 +45,7 @@ namespace HephAudio
 			const HephCommon::StringBuffer fileExtension = HephCommon::File::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (formats.at(i)->Extension().Contains(fileExtension))
+				if (formats.at(i)->Extensions().Contains(fileExtension))
 				{
 					return formats.at(i);
 				}

@@ -323,7 +323,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				pao->pause = true;
 				File audioFile = File(pao->filePath, FileOpenMode::Read);
 				FileFormats::IAudioFileFormat* audioFormat = FileFormats::AudioFileFormatManager::FindFileFormat(pao->filePath);
-				pao->buffer = audioFormat->ReadFile(&audioFile);
+				pao->buffer = audioFormat->ReadFile(audioFile);
 				pao->buffer.SetChannelCount(audio.GetRenderFormat().channelCount);
 				pao->buffer.SetSampleRate(audio.GetRenderFormat().sampleRate);
 				audio.SetAOPosition(pao, originalPosition);

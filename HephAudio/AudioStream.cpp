@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	std::vector<AudioStream*> AudioStream::streams = std::vector<AudioStream*>();
 	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath)
-		: pNativeAudio(pNativeAudio), pFile(new HephCommon::File(filePath, HephCommon::FileOpenMode::Read)), pFileFormat(FileFormats::AudioFileFormatManager::FindFileFormat(filePath)), pao(nullptr)
+		: pNativeAudio(pNativeAudio), pFile(new HephCommon::File(filePath, HephCommon::FileOpenMode::Read)), pFileFormat(FileFormats::AudioFileFormatManager::FindFileFormat(*this->pFile)), pao(nullptr)
 	{
 		if (this->pNativeAudio == nullptr)
 		{
@@ -21,8 +21,8 @@ namespace HephAudio
 		}
 
 		this->pao = pNativeAudio->CreateAO("(RT) " + this->pFile->FileName(), 0);
-		this->formatInfo = this->pFileFormat->ReadAudioFormatInfo(this->pFile);
-		this->pao->buffer.frameCount = this->pFileFormat->FileFrameCount(this->pFile, this->formatInfo);
+		this->formatInfo = this->pFileFormat->ReadAudioFormatInfo(*this->pFile);
+		this->pao->buffer.frameCount = this->pFileFormat->FileFrameCount(*this->pFile, this->formatInfo);
 
 		this->pAudioCodec = Codecs::AudioCodecManager::FindCodec(formatInfo.formatTag);
 		if (this->pAudioCodec == nullptr)
@@ -148,7 +148,7 @@ namespace HephAudio
 		AudioStream* pStream = AudioStream::FindStream((AudioObject*)pRenderArgs->pAudioObject);
 		if (pStream != nullptr)
 		{
-			pRenderResult->renderBuffer = pStream->pFileFormat->ReadFile(pStream->pFile, pStream->pAudioCodec, pStream->formatInfo, pStream->pao->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
+			pRenderResult->renderBuffer = pStream->pFileFormat->ReadFile(*pStream->pFile, pStream->pAudioCodec, pStream->formatInfo, pStream->pao->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
 			pStream->pao->frameIndex += pRenderArgs->renderFrameCount;
 		}
 	}
