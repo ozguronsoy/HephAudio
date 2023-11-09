@@ -64,7 +64,7 @@ namespace HephCommon
 		{
 			this->Empty();
 		}
-		ColorType& operator[](const size_t& frameIndex) const noexcept
+		ColorType& operator[](size_t frameIndex) const noexcept
 		{
 			return *(this->pColorData + frameIndex);
 		}

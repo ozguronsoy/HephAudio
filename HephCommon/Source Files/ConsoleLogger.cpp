@@ -13,18 +13,7 @@ namespace HephCommon
 	}
 	void ConsoleLogger::Log(StringBuffer message, const char* logLevel, StringBuffer libName)
 	{
-#if defined(_WIN32) || (defined(__linux__) && !defined(__ANDROID__)) || defined(__APPLE__)
-
-		if (message.GetStringType() == StringType::ASCII)
-		{
-			printf("\u001b[%sm%s[%s]: \033[0m%s\n", logLevel, libName.fc_str(), ConsoleLogger::CurrentTimeToString(StringType::ASCII).c_str(), message.c_str());
-		}
-		else
-		{
-			printf("\u001b[%lsm%ls[%ls]: \033[0m%ls\n", StringBuffer(logLevel, StringType::Wide).wc_str(), libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), message.wc_str());
-		}
-
-#elif defined(__ANDROID__)
+#if defined(__ANDROID__)
 
 		if (message.GetStringType() == StringType::ASCII)
 		{
@@ -81,9 +70,59 @@ namespace HephCommon
 			}
 		}
 
+#else
+
+		if (message.GetStringType() == StringType::ASCII)
+		{
+			printf("\u001b[%sm%s[%s]: \033[0m%s\n", logLevel, libName.fc_str(), ConsoleLogger::CurrentTimeToString(StringType::ASCII).c_str(), message.c_str());
+		}
+		else
+		{
+			printf("\u001b[%lsm%ls[%ls]: \033[0m%ls\n", StringBuffer(logLevel, StringType::Wide).wc_str(), libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), message.wc_str());
+		}
+
 #endif
 	}
-
+	void ConsoleLogger::LogInfo(const StringBuffer& message)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_INFO);
+	}
+	void ConsoleLogger::LogInfo(const StringBuffer& message, const StringBuffer& libName)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_INFO, libName);
+	}
+	void ConsoleLogger::LogWarning(const StringBuffer& message)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_WARNING);
+	}
+	void ConsoleLogger::LogWarning(const StringBuffer& message, const StringBuffer& libName)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_WARNING, libName);
+	}
+	void ConsoleLogger::LogError(const StringBuffer& message)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_ERROR);
+	}
+	void ConsoleLogger::LogError(const StringBuffer& message, const StringBuffer& libName)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_ERROR, libName);
+	}
+	void ConsoleLogger::LogSuccess(const StringBuffer& message)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_SUCCESS);
+	}
+	void ConsoleLogger::LogSuccess(const StringBuffer& message, const StringBuffer& libName)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_SUCCESS, libName);
+	}
+	void ConsoleLogger::LogDebug(const StringBuffer& message)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_DEBUG);
+	}
+	void ConsoleLogger::LogDebug(const StringBuffer& message, const StringBuffer& libName)
+	{
+		ConsoleLogger::Log(message, HEPH_CL_DEBUG, libName);
+	}
 	StringBuffer ConsoleLogger::CurrentTimeToString(StringType stringType)
 	{
 		constexpr uint8_t timeStringSize = 10;

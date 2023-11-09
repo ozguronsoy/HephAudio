@@ -50,7 +50,7 @@ namespace HephAudio
 		WinAudioDS::~WinAudioDS()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG("Destructing WinAudioDS...", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing WinAudioDS...", HEPH_CL_INFO);
 
 			disposing = true;
 
@@ -68,7 +68,7 @@ namespace HephAudio
 			UnregisterClassW(L"HephAudio", DLL_INSTANCE);
 			CoUninitialize();
 
-			HEPHAUDIO_LOG("WinAudioDS destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("WinAudioDS destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioDS::SetMasterVolume(heph_float volume)
 		{
@@ -93,7 +93,7 @@ namespace HephAudio
 		void WinAudioDS::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopRendering();
 
@@ -136,7 +136,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&WinAudioDS::RenderData, this);
 
-			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioDS::StopRendering()
 		{
@@ -147,13 +147,13 @@ namespace HephAudio
 				JoinRenderThread();
 				pDirectSoundBuffer = nullptr;
 				pDirectSound = nullptr;
-				HEPHAUDIO_LOG("Stopped rendering.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
 		}
 		void WinAudioDS::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopCapturing();
 
@@ -195,7 +195,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&WinAudioDS::CaptureData, this);
 
-			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioDS::StopCapturing()
 		{
@@ -206,7 +206,7 @@ namespace HephAudio
 				JoinCaptureThread();
 				pDirectSoundCaptureBuffer = nullptr;
 				pDirectSoundCapture = nullptr;
-				HEPHAUDIO_LOG("Stopped capturing.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
 		void WinAudioDS::SetDisplayName(HephCommon::StringBuffer displayName)
@@ -444,17 +444,17 @@ namespace HephAudio
 		GUID WinAudioDS::StringToGuid(HephCommon::StringBuffer str)
 		{
 			GUID guid = GUID();
-			guid.Data1 = HephCommon::StringBuffer::HexStringToUI32(str.SubString(0, 8));
-			guid.Data2 = HephCommon::StringBuffer::HexStringToUI16(str.SubString(9, 4));
-			guid.Data3 = HephCommon::StringBuffer::HexStringToUI16(str.SubString(14, 4));
-			guid.Data4[0] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(19, 2));
-			guid.Data4[1] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(21, 2));
-			guid.Data4[2] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(24, 2));
-			guid.Data4[3] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(26, 2));
-			guid.Data4[4] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(28, 2));
-			guid.Data4[5] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(30, 2));
-			guid.Data4[6] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(32, 2));
-			guid.Data4[7] = HephCommon::StringBuffer::HexStringToUI16(str.SubString(34, 2));
+			guid.Data1 = HephCommon::StringBuffer::HexStringToU32(str.SubString(0, 8));
+			guid.Data2 = HephCommon::StringBuffer::HexStringToU16(str.SubString(9, 4));
+			guid.Data3 = HephCommon::StringBuffer::HexStringToU16(str.SubString(14, 4));
+			guid.Data4[0] = HephCommon::StringBuffer::HexStringToU16(str.SubString(19, 2));
+			guid.Data4[1] = HephCommon::StringBuffer::HexStringToU16(str.SubString(21, 2));
+			guid.Data4[2] = HephCommon::StringBuffer::HexStringToU16(str.SubString(24, 2));
+			guid.Data4[3] = HephCommon::StringBuffer::HexStringToU16(str.SubString(26, 2));
+			guid.Data4[4] = HephCommon::StringBuffer::HexStringToU16(str.SubString(28, 2));
+			guid.Data4[5] = HephCommon::StringBuffer::HexStringToU16(str.SubString(30, 2));
+			guid.Data4[6] = HephCommon::StringBuffer::HexStringToU16(str.SubString(32, 2));
+			guid.Data4[7] = HephCommon::StringBuffer::HexStringToU16(str.SubString(34, 2));
 			return guid;
 		}
 		LRESULT CALLBACK WinAudioDS::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -6,7 +6,7 @@ namespace HephCommon
 {
 	File::File()
 		: pFile(nullptr), fileSize(0), filePath("") { }
-	File::File(StringBuffer filePath, FileOpenMode openMode)
+	File::File(const StringBuffer& filePath, FileOpenMode openMode)
 		: pFile(nullptr), fileSize(0), filePath(filePath)
 	{
 		this->Open(openMode);
@@ -23,7 +23,7 @@ namespace HephCommon
 	{
 		this->Close();
 	}
-	void File::Open(StringBuffer filePath, FileOpenMode openMode)
+	void File::Open(const StringBuffer& filePath, FileOpenMode openMode)
 	{
 		if (this->pFile == nullptr)
 		{
@@ -31,7 +31,7 @@ namespace HephCommon
 			this->Open(openMode);
 			if (this->pFile == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, L"File::File", L"An error occurred whilst opening the file."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, "File::File", "An error occurred whilst opening the file."));
 			}
 
 			fseek(this->pFile, 0, SEEK_END);
@@ -162,7 +162,7 @@ namespace HephCommon
 		}
 		return false;
 	}
-	StringBuffer File::GetFileName(StringBuffer filePath)
+	StringBuffer File::GetFileName(const StringBuffer& filePath)
 	{
 #if defined(__ANDROID__) || defined(__linux__) || defined(__APPLE__)
 		std::vector<StringBuffer> sfp = filePath.Split('/');
@@ -171,7 +171,7 @@ namespace HephCommon
 #endif
 		return sfp.at(sfp.size() - 1);
 	}
-	StringBuffer File::GetFileExtension(StringBuffer filePath)
+	StringBuffer File::GetFileExtension(const StringBuffer& filePath)
 	{
 		std::vector<StringBuffer> sfp = filePath.Split('.');
 		return '.' + sfp.at(sfp.size() - 1);

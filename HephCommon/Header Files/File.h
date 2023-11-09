@@ -20,11 +20,11 @@ namespace HephCommon
 		StringBuffer filePath;
 	public:
 		File();
-		File(StringBuffer filePath, FileOpenMode openMode);
+		File(const StringBuffer& filePath, FileOpenMode openMode);
 		File(const File&) = delete;
 		File& operator=(const File&) = delete;
 		~File();
-		void Open(StringBuffer filePath, FileOpenMode openMode);
+		void Open(const StringBuffer& filePath, FileOpenMode openMode);
 		void Close();
 		void Flush();
 		bool IsOpen() const noexcept;
@@ -44,8 +44,8 @@ namespace HephCommon
 		void Open(FileOpenMode openMode);
 	public:
 		static bool FileExists(StringBuffer filePath);
-		static StringBuffer GetFileName(StringBuffer filePath);
-		static StringBuffer GetFileExtension(StringBuffer filePath);
+		static StringBuffer GetFileName(const StringBuffer& filePath);
+		static StringBuffer GetFileExtension(const StringBuffer& filePath);
 	};
 }
 

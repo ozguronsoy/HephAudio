@@ -2,15 +2,18 @@
 #include "HephCommonFramework.h"
 #include "StringBuffer.h"
 #include "Event.h"
+#include <vector>
 #include <cinttypes>
 
-#define RAISE_HEPH_EXCEPTION(sender, ex) { HephCommon::HephExceptionEventArgs args = HephCommon::HephExceptionEventArgs(sender, ex); HephCommon::HephException::OnException.Invoke(&args, nullptr);}
-#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex) { HephCommon::HephExceptionEventArgs args = HephCommon::HephExceptionEventArgs(sender, ex); HephCommon::HephException::OnException.Invoke(&args, nullptr); throw ex;}
+#define RAISE_HEPH_EXCEPTION(sender, ex) ex.Raise(sender)
+#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex) ex.Raise(sender); throw ex
 
 namespace HephCommon
 {
 	struct HephException final
 	{
+	private:
+		static std::vector<HephException> exceptions;
 	public:
 		static constexpr int64_t ec_none = 0;
 		static constexpr int64_t ec_fail = -1;
@@ -26,6 +29,10 @@ namespace HephCommon
 		StringBuffer message;
 		HephException();
 		HephException(int64_t errorCode, StringBuffer method, StringBuffer message);
+		void Raise(const void* pSender) const noexcept;
+	public:
+		static const HephException& LastException();
+		static const std::vector<HephException>& AllExceptions();
 	};
 
 	struct HephExceptionEventArgs : public EventArgs

@@ -10,7 +10,6 @@
 #include "AudioFileFormatManager.h"
 #include "AudioCodecManager.h"
 #include <AudioStream.h>
-#include <WavFileMetadataReader.h>
 
 #define CAPTURE_FORMAT AudioFormatInfo(1, 2, 32, 48e3)
 
@@ -51,7 +50,7 @@ int main()
 	audio->SetDeviceEnumerationPeriod(250e6);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
-	audio.Play(audioRoot + "Gate of Steiner.mp3");
+	audio.Play(audioRoot + "Gate of Steiner.wav");
 
 	return Run(audio, audioRoot);
 }
@@ -60,7 +59,7 @@ void OnException(EventArgs* pArgs, EventResult* pResult)
 	const HephException& ex = ((HephExceptionEventArgs*)pArgs)->exception;
 
 	StringBuffer exceptionString = ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n\t\t" + ex.message;
-	ConsoleLogger::Log(exceptionString, ConsoleLogger::error);
+	ConsoleLogger::LogError(exceptionString);
 }
 void OnDeviceAdded(EventArgs* pArgs, EventResult* pResult)
 {
@@ -95,7 +94,7 @@ void OnRender(EventArgs* pArgs, EventResult* pResult)
 
 	pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount);
 
-	AudioProcessor::ConvertSampleRateRT(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex, pNativeAudio->GetRenderFormat().sampleRate, pRenderArgs->renderFrameCount);
+	AudioProcessor::ConvertSampleRate(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex, pNativeAudio->GetRenderFormat().sampleRate, pRenderArgs->renderFrameCount);
 
 	pAudioObject->frameIndex += readFrameCount;
 	pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
@@ -120,7 +119,7 @@ void OnFinishedPlaying(EventArgs* pArgs, EventResult* pResult)
 
 	if (pFinishedPlayingArgs->remainingLoopCount > 0)
 	{
-		ConsoleLogger::Log("The track \"" + pAudioObject->name + "\" is starting over, number of remaning loops: " + StringBuffer::ToString(pFinishedPlayingArgs->remainingLoopCount), ConsoleLogger::debug);
+		ConsoleLogger::LogInfo("The track \"" + pAudioObject->name + "\" is starting over, number of remaning loops: " + StringBuffer::ToString(pFinishedPlayingArgs->remainingLoopCount));
 	}
 }
 heph_float PrintDeltaTime(StringBuffer label)
@@ -128,7 +127,7 @@ heph_float PrintDeltaTime(StringBuffer label)
 	const heph_float dt = StopWatch::StaticDeltaTime(StopWatch::milli);
 	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
-	ConsoleLogger::Log(label, ConsoleLogger::success);
+	ConsoleLogger::LogSuccess(label);
 	StopWatch::StaticReset();
 	return dt;
 }
@@ -147,7 +146,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 			{
 				if (sb == L"path")
 				{
-					ConsoleLogger::Log(audioRoot, ConsoleLogger::info);
+					ConsoleLogger::LogInfo(audioRoot);
 				}
 				else
 				{
@@ -167,7 +166,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 					}
 				}
 				StopWatch::StaticReset();
-				std::shared_ptr<AudioObject> pao = audio.Play(audioRoot + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToUI32(arg1) : 1);
+				std::shared_ptr<AudioObject> pao = audio.Play(audioRoot + sb.Split('\"').at(1), isNumber ? StringBuffer::HexStringToU32(arg1) : 1);
 				pao->OnRender = OnRender;
 				pao->OnFinishedPlaying = OnFinishedPlaying;
 				PrintDeltaTime("Play function executed in");
@@ -333,7 +332,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 		}
 		catch (...)
 		{
-			ConsoleLogger::Log("Invalid input!", ConsoleLogger::error);
+			ConsoleLogger::LogError("Invalid input!");
 		}
 	}
 

@@ -24,6 +24,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\CsvStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\XmlStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\StreamHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header Files\Matrix.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\ConsoleLogger.cpp" />
@@ -40,5 +41,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\CsvStream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\XmlStream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\StreamHelpers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source Files\Matrix.cpp" />
   </ItemGroup>
 </Project>

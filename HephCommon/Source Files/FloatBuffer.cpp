@@ -50,7 +50,7 @@ namespace HephCommon
 	{
 		this->Empty();
 	}
-	heph_float& FloatBuffer::operator[](const size_t& frameIndex) const noexcept
+	heph_float& FloatBuffer::operator[](size_t frameIndex) const noexcept
 	{
 		return *(this->pData + frameIndex);
 	}
@@ -109,7 +109,7 @@ namespace HephCommon
 
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator*(const heph_float& rhs) const noexcept
+	FloatBuffer FloatBuffer::operator*(heph_float rhs) const noexcept
 	{
 		FloatBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -118,7 +118,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator*=(const heph_float& rhs) noexcept
+	FloatBuffer& FloatBuffer::operator*=(heph_float rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -126,7 +126,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator/(const heph_float& rhs) const noexcept
+	FloatBuffer FloatBuffer::operator/(heph_float rhs) const noexcept
 	{
 		FloatBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -135,7 +135,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator/=(const heph_float& rhs) noexcept
+	FloatBuffer& FloatBuffer::operator/=(heph_float rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -143,7 +143,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator<<(const size_t& rhs) const noexcept
+	FloatBuffer FloatBuffer::operator<<(size_t rhs) const noexcept
 	{
 		FloatBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
@@ -152,7 +152,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator<<=(const size_t& rhs) noexcept
+	FloatBuffer& FloatBuffer::operator<<=(size_t rhs) noexcept
 	{
 		if (this->frameCount > rhs)
 		{
@@ -165,7 +165,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator>>(const size_t& rhs) const noexcept
+	FloatBuffer FloatBuffer::operator>>(size_t rhs) const noexcept
 	{
 		FloatBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
@@ -174,7 +174,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator>>=(const size_t& rhs) noexcept
+	FloatBuffer& FloatBuffer::operator>>=(size_t rhs) noexcept
 	{
 		if (this->frameCount > rhs)
 		{
@@ -479,4 +479,8 @@ HephCommon::FloatBuffer abs(const HephCommon::FloatBuffer& rhs)
 		resultBuffer[i] = abs(rhs[i]);
 	}
 	return resultBuffer;
+}
+HephCommon::FloatBuffer operator*(heph_float lhs, const HephCommon::FloatBuffer& rhs)
+{
+	return rhs * lhs;
 }

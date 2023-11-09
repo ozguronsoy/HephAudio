@@ -55,9 +55,6 @@
     <Filter Include="Header Files\AudioCodecs\AudioFileMetadataReader">
       <UniqueIdentifier>{ebafe7cf-0bf1-461f-8c25-ea82d58059e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AudioFormats\AudioFileMetadataReader">
-      <UniqueIdentifier>{a12f51a1-4d73-4351-b8e5-d8d62ebf3d8b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioFramework.h">
@@ -177,9 +174,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
       <Filter>Header Files\Events\Args</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h">
-      <Filter>Header Files\AudioFormats</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.h">
       <Filter>Header Files\AudioCodecs\AudioFileMetadataReader</Filter>
     </ClInclude>
@@ -194,9 +188,6 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)MpegFormat.h">
-      <Filter>Header Files\AudioFormats</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -299,12 +290,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
       <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp">
-      <Filter>Source Files\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.cpp">
-      <Filter>Source Files\AudioFormats\AudioFileMetadataReader</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
@@ -316,9 +301,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioStream.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)MpegFormat.cpp">
-      <Filter>Source Files\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -56,7 +56,7 @@ namespace HephCommon
 	{
 		this->Empty();
 	}
-	Complex& ComplexBuffer::operator[](const size_t& frameIndex) const noexcept
+	Complex& ComplexBuffer::operator[](size_t frameIndex) const noexcept
 	{
 		return *(this->pComplexData + frameIndex);
 	}
@@ -160,7 +160,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator*(const heph_float& rhs) const noexcept
+	ComplexBuffer ComplexBuffer::operator*(heph_float rhs) const noexcept
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -169,7 +169,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator*=(const heph_float& rhs) noexcept
+	ComplexBuffer& ComplexBuffer::operator*=(heph_float rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -177,7 +177,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator/(const heph_float& rhs) const noexcept
+	ComplexBuffer ComplexBuffer::operator/(heph_float rhs) const noexcept
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -186,7 +186,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator/=(const heph_float& rhs) noexcept
+	ComplexBuffer& ComplexBuffer::operator/=(heph_float rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -194,7 +194,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator<<(const size_t& rhs) const noexcept
+	ComplexBuffer ComplexBuffer::operator<<(size_t rhs) const noexcept
 	{
 		ComplexBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
@@ -203,7 +203,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator<<=(const size_t& rhs) noexcept
+	ComplexBuffer& ComplexBuffer::operator<<=(size_t rhs) noexcept
 	{
 		if (this->frameCount > rhs)
 		{
@@ -216,7 +216,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator>>(const size_t& rhs) const noexcept
+	ComplexBuffer ComplexBuffer::operator>>(size_t rhs) const noexcept
 	{
 		ComplexBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
@@ -225,7 +225,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator>>=(const size_t& rhs) noexcept
+	ComplexBuffer& ComplexBuffer::operator>>=(size_t rhs) noexcept
 	{
 		if (this->frameCount > rhs)
 		{
@@ -492,4 +492,12 @@ HephCommon::FloatBuffer phase(const HephCommon::ComplexBuffer& rhs)
 		resultBuffer[i] = rhs[i].Phase();
 	}
 	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator*(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
+{
+	return rhs * lhs;
+}
+HephCommon::ComplexBuffer operator*(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs)
+{
+	return rhs * lhs;
 }

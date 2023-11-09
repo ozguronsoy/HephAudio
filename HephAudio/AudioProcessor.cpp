@@ -61,7 +61,7 @@ namespace HephAudio
 			buffer = std::move(resultBuffer);
 		}
 	}
-	void AudioProcessor::ConvertSampleRateRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount)
+	void AudioProcessor::ConvertSampleRate(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount)
 	{
 		const heph_float srRatio = (heph_float)outputSampleRate / (heph_float)originalBuffer.formatInfo.sampleRate;
 		if (srRatio != 1.0)
@@ -244,21 +244,6 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::ReverseRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex)
-	{
-		const size_t frameCount = (subBufferFrameIndex + subBuffer.frameCount > originalBuffer.frameCount) ? (originalBuffer.frameCount - subBufferFrameIndex) : subBuffer.frameCount;
-		const size_t hfc = frameCount * 0.5;
-		const size_t reversedFrameIndex = originalBuffer.frameCount - subBufferFrameIndex - frameCount;
-
-		for (size_t i = 0; i < hfc; i++)
-		{
-			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-			{
-				subBuffer[i][j] = originalBuffer[reversedFrameIndex + frameCount - i - 1][j];
-				subBuffer[frameCount - i - 1][j] = originalBuffer[reversedFrameIndex + i][j];
-			}
-		}
-	}
 	void AudioProcessor::Echo(AudioBuffer& buffer, EchoInfo info)
 	{
 		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay_s;
@@ -277,30 +262,6 @@ namespace HephAudio
 				for (size_t k = 0; k < buffer.formatInfo.channelCount; k++)
 				{
 					buffer[j][k] += echoBuffer[j - startFrameIndex][k] * factor;
-				}
-			}
-		}
-	}
-	void AudioProcessor::EchoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, EchoInfo info)
-	{
-		const size_t delayFrameCount = originalBuffer.formatInfo.sampleRate * info.reflectionDelay_s;
-		const size_t echoStartFrame = originalBuffer.frameCount * info.echoStartPosition;
-		const size_t echoFrameCount = originalBuffer.frameCount * info.echoEndPosition - echoStartFrame;
-		const size_t subBufferEndFrameIndex = subBufferFrameIndex + subBuffer.frameCount;
-		heph_float factor = info.decayFactor;
-		size_t startFrameIndex = echoStartFrame + delayFrameCount;
-
-		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.decayFactor, startFrameIndex += delayFrameCount)
-		{
-			const size_t endFrameIndex = startFrameIndex + echoFrameCount;
-			if (subBufferFrameIndex >= startFrameIndex)
-			{
-				for (size_t j = subBufferFrameIndex, jo = j - startFrameIndex; j < subBufferEndFrameIndex && jo < originalBuffer.frameCount; j++, jo++)
-				{
-					for (size_t k = 0; k < subBuffer.formatInfo.channelCount; k++)
-					{
-						subBuffer[j - subBufferFrameIndex][k] += originalBuffer[jo][k] * factor;
-					}
 				}
 			}
 		}
@@ -364,20 +325,6 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::TremoloRT(AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float depth, const Oscillator& lfo)
-	{
-		const heph_float wetFactor = depth;
-		const heph_float dryFactor = 1.0 - wetFactor;
-
-		for (size_t i = 0; i < subBuffer.frameCount; i++)
-		{
-			const heph_float lfoSample = lfo.Oscillate(subBufferFrameIndex + i);
-			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-			{
-				subBuffer[i][j] *= wetFactor * lfoSample + dryFactor;
-			}
-		}
-	}
 	void AudioProcessor::Vibrato(AudioBuffer& buffer, heph_float depth, heph_float extent_semitone, const Oscillator& lfo)
 	{
 		const heph_float resampleDelta = buffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
@@ -409,28 +356,6 @@ namespace HephAudio
 		}
 
 		buffer = std::move(resultBuffer);
-	}
-	void AudioProcessor::VibratoRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float depth, heph_float extent_semitone, const Oscillator& lfo)
-	{
-		const heph_float resampleDelta = subBuffer.formatInfo.sampleRate * (pow(2, extent_semitone / 12.0) - 1.0);
-		const heph_float wetFactor = depth * 0.5;
-		const heph_float dryFactor = 1.0 - wetFactor;
-
-		for (size_t i = 0, t_sample = subBufferFrameIndex; i < subBuffer.frameCount && t_sample < originalBuffer.frameCount; i++, t_sample++)
-		{
-			const heph_float resampleIndex = t_sample + (lfo.Oscillate(t_sample) * 0.5 + 0.5) * resampleDelta;
-			const heph_float rho = resampleIndex - floor(resampleIndex);
-
-			for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-			{
-				heph_float wetSample = 0.0;
-				if (resampleIndex + 1.0 < originalBuffer.frameCount)
-				{
-					wetSample = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
-				}
-				subBuffer[i][j] = wetFactor * wetSample + dryFactor * originalBuffer[t_sample][j];
-			}
-		}
 	}
 	void AudioProcessor::Chorus(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, heph_float extent_semitone, const Oscillator& lfo)
 	{
@@ -515,35 +440,6 @@ namespace HephAudio
 		}
 
 		buffer = std::move(resultBuffer);
-	}
-	void AudioProcessor::FlangerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex,
-		heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, const Oscillator& lfo)
-	{
-		static FloatBuffer feedbackBuffer = FloatBuffer();
-		if (subBufferFrameIndex == 0 || feedbackBuffer.FrameCount() != subBuffer.formatInfo.channelCount)
-		{
-			feedbackBuffer = FloatBuffer(subBuffer.formatInfo.channelCount);
-		}
-
-		const heph_float baseDelay_sample = baseDelay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
-		const heph_float delay_sample = delay_ms * 1e-3 * subBuffer.formatInfo.sampleRate;
-
-		if (subBufferFrameIndex > round(delay_sample + baseDelay_sample))
-		{
-			const heph_float wetFactor = depth * 0.5;
-			const heph_float dryFactor = 1.0 - wetFactor;
-
-			for (size_t i = 0; i < subBuffer.frameCount && subBufferFrameIndex + i < originalBuffer.frameCount; i++)
-			{
-				const size_t currentDelay_sample = round((lfo.Oscillate(subBufferFrameIndex + i) * 0.5 + 0.5) * delay_sample + baseDelay_ms);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					const heph_float wetSample = originalBuffer[subBufferFrameIndex + i - currentDelay_sample][j] + feedbackBuffer[j];
-					subBuffer[i][j] = wetFactor * wetSample + dryFactor * originalBuffer[subBufferFrameIndex + i][j];
-					feedbackBuffer[j] = feedbackGain * wetSample;
-				}
-			}
-		}
 	}
 	void AudioProcessor::Wah(AudioBuffer& buffer, heph_float depth, heph_float damping, heph_float fcmin, heph_float fcmax, const Oscillator& lfo)
 	{
@@ -809,103 +705,6 @@ namespace HephAudio
 			if (threads[i].joinable())
 			{
 				threads[i].join();
-			}
-		}
-	}
-	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, const std::vector<EqualizerInfo>& infos)
-	{
-		EqualizerRT(originalBuffer, subBuffer, subBufferFrameIndex, 512, 1024, infos);
-	}
-	void AudioProcessor::EqualizerRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos)
-	{
-		static std::vector<ProcessedBuffer*> processedBuffers;
-
-		const auto applyEqualizer = [&hopSize, &fftSize, &infos](AudioBuffer& subBuffer) -> void
-		{
-			const size_t nyquistFrequency = fftSize * 0.5;
-			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
-			const size_t frameSize = subBuffer.formatInfo.FrameSize();
-			std::vector<FloatBuffer> channels = SplitChannels(subBuffer);
-
-			for (size_t i = 0; i < subBuffer.formatInfo.channelCount; i++)
-			{
-				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels[i], fftSize);
-
-				for (size_t j = 0; j < infos.size(); j++)
-				{
-					const EqualizerInfo& info = infos[j];
-					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
-					if (info.f1 > info.f2)
-					{
-						higherFrequencyIndex = ceil(Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f1));
-						lowerFrequencyIndex = floor(Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f2));
-					}
-					else
-					{
-						higherFrequencyIndex = ceil(Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f2));
-						lowerFrequencyIndex = floor(Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, info.f1));
-					}
-					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
-
-					for (size_t k = lowerFrequencyIndex; k <= upperBound; k++)
-					{
-						complexBuffer[k] *= info.amplitudeFunction(Fourier::IndexToBinFrequency(subBuffer.formatInfo.sampleRate, fftSize, k));
-						complexBuffer[fftSize - k - 1].real = complexBuffer[k].real;
-						complexBuffer[fftSize - k - 1].imaginary = -complexBuffer[k].imaginary;
-					}
-				}
-
-				Fourier::FFT_Inverse(complexBuffer, false);
-				for (size_t j = 0; j < fftSize; j++)
-				{
-					subBuffer[j][i] = complexBuffer[j].real / fftSize;
-				}
-			}
-		};
-
-		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
-		size_t fStart = 0;
-		if (subBufferFrameIndex > fftSize)
-		{
-			fStart = subBufferFrameIndex - fftSize;
-			fStart = fStart + hopSize - (fStart % hopSize);
-		}
-		size_t fEnd = fTarget + fftSize;
-		fEnd = fEnd - (fEnd % hopSize);
-
-		subBuffer.Reset();
-		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
-
-		size_t isb, itb;
-		const heph_float piOverN = Math::pi / (fftSize - 1);
-		for (size_t i = fStart; i < fEnd; i += hopSize)
-		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
-			if (processedBuffer == nullptr)
-			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
-				applyEqualizer(processedBuffer->audioBuffer);
-				processedBuffers.push_back(processedBuffer);
-			}
-
-			if (i > subBufferFrameIndex)
-			{
-				isb = i - subBufferFrameIndex;
-				itb = 0;
-			}
-			else
-			{
-				isb = 0;
-				itb = subBufferFrameIndex - i;
-			}
-
-			for (; isb < subBuffer.frameCount && itb < fftSize; isb++, itb++)
-			{
-				const heph_float s = sin(itb * piOverN);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					subBuffer[isb][j] += processedBuffer->audioBuffer[itb][j] * s * s;
-				}
 			}
 		}
 	}
@@ -1272,86 +1071,6 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float cutoffFreq)
-	{
-		LowPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, 512, 1024, cutoffFreq);
-	}
-	void AudioProcessor::LowPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, heph_float cutoffFreq)
-	{
-		static std::vector<ProcessedBuffer*> processedBuffers;
-
-		const auto applyFilter = [&fftSize, &cutoffFreq](AudioBuffer& subBuffer) -> void
-		{
-			const size_t nyquistFrequency = fftSize * 0.5;
-			const uint64_t startIndex = Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, cutoffFreq);
-			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
-			const size_t frameSize = subBuffer.formatInfo.FrameSize();
-			std::vector<FloatBuffer> channels = SplitChannels(subBuffer);
-
-			for (size_t i = 0; i < subBuffer.formatInfo.channelCount; i++)
-			{
-				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels[i], fftSize);
-
-				for (size_t j = startIndex; j < nyquistFrequency; j++)
-				{
-					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
-				}
-
-				Fourier::FFT_Inverse(complexBuffer, false);
-				for (size_t j = 0; j < fftSize; j++)
-				{
-					subBuffer[j][i] = complexBuffer[j].real / fftSize;
-				}
-			}
-		};
-
-		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
-		size_t fStart = 0;
-		if (subBufferFrameIndex > fftSize)
-		{
-			fStart = subBufferFrameIndex - fftSize;
-			fStart = fStart + hopSize - (fStart % hopSize);
-		}
-		size_t fEnd = fTarget + fftSize;
-		fEnd = fEnd - (fEnd % hopSize);
-
-		subBuffer.Reset();
-		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
-
-		size_t isb, itb;
-		const heph_float piOverN = Math::pi / (fftSize - 1);
-		for (size_t i = fStart; i < fEnd; i += hopSize)
-		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
-			if (processedBuffer == nullptr)
-			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
-				applyFilter(processedBuffer->audioBuffer);
-				processedBuffers.push_back(processedBuffer);
-			}
-
-			if (i > subBufferFrameIndex)
-			{
-				isb = i - subBufferFrameIndex;
-				itb = 0;
-			}
-			else
-			{
-				isb = 0;
-				itb = subBufferFrameIndex - i;
-			}
-
-			for (; isb < subBuffer.frameCount && itb < fftSize; isb++, itb++)
-			{
-				const heph_float s = sin(itb * piOverN);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					subBuffer[isb][j] += processedBuffer->audioBuffer[itb][j] * s * s;
-				}
-			}
-		}
-	}
 	void AudioProcessor::HighPassFilter(AudioBuffer& buffer, heph_float cutoffFreq)
 	{
 		HighPassFilter(buffer, defaultHopSize, defaultFFTSize, cutoffFreq);
@@ -1448,84 +1167,6 @@ namespace HephAudio
 			if (threads[i].joinable())
 			{
 				threads[i].join();
-			}
-		}
-	}
-	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float cutoffFreq)
-	{
-		HighPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, 512, 1024, cutoffFreq);
-	}
-	void AudioProcessor::HighPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, heph_float cutoffFreq)
-	{
-		static std::vector<ProcessedBuffer*> processedBuffers;
-
-		const auto applyFilter = [&fftSize, &cutoffFreq](AudioBuffer& subBuffer) -> void
-		{
-			const uint64_t stopIndex = Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, cutoffFreq);
-			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
-			const size_t frameSize = subBuffer.formatInfo.FrameSize();
-			std::vector<FloatBuffer> channels = SplitChannels(subBuffer);
-
-			for (size_t i = 0; i < subBuffer.formatInfo.channelCount; i++)
-			{
-				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels[i], fftSize);
-
-				for (int64_t j = stopIndex; j >= 0; j--)
-				{
-					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
-				}
-
-				Fourier::FFT_Inverse(complexBuffer, false);
-				for (size_t j = 0; j < fftSize; j++)
-				{
-					subBuffer[j][i] = complexBuffer[j].real / fftSize;
-				}
-			}
-		};
-		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
-		size_t fStart = 0;
-		if (subBufferFrameIndex > fftSize)
-		{
-			fStart = subBufferFrameIndex - fftSize;
-			fStart = fStart + hopSize - (fStart % hopSize);
-		}
-		size_t fEnd = fTarget + fftSize;
-		fEnd = fEnd - (fEnd % hopSize);
-
-		subBuffer.Reset();
-		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
-
-		size_t isb, itb;
-		const heph_float piOverN = Math::pi / (fftSize - 1);
-		for (size_t i = fStart; i < fEnd; i += hopSize)
-		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
-			if (processedBuffer == nullptr)
-			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
-				applyFilter(processedBuffer->audioBuffer);
-				processedBuffers.push_back(processedBuffer);
-			}
-
-			if (i > subBufferFrameIndex)
-			{
-				isb = i - subBufferFrameIndex;
-				itb = 0;
-			}
-			else
-			{
-				isb = 0;
-				itb = subBufferFrameIndex - i;
-			}
-
-			for (; isb < subBuffer.frameCount && itb < fftSize; isb++, itb++)
-			{
-				const heph_float s = sin(itb * piOverN);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					subBuffer[isb][j] += processedBuffer->audioBuffer[itb][j] * s * s;
-				}
 			}
 		}
 	}
@@ -1646,92 +1287,6 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float lowCutoffFreq, heph_float highCutoffFreq)
-	{
-		BandPassFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, 512, 1024, lowCutoffFreq, highCutoffFreq);
-	}
-	void AudioProcessor::BandPassFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq)
-	{
-		static std::vector<ProcessedBuffer*> processedBuffers;
-
-		const auto applyFilter = [&fftSize, &lowCutoffFreq, &highCutoffFreq](AudioBuffer& subBuffer) -> void
-		{
-			const size_t nyquistFrequency = fftSize * 0.5;
-			const uint64_t startIndex = Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
-			const uint64_t stopIndex = Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
-			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
-			const size_t frameSize = subBuffer.formatInfo.FrameSize();
-			std::vector<FloatBuffer> channels = SplitChannels(subBuffer);
-
-			for (size_t i = 0; i < subBuffer.formatInfo.channelCount; i++)
-			{
-				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels[i], fftSize);
-
-				for (int64_t j = startIndex; j >= 0; j--)
-				{
-					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
-				}
-
-				for (size_t j = stopIndex; j < nyquistFrequency; j++)
-				{
-					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
-				}
-
-				Fourier::FFT_Inverse(complexBuffer, false);
-				for (size_t j = 0; j < fftSize; j++)
-				{
-					subBuffer[j][i] = complexBuffer[j].real / fftSize;
-				}
-			}
-		};
-		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
-		size_t fStart = 0;
-		if (subBufferFrameIndex > fftSize)
-		{
-			fStart = subBufferFrameIndex - fftSize;
-			fStart = fStart + hopSize - (fStart % hopSize);
-		}
-		size_t fEnd = fTarget + fftSize;
-		fEnd = fEnd - (fEnd % hopSize);
-
-		subBuffer.Reset();
-		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
-
-		size_t isb, itb;
-		const heph_float piOverN = Math::pi / (fftSize - 1);
-		for (size_t i = fStart; i < fEnd; i += hopSize)
-		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
-			if (processedBuffer == nullptr)
-			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
-				applyFilter(processedBuffer->audioBuffer);
-				processedBuffers.push_back(processedBuffer);
-			}
-
-			if (i > subBufferFrameIndex)
-			{
-				isb = i - subBufferFrameIndex;
-				itb = 0;
-			}
-			else
-			{
-				isb = 0;
-				itb = subBufferFrameIndex - i;
-			}
-
-			for (; isb < subBuffer.frameCount && itb < fftSize; isb++, itb++)
-			{
-				const heph_float s = sin(itb * piOverN);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					subBuffer[isb][j] += processedBuffer->audioBuffer[itb][j] * s * s;
-				}
-			}
-		}
-	}
 	void AudioProcessor::BandCutFilter(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq)
 	{
 		BandCutFilter(buffer, defaultHopSize, defaultFFTSize, lowCutoffFreq, highCutoffFreq);
@@ -1831,85 +1386,6 @@ namespace HephAudio
 			if (threads[i].joinable())
 			{
 				threads[i].join();
-			}
-		}
-	}
-	void AudioProcessor::BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, heph_float lowCutoffFreq, heph_float highCutoffFreq)
-	{
-		BandCutFilterRT(originalBuffer, subBuffer, subBufferFrameIndex, 512, 1024, lowCutoffFreq, highCutoffFreq);
-	}
-	void AudioProcessor::BandCutFilterRT(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq)
-	{
-		static std::vector<ProcessedBuffer*> processedBuffers;
-
-		const auto applyFilter = [&fftSize, &lowCutoffFreq, &highCutoffFreq](AudioBuffer& subBuffer) -> void
-		{
-			const uint64_t startIndex = Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
-			const uint64_t stopIndex = Fourier::BinFrequencyToIndex(subBuffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
-			const size_t sampleSize = subBuffer.formatInfo.bitsPerSample * 0.125;
-			const size_t frameSize = subBuffer.formatInfo.FrameSize();
-			std::vector<FloatBuffer> channels = SplitChannels(subBuffer);
-
-			for (size_t i = 0; i < subBuffer.formatInfo.channelCount; i++)
-			{
-				ComplexBuffer complexBuffer = Fourier::FFT_Forward(channels[i], fftSize);
-
-				for (size_t j = startIndex; j <= stopIndex; j++)
-				{
-					complexBuffer[j] = Complex();
-					complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
-				}
-
-				Fourier::FFT_Inverse(complexBuffer, false);
-				for (size_t j = 0; j < fftSize; j++)
-				{
-					subBuffer[j][i] = complexBuffer[j].real / fftSize;
-				}
-			}
-		};
-		const size_t fTarget = subBufferFrameIndex - (subBufferFrameIndex % hopSize);
-		size_t fStart = 0;
-		if (subBufferFrameIndex > fftSize)
-		{
-			fStart = subBufferFrameIndex - fftSize;
-			fStart = fStart + hopSize - (fStart % hopSize);
-		}
-		size_t fEnd = fTarget + fftSize;
-		fEnd = fEnd - (fEnd % hopSize);
-
-		subBuffer.Reset();
-		RemoveOldProcessedBuffers(processedBuffers, &originalBuffer, fStart);
-
-		size_t isb, itb;
-		const heph_float piOverN = Math::pi / (fftSize - 1);
-		for (size_t i = fStart; i < fEnd; i += hopSize)
-		{
-			ProcessedBuffer* processedBuffer = GetProcessedBuffer(processedBuffers, &originalBuffer, i, hopSize);
-			if (processedBuffer == nullptr)
-			{
-				processedBuffer = new ProcessedBuffer(&originalBuffer, originalBuffer.GetSubBuffer(i, fftSize), i, hopSize);
-				applyFilter(processedBuffer->audioBuffer);
-				processedBuffers.push_back(processedBuffer);
-			}
-
-			if (i > subBufferFrameIndex)
-			{
-				isb = i - subBufferFrameIndex;
-				itb = 0;
-			}
-			else
-			{
-				isb = 0;
-				itb = subBufferFrameIndex - i;
-			}
-
-			for (; isb < subBuffer.frameCount && itb < fftSize; isb++, itb++)
-			{
-				const heph_float s = sin(itb * piOverN);
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
-				{
-					subBuffer[isb][j] += processedBuffer->audioBuffer[itb][j] * s * s;
-				}
 			}
 		}
 	}
@@ -2419,40 +1895,6 @@ namespace HephAudio
 			window[i] = sin(pix) / pix;
 		}
 		return window;
-	}
-#pragma endregion
-#pragma region Processed Buffer
-	AudioProcessor::ProcessedBuffer::ProcessedBuffer(const AudioBuffer* pOriginalBuffer, const AudioBuffer& audioBuffer, const size_t& fStart, const size_t& hopSize)
-	{
-		this->pOriginalBuffer = pOriginalBuffer;
-		this->audioBuffer = audioBuffer;
-		this->fStart = fStart;
-		this->hopSize = hopSize;
-	}
-	AudioProcessor::ProcessedBuffer* AudioProcessor::GetProcessedBuffer(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart, const size_t& hopSize)
-	{
-		for (size_t i = 0; i < processedBuffers.size(); i++)
-		{
-			ProcessedBuffer*& processedBuffer = processedBuffers[i];
-			if (processedBuffer->fStart == fStart && hopSize == processedBuffer->hopSize && processedBuffer->pOriginalBuffer == pOriginalBuffer)
-			{
-				return processedBuffer;
-			}
-		}
-		return nullptr;
-	}
-	void AudioProcessor::RemoveOldProcessedBuffers(std::vector<ProcessedBuffer*>& processedBuffers, const AudioBuffer* const pOriginalBuffer, const size_t& fStart)
-	{
-		for (int64_t i = 0; i < processedBuffers.size(); i++)
-		{
-			ProcessedBuffer*& processedBuffer = processedBuffers[i];
-			if (processedBuffer->fStart < fStart && processedBuffer->pOriginalBuffer == pOriginalBuffer)
-			{
-				delete processedBuffer;
-				processedBuffers.erase(processedBuffers.begin() + i);
-				i--;
-			}
-		}
 	}
 #pragma endregion
 }

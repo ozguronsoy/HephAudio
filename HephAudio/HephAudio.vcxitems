@@ -42,7 +42,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MpegFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h" />
@@ -59,7 +58,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp" />
@@ -84,7 +82,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)MpegFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
@@ -97,10 +94,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WavFileMetadataReader.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp" />
   </ItemGroup>
 </Project>

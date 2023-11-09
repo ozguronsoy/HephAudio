@@ -25,7 +25,7 @@ namespace HephAudio
 		LinuxAudio::~LinuxAudio()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG("Destructing LinuxAudio...", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing LinuxAudio...", HEPH_CL_INFO);
 
 			disposing = true;
 
@@ -44,7 +44,7 @@ namespace HephAudio
 				snd_pcm_close(capturePcm);
 			}
 
-			HEPHAUDIO_LOG("LinuxAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("LinuxAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::SetMasterVolume(heph_float volume)
 		{
@@ -111,7 +111,7 @@ namespace HephAudio
 		void LinuxAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			int result;
 			snd_pcm_hw_params_t* pcmHwParams;
@@ -136,7 +136,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&LinuxAudio::RenderData, this);
 
-			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::StopRendering()
 		{
@@ -150,13 +150,13 @@ namespace HephAudio
 					snd_pcm_close(renderPcm);
 					renderPcm = nullptr;
 				}
-				HEPHAUDIO_LOG("Stopped rendering.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
 		}
 		void LinuxAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			int result;
 			snd_pcm_hw_params_t* pcmHwParams;
@@ -181,7 +181,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&LinuxAudio::CaptureData, this);
 
-			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::StopCapturing()
 		{
@@ -195,7 +195,7 @@ namespace HephAudio
 					snd_pcm_close(capturePcm);
 					capturePcm = nullptr;
 				}
-				HEPHAUDIO_LOG("Stopped capturing.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
 		void LinuxAudio::SetDisplayName(HephCommon::StringBuffer displayName)

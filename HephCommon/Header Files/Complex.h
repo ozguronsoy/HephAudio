@@ -17,6 +17,10 @@ namespace HephCommon
 			this->imaginary = rhs.imaginary;
 			return *this;
 		}
+		constexpr Complex operator+() const noexcept
+		{
+			return Complex(this->real, this->imaginary);
+		}
 		constexpr Complex operator-() const noexcept
 		{
 			return Complex(-this->real, -this->imaginary);
@@ -76,39 +80,39 @@ namespace HephCommon
 		{
 			return this->real != rhs.real || this->imaginary != rhs.imaginary;
 		}
-		constexpr Complex operator+(const heph_float& rhs) const noexcept
+		constexpr Complex operator+(heph_float rhs) const noexcept
 		{
 			return Complex(this->real + rhs, this->imaginary);
 		}
-		constexpr Complex& operator+=(const heph_float& rhs) noexcept
+		constexpr Complex& operator+=(heph_float rhs) noexcept
 		{
 			this->real += rhs;
 			return *this;
 		}
-		constexpr Complex operator-(const heph_float& rhs) const noexcept
+		constexpr Complex operator-(heph_float rhs) const noexcept
 		{
 			return Complex(this->real - rhs, this->imaginary);
 		}
-		constexpr Complex& operator-=(const heph_float& rhs) noexcept
+		constexpr Complex& operator-=(heph_float rhs) noexcept
 		{
 			this->real -= rhs;
 			return *this;
 		}
-		constexpr Complex operator*(const heph_float& rhs) const noexcept
+		constexpr Complex operator*(heph_float rhs) const noexcept
 		{
 			return Complex(this->real * rhs, this->imaginary * rhs);
 		}
-		constexpr Complex& operator*=(const heph_float& rhs) noexcept
+		constexpr Complex& operator*=(heph_float rhs) noexcept
 		{
 			this->real *= rhs;
 			this->imaginary *= rhs;
 			return *this;
 		}
-		constexpr Complex operator/(const heph_float& rhs) const noexcept
+		constexpr Complex operator/(heph_float rhs) const noexcept
 		{
 			return Complex(this->real / rhs, this->imaginary / rhs);
 		}
-		constexpr Complex& operator/=(const heph_float& rhs) noexcept
+		constexpr Complex& operator/=(heph_float rhs) noexcept
 		{
 			this->real /= rhs;
 			this->imaginary /= rhs;
@@ -140,15 +144,15 @@ inline heph_float phase(const HephCommon::Complex& rhs) noexcept
 {
 	return rhs.Phase();
 }
-inline constexpr HephCommon::Complex operator+(const heph_float& lhs, const HephCommon::Complex& rhs) noexcept
+inline constexpr HephCommon::Complex operator+(heph_float lhs, const HephCommon::Complex& rhs) noexcept
 {
 	return rhs + lhs;
 }
-inline constexpr HephCommon::Complex operator-(const heph_float& lhs, const HephCommon::Complex& rhs) noexcept
+inline constexpr HephCommon::Complex operator-(heph_float lhs, const HephCommon::Complex& rhs) noexcept
 {
 	return HephCommon::Complex(lhs - rhs.real, -rhs.imaginary);
 }
-inline constexpr HephCommon::Complex operator*(const heph_float& lhs, const HephCommon::Complex& rhs) noexcept
+inline constexpr HephCommon::Complex operator*(heph_float lhs, const HephCommon::Complex& rhs) noexcept
 {
 	return rhs * lhs;
 }

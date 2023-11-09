@@ -34,7 +34,7 @@ namespace HephAudio
 		AppleAudio::~AppleAudio()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG("Destructing AppleAudio...", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Destructing AppleAudio...", HEPH_CL_INFO);
 
 			disposing = true;
 
@@ -55,7 +55,7 @@ namespace HephAudio
 				AudioDeviceDestroyIOProcID(deviceID, captureProcID);
 			}
 
-			HEPHAUDIO_LOG("AppleAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("AppleAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AppleAudio::SetMasterVolume(heph_float volume)
 		{
@@ -100,7 +100,7 @@ namespace HephAudio
 		void AppleAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopRendering();
 
@@ -137,7 +137,7 @@ namespace HephAudio
 
 			isRenderInitialized = true;
 
-			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AppleAudio::StopRendering()
 		{
@@ -150,13 +150,13 @@ namespace HephAudio
 				APPLE_EXCPT(AudioDeviceStop(deviceID, renderProcID), this, "AppleAudio::StopRendering", "An error occurred whilst stopping the render.");
 				APPLE_EXCPT(AudioDeviceDestroyIOProcID(deviceID, renderProcID), this, "AppleAudio::StopRendering", "An error occurred whilst destroying the IO proc.");
 				renderProcID = nullptr;
-				HEPHAUDIO_LOG("Stopped rendering.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
 		}
 		void AppleAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopCapturing();
 
@@ -193,7 +193,7 @@ namespace HephAudio
 
 			isCaptureInitialized = true;
 
-			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HephCommon::ConsoleLogger::info);
+			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AppleAudio::StopCapturing()
 		{
@@ -206,7 +206,7 @@ namespace HephAudio
 				APPLE_EXCPT(AudioDeviceStop(deviceID, captureProcID), this, "AppleAudio::StopCapturing", "An error occurred whilst stopping the capture.");
 				APPLE_EXCPT(AudioDeviceDestroyIOProcID(deviceID, captureProcID), this, "AppleAudio::StopCapturing", "An error occurred whilst destroying the IO proc.");
 				captureProcID = nullptr;
-				HEPHAUDIO_LOG("Stopped capturing.", HephCommon::ConsoleLogger::info);
+				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
 		void AppleAudio::SetDisplayName(HephCommon::StringBuffer displayName)

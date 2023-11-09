@@ -34,13 +34,12 @@
 #define HEPHAUDIO_STOPWATCH_RESET HephCommon::StopWatch::StaticReset()
 #define HEPHAUDIO_STOPWATCH_DT(prefix) HephCommon::StopWatch::StaticDeltaTime(prefix)
 #define HEPHAUDIO_STOPWATCH_STOP HephCommon::StopWatch::StaticStop()
-#define HEPHAUDIO_LOG(logMessage, logType) HephCommon::ConsoleLogger::Log(logMessage, logType)
+#define HEPHAUDIO_LOG(logMessage, logType) HephCommon::ConsoleLogger::Log(logMessage, logType, "HephAudio")
 #else
 #define HEPHAUDIO_STOPWATCH_START
 #define HEPHAUDIO_STOPWATCH_RESET
 #define HEPHAUDIO_STOPWATCH_DT(prefix)
 #define HEPHAUDIO_STOPWATCH_STOP
-#define HEPHAUDIO_LOG(logMessage, logType)
 #define HEPHAUDIO_LOG(logMessage, logType)
 #endif
 #endif

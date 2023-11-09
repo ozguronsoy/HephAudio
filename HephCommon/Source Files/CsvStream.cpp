@@ -71,7 +71,7 @@ namespace HephCommon
 				}
 
 				field.SetStringType(this->stringType);
-				if ('\r'_b.CompareContent(field.c_at(field.Size() - 1)))
+				if ('\r'_sb.CompareContent(field.c_at(field.Size() - 1)))
 				{
 					field.RemoveAt(field.Size() - 1);
 				}
