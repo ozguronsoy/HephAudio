@@ -51,7 +51,7 @@ namespace HephCommon
 	}
 	double StopWatch::StaticDeltaTime()
 	{
-		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count();
+		return (std::chrono::high_resolution_clock::now() - timePoints[std::this_thread::get_id()]).count() * 1e-9;
 	}
 	double StopWatch::StaticDeltaTime(double prefix)
 	{

@@ -1,33 +1,9 @@
 #pragma once
 #include "HephAudioFramework.h"
-#include "int24.h"
 #include "AudioFormatInfo.h"
-#include <vector>
 
 namespace HephAudio
 {
-#pragma region Audio Frame
-	class AudioBuffer;
-	/// <summary>
-	/// Struct for accessing the audio samples at the given channel of the frame.
-	/// </summary>
-	struct AudioFrame final
-	{
-		friend class AudioBuffer;
-	private:
-		const AudioBuffer* pAudioBuffer;
-		size_t frameIndex;
-		AudioFrame(const AudioBuffer* pAudioBuffer, size_t frameIndex);
-	public:
-		/// <summary>
-		/// Returns the audio sample at the given channel.
-		/// </summary>
-		/// <param name="channel">Channel of the audio sample.</param>
-		/// <returns>The Audio sample.</returns>
-		heph_float& operator[](const size_t& channel) const;
-	};
-#pragma endregion
-#pragma region Audio Buffer
 	/// <summary>
 	/// Holds audio data.
 	/// </summary>
@@ -66,7 +42,7 @@ namespace HephAudio
 		/// </summary>
 		/// <param name="frameIndex">Position of the audio frame.</param>
 		/// <returns>The audio frame at the given index.</returns>
-		AudioFrame operator[](const size_t& frameIndex) const;
+		heph_float* operator[](const size_t& frameIndex) const;
 		/// <summary>
 		/// Creates an inverted audio buffer.
 		/// </summary>
@@ -274,6 +250,5 @@ namespace HephAudio
 		/// <returns>The frame that corresponds to the given time</returns>
 		static size_t CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo) noexcept;
 	};
-#pragma endregion
 }
 HephAudio::AudioBuffer abs(const HephAudio::AudioBuffer& rhs);

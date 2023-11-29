@@ -55,7 +55,7 @@ namespace HephAudio
 				AudioDeviceDestroyIOProcID(deviceID, captureProcID);
 			}
 
-			HEPHAUDIO_LOG("AppleAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AppleAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AppleAudio::SetMasterVolume(heph_float volume)
 		{
@@ -137,7 +137,7 @@ namespace HephAudio
 
 			isRenderInitialized = true;
 
-			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AppleAudio::StopRendering()
 		{
@@ -193,7 +193,7 @@ namespace HephAudio
 
 			isCaptureInitialized = true;
 
-			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HephCommon::StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AppleAudio::StopCapturing()
 		{

@@ -1,5 +1,6 @@
 #include "PcmCodec.h"
 #include "HephException.h"
+#include "int24.h"
 
 using namespace HephCommon;
 
@@ -13,7 +14,7 @@ namespace HephAudio
 		}
 		AudioBuffer PcmCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, encodedBufferInfo.formatInfo.channelCount, sizeof(heph_float) * 8, encodedBufferInfo.formatInfo.sampleRate));
+			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
 
 			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 			{

@@ -4,6 +4,10 @@
 #include <map>
 #include <thread>
 
+#define HEPH_SW_NANO 1e-9
+#define HEPH_SW_MICRO 1e-6
+#define HEPH_SW_MILLI 1e-3
+
 namespace HephCommon
 {
 	class StopWatch final
@@ -14,10 +18,6 @@ namespace HephCommon
 #else
 		typedef std::chrono::steady_clock::time_point TimePoint;
 #endif
-	public:
-		static constexpr double nano = 1e-9;
-		static constexpr double micro = 1e-6;
-		static constexpr double milli = 1e-3;
 	private:
 		TimePoint tp;
 	private:

@@ -9,7 +9,16 @@
 #include <shlobj.h>
 #include "AudioFileFormatManager.h"
 #include "AudioCodecManager.h"
+#include "SineWaveOscillator.h"
 #include <AudioStream.h>
+
+#include "HannWindow.h"
+#include "WelchWindow.h"
+#include "BlackmanWindow.h"
+#include "ExactBlackmanWindow.h"
+#include "ParzenWindow.h"
+#include "TriangleWindow.h"
+#include "SineWindow.h"
 
 #define CAPTURE_FORMAT AudioFormatInfo(1, 2, 32, 48e3)
 
@@ -33,7 +42,7 @@ int main()
 	HANDLE stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	DWORD outMode = 0;
 	GetConsoleMode(stdoutHandle, &outMode);
-	
+
 	SetConsoleMode(stdoutHandle, outMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
 	wchar_t desktopPath[MAX_PATH + 1];
@@ -50,7 +59,7 @@ int main()
 	audio->SetDeviceEnumerationPeriod(250e6);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
-	audio.Play(audioRoot + "Gate of Steiner.wav");
+	auto pao = audio.Load(audioRoot + "Last Game.wav");
 
 	return Run(audio, audioRoot);
 }
@@ -124,7 +133,7 @@ void OnFinishedPlaying(EventArgs* pArgs, EventResult* pResult)
 }
 heph_float PrintDeltaTime(StringBuffer label)
 {
-	const heph_float dt = StopWatch::StaticDeltaTime(StopWatch::milli);
+	const heph_float dt = StopWatch::StaticDeltaTime(HEPH_SW_MILLI);
 	label = label + " " + StringBuffer::ToString(dt, 4);
 	label += " ms";
 	ConsoleLogger::LogSuccess(label);
@@ -251,7 +260,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 
 				pao->pause = true;
 				StopWatch::StaticReset();
-				AudioProcessor::Flanger(pao->buffer, depth, -0.37, 0.3, delay, SineWaveOscillator(1.0, rate, pao->buffer.FormatInfo().sampleRate, phase, AngleUnit::Degree));
+				AudioProcessor::Flanger(pao->buffer, depth, -0.37, 0.3, delay, SineWaveOscillator(1.0, rate, pao->buffer.FormatInfo().sampleRate, Math::DegToRad(phase)));
 				PrintDeltaTime("flanger applied in");
 				pao->pause = originalState;
 			}
@@ -265,25 +274,29 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				if (params.at(1) == L"lp")
 				{
 					StopWatch::StaticReset();
-					AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1);
+					WelchWindow window;
+					AudioProcessor::LowPassFilterMT(pao->buffer, 512, 1024, f1, window);
 					PrintDeltaTime("low-pass filter applied in");
 				}
 				else if (params.at(1) == L"hp")
 				{
 					StopWatch::StaticReset();
-					AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1);
+					WelchWindow window;
+					AudioProcessor::HighPassFilterMT(pao->buffer, 512, 1024, f1, window);
 					PrintDeltaTime("high-pass filter applied in");
 				}
 				else if (params.at(1) == L"bp")
 				{
 					StopWatch::StaticReset();
-					AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2);
+					WelchWindow window;
+					AudioProcessor::BandPassFilterMT(pao->buffer, 512, 1024, f1, f2, window);
 					PrintDeltaTime("band-pass filter applied in");
 				}
 				else if (params.at(1) == L"bc")
 				{
 					StopWatch::StaticReset();
-					AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2);
+					WelchWindow window;
+					AudioProcessor::BandCutFilterMT(pao->buffer, 512, 1024, f1, f2, window);
 					PrintDeltaTime("band-cut filter applied in");
 				}
 			}
@@ -296,7 +309,8 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				heph_float speed = StringBuffer::StringToDouble(params.at(1));
 				pao->pause = true;
 				StopWatch::StaticReset();
-				AudioProcessor::ChangeSpeedTD(pao->buffer, speed);
+				HannWindow window;
+				AudioProcessor::ChangeSpeedTD(pao->buffer, speed, window);
 				audio.SetAOPosition(pao, originalPosition);
 				PrintDeltaTime("playback speed changed in");
 				pao->pause = originalState;
@@ -309,7 +323,8 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				heph_float shiftFactor = StringBuffer::StringToDouble(params.at(1));
 				pao->pause = true;
 				StopWatch::StaticReset();
-				AudioProcessor::PitchShiftMT(pao->buffer, 1024, 4096, shiftFactor);
+				WelchWindow window;
+				AudioProcessor::PitchShiftMT(pao->buffer, 1024, 4096, shiftFactor, window);
 				PrintDeltaTime("pitch shifted in");
 				pao->pause = originalState;
 			}

@@ -9,18 +9,19 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		std::vector<IAudioCodec*> audioCodecs = {
+		std::vector<IAudioCodec*> audioCodecs = 
+		{
 			new PcmCodec(),
 			new IEEE_FloatCodec(),
 			new MuLawCodec(),
 			new ALawCodec()
 		};
 
-		IAudioCodec* AudioCodecManager::FindCodec(uint32_t formatTag)
+		IAudioCodec* AudioCodecManager::FindCodec(uint32_t codecTag)
 		{
 			for (size_t i = 0; i < audioCodecs.size(); i++)
 			{
-				if (audioCodecs[i]->Tag() == formatTag)
+				if (audioCodecs[i]->Tag() == codecTag)
 				{
 					return audioCodecs[i];
 				}

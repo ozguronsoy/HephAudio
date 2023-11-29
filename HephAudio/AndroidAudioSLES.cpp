@@ -50,7 +50,7 @@ namespace HephAudio
 
 			(*audioEngineObject)->Destroy(audioEngineObject);
 
-			HEPHAUDIO_LOG("AndroidAudioSLES destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AndroidAudioSLES destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioSLES::SetMasterVolume(heph_float volume)
 		{
@@ -107,7 +107,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&AndroidAudioSLES::RenderData, this, bufferQueue);
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioSLES::StopRendering()
 		{
@@ -163,7 +163,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&AndroidAudioSLES::CaptureData, this, simpleBufferQueue);
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(StopWatch::milli), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioSLES::StopCapturing()
 		{

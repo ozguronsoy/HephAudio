@@ -12,9 +12,10 @@ namespace HephAudio
 		uint32_t order;
 		heph_float dutyCycle;
 	public:
+		PulseWaveOscillator();
 		PulseWaveOscillator(uint32_t sampleRate);
-		PulseWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase = 0.0, AngleUnit angleUnit = AngleUnit::Radian);
-		heph_float Oscillate(size_t t_sample) const noexcept override;
+		PulseWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad);
+		heph_float operator[](size_t n) const noexcept override;
 		heph_float GetPulseWidth() const noexcept;
 		heph_float GetEta() const noexcept;
 		void UpdateEta() noexcept;

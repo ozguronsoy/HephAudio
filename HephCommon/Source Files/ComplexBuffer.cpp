@@ -23,6 +23,22 @@ namespace HephCommon
 			this->Reset();
 		}
 	}
+	ComplexBuffer::ComplexBuffer(const std::initializer_list<heph_float>& rhs) : frameCount(rhs.size()), pComplexData(nullptr)
+	{
+		if (this->frameCount > 0)
+		{
+			this->pComplexData = (Complex*)malloc(this->Size());
+			if (this->pComplexData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+			}
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i].real = rhs.begin()[i];
+				(*this)[i].imaginary = 0;
+			}
+		}
+	}
 	ComplexBuffer::ComplexBuffer(const std::initializer_list<Complex>& rhs) : frameCount(rhs.size()), pComplexData(nullptr)
 	{
 		if (this->frameCount > 0)
@@ -47,6 +63,22 @@ namespace HephCommon
 			memcpy(this->pComplexData, rhs.pComplexData, rhs.Size());
 		}
 	}
+	ComplexBuffer::ComplexBuffer(const FloatBuffer& rhs) : frameCount(rhs.FrameCount()), pComplexData(nullptr)
+	{
+		if (this->frameCount > 0)
+		{
+			this->pComplexData = (Complex*)malloc(this->Size());
+			if (this->pComplexData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+			}
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i].real = rhs[i];
+				(*this)[i].imaginary = 0;
+			}
+		}
+	}
 	ComplexBuffer::ComplexBuffer(ComplexBuffer&& rhs) noexcept : frameCount(rhs.frameCount), pComplexData(rhs.pComplexData)
 	{
 		rhs.frameCount = 0;
@@ -69,6 +101,27 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
+	ComplexBuffer& ComplexBuffer::operator=(const std::initializer_list<heph_float>& rhs)
+	{
+		this->Empty();
+
+		this->frameCount = rhs.size();
+		if (this->frameCount > 0)
+		{
+			this->pComplexData = (Complex*)malloc(this->Size());
+			if (this->pComplexData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+			}
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i].real = rhs.begin()[i];
+				(*this)[i].imaginary = 0;
+			}
+		}
+
+		return *this;
+	}
 	ComplexBuffer& ComplexBuffer::operator=(const std::initializer_list<Complex>& rhs)
 	{
 		this->Empty();
@@ -90,7 +143,7 @@ namespace HephCommon
 	{
 		if (this->pComplexData != rhs.pComplexData)
 		{
-			this->Empty(); // destroy the current buffer to avoid memory leaks.
+			this->Empty();
 
 			this->frameCount = rhs.frameCount;
 
@@ -111,6 +164,32 @@ namespace HephCommon
 
 		return *this;
 	}
+	ComplexBuffer& ComplexBuffer::operator=(const FloatBuffer& rhs)
+	{
+		this->Empty();
+
+		this->frameCount = rhs.FrameCount();
+
+		if (this->frameCount > 0)
+		{
+			this->pComplexData = (Complex*)malloc(this->Size());
+			if (this->pComplexData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+			}
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i].real = rhs[i];
+				(*this)[i].imaginary = 0;
+			}
+		}
+		else
+		{
+			this->pComplexData = nullptr;
+		}
+
+		return *this;
+	}
 	ComplexBuffer& ComplexBuffer::operator=(ComplexBuffer&& rhs) noexcept
 	{
 		if (this != &rhs)
@@ -126,37 +205,181 @@ namespace HephCommon
 
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator*(const Complex& rhs) const noexcept
+	ComplexBuffer ComplexBuffer::operator+(heph_float rhs) const noexcept
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			resultBuffer[i] = (*this)[i] * rhs;
+			resultBuffer[i] += rhs;
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator*=(const Complex& rhs) noexcept
+	ComplexBuffer ComplexBuffer::operator+(const Complex& rhs) const noexcept
+	{
+		ComplexBuffer resultBuffer(*this);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] += rhs;
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer ComplexBuffer::operator+(const ComplexBuffer& rhs) const
+	{
+		ComplexBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		size_t i;
+
+		for (i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] + rhs[i];
+		}
+
+		for (; i < resultBuffer.frameCount; i++)
+		{
+			resultBuffer[i] = rhs[i];
+		}
+
+		return resultBuffer;
+	}
+	ComplexBuffer ComplexBuffer::operator+(const FloatBuffer& rhs) const
+	{
+		ComplexBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
+		size_t i;
+
+		for (i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] + rhs[i];
+		}
+
+		for (; i < resultBuffer.frameCount; i++)
+		{
+			resultBuffer[i].real = rhs[i];
+			resultBuffer[i].imaginary = 0;
+		}
+
+		return resultBuffer;
+	}
+	ComplexBuffer& ComplexBuffer::operator+=(heph_float rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			(*this)[i] *= rhs;
+			(*this)[i] += rhs;
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator/(const Complex& rhs) const noexcept
+	ComplexBuffer& ComplexBuffer::operator+=(const Complex& rhs)
+	{
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] += rhs;
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator+=(const ComplexBuffer& rhs)
+	{
+		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] += rhs[i];
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator+=(const FloatBuffer& rhs)
+	{
+		this->Resize(Math::Max(this->frameCount, rhs.FrameCount()));
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] += rhs[i];
+		}
+		return *this;
+	}
+	ComplexBuffer ComplexBuffer::operator-(heph_float rhs) const noexcept
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			resultBuffer[i] = (*this)[i] / rhs;
+			resultBuffer[i] -= rhs;
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator/=(const Complex& rhs) noexcept
+	ComplexBuffer ComplexBuffer::operator-(const Complex& rhs) const noexcept
+	{
+		ComplexBuffer resultBuffer(*this);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] -= rhs;
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer ComplexBuffer::operator-(const ComplexBuffer& rhs) const
+	{
+		ComplexBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		size_t i;
+
+		for (i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] - rhs[i];
+		}
+
+		for (; i < resultBuffer.frameCount; i++)
+		{
+			resultBuffer[i] = -rhs[i];
+		}
+
+		return resultBuffer;
+	}
+	ComplexBuffer ComplexBuffer::operator-(const FloatBuffer& rhs) const
+	{
+		ComplexBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
+		size_t i;
+
+		for (i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] - rhs[i];
+		}
+
+		for (; i < resultBuffer.frameCount; i++)
+		{
+			resultBuffer[i].real = -rhs[i];
+			resultBuffer[i].imaginary = 0;
+		}
+
+		return resultBuffer;
+	}
+	ComplexBuffer& ComplexBuffer::operator-=(heph_float rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			(*this)[i] /= rhs;
+			(*this)[i] -= rhs;
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator-=(const Complex& rhs)
+	{
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] -= rhs;
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator-=(const ComplexBuffer& rhs)
+	{
+		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] -= rhs[i];
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator-=(const FloatBuffer& rhs)
+	{
+		this->Resize(Math::Max(this->frameCount, rhs.FrameCount()));
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] -= rhs[i];
 		}
 		return *this;
 	}
@@ -169,12 +392,97 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
+	ComplexBuffer ComplexBuffer::operator*(const Complex& rhs) const noexcept
+	{
+		ComplexBuffer resultBuffer(*this);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] * rhs;
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer ComplexBuffer::operator*(const ComplexBuffer& rhs) const
+	{
+		ComplexBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		for (size_t i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] * rhs[i];
+		}
+		return resultBuffer;
+	}
+	ComplexBuffer ComplexBuffer::operator*(const FloatBuffer& rhs) const
+	{
+		ComplexBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
+		for (size_t i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] * rhs[i];
+		}
+		return resultBuffer;
+	}
 	ComplexBuffer& ComplexBuffer::operator*=(heph_float rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			(*this)[i] *= rhs;
 		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator*=(const Complex& rhs) noexcept
+	{
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] *= rhs;
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator*=(const ComplexBuffer& rhs)
+	{
+		if (this->frameCount >= rhs.frameCount)
+		{
+			for (size_t i = 0; i < rhs.frameCount; i++)
+			{
+				(*this)[i] *= rhs[i];
+			}
+			if (this->frameCount > rhs.frameCount)
+			{
+				memset(this->pComplexData + rhs.frameCount, 0, (this->frameCount - rhs.frameCount) * sizeof(Complex));
+			}
+		}
+		else
+		{
+			this->Resize(rhs.frameCount);
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i] *= rhs[i];
+			}
+		}
+
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator*=(const FloatBuffer& rhs)
+	{
+		if (this->frameCount >= rhs.FrameCount())
+		{
+			for (size_t i = 0; i < rhs.FrameCount(); i++)
+			{
+				(*this)[i] *= rhs[i];
+			}
+			if (this->frameCount > rhs.FrameCount())
+			{
+				memset(this->pComplexData + rhs.FrameCount(), 0, (this->frameCount - rhs.FrameCount()) * sizeof(Complex));
+			}
+		}
+		else
+		{
+			this->Resize(rhs.FrameCount());
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i] *= rhs[i];
+			}
+		}
+
 		return *this;
 	}
 	ComplexBuffer ComplexBuffer::operator/(heph_float rhs) const noexcept
@@ -186,7 +494,24 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
+	ComplexBuffer ComplexBuffer::operator/(const Complex& rhs) const noexcept
+	{
+		ComplexBuffer resultBuffer(*this);
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] / rhs;
+		}
+		return resultBuffer;
+	}
 	ComplexBuffer& ComplexBuffer::operator/=(heph_float rhs) noexcept
+	{
+		for (size_t i = 0; i < this->frameCount; i++)
+		{
+			(*this)[i] /= rhs;
+		}
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator/=(const Complex& rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -238,9 +563,17 @@ namespace HephCommon
 		}
 		return *this;
 	}
+	bool ComplexBuffer::operator==(std::nullptr_t rhs) const noexcept
+	{
+		return this->pComplexData == rhs;
+	}
 	bool ComplexBuffer::operator==(const ComplexBuffer& rhs) const noexcept
 	{
 		return this->pComplexData == rhs.pComplexData || (this->frameCount == rhs.frameCount && this->pComplexData != nullptr && rhs.pComplexData != nullptr && memcmp(this->pComplexData, rhs.pComplexData, this->Size()) == 0);
+	}
+	bool ComplexBuffer::operator!=(std::nullptr_t rhs) const noexcept
+	{
+		return this->pComplexData != rhs;
 	}
 	bool ComplexBuffer::operator!=(const ComplexBuffer& rhs) const noexcept
 	{
@@ -452,6 +785,10 @@ namespace HephCommon
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::Resize", "Insufficient memory."));
 				}
+				if (newFrameCount > this->frameCount)
+				{
+					memset(pTemp + this->frameCount, 0, (newFrameCount - this->frameCount) * sizeof(Complex));
+				}
 				this->pComplexData = pTemp;
 				this->frameCount = newFrameCount;
 			}
@@ -493,11 +830,98 @@ HephCommon::FloatBuffer phase(const HephCommon::ComplexBuffer& rhs)
 	}
 	return resultBuffer;
 }
+HephCommon::ComplexBuffer operator+(heph_float lhs, const HephCommon::ComplexBuffer& rhs) 
+{
+	return rhs + lhs;
+}
+HephCommon::ComplexBuffer operator+(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs) 
+{
+	return rhs + lhs;
+}
+HephCommon::ComplexBuffer operator+(const HephCommon::FloatBuffer& lhs, const HephCommon::ComplexBuffer& rhs) 
+{
+	return rhs + lhs;
+}
+HephCommon::ComplexBuffer operator-(heph_float lhs, const HephCommon::ComplexBuffer& rhs) 
+{
+	HephCommon::ComplexBuffer resultBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs - rhs[i];
+	}
+	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator-(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs) 
+{
+	HephCommon::ComplexBuffer resultBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs - rhs[i];
+	}
+	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator-(const HephCommon::FloatBuffer& lhs, const HephCommon::ComplexBuffer& rhs) 
+{
+	HephCommon::ComplexBuffer resultBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs[i] - rhs[i];
+	}
+	return resultBuffer;
+}
 HephCommon::ComplexBuffer operator*(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
 {
 	return rhs * lhs;
 }
 HephCommon::ComplexBuffer operator*(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs)
+{
+	return rhs * lhs;
+}
+HephCommon::ComplexBuffer operator*(const HephCommon::FloatBuffer& lhs, const HephCommon::ComplexBuffer& rhs)
+{
+	return rhs * lhs;
+}
+HephCommon::ComplexBuffer operator+(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs) 
+{
+	HephCommon::ComplexBuffer resultBuffer(lhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs[i] + rhs;
+	}
+	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator+(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs) 
+{
+	return rhs + lhs;
+}
+HephCommon::ComplexBuffer operator-(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs) 
+{
+	HephCommon::ComplexBuffer resultBuffer(lhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs[i] - rhs;
+	}
+	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator-(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs) 
+{
+	HephCommon::ComplexBuffer resultBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs - rhs[i];
+	}
+	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator*(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs)
+{
+	HephCommon::ComplexBuffer resultBuffer(lhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs[i] * rhs;
+	}
+	return resultBuffer;
+}
+HephCommon::ComplexBuffer operator*(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs)
 {
 	return rhs * lhs;
 }

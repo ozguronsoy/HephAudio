@@ -4,15 +4,6 @@
 
 namespace HephAudio
 {
-#pragma region Audio Frame
-	AudioFrame::AudioFrame(const AudioBuffer* pAudioBuffer, size_t frameIndex)
-		: pAudioBuffer(pAudioBuffer), frameIndex(frameIndex) { }
-	heph_float& AudioFrame::operator[](const size_t& channel) const
-	{
-		return *((heph_float*)this->pAudioBuffer->Begin() + this->frameIndex * this->pAudioBuffer->FormatInfo().channelCount + channel);
-	}
-#pragma endregion
-#pragma region Audio Buffer
 	AudioBuffer::AudioBuffer()
 		: formatInfo(AudioFormatInfo()), frameCount(0), pAudioData(nullptr) { }
 	AudioBuffer::AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo)
@@ -62,9 +53,9 @@ namespace HephAudio
 		this->Empty();
 		this->formatInfo = AudioFormatInfo();
 	}
-	AudioFrame AudioBuffer::operator[](const size_t& frameIndex) const
+	heph_float* AudioBuffer::operator[](const size_t& frameIndex) const
 	{
-		return AudioFrame(this, frameIndex);
+		return (heph_float*)(((uint8_t*)this->pAudioData) + this->formatInfo.FrameSize() * frameIndex);
 	}
 	AudioBuffer AudioBuffer::operator-() const
 	{
@@ -551,7 +542,6 @@ namespace HephAudio
 		if (formatInfo.FrameSize() == 0) { return 0.0; }
 		return t_s * (heph_float)formatInfo.ByteRate() / (heph_float)formatInfo.FrameSize();
 	}
-#pragma endregion
 }
 HephAudio::AudioBuffer abs(const HephAudio::AudioBuffer& rhs)
 {

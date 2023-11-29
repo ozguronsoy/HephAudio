@@ -4,11 +4,9 @@
 #include "FloatBuffer.h"
 #include "EchoInfo.h"
 #include "EqualizerInfo.h"
-#include "SineWaveOscillator.h"
-#include "SquareWaveOscillator.h"
-#include "TriangleWaveOscillator.h"
-#include "SawToothWaveOscillator.h"
-#include "PulseWaveOscillator.h"
+#include "Oscillator.h"
+#include "Window.h"
+#include <vector>
 
 namespace HephAudio
 {
@@ -52,83 +50,46 @@ namespace HephAudio
 		static void SoftClipDistortion(AudioBuffer& buffer, heph_float alpha);
 		static void Overdrive(AudioBuffer& buffer, heph_float drive);
 		static void Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha);
-		static void Equalizer(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
-		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
-		static void EqualizerMT(AudioBuffer& buffer, const std::vector<EqualizerInfo>& infos);
-		static void EqualizerMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, const std::vector<EqualizerInfo>& infos);
-		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float speed);
-		static void ChangeSpeedTD(AudioBuffer& buffer, heph_float speed);
-		static void ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, heph_float speed);
-		static void PitchShift(AudioBuffer& buffer, heph_float pitchChange_semitone);
-		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone);
-		static void PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone);
-		static void PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone);
+		static void Equalizer(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);
+		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, Window& window, const std::vector<EqualizerInfo>& infos);
+		static void EqualizerMT(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);
+		static void EqualizerMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, Window& window, const std::vector<EqualizerInfo>& infos);
+		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float speed, Window& window);
+		static void ChangeSpeedTD(AudioBuffer& buffer, heph_float speed, Window& window);
+		static void ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, heph_float speed, Window& window);
+		static void PitchShift(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window);
+		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window);
+		static void PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window);
+		static void PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window);
 #pragma endregion
 #pragma region Filters
 	public:
-		static void LowPassFilter(AudioBuffer& buffer, heph_float cutoffFreq);
-		static void LowPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq);
-		static void LowPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq);
-		static void LowPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq);
-		static void LowPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq, size_t threadCountPerChannel);
-		static void LowPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, size_t threadCountPerChannel);
-		static void HighPassFilter(AudioBuffer& buffer, heph_float cutoffFreq);
-		static void HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq);
-		static void HighPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq);
-		static void HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq);
-		static void HighPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq, size_t threadCountPerChannel);
-		static void HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, size_t threadCountPerChannel);
-		static void BandPassFilter(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandPassFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandPassFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel);
-		static void BandPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel);
-		static void BandCutFilter(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandCutFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq);
-		static void BandCutFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel);
-		static void BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel);
+		static void LowPassFilter(AudioBuffer& buffer, heph_float cutoffFreq, Window& window);
+		static void LowPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, Window& window);
+		static void LowPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq, Window& window);
+		static void LowPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, Window& window);
+		static void LowPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void LowPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void HighPassFilter(AudioBuffer& buffer, heph_float cutoffFreq, Window& window);
+		static void HighPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, Window& window);
+		static void HighPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq, Window& window);
+		static void HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, Window& window);
+		static void HighPassFilterMT(AudioBuffer& buffer, heph_float cutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float cutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void BandPassFilter(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandPassFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandPassFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandPassFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void BandPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void BandCutFilter(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandCutFilter(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandCutFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, Window& window);
+		static void BandCutFilterMT(AudioBuffer& buffer, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel, Window& window);
+		static void BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float lowCutoffFreq, heph_float highCutoffFreq, size_t threadCountPerChannel, Window& window);
 		static void SchroederAllpassFilter(AudioBuffer& buffer, heph_float delay_ms, heph_float gain);
 		static void FeedbackCombFilter(AudioBuffer& buffer, heph_float delay_ms, heph_float gain);
-#pragma endregion
-#pragma region Windows
-	public:
-		static void ApplyTriangleWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateTriangleWindow(size_t frameCount);
-		static void ApplyParzenWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateParzenWindow(size_t frameCount);
-		static void ApplyWelchWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateWelchWindow(size_t frameCount);
-		static void ApplySineWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateSineWindow(size_t frameCount);
-		static void ApplyHannWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateHannWindow(size_t frameCount);
-		static void ApplyHammingWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateHammingWindow(size_t frameCount);
-		static void ApplyBlackmanWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateBlackmanWindow(size_t frameCount);
-		static void ApplyExactBlackmanWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateExactBlackmanWindow(size_t frameCount);
-		static void ApplyNuttallWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateNuttallWindow(size_t frameCount);
-		static void ApplyBlackmanNuttallWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateBlackmanNuttallWindow(size_t frameCount);
-		static void ApplyBlackmanHarrisWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateBlackmanHarrisWindow(size_t frameCount);
-		static void ApplyFlatTopWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateFlatTopWindow(size_t frameCount);
-		static void ApplyGaussianWindow(AudioBuffer& buffer, heph_float sigma);
-		static HephCommon::FloatBuffer GenerateGaussianWindow(size_t frameCount, heph_float sigma);
-		static void ApplyTukeyWindow(AudioBuffer& buffer, heph_float alpha);
-		static HephCommon::FloatBuffer GenerateTukeyWindow(size_t frameCount, heph_float alpha);
-		static void ApplyBartlettHannWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateBartlettHannWindow(size_t frameCount);
-		static void ApplyHannPoissonWindow(AudioBuffer& buffer, heph_float alpha);
-		static HephCommon::FloatBuffer GenerateHannPoissonWindow(size_t frameCount, heph_float alpha);
-		static void ApplyLanczosWindow(AudioBuffer& buffer);
-		static HephCommon::FloatBuffer GenerateLanczosWindow(size_t frameCount);
 #pragma endregion
 	};
 }

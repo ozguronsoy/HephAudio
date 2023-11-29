@@ -21,15 +21,27 @@ namespace HephCommon
 		FloatBuffer& operator=(const std::initializer_list<heph_float>& rhs);
 		FloatBuffer& operator=(const FloatBuffer& rhs);
 		FloatBuffer& operator=(FloatBuffer&& rhs) noexcept;
+		FloatBuffer operator+(heph_float rhs) const noexcept;
+		FloatBuffer operator+(const FloatBuffer& rhs) const;
+		FloatBuffer& operator+=(heph_float rhs);
+		FloatBuffer& operator+=(const FloatBuffer& rhs);
+		FloatBuffer operator-(heph_float rhs) const noexcept;
+		FloatBuffer operator-(const FloatBuffer& rhs) const;
+		FloatBuffer& operator-=(heph_float rhs);
+		FloatBuffer& operator-=(const FloatBuffer& rhs);
 		FloatBuffer operator*(heph_float rhs) const noexcept;
+		FloatBuffer operator*(const FloatBuffer& rhs) const;
 		FloatBuffer& operator*=(heph_float rhs) noexcept;
+		FloatBuffer& operator*=(const FloatBuffer& rhs);
 		FloatBuffer operator/(heph_float rhs) const noexcept;
 		FloatBuffer& operator/=(heph_float rhs) noexcept;
 		FloatBuffer operator<<(size_t rhs) const noexcept;
 		FloatBuffer& operator<<=(size_t rhs) noexcept;
 		FloatBuffer operator>>(size_t rhs) const noexcept;
 		FloatBuffer& operator>>=(size_t rhs) noexcept;
+		bool operator==(std::nullptr_t rhs) const noexcept;
 		bool operator==(const FloatBuffer& rhs) const noexcept;
+		bool operator!=(std::nullptr_t rhs) const noexcept;
 		bool operator!=(const FloatBuffer& rhs) const noexcept;
 		size_t Size() const noexcept;
 		size_t FrameCount() const noexcept;
@@ -52,4 +64,6 @@ namespace HephCommon
 	};
 }
 HephCommon::FloatBuffer abs(const HephCommon::FloatBuffer& rhs);
+HephCommon::FloatBuffer operator+(heph_float lhs, const HephCommon::FloatBuffer& rhs);
+HephCommon::FloatBuffer operator-(heph_float lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator*(heph_float lhs, const HephCommon::FloatBuffer& rhs);

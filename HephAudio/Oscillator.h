@@ -6,11 +6,6 @@
 
 namespace HephAudio
 {
-	enum class AngleUnit : uint8_t
-	{
-		Degree,
-		Radian
-	};
 	class Oscillator
 	{
 	public:
@@ -19,12 +14,13 @@ namespace HephAudio
 		heph_float phase_rad;
 		uint32_t sampleRate;
 	protected:
-		Oscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase, AngleUnit angleUnit);
+		Oscillator();
+		Oscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad);
 	public:
 		virtual ~Oscillator() = default;
-		virtual heph_float Oscillate(size_t t_sample) const noexcept = 0;
-		HephCommon::FloatBuffer GenerateBuffer() const noexcept;
-		HephCommon::FloatBuffer GenerateBuffer(size_t frameCount) const noexcept;
-		HephCommon::FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const noexcept;
+		virtual heph_float operator[](size_t n) const noexcept = 0;
+		HephCommon::FloatBuffer GenerateBuffer() const;
+		HephCommon::FloatBuffer GenerateBuffer(size_t frameCount) const;
+		HephCommon::FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const;
 	};
 }
