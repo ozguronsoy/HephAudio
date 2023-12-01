@@ -170,6 +170,10 @@ namespace HephCommon
 					{
 						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::Resize", "Insufficient memory."));
 					}
+					if (newFrameCount > this->frameCount)
+					{
+						memset(pTemp + this->frameCount, 0, (newFrameCount - this->frameCount) * sizeof(ColorType));
+					}
 					this->pColorData = pTemp;
 					this->frameCount = newFrameCount;
 				}

@@ -257,12 +257,46 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
+	FloatBuffer FloatBuffer::operator/(const FloatBuffer& rhs) const
+	{
+		FloatBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		for (size_t i = 0; i < minFrameCount; i++)
+		{
+			resultBuffer[i] = (*this)[i] / rhs[i];
+		}
+		return resultBuffer;
+	}
 	FloatBuffer& FloatBuffer::operator/=(heph_float rhs) noexcept
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			(*this)[i] /= rhs;
 		}
+		return *this;
+	}
+	FloatBuffer& FloatBuffer::operator/=(const FloatBuffer& rhs)
+	{
+		if (this->frameCount >= rhs.frameCount)
+		{
+			for (size_t i = 0; i < rhs.frameCount; i++)
+			{
+				(*this)[i] /= rhs[i];
+			}
+			if (this->frameCount > rhs.frameCount)
+			{
+				memset(this->pData + rhs.frameCount, 0, (this->frameCount - rhs.frameCount) * sizeof(heph_float));
+			}
+		}
+		else
+		{
+			this->Resize(rhs.frameCount);
+			for (size_t i = 0; i < this->frameCount; i++)
+			{
+				(*this)[i] /= rhs[i];
+			}
+		}
+
 		return *this;
 	}
 	FloatBuffer FloatBuffer::operator<<(size_t rhs) const noexcept
@@ -630,4 +664,13 @@ HephCommon::FloatBuffer operator-(heph_float lhs, const HephCommon::FloatBuffer&
 HephCommon::FloatBuffer operator*(heph_float lhs, const HephCommon::FloatBuffer& rhs)
 {
 	return rhs * lhs;
+}
+HephCommon::FloatBuffer operator/(heph_float lhs, const HephCommon::FloatBuffer& rhs)
+{
+	HephCommon::FloatBuffer resultBuffer(rhs.FrameCount());
+	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
+	{
+		resultBuffer[i] = lhs / rhs[i];
+	}
+	return resultBuffer;
 }

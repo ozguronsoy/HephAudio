@@ -26,15 +26,9 @@ namespace HephAudio
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pRenderSessionControl;
 			Microsoft::WRL::ComPtr<IAudioClient3> pCaptureAudioClient;
 		public:
-			/// <summary>
-			/// Creates and initalizes a WinAudio instance.
-			/// </summary>
 			WinAudio();
 			WinAudio(const WinAudio&) = delete;
 			WinAudio& operator=(const WinAudio&) = delete;
-			/// <summary>
-			/// Frees the WASAPI resources.
-			/// </summary>
 			~WinAudio();
 			void SetMasterVolume(heph_float volume) override;
 			heph_float GetMasterVolume() const override;

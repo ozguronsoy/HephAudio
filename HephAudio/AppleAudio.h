@@ -17,15 +17,9 @@ namespace HephAudio
 			AudioDeviceIOProcID renderProcID;
 			AudioDeviceIOProcID captureProcID;
 		public:
-			/// <summary>
-			/// Creates and initalizes an AppleAudio instance.
-			/// </summary>
 			AppleAudio();
 			AppleAudio(const AppleAudio&) = delete;
 			AppleAudio& operator=(const AppleAudio&) = delete;
-			/// <summary>
-			/// Frees the CoreAudio resources.
-			/// </summary>
 			~AppleAudio();
 			void SetMasterVolume(heph_float volume) override;
 			heph_float GetMasterVolume() const override;

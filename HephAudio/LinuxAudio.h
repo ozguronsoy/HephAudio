@@ -19,15 +19,9 @@ namespace HephAudio
 			snd_pcm_t* renderPcm;
 			snd_pcm_t* capturePcm;
 		public:
-			/// <summary>
-			/// Creates and initalizes a LinuxAudio instance.
-			/// </summary>
 			LinuxAudio();
 			LinuxAudio(const LinuxAudio&) = delete;
 			LinuxAudio& operator=(const LinuxAudio&) = delete;
-			/// <summary>
-			/// Frees the ALSA resources.
-			/// </summary>
 			~LinuxAudio();
 			void SetMasterVolume(heph_float volume) override;
 			heph_float GetMasterVolume() const override;

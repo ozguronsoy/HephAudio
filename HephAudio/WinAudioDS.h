@@ -22,15 +22,9 @@ namespace HephAudio
 			Microsoft::WRL::ComPtr<IDirectSoundCapture> pDirectSoundCapture;
 			Microsoft::WRL::ComPtr<IDirectSoundCaptureBuffer> pDirectSoundCaptureBuffer;
 		public:
-			/// <summary>
-			/// Creates and initalizes an WinAudioDS instance.
-			/// </summary>
 			WinAudioDS();
 			WinAudioDS(const WinAudioDS&) = delete;
 			WinAudioDS& operator=(const WinAudioDS&) = delete;
-			/// <summary>
-			/// Frees the DirectSound resources.
-			/// </summary>
 			~WinAudioDS();
 			void SetMasterVolume(heph_float volume) override;
 			heph_float GetMasterVolume() const override;

@@ -34,7 +34,9 @@ namespace HephCommon
 		FloatBuffer& operator*=(heph_float rhs) noexcept;
 		FloatBuffer& operator*=(const FloatBuffer& rhs);
 		FloatBuffer operator/(heph_float rhs) const noexcept;
+		FloatBuffer operator/(const FloatBuffer& rhs) const;
 		FloatBuffer& operator/=(heph_float rhs) noexcept;
+		FloatBuffer& operator/=(const FloatBuffer& rhs);
 		FloatBuffer operator<<(size_t rhs) const noexcept;
 		FloatBuffer& operator<<=(size_t rhs) noexcept;
 		FloatBuffer operator>>(size_t rhs) const noexcept;
@@ -67,3 +69,4 @@ HephCommon::FloatBuffer abs(const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator+(heph_float lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator-(heph_float lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator*(heph_float lhs, const HephCommon::FloatBuffer& rhs);
+HephCommon::FloatBuffer operator/(heph_float lhs, const HephCommon::FloatBuffer& rhs);

@@ -9,9 +9,6 @@
 
 namespace HephAudio
 {
-	/// <summary>
-	/// Reads the audio data from the file just before rendering.
-	/// </summary>
 	class AudioStream final
 	{
 	private:
@@ -24,11 +21,6 @@ namespace HephAudio
 		AudioFormatInfo formatInfo;
 		std::shared_ptr<AudioObject> pao;
 	public:
-		/// <summary>
-		/// Creates and initalizes an AudioStream instance.
-		/// </summary>
-		/// <param name="pNativeAudio">Pointer to the used NativeAudio instance for rendering.</param>
-		/// <param name="filePath">Path of the audio file.</param>
 		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
 		AudioStream(const AudioStream&) = delete;
 		AudioStream& operator=(const AudioStream&) = delete;

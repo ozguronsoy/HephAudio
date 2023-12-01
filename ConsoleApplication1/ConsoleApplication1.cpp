@@ -59,7 +59,9 @@ int main()
 	audio->SetDeviceEnumerationPeriod(250e6);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
-	auto pao = audio.Load(audioRoot + "Last Game.wav");
+	auto pao = audio.Load(audioRoot + "Gate of Steiner.wav");
+
+	pao->pause = false;
 
 	return Run(audio, audioRoot);
 }

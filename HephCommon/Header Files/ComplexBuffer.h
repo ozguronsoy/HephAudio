@@ -53,8 +53,12 @@ namespace HephCommon
 		ComplexBuffer& operator*=(const FloatBuffer& rhs);
 		ComplexBuffer operator/(heph_float rhs) const noexcept;
 		ComplexBuffer operator/(const Complex& rhs) const noexcept;
+		ComplexBuffer operator/(const ComplexBuffer& rhs) const;
+		ComplexBuffer operator/(const FloatBuffer& rhs) const;
 		ComplexBuffer& operator/=(heph_float rhs) noexcept;
 		ComplexBuffer& operator/=(const Complex& rhs) noexcept;
+		ComplexBuffer& operator/=(const ComplexBuffer& rhs);
+		ComplexBuffer& operator/=(const FloatBuffer& rhs);
 		ComplexBuffer operator<<(size_t rhs) const noexcept;
 		ComplexBuffer& operator<<=(size_t rhs) noexcept;
 		ComplexBuffer operator>>(size_t rhs) const noexcept;
@@ -90,9 +94,14 @@ HephCommon::ComplexBuffer operator-(const HephCommon::FloatBuffer& lhs, const He
 HephCommon::ComplexBuffer operator*(heph_float lhs, const HephCommon::ComplexBuffer& rhs);
 HephCommon::ComplexBuffer operator*(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs);
 HephCommon::ComplexBuffer operator*(const HephCommon::FloatBuffer& lhs, const HephCommon::ComplexBuffer& rhs);
+HephCommon::ComplexBuffer operator/(heph_float lhs, const HephCommon::ComplexBuffer& rhs);
+HephCommon::ComplexBuffer operator/(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs);
+HephCommon::ComplexBuffer operator/(const HephCommon::FloatBuffer& lhs, const HephCommon::ComplexBuffer& rhs);
 HephCommon::ComplexBuffer operator+(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs);
 HephCommon::ComplexBuffer operator+(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::ComplexBuffer operator-(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs);
 HephCommon::ComplexBuffer operator-(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::ComplexBuffer operator*(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs);
 HephCommon::ComplexBuffer operator*(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs);
+HephCommon::ComplexBuffer operator/(const HephCommon::FloatBuffer& lhs, const HephCommon::Complex& rhs);
+HephCommon::ComplexBuffer operator/(const HephCommon::Complex& lhs, const HephCommon::FloatBuffer& rhs);

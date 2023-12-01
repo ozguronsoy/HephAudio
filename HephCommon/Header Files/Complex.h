@@ -156,6 +156,10 @@ inline constexpr HephCommon::Complex operator*(heph_float lhs, const HephCommon:
 {
 	return rhs * lhs;
 }
+inline constexpr HephCommon::Complex operator/(heph_float lhs, const HephCommon::Complex& rhs) noexcept
+{
+	return HephCommon::Complex(lhs, 0) / rhs;
+}
 inline HEPH_CONSTEVAL HephCommon::Complex operator""_j(unsigned long long int x) noexcept
 {
 	return HephCommon::Complex(0, x);
