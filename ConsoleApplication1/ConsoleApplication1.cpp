@@ -11,14 +11,10 @@
 #include "AudioCodecManager.h"
 #include "SineWaveOscillator.h"
 #include <AudioStream.h>
+#include "SquareWaveOscillator.h"
 
-#include "HannWindow.h"
 #include "WelchWindow.h"
-#include "BlackmanWindow.h"
-#include "ExactBlackmanWindow.h"
-#include "ParzenWindow.h"
-#include "TriangleWindow.h"
-#include "SineWindow.h"
+#include "HannWindow.h"
 
 #define CAPTURE_FORMAT AudioFormatInfo(1, 2, 32, 48e3)
 
@@ -312,7 +308,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				pao->pause = true;
 				StopWatch::StaticReset();
 				HannWindow window;
-				AudioProcessor::ChangeSpeedTD(pao->buffer, speed, window);
+				AudioProcessor::ChangeSpeed(pao->buffer, speed, window);
 				audio.SetAOPosition(pao, originalPosition);
 				PrintDeltaTime("playback speed changed in");
 				pao->pause = originalState;
@@ -340,8 +336,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 				File audioFile = File(pao->filePath, FileOpenMode::Read);
 				FileFormats::IAudioFileFormat* audioFormat = FileFormats::AudioFileFormatManager::FindFileFormat(pao->filePath);
 				pao->buffer = audioFormat->ReadFile(audioFile);
-				pao->buffer.SetChannelCount(audio.GetRenderFormat().channelCount);
-				pao->buffer.SetSampleRate(audio.GetRenderFormat().sampleRate);
+				pao->buffer.SetFormat(HEPHAUDIO_INTERNAL_FORMAT(audio.GetRenderFormat().channelCount, audio.GetRenderFormat().sampleRate));
 				audio.SetAOPosition(pao, originalPosition);
 				PrintDeltaTime("removed all effects in");
 				pao->pause = originalState;

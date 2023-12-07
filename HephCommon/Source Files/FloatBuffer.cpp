@@ -630,6 +630,22 @@ namespace HephCommon
 		}
 		return 0.0;
 	}
+	FloatBuffer FloatBuffer::Convolution(const FloatBuffer& h) const
+	{
+		if (this->frameCount > 0 && h.frameCount > 0)
+		{
+			FloatBuffer y(this->frameCount + h.frameCount - 1);
+			for (size_t i = 0; i < y.frameCount; i++)
+			{
+				for (int j = (i < this->frameCount ? i : (this->frameCount - 1)); j >= 0 && (i - j) < h.frameCount; j--)
+				{
+					y.pData[i] += this->pData[j] * h.pData[i - j];
+				}
+			}
+			return y;
+		}
+		return FloatBuffer();
+	}
 	heph_float* FloatBuffer::Begin() const noexcept
 	{
 		return this->pData;

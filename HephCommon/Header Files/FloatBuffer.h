@@ -61,6 +61,7 @@ namespace HephCommon
 		heph_float Max() const noexcept;
 		heph_float AbsMax() const noexcept;
 		heph_float Rms() const noexcept;
+		FloatBuffer Convolution(const FloatBuffer& h) const;
 		heph_float* Begin() const noexcept;
 		heph_float* End() const noexcept;
 	};

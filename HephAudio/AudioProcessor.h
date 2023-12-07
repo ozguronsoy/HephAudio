@@ -44,6 +44,7 @@ namespace HephAudio
 		static void Chorus(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, heph_float extent_semitone, const Oscillator& lfo);
 		static void Flanger(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, const Oscillator& lfo);
 		static void Wah(AudioBuffer& buffer, heph_float depth, heph_float damping, heph_float fcmin, heph_float fcmax, const Oscillator& lfo);
+		static void FixOverflow(AudioBuffer& buffer);
 		static void Normalize(AudioBuffer& buffer, heph_float peakAmplitude);
 		static void RmsNormalize(AudioBuffer& buffer, heph_float desiredRms);
 		static void HardClipDistortion(AudioBuffer& buffer, heph_float clippingLevel_dB);
@@ -54,9 +55,8 @@ namespace HephAudio
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, Window& window, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerMT(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, Window& window, const std::vector<EqualizerInfo>& infos);
-		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float speed, Window& window);
-		static void ChangeSpeedTD(AudioBuffer& buffer, heph_float speed, Window& window);
-		static void ChangeSpeedTD(AudioBuffer& buffer, size_t hopSize, size_t windowSize, heph_float speed, Window& window);
+		static void ChangeSpeed(AudioBuffer& buffer, heph_float speed, Window& window);
+		static void ChangeSpeed(AudioBuffer& buffer, size_t hopSize, size_t windowSize, heph_float speed, Window& window);
 		static void PitchShift(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window);
 		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window);
 		static void PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window);

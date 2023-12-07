@@ -12,7 +12,7 @@ namespace HephAudio
 	private:
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
-		void* pAudioData;
+		void* pData;
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
@@ -70,12 +70,12 @@ namespace HephAudio
 		heph_float Max() const noexcept;
 		heph_float AbsMax() const noexcept;
 		heph_float Rms() const noexcept;
+		AudioBuffer Convolution(const HephCommon::FloatBuffer& h) const;
+		AudioBuffer Convolution(const AudioBuffer& h) const;
 		heph_float CalculateDuration() const noexcept;
 		size_t CalculateFrameIndex(heph_float t_s) const noexcept;
 		const AudioFormatInfo& FormatInfo() const noexcept;
 		void SetFormat(AudioFormatInfo newFormat);
-		void SetChannelCount(uint16_t newChannelCount);
-		void SetSampleRate(uint32_t newSampleRate);
 		void* Begin() const noexcept;
 		void* End() const noexcept;
 	public:

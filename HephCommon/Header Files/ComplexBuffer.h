@@ -10,7 +10,7 @@ namespace HephCommon
 	{
 	private:
 		size_t frameCount;
-		Complex* pComplexData;
+		Complex* pData;
 	public:
 		ComplexBuffer();
 		ComplexBuffer(size_t frameCount);
@@ -79,6 +79,7 @@ namespace HephCommon
 		void Reset() noexcept;
 		void Resize(size_t newFrameCount);
 		void Empty() noexcept;
+		ComplexBuffer Convolution(const ComplexBuffer& h) const;
 		Complex* Begin() const noexcept;
 		Complex* End() const noexcept;
 	};
