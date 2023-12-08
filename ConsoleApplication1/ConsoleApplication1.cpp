@@ -12,9 +12,9 @@
 #include "SineWaveOscillator.h"
 #include <AudioStream.h>
 #include "SquareWaveOscillator.h"
-
 #include "WelchWindow.h"
 #include "HannWindow.h"
+#include "RoomImpulseResponse.h"
 
 #define CAPTURE_FORMAT AudioFormatInfo(1, 2, 32, 48e3)
 
@@ -56,6 +56,19 @@ int main()
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
 	auto pao = audio.Load(audioRoot + "Gate of Steiner.wav");
+
+	heph_float frequencyAbsorptionCoefficients[6][RoomImpulseResponse::surfaceCount + 1] =
+	{
+		{ 125, 0.10, 0.10, 0.10, 0.10, 0.02, 0.02 },
+		{ 250, 0.20, 0.20, 0.20, 0.20, 0.03, 0.03 },
+		{ 500, 0.40, 0.40, 0.40, 0.40, 0.03, 0.03 },
+		{ 1000, 0.60, 0.60, 0.60, 0.60, 0.03, 0.03 },
+		{ 2000, 0.50, 0.50, 0.50, 0.50, 0.04, 0.04 },
+		{ 4000, 0.60, 0.60, 0.60, 0.60, 0.07, 0.07 }
+	};
+	RoomImpulseResponse rir(48e3, Vector3(4, 4, 2.5), RoomImpulseResponse::default_c, frequencyAbsorptionCoefficients, 6);
+	HannWindow window;
+	rir.SimulateRoomIR(Vector3(3, 1, 1.8), Vector3(2, 1, 1.8), 512, window);
 
 	pao->pause = false;
 

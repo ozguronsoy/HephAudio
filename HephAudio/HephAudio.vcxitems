@@ -63,6 +63,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PcmCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioStream.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RoomImpulseResponse.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWindow.h" />
@@ -121,6 +122,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PcmCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PulseWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioStream.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)RoomImpulseResponse.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWindow.cpp" />

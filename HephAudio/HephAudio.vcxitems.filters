@@ -246,6 +246,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)LanczosWindow.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)RoomImpulseResponse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -415,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)LanczosWindow.cpp">
       <Filter>Source Files\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)RoomImpulseResponse.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
