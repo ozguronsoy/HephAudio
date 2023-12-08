@@ -108,7 +108,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>HEPHAUDIO_INFO_LOGGING;WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HEPHAUDIO_INFO_LOGGING;HEPH_HIGH_PRECISION_FLOAT;WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>..\HephAudio;C:\Users\ozgur\Desktop\Projects\HephAudio\HephCommon\Header Files;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

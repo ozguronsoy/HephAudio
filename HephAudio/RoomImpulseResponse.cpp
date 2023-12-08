@@ -17,7 +17,7 @@ namespace HephAudio
 		{
 			this->frequencies[i] = frequencyAbsorptionCoefficients[i][0];
 
-			this->BX1[i] = sqrt(1.0 - frequencyAbsorptionCoefficients[i][1]); // calculate the frequency dependant reflection coefficients for each wall
+			this->BX1[i] = sqrt(1.0 - frequencyAbsorptionCoefficients[i][1]);
 			this->BX2[i] = sqrt(1.0 - frequencyAbsorptionCoefficients[i][2]);
 			this->BY1[i] = sqrt(1.0 - frequencyAbsorptionCoefficients[i][3]);
 			this->BY2[i] = sqrt(1.0 - frequencyAbsorptionCoefficients[i][4]);
@@ -44,25 +44,26 @@ namespace HephAudio
 	}
 	FloatBuffer RoomImpulseResponse::SimulateRoomIR(Vector3 source, Vector3 reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
 	{
-		FloatBuffer impulseResponse;
+		constexpr uint32_t p_max = 8;
+		constexpr heph_float q[p_max] = { 0, 0, 0, 0, 1, 1, 1, 1 };
+		constexpr heph_float j[p_max] = { 0, 0, 1, 1, 0, 0, 1, 1 };
+		constexpr heph_float k[p_max] = { 0, 1, 0, 1, 0, 1, 0, 1 };
 
+		FloatBuffer impulseResponse;
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		window.SetSize(fftSize);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
 
-		const int32_t n_max = Math::Min((uint32_t)Math::Ceil(this->impulseResponseRange * 0.5 / this->roomSize.x), imageRangeLimit);
-		const int32_t l_max = Math::Min((uint32_t)Math::Ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
-		const int32_t m_max = Math::Min((uint32_t)Math::Ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
+		const int32_t n_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.x), imageRangeLimit);
+		const int32_t l_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
+		const int32_t m_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
 
-		const heph_float sourceXYZ[3][8] =
+		const heph_float sourceXYZ[3][p_max] =
 		{
 			{ -source.x, -source.x, -source.x, -source.x, source.x, source.x, source.x, source.x },
 			{ -source.y, -source.y, source.y, source.y, -source.y, -source.y, source.y, source.y },
 			{ -source.z, source.z, -source.z, source.z, -source.z, source.z, -source.z, source.z }
 		};
-		const heph_float q[8] = { 0, 0, 0, 0, 1, 1, 1, 1 };
-		const heph_float j[8] = { 0, 0, 1, 1, 0, 0, 1, 1 };
-		const heph_float k[8] = { 0, 1, 0, 1, 0, 1, 0, 1 };
 
 		FloatBuffer frequencies2(this->frequencies.FrameCount() + 2);
 		frequencies2[0] = 0;
@@ -78,24 +79,21 @@ namespace HephAudio
 			{
 				for (int32_t m = -m_max; m <= m_max; m++)
 				{
-					for (uint32_t p = 0; p < 8; p++)
+					for (uint32_t p = 0; p < p_max; p++)
 					{
-						FloatBuffer sourceImagePower(this->frequencies.FrameCount());
+						FloatBuffer imagePower(frequencies2.FrameCount());
 						for (size_t i = 0; i < this->frequencies.FrameCount(); i++)
 						{
-							sourceImagePower[i] =
+							imagePower[i + 1] =
 								pow(this->BX1[i], abs(n - q[p])) * pow(this->BY1[i], abs(l - j[p])) * pow(this->BZ1[i], abs(m - k[p])) *
 								pow(this->BX2[i], abs(n)) * pow(this->BY2[i], abs(l)) * pow(this->BZ2[i], abs(m));
 						}
+						imagePower[0] = imagePower[1];
+						imagePower[imagePower.FrameCount() - 1] = imagePower[imagePower.FrameCount() - 2];
 
-						sourceImagePower.Resize(sourceImagePower.FrameCount() + 2);
-						sourceImagePower >>= 1;
-						sourceImagePower[0] = sourceImagePower[1];
-						sourceImagePower[sourceImagePower.FrameCount() - 1] = sourceImagePower[sourceImagePower.FrameCount() - 2];
-
-						ComplexBuffer sourceImageTransferFunction(fftSize);
-						sourceImageTransferFunction[0].real = sourceImagePower[0];
-						sourceImageTransferFunction[fftSize - 1] = sourceImageTransferFunction[0].Conjugate();
+						ComplexBuffer imageTransferFunction(fftSize);
+						imageTransferFunction[0].real = imagePower[0];
+						imageTransferFunction[fftSize - 1] = imageTransferFunction[0].Conjugate();
 						const size_t nyquistFrequency = fftSize / 2;
 						for (size_t i = 1; i < nyquistFrequency; i++)
 						{
@@ -105,37 +103,37 @@ namespace HephAudio
 							heph_float f_upper = 0;
 							size_t i_lower = 0;
 							size_t i_upper = 0;
-							for (size_t j = 0; j < frequencies2.FrameCount(); j++)
+							for (size_t j_f = 0; j_f < frequencies2.FrameCount(); j_f++)
 							{
-								if (frequencies2[j] >= binFrequency)
+								if (frequencies2[j_f] >= binFrequency)
 								{
-									f_upper = frequencies2[j];
-									i_upper = j;
+									f_upper = frequencies2[j_f];
+									i_upper = j_f;
 									break;
 								}
-								f_lower = frequencies2[j];
-								i_lower = j;
+								f_lower = frequencies2[j_f];
+								i_lower = j_f;
 							}
 							const heph_float alpha = (binFrequency - f_lower) / (f_upper - f_lower);
 
-							sourceImageTransferFunction[i].real = sourceImagePower[i_lower] * (1.0 - alpha) + sourceImagePower[i_upper] * alpha;
-							sourceImageTransferFunction[fftSize - i - 1] = sourceImageTransferFunction[i].Conjugate();
+							imageTransferFunction[i].real = imagePower[i_lower] * (1.0 - alpha) + imagePower[i_upper] * alpha;
+							imageTransferFunction[fftSize - i - 1] = imageTransferFunction[i];
 						}
 
-						FloatBuffer sourceImageImpulseRespnose(fftSize);
-						Fourier::FFT_Inverse(sourceImageImpulseRespnose, sourceImageTransferFunction);
-						
-						const Vector3 sourceImage(2 * n * this->roomSize.x - sourceXYZ[0][p], 2 * l * this->roomSize.y - sourceXYZ[1][p], 2 * m * this->roomSize.z - sourceXYZ[2][p]);
-						const size_t delay = this->sampleRate * sourceImage.Distance(reciever) / this->c;
+						FloatBuffer imageImpulseRespnose(fftSize);
+						Fourier::FFT_Inverse(imageImpulseRespnose, imageTransferFunction);
 
-						if (delay + sourceImageImpulseRespnose.FrameCount() >= impulseResponse.FrameCount())
+						const Vector3 image(2 * n * this->roomSize.x - sourceXYZ[0][p], 2 * l * this->roomSize.y - sourceXYZ[1][p], 2 * m * this->roomSize.z - sourceXYZ[2][p]);
+						const size_t delay = this->sampleRate * image.Distance(reciever) / this->c;
+
+						if (delay + imageImpulseRespnose.FrameCount() >= impulseResponse.FrameCount())
 						{
-							impulseResponse.Resize(delay + sourceImageImpulseRespnose.FrameCount());
+							impulseResponse.Resize(delay + imageImpulseRespnose.FrameCount());
 						}
 
-						for (size_t i = 0; i < sourceImageImpulseRespnose.FrameCount(); i++)
+						for (size_t i = 0; i < imageImpulseRespnose.FrameCount(); i++)
 						{
-							impulseResponse[i + delay] += sourceImageImpulseRespnose[i] * window[i];
+							impulseResponse[i + delay] += imageImpulseRespnose[i] * windowBuffer[i];
 						}
 					}
 				}
@@ -149,7 +147,7 @@ namespace HephAudio
 		const FloatBuffer impulseResponse = this->SimulateRoomIR(source, reciever, fftSize, window, imageRangeLimit);
 		return Fourier::FFT_Forward(impulseResponse, Fourier::CalculateFFTSize(impulseResponse.FrameCount()));
 	}
-	FloatBuffer RoomImpulseResponse::GetFrequencies() const 
+	FloatBuffer RoomImpulseResponse::GetFrequencies() const
 	{
 		return this->frequencies;
 	}

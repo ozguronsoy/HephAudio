@@ -11,7 +11,7 @@ namespace HephAudio
 	{
 	public:
 		static constexpr size_t surfaceCount = 6;
-		static constexpr heph_float default_c = 343.0;
+		static constexpr heph_float default_c = 343.0; // speed of sound in dry air at 20°C in meters per second
 		static constexpr uint32_t defaultImageRangeLimit = 10;
 	private:
 		uint32_t sampleRate;
@@ -19,7 +19,7 @@ namespace HephAudio
 		heph_float wallXY;
 		heph_float wallYZ;
 		heph_float wallXZ;
-		heph_float c;
+		heph_float c; // speed of sound
 		heph_float Vroom;
 		HephCommon::FloatBuffer frequencies;
 		HephCommon::FloatBuffer RT60;
