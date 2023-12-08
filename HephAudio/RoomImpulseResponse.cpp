@@ -49,7 +49,7 @@ namespace HephAudio
 		constexpr heph_float j[p_max] = { 0, 0, 1, 1, 0, 0, 1, 1 };
 		constexpr heph_float k[p_max] = { 0, 1, 0, 1, 0, 1, 0, 1 };
 
-		FloatBuffer impulseResponse;
+		FloatBuffer roomImpulseResponse;
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		window.SetSize(fftSize);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
@@ -58,11 +58,11 @@ namespace HephAudio
 		const int32_t l_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
 		const int32_t m_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
 
-		const heph_float sourceXYZ[3][p_max] =
+		const Vector3 sourceReflections[p_max] =
 		{
-			{ -source.x, -source.x, -source.x, -source.x, source.x, source.x, source.x, source.x },
-			{ -source.y, -source.y, source.y, source.y, -source.y, -source.y, source.y, source.y },
-			{ -source.z, source.z, -source.z, source.z, -source.z, source.z, -source.z, source.z }
+			Vector3(-source.x, -source.y, -source.z), Vector3(-source.x, -source.y, source.z), Vector3(-source.x, source.y, -source.z),
+			Vector3(-source.x, source.y, source.z), Vector3(source.x, -source.y, -source.z), Vector3(source.x, -source.y, source.z),
+			Vector3(source.x, source.y, -source.z), Vector3(source.x, source.y, source.z)
 		};
 
 		FloatBuffer frequencies2(this->frequencies.FrameCount() + 2);
@@ -123,24 +123,24 @@ namespace HephAudio
 						FloatBuffer imageImpulseRespnose(fftSize);
 						Fourier::FFT_Inverse(imageImpulseRespnose, imageTransferFunction);
 
-						const Vector3 image(2 * n * this->roomSize.x - sourceXYZ[0][p], 2 * l * this->roomSize.y - sourceXYZ[1][p], 2 * m * this->roomSize.z - sourceXYZ[2][p]);
+						const Vector3 image(2 * n * this->roomSize.x - sourceReflections[p].x, 2 * l * this->roomSize.y - sourceReflections[p].y, 2 * m * this->roomSize.z - sourceReflections[p].z);
 						const size_t delay = this->sampleRate * image.Distance(reciever) / this->c;
 
-						if (delay + imageImpulseRespnose.FrameCount() >= impulseResponse.FrameCount())
+						if (delay + imageImpulseRespnose.FrameCount() >= roomImpulseResponse.FrameCount())
 						{
-							impulseResponse.Resize(delay + imageImpulseRespnose.FrameCount());
+							roomImpulseResponse.Resize(delay + imageImpulseRespnose.FrameCount());
 						}
 
 						for (size_t i = 0; i < imageImpulseRespnose.FrameCount(); i++)
 						{
-							impulseResponse[i + delay] += imageImpulseRespnose[i] * windowBuffer[i];
+							roomImpulseResponse[i + delay] += imageImpulseRespnose[i] * windowBuffer[i];
 						}
 					}
 				}
 			}
 		}
 
-		return impulseResponse;
+		return roomImpulseResponse;
 	}
 	ComplexBuffer RoomImpulseResponse::SimulateRoomTF(Vector3 source, Vector3 reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
 	{
