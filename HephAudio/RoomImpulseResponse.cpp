@@ -42,21 +42,14 @@ namespace HephAudio
 		}
 		this->impulseResponseRange = this->c * maxRT60;
 	}
-	FloatBuffer RoomImpulseResponse::SimulateRoomIR(Vector3 source, Vector3 reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
+	FloatBuffer RoomImpulseResponse::SimulateRoomIR(const Vector3& source, const Vector3& reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
 	{
-		constexpr uint32_t p_max = 8;
-		constexpr heph_float q[p_max] = { 0, 0, 0, 0, 1, 1, 1, 1 };
-		constexpr heph_float j[p_max] = { 0, 0, 1, 1, 0, 0, 1, 1 };
-		constexpr heph_float k[p_max] = { 0, 1, 0, 1, 0, 1, 0, 1 };
-
-		FloatBuffer roomImpulseResponse;
 		fftSize = Fourier::CalculateFFTSize(fftSize);
+		FloatBuffer roomImpulseResponse(this->CalculateImpulseResponseFrameCount(source, reciever, fftSize, imageRangeLimit));
 		window.SetSize(fftSize);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
 
-		const int32_t n_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.x), imageRangeLimit);
-		const int32_t l_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
-		const int32_t m_max = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
+		const NLM maxNLM = this->CalculateMaxNLM(imageRangeLimit);
 
 		const Vector3 sourceReflections[p_max] =
 		{
@@ -73,11 +66,11 @@ namespace HephAudio
 		}
 		frequencies2[frequencies2.FrameCount() - 1] = this->sampleRate * 0.5;
 
-		for (int32_t n = -n_max; n <= n_max; n++)
+		for (int32_t n = -maxNLM.n; n <= maxNLM.n; n++)
 		{
-			for (int32_t l = -l_max; l <= l_max; l++)
+			for (int32_t l = -maxNLM.l; l <= maxNLM.l; l++)
 			{
-				for (int32_t m = -m_max; m <= m_max; m++)
+				for (int32_t m = -maxNLM.m; m <= maxNLM.m; m++)
 				{
 					for (uint32_t p = 0; p < p_max; p++)
 					{
@@ -126,11 +119,6 @@ namespace HephAudio
 						const Vector3 image(2 * n * this->roomSize.x - sourceReflections[p].x, 2 * l * this->roomSize.y - sourceReflections[p].y, 2 * m * this->roomSize.z - sourceReflections[p].z);
 						const size_t delay = this->sampleRate * image.Distance(reciever) / this->c;
 
-						if (delay + imageImpulseRespnose.FrameCount() >= roomImpulseResponse.FrameCount())
-						{
-							roomImpulseResponse.Resize(delay + imageImpulseRespnose.FrameCount());
-						}
-
 						for (size_t i = 0; i < imageImpulseRespnose.FrameCount(); i++)
 						{
 							roomImpulseResponse[i + delay] += imageImpulseRespnose[i] * windowBuffer[i];
@@ -142,7 +130,7 @@ namespace HephAudio
 
 		return roomImpulseResponse;
 	}
-	ComplexBuffer RoomImpulseResponse::SimulateRoomTF(Vector3 source, Vector3 reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
+	ComplexBuffer RoomImpulseResponse::SimulateRoomTF(const Vector3& source, const Vector3& reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
 	{
 		const FloatBuffer impulseResponse = this->SimulateRoomIR(source, reciever, fftSize, window, imageRangeLimit);
 		return Fourier::FFT_Forward(impulseResponse, Fourier::CalculateFFTSize(impulseResponse.FrameCount()));
@@ -185,5 +173,54 @@ namespace HephAudio
 	heph_float RoomImpulseResponse::GetImpulseResponseRange() const
 	{
 		return this->impulseResponseRange;
+	}
+	uint32_t RoomImpulseResponse::CalculateNumberOfImages(uint32_t imageRangeLimit) const
+	{
+		const NLM maxNLM = this->CalculateMaxNLM(imageRangeLimit);
+		return p_max * (2 * maxNLM.n + 1) * (2 * maxNLM.l + 1) * (2 * maxNLM.m + 1);
+	}
+	size_t RoomImpulseResponse::CalculateImpulseResponseFrameCount(const Vector3& source, const Vector3& reciever, size_t fftSize, uint32_t imageRangeLimit) const
+	{
+		fftSize = Fourier::CalculateFFTSize(fftSize);
+		const NLM maxNLM = this->CalculateMaxNLM(imageRangeLimit);
+		const Vector3 sourceReflections[p_max] =
+		{
+			Vector3(-source.x, -source.y, -source.z), Vector3(-source.x, -source.y, source.z), Vector3(-source.x, source.y, -source.z),
+			Vector3(-source.x, source.y, source.z), Vector3(source.x, -source.y, -source.z), Vector3(source.x, -source.y, source.z),
+			Vector3(source.x, source.y, -source.z), Vector3(source.x, source.y, source.z)
+		};
+		heph_float maxDistance = 0;
+
+		auto measureDistance = [this, &reciever, sourceReflections, &maxDistance](uint32_t p, int32_t n, int32_t l, int32_t m) -> void
+		{
+			const Vector3 image = Vector3(2 * n * this->roomSize.x - sourceReflections[p].x, 2 * l * this->roomSize.y - sourceReflections[p].y, 2 * m * this->roomSize.z - sourceReflections[p].z);
+			const heph_float distance = image.Distance(reciever);
+			if (distance > maxDistance)
+			{
+				maxDistance = distance;
+			}
+		};
+
+		for (uint32_t p = 0; p < p_max; p++)
+		{
+			measureDistance(p, maxNLM.n, maxNLM.l, maxNLM.m);
+			measureDistance(p, maxNLM.n, maxNLM.l, -maxNLM.m);
+			measureDistance(p, maxNLM.n, -maxNLM.l, -maxNLM.m);
+			measureDistance(p, maxNLM.n, -maxNLM.l, maxNLM.m);
+			measureDistance(p, -maxNLM.n, -maxNLM.l, maxNLM.m);
+			measureDistance(p, -maxNLM.n, maxNLM.l, maxNLM.m);
+			measureDistance(p, -maxNLM.n, maxNLM.l, -maxNLM.m);
+			measureDistance(p, -maxNLM.n, -maxNLM.l, -maxNLM.m);
+		}
+
+		return this->sampleRate * maxDistance / this->c + fftSize;
+	}
+	RoomImpulseResponse::NLM RoomImpulseResponse::CalculateMaxNLM(uint32_t imageRangeLimit) const
+	{
+		NLM maxNLM{ 0 };
+		maxNLM.n = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.x), imageRangeLimit);
+		maxNLM.l = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
+		maxNLM.m = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
+		return maxNLM;
 	}
 }

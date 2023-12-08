@@ -68,7 +68,10 @@ int main()
 	};
 	RoomImpulseResponse rir(48e3, Vector3(4, 4, 2.5), RoomImpulseResponse::default_c, frequencyAbsorptionCoefficients, 6);
 	HannWindow window;
-	//rir.SimulateRoomIR(Vector3(3, 1, 1.8), Vector3(2, 1, 1.8), 512, window);
+	constexpr Vector3 source = Vector3(3, 1, 1.8);
+	constexpr Vector3 reciever = Vector3(2, 1, 1.8);
+	constexpr size_t fftSize = 512;
+	//auto ir = rir.SimulateRoomIR(source, reciever, fftSize, window);
 
 	return Run(audio, audioRoot);
 }
