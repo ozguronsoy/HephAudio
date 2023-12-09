@@ -1,7 +1,7 @@
 #ifdef __ANDROID__
 #include "AndroidAudioBase.h"
-#include "StopWatch.h"
-#include "ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 
 using namespace HephCommon;
 

@@ -1,5 +1,5 @@
 #include "HammingWindow.h"
-#include "HephMath.h"
+#include "../HephCommon/HeaderFiles/HephMath.h"
 
 using namespace HephCommon;
 

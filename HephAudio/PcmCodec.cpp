@@ -1,5 +1,5 @@
 #include "PcmCodec.h"
-#include "HephException.h"
+#include "../HephCommon/HeaderFiles/HephException.h"
 #include "int24.h"
 
 using namespace HephCommon;

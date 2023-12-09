@@ -1,6 +1,6 @@
 #include "RoomImpulseResponse.h"
-#include "HephException.h"
-#include "HephMath.h"
+#include "../HephCommon/HeaderFiles/HephException.h"
+#include "../HephCommon/HeaderFiles/HephMath.h"
 #include "Fourier.h"
 
 using namespace HephCommon;

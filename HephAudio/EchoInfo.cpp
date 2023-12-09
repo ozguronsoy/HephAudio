@@ -1,5 +1,5 @@
 #include "EchoInfo.h"
-#include "HephMath.h"
+#include "../HephCommon/HeaderFiles/HephMath.h"
 
 namespace HephAudio
 {

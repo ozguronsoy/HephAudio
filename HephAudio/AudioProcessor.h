@@ -1,7 +1,7 @@
 #pragma once
 #include "HephAudioFramework.h"
 #include "AudioBuffer.h"
-#include "FloatBuffer.h"
+#include "../HephCommon/HeaderFiles/FloatBuffer.h"
 #include "EchoInfo.h"
 #include "EqualizerInfo.h"
 #include "Oscillator.h"

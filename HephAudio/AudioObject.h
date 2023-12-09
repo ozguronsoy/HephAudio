@@ -1,8 +1,8 @@
 #pragma once
 #include "HephAudioFramework.h"
 #include "AudioBuffer.h"
-#include "StringBuffer.h"
-#include "Event.h"
+#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "../HephCommon/HeaderFiles/Event.h"
 #include "AudioRenderEventArgs.h"
 #include "AudioRenderEventResult.h"
 #include "AudioFinishedPlayingEventArgs.h"

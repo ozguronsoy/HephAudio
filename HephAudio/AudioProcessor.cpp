@@ -1,7 +1,7 @@
 #include "AudioProcessor.h"
-#include "HephException.h"
+#include "../HephCommon/HeaderFiles/HephException.h"
 #include "Fourier.h"
-#include "File.h"
+#include "../HephCommon/HeaderFiles/File.h"
 #include "AudioCodecManager.h"
 #include "int24.h"
 #include <thread>

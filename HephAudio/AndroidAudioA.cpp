@@ -1,10 +1,10 @@
 #ifdef __ANDROID__
 #include "AndroidAudioA.h"
 #include "AudioProcessor.h"
-#include "File.h"
-#include "HephMath.h"
-#include "StopWatch.h"
-#include "ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/File.h"
+#include "../HephCommon/HeaderFiles/HephMath.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 
 #define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message)); }
 #define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message)); goto RENDER_EXIT; }

@@ -1,9 +1,9 @@
 #ifdef __ANDROID__
 #include "AndroidAudioSLES.h"
 #include "AudioProcessor.h"
-#include "File.h"
-#include "StopWatch.h"
-#include "ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/File.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 
 #define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); }
 #define ANDROIDAUDIO_RENDER_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); goto RENDER_EXIT; }

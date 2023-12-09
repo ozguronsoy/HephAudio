@@ -1,11 +1,11 @@
 #pragma once
 #include "HephAudioFramework.h"
 #include "AudioDevice.h"
-#include "HephException.h"
+#include "../HephCommon/HeaderFiles/HephException.h"
 #include "AudioObject.h"
 #include "AudioFormatInfo.h"
 #include "EchoInfo.h"
-#include "Event.h"
+#include "../HephCommon/HeaderFiles/Event.h"
 #include "AudioDeviceEventArgs.h"
 #include "AudioCaptureEventArgs.h"
 #include <vector>

@@ -1,5 +1,5 @@
 #include "WavFormat.h"
-#include "HephException.h"
+#include "../HephCommon/HeaderFiles/HephException.h"
 #include "AudioCodecManager.h"
 #include "AudioProcessor.h"
 

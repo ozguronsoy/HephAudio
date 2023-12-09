@@ -1,9 +1,9 @@
 #ifdef _WIN32
 #include "WinAudioDS.h"
 #include "AudioProcessor.h"
-#include "File.h"
-#include "StopWatch.h"
-#include "ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/File.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 
 #pragma comment (lib, "Dsound.lib")
 #pragma comment(lib,"dxguid.lib")

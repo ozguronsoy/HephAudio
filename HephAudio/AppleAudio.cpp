@@ -1,9 +1,9 @@
 #if defined(__APPLE__)
 #include "AppleAudio.h"
-#include "File.h"
+#include "../HephCommon/HeaderFiles/File.h"
 #include "AudioProcessor.h"
-#include "ConsoleLogger.h"
-#include "StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
 #include <CoreFoundation/CFString.h>
 
 #if !defined(MAC_OS_VERSION_12_0)

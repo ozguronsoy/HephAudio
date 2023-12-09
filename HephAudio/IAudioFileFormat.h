@@ -1,9 +1,9 @@
 #pragma once
 #include "HephAudioFramework.h"
 #include "AudioBuffer.h"
-#include "File.h"
+#include "../HephCommon/HeaderFiles/File.h"
 #include "AudioFormatInfo.h"
-#include "StringBuffer.h"
+#include "../HephCommon/HeaderFiles/StringBuffer.h"
 #include "IAudioCodec.h"
 #include <memory>
 

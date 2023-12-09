@@ -1,9 +1,9 @@
 #if defined(__linux__)
 #include "LinuxAudio.h"
-#include "File.h"
+#include "../HephCommon/HeaderFiles/File.h"
 #include "AudioProcessor.h"
-#include "ConsoleLogger.h"
-#include "StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
 #include <unistd.h>
 
 #define SND_OK 0

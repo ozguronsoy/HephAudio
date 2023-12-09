@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioFramework.h"
-#include "FloatBuffer.h"
+#include "../HephCommon/HeaderFiles/FloatBuffer.h"
 
 namespace HephAudio
 {

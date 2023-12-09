@@ -1,8 +1,8 @@
 #ifdef _WIN32
 #include "WinAudio.h"
-#include "File.h"
-#include "StopWatch.h"
-#include "ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/File.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 #include "AudioProcessor.h"
 #include <VersionHelpers.h>
 

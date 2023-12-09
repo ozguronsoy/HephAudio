@@ -1,9 +1,9 @@
 #include "NativeAudio.h"
 #include "AudioProcessor.h"
 #include "AudioFileFormatManager.h"
-#include "StopWatch.h"
-#include "ConsoleLogger.h"
-#include "HephMath.h"
+#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "../HephCommon/HeaderFiles/HephMath.h"
 
 namespace HephAudio
 {

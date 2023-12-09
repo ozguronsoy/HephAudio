@@ -1,8 +1,8 @@
 #pragma once
 #include "HephAudioFramework.h"
-#include "Complex.h"
-#include "ComplexBuffer.h"
-#include "FloatBuffer.h"
+#include "../HephCommon/HeaderFiles/Complex.h"
+#include "../HephCommon/HeaderFiles/ComplexBuffer.h"
+#include "../HephCommon/HeaderFiles/FloatBuffer.h"
 
 namespace HephAudio
 {

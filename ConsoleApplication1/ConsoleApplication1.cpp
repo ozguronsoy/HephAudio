@@ -55,23 +55,6 @@ int main()
 	audio->SetDeviceEnumerationPeriod(250e6);
 
 	audio.InitializeRender(nullptr, AudioFormatInfo(1, 2, 32, 48e3));
-	audio.Play(audioRoot + "Gate of Steiner.wav")->OnRender = OnRender;
-
-	heph_float frequencyAbsorptionCoefficients[6][RoomImpulseResponse::surfaceCount + 1] =
-	{
-		{ 125, 0.10, 0.10, 0.10, 0.10, 0.02, 0.02 },
-		{ 250, 0.20, 0.20, 0.20, 0.20, 0.03, 0.03 },
-		{ 500, 0.40, 0.40, 0.40, 0.40, 0.03, 0.03 },
-		{ 1000, 0.60, 0.60, 0.60, 0.60, 0.03, 0.03 },
-		{ 2000, 0.50, 0.50, 0.50, 0.50, 0.04, 0.04 },
-		{ 4000, 0.60, 0.60, 0.60, 0.60, 0.07, 0.07 }
-	};
-	RoomImpulseResponse rir(48e3, Vector3(4, 4, 2.5), RoomImpulseResponse::default_c, frequencyAbsorptionCoefficients, 6);
-	HannWindow window;
-	constexpr Vector3 source = Vector3(3, 1, 1.8);
-	constexpr Vector3 reciever = Vector3(2, 1, 1.8);
-	constexpr size_t fftSize = 512;
-	//auto ir = rir.SimulateRoomIR(source, reciever, fftSize, window);
 
 	return Run(audio, audioRoot);
 }
