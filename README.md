@@ -149,7 +149,7 @@ audio.InitializeRender(&renderDevices[0], AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16
 ```
 
 ### Applying Effects
-Most of the signal processing is done by the ``AudioProcessor`` class. To apply effects we must obtain the ``AudioBuffer`` that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the ``AudioObject`` that is returend by the ``Play``, ``Load`` and ``Queue`` methods.
+Most of the signal processing is done by the ``AudioProcessor`` class. To apply effects we must obtain the ``AudioBuffer`` that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the ``AudioObject`` that is returned by the ``Play``, ``Load`` and ``Queue`` methods.
 Here is a sample code for playing the file in 2x speed without changing the pitch:
 ```
 #include <stdio.h>
@@ -185,7 +185,7 @@ int main()
 ### Handling Exceptions
 Every error that occurs while using the library raises an ``OnException`` event but only some exception will actually throw. Using this event we can log the exception details to a file or for this instance, simply print it to console.
 
-In this example, we will create a ``StringBuffer`` with 4 characters and we will try to access to its 5'th element. This is going to throw an invalid argument exception.
+In this example, we will create a ``StringBuffer`` with 4 characters and we will try to access to its 5th element. This is going to throw an invalid argument exception.
 ```
 #include <HephException.h>
 #include <ConsoleLogger.h>
