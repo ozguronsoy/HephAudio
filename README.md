@@ -182,3 +182,35 @@ int main()
   return 0;
 }
 ```
+### Handling Exceptions
+Every error that occurs while using the library raises an ``OnException`` event but only some exception will actually throw. Using this event we can log the exception details to a file or for this instance, simply print it to console.
+
+In this example, we will create a ``StringBuffer`` with 4 characters and we will try to access to its 5'th element. This is going to throw an invalid argument exception.
+```
+#include <HephException.h>
+#include <ConsoleLogger.h>
+
+using namespace HephCommon;
+
+void HandleExceptions(EventArgs* pArgs, EventResult* pResult)
+{
+  const HephException& ex = ((HephExceptionEventArgs*)pArgs)->exception; // get the exception data
+
+  StringBuffer exceptionString = "Error!\n" + ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n" + ex.message;
+  ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
+}
+
+int main()
+{
+  HephException::OnException = &HandleExceptions;
+
+  StringBuffer str = "text";
+
+  // invalid argument, index out of bounds
+  // this will first raise an OnException event, then will throw the exception.
+  ConsoleLogger::LogInfo(str.c_at(4));
+
+  return 0;
+}
+```
+With this we conclude our introduction to the HephAudio library. To learn more about the library and audio in general visit the docs folder.
