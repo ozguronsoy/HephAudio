@@ -40,7 +40,7 @@ namespace HephAudio
 		}
 		else
 		{
-			this->pNativeAudio = new LinuxAudio();
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "Audio::Audio", "API levels under 21 are not supported."));
 		}
 	}
 #else

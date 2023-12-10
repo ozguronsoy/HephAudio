@@ -17,23 +17,23 @@ namespace HephCommon
 
 		if (message.GetStringType() == StringType::ASCII)
 		{
-			if (logLevel == ConsoleLogger::info)
+			if (logLevel == HEPH_CL_INFO)
 			{
 				__android_log_print(ANDROID_LOG_INFO, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == ConsoleLogger::warning)
+			else if (logLevel == HEPH_CL_WARNING)
 			{
 				__android_log_print(ANDROID_LOG_WARN, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == ConsoleLogger::error)
+			else if (logLevel == HEPH_CL_ERROR)
 			{
 				__android_log_print(ANDROID_LOG_ERROR, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == ConsoleLogger::success)
+			else if (logLevel == HEPH_CL_SUCCESS)
 			{
 				__android_log_print(ANDROID_LOG_VERBOSE, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == ConsoleLogger::debug)
+			else if (logLevel == HEPH_CL_DEBUG)
 			{
 				__android_log_print(ANDROID_LOG_DEBUG, libName.fc_str(), "%s", message.c_str());
 			}
@@ -44,23 +44,23 @@ namespace HephCommon
 		}
 		else
 		{
-			if (logLevel == ConsoleLogger::info)
+			if (logLevel == HEPH_CL_INFO)
 			{
 				__android_log_print(ANDROID_LOG_INFO, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == ConsoleLogger::warning)
+			else if (logLevel == HEPH_CL_WARNING)
 			{
 				__android_log_print(ANDROID_LOG_WARN, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == ConsoleLogger::error)
+			else if (logLevel == HEPH_CL_ERROR)
 			{
 				__android_log_print(ANDROID_LOG_ERROR, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == ConsoleLogger::success)
+			else if (logLevel == HEPH_CL_SUCCESS)
 			{
 				__android_log_print(ANDROID_LOG_VERBOSE, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == ConsoleLogger::debug)
+			else if (logLevel == HEPH_CL_DEBUG)
 			{
 				__android_log_print(ANDROID_LOG_DEBUG, libName.fc_str(), "%ls", message.wc_str());
 			}

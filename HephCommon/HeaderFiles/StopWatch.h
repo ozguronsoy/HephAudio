@@ -13,7 +13,7 @@ namespace HephCommon
 	class StopWatch final
 	{
 	private:
-#if defined(__linux__)
+#if defined(__linux__) && !defined(ANDROID)
 		typedef std::chrono::system_clock::time_point TimePoint;
 #else
 		typedef std::chrono::steady_clock::time_point TimePoint;
