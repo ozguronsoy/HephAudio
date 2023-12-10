@@ -21,4 +21,4 @@ HephAudio is a cross-platform audio library that provides:
 2) Add ``include_directories(HephCommon/HeaderFiles HephAudio)`` command to your **CMAKE** file.
 3) Add ``file(GLOB HEPH_AUDIO HephCommon/SourceFiles/*.cpp HephAudio/*.cpp)`` command to your **CMAKE** file.
 4) Add ``${HEPH_AUDIO}`` to your ***add_library*** command. Ex: ``add_library(your_app SHARED native-lib.cpp ${HEPH_AUDIO})``.
-5) Link the necessary libraries ``m``, ``log``, ``OpenSLES``, and ``aaudio``. Ex: ``target_link_libraries(your_app m log OpenSLES aaudio)``.
+5) Link the necessary libraries; ``m``, ``log``, ``OpenSLES``, and ``aaudio``. Ex: ``target_link_libraries(your_app m log OpenSLES aaudio)``.
