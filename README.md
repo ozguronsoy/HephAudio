@@ -58,6 +58,14 @@ If the audio data we want to play does not have the same format as the one we sp
 audio.Load("some_path\\some_file.wav", false); // false = don't pause.
 ```
 We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing. You can find more information on this in the documentation files.
+### Queueing Files
+HephAudio allowes you to create queues by calling the ``Queue`` method. The files in the queue will be played one at a time in the given order. You can later add new files to the queue by calling the same method with the same queue name.
+```
+// queue name
+// delay in ms after a file finished playing.
+// a vector of file paths.
+audio.Queue("my queue", 300, { "file1.wav", "file2.wav", "file3.wav" });
+```
 ### Device Enumeration
 To get a list of available audio devices call the ``GetAudioDevices`` method.
 ```
