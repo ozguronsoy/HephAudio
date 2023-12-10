@@ -70,7 +70,7 @@ audio.Queue("my queue", 300, { "file1.wav", "file2.wav", "file3.wav" });
 
 ### Recording
 To record audio, first we need to initialize capturing just like before, this will start the recording process. You can access the recorded data via ``OnCapture`` event, which is invoked when some amount of data is captured (typically 10ms of audio data).
-To add an event handler use either on of the following methods:
+To add an event handler use either one of the following methods:
 ```
 audio.SetOnCaptureHandler(&MyCallbackMethod);          // Removes all the other event handlers, then adds the provided one
 audio->OnCapture.AddEventHandler(&MyCallbackMethod);   // Adds the provided event handler
