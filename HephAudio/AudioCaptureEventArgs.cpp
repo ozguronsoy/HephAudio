@@ -1,4 +1,5 @@
 #include "AudioCaptureEventArgs.h"
+#include <memory>
 
 namespace HephAudio
 {

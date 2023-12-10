@@ -1,4 +1,5 @@
 #include "IEEE_FloatCodec.h"
+#include <memory>
 
 using namespace HephCommon;
 
