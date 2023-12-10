@@ -96,9 +96,9 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
 	}
-	std::shared_ptr<AudioObject> Audio::Load(HephCommon::StringBuffer filePath)
+	std::shared_ptr<AudioObject> Audio::Load(HephCommon::StringBuffer filePath, bool isPaused)
 	{
-		return this->pNativeAudio->Load(filePath);
+		return this->pNativeAudio->Load(filePath, isPaused);
 	}
 	std::shared_ptr<AudioObject> Audio::CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount)
 	{

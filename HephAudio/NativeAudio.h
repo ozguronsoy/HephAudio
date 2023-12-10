@@ -54,7 +54,7 @@ namespace HephAudio
 			std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
 			std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
 			std::vector<std::shared_ptr<AudioObject>> Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
-			std::shared_ptr<AudioObject> Load(HephCommon::StringBuffer filePath);
+			std::shared_ptr<AudioObject> Load(HephCommon::StringBuffer filePath, bool isPaused);
 			std::shared_ptr<AudioObject> CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
 			bool DestroyAO(std::shared_ptr<AudioObject> pAudioObject);
 			bool AOExists(std::shared_ptr<AudioObject> pAudioObject) const;

@@ -120,9 +120,9 @@ namespace HephAudio
 
 			return queuedAudioObjects;
 		}
-		std::shared_ptr<AudioObject> NativeAudio::Load(HephCommon::StringBuffer filePath)
+		std::shared_ptr<AudioObject> NativeAudio::Load(HephCommon::StringBuffer filePath, bool isPaused)
 		{
-			std::shared_ptr<AudioObject> pao = Play(filePath, 1u, true);
+			std::shared_ptr<AudioObject> pao = Play(filePath, 1u, isPaused);
 			if (pao != nullptr && isRenderInitialized)
 			{
 				AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat.sampleRate);
