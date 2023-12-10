@@ -178,7 +178,7 @@ int Run(Audio& audio, StringBuffer& audioRoot)
 			else if (sb.Contains("load"))
 			{
 				StopWatch::StaticReset();
-				std::shared_ptr<AudioObject> pao = audio.Load(audioRoot + sb.Split('\"').at(1), true);
+				std::shared_ptr<AudioObject> pao = audio.Load(audioRoot + sb.Split('\"').at(1));
 				pao->OnFinishedPlaying = OnFinishedPlaying;
 				PrintDeltaTime("File loaded in");
 			}
