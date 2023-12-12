@@ -22,7 +22,7 @@ namespace HephAudio
 			static constexpr bool DEVICE_ENUMERATION_FAIL = false;
 			static constexpr bool DEVICE_ENUMERATION_SUCCESS = true;
 		protected:
-			std::vector<std::shared_ptr<AudioObject>> audioObjects;
+			std::vector<AudioObject> audioObjects;
 			std::vector<AudioDevice> audioDevices;
 			std::thread::id mainThreadId;
 			std::thread renderThread;
@@ -40,7 +40,8 @@ namespace HephAudio
 			HephCommon::StringBuffer displayName;
 			HephCommon::StringBuffer iconPath;
 			uint64_t deviceEnumerationPeriod_ns;
-			mutable std::mutex deviceMutex;
+			mutable std::mutex audioObjectsMutex;
+			mutable std::mutex audioDevicesMutex;
 		public:
 			HephCommon::Event OnAudioDeviceAdded;
 			HephCommon::Event OnAudioDeviceRemoved;
@@ -50,18 +51,16 @@ namespace HephAudio
 			NativeAudio(const NativeAudio&) = delete;
 			NativeAudio& operator=(const NativeAudio&) = delete;
 			virtual ~NativeAudio() = default;
-			std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath);
-			std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
-			std::shared_ptr<AudioObject> Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
-			std::vector<std::shared_ptr<AudioObject>> Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
-			std::shared_ptr<AudioObject> Load(HephCommon::StringBuffer filePath);
-			std::shared_ptr<AudioObject> CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
-			bool DestroyAO(std::shared_ptr<AudioObject> pAudioObject);
-			bool AOExists(std::shared_ptr<AudioObject> pAudioObject) const;
-			void SetAOPosition(std::shared_ptr<AudioObject> pAudioObject, heph_float position);
-			heph_float GetAOPosition(std::shared_ptr<AudioObject> pAudioObject) const;
-			std::shared_ptr<AudioObject> GetAO(HephCommon::StringBuffer aoName) const;
-			std::shared_ptr<AudioObject> GetAO(HephCommon::StringBuffer queueName, size_t index) const;
+			AudioObject* Play(HephCommon::StringBuffer filePath);
+			AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
+			AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
+			std::vector<AudioObject*> Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
+			AudioObject* Load(HephCommon::StringBuffer filePath);
+			AudioObject* CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
+			bool DestroyAO(AudioObject* pAudioObject);
+			bool AOExists(AudioObject* pAudioObject) const;
+			AudioObject* GetAO(HephCommon::StringBuffer aoName);
+			AudioObject* GetAO(HephCommon::StringBuffer queueName, size_t index);
 			void PauseCapture(bool pause);
 			bool IsCapturePaused() const noexcept;
 			uint64_t GetDeviceEnumerationPeriod() const noexcept;
@@ -91,11 +90,11 @@ namespace HephAudio
 			void JoinCaptureThread();
 			void JoinDeviceThread();
 			void JoinQueueThreads();
-			std::vector<std::shared_ptr<AudioObject>> GetQueue(HephCommon::StringBuffer queueName) const;
+			std::vector<AudioObject*> GetQueue(HephCommon::StringBuffer queueName);
 			void PlayNextInQueue(HephCommon::StringBuffer queueName, heph_float queueDelay, uint32_t decreaseQueueIndex);
 			void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
 			size_t GetAOCountToMix() const;
-			virtual heph_float GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const;
+			virtual heph_float GetFinalAOVolume(AudioObject* pAudioObject) const;
 		};
 	}
 }

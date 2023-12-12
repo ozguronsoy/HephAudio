@@ -25,6 +25,8 @@ namespace HephAudio
 		HephCommon::Event OnRender;
 		HephCommon::Event OnFinishedPlaying;
 		AudioObject();
+		AudioObject(AudioObject&& rhs) noexcept;
+		AudioObject& operator=(AudioObject&& rhs) noexcept;
 	private:
 		static void OnRenderHandler(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
 	};

@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <memory>
 #include <wctype.h>
+#include <cstdlib>
+#include <stdio.h>
 
 #define TO_STRING_BUFFER_SIZE 512
 

@@ -1,6 +1,8 @@
 #include "File.h"
 #include "HephException.h"
 #include <errno.h>
+#include <cstdio>
+#include <stdlib.h>
 
 namespace HephCommon
 {

@@ -11,6 +11,44 @@ namespace HephAudio
 	{
 		this->OnRender += OnRenderHandler;
 	}
+	AudioObject::AudioObject(AudioObject&& rhs) noexcept
+	{
+		this->filePath = std::move(rhs.filePath);
+		this->name = std::move(rhs.name);
+		this->pause = rhs.pause;
+		this->loopCount = rhs.loopCount;
+		this->volume = rhs.volume;
+		this->buffer = std::move(rhs.buffer);
+		this->frameIndex = rhs.frameIndex;
+		this->queueName = std::move(rhs.queueName);
+		this->queueIndex = rhs.queueIndex;
+		this->queueDelay_ms = rhs.queueDelay_ms;
+		this->OnRender = rhs.OnRender;
+		this->OnFinishedPlaying = rhs.OnFinishedPlaying;
+
+		rhs.OnRender.Clear();
+		rhs.OnFinishedPlaying.Clear();
+	}
+	AudioObject& AudioObject::operator=(AudioObject&& rhs) noexcept
+	{
+		this->filePath = std::move(rhs.filePath);
+		this->name = std::move(rhs.name);
+		this->pause = rhs.pause;
+		this->loopCount = rhs.loopCount;
+		this->volume = rhs.volume;
+		this->buffer = std::move(rhs.buffer);
+		this->frameIndex = rhs.frameIndex;
+		this->queueName = std::move(rhs.queueName);
+		this->queueIndex = rhs.queueIndex;
+		this->queueDelay_ms = rhs.queueDelay_ms;
+		this->OnRender = rhs.OnRender;
+		this->OnFinishedPlaying = rhs.OnFinishedPlaying;
+
+		rhs.OnRender.Clear();
+		rhs.OnFinishedPlaying.Clear();
+
+		return *this;
+	}
 	void AudioObject::OnRenderHandler(EventArgs* pArgs, EventResult* pResult)
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;

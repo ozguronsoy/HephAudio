@@ -19,7 +19,7 @@ namespace HephAudio
 		FileFormats::IAudioFileFormat* pFileFormat;
 		Codecs::IAudioCodec* pAudioCodec;
 		AudioFormatInfo formatInfo;
-		std::shared_ptr<AudioObject> pao;
+		AudioObject* pAudioObject;
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
 		AudioStream(const AudioStream&) = delete;
@@ -28,7 +28,7 @@ namespace HephAudio
 		HephCommon::File* GetFile() noexcept;
 		FileFormats::IAudioFileFormat* GetFileFormat() const noexcept;
 		Codecs::IAudioCodec* GetAudioCodec() const noexcept;
-		std::shared_ptr<AudioObject> GetAudioObject() const noexcept;
+		AudioObject* GetAudioObject() const noexcept;
 		const AudioFormatInfo& GetAudioFormatInfo() const noexcept;
 		void Release() noexcept;
 	private:
