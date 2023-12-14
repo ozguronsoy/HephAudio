@@ -8,7 +8,7 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	RoomImpulseResponse::RoomImpulseResponse(uint32_t sampleRate, Vector3 roomSize, heph_float c,
-		heph_float frequencyAbsorptionCoefficients[][surfaceCount + 1], size_t nFrequency)
+		heph_float frequencyAbsorptionCoefficients[][7], size_t nFrequency)
 		: sampleRate(sampleRate), roomSize(roomSize), c(c), Vroom(roomSize.x* roomSize.y* roomSize.z)
 		, frequencies(nFrequency), RT60(nFrequency), BX1(nFrequency), BX2(nFrequency), BY1(nFrequency), BY2(nFrequency), BZ1(nFrequency), BZ2(nFrequency)
 		, wallXZ(roomSize.x* roomSize.z), wallYZ(roomSize.y* roomSize.z), wallXY(roomSize.x* roomSize.y)

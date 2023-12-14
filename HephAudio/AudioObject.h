@@ -14,7 +14,7 @@ namespace HephAudio
 	{
 		HephCommon::StringBuffer filePath;
 		HephCommon::StringBuffer name;
-		bool pause;
+		bool isPaused;
 		uint32_t loopCount;
 		heph_float volume;
 		AudioBuffer buffer;

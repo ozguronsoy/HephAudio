@@ -43,6 +43,10 @@
 #endif
 #endif
 
+#ifndef HEPHAUDIO_SPEED_OF_SOUND
+#define HEPHAUDIO_SPEED_OF_SOUND 343.0 // speed of sound in dry air at 20°C in meters per second
+#endif
+
 #pragma region Helper Methods
 inline constexpr heph_float sgn(heph_float x)
 {

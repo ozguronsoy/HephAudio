@@ -6,7 +6,7 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: filePath(""), name(""), pause(false), loopCount(1), volume(1.0), buffer(AudioBuffer()), frameIndex(0), queueName(""), queueIndex(0), queueDelay_ms(0.0)
+		: filePath(""), name(""), isPaused(false), loopCount(1), volume(1.0), buffer(AudioBuffer()), frameIndex(0), queueName(""), queueIndex(0), queueDelay_ms(0.0)
 		, OnRender(Event()), OnFinishedPlaying(Event())
 	{
 		this->OnRender += OnRenderHandler;
@@ -15,7 +15,7 @@ namespace HephAudio
 	{
 		this->filePath = std::move(rhs.filePath);
 		this->name = std::move(rhs.name);
-		this->pause = rhs.pause;
+		this->isPaused = rhs.isPaused;
 		this->loopCount = rhs.loopCount;
 		this->volume = rhs.volume;
 		this->buffer = std::move(rhs.buffer);
@@ -33,7 +33,7 @@ namespace HephAudio
 	{
 		this->filePath = std::move(rhs.filePath);
 		this->name = std::move(rhs.name);
-		this->pause = rhs.pause;
+		this->isPaused = rhs.isPaused;
 		this->loopCount = rhs.loopCount;
 		this->volume = rhs.volume;
 		this->buffer = std::move(rhs.buffer);

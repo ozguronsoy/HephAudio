@@ -12,6 +12,9 @@
 #include <thread>
 #include <mutex>
 
+#define HEPHAUDIO_PAUSE true
+#define HEPHAUDIO_RESUME false
+
 namespace HephAudio
 {
 	namespace Native

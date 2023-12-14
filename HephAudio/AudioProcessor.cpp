@@ -597,6 +597,63 @@ namespace HephAudio
 			}
 		}
 	}
+	void AudioProcessor::FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance) 
+	{
+		constexpr heph_float distanceBetweenEars = 0.0215;
+		constexpr Vector3 reciever = Vector3(0, 0, 0);
+		constexpr Vector3 leftEar = Vector3(-distanceBetweenEars / 2, 0, 0);
+		constexpr Vector3 rightEar = Vector3(distanceBetweenEars / 2, 0, 0);
+
+		const heph_float leftDistance = source.Distance(leftEar);
+		const heph_float rightDistance = source.Distance(rightEar);
+
+		heph_float maxDelay = 0;
+		size_t delays[2]{ 0 };
+		if (leftDistance > rightDistance)
+		{
+			maxDelay = (leftDistance - rightDistance) * buffer.formatInfo.sampleRate / speedOfSound;
+			delays[0] = maxDelay;
+			delays[1] = 0;
+		}
+		else
+		{
+			maxDelay = (rightDistance - leftDistance) * buffer.formatInfo.sampleRate / speedOfSound;
+			delays[0] = 0;
+			delays[1] = maxDelay;
+		}
+
+		const heph_float azimuth = atan2(source.x, source.z);
+		const heph_float volumes[2] =
+		{
+			(leftDistance < maxDistance ? ((maxDistance - leftDistance) / maxDistance) : 0) * (0.5 - azimuth / Math::pi),
+			(rightDistance < maxDistance ? ((maxDistance - rightDistance) / maxDistance) : 0) * (0.5 + azimuth / Math::pi)
+		};
+
+		AudioFormatInfo resultBufferFormatInfo = buffer.formatInfo;
+		resultBufferFormatInfo.channelCount = 2;
+
+		AudioBuffer resultBuffer(buffer.frameCount + maxDelay, resultBufferFormatInfo);
+		for (size_t i = 0; i < buffer.frameCount; i++)
+		{
+			heph_float monoSample = 0.0;
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				monoSample += buffer[i][j];
+			}
+			monoSample /= buffer.formatInfo.channelCount;
+
+			for (size_t j = 0; j < 2; j++)
+			{
+				resultBuffer[i + delays[j]][j] = monoSample * volumes[j];
+			}
+		}
+
+		buffer = std::move(resultBuffer);
+	}
+	void AudioProcessor::FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, heph_float speedOfSound, heph_float maxDistance)
+	{
+		AudioProcessor::FastSpatialize(buffer, source - reciever, speedOfSound, maxDistance);
+	}
 	void AudioProcessor::Equalizer(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos)
 	{
 		AudioProcessor::Equalizer(buffer, AudioProcessor::defaultHopSize, AudioProcessor::defaultFFTSize, window, infos);

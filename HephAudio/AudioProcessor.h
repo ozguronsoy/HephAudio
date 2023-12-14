@@ -6,6 +6,7 @@
 #include "EqualizerInfo.h"
 #include "Oscillator.h"
 #include "Window.h"
+#include "../HephCommon/HeaderFiles/Vector.h"
 #include <vector>
 
 namespace HephAudio
@@ -51,6 +52,8 @@ namespace HephAudio
 		static void SoftClipDistortion(AudioBuffer& buffer, heph_float alpha);
 		static void Overdrive(AudioBuffer& buffer, heph_float drive);
 		static void Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha);
+		static void FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance);
+		static void FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, heph_float speedOfSound, heph_float maxDistance);
 		static void Equalizer(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, Window& window, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerMT(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);

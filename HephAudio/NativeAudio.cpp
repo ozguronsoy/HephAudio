@@ -46,7 +46,7 @@ namespace HephAudio
 				audioObject.name = audioFile.FileName();
 				audioObject.buffer = format->ReadFile(audioFile);
 				audioObject.loopCount = loopCount;
-				audioObject.pause = isPaused;
+				audioObject.isPaused = isPaused;
 				audioObjects.push_back(std::move(audioObject));
 
 				return &audioObjects[audioObjects.size() - 1];
@@ -528,7 +528,7 @@ namespace HephAudio
 			{
 				AudioObject* pAudioObject = &audioObjects.at(i);
 
-				if (!pAudioObject->pause && (pAudioObject->queueName.CompareContent("") || pAudioObject->queueIndex == 0))
+				if (!pAudioObject->isPaused && (pAudioObject->queueName.CompareContent("") || pAudioObject->queueIndex == 0))
 				{
 					const heph_float volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
 
@@ -592,7 +592,7 @@ namespace HephAudio
 			size_t result = 0;
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (!audioObjects.at(i).pause && (audioObjects.at(i).queueName.CompareContent("") || audioObjects.at(i).queueIndex == 0))
+				if (!audioObjects.at(i).isPaused && (audioObjects.at(i).queueName.CompareContent("") || audioObjects.at(i).queueIndex == 0))
 				{
 					result++;
 				}

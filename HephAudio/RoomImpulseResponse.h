@@ -15,8 +15,6 @@ namespace HephAudio
 		static constexpr heph_float j[p_max] = { 0, 0, 1, 1, 0, 0, 1, 1 };
 		static constexpr heph_float k[p_max] = { 0, 1, 0, 1, 0, 1, 0, 1 };
 	public:
-		static constexpr size_t surfaceCount = 6;
-		static constexpr heph_float default_c = 343.0; // speed of sound in dry air at 20°C in meters per second
 		static constexpr uint32_t defaultImageRangeLimit = 10;
 	private:
 		struct NLM
@@ -43,7 +41,7 @@ namespace HephAudio
 		HephCommon::FloatBuffer BZ2;
 		heph_float impulseResponseRange;
 	public:
-		RoomImpulseResponse(uint32_t sampleRate, HephCommon::Vector3 roomSize, heph_float c, heph_float frequencyAbsorptionCoefficients[][surfaceCount + 1], size_t nFrequency);
+		RoomImpulseResponse(uint32_t sampleRate, HephCommon::Vector3 roomSize, heph_float c, heph_float frequencyAbsorptionCoefficients[][7], size_t nFrequency);
 		HephCommon::FloatBuffer SimulateRoomIR(const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit = defaultImageRangeLimit) const;
 		HephCommon::ComplexBuffer SimulateRoomTF(const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit = defaultImageRangeLimit) const;
 		HephCommon::FloatBuffer GetFrequencies() const;
