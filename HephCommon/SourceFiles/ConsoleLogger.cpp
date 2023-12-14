@@ -125,7 +125,7 @@ namespace HephCommon
 	}
 	StringBuffer ConsoleLogger::CurrentTimeToString(StringType stringType)
 	{
-		constexpr uint8_t timeStringSize = 10;
+		HEPH_CONSTEXPR uint8_t timeStringSize = 10;
 
 		time_t currentTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		time(&currentTime);

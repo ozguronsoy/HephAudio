@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		constexpr int16_t decodeTable[128] =
+		static HEPH_CONSTEXPR int16_t decodeTable[128] =
 		{
 			-5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
 			-7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784,
@@ -26,7 +26,7 @@ namespace HephAudio
 			-944, -912, -1008, -976, -816, -784, -880, -848
 		};
 
-		constexpr uint8_t segmentTable[128] =
+		static HEPH_CONSTEXPR uint8_t segmentTable[128] =
 		{
 			1, 1, 2, 2, 3, 3, 3, 3,
 			4, 4, 4, 4, 4, 4, 4, 4,

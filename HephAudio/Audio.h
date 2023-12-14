@@ -18,8 +18,11 @@ namespace HephAudio
 		HephAudio::Native::NativeAudio* pNativeAudio;
 	public:
 		void SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
+		void AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
 		void SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
+		void AddOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
 		void SetOnCaptureHandler(HephCommon::EventHandler handler);
+		void AddOnCaptureHandler(HephCommon::EventHandler handler);
 	public:
 #ifdef __ANDROID__
 		Audio(JavaVM* jvm);
@@ -53,17 +56,15 @@ namespace HephAudio
 		void StopRendering();
 		void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 		void StopCapturing();
-#if (defined(_WIN32) && defined(_WIN32_WINNT_VISTA))
+#if (defined(_WIN32))
 		void SetDisplayName(HephCommon::StringBuffer displayName);
 		void SetIconPath(HephCommon::StringBuffer iconPath);
 #endif
-#if defined(_WIN32)
 		AudioDevice GetAudioDeviceById(HephCommon::StringBuffer deviceId) const;
 		AudioDevice GetRenderDevice() const;
 		AudioDevice GetCaptureDevice() const;
 		AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 		std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
-#endif
 		bool SaveToFile(HephCommon::StringBuffer filePath, bool overwrite, AudioBuffer& buffer);
 	};
 }

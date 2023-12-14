@@ -27,25 +27,4 @@ namespace HephAudio
 	{
 		return this->sampleRate * this->channelCount * this->bitsPerSample * 0.125;
 	}
-#if defined(_WIN32)
-	AudioFormatInfo::AudioFormatInfo(const WAVEFORMATEX& wfx)
-	{
-		this->formatTag = wfx.wFormatTag;
-		this->channelCount = wfx.nChannels;
-		this->sampleRate = wfx.nSamplesPerSec;
-		this->bitsPerSample = wfx.wBitsPerSample;
-	}
-	AudioFormatInfo::operator WAVEFORMATEX() const noexcept
-	{
-		WAVEFORMATEX wfx;
-		wfx.wFormatTag = this->formatTag;
-		wfx.nChannels = this->channelCount;
-		wfx.nSamplesPerSec = this->sampleRate;
-		wfx.nAvgBytesPerSec = this->ByteRate();
-		wfx.nBlockAlign = this->FrameSize();
-		wfx.wBitsPerSample = this->bitsPerSample;
-		wfx.cbSize = 0;
-		return wfx;
-	}
-#endif
 }

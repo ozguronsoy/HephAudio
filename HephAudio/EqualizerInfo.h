@@ -7,8 +7,8 @@ namespace HephAudio
 	{
 		heph_float f1;
 		heph_float f2;
-		heph_float (*amplitudeFunction)(heph_float binFrequency);
+		heph_float amplitude;
 		EqualizerInfo();
-		EqualizerInfo(heph_float f1, heph_float f2, heph_float (*amplitudeFunction)(heph_float binFrequency));
+		EqualizerInfo(heph_float f1, heph_float f2, heph_float amplitude);
 	};
 }

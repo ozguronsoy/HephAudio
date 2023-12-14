@@ -59,14 +59,14 @@ namespace HephCommon
 		heph_color_channel g;
 		heph_color_channel b;
 		heph_color_channel a;
-		constexpr Color() : r(HEPH_COLOR_CHANNEL_MAX), g(HEPH_COLOR_CHANNEL_MAX), b(HEPH_COLOR_CHANNEL_MAX), a(HEPH_COLOR_CHANNEL_MAX) {}
-		constexpr Color(heph_color_channel r, heph_color_channel g, heph_color_channel b) : r(r), g(g), b(b), a(HEPH_COLOR_CHANNEL_MAX) {}
-		constexpr Color(heph_color_channel r, heph_color_channel g, heph_color_channel b, heph_color_channel a) : r(r), g(g), b(b), a(a) {}
-		constexpr Color(const char* hexString) : Color()
+		HEPH_CONSTEXPR Color() : r(HEPH_COLOR_CHANNEL_MAX), g(HEPH_COLOR_CHANNEL_MAX), b(HEPH_COLOR_CHANNEL_MAX), a(HEPH_COLOR_CHANNEL_MAX) {}
+		HEPH_CONSTEXPR Color(heph_color_channel r, heph_color_channel g, heph_color_channel b) : r(r), g(g), b(b), a(HEPH_COLOR_CHANNEL_MAX) {}
+		HEPH_CONSTEXPR Color(heph_color_channel r, heph_color_channel g, heph_color_channel b, heph_color_channel a) : r(r), g(g), b(b), a(a) {}
+		HEPH_CONSTEXPR Color(const char* hexString) : Color()
 		{
 			this->FromHexString(hexString);
 		}
-		constexpr Color(const wchar_t* hexString) : Color()
+		HEPH_CONSTEXPR Color(const wchar_t* hexString) : Color()
 		{
 			this->FromHexString(hexString);
 		}
@@ -81,10 +81,10 @@ namespace HephCommon
 				this->FromHexString(hexString.wc_str());
 			}
 		}
-		constexpr operator RGB() const noexcept;
-		constexpr operator HSL() const noexcept;
-		constexpr operator HSV() const noexcept;
-		constexpr operator CMYK() const noexcept;
+		HEPH_CONSTEXPR operator RGB() const noexcept;
+		HEPH_CONSTEXPR operator HSL() const noexcept;
+		HEPH_CONSTEXPR operator HSV() const noexcept;
+		HEPH_CONSTEXPR operator CMYK() const noexcept;
 		heph_color_channel& operator[](size_t index)
 		{
 			switch (index)
@@ -101,7 +101,7 @@ namespace HephCommon
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Color::operator[]", "Index must be 0 (r), 1 (g), 2 (b) or 3 (a)."));
 			}
 		}
-		constexpr Color& operator=(const Color& rhs) noexcept
+		HEPH_CONSTEXPR Color& operator=(const Color& rhs) noexcept
 		{
 			this->r = rhs.r;
 			this->g = rhs.g;
@@ -109,12 +109,12 @@ namespace HephCommon
 			this->a = rhs.a;
 			return *this;
 		}
-		constexpr Color& operator=(const char* rhs)
+		HEPH_CONSTEXPR Color& operator=(const char* rhs)
 		{
 			this->FromHexString(rhs);
 			return *this;
 		}
-		constexpr Color& operator=(const wchar_t* rhs)
+		HEPH_CONSTEXPR Color& operator=(const wchar_t* rhs)
 		{
 			this->FromHexString(rhs);
 			return *this;
@@ -127,11 +127,11 @@ namespace HephCommon
 			}
 			return this->operator=(rhs.wc_str());
 		}
-		constexpr bool operator==(const Color& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator==(const Color& rhs) const noexcept
 		{
 			return this->r == rhs.r && this->g == rhs.g && this->b == rhs.b && this->a == rhs.a;
 		}
-		constexpr bool operator!=(const Color& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator!=(const Color& rhs) const noexcept
 		{
 			return this->r != rhs.r || this->g != rhs.g || this->b != rhs.b || this->a != rhs.a;
 		}
@@ -157,7 +157,7 @@ namespace HephCommon
 			colorString[8] = IntToHexChar(channel & 0x0F);
 		}
 	private:
-		constexpr heph_color_channel& GetChannelByIndex(size_t index) noexcept
+		HEPH_CONSTEXPR heph_color_channel& GetChannelByIndex(size_t index) noexcept
 		{
 			switch (index)
 			{
@@ -172,7 +172,7 @@ namespace HephCommon
 				return this->a;
 			}
 		}
-		constexpr void FromHexString(const char* hexString) noexcept
+		HEPH_CONSTEXPR void FromHexString(const char* hexString) noexcept
 		{
 			uint32_t stringSize = 0;
 			while (hexString[stringSize] != '\0')
@@ -216,7 +216,7 @@ namespace HephCommon
 				}
 			}
 		}
-		constexpr void FromHexString(const wchar_t* hexString) noexcept
+		HEPH_CONSTEXPR void FromHexString(const wchar_t* hexString) noexcept
 		{
 			uint32_t stringSize = 0;
 			while (hexString[stringSize] != L'\0')
@@ -260,7 +260,7 @@ namespace HephCommon
 				}
 			}
 		}
-		static constexpr uint8_t HexCharToInt(char c) noexcept
+		static HEPH_CONSTEXPR uint8_t HexCharToInt(char c) noexcept
 		{
 			switch (c)
 			{
@@ -306,7 +306,7 @@ namespace HephCommon
 				return 0x00;
 			}
 		}
-		static constexpr uint8_t HexCharToInt(wchar_t c) noexcept
+		static HEPH_CONSTEXPR uint8_t HexCharToInt(wchar_t c) noexcept
 		{
 			switch (c)
 			{
@@ -352,7 +352,7 @@ namespace HephCommon
 				return 0x00;
 			}
 		}
-		static constexpr char IntToHexChar(uint8_t i) noexcept
+		static HEPH_CONSTEXPR char IntToHexChar(uint8_t i) noexcept
 		{
 			switch (i)
 			{
@@ -399,16 +399,16 @@ namespace HephCommon
 		heph_color_channel r;
 		heph_color_channel g;
 		heph_color_channel b;
-		constexpr RGB() : r(HEPH_COLOR_CHANNEL_MAX), g(HEPH_COLOR_CHANNEL_MAX), b(HEPH_COLOR_CHANNEL_MAX) {}
-		constexpr RGB(heph_color_channel r, heph_color_channel g, heph_color_channel b) : r(r), g(g), b(b) {}
-		constexpr RGB(const char* hexString) : RGB()
+		HEPH_CONSTEXPR RGB() : r(HEPH_COLOR_CHANNEL_MAX), g(HEPH_COLOR_CHANNEL_MAX), b(HEPH_COLOR_CHANNEL_MAX) {}
+		HEPH_CONSTEXPR RGB(heph_color_channel r, heph_color_channel g, heph_color_channel b) : r(r), g(g), b(b) {}
+		HEPH_CONSTEXPR RGB(const char* hexString) : RGB()
 		{
 			const Color temp = Color(hexString);
 			this->r = temp.r;
 			this->g = temp.g;
 			this->b = temp.b;
 		}
-		constexpr RGB(const wchar_t* hexString) : RGB()
+		HEPH_CONSTEXPR RGB(const wchar_t* hexString) : RGB()
 		{
 			const Color temp = Color(hexString);
 			this->r = temp.r;
@@ -422,10 +422,10 @@ namespace HephCommon
 			this->g = temp.g;
 			this->b = temp.b;
 		}
-		constexpr operator Color() const noexcept;
-		constexpr operator HSL() const noexcept;
-		constexpr operator HSV() const noexcept;
-		constexpr operator CMYK() const noexcept;
+		HEPH_CONSTEXPR operator Color() const noexcept;
+		HEPH_CONSTEXPR operator HSL() const noexcept;
+		HEPH_CONSTEXPR operator HSV() const noexcept;
+		HEPH_CONSTEXPR operator CMYK() const noexcept;
 		heph_color_channel& operator[](size_t index)
 		{
 			switch (index)
@@ -440,14 +440,14 @@ namespace HephCommon
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "RGB::operator[]", "Index must be 0 (r), 1 (g), or 2 (b)."));
 			}
 		}
-		constexpr RGB& operator=(const RGB& rhs) noexcept
+		HEPH_CONSTEXPR RGB& operator=(const RGB& rhs) noexcept
 		{
 			this->r = rhs.r;
 			this->g = rhs.g;
 			this->b = rhs.b;
 			return *this;
 		}
-		constexpr RGB& operator=(const char* rhs) noexcept
+		HEPH_CONSTEXPR RGB& operator=(const char* rhs) noexcept
 		{
 			const Color temp = Color(rhs);
 			this->r = temp.r;
@@ -455,7 +455,7 @@ namespace HephCommon
 			this->b = temp.b;
 			return *this;
 		}
-		constexpr RGB& operator=(const wchar_t* rhs) noexcept
+		HEPH_CONSTEXPR RGB& operator=(const wchar_t* rhs) noexcept
 		{
 			const Color temp = Color(rhs);
 			this->r = temp.r;
@@ -471,11 +471,11 @@ namespace HephCommon
 			}
 			return this->operator=(rhs.wc_str());
 		}
-		constexpr bool operator==(const RGB& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator==(const RGB& rhs) const noexcept
 		{
 			return this->r == rhs.r && this->g == rhs.g && this->b == rhs.b;
 		}
-		constexpr bool operator!=(const RGB& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator!=(const RGB& rhs) const noexcept
 		{
 			return this->r != rhs.r || this->g != rhs.g || this->b != rhs.b;
 		}
@@ -486,16 +486,16 @@ namespace HephCommon
 		float h;
 		float s;
 		float l;
-		constexpr HSL() : h(0), s(0), l(1.0f) {}
-		constexpr HSL(float h, float s, float l) : h(h), s(s), l(l) {}
-		constexpr HSL(const char* hexString) : HSL()
+		HEPH_CONSTEXPR HSL() : h(0), s(0), l(1.0f) {}
+		HEPH_CONSTEXPR HSL(float h, float s, float l) : h(h), s(s), l(l) {}
+		HEPH_CONSTEXPR HSL(const char* hexString) : HSL()
 		{
 			const HSL hsl = Color(hexString);
 			this->h = hsl.h;
 			this->s = hsl.s;
 			this->l = hsl.l;
 		}
-		constexpr HSL(const wchar_t* hexString) : HSL()
+		HEPH_CONSTEXPR HSL(const wchar_t* hexString) : HSL()
 		{
 			const HSL temp = Color(hexString);
 			this->h = temp.h;
@@ -509,10 +509,10 @@ namespace HephCommon
 			this->s = temp.s;
 			this->l = temp.l;
 		}
-		constexpr operator Color() const noexcept;
-		constexpr operator RGB() const noexcept;
-		constexpr operator HSV() const noexcept;
-		constexpr operator CMYK() const noexcept;
+		HEPH_CONSTEXPR operator Color() const noexcept;
+		HEPH_CONSTEXPR operator RGB() const noexcept;
+		HEPH_CONSTEXPR operator HSV() const noexcept;
+		HEPH_CONSTEXPR operator CMYK() const noexcept;
 		float& operator[](size_t index)
 		{
 			switch (index)
@@ -527,14 +527,14 @@ namespace HephCommon
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "HSL::operator[]", "Index must be 0 (h), 1 (s), or 2 (l)."));
 			}
 		}
-		constexpr HSL& operator=(const HSL& rhs) noexcept
+		HEPH_CONSTEXPR HSL& operator=(const HSL& rhs) noexcept
 		{
 			this->h = rhs.h;
 			this->s = rhs.s;
 			this->l = rhs.l;
 			return *this;
 		}
-		constexpr HSL& operator=(const char* rhs) noexcept
+		HEPH_CONSTEXPR HSL& operator=(const char* rhs) noexcept
 		{
 			const HSL temp = Color(rhs);
 			this->h = temp.h;
@@ -542,7 +542,7 @@ namespace HephCommon
 			this->l = temp.l;
 			return *this;
 		}
-		constexpr HSL& operator=(const wchar_t* rhs) noexcept
+		HEPH_CONSTEXPR HSL& operator=(const wchar_t* rhs) noexcept
 		{
 			const HSL temp = Color(rhs);
 			this->h = temp.h;
@@ -558,11 +558,11 @@ namespace HephCommon
 			}
 			return this->operator=(rhs.wc_str());
 		}
-		constexpr bool operator==(const HSL& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator==(const HSL& rhs) const noexcept
 		{
 			return this->h == rhs.h && this->s == rhs.s && this->l == rhs.l;
 		}
-		constexpr bool operator!=(const HSL& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator!=(const HSL& rhs) const noexcept
 		{
 			return this->h != rhs.h || this->s != rhs.s || this->l != rhs.l;
 		}
@@ -573,16 +573,16 @@ namespace HephCommon
 		float h;
 		float s;
 		float v;
-		constexpr HSV() : h(0), s(0), v(1.0f) {}
-		constexpr HSV(float h, float s, float v) : h(h), s(s), v(v) {}
-		constexpr HSV(const char* hexString) : HSV()
+		HEPH_CONSTEXPR HSV() : h(0), s(0), v(1.0f) {}
+		HEPH_CONSTEXPR HSV(float h, float s, float v) : h(h), s(s), v(v) {}
+		HEPH_CONSTEXPR HSV(const char* hexString) : HSV()
 		{
 			const HSV hsl = Color(hexString);
 			this->h = hsl.h;
 			this->s = hsl.s;
 			this->v = hsl.v;
 		}
-		constexpr HSV(const wchar_t* hexString) : HSV()
+		HEPH_CONSTEXPR HSV(const wchar_t* hexString) : HSV()
 		{
 			const HSV temp = Color(hexString);
 			this->h = temp.h;
@@ -596,10 +596,10 @@ namespace HephCommon
 			this->s = temp.s;
 			this->v = temp.v;
 		}
-		constexpr operator Color() const noexcept;
-		constexpr operator RGB() const noexcept;
-		constexpr operator HSL() const noexcept;
-		constexpr operator CMYK() const noexcept;
+		HEPH_CONSTEXPR operator Color() const noexcept;
+		HEPH_CONSTEXPR operator RGB() const noexcept;
+		HEPH_CONSTEXPR operator HSL() const noexcept;
+		HEPH_CONSTEXPR operator CMYK() const noexcept;
 		float& operator[](size_t index)
 		{
 			switch (index)
@@ -614,14 +614,14 @@ namespace HephCommon
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "HSV::operator[]", "Index must be 0 (h), 1 (s), or 2 (v)."));
 			}
 		}
-		constexpr HSV& operator=(const HSV& rhs) noexcept
+		HEPH_CONSTEXPR HSV& operator=(const HSV& rhs) noexcept
 		{
 			this->h = rhs.h;
 			this->s = rhs.s;
 			this->v = rhs.v;
 			return *this;
 		}
-		constexpr HSV& operator=(const char* rhs) noexcept
+		HEPH_CONSTEXPR HSV& operator=(const char* rhs) noexcept
 		{
 			const HSV temp = Color(rhs);
 			this->h = temp.h;
@@ -629,7 +629,7 @@ namespace HephCommon
 			this->v = temp.v;
 			return *this;
 		}
-		constexpr HSV& operator=(const wchar_t* rhs) noexcept
+		HEPH_CONSTEXPR HSV& operator=(const wchar_t* rhs) noexcept
 		{
 			const HSV temp = Color(rhs);
 			this->h = temp.h;
@@ -645,11 +645,11 @@ namespace HephCommon
 			}
 			return this->operator=(rhs.wc_str());
 		}
-		constexpr bool operator==(const HSV& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator==(const HSV& rhs) const noexcept
 		{
 			return this->h == rhs.h && this->s == rhs.s && this->v == rhs.v;
 		}
-		constexpr bool operator!=(const HSV& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator!=(const HSV& rhs) const noexcept
 		{
 			return this->h != rhs.h || this->s != rhs.s || this->v != rhs.v;
 		}
@@ -661,9 +661,9 @@ namespace HephCommon
 		float m;
 		float y;
 		float k;
-		constexpr CMYK() : c(0), m(0), y(0), k(0) {}
-		constexpr CMYK(float c, float m, float y, float k) : c(c), m(m), y(y), k(k) {}
-		constexpr CMYK(const char* hexString) : CMYK()
+		HEPH_CONSTEXPR CMYK() : c(0), m(0), y(0), k(0) {}
+		HEPH_CONSTEXPR CMYK(float c, float m, float y, float k) : c(c), m(m), y(y), k(k) {}
+		HEPH_CONSTEXPR CMYK(const char* hexString) : CMYK()
 		{
 			const CMYK temp = Color(hexString);
 			this->c = temp.c;
@@ -671,7 +671,7 @@ namespace HephCommon
 			this->y = temp.y;
 			this->k = temp.k;
 		}
-		constexpr CMYK(const wchar_t* hexString) : CMYK()
+		HEPH_CONSTEXPR CMYK(const wchar_t* hexString) : CMYK()
 		{
 			const CMYK temp = Color(hexString);
 			this->c = temp.c;
@@ -687,10 +687,10 @@ namespace HephCommon
 			this->y = temp.y;
 			this->k = temp.k;
 		}
-		constexpr operator Color() const noexcept;
-		constexpr operator RGB() const noexcept;
-		constexpr operator HSL() const noexcept;
-		constexpr operator HSV() const noexcept;
+		HEPH_CONSTEXPR operator Color() const noexcept;
+		HEPH_CONSTEXPR operator RGB() const noexcept;
+		HEPH_CONSTEXPR operator HSL() const noexcept;
+		HEPH_CONSTEXPR operator HSV() const noexcept;
 		float& operator[](size_t index)
 		{
 			switch (index)
@@ -707,7 +707,7 @@ namespace HephCommon
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "CMYK::operator[]", "Index must be 0 (c), 1 (m), 2 (y), or 3 (k)."));
 			}
 		}
-		constexpr CMYK& operator=(const CMYK& rhs) noexcept
+		HEPH_CONSTEXPR CMYK& operator=(const CMYK& rhs) noexcept
 		{
 			this->c = rhs.c;
 			this->m = rhs.m;
@@ -715,7 +715,7 @@ namespace HephCommon
 			this->k = rhs.k;
 			return *this;
 		}
-		constexpr CMYK& operator=(const char* rhs) noexcept
+		HEPH_CONSTEXPR CMYK& operator=(const char* rhs) noexcept
 		{
 			const CMYK temp = Color(rhs);
 			this->c = temp.c;
@@ -724,7 +724,7 @@ namespace HephCommon
 			this->k = temp.k;
 			return *this;
 		}
-		constexpr CMYK& operator=(const wchar_t* rhs) noexcept
+		HEPH_CONSTEXPR CMYK& operator=(const wchar_t* rhs) noexcept
 		{
 			const CMYK temp = Color(rhs);
 			this->c = temp.c;
@@ -741,21 +741,21 @@ namespace HephCommon
 			}
 			return this->operator=(rhs.wc_str());
 		}
-		constexpr bool operator==(const CMYK& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator==(const CMYK& rhs) const noexcept
 		{
 			return this->c == rhs.c && this->m == rhs.m && this->y == rhs.y && this->k == rhs.k;
 		}
-		constexpr bool operator!=(const CMYK& rhs) const noexcept
+		HEPH_CONSTEXPR bool operator!=(const CMYK& rhs) const noexcept
 		{
 			return this->c != rhs.c || this->m != rhs.m || this->y != rhs.y || this->k != rhs.k;
 		}
 	};
 
-	constexpr Color::operator RGB() const noexcept
+	HEPH_CONSTEXPR Color::operator RGB() const noexcept
 	{
 		return RGB(this->r, this->g, this->b);
 	}
-	constexpr Color::operator HSL() const noexcept
+	HEPH_CONSTEXPR Color::operator HSL() const noexcept
 	{
 		HSL hsl;
 
@@ -797,7 +797,7 @@ namespace HephCommon
 
 		return hsl;
 	}
-	constexpr Color::operator HSV() const noexcept
+	HEPH_CONSTEXPR Color::operator HSV() const noexcept
 	{
 		HSV hsv;
 
@@ -839,7 +839,7 @@ namespace HephCommon
 
 		return hsv;
 	}
-	constexpr Color::operator CMYK() const noexcept
+	HEPH_CONSTEXPR Color::operator CMYK() const noexcept
 	{
 		const float n_r = (float)this->r / (float)HEPH_COLOR_CHANNEL_MAX;
 		const float n_g = (float)this->g / (float)HEPH_COLOR_CHANNEL_MAX;
@@ -848,24 +848,24 @@ namespace HephCommon
 		return CMYK((maxChannel - n_r) / maxChannel, (maxChannel - n_g) / maxChannel, (maxChannel - n_b) / maxChannel, 1.0f - maxChannel);
 	}
 
-	constexpr RGB::operator Color() const noexcept
+	HEPH_CONSTEXPR RGB::operator Color() const noexcept
 	{
 		return Color(this->r, this->g, this->b);
 	}
-	constexpr RGB::operator HSL() const noexcept
+	HEPH_CONSTEXPR RGB::operator HSL() const noexcept
 	{
 		return (HSL)(Color)(*this);
 	}
-	constexpr RGB::operator HSV() const noexcept
+	HEPH_CONSTEXPR RGB::operator HSV() const noexcept
 	{
 		return (HSV)(Color)(*this);
 	}
-	constexpr RGB::operator CMYK() const noexcept
+	HEPH_CONSTEXPR RGB::operator CMYK() const noexcept
 	{
 		return (CMYK)(Color)(*this);
 	}
 
-	constexpr HSL::operator Color() const noexcept
+	HEPH_CONSTEXPR HSL::operator Color() const noexcept
 	{
 		const float c = (1.0f - Math::Abs(2.0f * this->l - 1.0f)) * this->s;
 		const float x = c * (1.0f - Math::Abs(Math::Mod(this->h / 60.0f, 2.0f) - 1.0f));
@@ -909,11 +909,11 @@ namespace HephCommon
 		return Color(Math::Round(n_r * HEPH_COLOR_CHANNEL_MAX), Math::Round(n_g * HEPH_COLOR_CHANNEL_MAX), Math::Round(n_b * HEPH_COLOR_CHANNEL_MAX));
 #endif
 	}
-	constexpr HSL::operator RGB() const noexcept
+	HEPH_CONSTEXPR HSL::operator RGB() const noexcept
 	{
 		return (RGB)(Color)(*this);
 	}
-	constexpr HSL::operator HSV() const noexcept
+	HEPH_CONSTEXPR HSL::operator HSV() const noexcept
 	{
 		HSV hsv;
 		hsv.h = this->h;
@@ -921,12 +921,12 @@ namespace HephCommon
 		hsv.s = hsv.v == 0 ? 0 : (2.0f * (1.0f - this->l / hsv.v));
 		return hsv;
 	}
-	constexpr HSL::operator CMYK() const noexcept
+	HEPH_CONSTEXPR HSL::operator CMYK() const noexcept
 	{
 		return (CMYK)(Color)(*this);
 	}
 
-	constexpr HSV::operator Color() const noexcept
+	HEPH_CONSTEXPR HSV::operator Color() const noexcept
 	{
 		const float c = this->v * this->s;
 		const float x = c * (1.0f - Math::Abs(Math::Mod(this->h / 60.0f, 2.0f) - 1.0f));
@@ -970,11 +970,11 @@ namespace HephCommon
 		return Color(Math::Round(n_r * HEPH_COLOR_CHANNEL_MAX), Math::Round(n_g * HEPH_COLOR_CHANNEL_MAX), Math::Round(n_b * HEPH_COLOR_CHANNEL_MAX));
 #endif
 	}
-	constexpr HSV::operator RGB() const noexcept
+	HEPH_CONSTEXPR HSV::operator RGB() const noexcept
 	{
 		return (RGB)(Color)(*this);
 	}
-	constexpr HSV::operator HSL() const noexcept
+	HEPH_CONSTEXPR HSV::operator HSL() const noexcept
 	{
 		HSL hsl;
 		hsl.h = this->h;
@@ -982,12 +982,12 @@ namespace HephCommon
 		hsl.s = (hsl.l == 0 || hsl.l == 1) ? 0 : ((this->v - hsl.l) / Math::Min(hsl.l, 1.0f - hsl.l));
 		return hsl;
 	}
-	constexpr HSV::operator CMYK() const noexcept
+	HEPH_CONSTEXPR HSV::operator CMYK() const noexcept
 	{
 		return (CMYK)(Color)(*this);
 	}
 
-	constexpr CMYK::operator Color() const noexcept
+	HEPH_CONSTEXPR CMYK::operator Color() const noexcept
 	{
 #if HEPH_COLOR_CHANNEL_TYPE_I == 0
 		return Color((1.0f - this->c) * (1.0f - this->k) * HEPH_COLOR_CHANNEL_MAX, (1.0f - this->m) * (1.0f - this->k) * HEPH_COLOR_CHANNEL_MAX, (1.0f - this->y) * (1.0f - this->k) * HEPH_COLOR_CHANNEL_MAX);
@@ -995,15 +995,15 @@ namespace HephCommon
 		return Color(Math::Round((1.0f - this->c) * (1.0f - this->k) * HEPH_COLOR_CHANNEL_MAX), Math::Round((1.0f - this->m) * (1.0f - this->k) * HEPH_COLOR_CHANNEL_MAX), Math::Round((1.0f - this->y) * (1.0f - this->k) * HEPH_COLOR_CHANNEL_MAX));
 #endif
 	}
-	constexpr CMYK::operator RGB() const noexcept
+	HEPH_CONSTEXPR CMYK::operator RGB() const noexcept
 	{
 		return (RGB)(Color)(*this);
 	}
-	constexpr CMYK::operator HSL() const noexcept
+	HEPH_CONSTEXPR CMYK::operator HSL() const noexcept
 	{
 		return (HSL)(Color)(*this);
 	}
-	constexpr CMYK::operator HSV() const noexcept
+	HEPH_CONSTEXPR CMYK::operator HSV() const noexcept
 	{
 		return (HSV)(Color)(*this);
 	}
@@ -1011,14 +1011,14 @@ namespace HephCommon
 	class PredefinedColors final
 	{
 	public:
-		static constexpr Color Red = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Green = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Blue = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Magenta = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Cyan = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Yellow = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Black = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color White = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
-		static constexpr Color Transparent = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN);
+		static HEPH_CONSTEXPR Color Red = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Green = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Blue = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Magenta = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Cyan = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Yellow = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Black = Color(HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MIN, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color White = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX);
+		static HEPH_CONSTEXPR Color Transparent = Color(HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MAX, HEPH_COLOR_CHANNEL_MIN);
 	};
 }

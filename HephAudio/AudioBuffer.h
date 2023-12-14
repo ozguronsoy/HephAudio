@@ -70,8 +70,10 @@ namespace HephAudio
 		heph_float Max() const noexcept;
 		heph_float AbsMax() const noexcept;
 		heph_float Rms() const noexcept;
-		AudioBuffer Convolution(const HephCommon::FloatBuffer& h) const;
-		AudioBuffer Convolution(const AudioBuffer& h) const;
+		AudioBuffer Convolve(const HephCommon::FloatBuffer& h) const;
+		AudioBuffer Convolve(const HephCommon::FloatBuffer& h, HephCommon::ConvolutionMode convolutionMode) const;
+		AudioBuffer Convolve(const AudioBuffer& h) const;
+		AudioBuffer Convolve(const AudioBuffer& h, HephCommon::ConvolutionMode convolutionMode) const;
 		heph_float CalculateDuration() const noexcept;
 		size_t CalculateFrameIndex(heph_float t_s) const noexcept;
 		const AudioFormatInfo& FormatInfo() const noexcept;

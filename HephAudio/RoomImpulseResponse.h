@@ -10,12 +10,12 @@ namespace HephAudio
 	class RoomImpulseResponse final
 	{
 	private:
-		static constexpr uint32_t p_max = 8;
-		static constexpr heph_float q[p_max] = { 0, 0, 0, 0, 1, 1, 1, 1 };
-		static constexpr heph_float j[p_max] = { 0, 0, 1, 1, 0, 0, 1, 1 };
-		static constexpr heph_float k[p_max] = { 0, 1, 0, 1, 0, 1, 0, 1 };
+		static HEPH_CONSTEXPR uint32_t p_max = 8;
+		static HEPH_CONSTEXPR heph_float q[p_max] = { 0, 0, 0, 0, 1, 1, 1, 1 };
+		static HEPH_CONSTEXPR heph_float j[p_max] = { 0, 0, 1, 1, 0, 0, 1, 1 };
+		static HEPH_CONSTEXPR heph_float k[p_max] = { 0, 1, 0, 1, 0, 1, 0, 1 };
 	public:
-		static constexpr uint32_t defaultImageRangeLimit = 10;
+		static HEPH_CONSTEXPR uint32_t defaultImageRangeLimit = 10;
 	private:
 		struct NLM
 		{

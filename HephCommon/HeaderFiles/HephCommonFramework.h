@@ -43,13 +43,22 @@ typedef float heph_float;
 #define HEPH_FLOAT heph_float
 #endif
 
+#if !defined(HEPH_CONSTEXPR)
+
+#if CPP_VERSION >= CPP_VERSION_11
+#define HEPH_CONSTEXPR constexpr
+#else
+#define HEPH_CONSTEXPR 
+#endif
+
+#endif
 
 #if !defined(HEPH_CONSTEVAL)
 
 #if CPP_VERSION >= CPP_VERSION_20
 #define HEPH_CONSTEVAL consteval
 #else
-#define HEPH_CONSTEVAL constexpr
+#define HEPH_CONSTEVAL HEPH_CONSTEXPR
 #endif
 
 #endif
@@ -58,7 +67,8 @@ typedef float heph_float;
 namespace HephCommon
 {
 #if !defined(HEPH_ENDIAN)
-	enum class Endian : uint8_t
+	
+	enum Endian : uint8_t
 	{
 		Little = 0x00,
 		Big = 0x01,
@@ -66,9 +76,22 @@ namespace HephCommon
 	};
 	extern Endian systemEndian;
 	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
-	constexpr inline Endian operator!(const Endian& lhs) { return lhs == Endian::Unknown ? Endian::Unknown : (lhs == Endian::Big ? Endian::Little : Endian::Big); }
+	HEPH_CONSTEXPR inline Endian operator!(const Endian& lhs) { return lhs == Endian::Unknown ? Endian::Unknown : (lhs == Endian::Big ? Endian::Little : Endian::Big); }
 #define HEPH_ENDIAN HephCommon::Endian
 #define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian
 #define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)
+
+#endif
+
+#if !defined(HEPH_CONVOLUTION_MODE)
+	
+	enum ConvolutionMode
+	{
+		Full = 0,
+		Central = 1,
+		ValidPadding = 2
+	};
+#define HEPH_CONVOLUTION_MODE HephCommon::ConvolutionMode
+
 #endif
 }

@@ -2051,6 +2051,10 @@ HephCommon::StringBuffer operator+(const wchar_t* const lhs, const HephCommon::S
 	result += rhs;
 	return result;
 }
+HephCommon::StringBuffer operator*(size_t lhs, const HephCommon::StringBuffer& rhs)
+{
+	return rhs * lhs;
+}
 HephCommon::StringBuffer operator""_sb(char c)
 {
 	return (HephCommon::StringBuffer)c;

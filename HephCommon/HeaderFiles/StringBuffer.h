@@ -13,7 +13,7 @@ namespace HephCommon
 	class StringBuffer final
 	{
 	public:
-		static constexpr size_t npos = -1;
+		static HEPH_CONSTEXPR size_t npos = -1;
 	public:
 		class CharAccessor final
 		{
@@ -199,6 +199,7 @@ HephCommon::StringBuffer operator+(const char lhs, const HephCommon::StringBuffe
 HephCommon::StringBuffer operator+(const wchar_t lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const char* const lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const wchar_t* const lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator*(size_t lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator""_sb(char c);
 HephCommon::StringBuffer operator""_sb(wchar_t wc);
 HephCommon::StringBuffer operator""_sb(const char* str, size_t);

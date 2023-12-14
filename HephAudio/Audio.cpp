@@ -16,13 +16,25 @@ namespace HephAudio
 {
 	void Audio::SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler)
 	{
+		this->pNativeAudio->OnAudioDeviceAdded = handler;
+	}
+	void Audio::AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler)
+	{
 		this->pNativeAudio->OnAudioDeviceAdded += handler;
 	}
 	void Audio::SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler)
 	{
+		this->pNativeAudio->OnAudioDeviceRemoved = handler;
+	}
+	void Audio::AddOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler)
+	{
 		this->pNativeAudio->OnAudioDeviceRemoved += handler;
 	}
 	void Audio::SetOnCaptureHandler(HephCommon::EventHandler handler)
+	{
+		this->pNativeAudio->OnCapture = handler;
+	}
+	void Audio::AddOnCaptureHandler(HephCommon::EventHandler handler)
 	{
 		this->pNativeAudio->OnCapture += handler;
 	}
@@ -168,7 +180,7 @@ namespace HephAudio
 	{
 		this->pNativeAudio->StopCapturing();
 	}
-#if (defined(_WIN32) && defined(_WIN32_WINNT_VISTA))
+#if defined(_WIN32)
 	void Audio::SetDisplayName(HephCommon::StringBuffer displayName)
 	{
 		this->pNativeAudio->SetDisplayName(displayName);
@@ -178,7 +190,6 @@ namespace HephAudio
 		this->pNativeAudio->SetIconPath(iconPath);
 	}
 #endif
-#if defined(_WIN32)
 	AudioDevice Audio::GetAudioDeviceById(HephCommon::StringBuffer deviceId) const
 	{
 		return this->pNativeAudio->GetAudioDeviceById(deviceId);
@@ -199,7 +210,6 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAudioDevices(deviceType);
 	}
-#endif
 	bool Audio::SaveToFile(HephCommon::StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
 	{
 		return this->pNativeAudio->SaveToFile(filePath, overwrite, buffer);

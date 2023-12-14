@@ -79,7 +79,8 @@ namespace HephCommon
 		void Reset() noexcept;
 		void Resize(size_t newFrameCount);
 		void Empty() noexcept;
-		ComplexBuffer Convolution(const ComplexBuffer& h) const;
+		ComplexBuffer Convolve(const ComplexBuffer& h) const;
+		ComplexBuffer Convolve(const ComplexBuffer& h, ConvolutionMode convolutionMode) const;
 		Complex* Begin() const noexcept;
 		Complex* End() const noexcept;
 	};

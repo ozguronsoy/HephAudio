@@ -630,16 +630,43 @@ namespace HephCommon
 		}
 		return 0.0;
 	}
-	FloatBuffer FloatBuffer::Convolution(const FloatBuffer& h) const
+	FloatBuffer FloatBuffer::Convolve(const FloatBuffer& h) const
+	{
+		return this->Convolve(h, ConvolutionMode::Full);
+	}
+	FloatBuffer FloatBuffer::Convolve(const FloatBuffer& h, ConvolutionMode convolutionMode) const
 	{
 		if (this->frameCount > 0 && h.frameCount > 0)
 		{
-			FloatBuffer y(this->frameCount + h.frameCount - 1);
-			for (size_t i = 0; i < y.frameCount; i++)
+			size_t yFrameCount = 0;
+			size_t iStart = 0;
+			size_t iEnd = 0;
+			switch (convolutionMode)
 			{
-				for (int j = (i < this->frameCount ? i : (this->frameCount - 1)); j >= 0 && (i - j) < h.frameCount; j--)
+			case ConvolutionMode::Central:
+				iStart = h.frameCount / 2;
+				yFrameCount = this->frameCount;
+				iEnd = yFrameCount + iStart;
+				break;
+			case ConvolutionMode::ValidPadding:
+				iStart = h.frameCount - 1;
+				yFrameCount = h.frameCount > 0 ? Math::Max(this->frameCount - h.frameCount + 1, (size_t)0) : this->frameCount;
+				iEnd = yFrameCount + iStart;
+				break;
+			case ConvolutionMode::Full:
+			default:
+				iStart = 0;
+				yFrameCount = this->frameCount + h.frameCount - 1;
+				iEnd = yFrameCount;
+				break;
+			}
+
+			FloatBuffer y(yFrameCount);
+			for (size_t i = iStart; i < iEnd; i++)
+			{
+				for (int j = (i < iEnd ? i : (iEnd - 1)); j >= 0 && (i - j) < h.frameCount; j--)
 				{
-					y.pData[i] += this->pData[j] * h.pData[i - j];
+					y.pData[i - iStart] += this->pData[j] * h.pData[i - j];
 				}
 			}
 			return y;

@@ -127,7 +127,7 @@ namespace HephAudio
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
 			bufferDesc.dwBufferBytes = renderFormat.ByteRate() / 100 * 4;
 			bufferDesc.dwReserved = 0;
-			WAVEFORMATEX wrf = renderFormat;
+			WAVEFORMATEX wrf = AFI2WFX(renderFormat);
 			bufferDesc.lpwfxFormat = &wrf;
 			bufferDesc.guid3DAlgorithm = GUID_NULL;
 			WINAUDIODS_EXCPT(pDirectSound->CreateSoundBuffer(&bufferDesc, pDirectSoundBuffer.GetAddressOf(), nullptr), "WinAudioDS::InitializeRender", "An error occurred whilst creating a render buffer.");
@@ -185,7 +185,7 @@ namespace HephAudio
 			bufferDesc.dwSize = sizeof(DSCBUFFERDESC);
 			bufferDesc.dwFlags = 0;
 			bufferDesc.dwBufferBytes = captureFormat.ByteRate() * 2;
-			WAVEFORMATEX wcf = captureFormat;
+			WAVEFORMATEX wcf = AFI2WFX(captureFormat);
 			bufferDesc.lpwfxFormat = &wcf;
 			bufferDesc.dwFXCount = 0;
 			bufferDesc.lpDSCFXDesc = nullptr;
@@ -456,6 +456,22 @@ namespace HephAudio
 			guid.Data4[6] = HephCommon::StringBuffer::HexStringToU16(str.SubString(32, 2));
 			guid.Data4[7] = HephCommon::StringBuffer::HexStringToU16(str.SubString(34, 2));
 			return guid;
+		}
+		AudioFormatInfo WinAudioDS::WFX2AFI(const WAVEFORMATEX& wfx) noexcept
+		{
+			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.nSamplesPerSec, wfx.wBitsPerSample);
+		}
+		WAVEFORMATEX WinAudioDS::AFI2WFX(const AudioFormatInfo& afi) noexcept
+		{
+			WAVEFORMATEX wfx{ 0 };
+			wfx.wFormatTag = afi.formatTag;
+			wfx.nChannels = afi.channelCount;
+			wfx.nSamplesPerSec = afi.sampleRate;
+			wfx.nAvgBytesPerSec = afi.ByteRate();
+			wfx.nBlockAlign = afi.FrameSize();
+			wfx.wBitsPerSample = afi.bitsPerSample;
+			wfx.cbSize = 0;
+			return wfx;
 		}
 		LRESULT CALLBACK WinAudioDS::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{

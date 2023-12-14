@@ -1,10 +1,14 @@
 #pragma once
 #ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers 
+
 #include "HephAudioFramework.h"
 #include "NativeAudio.h"
+#include <Windows.h>
 #include <wrl.h>
-#include <dsound.h>
 #include <mmeapi.h>
+#include <dsound.h>
 
 namespace HephAudio
 {
@@ -44,6 +48,8 @@ namespace HephAudio
 			static BOOL CALLBACK CaptureDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
 			static HephCommon::StringBuffer GuidToString(LPGUID guid);
 			static GUID StringToGuid(HephCommon::StringBuffer str);
+			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx) noexcept;
+			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi) noexcept;
 			static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		};
 	}

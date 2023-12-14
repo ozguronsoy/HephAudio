@@ -111,13 +111,13 @@ namespace HephAudio
 			}
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pRenderAudioClient.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the render device.");
 
-			WAVEFORMATEX wrf = format;
+			WAVEFORMATEX wrf = AFI2WFX(format);
 			WINAUDIO_EXCPT(pRenderAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wrf, &closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr)
 			{
-				format = (*closestFormat);
+				format = WFX2AFI(*closestFormat);
 				format.formatTag = WAVE_FORMAT_PCM;
-				wrf = format;
+				wrf = AFI2WFX(format);
 				CoTaskMemFree(closestFormat);
 			}
 			renderFormat = format;
@@ -178,13 +178,13 @@ namespace HephAudio
 			}
 			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), "WinAudio::InitializeCapture", "An error occurred whilst activating the device.");
 
-			WAVEFORMATEX wcf = format;
+			WAVEFORMATEX wcf = AFI2WFX(format);
 			WINAUDIO_EXCPT(pCaptureAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wcf, &closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr)
 			{
-				format = (*closestFormat);
+				format = WFX2AFI(*closestFormat);
 				format.formatTag = WAVE_FORMAT_PCM;
-				wcf = format;
+				wcf = AFI2WFX(format);
 				CoTaskMemFree(closestFormat);
 			}
 			captureFormat = format;
@@ -365,8 +365,8 @@ namespace HephAudio
 		}
 		void WinAudio::CaptureData()
 		{
-			constexpr REFERENCE_TIME reftimesPerSec = 1e6;
-			constexpr REFERENCE_TIME reftimesPerMilliSec = 2e3;
+			HEPH_CONSTEXPR REFERENCE_TIME reftimesPerSec = 1e6;
+			HEPH_CONSTEXPR REFERENCE_TIME reftimesPerMilliSec = 2e3;
 
 			ComPtr<IAudioCaptureClient> pCaptureClient = nullptr;
 			UINT32 bufferSize, nFramesAvailable, packetLength;
@@ -437,6 +437,22 @@ namespace HephAudio
 				break;
 			}
 			return AudioDeviceType::Null;
+		}
+		AudioFormatInfo WinAudio::WFX2AFI(const WAVEFORMATEX& wfx) noexcept
+		{
+			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.nSamplesPerSec, wfx.wBitsPerSample);
+		}
+		WAVEFORMATEX WinAudio::AFI2WFX(const AudioFormatInfo& afi) noexcept
+		{
+			WAVEFORMATEX wfx{ 0 };
+			wfx.wFormatTag = afi.formatTag;
+			wfx.nChannels = afi.channelCount;
+			wfx.nSamplesPerSec = afi.sampleRate;
+			wfx.nAvgBytesPerSec = afi.ByteRate();
+			wfx.nBlockAlign = afi.FrameSize();
+			wfx.wBitsPerSample = afi.bitsPerSample;
+			wfx.cbSize = 0;
+			return wfx;
 		}
 	}
 }

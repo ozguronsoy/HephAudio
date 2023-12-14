@@ -892,18 +892,45 @@ namespace HephAudio
 		}
 		return sqrt(sumOfSamplesSquared / this->frameCount / this->formatInfo.channelCount);
 	}
-	AudioBuffer AudioBuffer::Convolution(const HephCommon::FloatBuffer& h) const
+	AudioBuffer AudioBuffer::Convolve(const HephCommon::FloatBuffer& h) const
+	{
+		return this->Convolve(h, HephCommon::ConvolutionMode::Full);
+	}
+	AudioBuffer AudioBuffer::Convolve(const HephCommon::FloatBuffer& h, HephCommon::ConvolutionMode convolutionMode) const
 	{
 		if (this->frameCount > 0 && h.FrameCount() > 0)
 		{
-			AudioBuffer y(this->frameCount + h.FrameCount() - 1, this->formatInfo);
+			size_t yFrameCount = 0;
+			size_t iStart = 0;
+			size_t iEnd = 0;
+			switch (convolutionMode)
+			{
+			case HephCommon::ConvolutionMode::Central:
+				iStart = h.FrameCount() / 2;
+				yFrameCount = this->frameCount;
+				iEnd = yFrameCount + iStart;
+				break;
+			case HephCommon::ConvolutionMode::ValidPadding:
+				iStart = h.FrameCount() - 1;
+				yFrameCount = h.FrameCount() > 0 ? HephCommon::Math::Max(this->frameCount - h.FrameCount() + 1, (size_t)0) : this->frameCount;
+				iEnd = yFrameCount + iStart;
+				break;
+			case HephCommon::ConvolutionMode::Full:
+			default:
+				iStart = 0;
+				yFrameCount = this->frameCount + h.FrameCount() - 1;
+				iEnd = yFrameCount;
+				break;
+			}
+
+			AudioBuffer y(yFrameCount, this->formatInfo);
 			for (size_t ch = 0; ch < this->formatInfo.channelCount; ch++)
 			{
-				for (size_t i = 0; i < y.frameCount; i++)
+				for (size_t i = iStart; i < iEnd; i++)
 				{
-					for (int j = (i < this->frameCount ? i : (this->frameCount - 1)); j >= 0 && (i - j) < h.FrameCount(); j--)
+					for (int j = (i < iEnd ? i : (iEnd - 1)); j >= 0 && (i - j) < h.FrameCount(); j--)
 					{
-						y[i][ch] += (*this)[j][ch] * h[i - j];
+						y[i - iStart][ch] += (*this)[j][ch] * h[i - j];
 					}
 				}
 			}
@@ -911,18 +938,46 @@ namespace HephAudio
 		}
 		return AudioBuffer();
 	}
-	AudioBuffer AudioBuffer::Convolution(const AudioBuffer& h) const
+	AudioBuffer AudioBuffer::Convolve(const AudioBuffer& h) const
 	{
-		if (this->frameCount > 0 && h.FrameCount() > 0)
+		return this->Convolve(h, HephCommon::ConvolutionMode::Full);
+	}
+	AudioBuffer AudioBuffer::Convolve(const AudioBuffer& h, HephCommon::ConvolutionMode convolutionMode) const
+	{
+		if (this->frameCount > 0 && h.frameCount > 0)
 		{
-			AudioBuffer y(this->frameCount + h.FrameCount() - 1, this->formatInfo);
-			for (size_t ch = 0; ch < this->formatInfo.channelCount; ch++)
+			size_t yFrameCount = 0;
+			size_t iStart = 0;
+			size_t iEnd = 0;
+			switch (convolutionMode)
 			{
-				for (size_t i = 0; i < y.frameCount; i++)
+			case HephCommon::ConvolutionMode::Central:
+				iStart = h.frameCount / 2;
+				yFrameCount = this->frameCount;
+				iEnd = yFrameCount + iStart;
+				break;
+			case HephCommon::ConvolutionMode::ValidPadding:
+				iStart = h.frameCount - 1;
+				yFrameCount = h.frameCount > 0 ? HephCommon::Math::Max(this->frameCount - h.frameCount + 1, (size_t)0) : this->frameCount;
+				iEnd = yFrameCount + iStart;
+				break;
+			case HephCommon::ConvolutionMode::Full:
+			default:
+				iStart = 0;
+				yFrameCount = this->frameCount + h.frameCount - 1;
+				iEnd = yFrameCount;
+				break;
+			}
+
+			AudioBuffer y(yFrameCount, this->formatInfo);
+			const uint16_t minChannelCount = HephCommon::Math::Min(this->formatInfo.channelCount, h.formatInfo.channelCount);
+			for (size_t ch = 0; ch < minChannelCount; ch++)
+			{
+				for (size_t i = iStart; i < iEnd; i++)
 				{
-					for (int j = (i < this->frameCount ? i : (this->frameCount - 1)); j >= 0 && (i - j) < h.FrameCount(); j--)
+					for (int j = (i < iEnd ? i : (iEnd - 1)); j >= 0 && (i - j) < h.frameCount; j--)
 					{
-						y[i][ch] += (*this)[j][ch] * h[i - j][ch];
+						y[i - iStart][ch] += (*this)[j][ch] * h[i - j][ch];
 					}
 				}
 			}

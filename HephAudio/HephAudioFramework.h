@@ -2,11 +2,6 @@
 #include "../HephCommon/HeaderFiles/HephCommonFramework.h"
 #include <cmath>
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers 
-#include <windows.h>
-#endif
-
 #ifndef WAVE_FORMAT_PCM
 #define WAVE_FORMAT_PCM 0x0001
 #define WAVE_FORMAT_IEEE_FLOAT 0x0003
@@ -48,48 +43,39 @@
 #endif
 
 #pragma region Helper Methods
-inline constexpr heph_float sgn(heph_float x)
+namespace HephAudio
 {
-	if (x > 0)
+	inline heph_float DecibelToGain(heph_float decibel)
 	{
-		return 1.0;
+		return pow(10.0, decibel * 0.05);
 	}
-	else if (x < 0)
+	inline heph_float GainToDecibel(heph_float gain)
 	{
-		return -1.0;
+		return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
 	}
-	return 0.0;
-}
-inline heph_float DecibelToGain(heph_float decibel)
-{
-	return pow(10.0, decibel * 0.05);
-}
-inline heph_float GainToDecibel(heph_float gain)
-{
-	return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
-}
-inline constexpr heph_float SemitoneToCent(heph_float semitone)
-{
-	return semitone * 100.0;
-}
-inline constexpr heph_float SemitoneToOctave(heph_float semitone)
-{
-	return semitone / 12.0;
-}
-inline constexpr heph_float CentToSemitone(heph_float cent)
-{
-	return cent / 100.0;
-}
-inline constexpr heph_float CentToOctave(heph_float cent)
-{
-	return cent / 1200.0;
-}
-inline constexpr heph_float OctaveToSemitone(heph_float octave)
-{
-	return octave * 12.0;
-}
-inline constexpr heph_float OctaveToCent(heph_float octave)
-{
-	return octave * 1200.0;
+	inline HEPH_CONSTEXPR heph_float SemitoneToCent(heph_float semitone)
+	{
+		return semitone * 100.0;
+	}
+	inline HEPH_CONSTEXPR heph_float SemitoneToOctave(heph_float semitone)
+	{
+		return semitone / 12.0;
+	}
+	inline HEPH_CONSTEXPR heph_float CentToSemitone(heph_float cent)
+	{
+		return cent / 100.0;
+	}
+	inline HEPH_CONSTEXPR heph_float CentToOctave(heph_float cent)
+	{
+		return cent / 1200.0;
+	}
+	inline HEPH_CONSTEXPR heph_float OctaveToSemitone(heph_float octave)
+	{
+		return octave * 12.0;
+	}
+	inline HEPH_CONSTEXPR heph_float OctaveToCent(heph_float octave)
+	{
+		return octave * 1200.0;
+	}
 }
 #pragma endregion

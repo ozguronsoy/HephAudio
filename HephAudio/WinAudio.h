@@ -1,7 +1,11 @@
 #pragma once
 #ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers 
+
 #include "HephAudioFramework.h"
 #include "NativeAudio.h"
+#include <windows.h>
 #include <wrl.h>
 #include <Mmdeviceapi.h>
 #include <Functiondiscoverykeys_devpkey.h>
@@ -44,6 +48,8 @@ namespace HephAudio
 			void CaptureData();
 			static EDataFlow DeviceTypeToDataFlow(AudioDeviceType deviceType);
 			static AudioDeviceType DataFlowToDeviceType(EDataFlow dataFlow);
+			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx) noexcept;
+			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi) noexcept;
 		};
 	}
 }
