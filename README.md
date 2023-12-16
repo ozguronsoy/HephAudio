@@ -1,4 +1,4 @@
-# About
+# Introduction
 HephAudio is a cross-platform audio library that provides:
 - Playing and recording audio data in Windows, Linux, iOS, MacOS, and Android.
 - Audio device enumeration and selection.
@@ -57,7 +57,7 @@ If the audio data we want to play does not have the same format as the one we sp
 ```
 audio.Load("some_path\\some_file.wav", false); // false = don't pause.
 ```
-We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing.  can find more information on this in the documentation files.
+We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing. You can find more information on this in the documentation files.
 
 ### Queueing Files
 HephAudio allowes you to create queues by calling the ``Queue`` method. The files in the queue will be played one at a time in the given order. You can later add new files to the queue by calling the same method with the same queue name.
