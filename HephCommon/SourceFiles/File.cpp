@@ -60,6 +60,10 @@ namespace HephCommon
 	{
 		return this->pFile != nullptr;
 	}
+	FILE* File::GetInternalFilePtr() const
+	{
+		return this->pFile;
+	}
 	uint64_t File::FileSize() const noexcept
 	{
 		return this->fileSize;

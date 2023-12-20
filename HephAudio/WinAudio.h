@@ -25,10 +25,10 @@ namespace HephAudio
 		private:
 			HANDLE hEvent;
 			Microsoft::WRL::ComPtr<IMMDeviceEnumerator> pEnumerator;
-			Microsoft::WRL::ComPtr<IAudioClient3> pRenderAudioClient;
-			Microsoft::WRL::ComPtr<IAudioSessionManager2> pRenderSessionManager;
+			Microsoft::WRL::ComPtr<IAudioClient> pRenderAudioClient;
+			Microsoft::WRL::ComPtr<IAudioSessionManager> pRenderSessionManager;
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pRenderSessionControl;
-			Microsoft::WRL::ComPtr<IAudioClient3> pCaptureAudioClient;
+			Microsoft::WRL::ComPtr<IAudioClient> pCaptureAudioClient;
 		public:
 			WinAudio();
 			WinAudio(const WinAudio&) = delete;

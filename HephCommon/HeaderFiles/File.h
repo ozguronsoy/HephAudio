@@ -28,6 +28,7 @@ namespace HephCommon
 		void Close();
 		void Flush();
 		bool IsOpen() const noexcept;
+		FILE* GetInternalFilePtr() const;
 		uint64_t FileSize() const noexcept;
 		StringBuffer FilePath() const;
 		StringBuffer FileName() const;

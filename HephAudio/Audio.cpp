@@ -140,6 +140,14 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->IsCapturePaused();
 	}
+	uint64_t Audio::GetDeviceEnumerationPeriod() const noexcept
+	{
+		return this->pNativeAudio->GetDeviceEnumerationPeriod();
+	}
+	void Audio::SetDeviceEnumerationPeriod(uint64_t deviceEnumerationPeriod_ns) noexcept
+	{
+		this->pNativeAudio->SetDeviceEnumerationPeriod(deviceEnumerationPeriod_ns);
+	}
 	void Audio::SetMasterVolume(heph_float volume)
 	{
 		this->pNativeAudio->SetMasterVolume(volume);

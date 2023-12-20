@@ -26,7 +26,8 @@ namespace HephAudio
 		WinAudioDS::WinAudioDS() : NativeAudio()
 			, pDirectSound(nullptr), pDirectSoundBuffer(nullptr), pDirectSoundCapture(nullptr), pDirectSoundCaptureBuffer(nullptr)
 		{
-			CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+			HRESULT hres;
+			WINAUDIODS_EXCPT(CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY), "WinAudioDS", "An error occurred whilst initializing COM.");
 
 			WNDCLASSEXW wndw;
 			wndw.lpfnWndProc = &WinAudioDS::WindowProc;

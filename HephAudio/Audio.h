@@ -15,7 +15,7 @@ namespace HephAudio
 	class Audio final
 	{
 	private:
-		HephAudio::Native::NativeAudio* pNativeAudio;
+		Native::NativeAudio* pNativeAudio;
 	public:
 		void SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
 		void AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
@@ -32,8 +32,8 @@ namespace HephAudio
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
-		HephAudio::Native::NativeAudio* operator->() const noexcept;
-		HephAudio::Native::NativeAudio* GetNativeAudio() const;
+		Native::NativeAudio* operator->() const noexcept;
+		Native::NativeAudio* GetNativeAudio() const;
 		AudioObject* Play(HephCommon::StringBuffer filePath);
 		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
 		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
@@ -46,6 +46,8 @@ namespace HephAudio
 		AudioObject* GetAO(HephCommon::StringBuffer queueName, size_t index) const;
 		void PauseCapture(bool pause);
 		bool IsCapturePaused() const noexcept;
+		uint64_t GetDeviceEnumerationPeriod() const noexcept;
+		void SetDeviceEnumerationPeriod(uint64_t deviceEnumerationPeriod_ns) noexcept;
 		void SetMasterVolume(heph_float volume);
 		heph_float GetMasterVolume() const;
 		void Skip(HephCommon::StringBuffer queueName, bool applyDelay);

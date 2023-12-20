@@ -24,8 +24,10 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista."));
 			}
 
-			CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 			HRESULT hres;
+
+			WINAUDIO_EXCPT(CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY), "WinAudio", "An error occurred whilst initializing COM.");
+			
 			WINAUDIO_EXCPT(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), &pEnumerator), "WinAudio", "An error occurred whilst initializing the audio device enumerator.");
 
 			this->EnumerateAudioDevices();
@@ -109,7 +111,7 @@ namespace HephAudio
 				renderDeviceId = deviceId;
 				CoTaskMemFree(deviceId);
 			}
-			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pRenderAudioClient.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the render device.");
+			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr, (void**)pRenderAudioClient.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the render device.");
 
 			WAVEFORMATEX wrf = AFI2WFX(format);
 			WINAUDIO_EXCPT(pRenderAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wrf, &closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
@@ -123,7 +125,7 @@ namespace HephAudio
 			renderFormat = format;
 
 			WINAUDIO_EXCPT(pRenderAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, &wrf, nullptr), "WinAudio::InitializeRender", "An error occurred whilst initializing the audio client.");
-			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager2), CLSCTX_INPROC_SERVER, nullptr, (void**)pRenderSessionManager.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the session manager.");
+			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager), CLSCTX_INPROC_SERVER, nullptr, (void**)pRenderSessionManager.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the session manager.");
 
 			WINAUDIO_EXCPT(pRenderSessionManager->GetAudioSessionControl(nullptr, 0, pRenderSessionControl.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst getting the session controls.");
 
@@ -176,7 +178,7 @@ namespace HephAudio
 				captureDeviceId = deviceId;
 				CoTaskMemFree(deviceId);
 			}
-			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient3), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), "WinAudio::InitializeCapture", "An error occurred whilst activating the device.");
+			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), "WinAudio::InitializeCapture", "An error occurred whilst activating the device.");
 
 			WAVEFORMATEX wcf = AFI2WFX(format);
 			WINAUDIO_EXCPT(pCaptureAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wcf, &closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
