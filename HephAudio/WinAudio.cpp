@@ -24,10 +24,19 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista."));
 			}
 
-			HRESULT hres;
+			HRESULT hres = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY | COINIT_DISABLE_OLE1DDE);
+			if (FAILED(hres))
+			{
+				if (hres == RPC_E_CHANGED_MODE)
+				{
+					WINAUDIO_EXCPT(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_SPEED_OVER_MEMORY | COINIT_DISABLE_OLE1DDE), "WinAudio", "An error occurred whilst initializing COM.");
+				}
+				else
+				{
+					WINAUDIO_EXCPT(hres, "WinAudio", "An error occurred whilst initializing COM.");
+				}
+			}
 
-			WINAUDIO_EXCPT(CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY), "WinAudio", "An error occurred whilst initializing COM.");
-			
 			WINAUDIO_EXCPT(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), &pEnumerator), "WinAudio", "An error occurred whilst initializing the audio device enumerator.");
 
 			this->EnumerateAudioDevices();
