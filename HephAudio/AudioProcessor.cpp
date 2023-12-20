@@ -625,8 +625,8 @@ namespace HephAudio
 		const heph_float azimuth = atan2(source.x, source.z);
 		const heph_float volumes[2] =
 		{
-			(leftDistance < maxDistance ? ((maxDistance - leftDistance) / maxDistance) : 0) * (0.5 - azimuth / Math::pi),
-			(rightDistance < maxDistance ? ((maxDistance - rightDistance) / maxDistance) : 0) * (0.5 + azimuth / Math::pi)
+			(heph_float)((leftDistance < maxDistance ? ((maxDistance - leftDistance) / maxDistance) : 0) * (0.5 - azimuth / Math::pi)),
+			(heph_float)((rightDistance < maxDistance ? ((maxDistance - rightDistance) / maxDistance) : 0) * (0.5 + azimuth / Math::pi))
 		};
 
 		AudioFormatInfo resultBufferFormatInfo = buffer.formatInfo;

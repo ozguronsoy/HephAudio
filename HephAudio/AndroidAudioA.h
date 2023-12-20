@@ -36,7 +36,7 @@ namespace HephAudio
 		private:
 			void RenderData();
 			void CaptureData();
-			heph_float GetFinalAOVolume(std::shared_ptr<AudioObject> pAudioObject) const override;
+			heph_float GetFinalAOVolume(AudioObject* pAudioObject) const override;
 		};
 	}
 }
