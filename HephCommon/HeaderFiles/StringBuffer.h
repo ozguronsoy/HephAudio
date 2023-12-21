@@ -1,5 +1,6 @@
 #pragma once
 #include "HephCommonFramework.h"
+#include "Guid.h"
 #include <cinttypes>
 #include <vector>
 
@@ -26,12 +27,12 @@ namespace HephCommon
 		public:
 			operator char() const;
 			operator wchar_t() const;
-			CharAccessor& operator=(const char c);
-			CharAccessor& operator=(const wchar_t wc);
-			bool operator==(const char c);
-			bool operator==(const wchar_t wc);
-			bool operator!=(const char c);
-			bool operator!=(const wchar_t wc);
+			CharAccessor& operator=(char c);
+			CharAccessor& operator=(wchar_t wc);
+			bool operator==(char c);
+			bool operator==(wchar_t wc);
+			bool operator!=(char c);
+			bool operator!=(wchar_t wc);
 		};
 	private:
 		size_t charSize;
@@ -41,8 +42,8 @@ namespace HephCommon
 		StringBuffer(size_t size, size_t charSize);
 	public:
 		StringBuffer();
-		StringBuffer(const char c);
-		StringBuffer(const wchar_t wc);
+		StringBuffer(char c);
+		StringBuffer(wchar_t wc);
 		StringBuffer(const char* const str);
 		StringBuffer(const wchar_t* const wstr);
 		StringBuffer(const StringBuffer& str);
@@ -52,31 +53,31 @@ namespace HephCommon
 		explicit operator char* () const;
 		explicit operator wchar_t* () const;
 		CharAccessor operator[](size_t index) const;
-		StringBuffer& operator=(const char rhs);
-		StringBuffer& operator=(const wchar_t rhs);
+		StringBuffer& operator=(char rhs);
+		StringBuffer& operator=(wchar_t rhs);
 		StringBuffer& operator=(const char* const rhs);
 		StringBuffer& operator=(const wchar_t* const rhs);
 		StringBuffer& operator=(const StringBuffer& rhs);
 		StringBuffer& operator=(StringBuffer&& rhs) noexcept;
-		StringBuffer operator+(const char rhs) const;
-		StringBuffer operator+(const wchar_t rhs) const;
+		StringBuffer operator+(char rhs) const;
+		StringBuffer operator+(wchar_t rhs) const;
 		StringBuffer operator+(const char* const rhs) const;
 		StringBuffer operator+(const wchar_t* const rhs) const;
 		StringBuffer operator+(const StringBuffer& rhs) const;
-		StringBuffer& operator+=(const char rhs);
-		StringBuffer& operator+=(const wchar_t rhs);
+		StringBuffer& operator+=(char rhs);
+		StringBuffer& operator+=(wchar_t rhs);
 		StringBuffer& operator+=(const char* const rhs);
 		StringBuffer& operator+=(const wchar_t* const rhs);
 		StringBuffer& operator+=(const StringBuffer& rhs);
 		StringBuffer operator*(size_t rhs) const;
 		StringBuffer& operator*=(size_t rhs);
-		bool operator==(const char rhs) const;
-		bool operator==(const wchar_t rhs) const;
+		bool operator==(char rhs) const;
+		bool operator==(wchar_t rhs) const;
 		bool operator==(const char* const rhs) const;
 		bool operator==(const wchar_t* const rhs) const;
 		bool operator==(const StringBuffer& rhs) const;
-		bool operator!=(const char rhs) const;
-		bool operator!=(const wchar_t rhs) const;
+		bool operator!=(char rhs) const;
+		bool operator!=(wchar_t rhs) const;
 		bool operator!=(const char* const rhs) const;
 		bool operator!=(const wchar_t* const rhs) const;
 		bool operator!=(const StringBuffer& rhs) const;
@@ -166,6 +167,7 @@ namespace HephCommon
 		static StringBuffer ToString(uint64_t value);
 		static StringBuffer ToString(double value);
 		static StringBuffer ToString(double value, size_t precision);
+		static StringBuffer ToString(const Guid& guid);
 		static StringBuffer ToHexString(int8_t value);
 		static StringBuffer ToHexString(uint8_t value);
 		static StringBuffer ToHexString(int16_t value);
@@ -181,6 +183,7 @@ namespace HephCommon
 		static int64_t StringToI64(StringBuffer string);
 		static uint64_t StringToU64(StringBuffer string);
 		static double StringToDouble(StringBuffer string);
+		static Guid StringToGuid(StringBuffer string);
 		static int16_t HexStringToI16(StringBuffer hexString);
 		static uint16_t HexStringToU16(StringBuffer hexString);
 		static int32_t HexStringToI32(StringBuffer hexString);
@@ -195,8 +198,8 @@ namespace HephCommon
 	};
 
 }
-HephCommon::StringBuffer operator+(const char lhs, const HephCommon::StringBuffer& rhs);
-HephCommon::StringBuffer operator+(const wchar_t lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator+(char lhs, const HephCommon::StringBuffer& rhs);
+HephCommon::StringBuffer operator+(wchar_t lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const char* const lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const wchar_t* const lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator*(size_t lhs, const HephCommon::StringBuffer& rhs);

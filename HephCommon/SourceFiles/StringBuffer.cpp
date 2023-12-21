@@ -36,7 +36,7 @@ namespace HephCommon
 
 		return ((wchar_t*)this->pParent->Begin())[this->index];
 	}
-	StringBuffer::CharAccessor& StringBuffer::CharAccessor::operator=(const char c)
+	StringBuffer::CharAccessor& StringBuffer::CharAccessor::operator=(char c)
 	{
 		if (this->charSize == sizeof(char))
 		{
@@ -50,7 +50,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	StringBuffer::CharAccessor& StringBuffer::CharAccessor::operator=(const wchar_t wc)
+	StringBuffer::CharAccessor& StringBuffer::CharAccessor::operator=(wchar_t wc)
 	{
 		if (this->charSize == sizeof(char))
 		{
@@ -64,19 +64,19 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	bool StringBuffer::CharAccessor::operator==(const char c)
+	bool StringBuffer::CharAccessor::operator==(char c)
 	{
 		return this->pParent->CompareContent(c);
 	}
-	bool StringBuffer::CharAccessor::operator==(const wchar_t wc)
+	bool StringBuffer::CharAccessor::operator==(wchar_t wc)
 	{
 		return this->pParent->CompareContent(wc);
 	}
-	bool StringBuffer::CharAccessor::operator!=(const char c)
+	bool StringBuffer::CharAccessor::operator!=(char c)
 	{
 		return !this->pParent->CompareContent(c);
 	}
-	bool StringBuffer::CharAccessor::operator!=(const wchar_t wc)
+	bool StringBuffer::CharAccessor::operator!=(wchar_t wc)
 	{
 		return !this->pParent->CompareContent(wc);
 	}
@@ -102,7 +102,7 @@ namespace HephCommon
 		}
 		this->pData[0] = '\0';
 	}
-	StringBuffer::StringBuffer(const char c)
+	StringBuffer::StringBuffer(char c)
 		: charSize(sizeof(char)), size(1)
 	{
 		this->pData = (char*)malloc(this->charSize * 2);
@@ -114,8 +114,8 @@ namespace HephCommon
 		this->pData[0] = c;
 		this->pData[1] = '\0';
 	}
-	StringBuffer::StringBuffer(const wchar_t wc)
-		: charSize(sizeof(wchar_t)), size(0)
+	StringBuffer::StringBuffer(wchar_t wc)
+		: charSize(sizeof(wchar_t)), size(1)
 	{
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData == nullptr)
@@ -247,13 +247,13 @@ namespace HephCommon
 		}
 		return CharAccessor(this, index, this->charSize);
 	}
-	StringBuffer& StringBuffer::operator=(const char rhs)
+	StringBuffer& StringBuffer::operator=(char rhs)
 	{
 		char buffer[2] = { rhs, '\0' };
 		*this = buffer;
 		return *this;
 	}
-	StringBuffer& StringBuffer::operator=(const wchar_t rhs)
+	StringBuffer& StringBuffer::operator=(wchar_t rhs)
 	{
 		wchar_t buffer[2] = { rhs, L'\0' };
 		*this = buffer;
@@ -377,12 +377,12 @@ namespace HephCommon
 
 		return *this;
 	}
-	StringBuffer StringBuffer::operator+(const char rhs) const
+	StringBuffer StringBuffer::operator+(char rhs) const
 	{
 		char buffer[2] = { rhs, '\0' };
 		return *this + buffer;
 	}
-	StringBuffer StringBuffer::operator+(const wchar_t rhs) const
+	StringBuffer StringBuffer::operator+(wchar_t rhs) const
 	{
 		wchar_t buffer[2] = { rhs, L'\0' };
 		return *this + buffer;
@@ -433,13 +433,13 @@ namespace HephCommon
 		}
 		return *this + rhs.wc_str();
 	}
-	StringBuffer& StringBuffer::operator+=(const char rhs)
+	StringBuffer& StringBuffer::operator+=(char rhs)
 	{
 		char buffer[2] = { rhs, '\0' };
 		*this += buffer;
 		return *this;
 	}
-	StringBuffer& StringBuffer::operator+=(const wchar_t rhs)
+	StringBuffer& StringBuffer::operator+=(wchar_t rhs)
 	{
 		wchar_t buffer[2] = { rhs, L'\0' };
 		*this += buffer;
@@ -544,12 +544,12 @@ namespace HephCommon
 
 		return *this;
 	}
-	bool StringBuffer::operator==(const char rhs) const
+	bool StringBuffer::operator==(char rhs) const
 	{
 		char buffer[2] = { rhs, '\0' };
 		return this->operator==(buffer);
 	}
-	bool StringBuffer::operator==(const wchar_t rhs) const
+	bool StringBuffer::operator==(wchar_t rhs) const
 	{
 		wchar_t buffer[2] = { rhs, L'\0' };
 		return this->operator==(buffer);
@@ -566,12 +566,12 @@ namespace HephCommon
 	{
 		return rhs.charSize == sizeof(char) ? this->operator==(rhs.c_str()) : this->operator==(rhs.wc_str());
 	}
-	bool StringBuffer::operator!=(const char rhs) const
+	bool StringBuffer::operator!=(char rhs) const
 	{
 		char buffer[2] = { rhs, '\0' };
 		return this->operator!=(buffer);
 	}
-	bool StringBuffer::operator!=(const wchar_t rhs) const
+	bool StringBuffer::operator!=(wchar_t rhs) const
 	{
 		wchar_t buffer[2] = { rhs, L'\0' };
 		return this->operator!=(buffer);
@@ -1785,6 +1785,14 @@ namespace HephCommon
 		sprintf(buffer, "%.*lf", precision, value);
 		return buffer;
 	}
+	StringBuffer StringBuffer::ToString(const Guid& guid)
+	{
+		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
+		sprintf(buffer, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x", guid.data1, guid.data2, guid.data3, 
+			guid.data4[0], guid.data4[1], guid.data4[2], guid.data4[3], 
+			guid.data4[4], guid.data4[5], guid.data4[6], guid.data4[7]);
+		return buffer;
+	}
 	StringBuffer StringBuffer::ToHexString(int8_t value)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
@@ -1874,6 +1882,19 @@ namespace HephCommon
 		double number = 0;
 		sscanf(string.fc_str(), "%lf", &number);
 		return number;
+	}
+	Guid StringBuffer::StringToGuid(StringBuffer string)
+	{
+		Guid guid;
+		string.SetStringType(StringType::ASCII);
+		const std::vector<StringBuffer> dataStr = string.Split('-');
+		sscanf(dataStr[0].c_str(), "%x", &guid.data1);
+		sscanf(dataStr[1].c_str(), "%04x", &guid.data2);
+		sscanf(dataStr[2].c_str(), "%04x", &guid.data3);
+		sscanf(dataStr[3].c_str(), "%02x", guid.data4);
+		sscanf(dataStr[3].c_str() + 2, "%02x", guid.data4 + 1);
+		sscanf(dataStr[4].c_str(), "%02x%02x%02x%02x%02x%02x", guid.data4 + 2, guid.data4 + 3, guid.data4 + 4, guid.data4 + 5, guid.data4 + 6, guid.data4 + 7);
+		return guid;
 	}
 	int16_t StringBuffer::HexStringToI16(StringBuffer hexString)
 	{
@@ -2025,14 +2046,14 @@ namespace HephCommon
 	}
 #pragma endregion
 }
-HephCommon::StringBuffer operator+(const char lhs, const HephCommon::StringBuffer& rhs)
+HephCommon::StringBuffer operator+(char lhs, const HephCommon::StringBuffer& rhs)
 {
 	HephCommon::StringBuffer result = "";
 	result += lhs;
 	result += rhs;
 	return result;
 }
-HephCommon::StringBuffer operator+(const wchar_t lhs, const HephCommon::StringBuffer& rhs)
+HephCommon::StringBuffer operator+(wchar_t lhs, const HephCommon::StringBuffer& rhs)
 {
 	HephCommon::StringBuffer result = "";
 	result += lhs;

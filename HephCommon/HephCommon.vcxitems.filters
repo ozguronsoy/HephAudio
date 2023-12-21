@@ -42,5 +42,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\XmlStream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StreamHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />
   </ItemGroup>
 </Project>

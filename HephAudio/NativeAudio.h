@@ -39,7 +39,6 @@ namespace HephAudio
 			HephCommon::StringBuffer displayName;
 			HephCommon::StringBuffer iconPath;
 			uint32_t deviceEnumerationPeriod_ms;
-			mutable std::mutex audioObjectsMutex;
 			mutable std::mutex audioDevicesMutex;
 		public:
 			HephCommon::Event OnAudioDeviceAdded;

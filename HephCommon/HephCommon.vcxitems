@@ -40,6 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\BitStream.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp" />
