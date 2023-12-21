@@ -39,7 +39,6 @@ namespace HephAudio
 			disposing = true;
 
 			JoinDeviceThread();
-			JoinQueueThreads();
 
 			if (renderProcID != nullptr)
 			{

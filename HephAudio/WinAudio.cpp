@@ -52,7 +52,6 @@ namespace HephAudio
 			JoinDeviceThread();
 			JoinRenderThread();
 			JoinCaptureThread();
-			JoinQueueThreads();
 
 			pEnumerator = nullptr;
 			pCaptureAudioClient = nullptr;

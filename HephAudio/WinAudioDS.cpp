@@ -68,7 +68,6 @@ namespace HephAudio
 			JoinDeviceThread();
 			JoinRenderThread();
 			JoinCaptureThread();
-			JoinQueueThreads();
 
 			pDirectSoundBuffer = nullptr;
 			pDirectSound = nullptr;

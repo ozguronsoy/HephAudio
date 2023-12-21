@@ -32,7 +32,6 @@ namespace HephAudio
 			JoinDeviceThread();
 			JoinRenderThread();
 			JoinCaptureThread();
-			JoinQueueThreads();
 
 			if (renderPcm != nullptr)
 			{

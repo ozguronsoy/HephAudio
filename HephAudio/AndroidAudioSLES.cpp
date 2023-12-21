@@ -44,7 +44,6 @@ namespace HephAudio
 			disposing = true;
 			JoinRenderThread();
 			JoinCaptureThread();
-			JoinQueueThreads();
 			StopRendering();
 			StopCapturing();
 

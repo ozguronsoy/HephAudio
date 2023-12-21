@@ -19,9 +19,6 @@ namespace HephAudio
 		heph_float volume;
 		AudioBuffer buffer;
 		size_t frameIndex;
-		HephCommon::StringBuffer queueName;
-		uint32_t queueIndex;
-		heph_float queueDelay_ms;
 		HephCommon::Event OnRender;
 		HephCommon::Event OnFinishedPlaying;
 		AudioObject();

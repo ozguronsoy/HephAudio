@@ -28,7 +28,6 @@ namespace HephAudio
 			std::thread renderThread;
 			std::thread captureThread;
 			std::thread deviceThread;
-			std::vector<std::thread> queueThreads;
 			HephCommon::StringBuffer renderDeviceId;
 			HephCommon::StringBuffer captureDeviceId;
 			AudioFormatInfo renderFormat;
@@ -39,7 +38,7 @@ namespace HephAudio
 			bool isCapturePaused;
 			HephCommon::StringBuffer displayName;
 			HephCommon::StringBuffer iconPath;
-			uint64_t deviceEnumerationPeriod_ns;
+			uint32_t deviceEnumerationPeriod_ms;
 			mutable std::mutex audioObjectsMutex;
 			mutable std::mutex audioDevicesMutex;
 		public:
@@ -54,21 +53,18 @@ namespace HephAudio
 			AudioObject* Play(HephCommon::StringBuffer filePath);
 			AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
 			AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
-			std::vector<AudioObject*> Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths);
 			AudioObject* Load(HephCommon::StringBuffer filePath);
 			AudioObject* CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
 			bool DestroyAO(AudioObject* pAudioObject);
 			bool AOExists(AudioObject* pAudioObject) const;
+			AudioObject* GetAO(size_t index);
 			AudioObject* GetAO(HephCommon::StringBuffer aoName);
-			AudioObject* GetAO(HephCommon::StringBuffer queueName, size_t index);
 			void PauseCapture(bool pause);
 			bool IsCapturePaused() const noexcept;
-			uint64_t GetDeviceEnumerationPeriod() const noexcept;
-			void SetDeviceEnumerationPeriod(uint64_t deviceEnumerationPeriod_ns) noexcept;
+			uint32_t GetDeviceEnumerationPeriod() const noexcept;
+			void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) noexcept;
 			virtual void SetMasterVolume(heph_float volume) = 0;
 			virtual heph_float GetMasterVolume() const = 0;
-			void Skip(HephCommon::StringBuffer queueName, bool applyDelay);
-			void Skip(size_t skipCount, HephCommon::StringBuffer queueName, bool applyDelay);
 			AudioFormatInfo GetRenderFormat() const;
 			AudioFormatInfo GetCaptureFormat() const;
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format) = 0;
@@ -89,9 +85,6 @@ namespace HephAudio
 			void JoinRenderThread();
 			void JoinCaptureThread();
 			void JoinDeviceThread();
-			void JoinQueueThreads();
-			std::vector<AudioObject*> GetQueue(HephCommon::StringBuffer queueName);
-			void PlayNextInQueue(HephCommon::StringBuffer queueName, heph_float queueDelay, uint32_t decreaseQueueIndex);
 			void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
 			size_t GetAOCountToMix() const;
 			virtual heph_float GetFinalAOVolume(AudioObject* pAudioObject) const;

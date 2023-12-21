@@ -84,10 +84,6 @@ namespace HephAudio
 			this->pNativeAudio = nullptr;
 		}
 	}
-	HephAudio::Native::NativeAudio* Audio::operator->() const noexcept
-	{
-		return this->pNativeAudio;
-	}
 	NativeAudio* Audio::GetNativeAudio() const
 	{
 		return this->pNativeAudio;
@@ -103,10 +99,6 @@ namespace HephAudio
 	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused)
 	{
 		return this->pNativeAudio->Play(filePath, loopCount, isPaused);
-	}
-	std::vector<AudioObject*> Audio::Queue(HephCommon::StringBuffer queueName, heph_float queueDelay_ms, const std::vector<HephCommon::StringBuffer>& filePaths)
-	{
-		return this->pNativeAudio->Queue(queueName, queueDelay_ms, filePaths);
 	}
 	AudioObject* Audio::Load(HephCommon::StringBuffer filePath)
 	{
@@ -124,13 +116,13 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->AOExists(audioObject);
 	}
+	AudioObject* Audio::GetAO(size_t index) const
+	{
+		return this->pNativeAudio->GetAO(index);
+	}
 	AudioObject* Audio::GetAO(HephCommon::StringBuffer aoName) const
 	{
 		return this->pNativeAudio->GetAO(aoName);
-	}
-	AudioObject* Audio::GetAO(HephCommon::StringBuffer queueName, size_t index) const
-	{
-		return this->pNativeAudio->GetAO(queueName, index);
 	}
 	void Audio::PauseCapture(bool pause)
 	{
@@ -140,13 +132,13 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->IsCapturePaused();
 	}
-	uint64_t Audio::GetDeviceEnumerationPeriod() const noexcept
+	uint32_t Audio::GetDeviceEnumerationPeriod() const noexcept
 	{
 		return this->pNativeAudio->GetDeviceEnumerationPeriod();
 	}
-	void Audio::SetDeviceEnumerationPeriod(uint64_t deviceEnumerationPeriod_ns) noexcept
+	void Audio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) noexcept
 	{
-		this->pNativeAudio->SetDeviceEnumerationPeriod(deviceEnumerationPeriod_ns);
+		this->pNativeAudio->SetDeviceEnumerationPeriod(deviceEnumerationPeriod_ms);
 	}
 	void Audio::SetMasterVolume(heph_float volume)
 	{
@@ -155,14 +147,6 @@ namespace HephAudio
 	heph_float Audio::GetMasterVolume() const
 	{
 		return this->pNativeAudio->GetMasterVolume();
-	}
-	void Audio::Skip(HephCommon::StringBuffer queueName, bool applyDelay)
-	{
-		this->pNativeAudio->Skip(queueName, applyDelay);
-	}
-	void Audio::Skip(size_t skipCount, HephCommon::StringBuffer queueName, bool applyDelay)
-	{
-		this->pNativeAudio->Skip(skipCount, queueName, applyDelay);
 	}
 	AudioFormatInfo Audio::GetRenderFormat() const
 	{
