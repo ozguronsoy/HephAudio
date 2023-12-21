@@ -59,25 +59,13 @@ audio.Load("some_path\\some_file.wav", false); // false = don't pause.
 ```
 We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing. You can find more information on this in the documentation files.
 
-### Queueing Files
-HephAudio allowes you to create queues by calling the ``Queue`` method. The files in the queue will be played one at a time in the given order. You can later add new files to the queue by calling the same method with the same queue name.
-```
-// queue name
-// delay in ms after a file finished playing.
-// a vector of file paths.
-audio.Queue("my queue", 300, { "file1.wav", "file2.wav", "file3.wav" });
-```
-
 ### Recording
 To record audio, first we need to initialize capturing just like before, this will start the recording process. You can access the recorded data via ``OnCapture`` event, which is invoked when some amount of data is captured (typically 10ms of audio data).
 To add an event handler use either one of the following methods:
 ```
-audio.SetOnCaptureHandler(&MyCallbackMethod);          // Removes all the other event handlers, then adds the provided one
-audio->OnCapture.AddEventHandler(&MyCallbackMethod);   // Adds the provided event handler
-audio->OnCapture += &MyCallbackMethod;                 // Adds the provided event handler
-audio->OnCapture = &MyCallbackMethod;                  // Removes all the other event handlers, then adds the provided one
+audio.SetOnCaptureHandler(&MyCallbackMethod); // Removes all the other event handlers, then adds the provided one
+audio.AddOnCaptureHandler(&MyCallbackMethod); // Adds the provided event handler
 ```
-Note that the ``->`` operator in ``Audio`` class is used to access the ``NativeAudio`` class that it internally uses which contains the ``OnCapture`` event instance.
 
 After setting an event handler for the ``OnCapture`` event, we must cast the provided ``EventArgs`` pointer to the correct type to access the captured data and append it to an ``AudioBuffer`` we created. For more details about the ``EventArgs`` and ``EventResult`` visit the documentation.
 When you are done recording you can either call ``StopCapturing()`` method to deinitialize capturing or ``PauseCapture(bool isPaused)`` method to prevent from raising the ``OnCapture`` event.
@@ -149,7 +137,7 @@ audio.InitializeRender(&renderDevices[0], AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16
 ```
 
 ### Applying Effects
-Most of the signal processing is done by the ``AudioProcessor`` class. To apply effects we must obtain the ``AudioBuffer`` that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the ``AudioObject`` that is returned by the ``Play``, ``Load`` and ``Queue`` methods.
+Most of the signal processing is done by the ``AudioProcessor`` class. To apply effects we must obtain the ``AudioBuffer`` that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the ``AudioObject`` that is returned by the ``Play`` and ``Load`` methods.
 Here is a sample code for playing the file in 2x speed without changing the pitch:
 ```
 #include <stdio.h>
