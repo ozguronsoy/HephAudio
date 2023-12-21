@@ -10,7 +10,7 @@ namespace HephAudio
 	namespace Native
 	{
 		/// <summary>
-		/// Uses OpenSL ES, min api target = 16. Use AndroidAudioA for api level 27 or greater (uses AAudio).
+		/// Uses OpenSL ES, min api target = 21. Use AndroidAudioA for api level 27 or greater (uses AAudio).
 		/// Add -lOpenSLES to the compiler flags.
 		/// </summary>
 		class AndroidAudioSLES final : public AndroidAudioBase
@@ -21,18 +21,19 @@ namespace HephAudio
 				AndroidAudioSLES* pAndroidAudio;
 				SLint8* pDataBase;
 				SLint8* pData;
-				SLuint32 size;
+				SLuint32 bufferSize;
 			};
 		private:
 			SLObjectItf audioEngineObject;
 			SLEngineItf audioEngine;
+			SLObjectItf outputMixObject;
 			SLObjectItf audioPlayerObject;
 			SLPlayItf audioPlayer;
 			SLVolumeItf masterVolumeObject;
 			SLObjectItf audioRecorderObject;
 			SLRecordItf audioRecorder;
-			uint32_t renderBufferSize;
-			uint32_t captureBufferSize;
+			CallbackContext renderCallbackContext;
+			CallbackContext captureCallbackContext;
 		public:
 			AndroidAudioSLES(JavaVM* jvm);
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
@@ -47,8 +48,6 @@ namespace HephAudio
 			void SetDisplayName(HephCommon::StringBuffer displayName);
 			void SetIconPath(HephCommon::StringBuffer iconPath);
 		private:
-			void RenderData(SLBufferQueueItf bufferQueue);
-			void CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue);
 			SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);
 			static void RecordEventCallback(SLAndroidSimpleBufferQueueItf simpleBufferQueue, void* pContext);

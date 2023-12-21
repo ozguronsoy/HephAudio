@@ -89,7 +89,7 @@ namespace HephAudio
 				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
 			}
 
-			renderBufferFrameCount = renderFormat.ByteRate();
+			renderBufferFrameCount = renderFormat.ByteRate() * 0.03;
 
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_OUTPUT);
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
@@ -171,7 +171,7 @@ namespace HephAudio
 				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
 			}
 
-			captureBufferFrameCount = captureFormat.ByteRate();
+			captureBufferFrameCount = captureFormat.ByteRate() * 0.03;
 
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_INPUT);
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
@@ -222,8 +222,8 @@ namespace HephAudio
 		}
 		void AndroidAudioA::RenderData()
 		{
-			HEPH_CONSTEXPR uint64_t stateChangeTimeoutNanos = 200 * 1000000;
-			HEPH_CONSTEXPR uint64_t writeTimeoutNanos = 10 * 1000000;
+			constexpr uint64_t stateChangeTimeoutNanos = 200 * 1000000;
+			constexpr uint64_t writeTimeoutNanos = 10 * 1000000;
 
 			AudioBuffer dataBuffer = AudioBuffer(renderFormat.sampleRate * 0.01, renderFormat);
 			aaudio_result_t  ares;
@@ -252,8 +252,8 @@ namespace HephAudio
 		}
 		void AndroidAudioA::CaptureData()
 		{
-			HEPH_CONSTEXPR uint64_t stateChangeTimeoutNanos = 200e6;
-			HEPH_CONSTEXPR uint64_t readTimeoutNanos = 10e6;
+			constexpr uint64_t stateChangeTimeoutNanos = 200e6;
+			constexpr uint64_t readTimeoutNanos = 10e6;
 
 			AudioBuffer dataBuffer = AudioBuffer(captureFormat.sampleRate * 0.01, captureFormat);
 			aaudio_result_t  ares;

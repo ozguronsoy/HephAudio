@@ -6,8 +6,6 @@
 #include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 
 #define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); }
-#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); goto RENDER_EXIT; }
-#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); goto CAPTURE_EXIT; }
 
 using namespace HephCommon;
 
@@ -16,13 +14,16 @@ namespace HephAudio
 	namespace Native
 	{
 		AndroidAudioSLES::AndroidAudioSLES(JavaVM* jvm) : AndroidAudioBase(jvm)
-			, audioEngineObject(nullptr), audioEngine(nullptr), audioPlayerObject(nullptr), audioPlayer(nullptr), audioRecorderObject(nullptr), audioRecorder(nullptr)
-			, masterVolumeObject(nullptr), renderBufferSize(0), captureBufferSize(0)
+			, audioEngineObject(nullptr), audioEngine(nullptr), outputMixObject(nullptr), audioPlayerObject(nullptr), audioPlayer(nullptr)
+			, audioRecorderObject(nullptr), audioRecorder(nullptr), masterVolumeObject(nullptr)
 		{
 			if (deviceApiLevel < 16)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
 			}
+
+			renderCallbackContext.pAndroidAudio = this;
+			captureCallbackContext.pAndroidAudio = this;
 
 			SLresult slres;
 			SLEngineOption engineOption;
@@ -42,8 +43,6 @@ namespace HephAudio
 			HEPHAUDIO_LOG("Destructing AndroidAudioSLES...", HEPH_CL_INFO);
 
 			disposing = true;
-			JoinRenderThread();
-			JoinCaptureThread();
 			StopRendering();
 			StopCapturing();
 
@@ -81,7 +80,6 @@ namespace HephAudio
 			dataSource.pFormat = &pcmFormat;
 
 			SLDataSink dataSink;
-			SLObjectItf outputMixObject;
 			SLDataLocator_OutputMix outputMixLocator;
 			SLresult slres;
 			ANDROIDAUDIO_EXCPT((*audioEngine)->CreateOutputMix(audioEngine, &outputMixObject, 0, nullptr, nullptr), this, "AndroidAudioSLES::InitializeRender", "An error occurred whilst creating audio player.");
@@ -103,8 +101,22 @@ namespace HephAudio
 			SLBufferQueueItf bufferQueue;
 			ANDROIDAUDIO_EXCPT((*audioPlayerObject)->GetInterface(audioPlayerObject, SL_IID_BUFFERQUEUE, &bufferQueue), this, "AndroidAudioSLES::InitializeRender", "An error occurred whilst creating render buffer.");
 
+			renderCallbackContext.bufferSize = renderFormat.ByteRate() * 0.03;
+			renderCallbackContext.pDataBase = (SLint8*)malloc(renderCallbackContext.bufferSize);
+			renderCallbackContext.pData = renderCallbackContext.pDataBase;
+
+			if (renderCallbackContext.pDataBase == nullptr)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::InitializeRender", "Insufficient memory."));
+				return;
+			}
+			memset(renderCallbackContext.pDataBase, 0, renderCallbackContext.bufferSize);
+
+			ANDROIDAUDIO_EXCPT((*bufferQueue)->RegisterCallback(bufferQueue, &AndroidAudioSLES::BufferQueueCallback, &renderCallbackContext), this, "AndroidAudioSLES::InitializeRender", "An error occurred whilst rendering data.");
+			ANDROIDAUDIO_EXCPT((*bufferQueue)->Enqueue(bufferQueue, renderCallbackContext.pData, renderCallbackContext.bufferSize * 0.01), this, "AndroidAudioSLES::InitializeRender", "An error occurred whilst rendering data.");
+			ANDROIDAUDIO_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PLAYING), this, "AndroidAudioSLES::InitializeRender", "An error occurred whilst rendering data.");
+
 			isRenderInitialized = true;
-			renderThread = std::thread(&AndroidAudioSLES::RenderData, this, bufferQueue);
 
 			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
@@ -112,13 +124,21 @@ namespace HephAudio
 		{
 			if (isRenderInitialized)
 			{
+				SLresult slres;
 				isRenderInitialized = false;
 				renderDeviceId = L"";
-				JoinRenderThread();
+				ANDROIDAUDIO_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED), this, "AndroidAudioSLES::StopRendering", "An error occurred whilst rendering data.");
 				if (audioPlayerObject != nullptr)
 				{
 					(*audioPlayerObject)->Destroy(audioPlayerObject);
+					audioPlayerObject = nullptr;
 				}
+				if (outputMixObject != nullptr)
+				{
+					(*outputMixObject)->Destroy(outputMixObject);
+					outputMixObject = nullptr;
+				}
+				free(renderCallbackContext.pDataBase);
 				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
 		}
@@ -159,8 +179,22 @@ namespace HephAudio
 			SLAndroidSimpleBufferQueueItf simpleBufferQueue;
 			ANDROIDAUDIO_EXCPT((*audioRecorderObject)->GetInterface(audioRecorderObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &simpleBufferQueue), this, "AndroidAudioSLES::InitializeCapture", "An error occurred whilst creating capture buffer.");
 
+			captureCallbackContext.bufferSize = captureFormat.ByteRate() * 0.03;
+			captureCallbackContext.pDataBase = (SLint8*)malloc(captureCallbackContext.bufferSize);
+			captureCallbackContext.pData = captureCallbackContext.pDataBase;
+
+			if (captureCallbackContext.pDataBase == nullptr)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::InitializeCapture", "Insufficient memory."));
+				return;
+			}
+			memset(captureCallbackContext.pDataBase, 0, captureCallbackContext.bufferSize);
+
+			ANDROIDAUDIO_EXCPT((*simpleBufferQueue)->RegisterCallback(simpleBufferQueue, &AndroidAudioSLES::RecordEventCallback, &captureCallbackContext), this, "AndroidAudioSLES::InitializeCapture", "An error occurred whilst initializing capture.");
+			ANDROIDAUDIO_EXCPT((*simpleBufferQueue)->Enqueue(simpleBufferQueue, captureCallbackContext.pData, captureCallbackContext.bufferSize * 0.01), this, "AndroidAudioSLES::InitializeCapture", "An error occurred whilst capturing data.");
+			ANDROIDAUDIO_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_RECORDING), this, "AndroidAudioSLES::InitializeCapture", "An error occurred whilst capturing data.");
+
 			isCaptureInitialized = true;
-			captureThread = std::thread(&AndroidAudioSLES::CaptureData, this, simpleBufferQueue);
 
 			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
@@ -168,13 +202,16 @@ namespace HephAudio
 		{
 			if (isCaptureInitialized)
 			{
+				SLresult slres;
 				isCaptureInitialized = false;
 				captureDeviceId = L"";
-				JoinCaptureThread();
+				ANDROIDAUDIO_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_STOPPED), this, "AndroidAudioSLES::StopCapturing", "An error occurred whilst capturing data.");
 				if (audioRecorderObject != nullptr)
 				{
 					(*audioRecorderObject)->Destroy(audioRecorderObject);
+					audioRecorderObject = nullptr;
 				}
+				free(captureCallbackContext.pDataBase);
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
@@ -185,62 +222,6 @@ namespace HephAudio
 		void AndroidAudioSLES::SetIconPath(StringBuffer iconPath)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioSLES::SetIconPath", "AndroidAudioSLES does not support this method."));
-		}
-		void AndroidAudioSLES::RenderData(SLBufferQueueItf bufferQueue)
-		{
-			renderBufferSize = renderFormat.ByteRate();
-			void* audioBuffer = malloc(renderBufferSize);
-			if (audioBuffer == nullptr)
-			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES", "Insufficient memory."));
-				return;
-			}
-			memset(audioBuffer, 0, renderBufferSize);
-
-			CallbackContext context;
-			context.pAndroidAudio = this;
-			context.pDataBase = (SLint8*)audioBuffer;
-			context.pData = context.pDataBase;
-			context.size = renderBufferSize;
-
-			SLresult slres;
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*bufferQueue)->RegisterCallback(bufferQueue, &AndroidAudioSLES::BufferQueueCallback, &context), this, "AndroidAudioSLES", "An error occurred whilst rendering data.");
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*bufferQueue)->Enqueue(bufferQueue, context.pData, renderBufferSize * 0.01), this, "AndroidAudioSLES", "An error occurred whilst rendering data.");
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_PLAYING), this, "AndroidAudioSLES", "An error occurred whilst rendering data.");
-
-			while (!disposing && isRenderInitialized);
-
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED), this, "AndroidAudioSLES", "An error occurred whilst rendering data.");
-		RENDER_EXIT:
-			free(audioBuffer);
-		}
-		void AndroidAudioSLES::CaptureData(SLAndroidSimpleBufferQueueItf simpleBufferQueue)
-		{
-			captureBufferSize = captureFormat.ByteRate();
-			void* audioBuffer = malloc(captureBufferSize);
-			if (audioBuffer == nullptr)
-			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::InitializeCapture", "Insufficient memory."));
-				return;
-			}
-			memset(audioBuffer, 0, captureBufferSize);
-
-			CallbackContext context;
-			context.pAndroidAudio = this;
-			context.pDataBase = (SLint8*)audioBuffer;
-			context.pData = context.pDataBase;
-			context.size = captureBufferSize;
-
-			SLresult slres;
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*simpleBufferQueue)->RegisterCallback(simpleBufferQueue, &AndroidAudioSLES::RecordEventCallback, &context), this, "AndroidAudioSLES", "An error occurred whilst initializing capture.");
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*simpleBufferQueue)->Enqueue(simpleBufferQueue, context.pData, captureBufferSize * 0.01), this, "AndroidAudioSLES", "An error occurred whilst capturing data.");
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_RECORDING), this, "AndroidAudioSLES", "An error occurred whilst capturing data.");
-
-			while (!disposing && isCaptureInitialized);
-
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_STOPPED), this, "AndroidAudioSLES", "An error occurred whilst capturing data.");
-		CAPTURE_EXIT:
-			free(audioBuffer);
 		}
 		SLAndroidDataFormat_PCM_EX  AndroidAudioSLES::ToSLFormat(AudioFormatInfo& formatInfo)
 		{
@@ -260,7 +241,7 @@ namespace HephAudio
 			CallbackContext* pCallbackContext = (CallbackContext*)pContext;
 			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->isRenderInitialized)
 			{
-				const uint32_t renderCallbackFrameCount = pCallbackContext->size * 0.01 / pCallbackContext->pAndroidAudio->renderFormat.FrameSize();
+				const uint32_t renderCallbackFrameCount = pCallbackContext->bufferSize * 0.01 / pCallbackContext->pAndroidAudio->renderFormat.FrameSize();
 
 				AudioBuffer dataBuffer(renderCallbackFrameCount, pCallbackContext->pAndroidAudio->renderFormat);
 				pCallbackContext->pAndroidAudio->Mix(dataBuffer, renderCallbackFrameCount);
@@ -274,7 +255,7 @@ namespace HephAudio
 				}
 
 				pCallbackContext->pData += dataBuffer.Size();
-				if (pCallbackContext->pData >= pCallbackContext->pDataBase + pCallbackContext->size)
+				if (pCallbackContext->pData >= pCallbackContext->pDataBase + pCallbackContext->bufferSize)
 				{
 					pCallbackContext->pData = pCallbackContext->pDataBase;
 				}
@@ -285,7 +266,7 @@ namespace HephAudio
 			CallbackContext* pCallbackContext = (CallbackContext*)pContext;
 			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->isCaptureInitialized && pCallbackContext->pAndroidAudio->OnCapture)
 			{
-				const uint32_t captureCallbackSize = pCallbackContext->size * 0.01;
+				const uint32_t captureCallbackSize = pCallbackContext->bufferSize * 0.01;
 				const uint32_t captureCallbackFrameCount = captureCallbackSize / pCallbackContext->pAndroidAudio->captureFormat.FrameSize();
 
 				AudioBuffer captureBuffer(captureCallbackFrameCount, pCallbackContext->pAndroidAudio->captureFormat);
@@ -303,7 +284,7 @@ namespace HephAudio
 				}
 
 				pCallbackContext->pData += captureCallbackSize;
-				if (pCallbackContext->pData >= pCallbackContext->pDataBase + pCallbackContext->size)
+				if (pCallbackContext->pData >= pCallbackContext->pDataBase + pCallbackContext->bufferSize)
 				{
 					pCallbackContext->pData = pCallbackContext->pDataBase;
 				}
