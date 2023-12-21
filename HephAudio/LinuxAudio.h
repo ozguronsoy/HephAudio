@@ -14,7 +14,7 @@ namespace HephAudio
 		class LinuxAudio final : public NativeAudio
 		{
 		private:
-			static HEPH_CONSTEXPR long volume_max = INT32_MAX;
+			static constexpr long volume_max = INT32_MAX;
 		private:
 			snd_pcm_t* renderPcm;
 			snd_pcm_t* capturePcm;

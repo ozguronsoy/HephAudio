@@ -15,12 +15,12 @@ namespace HephCommon
 	private:
 		static std::vector<HephException> exceptions;
 	public:
-		static HEPH_CONSTEXPR int64_t ec_none = 0;
-		static HEPH_CONSTEXPR int64_t ec_fail = -1;
-		static HEPH_CONSTEXPR int64_t ec_invalid_argument = -2;
-		static HEPH_CONSTEXPR int64_t ec_not_implemented = -3;
-		static HEPH_CONSTEXPR int64_t ec_insufficient_memory = -4;
-		static HEPH_CONSTEXPR int64_t ec_not_found = -5;
+		static constexpr int64_t ec_none = 0;
+		static constexpr int64_t ec_fail = -1;
+		static constexpr int64_t ec_invalid_argument = -2;
+		static constexpr int64_t ec_not_implemented = -3;
+		static constexpr int64_t ec_insufficient_memory = -4;
+		static constexpr int64_t ec_not_found = -5;
 	public:
 		static Event OnException;
 	public:

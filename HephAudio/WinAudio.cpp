@@ -375,8 +375,8 @@ namespace HephAudio
 		}
 		void WinAudio::CaptureData()
 		{
-			HEPH_CONSTEXPR REFERENCE_TIME reftimesPerSec = 1e6;
-			HEPH_CONSTEXPR REFERENCE_TIME reftimesPerMilliSec = 2e3;
+			constexpr REFERENCE_TIME reftimesPerSec = 1e6;
+			constexpr REFERENCE_TIME reftimesPerMilliSec = 2e3;
 
 			ComPtr<IAudioCaptureClient> pCaptureClient = nullptr;
 			UINT32 bufferSize, nFramesAvailable, packetLength;

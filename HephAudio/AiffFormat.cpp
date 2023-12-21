@@ -12,13 +12,13 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		static HEPH_CONSTEXPR uint32_t formID = 0x464F524D; // "FORM"
-		static HEPH_CONSTEXPR uint32_t fverID = 0x46564552; // "FVER"
-		static HEPH_CONSTEXPR uint32_t aiffID = 0x41494646; // "AIFF"
-		static HEPH_CONSTEXPR uint32_t aifcID = 0x41494643; // "AIFC"
-		static HEPH_CONSTEXPR uint32_t commID = 0x434F4D4D; // "COMM"
-		static HEPH_CONSTEXPR uint32_t ssndID = 0x53534E44; // "SSND"
-		static HEPH_CONSTEXPR uint32_t aifc_v1 = 0xA2805140;
+		static constexpr uint32_t formID = 0x464F524D; // "FORM"
+		static constexpr uint32_t fverID = 0x46564552; // "FVER"
+		static constexpr uint32_t aiffID = 0x41494646; // "AIFF"
+		static constexpr uint32_t aifcID = 0x41494643; // "AIFC"
+		static constexpr uint32_t commID = 0x434F4D4D; // "COMM"
+		static constexpr uint32_t ssndID = 0x53534E44; // "SSND"
+		static constexpr uint32_t aifc_v1 = 0xA2805140;
 
 		StringBuffer AiffFormat::Extensions() const
 		{

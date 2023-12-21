@@ -19,8 +19,8 @@ namespace HephAudio
 		class NativeAudio
 		{
 		protected:
-			static HEPH_CONSTEXPR bool DEVICE_ENUMERATION_FAIL = false;
-			static HEPH_CONSTEXPR bool DEVICE_ENUMERATION_SUCCESS = true;
+			static constexpr bool DEVICE_ENUMERATION_FAIL = false;
+			static constexpr bool DEVICE_ENUMERATION_SUCCESS = true;
 		protected:
 			std::vector<AudioObject> audioObjects;
 			std::vector<AudioDevice> audioDevices;

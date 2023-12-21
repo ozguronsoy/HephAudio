@@ -6,10 +6,10 @@
 using namespace HephCommon;
 using namespace HephAudio::Codecs;
 
-static HEPH_CONSTEXPR uint32_t riffID = 0x52494646; // "RIFF"
-static HEPH_CONSTEXPR uint32_t waveID = 0x057415645; // "WAVE"
-static HEPH_CONSTEXPR uint32_t fmtID = 0x666D7420; // "fmt "
-static HEPH_CONSTEXPR uint32_t dataID = 0x64617461; // "data"
+static constexpr uint32_t riffID = 0x52494646; // "RIFF"
+static constexpr uint32_t waveID = 0x057415645; // "WAVE"
+static constexpr uint32_t fmtID = 0x666D7420; // "fmt "
+static constexpr uint32_t dataID = 0x64617461; // "data"
 
 
 namespace HephAudio

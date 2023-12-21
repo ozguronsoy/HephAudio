@@ -14,8 +14,8 @@ namespace HephAudio
 	class AudioProcessor final
 	{
 	private:
-		static HEPH_CONSTEXPR size_t defaultHopSize = 1024u;
-		static HEPH_CONSTEXPR size_t defaultFFTSize = 4096u;
+		static constexpr size_t defaultHopSize = 1024u;
+		static constexpr size_t defaultFFTSize = 4096u;
 	public:
 		AudioProcessor() = delete;
 		AudioProcessor(const AudioProcessor&) = delete;

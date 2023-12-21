@@ -53,27 +53,27 @@ namespace HephAudio
 	{
 		return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
 	}
-	inline HEPH_CONSTEXPR heph_float SemitoneToCent(heph_float semitone)
+	inline constexpr heph_float SemitoneToCent(heph_float semitone)
 	{
 		return semitone * 100.0;
 	}
-	inline HEPH_CONSTEXPR heph_float SemitoneToOctave(heph_float semitone)
+	inline constexpr heph_float SemitoneToOctave(heph_float semitone)
 	{
 		return semitone / 12.0;
 	}
-	inline HEPH_CONSTEXPR heph_float CentToSemitone(heph_float cent)
+	inline constexpr heph_float CentToSemitone(heph_float cent)
 	{
 		return cent / 100.0;
 	}
-	inline HEPH_CONSTEXPR heph_float CentToOctave(heph_float cent)
+	inline constexpr heph_float CentToOctave(heph_float cent)
 	{
 		return cent / 1200.0;
 	}
-	inline HEPH_CONSTEXPR heph_float OctaveToSemitone(heph_float octave)
+	inline constexpr heph_float OctaveToSemitone(heph_float octave)
 	{
 		return octave * 12.0;
 	}
-	inline HEPH_CONSTEXPR heph_float OctaveToCent(heph_float octave)
+	inline constexpr heph_float OctaveToCent(heph_float octave)
 	{
 		return octave * 1200.0;
 	}

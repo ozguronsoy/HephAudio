@@ -14,7 +14,7 @@ namespace HephCommon
 	class StringBuffer final
 	{
 	public:
-		static HEPH_CONSTEXPR size_t npos = -1;
+		static constexpr size_t npos = -1;
 	public:
 		class CharAccessor final
 		{

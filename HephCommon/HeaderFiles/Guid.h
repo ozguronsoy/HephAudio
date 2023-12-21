@@ -10,8 +10,8 @@ namespace HephCommon
 		uint16_t data2;
 		uint16_t data3;
 		uint8_t data4[8];
-		HEPH_CONSTEXPR Guid() : data1(0), data2(0), data3(0), data4{ 0, 0, 0, 0, 0, 0, 0, 0 } {}
-		HEPH_CONSTEXPR bool operator==(const Guid& rhs)
+		constexpr Guid() : data1(0), data2(0), data3(0), data4{ 0, 0, 0, 0, 0, 0, 0, 0 } {}
+		constexpr bool operator==(const Guid& rhs)
 		{
 			if (this->data1 == rhs.data1 && this->data2 == rhs.data2 && this->data3 == rhs.data3)
 			{
@@ -26,7 +26,7 @@ namespace HephCommon
 			}
 			return false;
 		}
-		HEPH_CONSTEXPR bool operator!=(const Guid& rhs)
+		constexpr bool operator!=(const Guid& rhs)
 		{
 			return !(this->operator==(rhs));
 		}

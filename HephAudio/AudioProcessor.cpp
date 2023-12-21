@@ -599,10 +599,10 @@ namespace HephAudio
 	}
 	void AudioProcessor::FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance) 
 	{
-		HEPH_CONSTEXPR heph_float distanceBetweenEars = 0.0215;
-		HEPH_CONSTEXPR Vector3 reciever = Vector3(0, 0, 0);
-		HEPH_CONSTEXPR Vector3 leftEar = Vector3(-distanceBetweenEars / 2, 0, 0);
-		HEPH_CONSTEXPR Vector3 rightEar = Vector3(distanceBetweenEars / 2, 0, 0);
+		constexpr heph_float distanceBetweenEars = 0.0215;
+		constexpr Vector3 reciever = Vector3(0, 0, 0);
+		constexpr Vector3 leftEar = Vector3(-distanceBetweenEars / 2, 0, 0);
+		constexpr Vector3 rightEar = Vector3(distanceBetweenEars / 2, 0, 0);
 
 		const heph_float leftDistance = source.Distance(leftEar);
 		const heph_float rightDistance = source.Distance(rightEar);
@@ -830,7 +830,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window)
 	{
-		HEPH_CONSTEXPR heph_float twopi = 2.0 * Math::pi;
+		constexpr heph_float twopi = 2.0 * Math::pi;
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		window.SetSize(fftSize);
 		const size_t nyquistFrequency = fftSize * 0.5;
@@ -897,7 +897,7 @@ namespace HephAudio
 	{
 		auto applyPitchShift = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, size_t channelIndex, size_t hopSize, size_t fftSize, size_t nyquistFrequency, heph_float shiftFactor)
 		{
-			HEPH_CONSTEXPR heph_float twopi = 2.0 * Math::pi;
+			constexpr heph_float twopi = 2.0 * Math::pi;
 
 			FloatBuffer lastAnalysisPhases = FloatBuffer(nyquistFrequency);
 			FloatBuffer lastSynthesisPhases = FloatBuffer(nyquistFrequency);

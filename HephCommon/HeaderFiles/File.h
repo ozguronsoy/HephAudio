@@ -49,15 +49,15 @@ namespace HephCommon
 		static StringBuffer GetFileExtension(const StringBuffer& filePath);
 	};
 }
-HEPH_CONSTEXPR HephCommon::FileOpenMode operator|(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)
+constexpr HephCommon::FileOpenMode operator|(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)
 {
 	return static_cast<HephCommon::FileOpenMode>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs));
 }
-HEPH_CONSTEXPR HephCommon::FileOpenMode operator&(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)
+constexpr HephCommon::FileOpenMode operator&(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)
 {
 	return static_cast<HephCommon::FileOpenMode>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs));
 }
-HEPH_CONSTEXPR HephCommon::FileOpenMode operator^(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)
+constexpr HephCommon::FileOpenMode operator^(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)
 {
 	return static_cast<HephCommon::FileOpenMode>(static_cast<uint8_t>(lhs) ^ static_cast<uint8_t>(rhs));
 }

@@ -41,7 +41,13 @@ namespace HephAudio
 					return nullptr;
 				}
 
+#if CPP_VERSION >= CPP_VERSION_17
 				AudioObject& audioObject = audioObjects.emplace_back();
+#else
+				audioObjects.emplace_back();
+				AudioObject& audioObject = audioObjects[audioObjects.size() - 1];
+#endif
+
 				audioObject.filePath = filePath;
 				audioObject.name = audioFile.FileName();
 				audioObject.buffer = format->ReadFile(audioFile);
@@ -68,7 +74,13 @@ namespace HephAudio
 		}
 		AudioObject* NativeAudio::CreateAO(StringBuffer name, size_t bufferFrameCount)
 		{
+#if CPP_VERSION >= CPP_VERSION_17
 			AudioObject& audioObject = audioObjects.emplace_back();
+#else
+			audioObjects.emplace_back();
+			AudioObject& audioObject = audioObjects[audioObjects.size() - 1];
+#endif
+
 			audioObject.name = name;
 			audioObject.buffer = AudioBuffer(bufferFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
 			return &audioObject;
