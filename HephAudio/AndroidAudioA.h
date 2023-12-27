@@ -31,8 +31,6 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
-			void SetDisplayName(HephCommon::StringBuffer displayName) override;
-			void SetIconPath(HephCommon::StringBuffer iconPath) override;
 		private:
 			void RenderData();
 			void CaptureData();

@@ -29,7 +29,7 @@ namespace HephCommon
 		StringBuffer message;
 		HephException();
 		HephException(int64_t errorCode, StringBuffer method, StringBuffer message);
-		void Raise(const void* pSender) const noexcept;
+		void Raise(const void* pSender) const ;
 	public:
 		static const HephException& LastException();
 		static const std::vector<HephException>& AllExceptions();

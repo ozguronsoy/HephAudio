@@ -215,14 +215,6 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void AndroidAudioSLES::SetDisplayName(StringBuffer displayName)
-		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioSLES::SetDisplayName", "AndroidAudioSLES does not support this method."));
-		}
-		void AndroidAudioSLES::SetIconPath(StringBuffer iconPath)
-		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioSLES::SetIconPath", "AndroidAudioSLES does not support this method."));
-		}
 		SLAndroidDataFormat_PCM_EX  AndroidAudioSLES::ToSLFormat(AudioFormatInfo& formatInfo)
 		{
 			SLAndroidDataFormat_PCM_EX pcmFormat;

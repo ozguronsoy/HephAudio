@@ -14,9 +14,9 @@ namespace HephAudio
 		GaussianWindow();
 		GaussianWindow(size_t size);
 		GaussianWindow(size_t size, heph_float sigma);
-		heph_float operator[](size_t n) const noexcept override;
-		void SetSize(size_t newSize) noexcept override;
-		heph_float GetSigma() const noexcept;
-		void SetSigma(heph_float sigma) noexcept;
+		heph_float operator[](size_t n) const override;
+		void SetSize(size_t newSize) override;
+		heph_float GetSigma() const;
+		void SetSigma(heph_float sigma);
 	};
 }

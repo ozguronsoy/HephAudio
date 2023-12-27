@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		uint32_t IEEE_FloatCodec::Tag() const noexcept
+		uint32_t IEEE_FloatCodec::Tag() const 
 		{
 			return WAVE_FORMAT_IEEE_FLOAT;
 		}

@@ -14,7 +14,7 @@ namespace HephCommon
 		BitStream(void* pData, size_t dataSize_bit);
 		BitStream(const BitStream& rhs);
 		BitStream& operator=(const BitStream& rhs);
-		size_t GetOffset() const noexcept;
+		size_t GetOffset() const;
 		StreamStatus SetOffset(size_t offset);
 		StreamStatus IncreaseOffset(size_t x);
 		StreamStatus DecreaseOffset(size_t x);

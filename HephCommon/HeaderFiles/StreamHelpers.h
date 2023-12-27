@@ -15,6 +15,6 @@ namespace HephCommon
 		static wchar_t NextChar(const File& file, StringType stringType);
 		static bool FindChar(const File& file, StringType stringType, wchar_t c, StringBuffer* pOutChars);
 		static bool FindString(const File& file, StringType stringType, StringBuffer str, StringBuffer* pOutChars);
-		static size_t CharSize(StringType stringType) noexcept;
+		static size_t CharSize(StringType stringType);
 	};
 }

@@ -6,7 +6,7 @@ namespace HephCommon
 	Event HephException::OnException = Event();
 	HephException::HephException() : errorCode(HephException::ec_none), method(""), message("") { }
 	HephException::HephException(int64_t errorCode, StringBuffer method, StringBuffer message) : errorCode(errorCode), method(method), message(message) {}
-	void HephException::Raise(const void* pSender) const noexcept
+	void HephException::Raise(const void* pSender) const
 	{
 		HephExceptionEventArgs args(pSender, *this);
 		HephException::OnException.Invoke(&args, nullptr);

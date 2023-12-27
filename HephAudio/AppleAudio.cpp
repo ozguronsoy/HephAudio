@@ -208,14 +208,6 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void AppleAudio::SetDisplayName(HephCommon::StringBuffer displayName)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AppleAudio::SetDisplayName", "AppleAudio does not support this method."));
-		}
-		void AppleAudio::SetIconPath(HephCommon::StringBuffer iconPath)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AppleAudio::SetIconPath", "AppleAudio does not support this method."));
-		}
 		bool AppleAudio::EnumerateAudioDevices()
 		{
 			AudioObjectPropertyAddress propertyList;
@@ -361,7 +353,7 @@ namespace HephAudio
 
 			return AppleAudio::DEVICE_ENUMERATION_SUCCESS;
 		}
-		void AppleAudio::ToStreamDesc(const AudioFormatInfo& format, AudioStreamBasicDescription& streamDesc) const noexcept
+		void AppleAudio::ToStreamDesc(const AudioFormatInfo& format, AudioStreamBasicDescription& streamDesc) const
 		{
 			streamDesc.mSampleRate = renderFormat.sampleRate;
 			streamDesc.mBitsPerChannel = renderFormat.bitsPerSample;
@@ -415,7 +407,7 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AppleAudio", "Invalid audio format."));
 			}
 		}
-		void AppleAudio::FromStreamDesc(AudioFormatInfo& format, const AudioStreamBasicDescription& streamDesc) const noexcept
+		void AppleAudio::FromStreamDesc(AudioFormatInfo& format, const AudioStreamBasicDescription& streamDesc) const
 		{
 			format.sampleRate = streamDesc.mSampleRate;
 			format.bitsPerSample = streamDesc.mBitsPerChannel;

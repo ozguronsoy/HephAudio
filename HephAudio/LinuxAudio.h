@@ -29,13 +29,11 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
-			void SetDisplayName(HephCommon::StringBuffer displayName) override;
-			void SetIconPath(HephCommon::StringBuffer iconPath) override;
 		private:
 			bool EnumerateAudioDevices() override;
 			void RenderData();
 			void CaptureData();
-			snd_pcm_format_t ToPcmFormat(const AudioFormatInfo& format) const noexcept;
+			snd_pcm_format_t ToPcmFormat(const AudioFormatInfo& format) const;
 		};
 	}
 }

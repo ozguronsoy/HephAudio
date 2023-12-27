@@ -20,7 +20,7 @@ namespace HephAudio
 			this->Release(false);
 		}
 
-		this->pAudioObject = pNativeAudio->CreateAO("(Stream) " + this->file.FileName(), 0);
+		this->pAudioObject = pNativeAudio->CreateAudioObject("(Stream) " + this->file.FileName(), 0);
 		this->formatInfo = this->pFileFormat->ReadAudioFormatInfo(this->file);
 		this->pAudioObject->buffer.frameCount = this->pFileFormat->FileFrameCount(this->file, this->formatInfo);
 
@@ -36,41 +36,42 @@ namespace HephAudio
 
 		AudioStream::streams.push_back(this);
 	}
+	AudioStream::AudioStream(Audio& audio, HephCommon::StringBuffer filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
 	AudioStream::~AudioStream()
 	{
 		this->Release(true);
 	}
-	HephCommon::File* AudioStream::GetFile() noexcept
+	HephCommon::File* AudioStream::GetFile() 
 	{
 		return &this->file;
 	}
-	FileFormats::IAudioFileFormat* AudioStream::GetFileFormat() const noexcept
+	FileFormats::IAudioFileFormat* AudioStream::GetFileFormat() const 
 	{
 		return this->pFileFormat;
 	}
-	Codecs::IAudioCodec* AudioStream::GetAudioCodec() const noexcept
+	Codecs::IAudioCodec* AudioStream::GetAudioCodec() const 
 	{
 		return this->pAudioCodec;
 	}
-	AudioObject* AudioStream::GetAudioObject() const noexcept
+	AudioObject* AudioStream::GetAudioObject() const 
 	{
 		return this->pAudioObject;
 	}
-	const AudioFormatInfo& AudioStream::GetAudioFormatInfo() const noexcept
+	const AudioFormatInfo& AudioStream::GetAudioFormatInfo() const 
 	{
 		return this->formatInfo;
 	}
-	void AudioStream::Release() noexcept
+	void AudioStream::Release() 
 	{
 		this->Release(true);
 	}
-	void AudioStream::Release(bool destroyAO) noexcept
+	void AudioStream::Release(bool destroyAO) 
 	{
 		this->file.Close();
 
 		if (destroyAO && this->pAudioObject != nullptr)
 		{
-			this->pNativeAudio->DestroyAO(this->pAudioObject);
+			this->pNativeAudio->DestroyAudioObject(this->pAudioObject);
 		}
 
 		this->pAudioObject = nullptr;
@@ -81,7 +82,7 @@ namespace HephAudio
 
 		AudioStream::RemoveStream(this);
 	}
-	void AudioStream::RemoveStream(AudioStream* pStream) noexcept
+	void AudioStream::RemoveStream(AudioStream* pStream) 
 	{
 		for (size_t i = 0; i < AudioStream::streams.size(); i++)
 		{

@@ -85,9 +85,9 @@ namespace HephCommon
 		char* fc_str();
 		wchar_t* wc_str() const;
 		wchar_t* fwc_str();
-		size_t Size() const noexcept;
-		size_t ByteSize() const noexcept;
-		StringType GetStringType() const noexcept;
+		size_t Size() const;
+		size_t ByteSize() const;
+		StringType GetStringType() const;
 		void SetStringType(StringType newType);
 		bool CompareContent(char c) const;
 		bool CompareContent(wchar_t wc) const;
@@ -156,7 +156,7 @@ namespace HephCommon
 		StringBuffer& ToLower();
 		StringBuffer& ToUpper();
 		bool IsNumber() const;
-		void* Begin() const noexcept;
+		void* Begin() const;
 		void* End() const;
 	public:
 		static StringBuffer ToString(int16_t value);

@@ -14,7 +14,7 @@ namespace HephAudio
 		NativeAudio::NativeAudio()
 			: mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
 			, renderFormat(AudioFormatInfo(1, 2, 16, 48000)), captureFormat(AudioFormatInfo(1, 2, 16, 48000)), disposing(false)
-			, isRenderInitialized(false), isCaptureInitialized(false), isCapturePaused(false), displayName(""), iconPath(""), deviceEnumerationPeriod_ms(100)
+			, isRenderInitialized(false), isCaptureInitialized(false), isCapturePaused(false), deviceEnumerationPeriod_ms(100)
 		{
 			HEPHAUDIO_STOPWATCH_START;
 		}
@@ -31,6 +31,8 @@ namespace HephAudio
 			try
 			{
 				HEPHAUDIO_LOG("Playing \"" + File::GetFileName(filePath) + "\"", HEPH_CL_INFO);
+
+				std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
 				File audioFile(filePath, FileOpenMode::Read);
 				FileFormats::IAudioFileFormat* format = FileFormats::AudioFileFormatManager::FindFileFormat(audioFile);
@@ -64,16 +66,19 @@ namespace HephAudio
 		}
 		AudioObject* NativeAudio::Load(StringBuffer filePath)
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			AudioObject* pao = Play(filePath, 1u, true);
 			if (pao != nullptr && isRenderInitialized)
 			{
-				AudioProcessor::ConvertSampleRate(pao->buffer, renderFormat.sampleRate);
-				AudioProcessor::ConvertChannels(pao->buffer, renderFormat.channelCount);
+				AudioProcessor::ChangeSampleRate(pao->buffer, renderFormat.sampleRate);
+				AudioProcessor::ChangeNumberOfChannels(pao->buffer, renderFormat.channelCount);
 			}
 			return pao;
 		}
-		AudioObject* NativeAudio::CreateAO(StringBuffer name, size_t bufferFrameCount)
+		AudioObject* NativeAudio::CreateAudioObject(StringBuffer name, size_t bufferFrameCount)
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
+
 #if CPP_VERSION >= CPP_VERSION_17
 			AudioObject& audioObject = audioObjects.emplace_back();
 #else
@@ -85,8 +90,9 @@ namespace HephAudio
 			audioObject.buffer = AudioBuffer(bufferFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
 			return &audioObject;
 		}
-		bool NativeAudio::DestroyAO(AudioObject* pAudioObject)
+		bool NativeAudio::DestroyAudioObject(AudioObject* pAudioObject)
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
 				if (pAudioObject == &audioObjects.at(i))
@@ -97,8 +103,9 @@ namespace HephAudio
 			}
 			return false;
 		}
-		bool NativeAudio::AOExists(AudioObject* pAudioObject) const
+		bool NativeAudio::AudioObjectExists(AudioObject* pAudioObject) const
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			if (pAudioObject != nullptr)
 			{
 				for (size_t i = 0; i < audioObjects.size(); i++)
@@ -111,20 +118,22 @@ namespace HephAudio
 			}
 			return false;
 		}
-		AudioObject* NativeAudio::GetAO(size_t index)
+		AudioObject* NativeAudio::GetAudioObject(size_t index)
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			if (index >= audioObjects.size())
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "NativeAudio::GetAO", "Index out of range."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "NativeAudio::GetAudioObject", "Index out of range."));
 				return nullptr;
 			}
 			return &audioObjects[index];
 		}
-		AudioObject* NativeAudio::GetAO(StringBuffer aoName)
+		AudioObject* NativeAudio::GetAudioObject(StringBuffer audioObjectName)
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (audioObjects.at(i).name == aoName)
+				if (audioObjects.at(i).name == audioObjectName)
 				{
 					return &audioObjects.at(i);
 				}
@@ -135,15 +144,15 @@ namespace HephAudio
 		{
 			isCapturePaused = pause;
 		}
-		bool NativeAudio::IsCapturePaused() const noexcept
+		bool NativeAudio::IsCapturePaused() const
 		{
 			return isCapturePaused;
 		}
-		uint32_t NativeAudio::GetDeviceEnumerationPeriod() const noexcept
+		uint32_t NativeAudio::GetDeviceEnumerationPeriod() const
 		{
 			return this->deviceEnumerationPeriod_ms;
 		}
-		void NativeAudio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) noexcept
+		void NativeAudio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms)
 		{
 			this->deviceEnumerationPeriod_ms = deviceEnumerationPeriod_ms;
 		}
@@ -328,6 +337,8 @@ namespace HephAudio
 		}
 		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
+
 			const size_t mixedAOCount = GetAOCountToMix();
 			AudioBuffer mixBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
 
@@ -381,6 +392,7 @@ namespace HephAudio
 		}
 		size_t NativeAudio::GetAOCountToMix() const
 		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			size_t result = 0;
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{

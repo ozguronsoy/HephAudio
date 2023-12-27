@@ -104,39 +104,39 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->Load(filePath);
 	}
-	AudioObject* Audio::CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount)
+	AudioObject* Audio::CreateAudioObject(HephCommon::StringBuffer name, size_t bufferFrameCount)
 	{
-		return this->pNativeAudio->CreateAO(name, bufferFrameCount);
+		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount);
 	}
-	bool Audio::DestroyAO(AudioObject* audioObject)
+	bool Audio::DestroyAudioObject(AudioObject* pAudioObject)
 	{
-		return this->pNativeAudio->DestroyAO(audioObject);
+		return this->pNativeAudio->DestroyAudioObject(pAudioObject);
 	}
-	bool Audio::AOExists(AudioObject* audioObject) const
+	bool Audio::AudioObjectExists(AudioObject* pAudioObject) const
 	{
-		return this->pNativeAudio->AOExists(audioObject);
+		return this->pNativeAudio->AudioObjectExists(pAudioObject);
 	}
-	AudioObject* Audio::GetAO(size_t index) const
+	AudioObject* Audio::GetAudioObject(size_t index) const
 	{
-		return this->pNativeAudio->GetAO(index);
+		return this->pNativeAudio->GetAudioObject(index);
 	}
-	AudioObject* Audio::GetAO(HephCommon::StringBuffer aoName) const
+	AudioObject* Audio::GetAudioObject(HephCommon::StringBuffer audioObjectName) const
 	{
-		return this->pNativeAudio->GetAO(aoName);
+		return this->pNativeAudio->GetAudioObject(audioObjectName);
 	}
 	void Audio::PauseCapture(bool pause)
 	{
 		this->pNativeAudio->PauseCapture(pause);
 	}
-	bool Audio::IsCapturePaused() const noexcept
+	bool Audio::IsCapturePaused() const 
 	{
 		return this->pNativeAudio->IsCapturePaused();
 	}
-	uint32_t Audio::GetDeviceEnumerationPeriod() const noexcept
+	uint32_t Audio::GetDeviceEnumerationPeriod() const 
 	{
 		return this->pNativeAudio->GetDeviceEnumerationPeriod();
 	}
-	void Audio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) noexcept
+	void Audio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) 
 	{
 		this->pNativeAudio->SetDeviceEnumerationPeriod(deviceEnumerationPeriod_ms);
 	}
@@ -172,16 +172,6 @@ namespace HephAudio
 	{
 		this->pNativeAudio->StopCapturing();
 	}
-#if defined(_WIN32)
-	void Audio::SetDisplayName(HephCommon::StringBuffer displayName)
-	{
-		this->pNativeAudio->SetDisplayName(displayName);
-	}
-	void Audio::SetIconPath(HephCommon::StringBuffer iconPath)
-	{
-		this->pNativeAudio->SetIconPath(iconPath);
-	}
-#endif
 	AudioDevice Audio::GetAudioDeviceById(HephCommon::StringBuffer deviceId) const
 	{
 		return this->pNativeAudio->GetAudioDeviceById(deviceId);

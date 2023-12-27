@@ -16,9 +16,9 @@ namespace HephAudio
 		TukeyWindow();
 		TukeyWindow(size_t size);
 		TukeyWindow(size_t size, heph_float alpha);
-		heph_float operator[](size_t n) const noexcept override;
-		void SetSize(size_t newSize) noexcept override;
-		heph_float GetAlpha() const noexcept;
-		void SetAlpha(heph_float alpha) noexcept;
+		heph_float operator[](size_t n) const override;
+		void SetSize(size_t newSize) override;
+		heph_float GetAlpha() const;
+		void SetAlpha(heph_float alpha);
 	};
 }

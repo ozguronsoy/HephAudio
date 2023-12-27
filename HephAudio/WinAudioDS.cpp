@@ -219,14 +219,6 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void WinAudioDS::SetDisplayName(HephCommon::StringBuffer displayName)
-		{
-			RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOTIMPL, "WinAudioDS::SetDisplayName", "WinAudioDS does not support this method, use WinAudio instead."));
-		}
-		void WinAudioDS::SetIconPath(HephCommon::StringBuffer iconPath)
-		{
-			RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOTIMPL, "WinAudioDS::SetIconPath", "WinAudioDS does not support this method, use WinAudio instead."));
-		}
 		bool WinAudioDS::EnumerateAudioDevices()
 		{
 			HRESULT hres;
@@ -467,11 +459,11 @@ namespace HephAudio
 			guid.Data4[7] = HephCommon::StringBuffer::HexStringToU16(str.SubString(34, 2));
 			return guid;
 		}
-		AudioFormatInfo WinAudioDS::WFX2AFI(const WAVEFORMATEX& wfx) noexcept
+		AudioFormatInfo WinAudioDS::WFX2AFI(const WAVEFORMATEX& wfx)
 		{
 			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.nSamplesPerSec, wfx.wBitsPerSample);
 		}
-		WAVEFORMATEX WinAudioDS::AFI2WFX(const AudioFormatInfo& afi) noexcept
+		WAVEFORMATEX WinAudioDS::AFI2WFX(const AudioFormatInfo& afi)
 		{
 			WAVEFORMATEX wfx{ 0 };
 			wfx.wFormatTag = afi.formatTag;

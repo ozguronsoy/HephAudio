@@ -15,11 +15,11 @@ namespace HephAudio
 		}
 		return buffer;
 	}
-	size_t Window::GetSize() const noexcept
+	size_t Window::GetSize() const
 	{
 		return this->size;
 	}
-	void Window::SetSize(size_t newSize) noexcept
+	void Window::SetSize(size_t newSize)
 	{
 		this->size = newSize;
 	}

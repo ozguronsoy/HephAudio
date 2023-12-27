@@ -3,46 +3,36 @@
 #include "../HephCommon/HeaderFiles/HephException.h"
 #include "../HephCommon/HeaderFiles/HephMath.h"
 
+using namespace HephCommon;
+
 namespace HephAudio
 {
-	AudioBuffer::AudioBuffer()
-		: formatInfo(AudioFormatInfo()), frameCount(0), pData(nullptr) { }
-	AudioBuffer::AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo)
-		: formatInfo(formatInfo), frameCount(frameCount)
+	AudioBuffer::AudioBuffer() : frameCount(0), pData(nullptr) { }
+	AudioBuffer::AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo) : formatInfo(formatInfo), frameCount(frameCount), pData(nullptr)
 	{
 		if (frameCount > 0)
 		{
 			this->pData = malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::AudioBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::AudioBuffer", "Insufficient memory."));
 			}
 			this->Reset();
 		}
-		else
-		{
-			this->pData = nullptr;
-		}
 	}
-	AudioBuffer::AudioBuffer(const AudioBuffer& rhs)
-		: formatInfo(rhs.formatInfo), frameCount(rhs.frameCount)
+	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) : formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(nullptr)
 	{
 		if (rhs.frameCount > 0)
 		{
 			this->pData = malloc(rhs.Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::AudioBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::AudioBuffer", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.pData, rhs.Size());
 		}
-		else
-		{
-			this->pData = nullptr;
-		}
 	}
-	AudioBuffer::AudioBuffer(AudioBuffer&& rhs) noexcept
-		: formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(rhs.pData)
+	AudioBuffer::AudioBuffer(AudioBuffer&& rhs) noexcept : formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(rhs.pData)
 	{
 		rhs.frameCount = 0;
 		rhs.formatInfo = AudioFormatInfo();
@@ -73,7 +63,7 @@ namespace HephAudio
 	{
 		if (this->pData != rhs.pData)
 		{
-			this->~AudioBuffer(); // destroy the current buffer to avoid memory leaks.
+			this->~AudioBuffer();
 
 			this->formatInfo = rhs.formatInfo;
 			this->frameCount = rhs.frameCount;
@@ -83,13 +73,9 @@ namespace HephAudio
 				this->pData = malloc(rhs.Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::operator=", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::operator=", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.pData, rhs.Size());
-			}
-			else
-			{
-				this->pData = nullptr;
 			}
 		}
 
@@ -97,7 +83,7 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator=(AudioBuffer&& rhs) noexcept
 	{
-		if (this != &rhs)
+		if (this->pData != rhs.pData)
 		{
 			this->~AudioBuffer();
 
@@ -112,7 +98,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator+(heph_float rhs) const noexcept
+	AudioBuffer AudioBuffer::operator+(heph_float rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -124,10 +110,10 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer AudioBuffer::operator+(const HephCommon::FloatBuffer& rhs) const
+	AudioBuffer AudioBuffer::operator+(const FloatBuffer& rhs) const
 	{
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.FrameCount());
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
 		size_t i;
 
 		for (i = 0; i < minFrameCount; i++)
@@ -152,11 +138,11 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator+", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator+", "Buffers must have the same format."));
 		}
 
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.frameCount);
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
 		size_t i;
 
 		for (i = 0; i < minFrameCount; i++)
@@ -177,7 +163,7 @@ namespace HephAudio
 
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator+=(heph_float rhs) noexcept
+	AudioBuffer& AudioBuffer::operator+=(heph_float rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -188,9 +174,9 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer& AudioBuffer::operator+=(const HephCommon::FloatBuffer& rhs)
+	AudioBuffer& AudioBuffer::operator+=(const FloatBuffer& rhs)
 	{
-		this->Resize(HephCommon::Math::Max(this->frameCount, rhs.FrameCount()));
+		this->Resize(Math::Max(this->frameCount, rhs.FrameCount()));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -204,10 +190,10 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator+=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator+=", "Buffers must have the same format."));
 		}
 
-		this->Resize(HephCommon::Math::Max(this->frameCount, rhs.frameCount));
+		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -217,7 +203,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator-(heph_float rhs) const noexcept
+	AudioBuffer AudioBuffer::operator-(heph_float rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -229,10 +215,10 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer AudioBuffer::operator-(const HephCommon::FloatBuffer& rhs) const
+	AudioBuffer AudioBuffer::operator-(const FloatBuffer& rhs) const
 	{
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.FrameCount());
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
 		size_t i;
 
 		for (i = 0; i < minFrameCount; i++)
@@ -257,11 +243,11 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator-", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator-", "Buffers must have the same format."));
 		}
 
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.frameCount);
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
 		size_t i;
 
 		for (i = 0; i < minFrameCount; i++)
@@ -282,7 +268,7 @@ namespace HephAudio
 
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator-=(heph_float rhs) noexcept
+	AudioBuffer& AudioBuffer::operator-=(heph_float rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -293,9 +279,9 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer& AudioBuffer::operator-=(const HephCommon::FloatBuffer& rhs)
+	AudioBuffer& AudioBuffer::operator-=(const FloatBuffer& rhs)
 	{
-		this->Resize(HephCommon::Math::Max(this->frameCount, rhs.FrameCount()));
+		this->Resize(Math::Max(this->frameCount, rhs.FrameCount()));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -309,10 +295,10 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator-=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator-=", "Buffers must have the same format."));
 		}
 
-		this->Resize(HephCommon::Math::Max(this->frameCount, rhs.frameCount));
+		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -334,10 +320,10 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer AudioBuffer::operator*(const HephCommon::FloatBuffer& rhs) const
+	AudioBuffer AudioBuffer::operator*(const FloatBuffer& rhs) const
 	{
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.FrameCount());
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -351,11 +337,11 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator*", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator*", "Buffers must have the same format."));
 		}
 
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.frameCount);
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -376,7 +362,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer& AudioBuffer::operator*=(const HephCommon::FloatBuffer& rhs)
+	AudioBuffer& AudioBuffer::operator*=(const FloatBuffer& rhs)
 	{
 		if (this->frameCount >= rhs.FrameCount())
 		{
@@ -410,7 +396,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator*=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator*=", "Buffers must have the same format."));
 		}
 
 		if (this->frameCount >= rhs.frameCount)
@@ -453,10 +439,10 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer AudioBuffer::operator/(const HephCommon::FloatBuffer& rhs) const
+	AudioBuffer AudioBuffer::operator/(const FloatBuffer& rhs) const
 	{
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.FrameCount());
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.FrameCount()), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -470,11 +456,11 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator/", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator/", "Buffers must have the same format."));
 		}
 
-		AudioBuffer resultBuffer(HephCommon::Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
-		const size_t minFrameCount = HephCommon::Math::Min(this->frameCount, rhs.frameCount);
+		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
+		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
@@ -495,7 +481,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer& AudioBuffer::operator/=(const HephCommon::FloatBuffer& rhs)
+	AudioBuffer& AudioBuffer::operator/=(const FloatBuffer& rhs)
 	{
 		if (this->frameCount >= rhs.FrameCount())
 		{
@@ -529,7 +515,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_invalid_argument, "AudioBuffer::operator/=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator/=", "Buffers must have the same format."));
 		}
 
 		if (this->frameCount >= rhs.frameCount)
@@ -604,7 +590,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	bool AudioBuffer::operator==(std::nullptr_t rhs) const noexcept
+	bool AudioBuffer::operator==(std::nullptr_t rhs) const
 	{
 		return this->pData == rhs;
 	}
@@ -612,7 +598,7 @@ namespace HephAudio
 	{
 		return this == &rhs || (this->formatInfo == rhs.formatInfo && this->frameCount == rhs.frameCount && memcmp(this->pData, rhs.pData, this->Size()) == 0);
 	}
-	bool AudioBuffer::operator!=(std::nullptr_t rhs) const noexcept
+	bool AudioBuffer::operator!=(std::nullptr_t rhs) const
 	{
 		return this->pData == rhs;
 	}
@@ -620,11 +606,11 @@ namespace HephAudio
 	{
 		return this != &rhs && (this->formatInfo != rhs.formatInfo || this->frameCount != rhs.frameCount || memcmp(this->pData, rhs.pData, this->Size()) != 0);
 	}
-	size_t AudioBuffer::Size() const noexcept
+	size_t AudioBuffer::Size() const
 	{
 		return this->frameCount * this->formatInfo.FrameSize();
 	}
-	size_t AudioBuffer::FrameCount() const noexcept
+	size_t AudioBuffer::FrameCount() const
 	{
 		return this->frameCount;
 	}
@@ -643,6 +629,11 @@ namespace HephAudio
 	}
 	void AudioBuffer::Append(const AudioBuffer& buffer)
 	{
+		if (this->formatInfo != buffer.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::Append", "Both buffers must have the same format."));
+		}
+
 		if (buffer.frameCount > 0)
 		{
 			if (this->frameCount == 0)
@@ -651,20 +642,14 @@ namespace HephAudio
 				return;
 			}
 
-			// allocate memory with the combined size and copy the rhs's data to the end of the current buffer's data.
 			void* tempPtr = malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::Join", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Join", "Insufficient memory."));
 			}
-
 			memcpy(tempPtr, this->pData, this->Size());
 
-			// ensure both buffers have the same format.
-			AudioBuffer tempBuffer = buffer;
-			tempBuffer.SetFormat(this->formatInfo);
-
-			memcpy((uint8_t*)tempPtr + this->Size(), tempBuffer.pData, tempBuffer.Size());
+			memcpy((uint8_t*)tempPtr + this->Size(), buffer.pData, buffer.Size());
 
 			free(this->pData);
 			this->pData = tempPtr;
@@ -673,6 +658,11 @@ namespace HephAudio
 	}
 	void AudioBuffer::Insert(const AudioBuffer& buffer, size_t frameIndex)
 	{
+		if (this->formatInfo != buffer.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::Insert", "Both buffers must have the same format."));
+		}
+
 		if (buffer.frameCount > 0)
 		{
 			const size_t oldSize = this->Size();
@@ -682,28 +672,23 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::Insert", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Insert", "Insufficient memory."));
 			}
-			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
+			memset(tempPtr, 0, newSize);
 
-			// copy from 0 to insert start index.
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
 			if (frameIndexAsBytes > 0 && oldSize > 0)
 			{
 				memcpy(tempPtr, this->pData, oldSize > frameIndexAsBytes ? frameIndexAsBytes : oldSize);
 			}
 
-			// ensure both buffers have the same format.
-			AudioBuffer tempBuffer = buffer;
-			tempBuffer.SetFormat(this->formatInfo);
-			const size_t tempBufferSize = tempBuffer.Size();
+			const size_t bufferSize = buffer.Size();
 
-			memcpy((uint8_t*)tempPtr + frameIndexAsBytes, tempBuffer.pData, tempBufferSize); // insert the buffer.
+			memcpy((uint8_t*)tempPtr + frameIndexAsBytes, buffer.pData, bufferSize);
 
-			// copy the remaining data.
 			if (oldSize > frameIndexAsBytes)
 			{
-				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + tempBufferSize, (uint8_t*)this->pData + frameIndexAsBytes, oldSize - frameIndexAsBytes);
+				memcpy((uint8_t*)tempPtr + frameIndexAsBytes + bufferSize, (uint8_t*)this->pData + frameIndexAsBytes, oldSize - frameIndexAsBytes);
 			}
 
 			free(this->pData);
@@ -715,8 +700,7 @@ namespace HephAudio
 	{
 		if (frameCount > 0 && frameIndex < this->frameCount)
 		{
-
-			if (frameIndex + frameCount > this->frameCount) // to prevent overcutting.
+			if (frameIndex + frameCount > this->frameCount)
 			{
 				frameCount = this->frameCount - frameIndex;
 			}
@@ -727,17 +711,17 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::Cut", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Cut", "Insufficient memory."));
 			}
 
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
 
-			if (frameIndexAsBytes > 0) // copy from 0 to cut start index.
+			if (frameIndexAsBytes > 0)
 			{
 				memcpy(tempPtr, this->pData, frameIndexAsBytes);
 			}
 
-			if (newSize > frameIndexAsBytes) // copy the remaining data that we didn't cut.
+			if (newSize > frameIndexAsBytes)
 			{
 				memcpy((uint8_t*)tempPtr + frameIndexAsBytes, (uint8_t*)this->pData + frameIndexAsBytes + frameCount * this->formatInfo.FrameSize(), newSize - frameIndexAsBytes);
 			}
@@ -752,6 +736,11 @@ namespace HephAudio
 	}
 	void AudioBuffer::Replace(const AudioBuffer& buffer, size_t frameIndex, size_t frameCount)
 	{
+		if (this->formatInfo != buffer.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::Replace", "Both buffers must have the same format."));
+		}
+
 		if (frameCount > 0)
 		{
 			const size_t newFrameCount = frameIndex > this->frameCount ? (frameCount + frameIndex) : (this->frameCount + frameCount);
@@ -760,30 +749,25 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::Replace", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Replace", "Insufficient memory."));
 			}
-			memset(tempPtr, 0, newSize); // make sure the padded data is set to 0.
+			memset(tempPtr, 0, newSize);
 
-			// copy from 0 to replace start index.
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
 			if (frameIndex > 0)
 			{
 				memcpy(tempPtr, this->pData, frameIndexAsBytes > this->Size() ? this->Size() : frameIndexAsBytes);
 			}
 
-			// ensure both buffers have the same format.
-			AudioBuffer tempBuffer = buffer.GetSubBuffer(0, frameCount);
-			tempBuffer.SetFormat(this->formatInfo);
+			const AudioBuffer tempBuffer = buffer.GetSubBuffer(0, frameCount);
 			const size_t tempBufferSize = tempBuffer.Size();
 
-			// copy the replace data.
 			const size_t replacedSize = frameIndexAsBytes + tempBufferSize >= newSize ? newSize - frameIndexAsBytes : tempBufferSize;
 			if (replacedSize > 0)
 			{
 				memcpy((uint8_t*)tempPtr + frameIndexAsBytes, tempBuffer.pData, replacedSize);
 			}
 
-			// copy the remaining data.
 			if (frameIndex + frameCount < this->frameCount)
 			{
 				const size_t padding = frameIndexAsBytes + frameCount * this->formatInfo.FrameSize();
@@ -797,7 +781,10 @@ namespace HephAudio
 	}
 	void AudioBuffer::Reset()
 	{
-		memset(this->pData, 0, this->Size());
+		if (this->frameCount > 0)
+		{
+			memset(this->pData, 0, this->Size());
+		}
 	}
 	void AudioBuffer::Resize(size_t newFrameCount)
 	{
@@ -812,7 +799,7 @@ namespace HephAudio
 				void* tempPtr = realloc(this->pData, newFrameCount * this->formatInfo.FrameSize());
 				if (tempPtr == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_insufficient_memory, "AudioBuffer::Resize", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Resize", "Insufficient memory."));
 				}
 				if (newFrameCount > this->frameCount)
 				{
@@ -823,7 +810,7 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioBuffer::Empty() noexcept
+	void AudioBuffer::Empty()
 	{
 		this->frameCount = 0;
 		if (this->pData != nullptr)
@@ -832,7 +819,7 @@ namespace HephAudio
 			this->pData = nullptr;
 		}
 	}
-	heph_float AudioBuffer::Min() const noexcept
+	heph_float AudioBuffer::Min() const
 	{
 		heph_float minSample = INT32_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -848,7 +835,7 @@ namespace HephAudio
 		}
 		return minSample;
 	}
-	heph_float AudioBuffer::Max() const noexcept
+	heph_float AudioBuffer::Max() const
 	{
 		heph_float maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -864,7 +851,7 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	heph_float AudioBuffer::AbsMax() const noexcept
+	heph_float AudioBuffer::AbsMax() const
 	{
 		heph_float maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -880,7 +867,7 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	heph_float AudioBuffer::Rms() const noexcept
+	heph_float AudioBuffer::Rms() const
 	{
 		heph_float sumOfSamplesSquared = 0.0;
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -892,11 +879,11 @@ namespace HephAudio
 		}
 		return sqrt(sumOfSamplesSquared / this->frameCount / this->formatInfo.channelCount);
 	}
-	AudioBuffer AudioBuffer::Convolve(const HephCommon::FloatBuffer& h) const
+	AudioBuffer AudioBuffer::Convolve(const FloatBuffer& h) const
 	{
-		return this->Convolve(h, HephCommon::ConvolutionMode::Full);
+		return this->Convolve(h, ConvolutionMode::Full);
 	}
-	AudioBuffer AudioBuffer::Convolve(const HephCommon::FloatBuffer& h, HephCommon::ConvolutionMode convolutionMode) const
+	AudioBuffer AudioBuffer::Convolve(const FloatBuffer& h, ConvolutionMode convolutionMode) const
 	{
 		if (this->frameCount > 0 && h.FrameCount() > 0)
 		{
@@ -905,17 +892,17 @@ namespace HephAudio
 			size_t iEnd = 0;
 			switch (convolutionMode)
 			{
-			case HephCommon::ConvolutionMode::Central:
+			case ConvolutionMode::Central:
 				iStart = h.FrameCount() / 2;
 				yFrameCount = this->frameCount;
 				iEnd = yFrameCount + iStart;
 				break;
-			case HephCommon::ConvolutionMode::ValidPadding:
+			case ConvolutionMode::ValidPadding:
 				iStart = h.FrameCount() - 1;
-				yFrameCount = h.FrameCount() > 0 ? HephCommon::Math::Max(this->frameCount - h.FrameCount() + 1, (size_t)0) : this->frameCount;
+				yFrameCount = h.FrameCount() > 0 ? Math::Max(this->frameCount - h.FrameCount() + 1, (size_t)0) : this->frameCount;
 				iEnd = yFrameCount + iStart;
 				break;
-			case HephCommon::ConvolutionMode::Full:
+			case ConvolutionMode::Full:
 			default:
 				iStart = 0;
 				yFrameCount = this->frameCount + h.FrameCount() - 1;
@@ -940,9 +927,9 @@ namespace HephAudio
 	}
 	AudioBuffer AudioBuffer::Convolve(const AudioBuffer& h) const
 	{
-		return this->Convolve(h, HephCommon::ConvolutionMode::Full);
+		return this->Convolve(h, ConvolutionMode::Full);
 	}
-	AudioBuffer AudioBuffer::Convolve(const AudioBuffer& h, HephCommon::ConvolutionMode convolutionMode) const
+	AudioBuffer AudioBuffer::Convolve(const AudioBuffer& h, ConvolutionMode convolutionMode) const
 	{
 		if (this->frameCount > 0 && h.frameCount > 0)
 		{
@@ -951,17 +938,17 @@ namespace HephAudio
 			size_t iEnd = 0;
 			switch (convolutionMode)
 			{
-			case HephCommon::ConvolutionMode::Central:
+			case ConvolutionMode::Central:
 				iStart = h.frameCount / 2;
 				yFrameCount = this->frameCount;
 				iEnd = yFrameCount + iStart;
 				break;
-			case HephCommon::ConvolutionMode::ValidPadding:
+			case ConvolutionMode::ValidPadding:
 				iStart = h.frameCount - 1;
-				yFrameCount = h.frameCount > 0 ? HephCommon::Math::Max(this->frameCount - h.frameCount + 1, (size_t)0) : this->frameCount;
+				yFrameCount = h.frameCount > 0 ? Math::Max(this->frameCount - h.frameCount + 1, (size_t)0) : this->frameCount;
 				iEnd = yFrameCount + iStart;
 				break;
-			case HephCommon::ConvolutionMode::Full:
+			case ConvolutionMode::Full:
 			default:
 				iStart = 0;
 				yFrameCount = this->frameCount + h.frameCount - 1;
@@ -970,7 +957,7 @@ namespace HephAudio
 			}
 
 			AudioBuffer y(yFrameCount, this->formatInfo);
-			const uint16_t minChannelCount = HephCommon::Math::Min(this->formatInfo.channelCount, h.formatInfo.channelCount);
+			const uint16_t minChannelCount = Math::Min(this->formatInfo.channelCount, h.formatInfo.channelCount);
 			for (size_t ch = 0; ch < minChannelCount; ch++)
 			{
 				for (size_t i = iStart; i < iEnd; i++)
@@ -985,45 +972,32 @@ namespace HephAudio
 		}
 		return AudioBuffer();
 	}
-	heph_float AudioBuffer::CalculateDuration() const noexcept
+	heph_float AudioBuffer::CalculateDuration() const
 	{
 		return CalculateDuration(this->frameCount, this->formatInfo);
 	}
-	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s) const noexcept
+	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s) const
 	{
 		return CalculateFrameIndex(t_s, this->formatInfo);
 	}
-	const AudioFormatInfo& AudioBuffer::FormatInfo() const noexcept
+	AudioFormatInfo AudioBuffer::FormatInfo() const
 	{
 		return this->formatInfo;
 	}
-	void AudioBuffer::SetFormat(AudioFormatInfo newFormat)
-	{
-		if (newFormat != this->formatInfo)
-		{
-			if (this->frameCount > 0)
-			{
-				AudioProcessor::ConvertToTargetFormat(*this, newFormat);
-				AudioProcessor::ConvertSampleRate(*this, newFormat.sampleRate);
-				AudioProcessor::ConvertChannels(*this, newFormat.channelCount);
-			}
-			this->formatInfo = newFormat;
-		}
-	}
-	void* AudioBuffer::Begin() const noexcept
+	void* AudioBuffer::Begin() const
 	{
 		return this->pData;
 	}
-	void* AudioBuffer::End() const noexcept
+	void* AudioBuffer::End() const
 	{
 		return (uint8_t*)this->pData + this->Size();
 	}
-	heph_float AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo) noexcept
+	heph_float AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo)
 	{
 		if (formatInfo.ByteRate() == 0) { return 0.0; }
 		return (heph_float)frameCount * (heph_float)formatInfo.FrameSize() / (heph_float)formatInfo.ByteRate();
 	}
-	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo) noexcept
+	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo)
 	{
 		if (formatInfo.FrameSize() == 0) { return 0.0; }
 		return t_s * (heph_float)formatInfo.ByteRate() / (heph_float)formatInfo.FrameSize();
@@ -1046,7 +1020,7 @@ HephAudio::AudioBuffer operator+(heph_float lhs, const HephAudio::AudioBuffer& r
 {
 	return rhs + lhs;
 }
-HephAudio::AudioBuffer operator+(const HephCommon::FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator+(const FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
 {
 	return rhs + lhs;
 }
@@ -1062,10 +1036,10 @@ HephAudio::AudioBuffer operator-(heph_float lhs, const HephAudio::AudioBuffer& r
 	}
 	return resultBuffer;
 }
-HephAudio::AudioBuffer operator-(const HephCommon::FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator-(const FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
 {
-	HephAudio::AudioBuffer resultBuffer(HephCommon::Math::Max(lhs.FrameCount(), rhs.FrameCount()), rhs.FormatInfo());
-	const size_t minFrameCount = HephCommon::Math::Min(lhs.FrameCount(), rhs.FrameCount());
+	HephAudio::AudioBuffer resultBuffer(Math::Max(lhs.FrameCount(), rhs.FrameCount()), rhs.FormatInfo());
+	const size_t minFrameCount = Math::Min(lhs.FrameCount(), rhs.FrameCount());
 	size_t i;
 
 	for (i = 0; i < minFrameCount; i++)
@@ -1090,7 +1064,7 @@ HephAudio::AudioBuffer operator*(heph_float lhs, const HephAudio::AudioBuffer& r
 {
 	return rhs * lhs;
 }
-HephAudio::AudioBuffer operator*(const HephCommon::FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator*(const FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
 {
 	return rhs * lhs;
 }
@@ -1106,10 +1080,10 @@ HephAudio::AudioBuffer operator/(heph_float lhs, const HephAudio::AudioBuffer& r
 	}
 	return resultBuffer;
 }
-HephAudio::AudioBuffer operator/(const HephCommon::FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator/(const FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs)
 {
-	HephAudio::AudioBuffer resultBuffer(HephCommon::Math::Max(lhs.FrameCount(), rhs.FrameCount()), rhs.FormatInfo());
-	const size_t minFrameCount = HephCommon::Math::Min(lhs.FrameCount(), rhs.FrameCount());
+	HephAudio::AudioBuffer resultBuffer(Math::Max(lhs.FrameCount(), rhs.FrameCount()), rhs.FormatInfo());
+	const size_t minFrameCount = Math::Min(lhs.FrameCount(), rhs.FrameCount());
 	for (size_t i = 0; i < minFrameCount; i++)
 	{
 		for (size_t j = 0; j < rhs.FormatInfo().channelCount; j++)

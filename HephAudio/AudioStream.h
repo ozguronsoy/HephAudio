@@ -6,6 +6,7 @@
 #include "AudioObject.h"
 #include "NativeAudio.h"
 #include "IAudioCodec.h"
+#include "Audio.h"
 
 namespace HephAudio
 {
@@ -22,19 +23,20 @@ namespace HephAudio
 		AudioObject* pAudioObject;
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
+		AudioStream(Audio& audio, HephCommon::StringBuffer filePath);
 		AudioStream(const AudioStream&) = delete;
 		AudioStream& operator=(const AudioStream&) = delete;
 		~AudioStream();
-		HephCommon::File* GetFile() noexcept;
-		FileFormats::IAudioFileFormat* GetFileFormat() const noexcept;
-		Codecs::IAudioCodec* GetAudioCodec() const noexcept;
-		AudioObject* GetAudioObject() const noexcept;
-		const AudioFormatInfo& GetAudioFormatInfo() const noexcept;
-		void Release() noexcept;
+		HephCommon::File* GetFile() ;
+		FileFormats::IAudioFileFormat* GetFileFormat() const ;
+		Codecs::IAudioCodec* GetAudioCodec() const ;
+		AudioObject* GetAudioObject() const ;
+		const AudioFormatInfo& GetAudioFormatInfo() const ;
+		void Release() ;
 	private:
-		void Release(bool destroyAO) noexcept;
+		void Release(bool destroyAO) ;
 	private:
-		static void RemoveStream(AudioStream* pStream) noexcept;
+		static void RemoveStream(AudioStream* pStream) ;
 		static void OnRender(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
 		static void OnFinishedPlaying(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
 	public:

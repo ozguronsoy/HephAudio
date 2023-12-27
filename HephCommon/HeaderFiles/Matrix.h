@@ -40,10 +40,10 @@ namespace HephCommon
 		Matrix& operator*=(heph_float rhs);
 		Matrix operator/(heph_float rhs) const;
 		Matrix& operator/=(heph_float rhs);
-		size_t RowCount() const noexcept;
-		size_t ColCount() const noexcept;
-		size_t ElementCount() const noexcept;
-		bool IsEmpty() const noexcept;
+		size_t RowCount() const ;
+		size_t ColCount() const ;
+		size_t ElementCount() const ;
+		bool IsEmpty() const ;
 		heph_float& At(size_t row, size_t col) const;
 		Matrix Transpose() const;
 		heph_float Determinant() const;

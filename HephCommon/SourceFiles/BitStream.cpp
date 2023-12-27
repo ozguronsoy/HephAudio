@@ -15,7 +15,7 @@ namespace HephCommon
 		this->pBuffer = rhs.pBuffer;
 		return *this;
 	}
-	size_t BitStream::GetOffset() const noexcept
+	size_t BitStream::GetOffset() const
 	{
 		return this->offset;
 	}

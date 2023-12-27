@@ -15,15 +15,15 @@ namespace HephAudio
 	{
 		return this->formatTag != rhs.formatTag || this->bitsPerSample != rhs.bitsPerSample || this->channelCount != rhs.channelCount || this->sampleRate != rhs.sampleRate || this->endian != rhs.endian;
 	}
-	uint16_t AudioFormatInfo::FrameSize() const noexcept
+	uint16_t AudioFormatInfo::FrameSize() const
 	{
 		return this->channelCount * this->bitsPerSample * 0.125;
 	}
-	uint32_t AudioFormatInfo::BitRate() const noexcept
+	uint32_t AudioFormatInfo::BitRate() const
 	{
 		return this->sampleRate * this->channelCount * this->bitsPerSample;
 	}
-	uint32_t AudioFormatInfo::ByteRate() const noexcept
+	uint32_t AudioFormatInfo::ByteRate() const
 	{
 		return this->sampleRate * this->channelCount * this->bitsPerSample * 0.125;
 	}

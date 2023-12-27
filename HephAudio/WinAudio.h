@@ -40,16 +40,16 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
-			void SetDisplayName(HephCommon::StringBuffer displayName) override;
-			void SetIconPath(HephCommon::StringBuffer iconPath) override;
+			void SetDisplayName(HephCommon::StringBuffer displayName);
+			void SetIconPath(HephCommon::StringBuffer iconPath);
 		private:
 			bool EnumerateAudioDevices() override;
 			void RenderData();
 			void CaptureData();
 			static EDataFlow DeviceTypeToDataFlow(AudioDeviceType deviceType);
 			static AudioDeviceType DataFlowToDeviceType(EDataFlow dataFlow);
-			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx) noexcept;
-			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi) noexcept;
+			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx);
+			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi);
 		};
 	}
 }

@@ -4,7 +4,7 @@ namespace HephAudio
 {
 	ParzenWindow::ParzenWindow() : ParzenWindow(0) {}
 	ParzenWindow::ParzenWindow(size_t size) : Window(size) { this->SetSize(size); }
-	heph_float ParzenWindow::operator[](size_t n) const noexcept
+	heph_float ParzenWindow::operator[](size_t n) const 
 	{
 		const heph_float i = n - this->hN;
 		const heph_float absI = fabs(i);
@@ -14,7 +14,7 @@ namespace HephAudio
 		}
 		return 2.0 * pow(1.0 - absI / this->hL, 3);
 	}
-	void ParzenWindow::SetSize(size_t newSize) noexcept
+	void ParzenWindow::SetSize(size_t newSize) 
 	{
 		this->size = newSize;
 		this->hN = 0.5 * (this->size - 1);

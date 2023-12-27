@@ -15,58 +15,58 @@ namespace HephCommon
 	{
 	protected:
 		size_t frameCount;
-		ColorType* pColorData;
+		ColorType* pData;
 	protected:
-		ColorBufferBase() : frameCount(0), pColorData(nullptr) {}
-		ColorBufferBase(size_t frameCount) : frameCount(frameCount), pColorData(nullptr)
+		ColorBufferBase() : frameCount(0), pData(nullptr) {}
+		ColorBufferBase(size_t frameCount) : frameCount(frameCount), pData(nullptr)
 		{
 			if (this->frameCount > 0)
 			{
-				this->pColorData = (ColorType*)malloc(this->Size());
-				if (this->pColorData == nullptr)
+				this->pData = (ColorType*)malloc(this->Size());
+				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
 				}
 				this->Reset();
 			}
 		}
-		ColorBufferBase(const std::initializer_list<ColorType>& rhs) : frameCount(rhs.size()), pColorData(nullptr)
+		ColorBufferBase(const std::initializer_list<ColorType>& rhs) : frameCount(rhs.size()), pData(nullptr)
 		{
 			if (this->frameCount > 0)
 			{
-				this->pColorData = (ColorType*)malloc(this->Size());
-				if (this->pColorData == nullptr)
+				this->pData = (ColorType*)malloc(this->Size());
+				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
 				}
-				memcpy(this->pColorData, rhs.begin(), this->Size());
+				memcpy(this->pData, rhs.begin(), this->Size());
 			}
 		}
-		ColorBufferBase(const ColorBufferBase& rhs) : frameCount(rhs.frameCount), pColorData(nullptr)
+		ColorBufferBase(const ColorBufferBase& rhs) : frameCount(rhs.frameCount), pData(nullptr)
 		{
 			if (this->frameCount > 0)
 			{
-				this->pColorData = (ColorType*)malloc(this->Size());
-				if (this->pColorData == nullptr)
+				this->pData = (ColorType*)malloc(this->Size());
+				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
 				}
-				memcpy(this->pColorData, rhs.pColorData, this->Size());
+				memcpy(this->pData, rhs.pData, this->Size());
 			}
 		}
-		ColorBufferBase(ColorBufferBase&& rhs) : frameCount(rhs.frameCount), pColorData(rhs.pColorData)
+		ColorBufferBase(ColorBufferBase&& rhs) : frameCount(rhs.frameCount), pData(rhs.pData)
 		{
 			rhs.frameCount = 0;
-			rhs.pColorData = nullptr;
+			rhs.pData = nullptr;
 		}
 	public:
 		virtual ~ColorBufferBase()
 		{
 			this->Empty();
 		}
-		ColorType& operator[](size_t frameIndex) const noexcept
+		ColorType& operator[](size_t frameIndex) const
 		{
-			return *(this->pColorData + frameIndex);
+			return *(this->pData + frameIndex);
 		}
 		ColorBufferBase& operator=(const std::initializer_list<ColorType>& rhs)
 		{
@@ -75,64 +75,68 @@ namespace HephCommon
 			this->frameCount = rhs.size();
 			if (this->frameCount > 0)
 			{
-				this->pColorData = (ColorType*)malloc(this->Size());
-				if (this->pColorData == nullptr)
+				this->pData = (ColorType*)malloc(this->Size());
+				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::operator=", "Insufficient memory."));
 				}
-				memcpy(this->pColorData, rhs.begin(), this->Size());
+				memcpy(this->pData, rhs.begin(), this->Size());
 			}
 
 			return *this;
 		}
 		ColorBufferBase& operator=(const ColorBufferBase& rhs)
 		{
-			this->Empty();
-
-			this->frameCount = rhs.frameCount;
-			if (this->frameCount > 0)
+			if (this->pData != rhs.pData)
 			{
-				this->pColorData = (ColorType*)malloc(this->Size());
-				if (this->pColorData == nullptr)
-				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::operator=", "Insufficient memory."));
-				}
-				memcpy(this->pColorData, rhs.pColorData, this->Size());
-			}
+				this->Empty();
 
+				this->frameCount = rhs.frameCount;
+				if (this->frameCount > 0)
+				{
+					this->pData = (ColorType*)malloc(this->Size());
+					if (this->pData == nullptr)
+					{
+						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::operator=", "Insufficient memory."));
+					}
+					memcpy(this->pData, rhs.pData, this->Size());
+				}
+			}
 			return *this;
 		}
 		ColorBufferBase& operator=(ColorBufferBase&& rhs) noexcept
 		{
-			this->Empty();
+			if (this->pData != rhs.pData)
+			{
+				this->Empty();
 
-			this->frameCount = rhs.frameCount;
-			this->pColorData = rhs.pColorData;
+				this->frameCount = rhs.frameCount;
+				this->pData = rhs.pData;
 
-			rhs.frameCount = 0;
-			rhs.pColorData = nullptr;
-
+				rhs.frameCount = 0;
+				rhs.pData = nullptr;
+			}
 			return *this;
 		}
-		bool operator==(const ColorBufferBase& rhs) const noexcept
+		bool operator==(const ColorBufferBase& rhs) const
 		{
-			return this->pColorData == rhs.pColorData || (this->frameCount == rhs.frameCount && this->pColorData != nullptr && rhs.pColorData != nullptr && memcmp(this->pColorData, rhs.pColorData, this->Size()) == 0);
+			return this->pData == rhs.pData || (this->frameCount == rhs.frameCount && this->pData != nullptr && rhs.pData != nullptr && memcmp(this->pData, rhs.pData, this->Size()) == 0);
 		}
-		bool operator!=(const ColorBufferBase& rhs) const noexcept
+		bool operator!=(const ColorBufferBase& rhs) const
 		{
-			return this->pColorData != rhs.pColorData && (this->frameCount != rhs.frameCount || this->pColorData == nullptr || rhs.pColorData == nullptr || memcmp(this->pColorData, rhs.pColorData, this->Size()) != 0);
+			return this->pData != rhs.pData && (this->frameCount != rhs.frameCount || this->pData == nullptr || rhs.pData == nullptr || memcmp(this->pData, rhs.pData, this->Size()) != 0);
 		}
-		size_t FrameCount() const noexcept
+		size_t FrameCount() const
 		{
 			return this->frameCount;
 		}
-		size_t Size() const noexcept
+		size_t Size() const
 		{
 			return this->frameCount * sizeof(ColorType);
 		}
 		ColorType& At(size_t frameIndex) const
 		{
-			if (this->pColorData == nullptr)
+			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "ColorBufferBase::At", "Empty buffer."));
 			}
@@ -140,16 +144,10 @@ namespace HephCommon
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "ColorBufferBase::At", "Index out of bounds."));
 			}
-			return *(this->pColorData + frameIndex);
+			return *(this->pData + frameIndex);
 		}
-		void Reset() noexcept
+		void Reset()
 		{
-			if (this->pColorData == nullptr)
-			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "ColorBufferBase::Reset", "Empty buffer."));
-				return;
-			}
-
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
 				(*this)[i] = ColorType();
@@ -165,7 +163,7 @@ namespace HephCommon
 				}
 				else
 				{
-					ColorType* pTemp = (ColorType*)realloc(this->pColorData, newFrameCount * sizeof(ColorType));
+					ColorType* pTemp = (ColorType*)realloc(this->pData, newFrameCount * sizeof(ColorType));
 					if (pTemp == nullptr)
 					{
 						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::Resize", "Insufficient memory."));
@@ -174,27 +172,27 @@ namespace HephCommon
 					{
 						memset(pTemp + this->frameCount, 0, (newFrameCount - this->frameCount) * sizeof(ColorType));
 					}
-					this->pColorData = pTemp;
+					this->pData = pTemp;
 					this->frameCount = newFrameCount;
 				}
 			}
 		}
-		void Empty() noexcept
+		void Empty()
 		{
-			if (this->pColorData != nullptr)
+			if (this->pData != nullptr)
 			{
-				free(this->pColorData);
-				this->pColorData = nullptr;
+				free(this->pData);
+				this->pData = nullptr;
 			}
 			this->frameCount = 0;
 		}
-		ColorType* Begin() const noexcept
+		ColorType* Begin() const
 		{
-			return this->pColorData;
+			return this->pData;
 		}
-		ColorType* End() const noexcept
+		ColorType* End() const
 		{
-			return this->pColorData + this->frameCount;
+			return this->pData + this->frameCount;
 		}
 	};
 
@@ -310,7 +308,7 @@ namespace HephCommon
 		return resultBuffer;
 	}
 
-	RgbBuffer::operator ColorBuffer() const 
+	RgbBuffer::operator ColorBuffer() const
 	{
 		ColorBuffer resultBuffer(this->frameCount);
 		for (size_t i = 0; i < this->frameCount; i++)

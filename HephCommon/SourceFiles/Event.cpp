@@ -56,7 +56,7 @@ namespace HephCommon
 
 		this->eventHandlers.erase(this->eventHandlers.begin() + index);
 	}
-	size_t Event::EventHandlerCount() const noexcept
+	size_t Event::EventHandlerCount() const
 	{
 		return this->eventHandlers.size();
 	}

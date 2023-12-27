@@ -36,8 +36,6 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
-			void SetDisplayName(HephCommon::StringBuffer displayName) override;
-			void SetIconPath(HephCommon::StringBuffer iconPath) override;
 		private:
 			bool EnumerateAudioDevices() override;
 			void RenderData();
@@ -48,8 +46,8 @@ namespace HephAudio
 			static BOOL CALLBACK CaptureDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID lpContext);
 			static HephCommon::StringBuffer GuidToString(LPGUID guid);
 			static GUID StringToGuid(HephCommon::StringBuffer str);
-			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx) noexcept;
-			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi) noexcept;
+			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx);
+			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi);
 			static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		};
 	}

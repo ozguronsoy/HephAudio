@@ -9,7 +9,7 @@ namespace HephAudio
 	SawToothWaveOscillator::SawToothWaveOscillator(uint32_t sampleRate) : Oscillator(0.05, 1500.0, sampleRate, 0) {}
 	SawToothWaveOscillator::SawToothWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad)
 		: Oscillator(peakAmplitude, frequency, sampleRate, phase_rad) {}
-	heph_float SawToothWaveOscillator::operator[](size_t n) const noexcept
+	heph_float SawToothWaveOscillator::operator[](size_t n) const
 	{
 		const heph_float t_second = (heph_float)n / this->sampleRate + Math::RadToDeg(this->phase_rad);
 		const heph_float ft = this->frequency * t_second;

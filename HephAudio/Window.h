@@ -12,9 +12,9 @@ namespace HephAudio
 		Window();
 		Window(size_t size);
 		virtual ~Window() = default;
-		virtual heph_float operator[](size_t n) const noexcept = 0;
+		virtual heph_float operator[](size_t n) const = 0;
 		HephCommon::FloatBuffer GenerateBuffer() const;
-		size_t GetSize() const noexcept;
-		virtual void SetSize(size_t newSize) noexcept;
+		size_t GetSize() const;
+		virtual void SetSize(size_t newSize);
 	};
 }

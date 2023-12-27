@@ -76,7 +76,7 @@ namespace HephCommon
 
 		return false;
 	}
-	size_t StreamHelpers::CharSize(StringType stringType) noexcept
+	size_t StreamHelpers::CharSize(StringType stringType)
 	{
 		return stringType == StringType::Wide ? sizeof(wchar_t) : sizeof(char);
 	}

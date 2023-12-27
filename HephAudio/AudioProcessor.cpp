@@ -12,7 +12,7 @@ using namespace HephAudio::Codecs;
 namespace HephAudio
 {
 #pragma region Converts, Mix, Split/Merge Channels
-	void AudioProcessor::ConvertBPS(AudioBuffer& buffer, uint16_t outputBps)
+	void AudioProcessor::ChangeBitsPerSample(AudioBuffer& buffer, uint16_t outputBitsPerSample)
 	{
 		if (buffer.formatInfo.formatTag == WAVE_FORMAT_PCM)
 		{
@@ -25,16 +25,16 @@ namespace HephAudio
 			encodedBufferInfo.endian = HEPH_SYSTEM_ENDIAN;
 			buffer = pCodec->Decode(encodedBufferInfo);
 
-			encodedBufferInfo.formatInfo.bitsPerSample = outputBps;
+			encodedBufferInfo.formatInfo.bitsPerSample = outputBitsPerSample;
 			encodedBufferInfo.size_byte = buffer.Size();
 			pCodec->Encode(buffer, encodedBufferInfo);
 		}
 		else
 		{
-			RAISE_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_invalid_argument, "AudioProcessor::ConvertBPS", "Audio buffer is not raw PCM."));
+			RAISE_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_invalid_argument, "AudioProcessor::ChangeBitsPerSample", "Audio buffer is not raw PCM."));
 		}
 	}
-	void AudioProcessor::ConvertChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
+	void AudioProcessor::ChangeNumberOfChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
 	{
 		if (buffer.formatInfo.channelCount != outputChannelCount)
 		{
@@ -58,7 +58,7 @@ namespace HephAudio
 			buffer = std::move(resultBuffer);
 		}
 	}
-	void AudioProcessor::ConvertSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate)
+	void AudioProcessor::ChangeSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate)
 	{
 		const heph_float srRatio = (heph_float)outputSampleRate / (heph_float)buffer.formatInfo.sampleRate;
 		if (srRatio != 1.0)
@@ -81,7 +81,7 @@ namespace HephAudio
 			buffer = std::move(resultBuffer);
 		}
 	}
-	void AudioProcessor::ConvertSampleRate(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount)
+	void AudioProcessor::ChangeSampleRate(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount)
 	{
 		const heph_float srRatio = (heph_float)outputSampleRate / (heph_float)originalBuffer.formatInfo.sampleRate;
 		if (srRatio != 1.0)
@@ -98,38 +98,6 @@ namespace HephAudio
 				{
 					if (resampleIndex + 1.0 >= originalBuffer.frameCount) break;
 					subBuffer[i][j] = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
-				}
-			}
-		}
-	}
-	void AudioProcessor::Mix(AudioBuffer& outputBuffer, AudioFormatInfo outputFormat, std::vector<AudioBuffer> inputBuffers)
-	{
-		size_t outputBufferFrameCount = 0;
-		for (int64_t i = 0; i < inputBuffers.size(); i++)
-		{
-			AudioBuffer& buffer = inputBuffers[i];
-			if (buffer.frameCount == 0)
-			{
-				inputBuffers.erase(inputBuffers.begin() + i);
-				i--;
-				continue;
-			}
-			buffer.SetFormat(outputFormat);
-			if (buffer.frameCount > outputBufferFrameCount)
-			{
-				outputBufferFrameCount = buffer.frameCount;
-			}
-		}
-		outputBuffer = AudioBuffer(outputBufferFrameCount, outputFormat);
-		for (size_t i = 0; i < inputBuffers.size(); i++)
-		{
-			AudioBuffer& buffer = inputBuffers[i];
-			for (size_t j = 0; j < outputBuffer.frameCount; j++)
-			{
-				if (j >= buffer.frameCount) { break; }
-				for (size_t k = 0; k < outputBuffer.formatInfo.channelCount; k++)
-				{
-					outputBuffer[j][k] += buffer[j][k] / (heph_float)inputBuffers.size();
 				}
 			}
 		}

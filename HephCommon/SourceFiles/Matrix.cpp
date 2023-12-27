@@ -333,19 +333,19 @@ namespace HephCommon
 		this->elements /= rhs;
 		return *this;
 	}
-	size_t Matrix::RowCount() const noexcept
+	size_t Matrix::RowCount() const
 	{
 		return this->rowCount;
 	}
-	size_t Matrix::ColCount() const noexcept
+	size_t Matrix::ColCount() const
 	{
 		return this->colCount;
 	}
-	size_t Matrix::ElementCount() const noexcept
+	size_t Matrix::ElementCount() const
 	{
 		return this->rowCount * this->colCount;
 	}
-	bool Matrix::IsEmpty() const noexcept
+	bool Matrix::IsEmpty() const
 	{
 		return this->rowCount == 0 || this->colCount == 0;
 	}

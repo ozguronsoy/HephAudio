@@ -6,7 +6,7 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		uint32_t MuLawCodec::Tag() const noexcept
+		uint32_t MuLawCodec::Tag() const
 		{
 			return WAVE_FORMAT_MULAW;
 		}
@@ -29,7 +29,7 @@ namespace HephAudio
 		}
 		void MuLawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioProcessor::ConvertSampleRate(bufferToEncode, 8000);
+			AudioProcessor::ChangeSampleRate(bufferToEncode, 8000);
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
 			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_MULAW;
@@ -52,7 +52,7 @@ namespace HephAudio
 
 			bufferToEncode = std::move(tempBuffer);
 		}
-		int16_t MuLawCodec::MuLawToPcm(uint8_t mulawSample) const noexcept
+		int16_t MuLawCodec::MuLawToPcm(uint8_t mulawSample) const
 		{
 			const uint8_t sign = (mulawSample & 0x80) >> 7;
 			if (sign != 0)
@@ -73,7 +73,7 @@ namespace HephAudio
 
 			return sign == 1 ? -pcmSample : pcmSample;
 		}
-		int16_t MuLawCodec::FindSegment(uint16_t pcmSample) const noexcept
+		int16_t MuLawCodec::FindSegment(uint16_t pcmSample) const
 		{
 			for (size_t i = 7; i > 0; i--)
 			{

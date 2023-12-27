@@ -46,7 +46,7 @@ namespace HephAudio
 			7, 7, 7, 7, 7, 7, 7, 7,
 		};
 
-		uint32_t ALawCodec::Tag() const noexcept
+		uint32_t ALawCodec::Tag() const
 		{
 			return WAVE_FORMAT_ALAW;
 		}
@@ -69,7 +69,7 @@ namespace HephAudio
 		}
 		void ALawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioProcessor::ConvertSampleRate(bufferToEncode, 8000);
+			AudioProcessor::ChangeSampleRate(bufferToEncode, 8000);
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
 			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_ALAW;

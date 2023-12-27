@@ -24,7 +24,7 @@ namespace HephCommon
 		void RemoveEventHandler(EventHandler handler);
 		void RemoveEventHandler(size_t index);
 		void Clear();
-		size_t EventHandlerCount() const noexcept;
+		size_t EventHandlerCount() const;
 		void Invoke(EventArgs* pArgs, EventResult* pResult) const;
 	};
 }

@@ -37,15 +37,15 @@ namespace HephAudio
 		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
 		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
 		AudioObject* Load(HephCommon::StringBuffer filePath);
-		AudioObject* CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
-		bool DestroyAO(AudioObject* pAudioObject);
-		bool AOExists(AudioObject* pAudioObject) const;
-		AudioObject* GetAO(size_t index) const;
-		AudioObject* GetAO(HephCommon::StringBuffer aoName) const;
+		AudioObject* CreateAudioObject(HephCommon::StringBuffer name, size_t bufferFrameCount);
+		bool DestroyAudioObject(AudioObject* pAudioObject);
+		bool AudioObjectExists(AudioObject* pAudioObject) const;
+		AudioObject* GetAudioObject(size_t index) const;
+		AudioObject* GetAudioObject(HephCommon::StringBuffer audioObjectName) const;
 		void PauseCapture(bool pause);
-		bool IsCapturePaused() const noexcept;
-		uint32_t GetDeviceEnumerationPeriod() const noexcept;
-		void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) noexcept;
+		bool IsCapturePaused() const;
+		uint32_t GetDeviceEnumerationPeriod() const;
+		void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
 		void SetMasterVolume(heph_float volume);
 		heph_float GetMasterVolume() const;
 		AudioFormatInfo GetRenderFormat() const;
@@ -54,10 +54,6 @@ namespace HephAudio
 		void StopRendering();
 		void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 		void StopCapturing();
-#if (defined(_WIN32))
-		void SetDisplayName(HephCommon::StringBuffer displayName);
-		void SetIconPath(HephCommon::StringBuffer iconPath);
-#endif
 		AudioDevice GetAudioDeviceById(HephCommon::StringBuffer deviceId) const;
 		AudioDevice GetRenderDevice() const;
 		AudioDevice GetCaptureDevice() const;

@@ -222,7 +222,6 @@ namespace HephAudio
 		{
 			if (pRenderSessionControl != nullptr)
 			{
-				this->displayName = displayName;
 				HRESULT hres;
 				WINAUDIO_EXCPT(pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
 			}
@@ -231,7 +230,6 @@ namespace HephAudio
 		{
 			if (pRenderSessionControl != nullptr)
 			{
-				this->iconPath = iconPath;
 				HRESULT hres;
 				WINAUDIO_EXCPT(pRenderSessionControl->SetIconPath(iconPath.fwc_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
 			}
@@ -448,11 +446,11 @@ namespace HephAudio
 			}
 			return AudioDeviceType::Null;
 		}
-		AudioFormatInfo WinAudio::WFX2AFI(const WAVEFORMATEX& wfx) noexcept
+		AudioFormatInfo WinAudio::WFX2AFI(const WAVEFORMATEX& wfx)
 		{
 			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.nSamplesPerSec, wfx.wBitsPerSample);
 		}
-		WAVEFORMATEX WinAudio::AFI2WFX(const AudioFormatInfo& afi) noexcept
+		WAVEFORMATEX WinAudio::AFI2WFX(const AudioFormatInfo& afi)
 		{
 			WAVEFORMATEX wfx{ 0 };
 			wfx.wFormatTag = afi.formatTag;

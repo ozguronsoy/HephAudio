@@ -45,8 +45,6 @@ namespace HephAudio
 			void StopRendering();
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			void StopCapturing();
-			void SetDisplayName(HephCommon::StringBuffer displayName);
-			void SetIconPath(HephCommon::StringBuffer iconPath);
 		private:
 			SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);

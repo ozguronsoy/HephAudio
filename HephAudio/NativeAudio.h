@@ -36,10 +36,9 @@ namespace HephAudio
 			bool isRenderInitialized;
 			bool isCaptureInitialized;
 			bool isCapturePaused;
-			HephCommon::StringBuffer displayName;
-			HephCommon::StringBuffer iconPath;
 			uint32_t deviceEnumerationPeriod_ms;
 			mutable std::mutex audioDevicesMutex;
+			mutable std::recursive_mutex audioObjectsMutex;
 		public:
 			HephCommon::Event OnAudioDeviceAdded;
 			HephCommon::Event OnAudioDeviceRemoved;
@@ -53,15 +52,15 @@ namespace HephAudio
 			AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
 			AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
 			AudioObject* Load(HephCommon::StringBuffer filePath);
-			AudioObject* CreateAO(HephCommon::StringBuffer name, size_t bufferFrameCount);
-			bool DestroyAO(AudioObject* pAudioObject);
-			bool AOExists(AudioObject* pAudioObject) const;
-			AudioObject* GetAO(size_t index);
-			AudioObject* GetAO(HephCommon::StringBuffer aoName);
+			AudioObject* CreateAudioObject(HephCommon::StringBuffer name, size_t bufferFrameCount);
+			bool DestroyAudioObject(AudioObject* pAudioObject);
+			bool AudioObjectExists(AudioObject* pAudioObject) const;
+			AudioObject* GetAudioObject(size_t index);
+			AudioObject* GetAudioObject(HephCommon::StringBuffer audioObjectName);
 			void PauseCapture(bool pause);
-			bool IsCapturePaused() const noexcept;
-			uint32_t GetDeviceEnumerationPeriod() const noexcept;
-			void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) noexcept;
+			bool IsCapturePaused() const;
+			uint32_t GetDeviceEnumerationPeriod() const;
+			void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
 			virtual void SetMasterVolume(heph_float volume) = 0;
 			virtual heph_float GetMasterVolume() const = 0;
 			AudioFormatInfo GetRenderFormat() const;
@@ -70,8 +69,6 @@ namespace HephAudio
 			virtual void StopRendering() = 0;
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopCapturing() = 0;
-			virtual void SetDisplayName(HephCommon::StringBuffer displayName) = 0;
-			virtual void SetIconPath(HephCommon::StringBuffer iconPath) = 0;
 			AudioDevice GetAudioDeviceById(HephCommon::StringBuffer deviceId) const;
 			AudioDevice GetRenderDevice() const;
 			AudioDevice GetCaptureDevice() const;

@@ -8,7 +8,7 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		uint32_t PcmCodec::Tag() const noexcept
+		uint32_t PcmCodec::Tag() const 
 		{
 			return WAVE_FORMAT_PCM;
 		}

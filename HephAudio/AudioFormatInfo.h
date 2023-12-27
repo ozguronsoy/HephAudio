@@ -18,8 +18,8 @@ namespace HephAudio
 		AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate, HephCommon::Endian endian);
 		bool operator==(const AudioFormatInfo& rhs) const;
 		bool operator!=(const AudioFormatInfo& rhs) const;
-		uint16_t FrameSize() const noexcept;
-		uint32_t BitRate() const noexcept;
-		uint32_t ByteRate() const noexcept;
+		uint16_t FrameSize() const;
+		uint32_t BitRate() const;
+		uint32_t ByteRate() const;
 	};
 }

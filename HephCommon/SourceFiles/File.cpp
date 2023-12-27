@@ -56,7 +56,7 @@ namespace HephCommon
 			fflush(this->pFile);
 		}
 	}
-	bool File::IsOpen() const noexcept
+	bool File::IsOpen() const
 	{
 		return this->pFile != nullptr;
 	}
@@ -64,7 +64,7 @@ namespace HephCommon
 	{
 		return this->pFile;
 	}
-	uint64_t File::FileSize() const noexcept
+	uint64_t File::FileSize() const
 	{
 		return this->fileSize;
 	}

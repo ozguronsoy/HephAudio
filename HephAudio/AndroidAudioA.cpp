@@ -212,14 +212,6 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void AndroidAudioA::SetDisplayName(StringBuffer displayName)
-		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioA::SetDisplayName", "AndroidAudioA does not support this method."));
-		}
-		void AndroidAudioA::SetIconPath(StringBuffer iconPath)
-		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "AndroidAudioA::SetIconPath", "AndroidAudioA does not support this method."));
-		}
 		void AndroidAudioA::RenderData()
 		{
 			constexpr uint64_t stateChangeTimeoutNanos = 200 * 1000000;

@@ -197,14 +197,6 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void LinuxAudio::SetDisplayName(HephCommon::StringBuffer displayName)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "LinuxAudio::SetDisplayName", "LinuxAudio does not support this method."));
-		}
-		void LinuxAudio::SetIconPath(HephCommon::StringBuffer iconPath)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_not_implemented, "LinuxAudio::SetIconPath", "LinuxAudio does not support this method."));
-		}
 		bool LinuxAudio::EnumerateAudioDevices()
 		{
 			snd_pcm_stream_t streamTypes[2] = { SND_PCM_STREAM_PLAYBACK, SND_PCM_STREAM_CAPTURE };
@@ -302,7 +294,7 @@ namespace HephAudio
 				}
 			}
 		}
-		snd_pcm_format_t LinuxAudio::ToPcmFormat(const AudioFormatInfo& format) const noexcept
+		snd_pcm_format_t LinuxAudio::ToPcmFormat(const AudioFormatInfo& format) const
 		{
 			switch (format.bitsPerSample)
 			{

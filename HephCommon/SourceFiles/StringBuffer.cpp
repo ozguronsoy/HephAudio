@@ -362,7 +362,7 @@ namespace HephCommon
 	}
 	StringBuffer& StringBuffer::operator=(StringBuffer&& rhs) noexcept
 	{
-		if (this != &rhs)
+		if (this->pData != rhs.pData)
 		{
 			this->~StringBuffer();
 
@@ -606,15 +606,15 @@ namespace HephCommon
 		this->SetStringType(StringType::Wide);
 		return (wchar_t*)this->pData;
 	}
-	size_t StringBuffer::Size() const noexcept
+	size_t StringBuffer::Size() const
 	{
 		return this->size;
 	}
-	size_t StringBuffer::ByteSize() const noexcept
+	size_t StringBuffer::ByteSize() const
 	{
 		return this->size * this->charSize;
 	}
-	StringType StringBuffer::GetStringType() const noexcept
+	StringType StringBuffer::GetStringType() const
 	{
 		return this->charSize == sizeof(char) ? StringType::ASCII : StringType::Wide;
 	}
@@ -1729,7 +1729,7 @@ namespace HephCommon
 
 		return true;
 	}
-	void* StringBuffer::Begin() const noexcept
+	void* StringBuffer::Begin() const
 	{
 		return this->pData;
 	}
