@@ -205,8 +205,6 @@ namespace HephAudio
 			int cardID = -1, deviceID = -1;
 			int result;
 
-			this->audioDevices.clear();
-
 			LINUX_ENUMERATE_DEVICE_EXCPT(snd_card_next(&cardID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst getting the next card.");
 			LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_card_info_malloc(&cardInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst allocating memory for card info.");
 			LINUX_ENUMERATE_DEVICE_EXCPT(snd_pcm_info_malloc(&pcmInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst allocating memory for device info.");

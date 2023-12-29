@@ -74,6 +74,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WelchWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Window.h" />
   </ItemGroup>
@@ -132,6 +133,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WelchWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Window.cpp" />
   </ItemGroup>

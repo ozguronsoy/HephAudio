@@ -5,89 +5,83 @@
 #include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 #include "AudioProcessor.h"
 #include <VersionHelpers.h>
+#include <functiondiscoverykeys_devpkey.h>
+#include <audioclient.h>
 
+using namespace HephCommon;
 using namespace Microsoft::WRL;
 
-#define WINAUDIO_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); }
-#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); goto CAPTURE_EXIT; }
-#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephCommon::HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return retval; }
+#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto RENDER_EXIT; }
+#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto CAPTURE_EXIT; }
+#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 namespace HephAudio
 {
 	namespace Native
 	{
-		WinAudio::WinAudio() : NativeAudio(), hEvent(nullptr), pRenderAudioClient(nullptr), pRenderSessionManager(nullptr), pRenderSessionControl(nullptr), pCaptureAudioClient(nullptr)
+		WinAudio::WinAudio() : WinAudioBase(), pEnumerator(nullptr)
 		{
 			if (!IsWindowsVistaOrGreater())
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista."));
 			}
 
-			HRESULT hres = CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY | COINIT_DISABLE_OLE1DDE);
-			if (FAILED(hres))
-			{
-				if (hres == RPC_E_CHANGED_MODE)
-				{
-					WINAUDIO_EXCPT(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_SPEED_OVER_MEMORY | COINIT_DISABLE_OLE1DDE), "WinAudio", "An error occurred whilst initializing COM.");
-				}
-				else
-				{
-					WINAUDIO_EXCPT(hres, "WinAudio", "An error occurred whilst initializing COM.");
-				}
-			}
-
-			WINAUDIO_EXCPT(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), &pEnumerator), "WinAudio", "An error occurred whilst initializing the audio device enumerator.");
-
-			this->EnumerateAudioDevices();
+			this->InitializeCOM();
 			this->deviceThread = std::thread(&WinAudio::CheckAudioDevices, this);
+
+			size_t i = 0;
+			while (this->pEnumerator == nullptr)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(100)); // wait for device thread to create the pEnumerator
+				i++;
+				if (i == 20)
+				{
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WinAudio", "Time out whilst waiting for the creation of the device enumerator."));
+				}
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(this->deviceEnumerationPeriod_ms + 100)); // wait for the first device enumeration
 		}
 		WinAudio::~WinAudio()
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG("Destructing WinAudio...", HEPH_CL_INFO);
 
-			disposing = true;
+			this->disposing = true;
 
-			JoinDeviceThread();
-			JoinRenderThread();
-			JoinCaptureThread();
-
-			pEnumerator = nullptr;
-			pCaptureAudioClient = nullptr;
-			pRenderSessionControl = nullptr;
-			pRenderSessionManager = nullptr;
-			pRenderAudioClient = nullptr;
+			this->JoinDeviceThread();
+			this->JoinRenderThread();
+			this->JoinCaptureThread();
 
 			CoUninitialize();
 
-			HEPHAUDIO_LOG("WinAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("WinAudio destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudio::SetMasterVolume(heph_float volume)
 		{
-			if (pRenderSessionManager != nullptr)
+			if (this->pRenderSessionManager != nullptr)
 			{
 				if (volume > 1.0) { volume = 1.0; }
-				if (volume < 0.0) { volume = 0.0; }
+				else if (volume < 0.0) { volume = 0.0; }
 
 				ComPtr<ISimpleAudioVolume> pVolume = nullptr;
 				HRESULT hres;
-				WINAUDIO_EXCPT(pRenderSessionManager->GetSimpleAudioVolume(nullptr, 0, &pVolume), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
-
+				WINAUDIO_EXCPT(this->pRenderSessionManager->GetSimpleAudioVolume(nullptr, 0, &pVolume), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
 				WINAUDIO_EXCPT(pVolume->SetMasterVolume(volume, nullptr), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
+				pVolume = nullptr;
 			}
 		}
 		heph_float WinAudio::GetMasterVolume() const
 		{
 			float volume = -1.0f;
 
-			if (pRenderSessionManager != nullptr)
+			if (this->pRenderSessionManager != nullptr)
 			{
 				ComPtr<ISimpleAudioVolume> pVolume = nullptr;
 				HRESULT hres;
-				WINAUDIO_EXCPT(pRenderSessionManager->GetSimpleAudioVolume(nullptr, 0, &pVolume), "WinAudio::GetMasterVolume", "An error occurred whilst getting the master volume.");
-
-				WINAUDIO_EXCPT(pVolume->GetMasterVolume(&volume), "WinAudio::GetMasterVolume", "An error occurred whilst getting the master volume.");
+				WINAUDIO_EXCPT(this->pRenderSessionManager->GetSimpleAudioVolume(nullptr, 0, &pVolume), "WinAudio::GetMasterVolume", "An error occurred whilst getting the master volume.", volume);
+				WINAUDIO_EXCPT(pVolume->GetMasterVolume(&volume), "WinAudio::GetMasterVolume", "An error occurred whilst getting the master volume.", volume);
+				pVolume = nullptr;
 			}
 
 			return volume;
@@ -97,65 +91,25 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
-			StopRendering();
+			this->StopRendering();
 
-			ComPtr<IMMDevice> pDevice = nullptr;
-			WAVEFORMATEX* closestFormat = nullptr;
-			HRESULT hres;
-
-			if (device == nullptr || device->type != AudioDeviceType::Render || device->isDefault)
+			this->renderThread = std::thread(&WinAudio::RenderData, this, device, format);
+			size_t i = 0;
+			while (!this->isRenderInitialized && i < 20) // wait for initialization to complete
 			{
-				WINAUDIO_EXCPT(pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
-			}
-			else
-			{
-				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				i++;
 			}
 
-			LPWSTR deviceId = nullptr;
-			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
-			if (deviceId != nullptr)
-			{
-				renderDeviceId = deviceId;
-				CoTaskMemFree(deviceId);
-			}
-			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr, (void**)pRenderAudioClient.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the render device.");
-
-			WAVEFORMATEX wrf = AFI2WFX(format);
-			WINAUDIO_EXCPT(pRenderAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wrf, &closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
-			if (closestFormat != nullptr)
-			{
-				format = WFX2AFI(*closestFormat);
-				format.formatTag = WAVE_FORMAT_PCM;
-				wrf = AFI2WFX(format);
-				CoTaskMemFree(closestFormat);
-			}
-			renderFormat = format;
-
-			WINAUDIO_EXCPT(pRenderAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, &wrf, nullptr), "WinAudio::InitializeRender", "An error occurred whilst initializing the audio client.");
-			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager), CLSCTX_INPROC_SERVER, nullptr, (void**)pRenderSessionManager.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the session manager.");
-
-			WINAUDIO_EXCPT(pRenderSessionManager->GetAudioSessionControl(nullptr, 0, pRenderSessionControl.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst getting the session controls.");
-
-			hEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-			WINAUDIO_EXCPT(pRenderAudioClient->SetEventHandle(hEvent), "WinAudio::InitializeRender", "An error occurred whilst setting the audio client event handle.");
-
-			isRenderInitialized = true;
-			renderThread = std::thread(&WinAudio::RenderData, this);
-
-			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudio::StopRendering()
 		{
-			if (isRenderInitialized)
+			if (this->isRenderInitialized)
 			{
-				isRenderInitialized = false;
-				renderDeviceId = L"";
-				JoinRenderThread();
-				HRESULT hres;
-				pRenderSessionControl = nullptr;
-				pRenderSessionManager = nullptr;
-				pRenderAudioClient = nullptr;
+				this->isRenderInitialized = false;
+				this->renderDeviceId = "";
+				this->JoinRenderThread();
 				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
 		}
@@ -164,74 +118,42 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
-			StopCapturing();
+			this->StopCapturing();
 
-			ComPtr<IMMDevice> pDevice = nullptr;
-			WAVEFORMATEX* closestFormat = nullptr;
-			HRESULT hres;
-
-			if (device == nullptr || device->type != AudioDeviceType::Capture || device->isDefault)
+			this->captureThread = std::thread(&WinAudio::CaptureData, this, device, format);
+			size_t i = 0;
+			while (!this->isCaptureInitialized && i < 20) // wait for initialization to complete
 			{
-				WINAUDIO_EXCPT(pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
-			}
-			else
-			{
-				WINAUDIO_EXCPT(pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				i++;
 			}
 
-			LPWSTR deviceId = nullptr;
-			WINAUDIO_EXCPT(pDevice->GetId(&deviceId), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
-			if (deviceId != nullptr)
-			{
-				captureDeviceId = deviceId;
-				CoTaskMemFree(deviceId);
-			}
-			WINAUDIO_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_ALL, nullptr, (void**)pCaptureAudioClient.GetAddressOf()), "WinAudio::InitializeCapture", "An error occurred whilst activating the device.");
-
-			WAVEFORMATEX wcf = AFI2WFX(format);
-			WINAUDIO_EXCPT(pCaptureAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wcf, &closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
-			if (closestFormat != nullptr)
-			{
-				format = WFX2AFI(*closestFormat);
-				format.formatTag = WAVE_FORMAT_PCM;
-				wcf = AFI2WFX(format);
-				CoTaskMemFree(closestFormat);
-			}
-			captureFormat = format;
-
-			WINAUDIO_EXCPT(pCaptureAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, 10000000, 0, &wcf, nullptr), "WinAudio::InitializeCapture", "An error occurred whilst initializing the audio client.");
-
-			isCaptureInitialized = true;
-			captureThread = std::thread(&WinAudio::CaptureData, this);
-
-			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudio::StopCapturing()
 		{
-			if (isCaptureInitialized)
+			if (this->isCaptureInitialized)
 			{
-				isCaptureInitialized = false;
-				captureDeviceId = L"";
-				JoinCaptureThread();
-				HRESULT hres;
-				pCaptureAudioClient = nullptr;
+				this->isCaptureInitialized = false;
+				this->captureDeviceId = "";
+				this->JoinCaptureThread();
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void WinAudio::SetDisplayName(HephCommon::StringBuffer displayName)
+		void WinAudio::SetDisplayName(StringBuffer displayName)
 		{
-			if (pRenderSessionControl != nullptr)
+			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT(pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
+				WINAUDIO_EXCPT(this->pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
 			}
 		}
-		void WinAudio::SetIconPath(HephCommon::StringBuffer iconPath)
+		void WinAudio::SetIconPath(StringBuffer iconPath)
 		{
-			if (pRenderSessionControl != nullptr)
+			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT(pRenderSessionControl->SetIconPath(iconPath.fwc_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
+				WINAUDIO_EXCPT(this->pRenderSessionControl->SetIconPath(iconPath.fwc_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
 			}
 		}
 		bool WinAudio::EnumerateAudioDevices()
@@ -244,27 +166,25 @@ namespace HephAudio
 			LPWSTR defaultCaptureId = nullptr;
 			HRESULT hres;
 
-			this->audioDevices.clear();
-
-			WINAUDIO_ENUMERATE_DEVICE_EXCPT(pEnumerator->EnumAudioEndpoints(dataFlow, DEVICE_STATE_ACTIVE, &pCollection), "WinAudio::GetAudioDevices", "An error occurred whilst enumerating the devices.");
+			WINAUDIO_ENUMERATE_DEVICE_EXCPT(this->pEnumerator->EnumAudioEndpoints(dataFlow, DEVICE_STATE_ACTIVE, &pCollection), "WinAudio::GetAudioDevices", "An error occurred whilst enumerating the devices.");
 
 			// Get default render devices id, we will use it later to identify the default render device.
-			hres = pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDefaultRender);
+			hres = this->pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDefaultRender);
 			if (hres != HRESULT_FROM_WIN32(ERROR_NOT_FOUND))
 			{
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(hres, "WinAudio::GetAudioDevices", "An error occurred whilst getting the default render device id.");
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDefaultRender->GetId(&defaultRenderId), "WinAudio::GetAudioDevices", "An error occurred whilst getting the default render device id.");
 			}
-			HephCommon::StringBuffer defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
+			StringBuffer defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
 
 			// Get default capture devices id, we will use it later to identify the default capture device.
-			hres = pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDefaultCapture);
+			hres = this->pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDefaultCapture);
 			if (hres != HRESULT_FROM_WIN32(ERROR_NOT_FOUND))
 			{
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(hres, "WinAudio::GetAudioDevices", "An error occurred whilst getting the default capture device id.");
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDefaultCapture->GetId(&defaultCaptureId), "WinAudio::GetAudioDevices", "An error occurred whilst getting the default capture device id.");
 			}
-			HephCommon::StringBuffer defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
+			StringBuffer defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
 
 			UINT deviceCount = 0;
 			WINAUDIO_ENUMERATE_DEVICE_EXCPT(pCollection->GetCount(&deviceCount), "WinAudio::GetAudioDevices", "An error occurred whilst getting the device count.");
@@ -298,7 +218,7 @@ namespace HephAudio
 				}
 
 				device.id = deviceId;
-				device.type = DataFlowToDeviceType(dataFlow);
+				device.type = WinAudio::DataFlowToDeviceType(dataFlow);
 				device.isDefault = (device.type == AudioDeviceType::Render && device.id == defaultRenderIdStr) || (device.type == AudioDeviceType::Capture && device.id == defaultCaptureIdStr);
 				this->audioDevices.push_back(device);
 
@@ -319,117 +239,224 @@ namespace HephAudio
 
 			return NativeAudio::DEVICE_ENUMERATION_SUCCESS;
 		}
-		void WinAudio::RenderData()
+		void WinAudio::CheckAudioDevices()
 		{
+			this->InitializeCOM();
+
+			HRESULT hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), &this->pEnumerator);
+			if (FAILED(hresult))
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(hresult, "WinAudio", "An error occurred whilst initializing the audio device enumerator."));
+				HEPHAUDIO_LOG("Device enumeration failed, terminating the device thread...", HEPH_CL_ERROR);
+				return;
+			}
+
+			NativeAudio::CheckAudioDevices();
+
+			while (!this->disposing) // if device enumeration fails prevent from destroying the pEnumerator
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+
+			this->pEnumerator = nullptr;
+			CoUninitialize();
+		}
+		void WinAudio::RenderData(AudioDevice* device, AudioFormatInfo format)
+		{
+			this->InitializeCOM();
+
+			ComPtr<IAudioClient> pAudioClient = nullptr;
 			ComPtr<IAudioRenderClient> pRenderClient = nullptr;
+			ComPtr<IMMDevice> pDevice = nullptr;
+			LPWSTR deviceId = nullptr;
+			WAVEFORMATEX* closestFormat = nullptr;
+			WAVEFORMATEX wfx = WinAudio::AFI2WFX(format);
+			HANDLE hEvent = nullptr;
+			UINT32 padding, nFramesAvailable, bufferSize;
 			AudioBuffer dataBuffer;
-			UINT32 padding, nFramesAvailable;
-			BYTE* renderBuffer;
-			UINT32 bufferSize;
+			void* renderBuffer = nullptr;
 			HRESULT hres;
 
-			WINAUDIO_RENDER_THREAD_EXCPT(pRenderAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred whilst rendering the samples.");
-			dataBuffer = AudioBuffer(bufferSize, renderFormat);
+			if (device == nullptr || device->type != AudioDeviceType::Render || device->isDefault)
+			{
+				WINAUDIO_RENDER_THREAD_EXCPT(this->pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
+			}
+			else
+			{
+				WINAUDIO_RENDER_THREAD_EXCPT(this->pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
+			}
 
-			WINAUDIO_RENDER_THREAD_EXCPT(pRenderAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)pRenderClient.GetAddressOf()), "WinAudio", "An error occurred whilst rendering the samples.");
-			WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(bufferSize, &renderBuffer), "WinAudio", "An error occurred whilst rendering the samples.");
-			memset(renderBuffer, 0, bufferSize * renderFormat.FrameSize());
+			WINAUDIO_RENDER_THREAD_EXCPT(pDevice->GetId(&deviceId), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
+			if (deviceId != nullptr)
+			{
+				this->renderDeviceId = deviceId;
+				CoTaskMemFree(deviceId);
+				deviceId = nullptr;
+			}
+			WINAUDIO_RENDER_THREAD_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)pAudioClient.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the render device.");
+
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wfx, &closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
+			if (closestFormat != nullptr)
+			{
+				format = WinAudio::WFX2AFI(*closestFormat);
+				format.formatTag = WAVE_FORMAT_PCM;
+				CoTaskMemFree(closestFormat);
+				closestFormat = nullptr;
+			}
+			this->renderFormat = format;
+
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, &wfx, nullptr), "WinAudio::InitializeRender", "An error occurred whilst initializing the audio client.");
+			WINAUDIO_RENDER_THREAD_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager), CLSCTX_INPROC_SERVER, nullptr, (void**)this->pRenderSessionManager.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the session manager.");
+			pDevice = nullptr;
+
+			WINAUDIO_RENDER_THREAD_EXCPT(this->pRenderSessionManager->GetAudioSessionControl(nullptr, 0, this->pRenderSessionControl.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst getting the session controls.");
+
+			hEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+			if (hEvent == nullptr)
+			{
+				WINAUDIO_RENDER_THREAD_EXCPT(E_FAIL, "WinAudio::InitializeRender", "An error occurred whilst setting the render event handle.");
+			}
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->SetEventHandle(hEvent), "WinAudio::InitializeRender", "An error occurred whilst setting the render event handle.");
+
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred whilst rendering the samples.");
+			dataBuffer = AudioBuffer(bufferSize, this->renderFormat);
+
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)pRenderClient.GetAddressOf()), "WinAudio", "An error occurred whilst rendering the samples.");
+			WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(bufferSize, (BYTE**)&renderBuffer), "WinAudio", "An error occurred whilst rendering the samples.");
+			memset(renderBuffer, 0, (size_t)bufferSize * this->renderFormat.FrameSize());
 			WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(bufferSize, 0), "WinAudio", "An error occurred whilst rendering the samples.");
 
-			WINAUDIO_RENDER_THREAD_EXCPT(pRenderAudioClient->Start(), "WinAudio", "An error occurred whilst rendering the samples.");
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Start(), "WinAudio", "An error occurred whilst rendering the samples.");
 
-			while (!disposing && isRenderInitialized)
+			this->isRenderInitialized = true;
+
+			while (!this->disposing && this->isRenderInitialized)
 			{
-				uint32_t retval = WaitForSingleObject(hEvent, 2000);
-				if (retval != WAIT_OBJECT_0)
+				if (WaitForSingleObject(hEvent, 2000) != WAIT_OBJECT_0)
 				{
-					WINAUDIO_RENDER_THREAD_EXCPT(pRenderAudioClient->Stop(), "WinAudio", "An error occurred whilst rendering the samples.");
-					WINAUDIO_RENDER_THREAD_EXCPT(E_FAIL, "WinAudio", "An error occurred whilst rendering the samples.");
+					WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Stop(), "WinAudio", "An error occurred whilst rendering the samples.");
+					WINAUDIO_RENDER_THREAD_EXCPT(E_FAIL, "WinAudio", "Render time out.");
 				}
 
-				WINAUDIO_RENDER_THREAD_EXCPT(pRenderAudioClient->GetCurrentPadding(&padding), "WinAudio", "An error occurred whilst rendering the samples.");
+				WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetCurrentPadding(&padding), "WinAudio", "An error occurred whilst rendering the samples.");
 				nFramesAvailable = bufferSize - padding;
-
 				if (nFramesAvailable > 0)
 				{
 					Mix(dataBuffer, nFramesAvailable);
 
-					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, &renderBuffer), "WinAudio", "An error occurred whilst rendering the samples.");
-					memcpy(renderBuffer, dataBuffer.Begin(), nFramesAvailable * renderFormat.FrameSize());
+					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, (BYTE**)&renderBuffer), "WinAudio", "An error occurred whilst rendering the samples.");
+					memcpy(renderBuffer, dataBuffer.Begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(nFramesAvailable, 0), "WinAudio", "An error occurred whilst rendering the samples.");
 
 					dataBuffer.Reset();
 				}
 			}
 
-			WINAUDIO_RENDER_THREAD_EXCPT(pRenderAudioClient->Stop(), "WinAudio", "An error occurred whilst rendering the samples.");
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Stop(), "WinAudio", "An error occurred whilst rendering the samples.");
 
 		RENDER_EXIT:
+			pDevice = nullptr;
+			this->pRenderSessionControl = nullptr;
+			this->pRenderSessionManager = nullptr;
 			if (hEvent != nullptr)
 			{
-				CloseHandle(hEvent);
+				const BOOL eventResult = CloseHandle(hEvent);
+				if (eventResult == FALSE)
+				{
+					RAISE_HEPH_EXCEPTION(this, HephException(eventResult, "WinAudio", "An error occurred whilst closing the render event handle."));
+				}
 				hEvent = nullptr;
 			}
+			pRenderClient = nullptr;
+			pAudioClient = nullptr;
+			CoUninitialize();
 		}
-		void WinAudio::CaptureData()
+		void WinAudio::CaptureData(AudioDevice* device, AudioFormatInfo format)
 		{
-			constexpr REFERENCE_TIME reftimesPerSec = 1e6;
-			constexpr REFERENCE_TIME reftimesPerMilliSec = 2e3;
+			this->InitializeCOM();
 
+			constexpr REFERENCE_TIME requestedBufferDuration_rt = 2e5; // 20ms
+
+			ComPtr<IAudioClient> pAudioClient;
 			ComPtr<IAudioCaptureClient> pCaptureClient = nullptr;
+			ComPtr<IMMDevice> pDevice = nullptr;
+			LPWSTR deviceId = nullptr;
+			WAVEFORMATEX* closestFormat = nullptr;
+			WAVEFORMATEX wfx = AFI2WFX(format);
 			UINT32 bufferSize, nFramesAvailable, packetLength;
 			BYTE* captureBuffer = nullptr;
 			DWORD flags = 0;
-			REFERENCE_TIME hnsActualDuration = 0;
+			size_t halfActualBufferDuration_ms;
 			HRESULT hres;
 
-			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred whilst capturing the samples.");
-			hnsActualDuration = (heph_float)reftimesPerSec * bufferSize / captureFormat.sampleRate;
-
-			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->GetService(__uuidof(IAudioCaptureClient), &pCaptureClient), "WinAudio", "An error occurred whilst capturing the samples.");
-			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->Start(), "WinAudio", "An error occurred whilst capturing the samples.");
-
-			while (!disposing && isCaptureInitialized)
+			if (device == nullptr || device->type != AudioDeviceType::Capture || device->isDefault)
 			{
-				if (!isCapturePaused && OnCapture)
-				{
-					Sleep(hnsActualDuration / reftimesPerMilliSec);
+				WINAUDIO_CAPTURE_THREAD_EXCPT(this->pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
+			}
+			else
+			{
+				WINAUDIO_CAPTURE_THREAD_EXCPT(this->pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
+			}
 
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pDevice->GetId(&deviceId), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
+			if (deviceId != nullptr)
+			{
+				this->captureDeviceId = deviceId;
+				CoTaskMemFree(deviceId);
+				deviceId = nullptr;
+			}
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)pAudioClient.GetAddressOf()), "WinAudio::InitializeCapture", "An error occurred whilst activating the device.");
+			pDevice = nullptr;
+
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wfx, &closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
+			if (closestFormat != nullptr)
+			{
+				format = WFX2AFI(*closestFormat);
+				format.formatTag = WAVE_FORMAT_PCM;
+				CoTaskMemFree(closestFormat);
+				closestFormat = nullptr;
+			}
+			this->captureFormat = format;
+
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, requestedBufferDuration_rt, 0, &wfx, nullptr), "WinAudio::InitializeCapture", "An error occurred whilst initializing the audio client.");
+
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred whilst capturing the samples.");
+			halfActualBufferDuration_ms = 500.0 * bufferSize / this->captureFormat.sampleRate;
+
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->GetService(__uuidof(IAudioCaptureClient), &pCaptureClient), "WinAudio", "An error occurred whilst capturing the samples.");
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->Start(), "WinAudio", "An error occurred whilst capturing the samples.");
+
+			this->isCaptureInitialized = true;
+			
+			while (!this->disposing && this->isCaptureInitialized)
+			{
+				if (!this->isCapturePaused && this->OnCapture)
+				{
 					WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetNextPacketSize(&packetLength), "WinAudio", "An error occurred whilst capturing the samples.");
 					while (packetLength != 0)
 					{
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetBuffer(&captureBuffer, &nFramesAvailable, &flags, nullptr, nullptr), "WinAudio", "An error occurred whilst capturing the samples.");
 
-						AudioBuffer temp(nFramesAvailable, captureFormat);
+						AudioBuffer temp(nFramesAvailable, this->captureFormat);
 						memcpy(temp.Begin(), captureBuffer, temp.Size());
 						AudioProcessor::ConvertToInnerFormat(temp);
 						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
-						OnCapture(&captureEventArgs, nullptr);
+						this->OnCapture(&captureEventArgs, nullptr);
 
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->ReleaseBuffer(nFramesAvailable), "WinAudio", "An error occurred whilst capturing the samples.");
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetNextPacketSize(&packetLength), "WinAudio", "An error occurred whilst capturing the samples.");
 					}
 				}
+				std::this_thread::sleep_for(std::chrono::milliseconds(halfActualBufferDuration_ms));
 			}
 
-			WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureAudioClient->Stop(), "WinAudio", "An error occurred whilst capturing the samples.");
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->Stop(), "WinAudio", "An error occurred whilst capturing the samples.");
 
-		CAPTURE_EXIT:;
-		}
-		EDataFlow WinAudio::DeviceTypeToDataFlow(AudioDeviceType deviceType)
-		{
-			switch (deviceType)
-			{
-			case AudioDeviceType::Render:
-				return EDataFlow::eRender;
-			case AudioDeviceType::Capture:
-				return EDataFlow::eCapture;
-			case AudioDeviceType::All:
-				return EDataFlow::eAll;
-			default:
-				break;
-			}
-			return EDataFlow::EDataFlow_enum_count;
+		CAPTURE_EXIT:
+			pDevice = nullptr;
+			pCaptureClient = nullptr;
+			pAudioClient = nullptr;
+			CoUninitialize();
 		}
 		AudioDeviceType WinAudio::DataFlowToDeviceType(EDataFlow dataFlow)
 		{

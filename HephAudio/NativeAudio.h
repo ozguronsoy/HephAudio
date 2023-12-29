@@ -77,7 +77,7 @@ namespace HephAudio
 			bool SaveToFile(HephCommon::StringBuffer filePath, bool overwrite, AudioBuffer& buffer);
 		protected:
 			virtual bool EnumerateAudioDevices() = 0;
-			void CheckAudioDevices();
+			virtual void CheckAudioDevices();
 			void JoinRenderThread();
 			void JoinCaptureThread();
 			void JoinDeviceThread();

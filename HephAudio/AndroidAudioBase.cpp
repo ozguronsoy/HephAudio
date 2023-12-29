@@ -80,9 +80,11 @@ namespace HephAudio
 				env->DeleteLocalRef(audioDeviceArray);
 				env->DeleteLocalRef(audioManagerObject);
 				env->DeleteLocalRef(audioManagerClass);
+
+				return NativeAudio::DEVICE_ENUMERATION_SUCCESS;
 			}
 
-			return NativeAudio::DEVICE_ENUMERATION_SUCCESS;
+			return NativeAudio::DEVICE_ENUMERATION_FAIL;
 		}
 		void AndroidAudioBase::GetEnv(JNIEnv** pEnv) const
 		{
