@@ -88,7 +88,8 @@ AudioBuffer recordedAudio(0, HEPHAUDIO_INTERNAL_FORMAT(NUM_OF_CHANNELS, SAMPLE_R
 void RecordAudio(EventArgs* pArgs, EventResult* pResult) // the event handler method
 {
   AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)pArgs; // cast the args to capture event args
-  recordedAudio.Append(pCaptureArgs->captureBuffer); // append the freshly captured samples to the end of our buffer
+  AudioProcessor::ConvertToInnerFormat(pCaptureArgs->captureBuffer); // convert the captured data to inner format
+  recordedAudio.Append(pCaptureArgs->captureBuffer); // append the captured samples to the end of our buffer
 }
 
 int main()
