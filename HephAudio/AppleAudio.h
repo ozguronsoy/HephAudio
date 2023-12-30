@@ -8,9 +8,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		/// <summary>
-		/// Uses CoreAudio. Add -framework CoreFoundation and -framework CoreAudio to the compiler flags.
-		/// </summary>
+		// Uses CoreAudio, add -framework CoreFoundation and -framework CoreAudio to the compiler flags.
 		class AppleAudio final : public NativeAudio
 		{
 		private:

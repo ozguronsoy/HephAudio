@@ -269,7 +269,7 @@ namespace HephAudio
 				{
 					AudioBuffer tempBuffer = dataBuffer;
 					AudioProcessor::ConvertToInnerFormat(tempBuffer);
-					AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, tempBuffer);
+					AudioCaptureEventArgs captureEventArgs(this, tempBuffer);
 					OnCapture(&captureEventArgs, nullptr);
 				}
 

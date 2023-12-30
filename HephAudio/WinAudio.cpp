@@ -11,6 +11,7 @@
 using namespace HephCommon;
 using namespace Microsoft::WRL;
 
+#define PKEY_DEVICE_FRIENDLY_NAME {{ 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0 } }, 14}
 #define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return retval; }
 #define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto RENDER_EXIT; }
 #define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto CAPTURE_EXIT; }
@@ -37,7 +38,7 @@ namespace HephAudio
 				i++;
 				if (i == 20)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WinAudio", "Time out whilst waiting for the creation of the device enumerator."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WinAudio", "Time-out whilst waiting for the creation of the device enumerator."));
 				}
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(this->deviceEnumerationPeriod_ms + 100)); // wait for the first device enumeration
@@ -209,7 +210,7 @@ namespace HephAudio
 
 				// Open the property store of the device to read device info.
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDevice->OpenPropertyStore(STGM_READ, &pPropertyStore), "WinAudio::GetAudioDevices", "An error occurred whilst reading the devices properties.");
-				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pPropertyStore->GetValue(PKEY_Device_FriendlyName, &variant), "WinAudio::GetAudioDevices", "An error occurred whilst reading the devices properties.");
+				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pPropertyStore->GetValue(PKEY_DEVICE_FRIENDLY_NAME, &variant), "WinAudio::GetAudioDevices", "An error occurred whilst reading the devices properties.");
 
 				if (variant.vt != VT_EMPTY)
 				{
@@ -270,7 +271,7 @@ namespace HephAudio
 			ComPtr<IMMDevice> pDevice = nullptr;
 			LPWSTR deviceId = nullptr;
 			WAVEFORMATEX* closestFormat = nullptr;
-			WAVEFORMATEX wfx = WinAudio::AFI2WFX(format);
+			WAVEFORMATEX wfx = WinAudioBase::AFI2WFX(format);
 			HANDLE hEvent = nullptr;
 			UINT32 padding, nFramesAvailable, bufferSize;
 			AudioBuffer dataBuffer;
@@ -298,7 +299,7 @@ namespace HephAudio
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wfx, &closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr)
 			{
-				format = WinAudio::WFX2AFI(*closestFormat);
+				format = WinAudioBase::WFX2AFI(*closestFormat);
 				format.formatTag = WAVE_FORMAT_PCM;
 				CoTaskMemFree(closestFormat);
 				closestFormat = nullptr;
@@ -335,7 +336,7 @@ namespace HephAudio
 				if (WaitForSingleObject(hEvent, 2000) != WAIT_OBJECT_0)
 				{
 					WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Stop(), "WinAudio", "An error occurred whilst rendering the samples.");
-					WINAUDIO_RENDER_THREAD_EXCPT(E_FAIL, "WinAudio", "Render time out.");
+					WINAUDIO_RENDER_THREAD_EXCPT(E_FAIL, "WinAudio", "Render time-out.");
 				}
 
 				WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetCurrentPadding(&padding), "WinAudio", "An error occurred whilst rendering the samples.");
@@ -375,14 +376,14 @@ namespace HephAudio
 		{
 			this->InitializeCOM();
 
-			constexpr REFERENCE_TIME requestedBufferDuration_rt = 2e5; // 20ms
+			constexpr REFERENCE_TIME requestedBufferDuration_rt = 4e5; // 40ms
 
 			ComPtr<IAudioClient> pAudioClient;
 			ComPtr<IAudioCaptureClient> pCaptureClient = nullptr;
 			ComPtr<IMMDevice> pDevice = nullptr;
 			LPWSTR deviceId = nullptr;
 			WAVEFORMATEX* closestFormat = nullptr;
-			WAVEFORMATEX wfx = AFI2WFX(format);
+			WAVEFORMATEX wfx = WinAudioBase::AFI2WFX(format);
 			UINT32 bufferSize, nFramesAvailable, packetLength;
 			BYTE* captureBuffer = nullptr;
 			DWORD flags = 0;
@@ -411,7 +412,7 @@ namespace HephAudio
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wfx, &closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr)
 			{
-				format = WFX2AFI(*closestFormat);
+				format = WinAudioBase::WFX2AFI(*closestFormat);
 				format.formatTag = WAVE_FORMAT_PCM;
 				CoTaskMemFree(closestFormat);
 				closestFormat = nullptr;
@@ -427,7 +428,7 @@ namespace HephAudio
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->Start(), "WinAudio", "An error occurred whilst capturing the samples.");
 
 			this->isCaptureInitialized = true;
-			
+
 			while (!this->disposing && this->isCaptureInitialized)
 			{
 				if (!this->isCapturePaused && this->OnCapture)
@@ -440,7 +441,7 @@ namespace HephAudio
 						AudioBuffer temp(nFramesAvailable, this->captureFormat);
 						memcpy(temp.Begin(), captureBuffer, temp.Size());
 						AudioProcessor::ConvertToInnerFormat(temp);
-						AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(this, temp);
+						AudioCaptureEventArgs captureEventArgs(this, temp);
 						this->OnCapture(&captureEventArgs, nullptr);
 
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->ReleaseBuffer(nFramesAvailable), "WinAudio", "An error occurred whilst capturing the samples.");
@@ -472,22 +473,6 @@ namespace HephAudio
 				break;
 			}
 			return AudioDeviceType::Null;
-		}
-		AudioFormatInfo WinAudio::WFX2AFI(const WAVEFORMATEX& wfx)
-		{
-			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.nSamplesPerSec, wfx.wBitsPerSample);
-		}
-		WAVEFORMATEX WinAudio::AFI2WFX(const AudioFormatInfo& afi)
-		{
-			WAVEFORMATEX wfx{ 0 };
-			wfx.wFormatTag = afi.formatTag;
-			wfx.nChannels = afi.channelCount;
-			wfx.nSamplesPerSec = afi.sampleRate;
-			wfx.nAvgBytesPerSec = afi.ByteRate();
-			wfx.nBlockAlign = afi.FrameSize();
-			wfx.wBitsPerSample = afi.bitsPerSample;
-			wfx.cbSize = 0;
-			return wfx;
 		}
 	}
 }

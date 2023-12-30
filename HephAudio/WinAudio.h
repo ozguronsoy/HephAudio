@@ -11,9 +11,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		/// <summary>
-		/// Uses WASAPI. Use WinAudioDS if you have Windows XP or lower.
-		/// </summary>
+		// Uses WASAPI
 		class WinAudio final : public WinAudioBase
 		{
 		private:
@@ -39,8 +37,6 @@ namespace HephAudio
 			void RenderData(AudioDevice* device, AudioFormatInfo format);
 			void CaptureData(AudioDevice* device, AudioFormatInfo format);
 			static AudioDeviceType DataFlowToDeviceType(EDataFlow dataFlow);
-			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx);
-			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi);
 		};
 	}
 }

@@ -265,7 +265,7 @@ namespace HephAudio
 				memcpy(captureBuffer.Begin(), pCallbackContext->pData, captureCallbackSize);
 
 				AudioProcessor::ConvertToInnerFormat(captureBuffer);
-				AudioCaptureEventArgs captureEventArgs = AudioCaptureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
+				AudioCaptureEventArgs captureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
 				pCallbackContext->pAndroidAudio->OnCapture(&captureEventArgs, nullptr);
 
 				SLresult slres = (*simpleBufferQueue)->Enqueue(simpleBufferQueue, pCallbackContext->pData, captureCallbackSize);
