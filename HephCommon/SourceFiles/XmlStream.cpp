@@ -19,6 +19,15 @@ namespace HephCommon
 			this->file.Open(filePath, FileOpenMode::Read | FileOpenMode::Overwrite);
 		}
 	}
+	XmlStream::XmlStream(XmlStream&& rhs) noexcept : file(std::move(rhs.file)), useIndentation(rhs.useIndentation), useNewLine(rhs.useNewLine), stringType(rhs.stringType) {}
+	XmlStream& XmlStream::operator=(XmlStream&& rhs) noexcept
+	{
+		this->file = std::move(rhs.file);
+		this->useIndentation = rhs.useIndentation;
+		this->useNewLine = rhs.useNewLine;
+		this->stringType = rhs.stringType;
+		return *this;
+	}
 	XmlElement XmlStream::Read()
 	{
 		XmlElement rootElement;

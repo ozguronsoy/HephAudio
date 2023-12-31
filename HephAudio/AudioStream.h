@@ -25,7 +25,9 @@ namespace HephAudio
 		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
 		AudioStream(Audio& audio, HephCommon::StringBuffer filePath);
 		AudioStream(const AudioStream&) = delete;
+		AudioStream(AudioStream&& rhs) noexcept;
 		AudioStream& operator=(const AudioStream&) = delete;
+		AudioStream& operator=(AudioStream&& rhs) noexcept;
 		~AudioStream();
 		HephCommon::File* GetFile() ;
 		FileFormats::IAudioFileFormat* GetFileFormat() const ;

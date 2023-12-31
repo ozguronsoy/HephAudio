@@ -17,6 +17,13 @@ namespace HephCommon
 			this->file.Open(filePath, FileOpenMode::Read | FileOpenMode::Overwrite);
 		}
 	}
+	CsvStream::CsvStream(CsvStream&& rhs) noexcept : file(std::move(rhs.file)), stringType(StringType::ASCII) {}
+	CsvStream& CsvStream::operator=(CsvStream&& rhs) noexcept
+	{
+		this->file = std::move(rhs.file);
+		this->stringType = rhs.stringType;
+		return *this;
+	}
 	CsvRecordVector CsvStream::Read() const
 	{
 		CsvRecordVector recordVector;
@@ -33,19 +40,19 @@ namespace HephCommon
 			{
 				StringBuffer field = L"";
 
-				c =StreamHelpers::NextChar(this->file, this->stringType);
+				c = StreamHelpers::NextChar(this->file, this->stringType);
 				if (c == L'"')
 				{
 					do {
-						c =StreamHelpers::NextChar(this->file, this->stringType);
+						c = StreamHelpers::NextChar(this->file, this->stringType);
 						do
 						{
 							field += c;
-							c =StreamHelpers::NextChar(this->file, this->stringType);
+							c = StreamHelpers::NextChar(this->file, this->stringType);
 						} while (c != L'"' && IS_NOT_END_OF_FILE);
 						if (IS_NOT_END_OF_FILE)
 						{
-							c =StreamHelpers::NextChar(this->file, this->stringType);
+							c = StreamHelpers::NextChar(this->file, this->stringType);
 						}
 						if (c == L'"')
 						{
@@ -62,7 +69,7 @@ namespace HephCommon
 					do
 					{
 						field += c;
-						c =StreamHelpers::NextChar(this->file, this->stringType);
+						c = StreamHelpers::NextChar(this->file, this->stringType);
 					} while (c != L',' && c != L'\n' && IS_NOT_END_OF_FILE);
 					if (!IS_NOT_END_OF_FILE && c != L',' && c != L'\n')
 					{

@@ -42,6 +42,7 @@ namespace HephCommon
 				memcpy(this->pData, rhs.begin(), this->Size());
 			}
 		}
+		ColorBufferBase(std::nullptr_t rhs) : ColorBufferBase() {}
 		ColorBufferBase(const ColorBufferBase& rhs) : frameCount(rhs.frameCount), pData(nullptr)
 		{
 			if (this->frameCount > 0)
@@ -85,6 +86,11 @@ namespace HephCommon
 
 			return *this;
 		}
+		ColorBufferBase& operator=(std::nullptr_t rhs) 
+		{
+			this->Empty();
+			return *this;
+		}
 		ColorBufferBase& operator=(const ColorBufferBase& rhs)
 		{
 			if (this->pData != rhs.pData)
@@ -122,9 +128,17 @@ namespace HephCommon
 		{
 			return this->pData == rhs.pData || (this->frameCount == rhs.frameCount && this->pData != nullptr && rhs.pData != nullptr && memcmp(this->pData, rhs.pData, this->Size()) == 0);
 		}
+		bool operator==(std::nullptr_t rhs) const
+		{
+			return this->pData == nullptr;
+		}
 		bool operator!=(const ColorBufferBase& rhs) const
 		{
 			return this->pData != rhs.pData && (this->frameCount != rhs.frameCount || this->pData == nullptr || rhs.pData == nullptr || memcmp(this->pData, rhs.pData, this->Size()) != 0);
+		}
+		bool operator!=(std::nullptr_t rhs) const
+		{
+			return this->pData != nullptr;
 		}
 		size_t FrameCount() const
 		{
@@ -203,6 +217,7 @@ namespace HephCommon
 	public:
 		ColorBuffer() : ColorBufferBase<ColorType>() {}
 		ColorBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
+		ColorBuffer(std::nullptr_t rhs) : ColorBufferBase<ColorType>(rhs) {}
 		ColorBuffer(const ColorBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		ColorBuffer(ColorBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator RgbBuffer() const;
@@ -218,6 +233,7 @@ namespace HephCommon
 	public:
 		RgbBuffer() : ColorBufferBase<ColorType>() {}
 		RgbBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
+		RgbBuffer(std::nullptr_t rhs) : ColorBufferBase<ColorType>(rhs) {}
 		RgbBuffer(const RgbBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		RgbBuffer(RgbBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;
@@ -233,6 +249,7 @@ namespace HephCommon
 	public:
 		HslBuffer() : ColorBufferBase<ColorType>() {}
 		HslBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
+		HslBuffer(std::nullptr_t rhs) : ColorBufferBase<ColorType>(rhs) {}
 		HslBuffer(const HslBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		HslBuffer(HslBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;
@@ -249,6 +266,7 @@ namespace HephCommon
 		HsvBuffer() : ColorBufferBase<ColorType>() {}
 		HsvBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
 		HsvBuffer(const HsvBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
+		HsvBuffer(std::nullptr_t rhs) : ColorBufferBase<ColorType>(rhs) {}
 		HsvBuffer(HsvBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;
 		explicit operator RgbBuffer() const;
@@ -263,6 +281,7 @@ namespace HephCommon
 	public:
 		CmykBuffer() : ColorBufferBase<ColorType>() {}
 		CmykBuffer(size_t frameCount) : ColorBufferBase<ColorType>(frameCount) {}
+		CmykBuffer(std::nullptr_t rhs) : ColorBufferBase<ColorType>(rhs) {}
 		CmykBuffer(const CmykBuffer& rhs) : ColorBufferBase<ColorType>(rhs) {}
 		CmykBuffer(CmykBuffer&& rhs) noexcept : ColorBufferBase<ColorType>(rhs) {}
 		explicit operator ColorBuffer() const;

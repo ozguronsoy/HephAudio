@@ -7,12 +7,8 @@
 namespace HephCommon
 {
 	JsonElement::JsonElement() : name(L""), value(L""), children(JsonElementVector()) {}
-	JsonStream::JsonStream(const StringBuffer& filePath)
+	JsonStream::JsonStream(const StringBuffer& filePath) : useIndentation(true), useNewLine(true), stringType(StringType::ASCII)
 	{
-		this->useIndentation = true;
-		this->useNewLine = true;
-		this->stringType = StringType::ASCII;
-
 		if (File::FileExists(filePath))
 		{
 			this->file.Open(filePath, FileOpenMode::Read | FileOpenMode::Write);
@@ -21,6 +17,15 @@ namespace HephCommon
 		{
 			this->file.Open(filePath, FileOpenMode::Read | FileOpenMode::Overwrite);
 		}
+	}
+	JsonStream::JsonStream(JsonStream&& rhs) noexcept : file(std::move(rhs.file)), useIndentation(rhs.useIndentation), useNewLine(rhs.useNewLine), stringType(rhs.stringType) {}
+	JsonStream& JsonStream::operator=(JsonStream&& rhs) noexcept 
+	{
+		this->file = std::move(rhs.file);
+		this->useIndentation = rhs.useIndentation;
+		this->useNewLine = rhs.useNewLine;
+		this->stringType = rhs.stringType;
+		return *this;
 	}
 	JsonElement JsonStream::Read() const
 	{

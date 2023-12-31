@@ -34,7 +34,9 @@ namespace HephCommon
 	public:
 		JsonStream(const StringBuffer& filePath);
 		JsonStream(const JsonStream&) = delete;
+		JsonStream(JsonStream&& rhs) noexcept;
 		JsonStream& operator=(const JsonStream&) = delete;
+		JsonStream& operator=(JsonStream&& rhs) noexcept;
 		JsonElement Read() const;
 		void Write(const StringBuffer& jsonString);
 		void Write(const JsonElement& rootElement);

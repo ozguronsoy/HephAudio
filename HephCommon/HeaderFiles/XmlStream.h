@@ -39,7 +39,9 @@ namespace HephCommon
 	public:
 		XmlStream(const StringBuffer& filePath);
 		XmlStream(const XmlStream&) = delete;
+		XmlStream(XmlStream&& rhs) noexcept;
 		XmlStream& operator=(const XmlStream&) = delete;
+		XmlStream& operator=(XmlStream&& rhs) noexcept;
 		XmlElement Read();
 		void Write(const StringBuffer& xmlString);
 		void Write(const XmlElement& rootElement);

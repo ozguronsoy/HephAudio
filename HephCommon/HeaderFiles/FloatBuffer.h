@@ -13,12 +13,14 @@ namespace HephCommon
 		FloatBuffer();
 		FloatBuffer(size_t frameCount);
 		FloatBuffer(const std::initializer_list<heph_float>& rhs);
+		FloatBuffer(std::nullptr_t rhs);
 		FloatBuffer(const FloatBuffer& rhs);
 		FloatBuffer(FloatBuffer&& rhs) noexcept;
 		~FloatBuffer();
 		heph_float& operator[](size_t frameIndex) const;
 		FloatBuffer operator-() const;
 		FloatBuffer& operator=(const std::initializer_list<heph_float>& rhs);
+		FloatBuffer& operator=(std::nullptr_t rhs);
 		FloatBuffer& operator=(const FloatBuffer& rhs);
 		FloatBuffer& operator=(FloatBuffer&& rhs) noexcept;
 		FloatBuffer operator+(heph_float rhs) const;

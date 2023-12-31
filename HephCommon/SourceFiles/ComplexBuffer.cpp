@@ -5,11 +5,7 @@
 
 namespace HephCommon
 {
-	ComplexBuffer::ComplexBuffer() : frameCount(0), pData(nullptr)
-	{
-		this->frameCount = 0;
-		this->pData = nullptr;
-	}
+	ComplexBuffer::ComplexBuffer() : frameCount(0), pData(nullptr) {}
 	ComplexBuffer::ComplexBuffer(size_t frameCount) : frameCount(frameCount), pData(nullptr)
 	{
 		if (frameCount > 0)
@@ -50,18 +46,7 @@ namespace HephCommon
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
 	}
-	ComplexBuffer::ComplexBuffer(const ComplexBuffer& rhs) : frameCount(rhs.frameCount), pData(nullptr)
-	{
-		if (rhs.frameCount > 0)
-		{
-			this->pData = (Complex*)malloc(rhs.Size());
-			if (this->pData == nullptr)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
-			}
-			memcpy(this->pData, rhs.pData, rhs.Size());
-		}
-	}
+	ComplexBuffer::ComplexBuffer(std::nullptr_t rhs) : ComplexBuffer() {}
 	ComplexBuffer::ComplexBuffer(const FloatBuffer& rhs) : frameCount(rhs.FrameCount()), pData(nullptr)
 	{
 		if (this->frameCount > 0)
@@ -76,6 +61,18 @@ namespace HephCommon
 				(*this)[i].real = rhs[i];
 				(*this)[i].imaginary = 0;
 			}
+		}
+	}
+	ComplexBuffer::ComplexBuffer(const ComplexBuffer& rhs) : frameCount(rhs.frameCount), pData(nullptr)
+	{
+		if (rhs.frameCount > 0)
+		{
+			this->pData = (Complex*)malloc(rhs.Size());
+			if (this->pData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+			}
+			memcpy(this->pData, rhs.pData, rhs.Size());
 		}
 	}
 	ComplexBuffer::ComplexBuffer(ComplexBuffer&& rhs) noexcept : frameCount(rhs.frameCount), pData(rhs.pData)
@@ -138,25 +135,9 @@ namespace HephCommon
 
 		return *this;
 	}
-	ComplexBuffer& ComplexBuffer::operator=(const ComplexBuffer& rhs)
+	ComplexBuffer& ComplexBuffer::operator=(std::nullptr_t rhs) 
 	{
-		if (this->pData != rhs.pData)
-		{
-			this->Empty();
-
-			this->frameCount = rhs.frameCount;
-
-			if (rhs.frameCount > 0)
-			{
-				this->pData = (Complex*)malloc(rhs.Size());
-				if (this->pData == nullptr)
-				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
-				}
-				memcpy(this->pData, rhs.pData, rhs.Size());
-			}
-		}
-
+		this->Empty();
 		return *this;
 	}
 	ComplexBuffer& ComplexBuffer::operator=(const FloatBuffer& rhs)
@@ -176,6 +157,27 @@ namespace HephCommon
 			{
 				(*this)[i].real = rhs[i];
 				(*this)[i].imaginary = 0;
+			}
+		}
+
+		return *this;
+	}
+	ComplexBuffer& ComplexBuffer::operator=(const ComplexBuffer& rhs)
+	{
+		if (this->pData != rhs.pData)
+		{
+			this->Empty();
+
+			this->frameCount = rhs.frameCount;
+
+			if (rhs.frameCount > 0)
+			{
+				this->pData = (Complex*)malloc(rhs.Size());
+				if (this->pData == nullptr)
+				{
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+				}
+				memcpy(this->pData, rhs.pData, rhs.Size());
 			}
 		}
 

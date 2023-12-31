@@ -18,7 +18,9 @@ namespace HephCommon
 	public:
 		CsvStream(const StringBuffer& filePath);
 		CsvStream(const CsvStream&) = delete;
+		CsvStream(CsvStream&& rhs) noexcept;
 		CsvStream& operator=(const CsvStream&) = delete;
+		CsvStream& operator=(CsvStream&& rhs) noexcept;
 		CsvRecordVector Read() const;
 		void Write(const StringBuffer& csvString);
 		void Write(const CsvRecordVector& recordVector);

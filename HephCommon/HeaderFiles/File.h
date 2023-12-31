@@ -22,8 +22,10 @@ namespace HephCommon
 		File();
 		File(const StringBuffer& filePath, FileOpenMode openMode);
 		File(const File&) = delete;
-		File& operator=(const File&) = delete;
+		File(File&& rhs) noexcept;
 		~File();
+		File& operator=(const File&) = delete;
+		File& operator=(File&& rhs) noexcept;
 		void Open(const StringBuffer& filePath, FileOpenMode openMode);
 		void Close();
 		void Flush();

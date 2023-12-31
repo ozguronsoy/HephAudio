@@ -16,11 +16,13 @@ namespace HephAudio
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
+		AudioBuffer(std::nullptr_t rhs);
 		AudioBuffer(const AudioBuffer& rhs);
 		AudioBuffer(AudioBuffer&& rhs) noexcept;
 		~AudioBuffer();
 		heph_float* operator[](size_t frameIndex) const;
 		AudioBuffer operator-() const;
+		AudioBuffer& operator=(std::nullptr_t rhs);
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		AudioBuffer& operator=(AudioBuffer&& rhs) noexcept;
 		AudioBuffer operator+(heph_float rhs) const;

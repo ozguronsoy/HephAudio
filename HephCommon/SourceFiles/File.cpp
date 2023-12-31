@@ -6,10 +6,8 @@
 
 namespace HephCommon
 {
-	File::File()
-		: pFile(nullptr), fileSize(0), filePath("") { }
-	File::File(const StringBuffer& filePath, FileOpenMode openMode)
-		: pFile(nullptr), fileSize(0), filePath(filePath)
+	File::File() : pFile(nullptr), fileSize(0), filePath("") { }
+	File::File(const StringBuffer& filePath, FileOpenMode openMode) : pFile(nullptr), fileSize(0), filePath(filePath)
 	{
 		this->Open(openMode);
 		if (this->pFile == nullptr)
@@ -21,9 +19,27 @@ namespace HephCommon
 		this->fileSize = ftell(this->pFile);
 		fseek(this->pFile, 0, SEEK_SET);
 	}
+	File::File(File&& rhs) noexcept : pFile(rhs.pFile), fileSize(rhs.fileSize), filePath(rhs.filePath)
+	{
+		rhs.pFile = nullptr;
+		rhs.fileSize = 0;
+		rhs.filePath = nullptr;
+	}
 	File::~File()
 	{
 		this->Close();
+	}
+	File& File::operator=(File&& rhs) noexcept
+	{
+		this->pFile = rhs.pFile;
+		this->fileSize = rhs.fileSize;
+		this->filePath = rhs.filePath;
+
+		rhs.pFile = nullptr;
+		rhs.fileSize = 0;
+		rhs.filePath = nullptr;
+
+		return *this;
 	}
 	void File::Open(const StringBuffer& filePath, FileOpenMode openMode)
 	{

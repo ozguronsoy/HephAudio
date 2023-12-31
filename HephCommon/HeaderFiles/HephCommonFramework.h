@@ -19,6 +19,7 @@
 #define CPP_VERSION_14 201402L
 #define CPP_VERSION_17 201703L
 #define CPP_VERSION_20 202002L
+#define CPP_VERSION_23 202101L
 
 #if CPP_VERSION < CPP_VERSION_14
 #error C++ 14 or above is required

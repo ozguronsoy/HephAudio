@@ -82,8 +82,7 @@ namespace HephCommon
 	}
 #pragma endregion
 #pragma region StringBuffer
-	StringBuffer::StringBuffer(size_t size, size_t charSize)
-		: charSize(charSize), size(size)
+	StringBuffer::StringBuffer(size_t size, size_t charSize) : charSize(charSize), size(size)
 	{
 		this->pData = (char*)malloc(this->ByteSize() + this->charSize);
 		if (this->pData == nullptr)
@@ -92,8 +91,7 @@ namespace HephCommon
 		}
 		memset(this->pData + this->ByteSize(), 0, this->charSize);
 	}
-	StringBuffer::StringBuffer()
-		: charSize(sizeof(char)), size(0)
+	StringBuffer::StringBuffer() : charSize(sizeof(char)), size(0)
 	{
 		this->pData = (char*)malloc(this->charSize);
 		if (this->pData == nullptr)
@@ -102,8 +100,7 @@ namespace HephCommon
 		}
 		this->pData[0] = '\0';
 	}
-	StringBuffer::StringBuffer(char c)
-		: charSize(sizeof(char)), size(1)
+	StringBuffer::StringBuffer(char c) : charSize(sizeof(char)), size(1)
 	{
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData == nullptr)
@@ -114,8 +111,7 @@ namespace HephCommon
 		this->pData[0] = c;
 		this->pData[1] = '\0';
 	}
-	StringBuffer::StringBuffer(wchar_t wc)
-		: charSize(sizeof(wchar_t)), size(1)
+	StringBuffer::StringBuffer(wchar_t wc) : charSize(sizeof(wchar_t)), size(1)
 	{
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData == nullptr)
@@ -126,8 +122,7 @@ namespace HephCommon
 		((wchar_t*)this->pData)[0] = wc;
 		((wchar_t*)this->pData)[1] = L'\0';
 	}
-	StringBuffer::StringBuffer(const char* const str)
-		: charSize(sizeof(char))
+	StringBuffer::StringBuffer(const char* const str) : charSize(sizeof(char))
 	{
 		if (str == nullptr)
 		{
@@ -150,8 +145,7 @@ namespace HephCommon
 		}
 		memcpy(this->pData, str, this->ByteSize() + this->charSize);
 	}
-	StringBuffer::StringBuffer(const wchar_t* const wstr)
-		: charSize(sizeof(wchar_t))
+	StringBuffer::StringBuffer(const wchar_t* const wstr) : charSize(sizeof(wchar_t))
 	{
 		if (wstr == nullptr)
 		{
@@ -174,9 +168,9 @@ namespace HephCommon
 		}
 		memcpy(this->pData, wstr, this->ByteSize() + this->charSize);
 	}
+	StringBuffer::StringBuffer(std::nullptr_t rhs) : charSize(0), size(0), pData(nullptr) {}
 	StringBuffer::StringBuffer(const StringBuffer& str) : StringBuffer(str, str.charSize == sizeof(char) ? StringType::ASCII : StringType::Wide) {}
-	StringBuffer::StringBuffer(const StringBuffer& str, StringType stringType)
-		: size(str.size)
+	StringBuffer::StringBuffer(const StringBuffer& str, StringType stringType) : size(str.size)
 	{
 		this->charSize = stringType == StringType::ASCII ? sizeof(char) : sizeof(wchar_t);
 
@@ -214,8 +208,7 @@ namespace HephCommon
 			memset(this->pData, 0, this->charSize);
 		}
 	}
-	StringBuffer::StringBuffer(StringBuffer&& str) noexcept
-		: charSize(str.charSize), size(str.size), pData(str.pData)
+	StringBuffer::StringBuffer(StringBuffer&& str) noexcept : charSize(str.charSize), size(str.size), pData(str.pData)
 	{
 		str.charSize = 0;
 		str.size = 0;
@@ -323,6 +316,17 @@ namespace HephCommon
 			memcpy(this->pData, rhs, this->ByteSize() + this->charSize);
 		}
 
+		return *this;
+	}
+	StringBuffer& StringBuffer::operator=(std::nullptr_t rhs)
+	{
+		this->charSize = 0;
+		this->size = 0;
+		if (this->pData != nullptr)
+		{
+			free(this->pData);
+			this->pData = nullptr;
+		}
 		return *this;
 	}
 	StringBuffer& StringBuffer::operator=(const StringBuffer& rhs)
@@ -566,6 +570,10 @@ namespace HephCommon
 	{
 		return rhs.charSize == sizeof(char) ? this->operator==(rhs.c_str()) : this->operator==(rhs.wc_str());
 	}
+	bool StringBuffer::operator==(std::nullptr_t rhs) const
+	{
+		return this->pData == nullptr;
+	}
 	bool StringBuffer::operator!=(char rhs) const
 	{
 		char buffer[2] = { rhs, '\0' };
@@ -587,6 +595,10 @@ namespace HephCommon
 	bool StringBuffer::operator!=(const StringBuffer& rhs) const
 	{
 		return rhs.charSize == sizeof(char) ? this->operator!=(rhs.c_str()) : this->operator!=(rhs.wc_str());
+	}
+	bool StringBuffer::operator!=(std::nullptr_t rhs) const
+	{
+		return this->pData != nullptr;
 	}
 	char* StringBuffer::c_str() const
 	{

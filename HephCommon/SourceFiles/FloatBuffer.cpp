@@ -29,6 +29,7 @@ namespace HephCommon
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
 	}
+	FloatBuffer::FloatBuffer(std::nullptr_t rhs) : FloatBuffer() {}
 	FloatBuffer::FloatBuffer(const FloatBuffer& rhs) : frameCount(rhs.frameCount), pData(nullptr)
 	{
 		if (this->frameCount > 0)
@@ -78,6 +79,11 @@ namespace HephCommon
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
 
+		return *this;
+	}
+	FloatBuffer& FloatBuffer::operator=(std::nullptr_t rhs) 
+	{
+		this->Empty();
 		return *this;
 	}
 	FloatBuffer& FloatBuffer::operator=(const FloatBuffer& rhs)

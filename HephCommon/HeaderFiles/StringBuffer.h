@@ -46,6 +46,7 @@ namespace HephCommon
 		StringBuffer(wchar_t wc);
 		StringBuffer(const char* const str);
 		StringBuffer(const wchar_t* const wstr);
+		StringBuffer(std::nullptr_t rhs);
 		StringBuffer(const StringBuffer& str);
 		StringBuffer(const StringBuffer& str, StringType stringType);
 		StringBuffer(StringBuffer&& str) noexcept;
@@ -57,6 +58,7 @@ namespace HephCommon
 		StringBuffer& operator=(wchar_t rhs);
 		StringBuffer& operator=(const char* const rhs);
 		StringBuffer& operator=(const wchar_t* const rhs);
+		StringBuffer& operator=(std::nullptr_t rhs);
 		StringBuffer& operator=(const StringBuffer& rhs);
 		StringBuffer& operator=(StringBuffer&& rhs) noexcept;
 		StringBuffer operator+(char rhs) const;
@@ -76,11 +78,13 @@ namespace HephCommon
 		bool operator==(const char* const rhs) const;
 		bool operator==(const wchar_t* const rhs) const;
 		bool operator==(const StringBuffer& rhs) const;
+		bool operator==(std::nullptr_t rhs) const;
 		bool operator!=(char rhs) const;
 		bool operator!=(wchar_t rhs) const;
 		bool operator!=(const char* const rhs) const;
 		bool operator!=(const wchar_t* const rhs) const;
 		bool operator!=(const StringBuffer& rhs) const;
+		bool operator!=(std::nullptr_t rhs) const;
 		char* c_str() const;
 		char* fc_str();
 		wchar_t* wc_str() const;

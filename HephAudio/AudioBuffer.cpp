@@ -20,6 +20,7 @@ namespace HephAudio
 			this->Reset();
 		}
 	}
+	AudioBuffer::AudioBuffer(std::nullptr_t rhs) : AudioBuffer() {}
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) : formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(nullptr)
 	{
 		if (rhs.frameCount > 0)
@@ -59,11 +60,17 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
+	AudioBuffer& AudioBuffer::operator=(std::nullptr_t rhs)
+	{
+		this->Empty();
+		this->formatInfo = AudioFormatInfo();
+		return *this;
+	}
 	AudioBuffer& AudioBuffer::operator=(const AudioBuffer& rhs)
 	{
 		if (this->pData != rhs.pData)
 		{
-			this->~AudioBuffer();
+			this->Empty();
 
 			this->formatInfo = rhs.formatInfo;
 			this->frameCount = rhs.frameCount;
@@ -85,7 +92,7 @@ namespace HephAudio
 	{
 		if (this->pData != rhs.pData)
 		{
-			this->~AudioBuffer();
+			this->Empty();
 
 			this->frameCount = rhs.frameCount;
 			this->formatInfo = rhs.formatInfo;
