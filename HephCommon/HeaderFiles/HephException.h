@@ -5,8 +5,15 @@
 #include <vector>
 #include <cinttypes>
 
+#define HEPH_EC_NONE 0
+#define HEPH_EC_FAIL -1
+#define HEPH_EC_INVALID_ARGUMENT -2
+#define HEPH_EC_NOT_IMPLEMENTED -3
+#define HEPH_EC_INSUFFICIENT_MEMORY -4
+#define HEPH_EC_NOT_FOUND -5
+
 #define RAISE_HEPH_EXCEPTION(sender, ex) ex.Raise(sender)
-#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex) ex.Raise(sender); throw ex
+#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex) RAISE_HEPH_EXCEPTION(sender, ex); throw ex
 
 namespace HephCommon
 {
@@ -15,13 +22,6 @@ namespace HephCommon
 	private:
 		static std::vector<HephException> exceptions;
 	public:
-		static constexpr int64_t ec_none = 0;
-		static constexpr int64_t ec_fail = -1;
-		static constexpr int64_t ec_invalid_argument = -2;
-		static constexpr int64_t ec_not_implemented = -3;
-		static constexpr int64_t ec_insufficient_memory = -4;
-		static constexpr int64_t ec_not_found = -5;
-	public:
 		static Event OnException;
 	public:
 		int64_t errorCode;
@@ -29,7 +29,7 @@ namespace HephCommon
 		StringBuffer message;
 		HephException();
 		HephException(int64_t errorCode, StringBuffer method, StringBuffer message);
-		void Raise(const void* pSender) const ;
+		void Raise(const void* pSender) const;
 	public:
 		static const HephException& LastException();
 		static const std::vector<HephException>& AllExceptions();

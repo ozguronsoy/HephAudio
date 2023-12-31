@@ -52,7 +52,7 @@ namespace HephAudio
 		}
 		else
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "Audio::Audio", "API levels under 21 are not supported."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
 		}
 	}
 #else
@@ -72,7 +72,7 @@ namespace HephAudio
 #elif defined(__APPLE__)
 		this->pNativeAudio = new AppleAudio();
 #else
-		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "Audio::Audio", "Unsupported platform."));
+		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "Audio::Audio", "Unsupported platform."));
 #endif
 	}
 #endif

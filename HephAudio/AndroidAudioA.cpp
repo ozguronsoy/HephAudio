@@ -21,7 +21,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < 27)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27."));
 			}
 
 			this->EnumerateAudioDevices();

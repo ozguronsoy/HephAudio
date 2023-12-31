@@ -23,7 +23,7 @@ namespace HephCommon
 			case 1:
 				return this->y;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Vector2::operator[]", "Index must be 0 (x) or 1 (y)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Vector2::operator[]", "Index must be 0 (x) or 1 (y)."));
 			}
 		}
 		constexpr Vector2 operator+() const
@@ -143,7 +143,7 @@ namespace HephCommon
 			case 2:
 				return this->z;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Vector3::operator[]", "Index must be 0 (x), 1 (y) or 2 (z)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Vector3::operator[]", "Index must be 0 (x), 1 (y) or 2 (z)."));
 			}
 		}
 		constexpr Vector3 operator+() const

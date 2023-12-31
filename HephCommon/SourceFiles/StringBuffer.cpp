@@ -87,7 +87,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->ByteSize() + this->charSize);
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 		}
 		memset(this->pData + this->ByteSize(), 0, this->charSize);
 	}
@@ -96,7 +96,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->charSize);
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 		}
 		this->pData[0] = '\0';
 	}
@@ -105,7 +105,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 		}
 
 		this->pData[0] = c;
@@ -116,7 +116,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->charSize * 2);
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 		}
 
 		((wchar_t*)this->pData)[0] = wc;
@@ -130,7 +130,7 @@ namespace HephCommon
 			this->pData = (char*)malloc(this->charSize);
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 			}
 			memset(this->pData, 0, this->charSize);
 			return;
@@ -141,7 +141,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->ByteSize() + this->charSize); // allocate buffer and copy the string
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 		}
 		memcpy(this->pData, str, this->ByteSize() + this->charSize);
 	}
@@ -153,7 +153,7 @@ namespace HephCommon
 			this->pData = (char*)malloc(this->charSize);
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 			}
 			memset(this->pData, 0, this->charSize);
 			return;
@@ -164,7 +164,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->ByteSize() + this->charSize); // allocate buffer and copy the string
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 		}
 		memcpy(this->pData, wstr, this->ByteSize() + this->charSize);
 	}
@@ -179,7 +179,7 @@ namespace HephCommon
 			this->pData = (char*)malloc(this->ByteSize() + this->charSize); // allocate buffer and copy the string
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 			}
 
 			if (this->charSize != str.charSize)
@@ -203,7 +203,7 @@ namespace HephCommon
 			this->pData = (char*)malloc(this->charSize);
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 			}
 			memset(this->pData, 0, this->charSize);
 		}
@@ -236,7 +236,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::StringBuffer", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::StringBuffer", "Index out of bounds."));
 		}
 		return CharAccessor(this, index, this->charSize);
 	}
@@ -266,7 +266,7 @@ namespace HephCommon
 				this->pData = (char*)malloc(this->charSize);
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 				}
 				memset(this->pData, 0, this->charSize);
 
@@ -278,7 +278,7 @@ namespace HephCommon
 			this->pData = (char*)malloc(this->ByteSize() + this->charSize); // allocate buffer and copy the string
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::operator=", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::operator=", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs, this->ByteSize() + this->charSize);
 		}
@@ -299,7 +299,7 @@ namespace HephCommon
 				this->pData = (char*)malloc(this->charSize);
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 				}
 				memset(this->pData, 0, this->charSize);
 
@@ -311,7 +311,7 @@ namespace HephCommon
 			this->pData = (char*)malloc(this->ByteSize() + this->charSize); // allocate buffer and copy the string
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::operator=", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::operator=", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs, this->ByteSize() + this->charSize);
 		}
@@ -347,7 +347,7 @@ namespace HephCommon
 				}
 				else
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::operator=", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::operator=", "Insufficient memory."));
 				}
 			}
 			else
@@ -356,7 +356,7 @@ namespace HephCommon
 				this->pData = (char*)malloc(this->charSize);
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::StringBuffer", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::StringBuffer", "Insufficient memory."));
 				}
 				memset(this->pData, 0, this->charSize);
 			}
@@ -457,7 +457,7 @@ namespace HephCommon
 		char* pTemp = (char*)realloc(this->pData, newByteSize + this->charSize);
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::operator+=", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::operator+=", "Insufficient memory."));
 		}
 
 		if (this->charSize == sizeof(char))
@@ -482,7 +482,7 @@ namespace HephCommon
 		char* pTemp = (char*)realloc(this->pData, newByteSize + this->charSize);
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::operator+=", L"Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::operator+=", L"Insufficient memory."));
 		}
 
 		if (this->charSize == sizeof(wchar_t))
@@ -535,7 +535,7 @@ namespace HephCommon
 		char* pTemp = (char*)realloc(this->pData, newByteSize + this->charSize);
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::operator*=", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::operator*=", "Insufficient memory."));
 		}
 
 		for (size_t i = 0; i < newByteSize; i += oldByteSize)
@@ -638,7 +638,7 @@ namespace HephCommon
 			char* pTemp = (char*)malloc(this->size * newCharSize + newCharSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::ChangeStringType", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::ChangeStringType", "Insufficient memory."));
 			}
 
 			if (this->charSize == sizeof(char))
@@ -699,7 +699,7 @@ namespace HephCommon
 	{
 		if (index < 0 || index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::StringBuffer", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::StringBuffer", "Index out of bounds."));
 		}
 		return CharAccessor(this, index, this->charSize);
 	}
@@ -707,7 +707,7 @@ namespace HephCommon
 	{
 		if (index < 0 || index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::StringBuffer", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::StringBuffer", "Index out of bounds."));
 		}
 
 		if (this->charSize == sizeof(char))
@@ -724,7 +724,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::StringBuffer", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::StringBuffer", "Index out of bounds."));
 		}
 
 		if (this->charSize == sizeof(wchar_t))
@@ -741,7 +741,7 @@ namespace HephCommon
 	{
 		if (startIndex >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::SubString", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::SubString", "Index out of bounds."));
 		}
 
 		if (startIndex + size > this->size)
@@ -789,7 +789,7 @@ namespace HephCommon
 	{
 		if (offset >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::Find", "Offset out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::Find", "Offset out of bounds."));
 		}
 
 		if (this->charSize == sizeof(char))
@@ -803,7 +803,7 @@ namespace HephCommon
 		wchar_t* wstr = (wchar_t*)malloc(strSize * sizeof(wchar_t) + sizeof(wchar_t));
 		if (wstr == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::Find", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::Find", "Insufficient memory."));
 		}
 		mbstowcs(wstr, str, strSize + 1);
 
@@ -822,7 +822,7 @@ namespace HephCommon
 	{
 		if (offset >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::Find", "Offset out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::Find", "Offset out of bounds."));
 		}
 
 		if (this->charSize == sizeof(wchar_t))
@@ -836,7 +836,7 @@ namespace HephCommon
 		char* str = (char*)malloc(strSize * sizeof(char) + sizeof(char));
 		if (str == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Find", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Find", "Insufficient memory."));
 		}
 		wcstombs(str, wstr, strSize + 1);
 
@@ -950,7 +950,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::RemoveAt", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::RemoveAt", "Index out of bounds."));
 		}
 
 		if (index + size > this->size)
@@ -961,7 +961,7 @@ namespace HephCommon
 		char* pTemp = (char*)malloc(this->ByteSize());
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::RemoveAt", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::RemoveAt", "Insufficient memory."));
 		}
 		const size_t firstPartByteSize = index * this->charSize;
 		const size_t removedByteSize = size * this->charSize;
@@ -1039,7 +1039,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::ReplaceAt", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::ReplaceAt", "Index out of bounds."));
 		}
 
 		const size_t strSize = strlen(str);
@@ -1056,7 +1056,7 @@ namespace HephCommon
 			char* pTemp = (char*)realloc(this->pData, newByteSize + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::ReplaceAt", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::ReplaceAt", "Insufficient memory."));
 			}
 
 			this->size = index + strSize;
@@ -1079,7 +1079,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::ReplaceAt", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::ReplaceAt", "Index out of bounds."));
 		}
 
 		const size_t strSize = wcslen(wstr);
@@ -1096,7 +1096,7 @@ namespace HephCommon
 			char* pTemp = (char*)realloc(this->pData, newByteSize + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::ReplaceAt", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::ReplaceAt", "Insufficient memory."));
 			}
 
 			this->size = index + strSize;
@@ -1140,7 +1140,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::Insert", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::Insert", "Index out of bounds."));
 		}
 
 		const size_t strSize = strlen(str);
@@ -1149,7 +1149,7 @@ namespace HephCommon
 		char* pTemp = (char*)malloc(this->ByteSize() + strSize_byte + this->charSize);
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Insert", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Insert", "Insufficient memory."));
 		}
 
 		const size_t index_byte = index * this->charSize;
@@ -1165,7 +1165,7 @@ namespace HephCommon
 			wchar_t* wstr = (wchar_t*)malloc(strSize_byte);
 			if (wstr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Insert", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Insert", "Insufficient memory."));
 			}
 
 			mbstowcs(wstr, str, strSize);
@@ -1187,7 +1187,7 @@ namespace HephCommon
 	{
 		if (index >= this->size)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "StringBuffer::Insert", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "StringBuffer::Insert", "Index out of bounds."));
 		}
 
 		const size_t strSize = wcslen(wstr);
@@ -1196,7 +1196,7 @@ namespace HephCommon
 		char* pTemp = (char*)malloc(this->ByteSize() + strSize_byte + this->charSize);
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Insert", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Insert", "Insufficient memory."));
 		}
 
 		const size_t index_byte = index * this->charSize;
@@ -1207,7 +1207,7 @@ namespace HephCommon
 			char* str = (char*)malloc(strSize_byte);
 			if (str == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Insert", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Insert", "Insufficient memory."));
 			}
 
 			wcstombs(str, wstr, strSize);
@@ -1268,7 +1268,7 @@ namespace HephCommon
 			wchar_t* wstr = (wchar_t*)malloc(strSize * sizeof(wchar_t) + sizeof(wchar_t));
 			if (wstr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimStart", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimStart", "Insufficient memory."));
 			}
 
 			mbstowcs(wstr, str, strSize);
@@ -1289,7 +1289,7 @@ namespace HephCommon
 			char* pTemp = (char*)malloc(this->ByteSize() + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimStart", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimStart", "Insufficient memory."));
 			}
 
 			memcpy(pTemp, this->pData + iStart * this->charSize, this->ByteSize() + this->charSize);
@@ -1310,7 +1310,7 @@ namespace HephCommon
 			char* str = (char*)malloc(strSize * sizeof(char) + sizeof(char));
 			if (str == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimStart", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimStart", "Insufficient memory."));
 			}
 
 			wcstombs(str, wstr, strSize);
@@ -1338,7 +1338,7 @@ namespace HephCommon
 			char* pTemp = (char*)malloc(this->ByteSize() + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimStart", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimStart", "Insufficient memory."));
 			}
 
 			memcpy(pTemp, this->pData + iStart * this->charSize, this->ByteSize() + this->charSize);
@@ -1385,7 +1385,7 @@ namespace HephCommon
 			wchar_t* wstr = (wchar_t*)malloc(strSize * sizeof(wchar_t) + sizeof(wchar_t));
 			if (wstr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimEnd", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimEnd", "Insufficient memory."));
 			}
 
 			mbstowcs(wstr, str, strSize);
@@ -1407,7 +1407,7 @@ namespace HephCommon
 			char* pTemp = (char*)realloc(this->pData, this->ByteSize() + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimEnd", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimEnd", "Insufficient memory."));
 			}
 			memset(pTemp + this->ByteSize(), 0, this->charSize);
 
@@ -1426,7 +1426,7 @@ namespace HephCommon
 			char* str = (char*)malloc(strSize * sizeof(char) + sizeof(char));
 			if (str == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimEnd", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimEnd", "Insufficient memory."));
 			}
 
 			wcstombs(str, wstr, strSize);
@@ -1456,7 +1456,7 @@ namespace HephCommon
 			char* pTemp = (char*)realloc(this->pData, this->ByteSize() + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::TrimEnd", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::TrimEnd", "Insufficient memory."));
 			}
 			memset(pTemp + this->ByteSize(), 0, this->charSize);
 
@@ -1507,7 +1507,7 @@ namespace HephCommon
 			wchar_t* wstr = (wchar_t*)malloc(strSize * sizeof(wchar_t) + sizeof(wchar_t));
 			if (wstr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Trim", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Trim", "Insufficient memory."));
 			}
 
 			mbstowcs(wstr, str, strSize);
@@ -1534,7 +1534,7 @@ namespace HephCommon
 			char* pTemp = (char*)malloc(this->ByteSize() + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Trim", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Trim", "Insufficient memory."));
 			}
 
 			memcpy(pTemp, this->pData + iStart * this->charSize, this->ByteSize());
@@ -1557,7 +1557,7 @@ namespace HephCommon
 			char* str = (char*)malloc(strSize * sizeof(char) + sizeof(char));
 			if (wstr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Trim", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Trim", "Insufficient memory."));
 			}
 
 			wcstombs(str, wstr, strSize);
@@ -1597,7 +1597,7 @@ namespace HephCommon
 			char* pTemp = (char*)malloc(this->ByteSize() + this->charSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Trim", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Trim", "Insufficient memory."));
 			}
 
 			memcpy(pTemp, this->pData + iStart * this->charSize, this->ByteSize());
@@ -1626,7 +1626,7 @@ namespace HephCommon
 		this->pData = (char*)malloc(this->charSize);
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "StringBuffer::Clear", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Clear", "Insufficient memory."));
 		}
 		memset(this->pData, 0, this->charSize);
 

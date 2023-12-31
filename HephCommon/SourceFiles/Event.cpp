@@ -51,7 +51,7 @@ namespace HephCommon
 	{
 		if (index >= this->eventHandlers.size())
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Event::RemoveEventHandler", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::RemoveEventHandler", "Index out of bounds."));
 		}
 
 		this->eventHandlers.erase(this->eventHandlers.begin() + index);

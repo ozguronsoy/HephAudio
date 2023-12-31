@@ -12,13 +12,13 @@ namespace HephAudio
 	{
 		if (this->pNativeAudio == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioStream::AudioStream", "Native audio must not be nullptr."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "Native audio must not be nullptr."));
 			this->Release(false);
 		}
 
 		if (this->pFileFormat == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioStream::AudioStream", "File format '" + this->file.FileExtension() + "' is not supported."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "File format '" + this->file.FileExtension() + "' is not supported."));
 			this->Release(false);
 		}
 
@@ -29,7 +29,7 @@ namespace HephAudio
 		this->pAudioCodec = Codecs::AudioCodecManager::FindCodec(formatInfo.formatTag);
 		if (this->pAudioCodec == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AudioStream::AudioStream", "Unsupported audio codec."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AudioStream::AudioStream", "Unsupported audio codec."));
 			this->Release(true);
 		}
 

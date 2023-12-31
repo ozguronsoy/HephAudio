@@ -61,12 +61,12 @@ namespace HephAudio
 				snd_mixer_elem_t* mixerElem = snd_mixer_first_elem(mixer);
 				if (mixerElem == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "LinuxAudio::SetMasterVolume", "No mixer element found."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "LinuxAudio::SetMasterVolume", "No mixer element found."));
 				}
 
 				if (!snd_mixer_selem_has_playback_volume(mixerElem))
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "LinuxAudio::SetMasterVolume", "No mixer playback volume element found."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "LinuxAudio::SetMasterVolume", "No mixer playback volume element found."));
 				}
 
 				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, "LinuxAudio::SetMasterVolume", "An error occurred whilst setting the volume range.");
@@ -91,12 +91,12 @@ namespace HephAudio
 				snd_mixer_elem_t* mixerElem = snd_mixer_first_elem(mixer);
 				if (mixerElem == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "LinuxAudio::GetMasterVolume", "No mixer element found."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "LinuxAudio::GetMasterVolume", "No mixer element found."));
 				}
 
 				if (!snd_mixer_selem_has_playback_volume(mixerElem))
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "LinuxAudio::GetMasterVolume", "No mixer playback volume element found."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "LinuxAudio::GetMasterVolume", "No mixer playback volume element found."));
 				}
 
 				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, "LinuxAudio::GetMasterVolume", "An error occurred whilst getting the volume range.");

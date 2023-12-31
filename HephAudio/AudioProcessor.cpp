@@ -31,7 +31,7 @@ namespace HephAudio
 		}
 		else
 		{
-			RAISE_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_invalid_argument, "AudioProcessor::ChangeBitsPerSample", "Audio buffer is not raw PCM."));
+			RAISE_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioProcessor::ChangeBitsPerSample", "Audio buffer is not raw PCM."));
 		}
 	}
 	void AudioProcessor::ChangeNumberOfChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
@@ -132,7 +132,7 @@ namespace HephAudio
 		IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(buffer.formatInfo.formatTag);
 		if (pAudioCodec == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_fail, "AudioProcessor::ConvertToInnerFormat", "Unsupported audio codec."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_FAIL, "AudioProcessor::ConvertToInnerFormat", "Unsupported audio codec."));
 		}
 
 		EncodedBufferInfo encodedBufferInfo;
@@ -151,7 +151,7 @@ namespace HephAudio
 		IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(targetFormat.formatTag);
 		if (pAudioCodec == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HephException::ec_fail, "AudioProcessor::ConvertToTargetFormat", "Unsupported audio codec."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_FAIL, "AudioProcessor::ConvertToTargetFormat", "Unsupported audio codec."));
 		}
 
 		EncodedBufferInfo encodedBufferInfo;

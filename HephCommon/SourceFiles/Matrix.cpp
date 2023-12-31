@@ -1,8 +1,8 @@
 #include "Matrix.h"
 #include "HephException.h"
 
-#define MATRIX_CHECK_ROW_INDEX(i, c, method) if (i >= c) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, method, "Row index out of bounds.")); }
-#define MATRIX_CHECK_COL_INDEX(i, c, method) if (i >= c) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, method, "Col index out of bounds.")); }
+#define MATRIX_CHECK_ROW_INDEX(i, c, method) if (i >= c) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, method, "Row index out of bounds.")); }
+#define MATRIX_CHECK_COL_INDEX(i, c, method) if (i >= c) { RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, method, "Col index out of bounds.")); }
 #define MATRIX_CHECK_INDICES(ri, ci, rc, cc, method)  MATRIX_CHECK_ROW_INDEX(ri, rc, method) MATRIX_CHECK_COL_INDEX(ci, cc, method)
 
 namespace HephCommon
@@ -27,7 +27,7 @@ namespace HephCommon
 	{
 		if (this->colCount == 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Matrix", "The matrix must have at least one column."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Matrix", "The matrix must have at least one column."));
 		}
 
 		for (size_t i = 0; i < this->colCount; i++)
@@ -40,20 +40,20 @@ namespace HephCommon
 		this->rowCount = rhs.size();
 		if (this->rowCount == 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Matrix", "The matrix must have at least one row."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Matrix", "The matrix must have at least one row."));
 		}
 
 		this->colCount = rhs.begin()[0].size();
 		if (this->colCount == 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Matrix", "The matrix must have at least one column."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Matrix", "The matrix must have at least one column."));
 		}
 
 		for (const std::initializer_list<heph_float>& row : rhs)
 		{
 			if (this->colCount != row.size())
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Matrix", "All rows must have the same number of columns."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Matrix", "All rows must have the same number of columns."));
 			}
 		}
 
@@ -125,7 +125,7 @@ namespace HephCommon
 	{
 		if (rhs.size() == 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator=", "The matrix must have at least one column."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator=", "The matrix must have at least one column."));
 		}
 
 		this->rowCount = 1;
@@ -144,20 +144,20 @@ namespace HephCommon
 		this->rowCount = rhs.size();
 		if (this->rowCount == 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator=", "The matrix must have at least one row."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator=", "The matrix must have at least one row."));
 		}
 
 		this->colCount = rhs.begin()[0].size();
 		if (this->colCount == 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator=", "The matrix must have at least one column."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator=", "The matrix must have at least one column."));
 		}
 
 		for (const std::initializer_list<heph_float>& row : rhs)
 		{
 			if (this->colCount != row.size())
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator=", "All rows must have the same number of columns."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator=", "All rows must have the same number of columns."));
 			}
 		}
 
@@ -197,7 +197,7 @@ namespace HephCommon
 	{
 		if (rhs.rowCount != this->rowCount || rhs.colCount != rhs.colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator+", "The matrices must have the same number of rows and columns to perform addition."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator+", "The matrices must have the same number of rows and columns to perform addition."));
 		}
 
 		Matrix result(this->rowCount, this->colCount);
@@ -214,7 +214,7 @@ namespace HephCommon
 	{
 		if (rhs.rowCount != this->rowCount || rhs.colCount != rhs.colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator+=", "The matrices must have the same number of rows and columns to perform addition."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator+=", "The matrices must have the same number of rows and columns to perform addition."));
 		}
 
 		const size_t elementCount = this->ElementCount();
@@ -229,7 +229,7 @@ namespace HephCommon
 	{
 		if (rhs.rowCount != this->rowCount || rhs.colCount != rhs.colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator-", "The matrices must have the same number of rows and columns to perform subtraction."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator-", "The matrices must have the same number of rows and columns to perform subtraction."));
 		}
 
 		Matrix result(this->rowCount, this->colCount);
@@ -246,7 +246,7 @@ namespace HephCommon
 	{
 		if (rhs.rowCount != this->rowCount || rhs.colCount != rhs.colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator+=", "The matrices must have the same number of rows and columns to perform subtraction."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator+=", "The matrices must have the same number of rows and columns to perform subtraction."));
 		}
 
 		const size_t elementCount = this->ElementCount();
@@ -261,7 +261,7 @@ namespace HephCommon
 	{
 		if (this->colCount != rhs.rowCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator*", "The # of columns in the first matrix does not match the # of rows in the second matrix."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator*", "The # of columns in the first matrix does not match the # of rows in the second matrix."));
 		}
 
 		Matrix result(this->rowCount, rhs.colCount);
@@ -283,7 +283,7 @@ namespace HephCommon
 	{
 		if (this->colCount != rhs.rowCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::operator*=", "The # of columns in the first matrix does not match the # of rows in the second matrix."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::operator*=", "The # of columns in the first matrix does not match the # of rows in the second matrix."));
 		}
 
 		FloatBuffer tempElements(this->rowCount * rhs.colCount);
@@ -370,7 +370,7 @@ namespace HephCommon
 	{
 		if (this->rowCount != this->colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Determinant", "The matrix is not quadratic."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Determinant", "The matrix is not quadratic."));
 		}
 
 		if (this->rowCount == 1)
@@ -408,7 +408,7 @@ namespace HephCommon
 	{
 		if (this->rowCount != this->colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Cofactor", "The matrix is not quadratic."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Cofactor", "The matrix is not quadratic."));
 		}
 
 		Matrix result(this->rowCount, this->colCount);
@@ -443,7 +443,7 @@ namespace HephCommon
 	{
 		if (this->rowCount != this->colCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Matrix::Inverse", "The matrix is not quadratic."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Matrix::Inverse", "The matrix is not quadratic."));
 		}
 		const heph_float determinant = this->Determinant();
 		return (determinant == 0) ? Matrix(0, 0) : (this->Cofactor().Transpose() / determinant);

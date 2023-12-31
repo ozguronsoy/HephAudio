@@ -129,7 +129,7 @@ namespace HephCommon
 		void* pTemp = malloc(dataSize);
 		if (pTemp == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "File::Write", "Insufficient memory."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "File::Write", "Insufficient memory."));
 		}
 		memcpy(pTemp, pData, dataSize);
 
@@ -170,7 +170,7 @@ namespace HephCommon
 			strOpenMode = "wb+";
 			break;
 		default:
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "File::File", "Invalid mode."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "File::File", "Invalid mode."));
 		}
 		this->pFile = fopen(this->filePath.fc_str(), strOpenMode.fc_str());
 	}

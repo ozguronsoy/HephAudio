@@ -23,7 +23,7 @@ namespace HephCommon
 	{
 		if (offset >= this->bufferSize_bit)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::SetOffset", "New offset exceeds the buffer size."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::SetOffset", "New offset exceeds the buffer size."));
 			return StreamStatus::Fail;
 		}
 
@@ -34,7 +34,7 @@ namespace HephCommon
 	{
 		if ((this->offset + x) >= this->bufferSize_bit)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::IncreaseOffset", "New offset exceeds the buffer size."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::IncreaseOffset", "New offset exceeds the buffer size."));
 			return StreamStatus::Fail;
 		}
 
@@ -57,13 +57,13 @@ namespace HephCommon
 	{
 		if (pOutData == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Read", "pOutData cannot be null."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Read", "pOutData cannot be null."));
 			return StreamStatus::Fail;
 		}
 
 		if (this->offset == this->bufferSize_bit)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Read", "Offset exceeds the buffer size."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Read", "Offset exceeds the buffer size."));
 			return StreamStatus::Fail;
 		}
 
@@ -75,13 +75,13 @@ namespace HephCommon
 	{
 		if (pOutData == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Read", "pOutData cannot be null."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Read", "pOutData cannot be null."));
 			return StreamStatus::Fail;
 		}
 
 		if (this->offset == this->bufferSize_bit)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Read", "Offset exceeds the buffer size."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Read", "Offset exceeds the buffer size."));
 			return StreamStatus::Fail;
 		}
 
@@ -110,7 +110,7 @@ namespace HephCommon
 	{
 		if (this->offset == this->bufferSize_bit)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Write", "Offset exceeds the buffer size."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Write", "Offset exceeds the buffer size."));
 			return StreamStatus::Fail;
 		}
 
@@ -122,13 +122,13 @@ namespace HephCommon
 	{
 		if (pBits == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Write", "pBits cannot be null."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Write", "pBits cannot be null."));
 			return StreamStatus::Fail;
 		}
 
 		if (this->offset == this->bufferSize_bit)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "BitStream::Write", "Offset exceeds the buffer size."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BitStream::Write", "Offset exceeds the buffer size."));
 			return StreamStatus::Fail;
 		}
 

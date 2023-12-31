@@ -17,13 +17,13 @@ namespace HephAudio
 			deviceApiLevel = android_get_device_api_level();
 			if (deviceApiLevel == -1)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioBase::AndroidAudioBase", "An error occurred whilst getting the current device's api level."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioBase::AndroidAudioBase", "An error occurred whilst getting the current device's api level."));
 			}
 			else if (deviceApiLevel >= 23)
 			{
 				if (jvm == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr."));
 				}
 			}
 		}

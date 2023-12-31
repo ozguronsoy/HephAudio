@@ -44,7 +44,7 @@ namespace HephCommon
 
 		if (!StreamHelpers::FindString(this->file, this->stringType, L"?>", nullptr))
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "XmlStream::Read", "Invalid file."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "XmlStream::Read", "Invalid file."));
 		}
 
 		if (!StreamHelpers::FindString(this->file, this->stringType, L"<", nullptr))
@@ -108,12 +108,12 @@ namespace HephCommon
 
 			if (!StreamHelpers::FindString(this->file, this->stringType, L"=", &attribute.name))
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "XmlStream::Read", "Invalid file."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "XmlStream::Read", "Invalid file."));
 			}
 			StreamHelpers::NextChar(this->file, this->stringType); // skip the first "
 			if (!StreamHelpers::FindString(this->file, this->stringType, L"\"", &attribute.value))
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "XmlStream::Read", "Invalid file."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "XmlStream::Read", "Invalid file."));
 			}
 
 			element.attributes.push_back(attribute);

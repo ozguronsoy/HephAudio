@@ -19,7 +19,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < 16)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
 			}
 
 			renderCallbackContext.pAndroidAudio = this;
@@ -107,7 +107,7 @@ namespace HephAudio
 
 			if (renderCallbackContext.pDataBase == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::InitializeRender", "Insufficient memory."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::InitializeRender", "Insufficient memory."));
 				return;
 			}
 			memset(renderCallbackContext.pDataBase, 0, renderCallbackContext.bufferSize);
@@ -185,7 +185,7 @@ namespace HephAudio
 
 			if (captureCallbackContext.pDataBase == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AndroidAudioSLES::InitializeCapture", "Insufficient memory."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::InitializeCapture", "Insufficient memory."));
 				return;
 			}
 			memset(captureCallbackContext.pDataBase, 0, captureCallbackContext.bufferSize);

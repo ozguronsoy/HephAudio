@@ -235,7 +235,7 @@ namespace HephAudio
 			deviceIDs = (AudioObjectID*)malloc(size);
 			if (deviceIDs == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AppleAudio::EnumerateAudioDevices", "Insufficient memory."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "Insufficient memory."));
 				return AppleAudio::DEVICE_ENUMERATION_FAIL;
 			}
 
@@ -258,7 +258,7 @@ namespace HephAudio
 					UInt32* deviceSources = (UInt32*)malloc(size);
 					if (deviceSources == nullptr)
 					{
-						RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AppleAudio::EnumerateAudioDevices", "Insufficient memory."));
+						RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "Insufficient memory."));
 						return AppleAudio::DEVICE_ENUMERATION_FAIL;
 					}
 					APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, deviceSources), this, "AppleAudio::EnumerateAudioDevices", "An error occurred whilst getting the device sources.");
@@ -283,7 +283,7 @@ namespace HephAudio
 						{
 							free(deviceSources);
 							CFRelease(cfs);
-							RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AppleAudio::EnumerateAudioDevices", "An error occurred whilst getting the device source id."));
+							RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "An error occurred whilst getting the device source id."));
 							return AppleAudio::DEVICE_ENUMERATION_FAIL;
 						}
 						CFRelease(cfs);
@@ -337,7 +337,7 @@ namespace HephAudio
 						{
 							free(deviceIDs);
 							CFRelease(cfs);
-							RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AppleAudio::EnumerateAudioDevices", "An error occurred whilst getting the device name."));
+							RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "An error occurred whilst getting the device name."));
 							return AppleAudio::DEVICE_ENUMERATION_FAIL;
 						}
 						CFRelease(cfs);
@@ -404,7 +404,7 @@ namespace HephAudio
 				streamDesc.mFormatID = kAudioFormatQUALCOMM;
 				break;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AppleAudio", "Invalid audio format."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));
 			}
 		}
 		void AppleAudio::FromStreamDesc(AudioFormatInfo& format, const AudioStreamBasicDescription& streamDesc) const
@@ -443,7 +443,7 @@ namespace HephAudio
 				format.formatTag = WAVE_FORMAT_QUALCOMM_PUREVOICE;
 				break;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "AppleAudio", "Invalid audio format."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));
 			}
 		}
 		OSStatus AppleAudio::RenderCallback(AudioDeviceID device, const AudioTimeStamp* now, const AudioBufferList* indata,

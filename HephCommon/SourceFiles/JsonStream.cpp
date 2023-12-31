@@ -85,17 +85,17 @@ namespace HephCommon
 		// Get the element name
 		if (!StreamHelpers::FindChar(this->file, this->stringType, L'"', nullptr))
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
 			return element;
 		}
 		if (!StreamHelpers::FindChar(this->file, this->stringType, L'"', &element.name))
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
 			return element;
 		}
 		if (!StreamHelpers::FindChar(this->file, this->stringType, L':', nullptr))
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
 			return element;
 		}
 
@@ -115,7 +115,7 @@ namespace HephCommon
 		{
 			if (!StreamHelpers::FindChar(this->file, this->stringType, L'"', &element.value))
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "JsonStream::Read", "Failed to read the json element. File might be corrupted."));
 				return false;
 			}
 		}

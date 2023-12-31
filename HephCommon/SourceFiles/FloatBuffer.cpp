@@ -12,7 +12,7 @@ namespace HephCommon
 			this->pData = (heph_float*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::FloatBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::FloatBuffer", "Insufficient memory."));
 			}
 			this->Reset();
 		}
@@ -24,7 +24,7 @@ namespace HephCommon
 			this->pData = (heph_float*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::FloatBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::FloatBuffer", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
@@ -37,7 +37,7 @@ namespace HephCommon
 			this->pData = (heph_float*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::FloatBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::FloatBuffer", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.pData, this->Size());
 		}
@@ -74,7 +74,7 @@ namespace HephCommon
 			this->pData = (heph_float*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::operator=", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::operator=", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
@@ -98,7 +98,7 @@ namespace HephCommon
 				this->pData = (heph_float*)malloc(this->Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::operator=", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::operator=", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.pData, this->Size());
 			}
@@ -382,11 +382,11 @@ namespace HephCommon
 	{
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "FloatBuffer::At", "Empty buffer."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FloatBuffer::At", "Empty buffer."));
 		}
 		if (frameIndex >= this->frameCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "FloatBuffer::At", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FloatBuffer::At", "Index out of bounds."));
 		}
 		return *(this->pData + frameIndex);
 	}
@@ -416,7 +416,7 @@ namespace HephCommon
 			heph_float* pTemp = (heph_float*)malloc(this->Size() + rhs.Size());
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::Append", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Append", "Insufficient memory."));
 			}
 
 			memcpy(pTemp, this->pData, this->Size());
@@ -438,7 +438,7 @@ namespace HephCommon
 			heph_float* pTemp = (heph_float*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::Insert", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Insert", "Insufficient memory."));
 			}
 			memset(pTemp, 0, newSize);
 
@@ -481,7 +481,7 @@ namespace HephCommon
 			heph_float* pTemp = (heph_float*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::Cut", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Cut", "Insufficient memory."));
 			}
 
 			const size_t frameIndex_byte = frameIndex * sizeof(heph_float);
@@ -513,7 +513,7 @@ namespace HephCommon
 			heph_float* pTemp = (heph_float*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::Replace", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Replace", "Insufficient memory."));
 			}
 			memset(pTemp, 0, newSize);
 
@@ -560,7 +560,7 @@ namespace HephCommon
 				heph_float* pTemp = (heph_float*)realloc(this->pData, newFrameCount * sizeof(heph_float));
 				if (pTemp == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "FloatBuffer::Resize", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Resize", "Insufficient memory."));
 				}
 				if (newFrameCount > this->frameCount)
 				{

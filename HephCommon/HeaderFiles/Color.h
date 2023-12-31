@@ -98,7 +98,7 @@ namespace HephCommon
 			case 3:
 				return this->a;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "Color::operator[]", "Index must be 0 (r), 1 (g), 2 (b) or 3 (a)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Color::operator[]", "Index must be 0 (r), 1 (g), 2 (b) or 3 (a)."));
 			}
 		}
 		constexpr Color& operator=(const Color& rhs)
@@ -437,7 +437,7 @@ namespace HephCommon
 			case 2:
 				return this->b;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "RGB::operator[]", "Index must be 0 (r), 1 (g), or 2 (b)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "RGB::operator[]", "Index must be 0 (r), 1 (g), or 2 (b)."));
 			}
 		}
 		constexpr RGB& operator=(const RGB& rhs)
@@ -524,7 +524,7 @@ namespace HephCommon
 			case 2:
 				return this->l;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "HSL::operator[]", "Index must be 0 (h), 1 (s), or 2 (l)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "HSL::operator[]", "Index must be 0 (h), 1 (s), or 2 (l)."));
 			}
 		}
 		constexpr HSL& operator=(const HSL& rhs)
@@ -611,7 +611,7 @@ namespace HephCommon
 			case 2:
 				return this->v;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "HSV::operator[]", "Index must be 0 (h), 1 (s), or 2 (v)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "HSV::operator[]", "Index must be 0 (h), 1 (s), or 2 (v)."));
 			}
 		}
 		constexpr HSV& operator=(const HSV& rhs)
@@ -704,7 +704,7 @@ namespace HephCommon
 			case 3:
 				return this->k;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "CMYK::operator[]", "Index must be 0 (c), 1 (m), 2 (y), or 3 (k)."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "CMYK::operator[]", "Index must be 0 (c), 1 (m), 2 (y), or 3 (k)."));
 			}
 		}
 		constexpr CMYK& operator=(const CMYK& rhs)

@@ -25,7 +25,7 @@ namespace HephCommon
 				this->pData = (ColorType*)malloc(this->Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
 				}
 				this->Reset();
 			}
@@ -37,7 +37,7 @@ namespace HephCommon
 				this->pData = (ColorType*)malloc(this->Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.begin(), this->Size());
 			}
@@ -50,7 +50,7 @@ namespace HephCommon
 				this->pData = (ColorType*)malloc(this->Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ColorBufferBase::ColorBufferBase", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.pData, this->Size());
 			}
@@ -79,7 +79,7 @@ namespace HephCommon
 				this->pData = (ColorType*)malloc(this->Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::operator=", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ColorBufferBase::operator=", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.begin(), this->Size());
 			}
@@ -103,7 +103,7 @@ namespace HephCommon
 					this->pData = (ColorType*)malloc(this->Size());
 					if (this->pData == nullptr)
 					{
-						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::operator=", "Insufficient memory."));
+						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ColorBufferBase::operator=", "Insufficient memory."));
 					}
 					memcpy(this->pData, rhs.pData, this->Size());
 				}
@@ -152,11 +152,11 @@ namespace HephCommon
 		{
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "ColorBufferBase::At", "Empty buffer."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "ColorBufferBase::At", "Empty buffer."));
 			}
 			if (frameIndex >= this->frameCount)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "ColorBufferBase::At", "Index out of bounds."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ColorBufferBase::At", "Index out of bounds."));
 			}
 			return *(this->pData + frameIndex);
 		}
@@ -180,7 +180,7 @@ namespace HephCommon
 					ColorType* pTemp = (ColorType*)realloc(this->pData, newFrameCount * sizeof(ColorType));
 					if (pTemp == nullptr)
 					{
-						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ColorBufferBase::Resize", "Insufficient memory."));
+						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ColorBufferBase::Resize", "Insufficient memory."));
 					}
 					if (newFrameCount > this->frameCount)
 					{

@@ -74,7 +74,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "PcmCodec::Decode", "Invalid sample size."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "PcmCodec::Decode", "Invalid sample size."));
 				}
 			}
 			else
@@ -126,7 +126,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "PcmCodec::Decode", "Invalid sample size."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "PcmCodec::Decode", "Invalid sample size."));
 				}
 			}
 
@@ -199,7 +199,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "PcmCodec::Encode", "Invalid sample size."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "PcmCodec::Encode", "Invalid sample size."));
 				}
 			}
 			else
@@ -251,7 +251,7 @@ namespace HephAudio
 				}
 				break;
 				default:
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HephCommon::HephException::ec_fail, "PcmCodec::Encode", "Invalid sample size."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "PcmCodec::Encode", "Invalid sample size."));
 				}
 			}
 

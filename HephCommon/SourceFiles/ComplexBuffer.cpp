@@ -13,7 +13,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
 			}
 			this->Reset();
 		}
@@ -25,7 +25,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
@@ -41,7 +41,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
@@ -54,7 +54,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
@@ -70,7 +70,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(rhs.Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::ComplexBuffer", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.pData, rhs.Size());
 		}
@@ -107,7 +107,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::operator=", "Insufficient memory."));
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
@@ -128,7 +128,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::operator=", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.begin(), this->Size());
 		}
@@ -151,7 +151,7 @@ namespace HephCommon
 			this->pData = (Complex*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::operator=", "Insufficient memory."));
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
@@ -175,7 +175,7 @@ namespace HephCommon
 				this->pData = (Complex*)malloc(rhs.Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::operator=", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::operator=", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.pData, rhs.Size());
 			}
@@ -652,11 +652,11 @@ namespace HephCommon
 	{
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "ComplexBuffer::At", "Empty buffer."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "ComplexBuffer::At", "Empty buffer."));
 		}
 		if (frameIndex >= this->frameCount)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "ComplexBuffer::At", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ComplexBuffer::At", "Index out of bounds."));
 		}
 		return *(this->pData + frameIndex);
 	}
@@ -686,7 +686,7 @@ namespace HephCommon
 			void* pTemp = malloc(this->Size() + buffer.Size());
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::Append", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::Append", "Insufficient memory."));
 			}
 
 			memcpy(pTemp, this->pData, this->Size());
@@ -709,7 +709,7 @@ namespace HephCommon
 			void* pTemp = malloc(newSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::Insert", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::Insert", "Insufficient memory."));
 			}
 			memset(pTemp, 0, newSize);
 
@@ -752,7 +752,7 @@ namespace HephCommon
 			Complex* pTemp = (Complex*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::Cut", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::Cut", "Insufficient memory."));
 			}
 
 			const size_t frameIndex_byte = frameIndex * sizeof(Complex);
@@ -784,7 +784,7 @@ namespace HephCommon
 			void* pTemp = malloc(newSize);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::Replace", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::Replace", "Insufficient memory."));
 			}
 			memset(pTemp, 0, newSize);
 
@@ -834,7 +834,7 @@ namespace HephCommon
 				Complex* pTemp = (Complex*)realloc(this->pData, newFrameCount * sizeof(Complex));
 				if (pTemp == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "ComplexBuffer::Resize", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "ComplexBuffer::Resize", "Insufficient memory."));
 				}
 				if (newFrameCount > this->frameCount)
 				{

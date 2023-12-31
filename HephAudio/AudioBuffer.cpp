@@ -15,7 +15,7 @@ namespace HephAudio
 			this->pData = malloc(this->Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::AudioBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory."));
 			}
 			this->Reset();
 		}
@@ -28,7 +28,7 @@ namespace HephAudio
 			this->pData = malloc(rhs.Size());
 			if (this->pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::AudioBuffer", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory."));
 			}
 			memcpy(this->pData, rhs.pData, rhs.Size());
 		}
@@ -80,7 +80,7 @@ namespace HephAudio
 				this->pData = malloc(rhs.Size());
 				if (this->pData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::operator=", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::operator=", "Insufficient memory."));
 				}
 				memcpy(this->pData, rhs.pData, rhs.Size());
 			}
@@ -145,7 +145,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator+", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator+", "Buffers must have the same format."));
 		}
 
 		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
@@ -197,7 +197,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator+=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator+=", "Buffers must have the same format."));
 		}
 
 		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
@@ -250,7 +250,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator-", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator-", "Buffers must have the same format."));
 		}
 
 		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
@@ -302,7 +302,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator-=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator-=", "Buffers must have the same format."));
 		}
 
 		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
@@ -344,7 +344,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator*", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator*", "Buffers must have the same format."));
 		}
 
 		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
@@ -403,7 +403,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator*=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator*=", "Buffers must have the same format."));
 		}
 
 		if (this->frameCount >= rhs.frameCount)
@@ -463,7 +463,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator/", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator/", "Buffers must have the same format."));
 		}
 
 		AudioBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount), this->formatInfo);
@@ -522,7 +522,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::operator/=", "Buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator/=", "Buffers must have the same format."));
 		}
 
 		if (this->frameCount >= rhs.frameCount)
@@ -638,7 +638,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != buffer.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::Append", "Both buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Append", "Both buffers must have the same format."));
 		}
 
 		if (buffer.frameCount > 0)
@@ -652,7 +652,7 @@ namespace HephAudio
 			void* tempPtr = malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Join", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Join", "Insufficient memory."));
 			}
 			memcpy(tempPtr, this->pData, this->Size());
 
@@ -667,7 +667,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != buffer.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::Insert", "Both buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Insert", "Both buffers must have the same format."));
 		}
 
 		if (buffer.frameCount > 0)
@@ -679,7 +679,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Insert", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Insert", "Insufficient memory."));
 			}
 			memset(tempPtr, 0, newSize);
 
@@ -718,7 +718,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Cut", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Cut", "Insufficient memory."));
 			}
 
 			const size_t frameIndexAsBytes = frameIndex * this->formatInfo.FrameSize();
@@ -745,7 +745,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != buffer.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_invalid_argument, "AudioBuffer::Replace", "Both buffers must have the same format."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Replace", "Both buffers must have the same format."));
 		}
 
 		if (frameCount > 0)
@@ -756,7 +756,7 @@ namespace HephAudio
 			void* tempPtr = malloc(newSize);
 			if (tempPtr == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Replace", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Replace", "Insufficient memory."));
 			}
 			memset(tempPtr, 0, newSize);
 
@@ -806,7 +806,7 @@ namespace HephAudio
 				void* tempPtr = realloc(this->pData, newFrameCount * this->formatInfo.FrameSize());
 				if (tempPtr == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_insufficient_memory, "AudioBuffer::Resize", "Insufficient memory."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Resize", "Insufficient memory."));
 				}
 				if (newFrameCount > this->frameCount)
 				{

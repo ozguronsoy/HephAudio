@@ -38,7 +38,7 @@ namespace HephAudio
 				i++;
 				if (i == 20)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HephException::ec_fail, "WinAudio", "Time-out whilst waiting for the creation of the device enumerator."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "WinAudio", "Time-out whilst waiting for the creation of the device enumerator."));
 				}
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(this->deviceEnumerationPeriod_ms + 100)); // wait for the first device enumeration
