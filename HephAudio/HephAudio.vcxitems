@@ -30,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AudioPlaylist.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BartlettHannWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BlackmanHarrisWindow.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AudioPlaylist.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BartlettHannWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BlackmanHarrisWindow.cpp" />

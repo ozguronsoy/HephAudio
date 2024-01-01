@@ -6,18 +6,21 @@
 
 namespace HephCommon
 {
-	File::File() : pFile(nullptr), fileSize(0), filePath("") { }
+	File::File() : pFile(nullptr), fileSize(0), filePath(nullptr) { }
 	File::File(const StringBuffer& filePath, FileOpenMode openMode) : pFile(nullptr), fileSize(0), filePath(filePath)
 	{
-		this->Open(openMode);
-		if (this->pFile == nullptr)
+		if (this->filePath != nullptr && this->filePath != "" && this->filePath != L"")
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, L"File::File", L"An error occurred whilst opening the file."));
-		}
+			this->Open(openMode);
+			if (this->pFile == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, L"File::File", L"An error occurred whilst opening the file."));
+			}
 
-		fseek(this->pFile, 0, SEEK_END);
-		this->fileSize = ftell(this->pFile);
-		fseek(this->pFile, 0, SEEK_SET);
+			fseek(this->pFile, 0, SEEK_END);
+			this->fileSize = ftell(this->pFile);
+			fseek(this->pFile, 0, SEEK_SET);
+		}
 	}
 	File::File(File&& rhs) noexcept : pFile(rhs.pFile), fileSize(rhs.fileSize), filePath(rhs.filePath)
 	{

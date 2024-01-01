@@ -366,13 +366,18 @@ namespace HephAudio
 					{
 						if (pAudioObject->loopCount == 1) // Finish playing.
 						{
+							const StringBuffer audioObjectName = pAudioObject->name;
+
 							AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, pAudioObject, 0);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
-							HEPHAUDIO_LOG("Finished playing the file \"" + pAudioObject->name + "\"", HEPH_CL_INFO);
+							HEPHAUDIO_LOG("Finished playing the file \"" + audioObjectName + "\"", HEPH_CL_INFO);
 
-							audioObjects.erase(audioObjects.begin() + i);
-							i--;
+							if (AudioObjectExists(pAudioObject) && pAudioObject->name == audioObjectName)
+							{
+								audioObjects.erase(audioObjects.begin() + i);
+								i--;
+							}
 						}
 						else
 						{

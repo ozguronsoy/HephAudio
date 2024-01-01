@@ -71,9 +71,8 @@ namespace HephAudio
 				const heph_float resampleIndex = i / srRatio;
 				const heph_float rho = resampleIndex - floor(resampleIndex);
 
-				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+				for (size_t j = 0; j < buffer.formatInfo.channelCount && (resampleIndex + 1) < buffer.frameCount; j++)
 				{
-					if (resampleIndex + 1.0 >= buffer.frameCount) break;
 					resultBuffer[i][j] = buffer[resampleIndex][j] * (1.0 - rho) + buffer[resampleIndex + 1.0][j] * rho;
 				}
 			}
@@ -94,9 +93,8 @@ namespace HephAudio
 				const heph_float resampleIndex = i / srRatio + subBufferFrameIndex;
 				const heph_float rho = resampleIndex - floor(resampleIndex);
 
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount; j++)
+				for (size_t j = 0; j < subBuffer.formatInfo.channelCount && (resampleIndex + 1) < originalBuffer.frameCount; j++)
 				{
-					if (resampleIndex + 1.0 >= originalBuffer.frameCount) break;
 					subBuffer[i][j] = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
 				}
 			}

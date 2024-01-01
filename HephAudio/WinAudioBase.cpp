@@ -27,7 +27,7 @@ namespace HephAudio
 		}
 		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEX& wfx)
 		{
-			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.nSamplesPerSec, wfx.wBitsPerSample);
+			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.wBitsPerSample, wfx.nSamplesPerSec);
 		}
 		WAVEFORMATEX WinAudioBase::AFI2WFX(const AudioFormatInfo& afi)
 		{

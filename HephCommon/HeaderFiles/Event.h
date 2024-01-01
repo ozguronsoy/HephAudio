@@ -20,7 +20,9 @@ namespace HephCommon
 		Event& operator=(const EventHandler& handler);
 		Event& operator+=(const EventHandler& handler);
 		Event& operator-=(const EventHandler& handler);
+		EventHandler GetEventHandler(size_t index) const;
 		void AddEventHandler(EventHandler handler);
+		void InsertEventHandler(EventHandler handler, size_t index);
 		void RemoveEventHandler(EventHandler handler);
 		void RemoveEventHandler(size_t index);
 		void Clear();

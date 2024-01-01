@@ -301,6 +301,7 @@ namespace HephAudio
 			{
 				format = WinAudioBase::WFX2AFI(*closestFormat);
 				format.formatTag = WAVE_FORMAT_PCM;
+				wfx = WinAudioBase::AFI2WFX(format);
 				CoTaskMemFree(closestFormat);
 				closestFormat = nullptr;
 			}
@@ -414,6 +415,7 @@ namespace HephAudio
 			{
 				format = WinAudioBase::WFX2AFI(*closestFormat);
 				format.formatTag = WAVE_FORMAT_PCM;
+				wfx = WinAudioBase::AFI2WFX(format);
 				CoTaskMemFree(closestFormat);
 				closestFormat = nullptr;
 			}

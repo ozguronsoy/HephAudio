@@ -5,7 +5,8 @@ namespace HephCommon
 	struct EventArgs
 	{
 		const void* pSender;
-		EventArgs(const void* pSender) : pSender(pSender) {}
+		bool isHandled;
+		EventArgs(const void* pSender) : pSender(pSender), isHandled(false) {}
 		virtual ~EventArgs() = default;
 	};
 }
