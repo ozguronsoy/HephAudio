@@ -314,12 +314,20 @@ namespace HephAudio
 
 		if (pPlaylist->applyFadeInOrDelay)
 		{
-			const heph_float duration_sample = pPlaylist->transitionDuration_s * pNativeAudio->GetRenderFormat().sampleRate;
+			const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
+			const heph_float duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
 			if (pAudioObject->frameIndex >= duration_sample)
 			{
 				pPlaylist->applyFadeInOrDelay = false;
 			}
-			pRenderResult->renderBuffer *= (pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
+			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
+			{
+				const heph_float factor = (i + pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
+				for (size_t j = 0; j < renderFormatInfo.channelCount; j++)
+				{
+					pRenderResult->renderBuffer[i][j] *= factor;
+				}
+			}
 		}
 	}
 	void AudioPlaylist::Transition_FadeOut(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult)
@@ -327,11 +335,19 @@ namespace HephAudio
 		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		const heph_float duration_sample = pPlaylist->transitionDuration_s * pNativeAudio->GetRenderFormat().sampleRate;
+		const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
+		const heph_float duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
 		const size_t fileFrameCount = pPlaylist->stream.GetFileFormat()->FileFrameCount(*pPlaylist->stream.GetFile(), pPlaylist->stream.GetAudioFormatInfo());
 		if (pAudioObject->frameIndex + duration_sample >= fileFrameCount + pRenderArgs->renderFrameCount)
 		{
-			pRenderResult->renderBuffer *= (fileFrameCount - pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
+			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
+			{
+				const heph_float factor = (fileFrameCount - i - pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
+				for (size_t j = 0; j < renderFormatInfo.channelCount; j++)
+				{
+					pRenderResult->renderBuffer[i][j] *= factor;
+				}
+			}
 		}
 	}
 }
