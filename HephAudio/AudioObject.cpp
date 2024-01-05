@@ -20,10 +20,8 @@ namespace HephAudio
 		this->OnRender = rhs.OnRender;
 		this->OnFinishedPlaying = rhs.OnFinishedPlaying;
 
-		rhs.OnRender.ClearEventHandlers();
-		rhs.OnRender.ClearUserArgs();
-		rhs.OnFinishedPlaying.ClearEventHandlers();
-		rhs.OnFinishedPlaying.ClearUserArgs();
+		rhs.OnRender.ClearAll();
+		rhs.OnFinishedPlaying.ClearAll();
 	}
 	AudioObject& AudioObject::operator=(AudioObject&& rhs) noexcept
 	{
@@ -38,10 +36,8 @@ namespace HephAudio
 		this->OnRender = rhs.OnRender;
 		this->OnFinishedPlaying = rhs.OnFinishedPlaying;
 
-		rhs.OnRender.ClearEventHandlers();
-		rhs.OnRender.ClearUserArgs();
-		rhs.OnFinishedPlaying.ClearEventHandlers();
-		rhs.OnFinishedPlaying.ClearUserArgs();
+		rhs.OnRender.ClearAll();
+		rhs.OnFinishedPlaying.ClearAll();
 
 		return *this;
 	}

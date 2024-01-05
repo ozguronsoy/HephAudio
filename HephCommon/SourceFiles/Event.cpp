@@ -33,6 +33,17 @@ namespace HephCommon
 	{
 		return this->eventHandlers.size();
 	}
+	bool Event::EventHandlerExists(EventHandler handler) const
+	{
+		for (size_t i = 0; i < this->eventHandlers.size(); i++)
+		{
+			if (this->eventHandlers[i] == handler)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	EventHandler Event::GetEventHandler(size_t index) const
 	{
 		if (index >= this->eventHandlers.size())
@@ -86,63 +97,10 @@ namespace HephCommon
 	{
 		this->eventHandlers.clear();
 	}
-	size_t Event::UserArgCount() const 
-	{
-		return this->userEventArgs.size();
-	}
-	void* Event::GetUserArg(size_t index) const 
-	{
-		if (index >= this->userEventArgs.size())
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::GetUserArg", "Index out of range."));
-		}
-		return this->userEventArgs[index];
-	}
-	void Event::SetUserArg(void* pUserArg)
-	{
-		this->userEventArgs.clear();
-		this->AddUserArg(pUserArg);
-	}
-	void Event::AddUserArg(void* pUserArg)
-	{
-		this->userEventArgs.push_back(pUserArg);
-	}
-	void Event::InsertUserArg(void* pUserArg, size_t index) 
-	{
-		if (index > this->userEventArgs.size())
-		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::InsertUserArg", "Index out of range."));
-			index = this->userEventArgs.size();
-		}
-		this->userEventArgs.insert(this->userEventArgs.begin() + index, pUserArg);
-	}
-	void Event::RemoveUserArg(void* pUserArg) 
-	{
-		for (size_t i = 0; i < this->userEventArgs.size(); i++)
-		{
-			if (pUserArg == this->userEventArgs[i])
-			{
-				this->userEventArgs.erase(this->userEventArgs.begin() + i);
-				return;
-			}
-		}
-	}
-	void Event::RemoveUserArg(size_t index) 
-	{
-		if (index >= this->userEventArgs.size())
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::RemoveUserArg", "Index out of range."));
-		}
-		this->userEventArgs.erase(this->userEventArgs.begin() + index);
-	}
-	void Event::ClearUserArgs() 
-	{
-		this->userEventArgs.clear();
-	}
 	void Event::ClearAll()
 	{
-		this->userEventArgs.clear();
-		this->eventHandlers.clear();
+		this->userEventArgs.Clear();
+		this->ClearEventHandlers();
 	}
 	void Event::Invoke(EventArgs* pArgs, EventResult* pResult) const
 	{

@@ -2,7 +2,9 @@
 #include "HephCommonFramework.h"
 #include "EventArgs.h"
 #include "EventResult.h"
-#include <vector>
+#include "StringBuffer.h"
+#include "UserEventArgs.h"
+#include <unordered_map>
 
 namespace HephCommon
 {
@@ -10,7 +12,7 @@ namespace HephCommon
 	{
 		EventArgs* pArgs;
 		EventResult* pResult;
-		const std::vector<void*>& userEventArgs;
-		EventParams(const std::vector<void*>& userEventArgs) : pArgs(nullptr), pResult(nullptr), userEventArgs(userEventArgs) {}
+		const UserEventArgs& userEventArgs;
+		EventParams(const UserEventArgs& userEventArgs) : pArgs(nullptr), pResult(nullptr), userEventArgs(userEventArgs) {}
 	};
 }

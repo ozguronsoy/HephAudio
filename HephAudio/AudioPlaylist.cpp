@@ -241,8 +241,8 @@ namespace HephAudio
 			AudioObject* pAudioObject = this->stream.GetAudioObject();
 			pAudioObject->OnRender += &AudioPlaylist::ApplyTransitionEffect;
 			pAudioObject->OnFinishedPlaying = &AudioPlaylist::OnFinishedPlaying;
-			pAudioObject->OnRender.AddUserArg(this);
-			pAudioObject->OnFinishedPlaying.AddUserArg(this);
+			pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
+			pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
 			pAudioObject->isPaused = this->isPaused;
 		}
 	}
@@ -250,7 +250,7 @@ namespace HephAudio
 	{
 		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 		AudioObject* pAudioObject = (AudioObject*)pFinishedPlayingEventArgs->pAudioObject;
-		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[0];
+		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY];
 
 		if (pPlaylist != nullptr)
 		{
@@ -268,7 +268,7 @@ namespace HephAudio
 		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[0];
+		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY];
 		if (pPlaylist != nullptr)
 		{
 			switch (pPlaylist->transitionEffect)

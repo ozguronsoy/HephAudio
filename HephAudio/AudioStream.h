@@ -8,6 +8,8 @@
 #include "IAudioCodec.h"
 #include "Audio.h"
 
+#define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY "audio_stream"_sb
+
 namespace HephAudio
 {
 	class AudioStream final

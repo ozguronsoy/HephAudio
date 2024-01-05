@@ -8,6 +8,8 @@
 #include "AudioRenderEventResult.h"
 #include <vector>
 
+#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY "audio_playlist"_sb
+
 namespace HephAudio
 {
 	class AudioPlaylist final

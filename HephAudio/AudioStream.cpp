@@ -39,8 +39,8 @@ namespace HephAudio
 
 			this->pAudioObject->OnRender = &AudioStream::OnRender;
 			this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
-			this->pAudioObject->OnRender.AddUserArg(this);
-			this->pAudioObject->OnFinishedPlaying.AddUserArg(this);
+			this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+			this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
 		}
 	}
 	AudioStream::AudioStream(Audio& audio, StringBuffer filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
@@ -49,8 +49,8 @@ namespace HephAudio
 	{
 		if (this->pAudioObject != nullptr)
 		{
-			this->pAudioObject->OnRender.SetUserArg(this);
-			this->pAudioObject->OnFinishedPlaying.SetUserArg(this);
+			this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+			this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
 		}
 
 		rhs.pNativeAudio = nullptr;
@@ -73,8 +73,8 @@ namespace HephAudio
 			this->pAudioObject = rhs.pAudioObject;
 			if (this->pAudioObject != nullptr)
 			{
-				this->pAudioObject->OnRender.SetUserArg(this);
-				this->pAudioObject->OnFinishedPlaying.SetUserArg(this);
+				this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+				this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
 			}
 
 			rhs.pNativeAudio = nullptr;
@@ -140,7 +140,7 @@ namespace HephAudio
 		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[0];
+		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY];
 		if (pStream != nullptr && pStream->file.IsOpen())
 		{
 			const AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
@@ -176,7 +176,7 @@ namespace HephAudio
 	{
 		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 
-		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[0];
+		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY];
 		if (pStream != nullptr && pFinishedPlayingEventArgs->remainingLoopCount == 0)
 		{
 			pStream->Release(false);

@@ -36,6 +36,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamStatus.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Vector.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\XmlStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StreamHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\XmlStream.cpp" />
   </ItemGroup>
 </Project>
