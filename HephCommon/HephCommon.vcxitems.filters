@@ -25,6 +25,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\XmlStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventParams.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp" />

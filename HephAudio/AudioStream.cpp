@@ -37,9 +37,10 @@ namespace HephAudio
 				this->Release(true);
 			}
 
-			this->pAudioObject->userEventArgs = this;
 			this->pAudioObject->OnRender = &AudioStream::OnRender;
 			this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
+			this->pAudioObject->OnRender.AddUserArg(this);
+			this->pAudioObject->OnFinishedPlaying.AddUserArg(this);
 		}
 	}
 	AudioStream::AudioStream(Audio& audio, StringBuffer filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
@@ -48,7 +49,8 @@ namespace HephAudio
 	{
 		if (this->pAudioObject != nullptr)
 		{
-			this->pAudioObject->userEventArgs = this;
+			this->pAudioObject->OnRender.SetUserArg(this);
+			this->pAudioObject->OnFinishedPlaying.SetUserArg(this);
 		}
 
 		rhs.pNativeAudio = nullptr;
@@ -69,6 +71,11 @@ namespace HephAudio
 			this->pAudioCodec = rhs.pAudioCodec;
 			this->formatInfo = rhs.formatInfo;
 			this->pAudioObject = rhs.pAudioObject;
+			if (this->pAudioObject != nullptr)
+			{
+				this->pAudioObject->OnRender.SetUserArg(this);
+				this->pAudioObject->OnFinishedPlaying.SetUserArg(this);
+			}
 
 			rhs.pNativeAudio = nullptr;
 			rhs.pFileFormat = nullptr;
@@ -126,14 +133,14 @@ namespace HephAudio
 		this->pNativeAudio = nullptr;
 		this->formatInfo = AudioFormatInfo();
 	}
-	void AudioStream::OnRender(EventArgs* pArgs, EventResult* pResult)
+	void AudioStream::OnRender(const EventParams& eventParams)
 	{
-		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
-		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
+		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
 		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		AudioStream* pStream = (AudioStream*)pAudioObject->userEventArgs;
+		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[0];
 		if (pStream != nullptr && pStream->file.IsOpen())
 		{
 			const AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
@@ -165,11 +172,11 @@ namespace HephAudio
 			pAudioObject->frameIndex += readFrameCount;
 		}
 	}
-	void AudioStream::OnFinishedPlaying(EventArgs* pArgs, EventResult* pResult)
+	void AudioStream::OnFinishedPlaying(const EventParams& eventParams)
 	{
-		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)pArgs;
+		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 
-		AudioStream* pStream = (AudioStream*)((AudioObject*)pFinishedPlayingEventArgs->pAudioObject)->userEventArgs;
+		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[0];
 		if (pStream != nullptr && pFinishedPlayingEventArgs->remainingLoopCount == 0)
 		{
 			pStream->Release(false);

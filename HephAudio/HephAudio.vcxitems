@@ -88,11 +88,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AppleAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Audio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioCodecManager.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioPlaylist.cpp" />
@@ -119,7 +115,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ParzenWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PcmCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioStream.cpp" />

@@ -239,35 +239,36 @@ namespace HephAudio
 		if (filePath != nullptr)
 		{
 			AudioObject* pAudioObject = this->stream.GetAudioObject();
-			pAudioObject->userEventArgs = this;
 			pAudioObject->OnRender += &AudioPlaylist::ApplyTransitionEffect;
 			pAudioObject->OnFinishedPlaying = &AudioPlaylist::OnFinishedPlaying;
+			pAudioObject->OnRender.AddUserArg(this);
+			pAudioObject->OnFinishedPlaying.AddUserArg(this);
 			pAudioObject->isPaused = this->isPaused;
 		}
 	}
-	void AudioPlaylist::OnFinishedPlaying(EventArgs* pArgs, EventResult* pResult)
+	void AudioPlaylist::OnFinishedPlaying(const EventParams& eventParams)
 	{
-		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)pArgs;
+		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 		AudioObject* pAudioObject = (AudioObject*)pFinishedPlayingEventArgs->pAudioObject;
-		AudioPlaylist* pPlaylist = (AudioPlaylist*)pAudioObject->userEventArgs;
+		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[0];
 
 		if (pPlaylist != nullptr)
 		{
 			pPlaylist->Remove(0);
-			pArgs->isHandled = true;
+			eventParams.pResult->isHandled = true;
 			// event is destroyed since the audio object that owns it is destroyed
 			// the event handler count will be random, thus invoke loop will keep going
 			// to exit invoke loop set the "isHandled" to true
 		}
 	}
-	void AudioPlaylist::ApplyTransitionEffect(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult)
+	void AudioPlaylist::ApplyTransitionEffect(const EventParams& eventParams)
 	{
-		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)pArgs;
-		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)pResult;
+		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
+		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
 		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		AudioPlaylist* pPlaylist = (AudioPlaylist*)pAudioObject->userEventArgs;
+		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[0];
 		if (pPlaylist != nullptr)
 		{
 			switch (pPlaylist->transitionEffect)

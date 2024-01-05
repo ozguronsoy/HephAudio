@@ -350,7 +350,7 @@ namespace HephAudio
 				{
 					const heph_float volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
 
-					AudioRenderEventArgs rArgs = AudioRenderEventArgs(this, pAudioObject, frameCount);
+					AudioRenderEventArgs rArgs(pAudioObject, this, frameCount);
 					AudioRenderEventResult rResult;
 					pAudioObject->OnRender(&rArgs, &rResult);
 
@@ -368,7 +368,7 @@ namespace HephAudio
 						{
 							const StringBuffer audioObjectName = pAudioObject->name;
 
-							AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, pAudioObject, 0);
+							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, 0);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
 							HEPHAUDIO_LOG("Finished playing the file \"" + audioObjectName + "\"", HEPH_CL_INFO);
@@ -383,7 +383,7 @@ namespace HephAudio
 						{
 							pAudioObject->loopCount--;
 
-							AudioFinishedPlayingEventArgs ofpArgs = AudioFinishedPlayingEventArgs(this, pAudioObject, pAudioObject->loopCount);
+							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, pAudioObject->loopCount);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
 							pAudioObject->frameIndex = 0;

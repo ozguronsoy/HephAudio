@@ -37,8 +37,9 @@ namespace HephCommon
 
 	struct HephExceptionEventArgs : public EventArgs
 	{
+		const void* pSender;
 		HephException exception;
-		HephExceptionEventArgs(const void* pSender, HephException ex) : EventArgs(pSender), exception(ex) {}
+		HephExceptionEventArgs(const void* pSender, HephException ex) : pSender(pSender), exception(ex) {}
 		virtual ~HephExceptionEventArgs() = default;
 	};
 }

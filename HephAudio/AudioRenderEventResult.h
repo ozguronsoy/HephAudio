@@ -8,6 +8,7 @@ namespace HephAudio
 	struct AudioRenderEventResult : public HephCommon::EventResult
 	{
 		AudioBuffer renderBuffer;
-		bool isFinishedPlaying{ false };
+		bool isFinishedPlaying;
+		AudioRenderEventResult() : isFinishedPlaying(false) {}
 	};
 }

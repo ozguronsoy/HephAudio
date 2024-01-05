@@ -8,6 +8,6 @@ namespace HephAudio
 	struct AudioCaptureEventArgs : public AudioEventArgs
 	{
 		AudioBuffer captureBuffer;
-		AudioCaptureEventArgs(const void* pNativeAudio, AudioBuffer& captureBuffer);
+		AudioCaptureEventArgs(void* pNativeAudio, AudioBuffer& captureBuffer) : AudioEventArgs(pNativeAudio), captureBuffer(std::move(captureBuffer)) {}
 	};
 }

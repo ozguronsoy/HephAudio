@@ -36,7 +36,7 @@ namespace HephAudio
 		void Release();
 	private:
 		void Release(bool destroyAO);
-		static void OnRender(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
-		static void OnFinishedPlaying(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
+		static void OnRender(const HephCommon::EventParams& eventParams);
+		static void OnFinishedPlaying(const HephCommon::EventParams& eventParams);
 	};
 }

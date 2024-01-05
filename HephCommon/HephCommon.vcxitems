@@ -21,6 +21,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\CsvStream.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventResult.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FloatBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\File.h" />

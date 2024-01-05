@@ -19,13 +19,12 @@ namespace HephAudio
 		heph_float volume;
 		AudioBuffer buffer;
 		size_t frameIndex;
-		void* userEventArgs; // pointer to an object that is supplied by the user to use in OnRender and OnFinishedPlaying events
 		HephCommon::Event OnRender;
 		HephCommon::Event OnFinishedPlaying;
 		AudioObject();
 		AudioObject(AudioObject&& rhs) noexcept;
 		AudioObject& operator=(AudioObject&& rhs) noexcept;
 	private:
-		static void OnRenderHandler(HephCommon::EventArgs* pArgs, HephCommon::EventResult* pResult);
+		static void OnRenderHandler(const HephCommon::EventParams& eventParams);
 	};
 }

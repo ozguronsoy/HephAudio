@@ -8,6 +8,6 @@ namespace HephAudio
 	struct AudioDeviceEventArgs : public AudioEventArgs
 	{
 		AudioDevice audioDevice;
-		AudioDeviceEventArgs(const void* pNativeAudio, AudioDevice audioDevice);
+		AudioDeviceEventArgs(void* pNativeAudio, AudioDevice audioDevice) : AudioEventArgs(pNativeAudio), audioDevice(audioDevice) {}
 	};
 }

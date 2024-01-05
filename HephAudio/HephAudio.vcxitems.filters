@@ -28,14 +28,8 @@
     <Filter Include="Header Files\Events">
       <UniqueIdentifier>{242ac56b-00c4-4282-ba24-06be01d4bd40}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Events">
-      <UniqueIdentifier>{b3bf1938-9041-43a1-b499-f657218be0f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Events\Args">
       <UniqueIdentifier>{21cab1f0-6e19-48e2-9eec-7c21178e4bc7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Events\Args">
-      <UniqueIdentifier>{88dd4d2d-b3d2-4ebf-bf4d-f893a15cf28e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Events\Results">
       <UniqueIdentifier>{fee30d6f-5a01-4043-9a4d-bff499127af7}</UniqueIdentifier>
@@ -305,18 +299,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioBase.cpp">
       <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp">
       <Filter>Source Files\Oscillators</Filter>
     </ClCompile>
@@ -346,9 +328,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ALawCodec.cpp">
       <Filter>Source Files\AudioCodecs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AudioEventArgs.cpp">
-      <Filter>Source Files\Events\Args</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp">
       <Filter>Source Files\NativeAudio</Filter>

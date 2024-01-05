@@ -7,8 +7,7 @@ namespace HephAudio
 	struct AudioEventArgs : public HephCommon::EventArgs
 	{
 		void* pNativeAudio;
-		void* pAudioObject;
-		AudioEventArgs(const void* pNativeAudio, void* pAudioObject);
+		AudioEventArgs(void* pNativeAudio) : pNativeAudio(pNativeAudio) {}
 		virtual ~AudioEventArgs() = default;
 	};
 }
