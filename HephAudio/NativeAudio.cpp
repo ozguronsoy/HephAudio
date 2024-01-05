@@ -95,7 +95,20 @@ namespace HephAudio
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (pAudioObject == &audioObjects.at(i))
+				if (pAudioObject == &audioObjects[i])
+				{
+					audioObjects.erase(audioObjects.begin() + i);
+					return true;
+				}
+			}
+			return false;
+		}
+		bool NativeAudio::DestroyAudioObject(const HephCommon::Guid& audioObjectId)
+		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
+			for (size_t i = 0; i < audioObjects.size(); i++)
+			{
+				if (audioObjects[i].id == audioObjectId)
 				{
 					audioObjects.erase(audioObjects.begin() + i);
 					return true;
@@ -110,10 +123,22 @@ namespace HephAudio
 			{
 				for (size_t i = 0; i < audioObjects.size(); i++)
 				{
-					if (pAudioObject == &audioObjects.at(i))
+					if (pAudioObject == &audioObjects[i])
 					{
 						return true;
 					}
+				}
+			}
+			return false;
+		}
+		bool NativeAudio::AudioObjectExists(const Guid& audioObjectId) const
+		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
+			for (size_t i = 0; i < audioObjects.size(); i++)
+			{
+				if (audioObjects[i].id == audioObjectId)
+				{
+					return true;
 				}
 			}
 			return false;
@@ -128,14 +153,26 @@ namespace HephAudio
 			}
 			return &audioObjects[index];
 		}
+		AudioObject* NativeAudio::GetAudioObject(const HephCommon::Guid& audioObjectId)
+		{
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
+			for (size_t i = 0; i < audioObjects.size(); i++)
+			{
+				if (audioObjects[i].id == audioObjectId)
+				{
+					return &audioObjects[i];
+				}
+			}
+			return nullptr;
+		}
 		AudioObject* NativeAudio::GetAudioObject(StringBuffer audioObjectName)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (audioObjects.at(i).name == audioObjectName)
+				if (audioObjects[i].name == audioObjectName)
 				{
-					return &audioObjects.at(i);
+					return &audioObjects[i];
 				}
 			}
 			return nullptr;
@@ -169,9 +206,9 @@ namespace HephAudio
 			std::vector<AudioDevice> devices = GetAudioDevices(AudioDeviceType::All);
 			for (size_t i = 0; i < devices.size(); i++)
 			{
-				if (devices.at(i).id == deviceId)
+				if (devices[i].id == deviceId)
 				{
-					return devices.at(i);
+					return devices[i];
 				}
 			}
 			return AudioDevice();
@@ -207,9 +244,9 @@ namespace HephAudio
 			std::lock_guard<std::mutex> lockGuard(audioDevicesMutex);
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
-				if (audioDevices.at(i).isDefault && audioDevices.at(i).type == deviceType)
+				if (audioDevices[i].isDefault && audioDevices[i].type == deviceType)
 				{
-					return audioDevices.at(i);
+					return audioDevices[i];
 				}
 			}
 
@@ -228,9 +265,9 @@ namespace HephAudio
 			std::lock_guard<std::mutex> lockGuard(audioDevicesMutex);
 			for (size_t i = 0; i < audioDevices.size(); i++)
 			{
-				if (deviceType == AudioDeviceType::All || audioDevices.at(i).type == deviceType)
+				if (deviceType == AudioDeviceType::All || audioDevices[i].type == deviceType)
 				{
-					result.push_back(audioDevices.at(i));
+					result.push_back(audioDevices[i]);
 				}
 			}
 
@@ -285,12 +322,12 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < oldDevices.size(); j++)
 						{
-							if (audioDevices.at(i).id == oldDevices.at(j).id)
+							if (audioDevices[i].id == oldDevices.at(j).id)
 							{
 								goto ADD_BREAK;
 							}
 						}
-						deviceEventArgs.audioDevice = audioDevices.at(i);
+						deviceEventArgs.audioDevice = audioDevices[i];
 						OnAudioDeviceAdded(&deviceEventArgs, nullptr);
 					ADD_BREAK:;
 					}
@@ -302,12 +339,12 @@ namespace HephAudio
 					{
 						for (size_t j = 0; j < audioDevices.size(); j++)
 						{
-							if (oldDevices.at(i).id == audioDevices.at(j).id)
+							if (oldDevices[i].id == audioDevices.at(j).id)
 							{
 								goto REMOVE_BREAK;
 							}
 						}
-						deviceEventArgs.audioDevice = oldDevices.at(i);
+						deviceEventArgs.audioDevice = oldDevices[i];
 						OnAudioDeviceRemoved(&deviceEventArgs, nullptr);
 					REMOVE_BREAK:;
 					}
@@ -344,11 +381,12 @@ namespace HephAudio
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				AudioObject* pAudioObject = &audioObjects.at(i);
+				AudioObject* pAudioObject = &audioObjects[i];
 
 				if (!pAudioObject->isPaused)
 				{
 					const heph_float volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
+					const Guid audioObjectId = pAudioObject->id;
 
 					AudioRenderEventArgs rArgs(pAudioObject, this, frameCount);
 					AudioRenderEventResult rResult;
@@ -362,7 +400,7 @@ namespace HephAudio
 						}
 					}
 
-					if (rResult.isFinishedPlaying)
+					if (rResult.isFinishedPlaying && AudioObjectExists(audioObjectId))
 					{
 						if (pAudioObject->loopCount == 1) // Finish playing.
 						{
@@ -373,7 +411,7 @@ namespace HephAudio
 
 							HEPHAUDIO_LOG("Finished playing the file \"" + audioObjectName + "\"", HEPH_CL_INFO);
 
-							if (AudioObjectExists(pAudioObject) && pAudioObject->name == audioObjectName)
+							if (AudioObjectExists(audioObjectId))
 							{
 								audioObjects.erase(audioObjects.begin() + i);
 								i--;
@@ -386,7 +424,10 @@ namespace HephAudio
 							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, pAudioObject->loopCount);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
-							pAudioObject->frameIndex = 0;
+							if (AudioObjectExists(audioObjectId))
+							{
+								pAudioObject->frameIndex = 0;
+							}
 						}
 					}
 				}
@@ -401,7 +442,7 @@ namespace HephAudio
 			size_t result = 0;
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
-				if (!audioObjects.at(i).isPaused)
+				if (!audioObjects[i].isPaused)
 				{
 					result++;
 				}

@@ -6,9 +6,10 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: filePath(""), name(""), isPaused(true), loopCount(1), volume(1.0), buffer(AudioBuffer()), frameIndex(0), OnRender(&AudioObject::OnRenderHandler) {}
+		: id(Guid::GenerateNew()), filePath(""), name(""), isPaused(true), loopCount(1), volume(1.0), buffer(AudioBuffer()), frameIndex(0), OnRender(&AudioObject::OnRenderHandler) {}
 	AudioObject::AudioObject(AudioObject&& rhs) noexcept
 	{
+		this->id = rhs.id;
 		this->filePath = std::move(rhs.filePath);
 		this->name = std::move(rhs.name);
 		this->isPaused = rhs.isPaused;
@@ -26,6 +27,7 @@ namespace HephAudio
 	}
 	AudioObject& AudioObject::operator=(AudioObject&& rhs) noexcept
 	{
+		this->id = rhs.id;
 		this->filePath = std::move(rhs.filePath);
 		this->name = std::move(rhs.name);
 		this->isPaused = rhs.isPaused;

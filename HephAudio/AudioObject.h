@@ -3,6 +3,7 @@
 #include "AudioBuffer.h"
 #include "../HephCommon/HeaderFiles/StringBuffer.h"
 #include "../HephCommon/HeaderFiles/Event.h"
+#include "../HephCommon/HeaderFiles/Guid.h"
 #include "AudioRenderEventArgs.h"
 #include "AudioRenderEventResult.h"
 #include "AudioFinishedPlayingEventArgs.h"
@@ -12,6 +13,7 @@ namespace HephAudio
 {
 	struct AudioObject
 	{
+		HephCommon::Guid id;
 		HephCommon::StringBuffer filePath;
 		HephCommon::StringBuffer name;
 		bool isPaused;
