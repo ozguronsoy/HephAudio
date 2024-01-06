@@ -51,6 +51,10 @@ namespace HephAudio
 		static void SoftClipDistortion(AudioBuffer& buffer, heph_float alpha);
 		static void Overdrive(AudioBuffer& buffer, heph_float drive);
 		static void Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha);
+		static void LinearFadeIn(AudioBuffer& buffer, heph_float duration_s);
+		static void LinearFadeIn(AudioBuffer& buffer, heph_float duration_s, size_t startIndex);
+		static void LinearFadeOut(AudioBuffer& buffer, heph_float duration_s);
+		static void LinearFadeOut(AudioBuffer& buffer, heph_float duration_s, size_t startIndex);
 		static void FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance);
 		static void FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, heph_float speedOfSound, heph_float maxDistance);
 		static void Equalizer(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);

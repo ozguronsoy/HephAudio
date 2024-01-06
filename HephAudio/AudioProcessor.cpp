@@ -63,13 +63,13 @@ namespace HephAudio
 		const heph_float srRatio = (heph_float)outputSampleRate / (heph_float)buffer.formatInfo.sampleRate;
 		if (srRatio != 1.0)
 		{
-			const size_t targetFrameCount = ceil((heph_float)buffer.frameCount * srRatio);
+			const size_t targetFrameCount = Math::Ceil((heph_float)buffer.frameCount * srRatio);
 			AudioBuffer resultBuffer(targetFrameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate));
 
 			for (size_t i = 0; i < targetFrameCount; i++)
 			{
 				const heph_float resampleIndex = i / srRatio;
-				const heph_float rho = resampleIndex - floor(resampleIndex);
+				const heph_float rho = resampleIndex - Math::Floor(resampleIndex);
 
 				for (size_t j = 0; j < buffer.formatInfo.channelCount && (resampleIndex + 1) < buffer.frameCount; j++)
 				{
@@ -91,7 +91,7 @@ namespace HephAudio
 			for (size_t i = 0; i < outFrameCount; i++)
 			{
 				const heph_float resampleIndex = i / srRatio + subBufferFrameIndex;
-				const heph_float rho = resampleIndex - floor(resampleIndex);
+				const heph_float rho = resampleIndex - Math::Floor(resampleIndex);
 
 				for (size_t j = 0; j < subBuffer.formatInfo.channelCount && (resampleIndex + 1) < originalBuffer.frameCount; j++)
 				{
@@ -317,7 +317,7 @@ namespace HephAudio
 		const heph_float wetFactor = depth * 0.5;
 		const heph_float dryFactor = 1.0 - wetFactor;
 
-		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(Math::Ceil(lfo.sampleRate / lfo.frequency));
 		for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
@@ -328,7 +328,7 @@ namespace HephAudio
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			const heph_float resampleIndex = i + lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * resampleDelta;
-			const heph_float rho = resampleIndex - floor(resampleIndex);
+			const heph_float rho = resampleIndex - Math::Floor(resampleIndex);
 
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
@@ -351,7 +351,7 @@ namespace HephAudio
 		const heph_float wetFactor = depth * 0.5;
 		const heph_float dryFactor = 1.0 - wetFactor;
 
-		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(Math::Ceil(lfo.sampleRate / lfo.frequency));
 		FloatBuffer feedbackBuffer = FloatBuffer(buffer.formatInfo.channelCount);
 		for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
 		{
@@ -359,13 +359,13 @@ namespace HephAudio
 		}
 
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-		memcpy(resultBuffer.pData, buffer.pData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
+		memcpy(resultBuffer.pData, buffer.pData, Math::Round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
+			const size_t currentDelay_sample = Math::Round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
 			const heph_float resampleIndex = (i - currentDelay_sample) + lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * resampleDelta;
-			const heph_float rho = resampleIndex - floor(resampleIndex);
+			const heph_float rho = resampleIndex - Math::Floor(resampleIndex);
 
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
@@ -395,18 +395,18 @@ namespace HephAudio
 		const heph_float wetFactor = depth * 0.5;
 		const heph_float dryFactor = 1.0 - wetFactor;
 		FloatBuffer feedbackBuffer = FloatBuffer(buffer.formatInfo.channelCount);
-		FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		FloatBuffer lfoPeriodBuffer = FloatBuffer(Math::Ceil(lfo.sampleRate / lfo.frequency));
 		for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
 		AudioBuffer resultBuffer = AudioBuffer(buffer.frameCount, buffer.formatInfo);
-		memcpy(resultBuffer.pData, buffer.pData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
+		memcpy(resultBuffer.pData, buffer.pData, Math::Round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
+			const size_t currentDelay_sample = Math::Round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				const heph_float wetSample = buffer[i - currentDelay_sample][j] + feedbackBuffer[j];
@@ -428,7 +428,7 @@ namespace HephAudio
 			const heph_float fcdelta = fcmax - fcmin;
 			const heph_float Q = 2.0 * damping;
 
-			FloatBuffer lfoPeriodBuffer = FloatBuffer(ceil(lfo.sampleRate / lfo.frequency));
+			FloatBuffer lfoPeriodBuffer = FloatBuffer(Math::Ceil(lfo.sampleRate / lfo.frequency));
 			for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
 			{
 				lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
@@ -538,7 +538,7 @@ namespace HephAudio
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 			{
 				heph_float& sample = buffer[i][j];
-				sample = (1.0 + k) * sample / (1.0 + k * abs(sample));
+				sample = (1.0 + k) * sample / (1.0 + k * Math::Abs(sample));
 			}
 		}
 	}
@@ -563,7 +563,42 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioProcessor::FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance) 
+	void AudioProcessor::LinearFadeIn(AudioBuffer& buffer, heph_float duration_s)
+	{
+		AudioProcessor::LinearFadeIn(buffer, duration_s, 0);
+	}
+	void AudioProcessor::LinearFadeIn(AudioBuffer& buffer, heph_float duration_s, size_t startIndex)
+	{
+		const heph_float duration_sample = Math::Round(duration_s * buffer.formatInfo.sampleRate);
+		const size_t endIndex = Math::Min(startIndex + (size_t)duration_sample, buffer.frameCount);
+		for (size_t i = startIndex; i < endIndex; i++)
+		{
+			const heph_float factor = (i - startIndex) / duration_sample;
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				buffer[i][j] *= factor;
+			}
+		}
+	}
+	void AudioProcessor::LinearFadeOut(AudioBuffer& buffer, heph_float duration_s) 
+	{
+		const size_t duration_sample = Math::Round(duration_s * buffer.formatInfo.sampleRate);
+		AudioProcessor::LinearFadeOut(buffer, duration_s, buffer.frameCount > duration_sample ? (buffer.frameCount - duration_sample) : 0);
+	}
+	void AudioProcessor::LinearFadeOut(AudioBuffer& buffer, heph_float duration_s, size_t startIndex) 
+	{
+		const heph_float duration_sample = Math::Round(duration_s * buffer.formatInfo.sampleRate);
+		const size_t endIndex = Math::Min(startIndex + (size_t)duration_sample, buffer.frameCount);
+		for (size_t i = startIndex; i < endIndex; i++)
+		{
+			const heph_float factor = (endIndex - i) / duration_sample;
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				buffer[i][j] *= factor;
+			}
+		}
+	}
+	void AudioProcessor::FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance)
 	{
 		constexpr heph_float distanceBetweenEars = 0.0215;
 		constexpr Vector3 reciever = Vector3(0, 0, 0);
@@ -646,13 +681,13 @@ namespace HephAudio
 					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
 					if (info.f1 > info.f2)
 					{
-						higherFrequencyIndex = ceil(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f1));
-						lowerFrequencyIndex = floor(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f2));
+						higherFrequencyIndex = Math::Ceil(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f1));
+						lowerFrequencyIndex = Math::Floor(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f2));
 					}
 					else
 					{
-						higherFrequencyIndex = ceil(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f2));
-						lowerFrequencyIndex = floor(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f1));
+						higherFrequencyIndex = Math::Ceil(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f2));
+						lowerFrequencyIndex = Math::Floor(Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, info.f1));
 					}
 					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
 
@@ -696,13 +731,13 @@ namespace HephAudio
 					uint64_t lowerFrequencyIndex, higherFrequencyIndex;
 					if (info.f1 > info.f2)
 					{
-						higherFrequencyIndex = ceil(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f1));
-						lowerFrequencyIndex = floor(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f2));
+						higherFrequencyIndex = Math::Ceil(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f1));
+						lowerFrequencyIndex = Math::Floor(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f2));
 					}
 					else
 					{
-						higherFrequencyIndex = ceil(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f2));
-						lowerFrequencyIndex = floor(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f1));
+						higherFrequencyIndex = Math::Ceil(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f2));
+						lowerFrequencyIndex = Math::Floor(Fourier::BinFrequencyToIndex(buffer->formatInfo.sampleRate, fftSize, info.f1));
 					}
 					const size_t upperBound = higherFrequencyIndex < nyquistFrequency ? higherFrequencyIndex : nyquistFrequency - 1;
 
@@ -826,7 +861,7 @@ namespace HephAudio
 					heph_float phaseRemainder = phase - lastAnalysisPhases[k][j] - twopi * k * hopSize / fftSize;
 					phaseRemainder = phaseRemainder >= 0 ? (fmod(phaseRemainder + Math::pi, twopi) - Math::pi) : (fmod(phaseRemainder - Math::pi, -twopi) + Math::pi);
 
-					const size_t newBin = floor(k * shiftFactor + 0.5);
+					const size_t newBin = Math::Floor(k * shiftFactor + 0.5);
 					if (newBin < nyquistFrequency)
 					{
 						synthesisMagnitudes[newBin][j] += complexBuffer[k].Magnitude();
@@ -891,7 +926,7 @@ namespace HephAudio
 					heph_float phaseRemainder = phase - lastAnalysisPhases[k] - twopi * k * hopSize / fftSize;
 					phaseRemainder = phaseRemainder >= 0 ? (fmod(phaseRemainder + Math::pi, twopi) - Math::pi) : (fmod(phaseRemainder - Math::pi, -twopi) + Math::pi);
 
-					const size_t newBin = floor(k * shiftFactor + 0.5);
+					const size_t newBin = Math::Floor(k * shiftFactor + 0.5);
 					if (newBin < nyquistFrequency)
 					{
 						synthesisMagnitudes[newBin] += complexBuffer[k].Magnitude();
@@ -1027,7 +1062,7 @@ namespace HephAudio
 		window.SetSize(fftSize);
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
-		const size_t frameCountPerThread = ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
+		const size_t frameCountPerThread = Math::Ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads = std::vector<std::thread>(buffer.formatInfo.channelCount * threadCountPerChannel);
 
@@ -1129,7 +1164,7 @@ namespace HephAudio
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		window.SetSize(fftSize);
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
-		const size_t frameCountPerThread = ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
+		const size_t frameCountPerThread = Math::Ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads = std::vector<std::thread>(buffer.formatInfo.channelCount * threadCountPerChannel);
 
@@ -1248,7 +1283,7 @@ namespace HephAudio
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
-		const size_t frameCountPerThread = ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
+		const size_t frameCountPerThread = Math::Ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads = std::vector<std::thread>(buffer.formatInfo.channelCount * threadCountPerChannel);
 
@@ -1352,7 +1387,7 @@ namespace HephAudio
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
-		const size_t frameCountPerThread = ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
+		const size_t frameCountPerThread = Math::Ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads = std::vector<std::thread>(buffer.formatInfo.channelCount * threadCountPerChannel);
 
