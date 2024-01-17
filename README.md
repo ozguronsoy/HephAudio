@@ -85,10 +85,9 @@ using namespace HephAudio;
 
 AudioBuffer recordedAudio(0, HEPHAUDIO_INTERNAL_FORMAT(NUM_OF_CHANNELS, SAMPLE_RATE)); // create an audio buffer with 0 frames
 
-void RecordAudio(EventArgs* pArgs, EventResult* pResult) // the event handler method
+void RecordAudio(const EventParams& eventParams) // the event handler method
 {
-  AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)pArgs; // cast the args to capture event args
-  AudioProcessor::ConvertToInnerFormat(pCaptureArgs->captureBuffer); // convert the captured data to inner format
+  AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)eventParams.pArgs; // cast the args to capture event args
   recordedAudio.Append(pCaptureArgs->captureBuffer); // append the captured samples to the end of our buffer
 }
 
@@ -153,7 +152,7 @@ int main()
   Audio audio;
   audio.InitializeRender(nullptr, AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16, 48000));
 
-  std::shared_ptr<AudioObject> pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
+  AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
 
   printf("applying sound effects...");
   
@@ -181,9 +180,9 @@ In this example, we will create a ``StringBuffer`` with 4 characters and we will
 
 using namespace HephCommon;
 
-void HandleExceptions(EventArgs* pArgs, EventResult* pResult)
+void HandleExceptions(const EventParams& eventParams)
 {
-  const HephException& ex = ((HephExceptionEventArgs*)pArgs)->exception; // get the exception data
+  const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
   StringBuffer exceptionString = "Error!\n" + ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n" + ex.message;
   ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
