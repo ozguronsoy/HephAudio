@@ -27,6 +27,15 @@
 
 #endif
 
+#if !defined(HEPH_CONSTEVAL)
+
+#if CPP_VERSION >= CPP_VERSION_20
+#define HEPH_CONSTEVAL consteval
+#else
+#define HEPH_CONSTEVAL constexpr
+#endif
+
+#endif
 
 
 #if (!defined(_MSC_VER) || defined(__INTEL_COMPILER))
@@ -45,17 +54,10 @@ typedef double heph_float;
 typedef float heph_float;
 #endif
 
+inline HEPH_CONSTEVAL heph_float operator""_hf(long double x) { return (heph_float)x; }
+inline HEPH_CONSTEVAL heph_float operator""_hf(unsigned long long int x) { return (heph_float)x; }
+
 #define HEPH_FLOAT heph_float
-#endif
-
-#if !defined(HEPH_CONSTEVAL)
-
-#if CPP_VERSION >= CPP_VERSION_20
-#define HEPH_CONSTEVAL consteval
-#else
-#define HEPH_CONSTEVAL constexpr
-#endif
-
 #endif
 
 
@@ -71,7 +73,7 @@ namespace HephCommon
 	};
 	extern Endian systemEndian;
 	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
-	constexpr inline Endian operator!(const Endian& lhs) { return lhs == Endian::Unknown ? Endian::Unknown : (lhs == Endian::Big ? Endian::Little : Endian::Big); }
+	constexpr inline Endian operator!(const Endian& lhs) { return lhs == Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
 #define HEPH_ENDIAN HephCommon::Endian
 #define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian
 #define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)

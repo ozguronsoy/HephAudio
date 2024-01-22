@@ -5,9 +5,9 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephAudio", "HephAudio\HephAudio.vcxitems", "{BB93F558-91D0-4736-88AF-56A3AD9532E9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{E4F627E8-208E-420A-98E2-F6B3F9A25356}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HephCommon", "HephCommon\HephCommon.vcxitems", "{DE064538-DA5C-4E0E-B44C-6A25C86FB48F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.vcxproj", "{16564B74-D459-4C28-BBA6-197B57C8A708}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +21,22 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Debug|ARM.ActiveCfg = Debug|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Debug|ARM64.ActiveCfg = Debug|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Debug|x64.ActiveCfg = Debug|x64
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Debug|x64.Build.0 = Debug|x64
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Debug|x86.ActiveCfg = Debug|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Debug|x86.Build.0 = Debug|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|ARM.ActiveCfg = Release|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|ARM64.ActiveCfg = Release|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x64.ActiveCfg = Release|x64
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x64.Build.0 = Release|x64
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x86.ActiveCfg = Release|Win32
-		{E4F627E8-208E-420A-98E2-F6B3F9A25356}.Release|x86.Build.0 = Release|Win32
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|ARM.ActiveCfg = Debug|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|ARM.Build.0 = Debug|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|ARM64.ActiveCfg = Debug|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|ARM64.Build.0 = Debug|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|x64.ActiveCfg = Debug|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|x64.Build.0 = Debug|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|x86.ActiveCfg = Debug|Win32
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Debug|x86.Build.0 = Debug|Win32
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|ARM.ActiveCfg = Release|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|ARM.Build.0 = Release|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|ARM64.ActiveCfg = Release|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|ARM64.Build.0 = Release|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|x64.ActiveCfg = Release|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|x64.Build.0 = Release|x64
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|x86.ActiveCfg = Release|Win32
+		{16564B74-D459-4C28-BBA6-197B57C8A708}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,9 +45,9 @@ Global
 		SolutionGuid = {87395B32-3B90-4400-A819-A5506CD066AF}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		HephAudio\HephAudio.vcxitems*{16564b74-d459-4c28-bba6-197b57c8a708}*SharedItemsImports = 4
+		HephCommon\HephCommon.vcxitems*{16564b74-d459-4c28-bba6-197b57c8a708}*SharedItemsImports = 4
 		HephAudio\HephAudio.vcxitems*{bb93f558-91d0-4736-88af-56a3ad9532e9}*SharedItemsImports = 9
 		HephCommon\HephCommon.vcxitems*{de064538-da5c-4e0e-b44c-6a25c86fb48f}*SharedItemsImports = 9
-		HephAudio\HephAudio.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
-		HephCommon\HephCommon.vcxitems*{e4f627e8-208e-420a-98e2-f6b3f9a25356}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

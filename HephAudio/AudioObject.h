@@ -9,6 +9,9 @@
 #include "AudioFinishedPlayingEventArgs.h"
 #include <vector>
 
+#define HEPHAUDIO_RENDER_HANDLER_DEFAULT &HephAudio::AudioObject::DefaultRenderHandler
+#define HEPHAUDIO_RENDER_HANDLER_ENSURE_FORMAT &HephAudio::AudioObject::EnsureFormatRenderHandler
+
 namespace HephAudio
 {
 	struct AudioObject
@@ -26,7 +29,9 @@ namespace HephAudio
 		AudioObject();
 		AudioObject(AudioObject&& rhs) noexcept;
 		AudioObject& operator=(AudioObject&& rhs) noexcept;
-	private:
-		static void OnRenderHandler(const HephCommon::EventParams& eventParams);
+		heph_float GetPosition() const;
+		void SetPosition(heph_float position);
+		static void DefaultRenderHandler(const HephCommon::EventParams& eventParams);
+		static void EnsureFormatRenderHandler(const HephCommon::EventParams& eventParams);
 	};
 }

@@ -4,22 +4,22 @@
 #include <cinttypes>
 #include <float.h>
 
-#define HEPH_PI 3.14159265358979323846
-#define HEPH_E 2.71828182845904523536
+#define HEPH_PI 3.14159265358979323846l
+#define HEPH_E 2.71828182845904523536l
 
 namespace HephCommon
 {
 	class Math final
 	{
 	public:
-		static constexpr long double pi_l = 3.14159265358979323846L;
-		static constexpr double pi = Math::pi_l;
-		static constexpr float pi_f = Math::pi_l;
-		static constexpr heph_float pi_hf = Math::pi_l;
-		static constexpr long double e_l = 2.71828182845904523536L;
-		static constexpr double e = Math::e_l;
-		static constexpr float e_f = Math::e_l;
-		static constexpr heph_float e_hf = Math::e_l;
+		static constexpr long double pi_l = HEPH_PI;
+		static constexpr double pi = HEPH_PI;
+		static constexpr float pi_f = HEPH_PI;
+		static constexpr heph_float pi_hf = HEPH_PI;
+		static constexpr long double e_l = HEPH_E;
+		static constexpr double e = HEPH_E;
+		static constexpr float e_f = HEPH_E;
+		static constexpr heph_float e_hf = HEPH_E;
 	public:
 		Math() = delete;
 		Math(const Math&) = delete;
