@@ -22,9 +22,9 @@ namespace HephAudio
 
 		StringBuffer AiffFormat::Extensions() const
 		{
-			return ".aiff .aifc";
+			return ".aif .aiff .aifc";
 		}
-		bool AiffFormat::CheckSignature(const File& audioFile) const
+		bool AiffFormat::VerifySignature(const File& audioFile) const
 		{
 			uint32_t data32 = 0;
 
@@ -231,7 +231,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		bool AiffFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
+		bool AiffFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			try
 			{

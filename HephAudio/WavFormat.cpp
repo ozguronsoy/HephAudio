@@ -18,9 +18,9 @@ namespace HephAudio
 	{
 		StringBuffer WavFormat::Extensions() const
 		{
-			return ".wav";
+			return ".wav .wave";
 		}
-		bool WavFormat::CheckSignature(const File& audioFile) const
+		bool WavFormat::VerifySignature(const File& audioFile) const
 		{
 			uint32_t data32 = 0;
 			
@@ -203,7 +203,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		bool WavFormat::SaveToFile(StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const
+		bool WavFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) const
 		{
 			try
 			{

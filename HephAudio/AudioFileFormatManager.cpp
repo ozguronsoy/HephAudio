@@ -2,46 +2,53 @@
 #include "WavFormat.h"
 #include "AiffFormat.h"
 
+using namespace HephCommon;
+
 namespace HephAudio
 {
 	namespace FileFormats
 	{
-		std::vector<IAudioFileFormat*> formats = {
-					new WavFormat(),
-					new AiffFormat(),
+		std::vector<IAudioFileFormat*> formats = { 
+			new WavFormat(),
+			new AiffFormat()
 		};
 
 		void AudioFileFormatManager::RegisterFileFormat(IAudioFileFormat* format)
 		{
+			const std::vector<StringBuffer> newFormatExtensions = format->Extensions().Split(' ');
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				// If format is already registered, remove it and add the new implementation.
-				if (format->Extensions().Contains(formats.at(i)->Extensions()))
+				const StringBuffer currentFormatExtensions = formats.at(i)->Extensions();
+				for (size_t j = 0; j < newFormatExtensions.size(); j++)
 				{
-					delete formats.at(i);
-					formats.erase(formats.begin() + i);
-					break;
+					// If format is already registered, remove it and add the new implementation.
+					if (currentFormatExtensions.Contains(newFormatExtensions[j]))
+					{
+						delete formats.at(i);
+						formats.erase(formats.begin() + i);
+						formats.push_back(format);
+						return;
+					}
 				}
 			}
-			formats.push_back(format);
 		}
-		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(const HephCommon::File& file)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(const File& file)
 		{
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (formats.at(i)->CheckSignature(file))
+				if (formats.at(i)->VerifySignature(file))
 				{
 					return formats.at(i);
 				}
 			}
 			return nullptr;
 		}
-		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(HephCommon::StringBuffer filePath)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(StringBuffer filePath)
 		{
-			const HephCommon::StringBuffer fileExtension = HephCommon::File::GetFileExtension(filePath);
+			const StringBuffer fileExtension = File::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				if (formats.at(i)->Extensions().Contains(fileExtension))
+				if (formats.at(i)->VerifyExtension(fileExtension))
 				{
 					return formats.at(i);
 				}

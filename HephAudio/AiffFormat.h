@@ -10,12 +10,12 @@ namespace HephAudio
 		{
 		public:
 			HephCommon::StringBuffer Extensions() const override;
-			bool CheckSignature(const HephCommon::File& audioFile) const override;
+			bool VerifySignature(const HephCommon::File& audioFile) const override;
 			size_t FileFrameCount(const HephCommon::File& audioFile, const AudioFormatInfo& audioFormatInfo) const override;
 			AudioFormatInfo ReadAudioFormatInfo(const HephCommon::File& audioFile) const override;
 			AudioBuffer ReadFile(const HephCommon::File& audioFile) const override;
 			AudioBuffer ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const override;
-			bool SaveToFile(HephCommon::StringBuffer filePath, AudioBuffer& buffer, bool overwrite) const override;
+			bool SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) const override;
 		private:
 			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo& formatInfo) const;
 			uint64_t SampleRateTo64(const AudioFormatInfo& formatInfo) const;
