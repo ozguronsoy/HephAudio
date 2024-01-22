@@ -14,9 +14,9 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ChangeBitsPerSample(AudioBuffer& buffer, uint16_t outputBitsPerSample)
 	{
-		if (buffer.formatInfo.formatTag == WAVE_FORMAT_PCM)
+		if (buffer.formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM)
 		{
-			IAudioCodec* pCodec = AudioCodecManager::FindCodec(WAVE_FORMAT_PCM);
+			IAudioCodec* pCodec = AudioCodecManager::FindCodec(HEPHAUDIO_FORMAT_TAG_PCM);
 			EncodedBufferInfo encodedBufferInfo;
 			encodedBufferInfo.formatInfo = buffer.formatInfo;
 			encodedBufferInfo.pBuffer = buffer.pData;
@@ -115,7 +115,7 @@ namespace HephAudio
 	AudioBuffer AudioProcessor::MergeChannels(const std::vector<FloatBuffer>& channels, uint32_t sampleRate)
 	{
 		if (channels.size() == 0) { return AudioBuffer(0, AudioFormatInfo()); }
-		AudioBuffer resultBuffer(channels[0].FrameCount(), AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, channels.size(), sizeof(heph_float) * 8, sampleRate));
+		AudioBuffer resultBuffer(channels[0].FrameCount(), AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT, channels.size(), sizeof(heph_float) * 8, sampleRate));
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < resultBuffer.formatInfo.channelCount; j++)

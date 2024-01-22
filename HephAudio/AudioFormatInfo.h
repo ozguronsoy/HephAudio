@@ -2,7 +2,7 @@
 #include "HephAudioFramework.h"
 #include <cstdint>
 
-#define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate) AudioFormatInfo(WAVE_FORMAT_IEEE_FLOAT, channelCount, sizeof(heph_float) * 8, sampleRate, HEPH_SYSTEM_ENDIAN)
+#define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate) AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT, channelCount, sizeof(heph_float) * 8, sampleRate, HEPH_SYSTEM_ENDIAN)
 
 namespace HephAudio
 {

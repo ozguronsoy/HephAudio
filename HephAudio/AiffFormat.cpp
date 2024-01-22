@@ -3,7 +3,7 @@
 #include "AudioCodecManager.h"
 #include "AudioProcessor.h"
 
-#define WAVE_FORMAT_PCM_BIG_ENDIAN (WAVE_FORMAT_PCM << 8)
+#define HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN (HEPHAUDIO_FORMAT_TAG_PCM << 8)
 
 using namespace HephCommon;
 using namespace HephAudio::Codecs;
@@ -117,7 +117,7 @@ namespace HephAudio
 			}
 			else
 			{
-				formatInfo.formatTag = WAVE_FORMAT_PCM;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 			}
 
 			audioFile.SetOffset(commChunkEnd);
@@ -145,9 +145,9 @@ namespace HephAudio
 		{
 			AudioFormatInfo audioFormatInfo = this->ReadAudioFormatInfo(audioFile);
 			Endian audioDataEndian = Endian::Big;
-			if (audioFormatInfo.formatTag == WAVE_FORMAT_PCM_BIG_ENDIAN)
+			if (audioFormatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN)
 			{
-				audioFormatInfo.formatTag = WAVE_FORMAT_PCM;
+				audioFormatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 				audioDataEndian = Endian::Little;
 			}
 
@@ -186,7 +186,7 @@ namespace HephAudio
 		{
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t audioDataSize = frameCount * audioFormatInfo.FrameSize();
-			const Endian audioDataEndian = audioFormatInfo.formatTag == WAVE_FORMAT_PCM_BIG_ENDIAN ? Endian::Little : Endian::Big;
+			const Endian audioDataEndian = audioFormatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN ? Endian::Little : Endian::Big;
 			uint32_t data32 = 0;
 
 			if (finishedPlaying != nullptr)
@@ -441,26 +441,26 @@ namespace HephAudio
 			switch (tagBits)
 			{
 			case 0x4E4F4E45: // "NONE"
-				formatInfo.formatTag = WAVE_FORMAT_PCM;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 				break;
 			case 0x736F7774: // "sowt"
-				formatInfo.formatTag = WAVE_FORMAT_PCM_BIG_ENDIAN;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN;
 				break;
 			case 0x666C3332: // "fl32"
 			case 0x666C3634: // "fl64"
 			case 0x464C3332: // "FL32"
-				formatInfo.formatTag = WAVE_FORMAT_IEEE_FLOAT;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT;
 				break;
 			case 0x414C4157: // "ALAW"
 				formatInfo.sampleRate = 8000;
 			case 0x616C6177: // "alaw"
-				formatInfo.formatTag = WAVE_FORMAT_ALAW;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_ALAW;
 				formatInfo.bitsPerSample = 8;
 				break;
 			case 0x554C4157: // "ULAW"
 				formatInfo.sampleRate = 8000;
 			case 0x756C6177: // "ulaw"
-				formatInfo.formatTag = WAVE_FORMAT_MULAW;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_MULAW;
 				formatInfo.bitsPerSample = 8;
 				break;
 			default:
@@ -471,11 +471,11 @@ namespace HephAudio
 		{
 			switch (audioFormatInfo.formatTag)
 			{
-			case WAVE_FORMAT_PCM:
+			case HEPHAUDIO_FORMAT_TAG_PCM:
 				outTagBits = 0x4E4F4E45; // "NONE"
 				outCompressionName = "not compressed";
 				break;
-			case WAVE_FORMAT_IEEE_FLOAT:
+			case HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT:
 				if (audioFormatInfo.bitsPerSample == 32)
 				{
 					outTagBits = 0x666C3332; // "fl32"
@@ -487,11 +487,11 @@ namespace HephAudio
 					outCompressionName = " IEEE 64-bit float";
 				}
 				break;
-			case WAVE_FORMAT_ALAW:
+			case HEPHAUDIO_FORMAT_TAG_ALAW:
 				outTagBits = 0x616C6177; // "alaw"
 				outCompressionName = "ALaw 2:1";
 				break;
-			case WAVE_FORMAT_MULAW:
+			case HEPHAUDIO_FORMAT_TAG_MULAW:
 				outTagBits = 0x756C6177;
 				outCompressionName = "µLaw 2:1";
 				break;

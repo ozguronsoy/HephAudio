@@ -366,7 +366,7 @@ namespace HephAudio
 
 			switch (format.formatTag)
 			{
-			case WAVE_FORMAT_PCM:
+			case HEPHAUDIO_FORMAT_TAG_PCM:
 			{
 				streamDesc.mFormatID = kAudioFormatLinearPCM;
 				if (format.bitsPerSample != 8)
@@ -375,32 +375,32 @@ namespace HephAudio
 				}
 			}
 			break;
-			case WAVE_FORMAT_IEEE_FLOAT:
+			case HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT:
 				streamDesc.mFormatID = kAudioFormatLinearPCM;
 				streamDesc.mFormatFlags |= kAudioFormatFlagIsFloat;
 				break;
-			case WAVE_FORMAT_ALAW:
+			case HEPHAUDIO_FORMAT_TAG_ALAW:
 				streamDesc.mFormatID = kAudioFormatALaw;
 				break;
-			case WAVE_FORMAT_MULAW:
+			case HEPHAUDIO_FORMAT_TAG_MULAW:
 				streamDesc.mFormatID = kAudioFormatULaw;
 				break;
-			case WAVE_FORMAT_FLAC:
+			case HEPHAUDIO_FORMAT_TAG_FLAC:
 				streamDesc.mFormatID = kAudioFormatFLAC;
 				break;
-			case WAVE_FORMAT_ALAC:
+			case HEPHAUDIO_FORMAT_TAG_ALAC:
 				streamDesc.mFormatID = kAudioFormatAppleLossless;
 				break;
-			case WAVE_FORMAT_MPEGLAYER3:
+			case HEPHAUDIO_FORMAT_TAG_MPEGLAYER3:
 				streamDesc.mFormatID = kAudioFormatMPEGLayer3;
 				break;
-			case WAVE_FORMAT_MPEG4_AAC:
+			case HEPHAUDIO_FORMAT_TAG_MPEG4_AAC:
 				streamDesc.mFormatID = kAudioFormatMPEG4AAC;
 				break;
-			case WAVE_FORMAT_OPUS:
+			case HEPHAUDIO_FORMAT_TAG_OPUS:
 				streamDesc.mFormatID = kAudioFormatOpus;
 				break;
-			case WAVE_FORMAT_QUALCOMM_PUREVOICE:
+			case HEPHAUDIO_FORMAT_TAG_QUALCOMM_PUREVOICE:
 				streamDesc.mFormatID = kAudioFormatQUALCOMM;
 				break;
 			default:
@@ -416,31 +416,31 @@ namespace HephAudio
 			switch (streamDesc.mFormatID)
 			{
 			case kAudioFormatLinearPCM:
-				format.formatTag = ((streamDesc.mFormatFlags & kAudioFormatFlagIsFloat) == kAudioFormatFlagIsFloat) ? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
+				format.formatTag = ((streamDesc.mFormatFlags & kAudioFormatFlagIsFloat) == kAudioFormatFlagIsFloat) ? HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT : HEPHAUDIO_FORMAT_TAG_PCM;
 				break;
 			case kAudioFormatALaw:
-				format.formatTag = WAVE_FORMAT_ALAW;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_ALAW;
 				break;
 			case kAudioFormatULaw:
-				format.formatTag = WAVE_FORMAT_MULAW;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_MULAW;
 				break;
 			case kAudioFormatFLAC:
-				format.formatTag = WAVE_FORMAT_FLAC;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_FLAC;
 				break;
 			case kAudioFormatAppleLossless:
-				format.formatTag = WAVE_FORMAT_ALAC;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_ALAC;
 				break;
 			case kAudioFormatMPEGLayer3:
-				format.formatTag = WAVE_FORMAT_MPEGLAYER3;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_MPEGLAYER3;
 				break;
 			case kAudioFormatMPEG4AAC:
-				format.formatTag = WAVE_FORMAT_MPEG4_AAC;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_MPEG4_AAC;
 				break;
 			case kAudioFormatOpus:
-				format.formatTag = WAVE_FORMAT_OPUS;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_OPUS;
 				break;
 			case kAudioFormatQUALCOMM:
-				format.formatTag = WAVE_FORMAT_QUALCOMM_PUREVOICE;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_QUALCOMM_PUREVOICE;
 				break;
 			default:
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));

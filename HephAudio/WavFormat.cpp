@@ -97,7 +97,7 @@ namespace HephAudio
 			audioFile.IncreaseOffset(6);
 			audioFile.Read(&formatInfo.bitsPerSample, 2, Endian::Little);
 
-			if (formatInfo.formatTag == WAVE_FORMAT_EXTENSIBLE)
+			if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_EXTENSIBLE)
 			{
 				uint16_t extensionSize;
 				audioFile.Read(&extensionSize, 2, Endian::Little);

@@ -10,7 +10,7 @@ namespace HephAudio
 	{
 		uint32_t PcmCodec::Tag() const 
 		{
-			return WAVE_FORMAT_PCM;
+			return HEPHAUDIO_FORMAT_TAG_PCM;
 		}
 		AudioBuffer PcmCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
@@ -136,7 +136,7 @@ namespace HephAudio
 		{
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
-			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_PCM;
+			encodedBufferInfo.formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
 			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
 			AudioBuffer tempBuffer = AudioBuffer(bufferToEncode.FrameCount(), encodedBufferInfo.formatInfo);

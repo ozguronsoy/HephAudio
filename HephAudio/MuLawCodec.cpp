@@ -8,7 +8,7 @@ namespace HephAudio
 	{
 		uint32_t MuLawCodec::Tag() const
 		{
-			return WAVE_FORMAT_MULAW;
+			return HEPHAUDIO_FORMAT_TAG_MULAW;
 		}
 		AudioBuffer MuLawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
@@ -32,7 +32,7 @@ namespace HephAudio
 			AudioProcessor::ChangeSampleRate(bufferToEncode, 8000);
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
-			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_MULAW;
+			encodedBufferInfo.formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_MULAW;
 			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
 			encodedBufferInfo.formatInfo.bitsPerSample = 8;
 			encodedBufferInfo.formatInfo.sampleRate = 8000;

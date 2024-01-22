@@ -9,7 +9,7 @@ namespace HephAudio
 	{
 		uint32_t IEEE_FloatCodec::Tag() const 
 		{
-			return WAVE_FORMAT_IEEE_FLOAT;
+			return HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT;
 		}
 		AudioBuffer IEEE_FloatCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
@@ -74,7 +74,7 @@ namespace HephAudio
 		{
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
-			encodedBufferInfo.formatInfo.formatTag = WAVE_FORMAT_IEEE_FLOAT;
+			encodedBufferInfo.formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT;
 			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
 			encodedBufferInfo.formatInfo.bitsPerSample = bufferToEncode.FormatInfo().bitsPerSample;
 			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
