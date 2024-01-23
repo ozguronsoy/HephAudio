@@ -20,6 +20,7 @@ namespace HephAudio
 			this->Reset();
 		}
 	}
+	AudioBuffer::AudioBuffer(size_t frameCount, uint16_t channelCount, uint32_t sampleRate) : AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate)) {}
 	AudioBuffer::AudioBuffer(std::nullptr_t rhs) : AudioBuffer() {}
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) : formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(nullptr)
 	{

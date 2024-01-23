@@ -218,9 +218,9 @@ namespace HephAudio
 	RoomImpulseResponse::NLM RoomImpulseResponse::CalculateMaxNLM(uint32_t imageRangeLimit) const
 	{
 		NLM maxNLM{ 0 };
-		maxNLM.n = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.x), imageRangeLimit);
-		maxNLM.l = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
-		maxNLM.m = Math::Min((uint32_t)ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
+		maxNLM.n = Math::Min((uint32_t)Math::Ceil(this->impulseResponseRange * 0.5 / this->roomSize.x), imageRangeLimit);
+		maxNLM.l = Math::Min((uint32_t)Math::Ceil(this->impulseResponseRange * 0.5 / this->roomSize.y), imageRangeLimit);
+		maxNLM.m = Math::Min((uint32_t)Math::Ceil(this->impulseResponseRange * 0.5 / this->roomSize.z), imageRangeLimit);
 		return maxNLM;
 	}
 }

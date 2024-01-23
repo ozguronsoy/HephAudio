@@ -6,21 +6,37 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio)
-		: stream(pNativeAudio, nullptr), isPaused(true), applyFadeInOrDelay(false), transitionEffect(TransitionEffect::None), transitionDuration_s(0) {}
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio) : AudioPlaylist(pNativeAudio, TransitionEffect::None, 0) {}
+
 	AudioPlaylist::AudioPlaylist(Audio& audio) : AudioPlaylist(audio.GetNativeAudio()) {}
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<StringBuffer>& files)
-		: stream(pNativeAudio, nullptr), files(files), isPaused(true), applyFadeInOrDelay(false), transitionEffect(TransitionEffect::None), transitionDuration_s(0)
+
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<StringBuffer>& files)  : AudioPlaylist(pNativeAudio, TransitionEffect::None, 0, files) {}
+
+	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<StringBuffer>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
+
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s) 
+		: stream(pNativeAudio, nullptr), isPaused(true), applyFadeInOrDelay(false), transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s) {}
+	
+	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s) : AudioPlaylist(audio.GetNativeAudio()) {}
+	
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files)
+		: stream(pNativeAudio, nullptr), files(files), isPaused(true), applyFadeInOrDelay(false)
+		, transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s)
 	{
 		if (this->files.size() > 0)
 		{
 			this->ChangeFile();
 		}
 	}
-	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<StringBuffer>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
+
+	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files)
+		: AudioPlaylist(audio.GetNativeAudio(), transitionEffect, transitionDuration_s, files) {}
+
 	AudioPlaylist::AudioPlaylist(AudioPlaylist&& rhs) noexcept :
-		stream(std::move(rhs.stream)), files(std::move(rhs.files)),
-		isPaused(rhs.isPaused), applyFadeInOrDelay(rhs.applyFadeInOrDelay), transitionEffect(rhs.transitionEffect), transitionDuration_s(rhs.transitionDuration_s) {}
+		stream(std::move(rhs.stream)), files(std::move(rhs.files))
+		, isPaused(rhs.isPaused), applyFadeInOrDelay(rhs.applyFadeInOrDelay)
+		, transitionEffect(rhs.transitionEffect), transitionDuration_s(rhs.transitionDuration_s) {}
+
 	AudioPlaylist& AudioPlaylist::operator=(const HephCommon::StringBuffer& rhs)
 	{
 		this->Clear();

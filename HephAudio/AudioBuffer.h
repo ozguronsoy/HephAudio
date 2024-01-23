@@ -8,7 +8,6 @@ namespace HephAudio
 	class AudioBuffer final
 	{
 		friend class AudioProcessor;
-		friend class AudioStream;
 	private:
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
@@ -16,6 +15,7 @@ namespace HephAudio
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
+		AudioBuffer(size_t frameCount, uint16_t channelCount, uint32_t sampleRate);
 		AudioBuffer(std::nullptr_t rhs);
 		AudioBuffer(const AudioBuffer& rhs);
 		AudioBuffer(AudioBuffer&& rhs) noexcept;

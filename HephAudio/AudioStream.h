@@ -20,6 +20,7 @@ namespace HephAudio
 		FileFormats::IAudioFileFormat* pFileFormat;
 		Codecs::IAudioCodec* pAudioCodec;
 		AudioFormatInfo formatInfo;
+		size_t frameCount;
 		AudioObject* pAudioObject;
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
@@ -35,6 +36,11 @@ namespace HephAudio
 		Codecs::IAudioCodec* GetAudioCodec() const;
 		AudioObject* GetAudioObject() const;
 		const AudioFormatInfo& GetAudioFormatInfo() const;
+		size_t GetFrameCount() const;
+		void Start();
+		void Stop();
+		heph_float GetPosition() const;
+		void SetPosition(heph_float position) const;
 		void Release();
 	private:
 		void Release(bool destroyAO);

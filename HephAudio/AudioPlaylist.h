@@ -35,6 +35,10 @@ namespace HephAudio
 		AudioPlaylist(Audio& audio);
 		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<HephCommon::StringBuffer>& files);
 		AudioPlaylist(Audio& audio, const std::vector<HephCommon::StringBuffer>& files);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s);
+		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files);
+		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files);
 		AudioPlaylist(const AudioPlaylist&) = delete;
 		AudioPlaylist(AudioPlaylist&& rhs) noexcept;
 		AudioPlaylist& operator=(const AudioPlaylist&) = delete;

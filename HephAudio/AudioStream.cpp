@@ -1,7 +1,8 @@
 #include "AudioStream.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
 #include "AudioCodecManager.h"
 #include "AudioProcessor.h"
+#include "../HephCommon/HeaderFiles/HephException.h"
+#include "../HephCommon/HeaderFiles/HephMath.h"
 
 using namespace HephCommon;
 
@@ -10,7 +11,7 @@ namespace HephAudio
 	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, StringBuffer filePath)
 		: pNativeAudio(pNativeAudio), file(filePath, FileOpenMode::Read),
 		pFileFormat(this->file.IsOpen() ? FileFormats::AudioFileFormatManager::FindFileFormat(this->file) : nullptr),
-		pAudioCodec(nullptr), pAudioObject(nullptr)
+		pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr)
 	{
 		if (this->pNativeAudio == nullptr)
 		{
@@ -28,7 +29,7 @@ namespace HephAudio
 
 			this->pAudioObject = pNativeAudio->CreateAudioObject("(Stream) " + this->file.FileName(), 0);
 			this->formatInfo = this->pFileFormat->ReadAudioFormatInfo(this->file);
-			this->pAudioObject->buffer.frameCount = this->pFileFormat->FileFrameCount(this->file, this->formatInfo);
+			this->frameCount = this->pFileFormat->FileFrameCount(this->file, this->formatInfo);
 
 			this->pAudioCodec = Codecs::AudioCodecManager::FindCodec(formatInfo.formatTag);
 			if (this->pAudioCodec == nullptr)
@@ -45,7 +46,8 @@ namespace HephAudio
 	}
 	AudioStream::AudioStream(Audio& audio, StringBuffer filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
-		: pNativeAudio(rhs.pNativeAudio), file(std::move(rhs.file)), pFileFormat(rhs.pFileFormat), pAudioCodec(rhs.pAudioCodec), formatInfo(rhs.formatInfo), pAudioObject(rhs.pAudioObject)
+		: pNativeAudio(rhs.pNativeAudio), file(std::move(rhs.file)), pFileFormat(rhs.pFileFormat)
+		, pAudioCodec(rhs.pAudioCodec), formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pAudioObject(rhs.pAudioObject)
 	{
 		if (this->pAudioObject != nullptr)
 		{
@@ -70,6 +72,7 @@ namespace HephAudio
 			this->pFileFormat = rhs.pFileFormat;
 			this->pAudioCodec = rhs.pAudioCodec;
 			this->formatInfo = rhs.formatInfo;
+			this->frameCount = rhs.frameCount;
 			this->pAudioObject = rhs.pAudioObject;
 			if (this->pAudioObject != nullptr)
 			{
@@ -81,6 +84,7 @@ namespace HephAudio
 			rhs.pFileFormat = nullptr;
 			rhs.pAudioCodec = nullptr;
 			rhs.formatInfo = AudioFormatInfo();
+			rhs.frameCount = 0;
 			rhs.pAudioObject = nullptr;
 		}
 
@@ -114,6 +118,45 @@ namespace HephAudio
 	{
 		return this->formatInfo;
 	}
+	size_t AudioStream::GetFrameCount() const
+	{
+		return this->frameCount;
+	}
+	void AudioStream::Start()
+	{
+		if (this->pAudioObject != nullptr)
+		{
+			this->pAudioObject->isPaused = false;
+		}
+	}
+	void AudioStream::Stop()
+	{
+		if (this->pAudioObject != nullptr)
+		{
+			this->pAudioObject->isPaused = true;
+		}
+	}
+	heph_float AudioStream::GetPosition() const
+	{
+		return this->pAudioObject != nullptr ? Math::Min((heph_float)this->pAudioObject->frameIndex / this->frameCount, 1.0_hf) : 0;
+	}
+	void AudioStream::SetPosition(heph_float position) const
+	{
+		if (this->pAudioObject != nullptr)
+		{
+			if (position > 1.0)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::SetPosition", "position must be between 0 and 1"));
+				position = 1.0;
+			}
+			else if (position < 0.0)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::SetPosition", "position must be between 0 and 1"));
+				position = 0.0;
+			}
+			this->pAudioObject->frameIndex = position * this->frameCount;
+		}
+	}
 	void AudioStream::Release()
 	{
 		this->Release(true);
@@ -132,6 +175,7 @@ namespace HephAudio
 		this->pAudioCodec = nullptr;
 		this->pNativeAudio = nullptr;
 		this->formatInfo = AudioFormatInfo();
+		this->frameCount = 0;
 	}
 	void AudioStream::OnRender(const EventParams& eventParams)
 	{
@@ -151,7 +195,6 @@ namespace HephAudio
 			if (srRatio != 1.0) // change sample rate
 			{
 				pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
-				pRenderResult->renderBuffer.formatInfo.sampleRate = pRenderArgs->renderFrameCount;
 				const AudioBuffer originalBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
 
 				for (size_t i = 0; i < pRenderArgs->renderFrameCount; i++)
@@ -159,9 +202,9 @@ namespace HephAudio
 					const heph_float resampleIndex = i / srRatio;
 					const heph_float rho = resampleIndex - floor(resampleIndex);
 
-					for (size_t j = 0; j < pRenderResult->renderBuffer.formatInfo.channelCount && (resampleIndex + 1) < originalBuffer.frameCount; j++)
+					for (size_t j = 0; j < pRenderResult->renderBuffer.FormatInfo().channelCount && (resampleIndex + 1) < originalBuffer.FrameCount(); j++)
 					{
-						if (resampleIndex + 1.0 >= originalBuffer.frameCount) break;
+						if (resampleIndex + 1.0 >= originalBuffer.FrameCount()) break;
 						pRenderResult->renderBuffer[i][j] = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
 					}
 				}
