@@ -7,13 +7,13 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		uint32_t IEEE_FloatCodec::Tag() const 
+		uint32_t IEEE_FloatCodec::Tag() const
 		{
 			return HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT;
 		}
 		AudioBuffer IEEE_FloatCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
+			AudioBuffer resultBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
 
 			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 			{
@@ -78,7 +78,7 @@ namespace HephAudio
 			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
 			encodedBufferInfo.formatInfo.bitsPerSample = bufferToEncode.FormatInfo().bitsPerSample;
 			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
+			AudioBuffer resultBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
 			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 			{

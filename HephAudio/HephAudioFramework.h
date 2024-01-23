@@ -42,6 +42,33 @@
 #define HEPHAUDIO_SPEED_OF_SOUND 343.0 // speed of sound in dry air at 20°C in meters per second
 #endif
 
+#ifndef HEPH_AUDIO_SAMPLE
+
+#if defined(HEPHAUDIO_SAMPLE_TYPE_FLOAT64)
+typedef double heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN -1.0
+#define HEPH_AUDIO_SAMPLE_MAX 1.0
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_FLOAT32)
+typedef float heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN -1.0f
+#define HEPH_AUDIO_SAMPLE_MAX 1.0f
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_HEPH_FLOAT)
+typedef heph_float heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN -1.0_hf
+#define HEPH_AUDIO_SAMPLE_MAX 1.0_hf
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
+#else
+typedef float heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN -1.0f
+#define HEPH_AUDIO_SAMPLE_MAX 1.0f
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
+#endif
+
+#define HEPH_AUDIO_SAMPLE heph_audio_sample
+#endif
+
 #pragma region Helper Methods
 namespace HephAudio
 {

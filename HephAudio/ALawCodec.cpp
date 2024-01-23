@@ -52,7 +52,7 @@ namespace HephAudio
 		}
 		AudioBuffer ALawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
+			AudioBuffer resultBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
@@ -76,7 +76,7 @@ namespace HephAudio
 			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
 			encodedBufferInfo.formatInfo.bitsPerSample = 8;
 			encodedBufferInfo.formatInfo.sampleRate = 8000;
-			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
+			AudioBuffer tempBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{

@@ -44,9 +44,9 @@ namespace HephAudio
 		this->Empty();
 		this->formatInfo = AudioFormatInfo();
 	}
-	heph_float* AudioBuffer::operator[](size_t frameIndex) const
+	heph_audio_sample* AudioBuffer::operator[](size_t frameIndex) const
 	{
-		return (heph_float*)(((uint8_t*)this->pData) + this->formatInfo.FrameSize() * frameIndex);
+		return (heph_audio_sample*)(((uint8_t*)this->pData) + this->formatInfo.FrameSize() * frameIndex);
 	}
 	AudioBuffer AudioBuffer::operator-() const
 	{
@@ -826,14 +826,14 @@ namespace HephAudio
 			this->pData = nullptr;
 		}
 	}
-	heph_float AudioBuffer::Min() const
+	heph_audio_sample AudioBuffer::Min() const
 	{
-		heph_float minSample = INT32_MAX;
+		heph_audio_sample minSample = INT32_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
-				const heph_float& currentSample = (*this)[i][j];
+				const heph_audio_sample& currentSample = (*this)[i][j];
 				if (currentSample < minSample)
 				{
 					minSample = currentSample;
@@ -842,14 +842,14 @@ namespace HephAudio
 		}
 		return minSample;
 	}
-	heph_float AudioBuffer::Max() const
+	heph_audio_sample AudioBuffer::Max() const
 	{
-		heph_float maxSample = INT32_MIN;
+		heph_audio_sample maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
-				const heph_float& currentSample = (*this)[i][j];
+				const heph_audio_sample& currentSample = (*this)[i][j];
 				if (currentSample > maxSample)
 				{
 					maxSample = currentSample;
@@ -858,14 +858,14 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	heph_float AudioBuffer::AbsMax() const
+	heph_audio_sample AudioBuffer::AbsMax() const
 	{
-		heph_float maxSample = INT32_MIN;
+		heph_audio_sample maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
 			{
-				heph_float currentSample = abs((*this)[i][j]);
+				heph_audio_sample currentSample = Math::Abs((*this)[i][j]);
 				if (currentSample > maxSample)
 				{
 					maxSample = currentSample;
@@ -1018,7 +1018,7 @@ HephAudio::AudioBuffer abs(const HephAudio::AudioBuffer& rhs)
 	{
 		for (size_t j = 0; j < audioFormatInfo.channelCount; j++)
 		{
-			resultBuffer[i][j] = abs(rhs[i][j]);
+			resultBuffer[i][j] = Math::Abs(rhs[i][j]);
 		}
 	}
 	return resultBuffer;
