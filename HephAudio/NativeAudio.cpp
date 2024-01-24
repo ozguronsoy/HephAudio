@@ -22,11 +22,11 @@ namespace HephAudio
 		{
 			return this->Play(filePath, 1u, false);
 		}
-		AudioObject* NativeAudio::Play(StringBuffer filePath, uint32_t loopCount)
+		AudioObject* NativeAudio::Play(StringBuffer filePath, uint32_t playCount)
 		{
-			return this->Play(filePath, loopCount, false);
+			return this->Play(filePath, playCount, false);
 		}
-		AudioObject* NativeAudio::Play(StringBuffer filePath, uint32_t loopCount, bool isPaused)
+		AudioObject* NativeAudio::Play(StringBuffer filePath, uint32_t playCount, bool isPaused)
 		{
 			try
 			{
@@ -53,7 +53,7 @@ namespace HephAudio
 				audioObject.filePath = filePath;
 				audioObject.name = audioFile.FileName();
 				audioObject.buffer = format->ReadFile(audioFile);
-				audioObject.loopCount = loopCount;
+				audioObject.playCount = playCount;
 				audioObject.isPaused = isPaused;
 
 				return &audioObject;
@@ -402,7 +402,7 @@ namespace HephAudio
 
 					if (rResult.isFinishedPlaying && AudioObjectExists(audioObjectId))
 					{
-						if (pAudioObject->loopCount == 1) // Finish playing.
+						if (pAudioObject->playCount == 1) // finish playing.
 						{
 							const StringBuffer audioObjectName = pAudioObject->name;
 
@@ -419,9 +419,9 @@ namespace HephAudio
 						}
 						else
 						{
-							pAudioObject->loopCount--;
+							pAudioObject->playCount--;
 
-							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, pAudioObject->loopCount);
+							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, pAudioObject->playCount);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
 							if (AudioObjectExists(audioObjectId))

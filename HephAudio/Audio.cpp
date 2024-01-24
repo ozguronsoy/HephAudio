@@ -92,13 +92,13 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->Play(filePath);
 	}
-	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t loopCount)
+	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t playCount)
 	{
-		return this->pNativeAudio->Play(filePath, loopCount);
+		return this->pNativeAudio->Play(filePath, playCount);
 	}
-	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused)
+	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t playCount, bool isPaused)
 	{
-		return this->pNativeAudio->Play(filePath, loopCount, isPaused);
+		return this->pNativeAudio->Play(filePath, playCount, isPaused);
 	}
 	AudioObject* Audio::Load(HephCommon::StringBuffer filePath)
 	{

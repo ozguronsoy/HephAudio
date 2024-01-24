@@ -9,6 +9,7 @@
 #include "AudioFinishedPlayingEventArgs.h"
 #include <vector>
 
+#define HEPHAUDIO_INFINITE_LOOP 0
 #define HEPHAUDIO_RENDER_HANDLER_DEFAULT &HephAudio::AudioObject::DefaultRenderHandler
 #define HEPHAUDIO_RENDER_HANDLER_ENSURE_FORMAT &HephAudio::AudioObject::EnsureFormatRenderHandler
 
@@ -20,7 +21,7 @@ namespace HephAudio
 		HephCommon::StringBuffer filePath;
 		HephCommon::StringBuffer name;
 		bool isPaused;
-		uint32_t loopCount;
+		uint32_t playCount;
 		heph_float volume;
 		AudioBuffer buffer;
 		size_t frameIndex;

@@ -9,10 +9,10 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: id(Guid::GenerateNew()), filePath(""), name(""), isPaused(true), loopCount(1), volume(1.0), frameIndex(0), OnRender(&AudioObject::DefaultRenderHandler) {}
+		: id(Guid::GenerateNew()), filePath(""), name(""), isPaused(true), playCount(1), volume(1.0), frameIndex(0), OnRender(&AudioObject::DefaultRenderHandler) {}
 	AudioObject::AudioObject(AudioObject&& rhs) noexcept
 		: id(rhs.id), filePath(std::move(rhs.filePath)), name(std::move(rhs.name)), isPaused(rhs.isPaused)
-		, loopCount(rhs.loopCount), volume(rhs.volume), buffer(std::move(rhs.buffer)), frameIndex(rhs.frameIndex)
+		, playCount(rhs.playCount), volume(rhs.volume), buffer(std::move(rhs.buffer)), frameIndex(rhs.frameIndex)
 		, OnRender(rhs.OnRender), OnFinishedPlaying(rhs.OnFinishedPlaying)
 	{
 		rhs.OnRender.ClearAll();
@@ -24,7 +24,7 @@ namespace HephAudio
 		this->filePath = std::move(rhs.filePath);
 		this->name = std::move(rhs.name);
 		this->isPaused = rhs.isPaused;
-		this->loopCount = rhs.loopCount;
+		this->playCount = rhs.playCount;
 		this->volume = rhs.volume;
 		this->buffer = std::move(rhs.buffer);
 		this->frameIndex = rhs.frameIndex;

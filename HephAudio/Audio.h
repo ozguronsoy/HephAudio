@@ -34,8 +34,8 @@ namespace HephAudio
 		~Audio();
 		Native::NativeAudio* GetNativeAudio() const;
 		AudioObject* Play(HephCommon::StringBuffer filePath);
-		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount);
-		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t loopCount, bool isPaused);
+		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t playCount);
+		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t playCount, bool isPaused);
 		AudioObject* Load(HephCommon::StringBuffer filePath);
 		AudioObject* CreateAudioObject(HephCommon::StringBuffer name, size_t bufferFrameCount);
 		bool DestroyAudioObject(AudioObject* pAudioObject);
