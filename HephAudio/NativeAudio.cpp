@@ -18,15 +18,15 @@ namespace HephAudio
 		{
 			HEPHAUDIO_STOPWATCH_START;
 		}
-		AudioObject* NativeAudio::Play(StringBuffer filePath)
+		AudioObject* NativeAudio::Play(const StringBuffer& filePath)
 		{
 			return this->Play(filePath, 1u, false);
 		}
-		AudioObject* NativeAudio::Play(StringBuffer filePath, uint32_t playCount)
+		AudioObject* NativeAudio::Play(const StringBuffer& filePath, uint32_t playCount)
 		{
 			return this->Play(filePath, playCount, false);
 		}
-		AudioObject* NativeAudio::Play(StringBuffer filePath, uint32_t playCount, bool isPaused)
+		AudioObject* NativeAudio::Play(const StringBuffer& filePath, uint32_t playCount, bool isPaused)
 		{
 			try
 			{
@@ -64,18 +64,26 @@ namespace HephAudio
 				return nullptr;
 			}
 		}
-		AudioObject* NativeAudio::Load(StringBuffer filePath)
+		AudioObject* NativeAudio::Load(const StringBuffer& filePath)
+		{
+			return this->Load(filePath, 1, true);
+		}
+		AudioObject* NativeAudio::Load(const StringBuffer& filePath, uint32_t playCount)
+		{
+			return this->Load(filePath, playCount, true);
+		}
+		AudioObject* NativeAudio::Load(const StringBuffer& filePath, uint32_t playCount, bool isPaused)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			AudioObject* pao = Play(filePath, 1u, true);
-			if (pao != nullptr && isRenderInitialized)
+			AudioObject* pao = this->Play(filePath, playCount, isPaused);
+			if (pao != nullptr && this->isRenderInitialized)
 			{
-				AudioProcessor::ChangeSampleRate(pao->buffer, renderFormat.sampleRate);
-				AudioProcessor::ChangeNumberOfChannels(pao->buffer, renderFormat.channelCount);
+				AudioProcessor::ChangeSampleRate(pao->buffer, this->renderFormat.sampleRate);
+				AudioProcessor::ChangeNumberOfChannels(pao->buffer, this->renderFormat.channelCount);
 			}
 			return pao;
 		}
-		AudioObject* NativeAudio::CreateAudioObject(StringBuffer name, size_t bufferFrameCount)
+		AudioObject* NativeAudio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
@@ -165,7 +173,7 @@ namespace HephAudio
 			}
 			return nullptr;
 		}
-		AudioObject* NativeAudio::GetAudioObject(StringBuffer audioObjectName)
+		AudioObject* NativeAudio::GetAudioObject(const StringBuffer& audioObjectName)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)
@@ -201,7 +209,7 @@ namespace HephAudio
 		{
 			return captureFormat;
 		}
-		AudioDevice NativeAudio::GetAudioDeviceById(StringBuffer deviceId) const
+		AudioDevice NativeAudio::GetAudioDeviceById(const StringBuffer& deviceId) const
 		{
 			std::vector<AudioDevice> devices = GetAudioDevices(AudioDeviceType::All);
 			for (size_t i = 0; i < devices.size(); i++)
@@ -273,7 +281,7 @@ namespace HephAudio
 
 			return result;
 		}
-		bool NativeAudio::SaveToFile(StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
+		bool NativeAudio::SaveToFile(const StringBuffer& filePath, bool overwrite, AudioBuffer& buffer)
 		{
 			try
 			{

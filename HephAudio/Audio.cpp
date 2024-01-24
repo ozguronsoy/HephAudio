@@ -10,31 +10,32 @@
 #include <android/api-level.h>
 #endif
 
+using namespace HephCommon;
 using namespace HephAudio::Native;
 
 namespace HephAudio
 {
-	void Audio::SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler)
+	void Audio::SetOnAudioDeviceAddedHandler(EventHandler handler)
 	{
 		this->pNativeAudio->OnAudioDeviceAdded = handler;
 	}
-	void Audio::AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler)
+	void Audio::AddOnAudioDeviceAddedHandler(EventHandler handler)
 	{
 		this->pNativeAudio->OnAudioDeviceAdded += handler;
 	}
-	void Audio::SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler)
+	void Audio::SetOnAudioDeviceRemovedHandler(EventHandler handler)
 	{
 		this->pNativeAudio->OnAudioDeviceRemoved = handler;
 	}
-	void Audio::AddOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler)
+	void Audio::AddOnAudioDeviceRemovedHandler(EventHandler handler)
 	{
 		this->pNativeAudio->OnAudioDeviceRemoved += handler;
 	}
-	void Audio::SetOnCaptureHandler(HephCommon::EventHandler handler)
+	void Audio::SetOnCaptureHandler(EventHandler handler)
 	{
 		this->pNativeAudio->OnCapture = handler;
 	}
-	void Audio::AddOnCaptureHandler(HephCommon::EventHandler handler)
+	void Audio::AddOnCaptureHandler(EventHandler handler)
 	{
 		this->pNativeAudio->OnCapture += handler;
 	}
@@ -52,7 +53,7 @@ namespace HephAudio
 		}
 		else
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
 		}
 	}
 #else
@@ -72,13 +73,13 @@ namespace HephAudio
 #elif defined(__APPLE__)
 		this->pNativeAudio = new AppleAudio();
 #else
-		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephCommon::HephException(HEPH_EC_FAIL, "Audio::Audio", "Unsupported platform."));
+		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "Unsupported platform."));
 #endif
 	}
 #endif
 	Audio::~Audio()
 	{
-		if (pNativeAudio != nullptr)
+		if (this->pNativeAudio != nullptr)
 		{
 			delete this->pNativeAudio;
 			this->pNativeAudio = nullptr;
@@ -88,23 +89,31 @@ namespace HephAudio
 	{
 		return this->pNativeAudio;
 	}
-	AudioObject* Audio::Play(HephCommon::StringBuffer filePath)
+	AudioObject* Audio::Play(const StringBuffer& filePath)
 	{
 		return this->pNativeAudio->Play(filePath);
 	}
-	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t playCount)
+	AudioObject* Audio::Play(const StringBuffer& filePath, uint32_t playCount)
 	{
 		return this->pNativeAudio->Play(filePath, playCount);
 	}
-	AudioObject* Audio::Play(HephCommon::StringBuffer filePath, uint32_t playCount, bool isPaused)
+	AudioObject* Audio::Play(const StringBuffer& filePath, uint32_t playCount, bool isPaused)
 	{
 		return this->pNativeAudio->Play(filePath, playCount, isPaused);
 	}
-	AudioObject* Audio::Load(HephCommon::StringBuffer filePath)
+	AudioObject* Audio::Load(const StringBuffer& filePath)
 	{
 		return this->pNativeAudio->Load(filePath);
 	}
-	AudioObject* Audio::CreateAudioObject(HephCommon::StringBuffer name, size_t bufferFrameCount)
+	AudioObject* Audio::Load(const StringBuffer& filePath, uint32_t playCount)
+	{
+		return this->pNativeAudio->Load(filePath, playCount);
+	}
+	AudioObject* Audio::Load(const StringBuffer& filePath, uint32_t playCount, bool isPaused)
+	{
+		return this->pNativeAudio->Load(filePath, playCount, isPaused);
+	}
+	AudioObject* Audio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount)
 	{
 		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount);
 	}
@@ -120,7 +129,7 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAudioObject(index);
 	}
-	AudioObject* Audio::GetAudioObject(HephCommon::StringBuffer audioObjectName) const
+	AudioObject* Audio::GetAudioObject(const StringBuffer& audioObjectName) const
 	{
 		return this->pNativeAudio->GetAudioObject(audioObjectName);
 	}
@@ -172,7 +181,7 @@ namespace HephAudio
 	{
 		this->pNativeAudio->StopCapturing();
 	}
-	AudioDevice Audio::GetAudioDeviceById(HephCommon::StringBuffer deviceId) const
+	AudioDevice Audio::GetAudioDeviceById(const StringBuffer& deviceId) const
 	{
 		return this->pNativeAudio->GetAudioDeviceById(deviceId);
 	}
@@ -192,7 +201,7 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAudioDevices(deviceType);
 	}
-	bool Audio::SaveToFile(HephCommon::StringBuffer filePath, bool overwrite, AudioBuffer& buffer)
+	bool Audio::SaveToFile(const StringBuffer& filePath, bool overwrite, AudioBuffer& buffer)
 	{
 		return this->pNativeAudio->SaveToFile(filePath, overwrite, buffer);
 	}

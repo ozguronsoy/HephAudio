@@ -33,15 +33,17 @@ namespace HephAudio
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
 		Native::NativeAudio* GetNativeAudio() const;
-		AudioObject* Play(HephCommon::StringBuffer filePath);
-		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t playCount);
-		AudioObject* Play(HephCommon::StringBuffer filePath, uint32_t playCount, bool isPaused);
-		AudioObject* Load(HephCommon::StringBuffer filePath);
-		AudioObject* CreateAudioObject(HephCommon::StringBuffer name, size_t bufferFrameCount);
+		AudioObject* Play(const HephCommon::StringBuffer& filePath);
+		AudioObject* Play(const HephCommon::StringBuffer& filePath, uint32_t playCount);
+		AudioObject* Play(const HephCommon::StringBuffer& filePath, uint32_t playCount, bool isPaused);
+		AudioObject* Load(const HephCommon::StringBuffer& filePath);
+		AudioObject* Load(const HephCommon::StringBuffer& filePath, uint32_t playCount);
+		AudioObject* Load(const HephCommon::StringBuffer& filePath, uint32_t playCount, bool isPaused);
+		AudioObject* CreateAudioObject(const HephCommon::StringBuffer& name, size_t bufferFrameCount);
 		bool DestroyAudioObject(AudioObject* pAudioObject);
 		bool AudioObjectExists(AudioObject* pAudioObject) const;
 		AudioObject* GetAudioObject(size_t index) const;
-		AudioObject* GetAudioObject(HephCommon::StringBuffer audioObjectName) const;
+		AudioObject* GetAudioObject(const HephCommon::StringBuffer& audioObjectName) const;
 		void PauseCapture(bool pause);
 		bool IsCapturePaused() const;
 		uint32_t GetDeviceEnumerationPeriod() const;
@@ -54,11 +56,11 @@ namespace HephAudio
 		void StopRendering();
 		void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 		void StopCapturing();
-		AudioDevice GetAudioDeviceById(HephCommon::StringBuffer deviceId) const;
+		AudioDevice GetAudioDeviceById(const HephCommon::StringBuffer& deviceId) const;
 		AudioDevice GetRenderDevice() const;
 		AudioDevice GetCaptureDevice() const;
 		AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 		std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
-		bool SaveToFile(HephCommon::StringBuffer filePath, bool overwrite, AudioBuffer& buffer);
+		bool SaveToFile(const HephCommon::StringBuffer& filePath, bool overwrite, AudioBuffer& buffer);
 	};
 }
