@@ -209,6 +209,30 @@ namespace HephAudio
 		{
 			return captureFormat;
 		}
+		void NativeAudio::InitializeRender() 
+		{
+			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(2, 48000));
+		}
+		void NativeAudio::InitializeRender(uint16_t channelCount, uint32_t sampleRate) 
+		{
+			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate));
+		}
+		void NativeAudio::InitializeRender(AudioFormatInfo format) 
+		{
+			this->InitializeRender(nullptr, format);
+		}
+		void NativeAudio::InitializeCapture()
+		{
+			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(2, 48000));
+		}
+		void NativeAudio::InitializeCapture(uint16_t channelCount, uint32_t sampleRate)
+		{
+			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate));
+		}
+		void NativeAudio::InitializeCapture(AudioFormatInfo format)
+		{
+			this->InitializeCapture(nullptr, format);
+		}
 		AudioDevice NativeAudio::GetAudioDeviceById(const StringBuffer& deviceId) const
 		{
 			std::vector<AudioDevice> devices = GetAudioDevices(AudioDeviceType::All);

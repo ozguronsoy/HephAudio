@@ -70,8 +70,14 @@ namespace HephAudio
 			virtual heph_float GetMasterVolume() const = 0;
 			AudioFormatInfo GetRenderFormat() const;
 			AudioFormatInfo GetCaptureFormat() const;
+			void InitializeRender();
+			void InitializeRender(uint16_t channelCount, uint32_t sampleRate);
+			void InitializeRender(AudioFormatInfo format);
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopRendering() = 0;
+			void InitializeCapture();
+			void InitializeCapture(uint16_t channelCount, uint32_t sampleRate);
+			void InitializeCapture(AudioFormatInfo format);
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopCapturing() = 0;
 			AudioDevice GetAudioDeviceById(const HephCommon::StringBuffer& deviceId) const;
