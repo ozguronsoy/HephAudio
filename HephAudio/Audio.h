@@ -7,10 +7,21 @@
 
 namespace HephAudio
 {
-	namespace Native
+	enum AudioAPI
 	{
-		class NativeAudio;
-	}
+		Default,
+#if defined(_WIN32)
+		WASAPI,
+		DirectSound,
+#elif defined(__APPLE__)
+		CoreAudio,
+#elif defined(__ANDROID__)
+		AAudio,
+		OpenSLES,
+#elif defined(__linux__)
+		ALSA,
+#endif
+	};
 
 	class Audio final
 	{
@@ -26,8 +37,10 @@ namespace HephAudio
 	public:
 #ifdef __ANDROID__
 		Audio(JavaVM* jvm);
+		Audio(JavaVM* jvm, AudioAPI api);
 #else
 		Audio();
+		Audio(AudioAPI api);
 #endif
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;

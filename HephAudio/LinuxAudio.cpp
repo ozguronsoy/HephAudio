@@ -1,4 +1,4 @@
-#if defined(__linux__) && !defined(ANDROID)
+#if defined(__linux__) && !defined(__ANDROID__)
 #include "LinuxAudio.h"
 #include "../HephCommon/HeaderFiles/File.h"
 #include "AudioProcessor.h"

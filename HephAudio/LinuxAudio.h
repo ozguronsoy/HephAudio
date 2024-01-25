@@ -1,5 +1,5 @@
 #pragma once
-#if defined(__linux__) && !defined(ANDROID)
+#if defined(__linux__) && !defined(__ANDROID__)
 #include "HephAudioFramework.h"
 #include "NativeAudio.h"
 #include <alsa/asoundlib.h>

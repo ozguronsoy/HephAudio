@@ -56,6 +56,28 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
 		}
 	}
+	Audio(JavaVM* jvm, AudioAPI api)
+	{
+		const uint32_t androidApiLevel = android_get_device_api_level();
+		if (androidApiLevel < 21)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
+		}
+
+		switch (api)
+		{
+		case AudioAPI::AAudio:
+			this->pNativeAudio = new AndroidAudioA(jvm);
+			break;
+		case AudioAPI::OpenSLES:
+			this->pNativeAudio = new AndroidAudioSLES(jvm);
+			break;
+		case AudioAPI::Default:
+		default:
+			this->pNativeAudio = androidApiLevel >= 27 ? (NativeAudio*)new AndroidAudioA(jvm) : (NativeAudio*)new AndroidAudioSLES(jvm);
+			break;
+		}
+	}
 #else
 	Audio::Audio()
 	{
@@ -67,6 +89,30 @@ namespace HephAudio
 		else
 		{
 			this->pNativeAudio = new WinAudioDS();
+		}
+#elif defined(__linux__)
+		this->pNativeAudio = new LinuxAudio();
+#elif defined(__APPLE__)
+		this->pNativeAudio = new AppleAudio();
+#else
+		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "Unsupported platform."));
+#endif
+	}
+	Audio::Audio(AudioAPI api)
+	{
+#if defined(_WIN32)
+		switch (api)
+		{
+		case AudioAPI::WASAPI:
+			this->pNativeAudio = new WinAudio();
+			break;
+		case AudioAPI::DirectSound:
+			this->pNativeAudio = new WinAudioDS();
+			break;
+		case AudioAPI::Default:
+		default:
+			this->pNativeAudio = IsWindowsVistaOrGreater() ? (NativeAudio*)new WinAudio() : (NativeAudio*)new WinAudioDS();
+			break;
 		}
 #elif defined(__linux__)
 		this->pNativeAudio = new LinuxAudio();
@@ -137,15 +183,15 @@ namespace HephAudio
 	{
 		this->pNativeAudio->PauseCapture(pause);
 	}
-	bool Audio::IsCapturePaused() const 
+	bool Audio::IsCapturePaused() const
 	{
 		return this->pNativeAudio->IsCapturePaused();
 	}
-	uint32_t Audio::GetDeviceEnumerationPeriod() const 
+	uint32_t Audio::GetDeviceEnumerationPeriod() const
 	{
 		return this->pNativeAudio->GetDeviceEnumerationPeriod();
 	}
-	void Audio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms) 
+	void Audio::SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms)
 	{
 		this->pNativeAudio->SetDeviceEnumerationPeriod(deviceEnumerationPeriod_ms);
 	}
@@ -165,15 +211,15 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetCaptureFormat();
 	}
-	void Audio::InitializeRender() 
+	void Audio::InitializeRender()
 	{
 		this->pNativeAudio->InitializeRender();
 	}
-	void Audio::InitializeRender(uint16_t channelCount, uint32_t sampleRate) 
+	void Audio::InitializeRender(uint16_t channelCount, uint32_t sampleRate)
 	{
 		this->pNativeAudio->InitializeRender(channelCount, sampleRate);
 	}
-	void Audio::InitializeRender(AudioFormatInfo format) 
+	void Audio::InitializeRender(AudioFormatInfo format)
 	{
 		this->pNativeAudio->InitializeRender(format);
 	}
