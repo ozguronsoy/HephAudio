@@ -103,7 +103,7 @@ int main()
   audio.StopCapturing();
 
   // Save the recorded audio data to a file if it doesn't exist.
-  audio.SaveToFile("file_path\\fila_name.wav", false, recordedAudioBuffer);
+  audio.SaveToFile("file_path\\fila_name.wav", false, recordedAudio);
 
   recordedAudio.Empty(); // dispose of the unnecessary data
 
