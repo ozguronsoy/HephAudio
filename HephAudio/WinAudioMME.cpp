@@ -6,6 +6,7 @@
 #include "../HephCommon/HeaderFiles/StringBuffer.h"
 #include <VersionHelpers.h>
 
+#define MAX_STOP_WAIT 200
 #define HAS_FORMAT_TAG(formatTag) ((dwFormats & formatTag) == formatTag)
 #define WINAUDIOMME_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_AND_THROW_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message)); }
 #define WINAUDIOMME_RENDER_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message)); goto RENDER_EXIT; }
@@ -125,7 +126,7 @@ namespace HephAudio
 					if (this->renderHdrs[i].lpData != nullptr)
 					{
 						size_t j = 0;
-						while ((this->renderHdrs[i].dwFlags & WHDR_DONE) != WHDR_DONE && j < 2000)
+						while ((this->renderHdrs[i].dwFlags & WHDR_DONE) != WHDR_DONE && j < MAX_STOP_WAIT)
 						{
 							std::this_thread::sleep_for(std::chrono::milliseconds(10));
 							j++;
@@ -217,7 +218,7 @@ namespace HephAudio
 					if (this->captureHdrs[i].lpData != nullptr)
 					{
 						size_t j = 0;
-						while ((this->captureHdrs[i].dwFlags & WHDR_DONE) != WHDR_DONE && j < 2000)
+						while ((this->captureHdrs[i].dwFlags & WHDR_DONE) != WHDR_DONE && j < MAX_STOP_WAIT)
 						{
 							std::this_thread::sleep_for(std::chrono::milliseconds(10));
 							j++;
