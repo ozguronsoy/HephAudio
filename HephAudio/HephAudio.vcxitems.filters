@@ -246,6 +246,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioPlaylist.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioMME.h">
+      <Filter>Header Files\NativeAudio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -406,6 +409,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioPlaylist.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioMME.cpp">
+      <Filter>Source Files\NativeAudio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

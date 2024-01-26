@@ -13,7 +13,7 @@
 #define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto RENDER_EXIT; }
 #define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto CAPTURE_EXIT; }
 #define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
-#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message)); return FALSE; }
+#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 using namespace HephCommon;
 using namespace Microsoft::WRL;

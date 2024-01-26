@@ -1,9 +1,11 @@
 #include "Audio.h"
 #include "WinAudio.h"
 #include "WinAudioDS.h"
+#include "WinAudioMME.h"
 #include "AndroidAudioA.h"
 #include "AndroidAudioSLES.h"
 #include "LinuxAudio.h"
+#include "AppleAudio.h"
 #if defined(_WIN32)
 #include <VersionHelpers.h>
 #elif defined(__ANDROID__)
@@ -108,6 +110,9 @@ namespace HephAudio
 			break;
 		case AudioAPI::DirectSound:
 			this->pNativeAudio = new WinAudioDS();
+			break;
+		case AudioAPI::MMEAPI:
+			this->pNativeAudio = new WinAudioMME();
 			break;
 		case AudioAPI::Default:
 		default:

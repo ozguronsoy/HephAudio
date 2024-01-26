@@ -25,7 +25,7 @@ namespace HephAudio
 		{
 			if (!IsWindowsVistaOrGreater())
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(E_NOINTERFACE, "WinAudio", "OS version must be at least Windows Vista."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(E_NOINTERFACE, "WinAudio::WinAudio", "OS version must be at least Windows Vista."));
 			}
 
 			this->InitializeCOM();

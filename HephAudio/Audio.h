@@ -13,6 +13,7 @@ namespace HephAudio
 #if defined(_WIN32)
 		WASAPI,
 		DirectSound,
+		MMEAPI,
 #elif defined(__APPLE__)
 		CoreAudio,
 #elif defined(__ANDROID__)
