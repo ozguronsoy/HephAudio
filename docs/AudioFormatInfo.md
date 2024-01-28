@@ -10,9 +10,9 @@ Stores information on how audio signals are represented digitally.
 <br><br>
 
 ### Macros
-- ```c++
-  #define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate)
-  ```
+```c++
+#define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate)
+```
 Creates an ``AudioFormatInfo`` instance in the format HephAudio uses internally with the provided channel count and sample rate.
 <br><br>
 
