@@ -13,8 +13,6 @@ Holds the information that's necessary to play audio.
 ```c++
 #define HEPHAUDIO_INFINITE_LOOP 0
 ```
-When the ``playCount`` value is set to this value, the ``AudioObject`` will be looped forever.
-<br><br>
 
 ```c++
 #define HEPHAUDIO_RENDER_HANDLER_DEFAULT
