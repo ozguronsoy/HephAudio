@@ -2,8 +2,9 @@
 
 ### Description
 Stores information about an audio device provided by the native API.
+<br><br>
 
-### Syntax
+### Parameters
 ```c++
 struct AudioDevice
 {
@@ -14,7 +15,6 @@ struct AudioDevice
 };
 ```
 
-### Parameters
 - ``id``
 <br><br>
 Unique identifier of the audio device.
