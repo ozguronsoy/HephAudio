@@ -1,5 +1,10 @@
 ## HephAudioFramework
 
+> [Description](#description)<br>
+[Macros](#macros)<br>
+[Data Types](#data-types)<br>
+[Methods](#methods)
+
 ### Description
 Defines macros, data types, and methods that will be used in all HephAudio header files.
 <br><br>
