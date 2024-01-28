@@ -1,4 +1,4 @@
-## AudioDevice struct
+## AudioDevice Struct
 
 ### Description
 Stores information about an audio device provided by the native API.
