@@ -26,7 +26,7 @@ HephAudio is a cross-platform audio library that provides:
 # Getting Started
 ### Playing Files
 Let's start by playing a wav file with the default output device. First we need to initialize the audio class for rendering (playing) by calling the ``InitializeRender`` method. Then simply call the ``Play`` method with the full path to the wav file.
-```
+```c++
 #include <stdio.h>
 #include <string.h>
 #include <Audio.h>
@@ -54,7 +54,7 @@ int main()
 }
 ```
 If the audio data we want to play does not have the same format as the one we specified when initializing render, the sound will come out distorted. To prevent that we can call the ``Load`` method instead. This method converts the audio data to our target format before playing.
-```
+```c++
 audio.Load("some_path\\some_file.wav", false); // false = don't pause.
 ```
 We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing. You can find more information on this in the documentation files.
@@ -62,7 +62,7 @@ We can also do these convertions on the samples that are just about to be played
 ### Recording
 To record audio, first we need to initialize capturing just like before, this will start the recording process. You can access the recorded data via ``OnCapture`` event, which is invoked when some amount of data is captured (typically 10ms of audio data).
 To add an event handler use either one of the following methods:
-```
+```c++
 audio.SetOnCaptureHandler(&MyCallbackMethod); // Removes all the other event handlers, then adds the provided one
 audio.AddOnCaptureHandler(&MyCallbackMethod); // Adds the provided event handler
 ```
@@ -71,7 +71,7 @@ After setting an event handler for the ``OnCapture`` event, we must cast the pro
 When you are done recording you can either call ``StopCapturing()`` method to deinitialize capturing or ``PauseCapture(bool isPaused)`` method to prevent from raising the ``OnCapture`` event.
 
 Sample code for recording audio for 5 seconds, saving it to a file, then playing the file:
-```
+```c++
 #include <stdio.h>
 #include <string.h>
 #include <thread>
@@ -121,25 +121,25 @@ int main()
 
 ### Device Enumeration
 To get a list of available audio devices call the ``GetAudioDevices`` method.
-```
+```c++
 std::vector<AudioDevice> renderDevices = audio.GetAudioDevices(AudioDeviceType::Render);    // Get only the devices that are capable of rendering
 std::vector<AudioDevice> captureDevices = audio.GetAudioDevices(AudioDeviceType::Capture);  // Get only the devices that are capable of capturing
 std::vector<AudioDevice> audioDevices = audio.GetAudioDevices(AudioDeviceType::All);        // Get all devices.
 ```
 To get the default audio device, call the ``GetDefaultAudioDevice`` method.
-```
+```c++
 AudioDevice defaultRenderDevice = audio.GetDefaultAudioDevice(AudioDeviceType::Render);
 AudioDevice defaultCaptureDevice = audio.GetDefaultAudioDevice(AudioDeviceType::Capture);
 ```
 After obtaining the audio devices, simply pass a pointer of the desired audio device to the ``InitializeRender`` method.
-```
+```c++
 audio.InitializeRender(&renderDevices[0], AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16, 48000));
 ```
 
 ### Applying Effects
 Most of the signal processing is done by the ``AudioProcessor`` class. To apply effects we must obtain the ``AudioBuffer`` that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the ``AudioObject`` that is returned by the ``Play`` and ``Load`` methods.
 Here is a sample code for playing the file in 2x speed without changing the pitch:
-```
+```c++
 #include <stdio.h>
 #include <string.h>
 #include <Audio.h>
@@ -174,7 +174,7 @@ int main()
 Every error that occurs while using the library raises an ``OnException`` event but only some exception will actually throw. Using this event we can log the exception details to a file or for this instance, simply print it to console.
 
 In this example, we will create a ``StringBuffer`` with 4 characters and we will try to access to its 5th element. This is going to throw an invalid argument exception.
-```
+```c++
 #include <HephException.h>
 #include <ConsoleLogger.h>
 
