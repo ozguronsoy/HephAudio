@@ -73,30 +73,30 @@ Creates an instance and initializes it with provided values.
 bool operator==(const AudioFormatInfo& rhs) const;
 ```
 Checks if the current format is the same as the one provided.
-- <b>rhs:</b> The format to compare to.
-- <b>Returns:</b> true if two formats are the same, otherwise false.
+- **rhs:** The format to compare to.
+- **Returns:** true if two formats are the same, otherwise false.
 <br><br><br><br>
 ```c++
 bool operator!=(const AudioFormatInfo& rhs) const;
 ```
 Checks if the current format is different from the one provided.
-- <b>rhs:</b> The format to compare to.
-- <b>Returns:</b> true if two formats are different, otherwise false.
+- **rhs:** The format to compare to.
+- **Returns:** true if two formats are different, otherwise false.
 <br><br><br><br>
 ```c++
 uint16_t FrameSize() const;
 ```
 Calculates the size, in bytes, an audio frame occupies in memory.
-- <b>Returns:</b> The size of an audio frame in bytes.
+- **Returns:** The size of an audio frame in bytes.
 <br><br><br><br>
 ```c++
 uint32_t BitRate() const;
 ```
 Calculates the number of bits required to represent a one-second-long audio signal.
-- <b>Returns:</b> The number of bits required to represent a one-second-long audio signal.
+- **Returns:** The number of bits required to represent a one-second-long audio signal.
 <br><br><br><br>
 ```c++
 uint32_t ByteRate() const;
 ```
 Calculates the number of bytes required to represent a one-second-long audio signal.
-- <b>Returns:</b> The number of bytes required to represent a one-second-long audio signal.
+- **Returns:** The number of bytes required to represent a one-second-long audio signal.
