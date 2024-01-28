@@ -30,4 +30,3 @@ Indicates whether the device is an input (capture) or an output (render) device.
 - ``isDefault``
 <br><br>
 Indicates whether the device is the system default.
-<br><br>
