@@ -24,7 +24,7 @@ The default handler for the ``AudioObject::OnRender`` event. Plays the audio dat
 #define HEPHAUDIO_RENDER_HANDLER_ENSURE_FORMAT
 ```
 An event handler for the ``AudioObject::OnRender`` event. Converts the audio data to the render format before playing.
-<br><br><br><br>
+<br><br>
 
 ### Parameters
 ```c++
