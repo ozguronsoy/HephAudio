@@ -1,5 +1,11 @@
 ## AudioFormatInfo struct
 
+[description](#description)<br>
+[defines](#defines)<br>
+[parameters](#parameters)<br>
+[methods](#methods)
+<br><br>
+
 ### Description
 Stores information on how audio signals are represented digitally.
 <br><br>
