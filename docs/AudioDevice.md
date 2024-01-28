@@ -4,6 +4,18 @@
 Stores information about an audio device provided by the native API.
 <br><br>
 
+### Enums
+```c++
+enum class AudioDeviceType : uint8_t
+{
+    Null = 0,
+    Render = 1,
+    Capture = 2,
+    All = Render | Capture
+};
+```
+<br><br>
+
 ### Parameters
 ```c++
 struct AudioDevice
