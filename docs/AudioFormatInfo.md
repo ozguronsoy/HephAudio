@@ -1,4 +1,4 @@
-## AudioFormatInfo struct
+## AudioFormatInfo Struct
 
 > [Description](#description)<br>
 [Macros](#macros)<br>
