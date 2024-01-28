@@ -7,10 +7,10 @@ Stores information about an audio device provided by the native API.
 ```c++
 struct AudioDevice
 {
-  HephCommon::StringBuffer id;
-  HephCommon::StringBuffer name;
-  AudioDeviceType type;
-  bool isDefault;
+    HephCommon::StringBuffer id;
+    HephCommon::StringBuffer name;
+    AudioDeviceType type;
+    bool isDefault;
 };
 ```
 
