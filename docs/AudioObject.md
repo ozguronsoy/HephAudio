@@ -121,15 +121,15 @@ Moves the rhs's fields to the current object.
 ```c++
 heph_float GetPosition() const;
 ```
-Calculates the position of the first audio frame which will be rendered next. Returns it between 0 and 1.
+Calculates the playback position between 0 and 1.
 - **Returns:** Position of the frame that will be rendered next.
 <br><br><br><br>
 
 ```c++
 void SetPosition(heph_float position);
 ```
-Sets the frameIndex by the provided position.
-- **Position:** Position of the frame that will be rendered next. Must be between 0 and 1.
+Sets the playback position.
+- **Position:** The new playback position.
 <br><br><br><br>
 
 ```c++
