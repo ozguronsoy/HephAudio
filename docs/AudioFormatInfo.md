@@ -42,7 +42,7 @@ Number of samples required to represent a one-second-long audio signal.
 <br><br>
 - ``bitsPerSample``
 <br><br>
-Bit-depth, the number of bits required to represent a sample.
+Bit depth, the number of bits required to represent a sample.
 <br><br>
 - ``endian``
 <br><br>
