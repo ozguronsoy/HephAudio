@@ -1,7 +1,7 @@
 ## AudioFormatInfo struct
 
 > [description](#description)<br>
-[defines](#defines)<br>
+[macros](#macros)<br>
 [parameters](#parameters)<br>
 [methods](#methods)
 
@@ -9,7 +9,7 @@
 Stores information on how audio signals are represented digitally.
 <br><br>
 
-### Defines
+### Macros
 - ```c++
   #define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate)
   ```
