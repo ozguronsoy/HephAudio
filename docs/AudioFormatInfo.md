@@ -38,7 +38,7 @@ Number of channels present in the audio buffer. This will be 1 for Mono and 2 fo
 <br><br>
 - ``sampleRate``
 <br><br>
-Number of samples required to represent a one-second-long audio signal.
+Samples per second (Hz), the number of samples required to represent a one-second-long audio signal.
 <br><br>
 - ``bitsPerSample``
 <br><br>
