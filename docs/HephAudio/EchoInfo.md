@@ -33,14 +33,17 @@ Multiplication factor of the reflected data. Reflected data will be multiplied b
 
 - ``echoStartPosition``
 <br><br>
-Start position of the audio data that will be reflected. Should be between 0 and 1.<br>
-Must be less than or equal to ``echoEndPosition``.
+Start position of the audio data that will be reflected. Should be between 0 and 1.
 <br><br>
 
 - ``echoEndPosition``
 <br><br>
-End position of the audio data that will be reflected. Should be between 0 and 1.<br>
-Must be greater than or equal to ``echoStartPosition``.
+End position of the audio data that will be reflected. Should be between 0 and 1.
+<br><br>
+
+> [!CAUTION]
+> The ``echoStartPosition`` must be less than or equal to ``echoEndPosition``.
+
 <br><br>
 
 ### Methods
