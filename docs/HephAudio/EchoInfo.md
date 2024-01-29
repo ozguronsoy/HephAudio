@@ -1,4 +1,4 @@
-## AudioObject Struct
+## EchoInfo Struct
 
 ### Description
 Container for echo effect parameters.
