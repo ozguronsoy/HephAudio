@@ -42,7 +42,7 @@ int main()
   // 2 -> # of channels
   // 16 -> 16 bit resolution.
   // 48000 -> 48kHz sampling rate.
-  audio.InitializeRender(nullptr, AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16, 48000));
+  audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
 
   audio.Play("some_path\\some_file.wav");
 
@@ -96,7 +96,7 @@ int main()
   Audio audio;
 
   audio.SetOnCaptureHandler(&RecordAudio); // set an event handler for capturing
-  audio.InitializeCapture(nullptr, AudioFormatInfo(WAVE_FORMAT_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE)); // initialize with default device
+  audio.InitializeCapture(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE)); // initialize with default device
 
   // record for 5 seconds, then stop capturing
   std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -108,7 +108,7 @@ int main()
   recordedAudio.Empty(); // dispose of the unnecessary data
 
   // play the recorded file.
-  audio.InitializeRender(nullptr, AudioFormatInfo(WAVE_FORMAT_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
+  audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
   audio.Play("file_path\\fila_name.wav");
 
   // prevent from exiting the app
@@ -133,7 +133,7 @@ AudioDevice defaultCaptureDevice = audio.GetDefaultAudioDevice(AudioDeviceType::
 ```
 After obtaining the audio devices, simply pass a pointer of the desired audio device to the ``InitializeRender`` method.
 ```c++
-audio.InitializeRender(&renderDevices[0], AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16, 48000));
+audio.InitializeRender(&renderDevices[0], AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
 ```
 
 ### Applying Effects
@@ -150,7 +150,7 @@ using namespace HephAudio;
 int main()
 {
   Audio audio;
-  audio.InitializeRender(nullptr, AudioFormatInfo(WAVE_FORMAT_PCM, 2, 16, 48000));
+  audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
 
   AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
 
