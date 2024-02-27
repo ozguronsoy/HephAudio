@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class TriangleWindow : public Window
+	class TriangleWindow final : public Window
 	{
 	private:
 		heph_float hN;

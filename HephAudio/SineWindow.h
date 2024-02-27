@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class SineWindow : public Window
+	class SineWindow final : public Window
 	{
 	private:
 		heph_float N;

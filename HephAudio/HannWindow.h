@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class HannWindow : public Window
+	class HannWindow final : public Window
 	{
 	private:
 		heph_float N;

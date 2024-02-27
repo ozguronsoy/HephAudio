@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class TukeyWindow : public Window
+	class TukeyWindow final : public Window
 	{
 	private:
 		heph_float alpha;

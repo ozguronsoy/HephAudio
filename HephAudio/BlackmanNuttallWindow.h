@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class BlackmanNuttallWindow : public Window
+	class BlackmanNuttallWindow final : public Window
 	{
 	private:
 		heph_float N;

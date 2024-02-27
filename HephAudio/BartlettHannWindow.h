@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class BartlettHannWindow : public Window
+	class BartlettHannWindow final : public Window
 	{
 	private:
 		heph_float N;

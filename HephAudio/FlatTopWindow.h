@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class FlatTopWindow : public Window
+	class FlatTopWindow final : public Window
 	{
 	private:
 		heph_float N;

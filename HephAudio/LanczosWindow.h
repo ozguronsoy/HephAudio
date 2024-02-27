@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class LanczosWindow : public Window
+	class LanczosWindow final : public Window
 	{
 	private:
 		heph_float N;

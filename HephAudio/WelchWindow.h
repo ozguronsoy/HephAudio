@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class WelchWindow : public Window
+	class WelchWindow final : public Window
 	{
 	private:
 		heph_float hN;

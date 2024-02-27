@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class NuttallWindow : public Window
+	class NuttallWindow final : public Window
 	{
 	private:
 		heph_float N;

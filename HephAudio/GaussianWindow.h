@@ -4,7 +4,7 @@
 
 namespace HephAudio
 {
-	class GaussianWindow : public Window
+	class GaussianWindow final : public Window
 	{
 	private:
 		heph_float sigma;
