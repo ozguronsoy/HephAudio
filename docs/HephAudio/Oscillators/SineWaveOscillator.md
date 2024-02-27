@@ -5,7 +5,7 @@
 [Methods](#methods)
 
 ### Description
-Generates a sine wave.
+Generates a sine wave signal.
 <br><br>
 
 ### Methods
