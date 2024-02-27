@@ -50,3 +50,50 @@ void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
     }
 }
 ```
+Test it using [SineWaveOscillator](/docs/HephAudio/Oscillators/SineWaveOscillator.md).
+```c++
+#include <iostream>
+#include <Audio.h>
+#include <SineWaveOscillator.h>
+
+using namespace HephAudio;
+
+void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo);
+
+int main()
+{
+    Audio audio;
+    audio.InitializeRender(2, 48000);
+    AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav");
+
+    heph_float depth = 0.7;
+    uint32_t bufferSampleRate = pAudioObject->buffer.FormatInfo().sampleRate;
+    SineWaveOscillator lfo(1.0, 8.0, bufferSampleRate, 0); // create low-frequency sine wave oscillator
+    MyTremolo(pAudioObject->buffer, depth, lfo);
+
+    pAudioObject->isPaused = false;
+
+    // stop from exiting the program.
+    std::string s;
+    std::cin >> s;
+
+    return 0;
+}
+
+void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
+{
+    const heph_float wetFactor = depth;
+    const heph_float dryFactor = 1.0 - wetFactor;
+
+    for (size_t i = 0; i < buffer.FrameCount(); i++)
+    {
+        const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
+        for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++)
+        {
+            const heph_float drySample = buffer[i][j];
+            const heph_float wetSample = drySample * volume;
+            buffer[i][j] = drySample * dryFactor + wetSample * wetFactor;
+        }
+    }
+}
+```
