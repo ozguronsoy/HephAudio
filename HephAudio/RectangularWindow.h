@@ -4,11 +4,11 @@
 
 namespace HephAudio
 {
-	class SquareWindow final : public Window
+	class RectangularWindow final : public Window
 	{
 	public:
-		SquareWindow();
-		SquareWindow(size_t size);
+		RectangularWindow();
+		RectangularWindow(size_t size);
 		heph_float operator[](size_t n) const override;
 	};
 }

@@ -68,9 +68,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)SquareWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RectangularWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TriangularWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TukeyWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WelchWindow.h" />
@@ -124,9 +124,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SquareWindow.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)RectangularWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWindow.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TriangularWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TukeyWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WelchWindow.cpp" />

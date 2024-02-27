@@ -183,10 +183,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Window.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)SquareWindow.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)RectangularWindow.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWindow.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)TriangularWindow.h">
       <Filter>Header Files\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)ParzenWindow.h">
@@ -347,10 +347,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Window.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SquareWindow.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)RectangularWindow.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWindow.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)TriangularWindow.cpp">
       <Filter>Source Files\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ParzenWindow.cpp">
