@@ -8,9 +8,10 @@ namespace HephAudio
 	{
 	protected:
 		size_t size;
-	public:
+	protected:
 		Window();
 		Window(size_t size);
+	public:
 		virtual ~Window() = default;
 		virtual heph_float operator[](size_t n) const = 0;
 		HephCommon::FloatBuffer GenerateBuffer() const;
