@@ -14,7 +14,7 @@ Our method will take an [AudioBuffer](/docs/HephAudio/AudioBuffer.md) reference 
 ```c++
 void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo);
 ```
-The shape of the oscillator directly affects the resulting sound. Hence, we use the base oscillator class to avoid restricting the user to a single shape.
+The shape of the oscillator directly affects the resulting sound. Hence we used the base oscillator class to avoid restricting the user to a single shape.
 ```c++
 void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo)
 {
