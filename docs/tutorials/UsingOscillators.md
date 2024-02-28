@@ -31,7 +31,7 @@ void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo)
 We created a simple tremolo effect. We can improve it by mixing the original input signal (dry) and the output signal we just calculated (wet). 
 That will make our effect even more customizable and increase the variety of sounds we can achieve.
 We will take another parameter to control the dry/wet ratio and call it *depth*. This parameter will be between 0 and 1.<br>
-For *depth = 0*, the output will only contain the dry signal, and vice versa for *depth = 1*.
+For *depth = 0*, the output will only contain the dry signal, and vice versa.
 ```c++
 void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
 {
