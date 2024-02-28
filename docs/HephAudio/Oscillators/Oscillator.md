@@ -5,7 +5,8 @@
 [Methods](#methods)
 
 ### Description
-Base class for oscillators. Oscillators are used for generating periodic signals.
+Base class for oscillators. Oscillators are used for generating periodic signals. 
+Check this [tutorial](/docs/tutorials/UsingOscillators.md) to learn how and when to use oscillators.
 <br><br>
 
 ### Parameters
