@@ -1,7 +1,7 @@
 # Using Oscillators
 
 Oscillators are used when we need variables that change periodically. 
-You may have encountered the word **LFO** while playing with some sound effects controls. 
+You may have encountered the word **LFO** while playing with a sound effect's controls. 
 LFO means "Low-Frequency Oscillator" and LFOs are commonly used in modulation effects such as chorus, tremolo, and flanger. 
 To better understand how we can utilize oscillators, let's write a tremolo effect.
 <br><br><br><br>
