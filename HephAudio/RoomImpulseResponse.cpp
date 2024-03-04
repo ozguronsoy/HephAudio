@@ -1,7 +1,7 @@
 #include "RoomImpulseResponse.h"
 #include "../HephCommon/HeaderFiles/HephException.h"
 #include "../HephCommon/HeaderFiles/HephMath.h"
-#include "Fourier.h"
+#include "../HephCommon/HeaderFiles/Fourier.h"
 
 using namespace HephCommon;
 
@@ -114,7 +114,7 @@ namespace HephAudio
 						}
 
 						FloatBuffer imageImpulseRespnose(fftSize);
-						Fourier::FFT_Inverse(imageImpulseRespnose, imageTransferFunction);
+						Fourier::IFFT(imageImpulseRespnose, imageTransferFunction);
 
 						const Vector3 image(2 * n * this->roomSize.x - sourceReflections[p].x, 2 * l * this->roomSize.y - sourceReflections[p].y, 2 * m * this->roomSize.z - sourceReflections[p].z);
 						const size_t delay = this->sampleRate * image.Distance(reciever) / this->c;
@@ -133,7 +133,7 @@ namespace HephAudio
 	ComplexBuffer RoomImpulseResponse::SimulateRoomTF(const Vector3& source, const Vector3& reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit) const
 	{
 		const FloatBuffer impulseResponse = this->SimulateRoomIR(source, reciever, fftSize, window, imageRangeLimit);
-		return Fourier::FFT_Forward(impulseResponse, Fourier::CalculateFFTSize(impulseResponse.FrameCount()));
+		return Fourier::FFT(impulseResponse, Fourier::CalculateFFTSize(impulseResponse.FrameCount()));
 	}
 	FloatBuffer RoomImpulseResponse::GetFrequencies() const
 	{

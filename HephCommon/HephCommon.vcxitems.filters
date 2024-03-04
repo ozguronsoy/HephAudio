@@ -1,50 +1,150 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephException.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonFramework.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Complex.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\File.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FloatBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventArgs.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventResult.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Event.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ComplexBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Vector.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Color.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ColorBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Guid.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\BitStream.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamStatus.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\JsonStream.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\CsvStream.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\XmlStream.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamHelpers.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventParams.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\BitStream.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Color.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ColorBuffer.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Complex.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ComplexBuffer.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\CsvStream.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Event.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventArgs.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventParams.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventResult.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\File.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FloatBuffer.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Fourier.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Guid.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephException.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonFramework.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\JsonStream.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamHelpers.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamStatus.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringBuffer.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Vector.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\XmlStream.h">
+      <Filter>HeaderFiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\File.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FloatBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephCommonFramework.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\BitStream.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\JsonStream.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\CsvStream.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\XmlStream.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StreamHelpers.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\BitStream.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\XmlStream.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\CsvStream.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\File.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FloatBuffer.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Fourier.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephCommonFramework.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\JsonStream.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StreamHelpers.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringBuffer.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="HeaderFiles">
+      <UniqueIdentifier>{0b0717a8-37e8-428c-bb6e-7a885277ed84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles">
+      <UniqueIdentifier>{e63a74a0-2965-4111-83a7-785070088196}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

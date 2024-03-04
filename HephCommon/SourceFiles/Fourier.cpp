@@ -1,44 +1,42 @@
 #include "Fourier.h"
 
-using namespace HephCommon;
-
-namespace HephAudio
+namespace HephCommon
 {
-	ComplexBuffer Fourier::FFT_Forward(const FloatBuffer& floatBuffer)
+	ComplexBuffer Fourier::FFT(const FloatBuffer& floatBuffer)
 	{
-		return FFT_Forward(floatBuffer, floatBuffer.FrameCount());
+		return Fourier::FFT(floatBuffer, floatBuffer.FrameCount());
 	}
-	ComplexBuffer Fourier::FFT_Forward(const FloatBuffer& floatBuffer, size_t fftSize)
+	ComplexBuffer Fourier::FFT(const FloatBuffer& floatBuffer, size_t fftSize)
 	{
 		ComplexBuffer complexBuffer = ComplexBuffer(fftSize);
 		for (size_t i = 0; i < floatBuffer.FrameCount(); i++)
 		{
 			complexBuffer[i].real = floatBuffer[i];
 		}
-		FFT(complexBuffer, fftSize, true);
+		Fourier::FFT_Internal(complexBuffer, fftSize, true);
 		return complexBuffer;
 	}
-	void Fourier::FFT_Forward(ComplexBuffer& complexBuffer)
+	void Fourier::FFT(ComplexBuffer& complexBuffer)
 	{
-		Fourier::FFT_Forward(complexBuffer, complexBuffer.FrameCount());
+		Fourier::FFT(complexBuffer, complexBuffer.FrameCount());
 	}
-	void Fourier::FFT_Forward(ComplexBuffer& complexBuffer, size_t fftSize)
+	void Fourier::FFT(ComplexBuffer& complexBuffer, size_t fftSize)
 	{
 		complexBuffer.Resize(fftSize);
-		FFT(complexBuffer, fftSize, true);
+		Fourier::FFT_Internal(complexBuffer, fftSize, true);
 	}
-	void Fourier::FFT_Inverse(FloatBuffer& floatBuffer, ComplexBuffer& complexBuffer)
+	void Fourier::IFFT(FloatBuffer& floatBuffer, ComplexBuffer& complexBuffer)
 	{
-		FFT(complexBuffer, complexBuffer.FrameCount(), false);
+		Fourier::FFT_Internal(complexBuffer, complexBuffer.FrameCount(), false);
 		for (size_t i = 0; i < floatBuffer.FrameCount(); i++)
 		{
 			complexBuffer[i] /= complexBuffer.FrameCount();
 			floatBuffer[i] = complexBuffer[i].real;
 		}
 	}
-	void Fourier::FFT_Inverse(ComplexBuffer& complexBuffer, bool scale)
+	void Fourier::IFFT(ComplexBuffer& complexBuffer, bool scale)
 	{
-		FFT(complexBuffer, complexBuffer.FrameCount(), false);
+		Fourier::FFT_Internal(complexBuffer, complexBuffer.FrameCount(), false);
 		if (scale)
 		{
 			complexBuffer /= complexBuffer.FrameCount();
@@ -74,9 +72,9 @@ namespace HephAudio
 			j ^= fftSize - fftSize / ((i ^ (i + 1)) + 1);
 		}
 	}
-	void Fourier::FFT(ComplexBuffer& complexBuffer, size_t fftSize, bool isForward)
+	void Fourier::Fourier::FFT_Internal(ComplexBuffer& complexBuffer, size_t fftSize, bool isForward)
 	{
-		ReverseBits(complexBuffer, fftSize);
+		Fourier::ReverseBits(complexBuffer, fftSize);
 		const size_t p = log2(fftSize);
 		Complex a = Complex(-1.0, 0.0);
 		for (size_t i = 0; i < p; i++)

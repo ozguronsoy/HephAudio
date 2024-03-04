@@ -1,417 +1,411 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
+    <Filter Include="HeaderFiles">
       <UniqueIdentifier>{3bf5b30c-6b04-4593-b678-2591b268bf5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{9ad72c3c-48e4-4e2a-869e-6f611aa8cdb5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\AudioFormats">
+    <Filter Include="HeaderFiles\AudioFormats">
       <UniqueIdentifier>{f40df24f-bf38-4d63-b84d-11d0822b8e2a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AudioFormats">
-      <UniqueIdentifier>{70cb229e-4a65-4e2b-9bad-4a4eb1dc3e94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\AudioStructs">
+    <Filter Include="HeaderFiles\AudioStructs">
       <UniqueIdentifier>{7fc1bede-5a56-4a47-b312-361959bfca91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AudioStructs">
-      <UniqueIdentifier>{0a7fcc38-cdce-4704-b08f-3e79f39cf8ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\NativeAudio">
-      <UniqueIdentifier>{2caae077-88ed-4680-9906-4d585017b4aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\NativeAudio">
+    <Filter Include="HeaderFiles\NativeAudio">
       <UniqueIdentifier>{28bbd6b8-db48-4d3f-b928-cdc7c7e87297}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Events">
+    <Filter Include="HeaderFiles\Events">
       <UniqueIdentifier>{242ac56b-00c4-4282-ba24-06be01d4bd40}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Events\Args">
+    <Filter Include="HeaderFiles\Events\Args">
       <UniqueIdentifier>{21cab1f0-6e19-48e2-9eec-7c21178e4bc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Events\Results">
+    <Filter Include="HeaderFiles\Events\Results">
       <UniqueIdentifier>{fee30d6f-5a01-4043-9a4d-bff499127af7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Oscillators">
+    <Filter Include="HeaderFiles\Oscillators">
       <UniqueIdentifier>{6aa74870-c719-4d8f-855f-b0362054fbd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Oscillators">
-      <UniqueIdentifier>{b830d0cf-bd31-42c7-9f99-313d1eae36e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\AudioCodecs">
+    <Filter Include="HeaderFiles\AudioCodecs">
       <UniqueIdentifier>{1843b1b5-36b6-45a6-a21a-b5e2ae31014d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\AudioCodecs">
-      <UniqueIdentifier>{ca75d65b-95e5-47fc-8ce7-581e92b656ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Windows">
+    <Filter Include="HeaderFiles\Windows">
       <UniqueIdentifier>{80031416-8f03-4c0c-bb47-609cbb6140de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Windows">
+    <Filter Include="SourceFiles">
+      <UniqueIdentifier>{9ad72c3c-48e4-4e2a-869e-6f611aa8cdb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\AudioFormats">
+      <UniqueIdentifier>{70cb229e-4a65-4e2b-9bad-4a4eb1dc3e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\AudioStructs">
+      <UniqueIdentifier>{0a7fcc38-cdce-4704-b08f-3e79f39cf8ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\NativeAudio">
+      <UniqueIdentifier>{2caae077-88ed-4680-9906-4d585017b4aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\Oscillators">
+      <UniqueIdentifier>{b830d0cf-bd31-42c7-9f99-313d1eae36e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\AudioCodecs">
+      <UniqueIdentifier>{ca75d65b-95e5-47fc-8ce7-581e92b656ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\Windows">
       <UniqueIdentifier>{b763edda-680b-45bd-8d1d-74de1ed08e4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioFramework.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Fourier.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h">
-      <Filter>Header Files\AudioFormats</Filter>
+      <Filter>HeaderFiles\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.h">
-      <Filter>Header Files\AudioFormats</Filter>
+      <Filter>HeaderFiles\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFileFormat.h">
-      <Filter>Header Files\AudioFormats</Filter>
+      <Filter>HeaderFiles\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WavFormat.h">
-      <Filter>Header Files\AudioFormats</Filter>
+      <Filter>HeaderFiles\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioDevice.h">
-      <Filter>Header Files\AudioStructs</Filter>
+      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioObject.h">
-      <Filter>Header Files\AudioStructs</Filter>
+      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h">
-      <Filter>Header Files\AudioStructs</Filter>
+      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudio.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFormatInfo.h">
-      <Filter>Header Files\AudioStructs</Filter>
+      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EchoInfo.h">
-      <Filter>Header Files\AudioStructs</Filter>
+      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Audio.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h">
-      <Filter>Header Files\AudioStructs</Filter>
+      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioA.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioBase.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h">
-      <Filter>Header Files\Events\Results</Filter>
+      <Filter>HeaderFiles\Events\Results</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
+      <Filter>HeaderFiles\Events\Args</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioDeviceEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
+      <Filter>HeaderFiles\Events\Args</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioCaptureEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
+      <Filter>HeaderFiles\Events\Args</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioFinishedPlayingEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
+      <Filter>HeaderFiles\Events\Args</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h">
-      <Filter>Header Files\Oscillators</Filter>
+      <Filter>HeaderFiles\Oscillators</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWaveOscillator.h">
-      <Filter>Header Files\Oscillators</Filter>
+      <Filter>HeaderFiles\Oscillators</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.h">
-      <Filter>Header Files\Oscillators</Filter>
+      <Filter>HeaderFiles\Oscillators</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.h">
-      <Filter>Header Files\Oscillators</Filter>
+      <Filter>HeaderFiles\Oscillators</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.h">
-      <Filter>Header Files\Oscillators</Filter>
+      <Filter>HeaderFiles\Oscillators</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioCodec.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EncodedBufferInfo.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)PcmCodec.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioCodecManager.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)ALawCodec.h">
-      <Filter>Header Files\AudioCodecs</Filter>
+      <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioEventArgs.h">
-      <Filter>Header Files\Events\Args</Filter>
+      <Filter>HeaderFiles\Events\Args</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AppleAudio.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioStream.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioBuffer.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Window.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)RectangularWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)TriangularWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)ParzenWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WelchWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)SineWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HannWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HammingWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)BlackmanWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)ExactBlackmanWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)NuttallWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)BlackmanNuttallWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)BlackmanHarrisWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)FlatTopWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)GaussianWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)TukeyWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HannPoissonWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)BartlettHannWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)LanczosWindow.h">
-      <Filter>Header Files\Windows</Filter>
+      <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)RoomImpulseResponse.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioBase.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioPlaylist.h">
-      <Filter>Header Files</Filter>
+      <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioMME.h">
-      <Filter>Header Files\NativeAudio</Filter>
+      <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Fourier.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp">
-      <Filter>Source Files\AudioFormats</Filter>
+      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WavFormat.cpp">
-      <Filter>Source Files\AudioFormats</Filter>
+      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
+      <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudio.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFormatInfo.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
+      <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioSLES.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioFileFormatManager.cpp">
-      <Filter>Source Files\AudioFormats</Filter>
+      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
+      <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Audio.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
+      <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp">
-      <Filter>Source Files\AudioStructs</Filter>
+      <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioA.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioBase.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp">
-      <Filter>Source Files\Oscillators</Filter>
+      <Filter>SourceFiles\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWaveOscillator.cpp">
-      <Filter>Source Files\Oscillators</Filter>
+      <Filter>SourceFiles\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SquareWaveOscillator.cpp">
-      <Filter>Source Files\Oscillators</Filter>
+      <Filter>SourceFiles\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)TriangleWaveOscillator.cpp">
-      <Filter>Source Files\Oscillators</Filter>
+      <Filter>SourceFiles\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SawToothWaveOscillator.cpp">
-      <Filter>Source Files\Oscillators</Filter>
+      <Filter>SourceFiles\Oscillators</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)PcmCodec.cpp">
-      <Filter>Source Files\AudioCodecs</Filter>
+      <Filter>SourceFiles\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioCodecManager.cpp">
-      <Filter>Source Files\AudioCodecs</Filter>
+      <Filter>SourceFiles\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp">
-      <Filter>Source Files\AudioCodecs</Filter>
+      <Filter>SourceFiles\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp">
-      <Filter>Source Files\AudioCodecs</Filter>
+      <Filter>SourceFiles\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ALawCodec.cpp">
-      <Filter>Source Files\AudioCodecs</Filter>
+      <Filter>SourceFiles\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AppleAudio.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioBuffer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioStream.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Window.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)RectangularWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)TriangularWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ParzenWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WelchWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SineWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)HannWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)HammingWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)BlackmanWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)ExactBlackmanWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)NuttallWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)BlackmanNuttallWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)BlackmanHarrisWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)FlatTopWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)GaussianWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)TukeyWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)HannPoissonWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)BartlettHannWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)LanczosWindow.cpp">
-      <Filter>Source Files\Windows</Filter>
+      <Filter>SourceFiles\Windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)RoomImpulseResponse.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioBase.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioPlaylist.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioMME.cpp">
-      <Filter>Source Files\NativeAudio</Filter>
+      <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
