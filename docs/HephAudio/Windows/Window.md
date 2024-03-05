@@ -5,7 +5,7 @@
 [Methods](#methods)
 
 ### Description
-Base class for windows. Windows are used to reduce artifacts introduced by the Fourier transform.<br>
+Base class for windows. Windows are used to reduce artifacts introduced by the Fourier transform. Check this [tutorial](/docs/tutorials/UsingWindows.md) to learn how and when to use windows.<br>
 <br><br>
 
 ### Parameters
