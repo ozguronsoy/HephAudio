@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 #include "EventArgs.h"
 #include "EventResult.h"
 #include "EventParams.h"

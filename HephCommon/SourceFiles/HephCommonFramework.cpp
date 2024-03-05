@@ -1,4 +1,4 @@
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 
 namespace HephCommon
 {

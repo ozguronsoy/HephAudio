@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 #include "StreamStatus.h"
 #include "StringBuffer.h"
 #include "File.h"

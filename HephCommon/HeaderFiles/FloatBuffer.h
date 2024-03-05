@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 #include <initializer_list>
 
 namespace HephCommon

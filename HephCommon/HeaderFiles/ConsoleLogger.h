@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 #include "StringBuffer.h"
 
 #define HEPH_CL_INFO "36"

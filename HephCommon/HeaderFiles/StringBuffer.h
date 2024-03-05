@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 #include "Guid.h"
 #include <cinttypes>
 #include <vector>

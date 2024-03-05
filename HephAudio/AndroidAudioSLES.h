@@ -1,6 +1,6 @@
 #pragma once
 #ifdef __ANDROID__
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include "AndroidAudioBase.h"
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>

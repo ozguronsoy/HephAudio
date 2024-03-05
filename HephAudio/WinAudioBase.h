@@ -1,5 +1,5 @@
 #pragma once
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include <wrl.h>
 #include <mmeapi.h>

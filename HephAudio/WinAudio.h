@@ -1,6 +1,6 @@
 #pragma once
 #ifdef _WIN32
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include "WinAudioBase.h"
 #include <wrl.h>

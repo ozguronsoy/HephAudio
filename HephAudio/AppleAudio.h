@@ -1,6 +1,6 @@
 #pragma once
 #if defined(__APPLE__)
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include <CoreAudio/CoreAudio.h>
 

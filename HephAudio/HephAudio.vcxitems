@@ -45,7 +45,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HammingWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HannPoissonWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HannWindow.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioFramework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioShared.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioRenderEventResult.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)IAudioFileFormat.h" />

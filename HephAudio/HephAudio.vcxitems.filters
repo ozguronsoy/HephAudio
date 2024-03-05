@@ -54,7 +54,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioFramework.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioShared.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AudioProcessor.h">

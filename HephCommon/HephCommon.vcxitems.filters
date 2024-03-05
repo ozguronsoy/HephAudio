@@ -52,7 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonFramework.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\JsonStream.h">

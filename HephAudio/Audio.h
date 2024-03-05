@@ -1,5 +1,5 @@
 #pragma once
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include "NativeAudio.h"
 #ifdef __ANDROID__
 #include <jni.h>

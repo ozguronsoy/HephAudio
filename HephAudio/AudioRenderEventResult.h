@@ -1,5 +1,5 @@
 #pragma once
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include "../HephCommon/HeaderFiles/EventResult.h"
 #include "AudioBuffer.h"
 

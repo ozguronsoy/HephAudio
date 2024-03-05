@@ -1,5 +1,5 @@
 #pragma once
-#include "HephAudioFramework.h"
+#include "HephAudioShared.h"
 #include <cstdint>
 
 #define HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate) AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL, channelCount, sizeof(heph_audio_sample) * 8, sampleRate, HEPH_SYSTEM_ENDIAN)

@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonFramework.h"
+#include "HephCommonShared.h"
 #include "HephException.h"
 #include "StringBuffer.h"
 #include "HephMath.h"

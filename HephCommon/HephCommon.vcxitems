@@ -29,7 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Guid.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonFramework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\JsonStream.h" />
