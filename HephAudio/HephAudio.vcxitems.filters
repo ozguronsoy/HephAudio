@@ -52,6 +52,12 @@
     <Filter Include="SourceFiles\Windows">
       <UniqueIdentifier>{b763edda-680b-45bd-8d1d-74de1ed08e4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HeaderFiles\FFmpeg">
+      <UniqueIdentifier>{95e96adf-2f40-4394-a440-bd4c948dc250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceFiles\FFmpeg">
+      <UniqueIdentifier>{e762f2da-fdb9-4b61-b6ff-9f0d2b90adcb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)HephAudioShared.h">
@@ -246,6 +252,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioMME.h">
       <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.h">
+      <Filter>HeaderFiles\FFmpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioShared.h">
+      <Filter>HeaderFiles\FFmpeg</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -406,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioMME.cpp">
       <Filter>SourceFiles\NativeAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.cpp">
+      <Filter>SourceFiles\FFmpeg</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

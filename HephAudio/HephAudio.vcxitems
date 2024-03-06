@@ -40,6 +40,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EncodedBufferInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EqualizerInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ExactBlackmanWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioShared.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlatTopWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GaussianWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HammingWindow.h" />
@@ -100,6 +102,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EchoInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ExactBlackmanWindow.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)FlatTopWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GaussianWindow.cpp" />
