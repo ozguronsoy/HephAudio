@@ -1,4 +1,4 @@
-## HephAudioFramework
+## HephAudioS
 
 > [Description](#description)<br>
 [Macros](#macros)<br>
