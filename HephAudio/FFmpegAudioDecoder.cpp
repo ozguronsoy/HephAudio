@@ -135,8 +135,8 @@ namespace HephAudio
 		AVStream* avStream = this->avFormatContext->streams[audioStreamIndex];
 
 		// seek the frame
-		const int64_t timeStamp = av_rescale(frameIndex / this->sampleRate, avStream->time_base.den, avStream->time_base.num);
-		ret = av_seek_frame(this->avFormatContext, this->audioStreamIndex, timeStamp, AVSEEK_FLAG_BACKWARD);
+		const size_t timeStamp = av_rescale(frameIndex, avStream->time_base.den, avStream->time_base.num) / this->sampleRate;
+		ret = avformat_seek_file(this->avFormatContext, this->audioStreamIndex, 0, timeStamp, timeStamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
 		if (ret < 0)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
@@ -144,19 +144,19 @@ namespace HephAudio
 		}
 		avcodec_flush_buffers(this->avCodecContext);
 
+		// TODO: calculate frameIndex relative to the current package pos
+
 		while (decodedFrameCount < frameCount)
 		{
 			// get the next frame from file
 			ret = av_read_frame(this->avFormatContext, this->avPacket);
 			if (ret == AVERROR_EOF)
 			{
-				av_packet_unref(this->avPacket);
 				HEPHAUDIO_LOG("EOF, no more frames to read.", HEPH_CL_INFO);
 				break;
 			}
 			else if (ret < 0)
 			{
-				av_packet_unref(this->avPacket);
 				HEPHAUDIO_LOG("Failed to read the frame, skipping it...", HEPH_CL_WARNING);
 				continue;
 			}
@@ -178,25 +178,22 @@ namespace HephAudio
 					continue;
 				}
 
-				const size_t packetFrameCount = (heph_float)avStream->codecpar->sample_rate * this->avPacket->duration * avStream->time_base.num / avStream->time_base.den;
 				size_t framesReadForCurrentPacket = 0;
-				while (framesReadForCurrentPacket < packetFrameCount)
+				while (avcodec_receive_frame(this->avCodecContext, this->avFrame) >= 0)
 				{
-					// get the decoded data
-					ret = avcodec_receive_frame(this->avCodecContext, this->avFrame);
-					if (ret < 0)
-					{
-						HEPHAUDIO_LOG("Failed to recieve frame, skipping the packet...", HEPH_CL_WARNING);
-						break;
-					}
-
 					size_t currentFrameCount = this->avFrame->nb_samples;
 					if (currentFrameCount > 0)
 					{
-						// prevent overflow
-						if (decodedFrameCount + framesReadForCurrentPacket + currentFrameCount > frameCount)
+						if (frameIndex >= currentFrameCount)
 						{
-							currentFrameCount = frameCount - decodedFrameCount - framesReadForCurrentPacket;
+							frameIndex -= currentFrameCount;
+							continue;
+						}
+
+						// prevent overflow
+						if (decodedFrameCount + framesReadForCurrentPacket + currentFrameCount - frameIndex > frameCount)
+						{
+							currentFrameCount = frameCount + frameIndex - decodedFrameCount - framesReadForCurrentPacket;
 						}
 
 						// read the decoded data into a temporary buffer
@@ -213,14 +210,14 @@ namespace HephAudio
 								for (size_t j = 0; j < currentFrameBufferFormatInfo.channelCount; j++)
 								{
 									memcpy((uint8_t*)currentFrameBuffer.Begin() + (framesReadForCurrentPacket + i) * bufferFrameSize + j * sampleSize_byte,
-										this->avFrame->data[j] + i * sampleSize_byte, sampleSize_byte);
+										this->avFrame->data[j] + (i + frameIndex) * sampleSize_byte, sampleSize_byte);
 								}
 							}
 						}
 						else
 						{
 							memcpy((uint8_t*)currentFrameBuffer.Begin() + framesReadForCurrentPacket * bufferFrameSize,
-								this->avFrame->data[0], currentFrameCount * bufferFrameSize);
+								this->avFrame->data[0] + frameIndex * sampleSize_byte, currentFrameCount * bufferFrameSize);
 						}
 
 						// convert the temporary buffer to the output format and fill the output buffer
@@ -230,9 +227,10 @@ namespace HephAudio
 						{
 							AudioProcessor::ConvertToInnerFormat(currentFrameBuffer);
 						}
-						memcpy(decodedBuffer[decodedFrameCount + framesReadForCurrentPacket], currentFrameBuffer.Begin(), currentFrameBuffer.Size());
+						memcpy(decodedBuffer[decodedFrameCount + framesReadForCurrentPacket], currentFrameBuffer.Begin(), Math::Min(decodedBuffer.Size(), currentFrameBuffer.Size()));
 
-						framesReadForCurrentPacket += currentFrameCount;
+						framesReadForCurrentPacket += currentFrameCount - frameIndex;
+						frameIndex = 0;
 					}
 				}
 				decodedFrameCount += framesReadForCurrentPacket;
