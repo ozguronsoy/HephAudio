@@ -16,11 +16,11 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer WavFormat::Extensions() const
+		StringBuffer WavFormat::Extensions()
 		{
 			return ".wav .wave";
 		}
-		bool WavFormat::VerifySignature(const File& audioFile) const
+		bool WavFormat::VerifySignature(const File& audioFile)
 		{
 			uint32_t data32 = 0;
 			
@@ -35,7 +35,7 @@ namespace HephAudio
 
 			return false;
 		}
-		size_t WavFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo) const
+		size_t WavFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo)
 		{
 			uint32_t data32 = 0;
 
@@ -56,7 +56,7 @@ namespace HephAudio
 
 			return data32 / audioFormatInfo.FrameSize();
 		}
-		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const File& audioFile) const
+		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const File& audioFile)
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32 = 0, chunkSize = 0;
@@ -121,7 +121,7 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer WavFormat::ReadFile(const File& audioFile) const
+		AudioBuffer WavFormat::ReadFile(const File& audioFile)
 		{
 			const AudioFormatInfo wavFormatInfo = this->ReadAudioFormatInfo(audioFile);
 
@@ -155,7 +155,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		AudioBuffer WavFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer WavFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t wavAudioDataSize = frameCount * audioFormatInfo.FrameSize();
@@ -203,7 +203,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		bool WavFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) const
+		bool WavFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

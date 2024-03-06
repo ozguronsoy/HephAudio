@@ -42,6 +42,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ExactBlackmanWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioShared.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FlacFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FlatTopWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GaussianWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HammingWindow.h" />
@@ -55,8 +56,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LanczosWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AacFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NuttallWindow.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)OggFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)int24.h" />
@@ -80,6 +84,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioDS.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WinAudioMME.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Window.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp" />
@@ -103,6 +108,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ExactBlackmanWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)FlacFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)FlatTopWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GaussianWindow.cpp" />
@@ -112,8 +118,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LanczosWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AacFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NuttallWindow.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)OggFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)int24.cpp" />
@@ -136,5 +145,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioDS.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinAudioMME.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Window.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp" />
   </ItemGroup>
 </Project>

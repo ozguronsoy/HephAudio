@@ -54,8 +54,11 @@ namespace HephAudio
 	}
 	void FFmpegAudioDecoder::ChangeFile(const StringBuffer& newAudioFilePath)
 	{
-		this->CloseFile();
-		this->OpenFile(newAudioFilePath);
+		if (!this->audioFilePath.CompareContent(newAudioFilePath))
+		{
+			this->CloseFile();
+			this->OpenFile(newAudioFilePath);
+		}
 	}
 	void FFmpegAudioDecoder::CloseFile()
 	{
@@ -131,9 +134,15 @@ namespace HephAudio
 		AudioBuffer decodedBuffer(frameCount, this->GetOutputFormat());
 		AVStream* avStream = this->avFormatContext->streams[audioStreamIndex];
 
-		// seek the frameIndex
-		int64_t timeStamp = av_rescale(frameIndex / this->sampleRate, avStream->time_base.den, avStream->time_base.num);
-		ret = av_seek_frame(this->avFormatContext, this->audioStreamIndex, timeStamp, AVSEEK_FLAG_ANY);
+		// seek the frame
+		const int64_t timeStamp = av_rescale(frameIndex / this->sampleRate, avStream->time_base.den, avStream->time_base.num);
+		ret = av_seek_frame(this->avFormatContext, this->audioStreamIndex, timeStamp, AVSEEK_FLAG_BACKWARD);
+		if (ret < 0)
+		{
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
+			return AudioBuffer();
+		}
+		avcodec_flush_buffers(this->avCodecContext);
 
 		while (decodedFrameCount < frameCount)
 		{
@@ -228,7 +237,7 @@ namespace HephAudio
 				}
 				decodedFrameCount += framesReadForCurrentPacket;
 			}
-		
+
 			av_packet_unref(this->avPacket);
 		}
 

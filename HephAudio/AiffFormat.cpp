@@ -20,11 +20,11 @@ namespace HephAudio
 		static constexpr uint32_t ssndID = 0x53534E44; // "SSND"
 		static constexpr uint32_t aifc_v1 = 0xA2805140;
 
-		StringBuffer AiffFormat::Extensions() const
+		StringBuffer AiffFormat::Extensions()
 		{
 			return ".aif .aiff .aifc";
 		}
-		bool AiffFormat::VerifySignature(const File& audioFile) const
+		bool AiffFormat::VerifySignature(const File& audioFile)
 		{
 			uint32_t data32 = 0;
 
@@ -39,7 +39,7 @@ namespace HephAudio
 
 			return false;
 		}
-		size_t AiffFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo) const
+		size_t AiffFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo)
 		{
 			uint32_t data32 = 0;
 
@@ -64,7 +64,7 @@ namespace HephAudio
 
 			return data32 / audioFormatInfo.FrameSize();
 		}
-		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const File& audioFile) const
+		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const File& audioFile)
 		{
 			AudioFormatInfo formatInfo;
 			uint32_t data32 = 0, formType = 0, chunkSize = 0;
@@ -141,7 +141,7 @@ namespace HephAudio
 
 			return formatInfo;
 		}
-		AudioBuffer AiffFormat::ReadFile(const File& audioFile) const
+		AudioBuffer AiffFormat::ReadFile(const File& audioFile)
 		{
 			AudioFormatInfo audioFormatInfo = this->ReadAudioFormatInfo(audioFile);
 			Endian audioDataEndian = Endian::Big;
@@ -182,7 +182,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		AudioBuffer AiffFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) const
+		AudioBuffer AiffFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t audioDataSize = frameCount * audioFormatInfo.FrameSize();
@@ -231,7 +231,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 		}
-		bool AiffFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) const
+		bool AiffFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

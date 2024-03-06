@@ -1,13 +1,17 @@
 #pragma once
+#if defined(HEPHAUDIO_USE_FFMPEG)
 #include "HephAudioShared.h"
 #include "IAudioFileFormat.h"
+#include "FFmpegAudioDecoder.h"
 
 namespace HephAudio
 {
 	namespace FileFormats
 	{
-		class AiffFormat final : public IAudioFileFormat
+		class Mp3Format final : public IAudioFileFormat
 		{
+		private:
+			FFmpegAudioDecoder ffmpegAudioDecoder;
 		public:
 			HephCommon::StringBuffer Extensions() override;
 			bool VerifySignature(const HephCommon::File& audioFile) override;
@@ -16,11 +20,7 @@ namespace HephAudio
 			AudioBuffer ReadFile(const HephCommon::File& audioFile) override;
 			AudioBuffer ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) override;
 			bool SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) override;
-		private:
-			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo& formatInfo) const;
-			uint64_t SampleRateTo64(const AudioFormatInfo& formatInfo) const;
-			void FormatTagFrom32(uint32_t tagBits, AudioFormatInfo& formatInfo) const;
-			void FormatTagTo32(const AudioFormatInfo& audioFormatInfo, uint32_t& outTagBits, HephCommon::StringBuffer& outCompressionName) const;
 		};
 	}
 }
+#endif

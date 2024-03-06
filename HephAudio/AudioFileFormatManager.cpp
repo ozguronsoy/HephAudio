@@ -1,6 +1,11 @@
 #include "AudioFileFormatManager.h"
 #include "WavFormat.h"
 #include "AiffFormat.h"
+#include "Mp3Format.h"
+#include "OggFormat.h"
+#include "FlacFormat.h"
+#include "AacFormat.h"
+#include "WmaFormat.h"
 
 using namespace HephCommon;
 
@@ -8,9 +13,16 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		std::vector<IAudioFileFormat*> formats = { 
+		std::vector<IAudioFileFormat*> formats = {
 			new WavFormat(),
-			new AiffFormat()
+			new AiffFormat(),
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			new Mp3Format(),
+			new OggFormat(),
+			new FlacFormat(),
+			new AacFormat(),
+			new WmaFormat(),
+#endif
 		};
 
 		void AudioFileFormatManager::RegisterFileFormat(IAudioFileFormat* format)

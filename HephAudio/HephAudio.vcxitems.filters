@@ -258,6 +258,21 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioShared.h">
       <Filter>HeaderFiles\FFmpeg</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h">
+      <Filter>HeaderFiles\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)OggFormat.h">
+      <Filter>HeaderFiles\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FlacFormat.h">
+      <Filter>HeaderFiles\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AacFormat.h">
+      <Filter>HeaderFiles\AudioFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h">
+      <Filter>HeaderFiles\AudioFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -421,6 +436,21 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)FFmpegAudioDecoder.cpp">
       <Filter>SourceFiles\FFmpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp">
+      <Filter>SourceFiles\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)OggFormat.cpp">
+      <Filter>SourceFiles\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)FlacFormat.cpp">
+      <Filter>SourceFiles\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AacFormat.cpp">
+      <Filter>SourceFiles\AudioFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WmaFormat.cpp">
+      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
