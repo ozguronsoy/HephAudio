@@ -37,6 +37,7 @@ namespace HephAudio
 		}
 		AudioBuffer AacFormat::ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AacFormat::ReadFile", "Currently not supported due to the bugs in the FFmpegAudioDecoder class."));
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
 			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
 			if (finishedPlaying != nullptr)

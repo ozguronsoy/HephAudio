@@ -130,21 +130,20 @@ namespace HephAudio
 		}
 
 		int ret = 0;
+		const size_t fileFrameCount = this->GetFrameCount();
 		size_t decodedFrameCount = 0;
 		AudioBuffer decodedBuffer(frameCount, this->GetOutputFormat());
 		AVStream* avStream = this->avFormatContext->streams[audioStreamIndex];
 
 		// seek the frame
-		const size_t timeStamp = av_rescale(frameIndex, avStream->time_base.den, avStream->time_base.num) / this->sampleRate;
-		ret = avformat_seek_file(this->avFormatContext, this->audioStreamIndex, 0, timeStamp, timeStamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
-		if (ret < 0)
+		if (frameIndex > 0)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
-			return AudioBuffer();
+			if (!this->SeekFrame(frameIndex))
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
+				return AudioBuffer();
+			}
 		}
-		avcodec_flush_buffers(this->avCodecContext);
-
-		// TODO: calculate frameIndex relative to the current package pos
 
 		while (decodedFrameCount < frameCount)
 		{
@@ -174,26 +173,34 @@ namespace HephAudio
 				else if (ret < 0)
 				{
 					av_packet_unref(this->avPacket);
-					HEPHAUDIO_LOG("Failed to send the packet, skipping it...", HEPH_CL_WARNING);
+					HEPHAUDIO_LOG("Failed to decode the packet, skipping it...", HEPH_CL_WARNING);
 					continue;
 				}
 
 				size_t framesReadForCurrentPacket = 0;
-				while (avcodec_receive_frame(this->avCodecContext, this->avFrame) >= 0)
+				while ((framesReadForCurrentPacket + decodedFrameCount) < frameCount && avcodec_receive_frame(this->avCodecContext, this->avFrame) >= 0)
 				{
 					size_t currentFrameCount = this->avFrame->nb_samples;
 					if (currentFrameCount > 0)
 					{
-						if (frameIndex >= currentFrameCount)
+						// prevent overflow
+						if (frameIndex > 0)
 						{
-							frameIndex -= currentFrameCount;
-							continue;
+							if (frameIndex >= currentFrameCount)
+							{
+								frameIndex -= currentFrameCount;
+								continue;
+							}
+
+							if (frameIndex + frameCount > currentFrameCount)
+							{
+								currentFrameCount = currentFrameCount - frameIndex;
+							}
 						}
 
-						// prevent overflow
-						if (decodedFrameCount + framesReadForCurrentPacket + currentFrameCount - frameIndex > frameCount)
+						if (decodedFrameCount + framesReadForCurrentPacket + currentFrameCount > frameCount)
 						{
-							currentFrameCount = frameCount + frameIndex - decodedFrameCount - framesReadForCurrentPacket;
+							currentFrameCount = frameCount - decodedFrameCount - framesReadForCurrentPacket;
 						}
 
 						// read the decoded data into a temporary buffer
@@ -217,7 +224,7 @@ namespace HephAudio
 						else
 						{
 							memcpy((uint8_t*)currentFrameBuffer.Begin() + framesReadForCurrentPacket * bufferFrameSize,
-								this->avFrame->data[0] + frameIndex * sampleSize_byte, currentFrameCount * bufferFrameSize);
+								this->avFrame->data[0] + frameIndex * bufferFrameSize, currentFrameCount * bufferFrameSize);
 						}
 
 						// convert the temporary buffer to the output format and fill the output buffer
@@ -227,9 +234,9 @@ namespace HephAudio
 						{
 							AudioProcessor::ConvertToInnerFormat(currentFrameBuffer);
 						}
-						memcpy(decodedBuffer[decodedFrameCount + framesReadForCurrentPacket], currentFrameBuffer.Begin(), Math::Min(decodedBuffer.Size(), currentFrameBuffer.Size()));
+						memcpy(decodedBuffer[decodedFrameCount + framesReadForCurrentPacket], currentFrameBuffer.Begin(), currentFrameBuffer.Size());
 
-						framesReadForCurrentPacket += currentFrameCount - frameIndex;
+						framesReadForCurrentPacket += currentFrameCount;
 						frameIndex = 0;
 					}
 				}
@@ -274,7 +281,7 @@ namespace HephAudio
 			AVStream* avStream = this->avFormatContext->streams[i];
 			if (avStream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
 			{
-				this->fileDuration_frame = (heph_float)avStream->codecpar->sample_rate * avStream->duration * avStream->time_base.num / avStream->time_base.den;
+				this->fileDuration_frame = (double)avStream->codecpar->sample_rate * avStream->duration * avStream->time_base.num / avStream->time_base.den;
 				this->channelCount = avStream->codecpar->ch_layout.nb_channels;
 				this->sampleRate = avStream->codecpar->sample_rate;
 				this->audioStreamIndex = i;
@@ -332,6 +339,29 @@ namespace HephAudio
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "Failed to allocate av packet."));
 		}
+	}
+	bool FFmpegAudioDecoder::SeekFrame(size_t& frameIndex)
+	{
+		bool endSeek = false;
+		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
+		const int64_t timestamp = ((double)frameIndex / this->sampleRate) * avStream->time_base.den / avStream->time_base.num;
+
+	SEEK_START:
+		if (avformat_seek_file(this->avFormatContext, this->audioStreamIndex, INT64_MIN, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME) < 0)
+		{
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "Failed to seek frame."));
+			return false;
+		}
+		avcodec_flush_buffers(this->avCodecContext);
+
+		if (endSeek) return true;
+
+		// calculate frameIndex relative to the current frame pos
+		if (av_read_frame(this->avFormatContext, this->avPacket) < 0) return false;
+		frameIndex -= this->avPacket->pts * this->sampleRate * avStream->time_base.num / avStream->time_base.den;
+		av_packet_unref(this->avPacket);
+		endSeek = true;
+		goto SEEK_START;
 	}
 	AudioFormatInfo FFmpegAudioDecoder::SF2AFI(uint16_t channelCount, uint32_t sampleRate, AVSampleFormat sampleFormat, bool& outIsPlanar) const
 	{
