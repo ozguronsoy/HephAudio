@@ -19,6 +19,7 @@ namespace HephAudio
 		uint32_t sampleRate;
 		AVFormatContext* avFormatContext;
 		AVCodecContext* avCodecContext;
+		SwrContext* swrContext;
 		AVFrame* avFrame;
 		AVPacket* avPacket;
 	public:
@@ -38,7 +39,7 @@ namespace HephAudio
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
 	private:
 		void OpenFile(const HephCommon::StringBuffer& audioFilePath);
-		bool SeekFrame(size_t& frameIndex);
+		int SeekFrame(size_t& frameIndex);
 		AudioFormatInfo SF2AFI(uint16_t channelCount, uint32_t sampleRate, AVSampleFormat sampleFormat, bool& outIsPlanar) const;
 	};
 }
