@@ -25,6 +25,7 @@ Defines macros, data types, and methods that will be used in all HephAudio heade
 #define HEPHAUDIO_FORMAT_TAG_MPEGLAYER3
 #define HEPHAUDIO_FORMAT_TAG_ALAC
 #define HEPHAUDIO_FORMAT_TAG_OPUS
+#define HEPHAUDIO_FORMAT_TAG_VORBIS
 #define HEPHAUDIO_FORMAT_TAG_MPEG4_AAC
 #define HEPHAUDIO_FORMAT_TAG_FLAC
 #define HEPHAUDIO_FORMAT_TAG_EXTENSIBLE
