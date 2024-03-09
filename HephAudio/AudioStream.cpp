@@ -8,14 +8,18 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
-	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, StringBuffer filePath)
+	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const StringBuffer& filePath)
 		: pNativeAudio(pNativeAudio), file(filePath, FileOpenMode::Read),
 		pFileFormat(this->file.IsOpen() ? FileFormats::AudioFileFormatManager::FindFileFormat(this->file) : nullptr),
 		pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr)
 	{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AudioStream::AudioStream", "Streaming is currently not available due to seeking/decoding bugs."));
+#endif
+
 		if (this->pNativeAudio == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "Native audio must not be nullptr."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "pNativeAudio must not be nullptr."));
 			this->Release(false);
 		}
 
@@ -23,7 +27,7 @@ namespace HephAudio
 		{
 			if (this->pFileFormat == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "File format '" + this->file.FileExtension() + "' is not supported."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "File format '" + this->file.FileExtension() + "' is not supported."));
 				this->Release(false);
 			}
 
@@ -34,7 +38,7 @@ namespace HephAudio
 			this->pAudioCodec = Codecs::AudioCodecManager::FindCodec(formatInfo.formatTag);
 			if (this->pAudioCodec == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AudioStream::AudioStream", "Unsupported audio codec."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AudioStream::AudioStream", "Unsupported audio codec."));
 				this->Release(true);
 			}
 
@@ -44,7 +48,7 @@ namespace HephAudio
 			this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
 		}
 	}
-	AudioStream::AudioStream(Audio& audio, StringBuffer filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
+	AudioStream::AudioStream(Audio& audio, const StringBuffer& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
 		: pNativeAudio(rhs.pNativeAudio), file(std::move(rhs.file)), pFileFormat(rhs.pFileFormat)
 		, pAudioCodec(rhs.pAudioCodec), formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pAudioObject(rhs.pAudioObject)
@@ -140,20 +144,10 @@ namespace HephAudio
 	{
 		return this->pAudioObject != nullptr ? Math::Min((heph_float)this->pAudioObject->frameIndex / this->frameCount, 1.0_hf) : 0;
 	}
-	void AudioStream::SetPosition(heph_float position) const
+	void AudioStream::SetPosition(heph_float position)
 	{
 		if (this->pAudioObject != nullptr)
 		{
-			if (position > 1.0)
-			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::SetPosition", "position must be between 0 and 1"));
-				position = 1.0;
-			}
-			else if (position < 0.0)
-			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::SetPosition", "position must be between 0 and 1"));
-				position = 0.0;
-			}
 			this->pAudioObject->frameIndex = position * this->frameCount;
 		}
 	}

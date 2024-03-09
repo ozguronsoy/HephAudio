@@ -114,6 +114,22 @@ namespace HephAudio
 	{
 		return this->fileDuration_frame;
 	}
+	bool FFmpegAudioDecoder::Seek(size_t frameIndex)
+	{
+		if (frameIndex >= this->fileDuration_frame)
+		{
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioDecoder::Seek", "frameIndex out of bounds."));
+			return false;
+		}
+
+		const int ret = this->SeekFrame(frameIndex);
+		if (ret < 0)
+		{
+			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Seek", "Failed to seek frame."));
+			return false;
+		}
+		return true;
+	}
 	AudioBuffer FFmpegAudioDecoder::Decode()
 	{
 		return this->Decode(0, this->fileDuration_frame);
@@ -126,6 +142,8 @@ namespace HephAudio
 			return AudioBuffer();
 		}
 
+		int ret = 0;
+
 		if (frameIndex >= this->fileDuration_frame)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioDecoder::Decode", "frameIndex out of bounds."));
@@ -137,23 +155,18 @@ namespace HephAudio
 			frameCount = this->fileDuration_frame - frameIndex;
 		}
 
-		int ret = 0;
+		ret = this->SeekFrame(frameIndex);
+		if (ret < 0)
+		{
+			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
+			return AudioBuffer();
+		}
+
 		const size_t fileFrameCount = this->GetFrameCount();
 		const AudioFormatInfo outputFormatInfo = this->GetOutputFormat();
 		size_t decodedFrameCount = 0;
 		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
 		AVStream* avStream = this->avFormatContext->streams[audioStreamIndex];
-
-		// seek the frame
-		if (frameIndex > 0)
-		{
-			ret = this->SeekFrame(frameIndex);
-			if (ret < 0)
-			{
-				RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
-				return AudioBuffer();
-			}
-		}
 
 		while (decodedFrameCount < frameCount)
 		{
@@ -162,7 +175,7 @@ namespace HephAudio
 			if (ret == AVERROR_EOF)
 			{
 				HEPHAUDIO_LOG("EOF, no more frames to read.", HEPH_CL_INFO);
-				break;
+				return decodedBuffer;
 			}
 			else if (ret < 0)
 			{
@@ -178,7 +191,7 @@ namespace HephAudio
 				{
 					av_packet_unref(this->avPacket);
 					HEPHAUDIO_LOG("EOF, no more frames to read.", HEPH_CL_INFO);
-					break;
+					return decodedBuffer;
 				}
 				else if (ret < 0)
 				{
@@ -221,11 +234,26 @@ namespace HephAudio
 						ret = swr_init(this->swrContext);
 						if (ret < 0)
 						{
+							av_packet_unref(this->avPacket);
 							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to initialize SwrContext."));
 						}
 
-						uint8_t* targetOutputFrame = (uint8_t*)decodedBuffer[decodedFrameCount + framesReadForCurrentPacket];
-						swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, this->avFrame->data, currentFrameCount);
+						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo);
+						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.Begin();
+						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, this->avFrame->data, currentFrameCount);
+						if (ret < 0)
+						{
+							av_packet_unref(this->avPacket);
+							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples."));
+						}
+
+						for (size_t i = 0; i < currentFrameCount; i++)
+						{
+							for (size_t j = 0; j < outputFormatInfo.channelCount; j++)
+							{
+								decodedBuffer[i + decodedFrameCount + framesReadForCurrentPacket][j] = tempBuffer[i + frameIndex][j];
+							}
+						}
 
 						framesReadForCurrentPacket += currentFrameCount;
 						decodedFrameCount += currentFrameCount;
@@ -376,40 +404,6 @@ namespace HephAudio
 		av_packet_unref(this->avPacket);
 		endSeek = true;
 		goto SEEK_START;
-	}
-	AudioFormatInfo FFmpegAudioDecoder::SF2AFI(uint16_t channelCount, uint32_t sampleRate, AVSampleFormat sampleFormat, bool& outIsPlanar) const
-	{
-		outIsPlanar = false;
-		switch (sampleFormat)
-		{
-		case AV_SAMPLE_FMT_U8P:
-			outIsPlanar = true;
-		case AV_SAMPLE_FMT_U8:
-			return AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, channelCount, 8, sampleRate);
-			break;
-		case AV_SAMPLE_FMT_S16P:
-			outIsPlanar = true;
-		case AV_SAMPLE_FMT_S16:
-			return AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, channelCount, 16, sampleRate);
-			break;
-		case AV_SAMPLE_FMT_S32P:
-			outIsPlanar = true;
-		case AV_SAMPLE_FMT_S32:
-			return AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, channelCount, 32, sampleRate);
-			break;
-		case AV_SAMPLE_FMT_FLTP:
-			outIsPlanar = true;
-		case AV_SAMPLE_FMT_FLT:
-			return AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT, channelCount, sizeof(float) * 8, sampleRate);
-			break;
-		case AV_SAMPLE_FMT_DBLP:
-			outIsPlanar = true;
-		case AV_SAMPLE_FMT_DBL:
-			return AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT, channelCount, sizeof(double) * 8, sampleRate);
-			break;
-		default:
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "Unsupported sample format [" + StringBuffer::ToString(sampleFormat) + "]."));
-		}
 	}
 }
 #endif

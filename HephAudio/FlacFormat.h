@@ -10,8 +10,6 @@ namespace HephAudio
 	{
 		class FlacFormat final : public IAudioFileFormat
 		{
-		private:
-			FFmpegAudioDecoder ffmpegAudioDecoder;
 		public:
 			HephCommon::StringBuffer Extensions() override;
 			bool VerifySignature(const HephCommon::File& audioFile) override;

@@ -41,6 +41,10 @@ namespace HephAudio
 		}
 		size_t AiffFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			return this->ffmpegAudioDecoder.GetFrameCount();
+#else
 			uint32_t data32 = 0;
 
 			audioFile.SetOffset(0);
@@ -63,9 +67,14 @@ namespace HephAudio
 			audioFile.Read(&data32, 4, Endian::Big);
 
 			return data32 / audioFormatInfo.FrameSize();
+#endif
 		}
 		AudioFormatInfo AiffFormat::ReadAudioFormatInfo(const File& audioFile)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			return this->ffmpegAudioDecoder.GetOutputFormat();
+#else
 			AudioFormatInfo formatInfo;
 			uint32_t data32 = 0, formType = 0, chunkSize = 0;
 			uint64_t srBits = 0;
@@ -140,9 +149,14 @@ namespace HephAudio
 			}
 
 			return formatInfo;
+#endif
 		}
 		AudioBuffer AiffFormat::ReadFile(const File& audioFile)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			return this->ffmpegAudioDecoder.Decode();
+#else
 			AudioFormatInfo audioFormatInfo = this->ReadAudioFormatInfo(audioFile);
 			Endian audioDataEndian = Endian::Big;
 			if (audioFormatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN)
@@ -181,9 +195,20 @@ namespace HephAudio
 			free(encodedBufferInfo.pBuffer);
 
 			return hephaudioBuffer;
+#endif
 		}
 		AudioBuffer AiffFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AiffFormat::ReadFile", "Currently not supported due to the bugs in the FFmpegAudioDecoder class."));
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
+			if (finishedPlaying != nullptr)
+			{
+				*finishedPlaying = (frameIndex + frameCount) >= this->ffmpegAudioDecoder.GetFrameCount();
+			}
+			return decodedBuffer;
+#else
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t audioDataSize = frameCount * audioFormatInfo.FrameSize();
 			const Endian audioDataEndian = audioFormatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN ? Endian::Little : Endian::Big;
@@ -230,6 +255,7 @@ namespace HephAudio
 			free(encodedBufferInfo.pBuffer);
 
 			return hephaudioBuffer;
+#endif
 		}
 		bool AiffFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{

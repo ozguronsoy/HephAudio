@@ -23,8 +23,8 @@ namespace HephAudio
 		size_t frameCount;
 		AudioObject* pAudioObject;
 	public:
-		AudioStream(Native::NativeAudio* pNativeAudio, HephCommon::StringBuffer filePath);
-		AudioStream(Audio& audio, HephCommon::StringBuffer filePath);
+		AudioStream(Native::NativeAudio* pNativeAudio, const HephCommon::StringBuffer& filePath);
+		AudioStream(Audio& audio, const HephCommon::StringBuffer& filePath);
 		AudioStream(const AudioStream&) = delete;
 		AudioStream(AudioStream&& rhs) noexcept;
 		AudioStream& operator=(const AudioStream&) = delete;
@@ -40,7 +40,7 @@ namespace HephAudio
 		void Start();
 		void Stop();
 		heph_float GetPosition() const;
-		void SetPosition(heph_float position) const;
+		void SetPosition(heph_float position);
 		void Release();
 	private:
 		void Release(bool destroyAO);

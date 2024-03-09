@@ -5,6 +5,7 @@
 #include "AudioFormatInfo.h"
 #include "../HephCommon/HeaderFiles/StringBuffer.h"
 #include "IAudioCodec.h"
+#include "FFmpegAudioDecoder.h"
 #include <memory>
 
 namespace HephAudio
@@ -13,6 +14,10 @@ namespace HephAudio
 	{
 		class IAudioFileFormat
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+		protected:
+			FFmpegAudioDecoder ffmpegAudioDecoder;
+#endif
 		public:
 			virtual ~IAudioFileFormat() = default;
 			virtual HephCommon::StringBuffer Extensions() = 0;

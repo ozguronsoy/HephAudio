@@ -35,12 +35,12 @@ namespace HephAudio
 		bool IsFileOpen() const;
 		AudioFormatInfo GetOutputFormat() const;
 		size_t GetFrameCount() const;
+		bool Seek(size_t frameIndex);
 		AudioBuffer Decode();
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
 	private:
 		void OpenFile(const HephCommon::StringBuffer& audioFilePath);
 		int SeekFrame(size_t& frameIndex);
-		AudioFormatInfo SF2AFI(uint16_t channelCount, uint32_t sampleRate, AVSampleFormat sampleFormat, bool& outIsPlanar) const;
 	};
 }
 #endif

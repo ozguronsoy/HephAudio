@@ -23,7 +23,7 @@ namespace HephAudio
 		bool WavFormat::VerifySignature(const File& audioFile)
 		{
 			uint32_t data32 = 0;
-			
+
 			audioFile.SetOffset(0);
 			audioFile.Read(&data32, 4, Endian::Big);
 			if (data32 == riffID)
@@ -37,6 +37,10 @@ namespace HephAudio
 		}
 		size_t WavFormat::FileFrameCount(const File& audioFile, const AudioFormatInfo& audioFormatInfo)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			return this->ffmpegAudioDecoder.GetFrameCount();
+#else
 			uint32_t data32 = 0;
 
 			audioFile.SetOffset(12);
@@ -55,9 +59,14 @@ namespace HephAudio
 			audioFile.Read(&data32, 4, Endian::Little);
 
 			return data32 / audioFormatInfo.FrameSize();
+#endif
 		}
 		AudioFormatInfo WavFormat::ReadAudioFormatInfo(const File& audioFile)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			return this->ffmpegAudioDecoder.GetOutputFormat();
+#else
 			AudioFormatInfo formatInfo;
 			uint32_t data32 = 0, chunkSize = 0;
 
@@ -120,9 +129,14 @@ namespace HephAudio
 			}
 
 			return formatInfo;
+#endif
 		}
 		AudioBuffer WavFormat::ReadFile(const File& audioFile)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			return this->ffmpegAudioDecoder.Decode();
+#else
 			const AudioFormatInfo wavFormatInfo = this->ReadAudioFormatInfo(audioFile);
 
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(wavFormatInfo.formatTag);
@@ -154,9 +168,20 @@ namespace HephAudio
 			free(encodedBufferInfo.pBuffer);
 
 			return hephaudioBuffer;
+#endif
 		}
 		AudioBuffer WavFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "WavFormat::ReadFile", "Currently not supported due to the bugs in the FFmpegAudioDecoder class."));
+			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
+			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
+			if (finishedPlaying != nullptr)
+			{
+				*finishedPlaying = (frameIndex + frameCount) >= this->ffmpegAudioDecoder.GetFrameCount();
+			}
+			return decodedBuffer;
+#else
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t wavAudioDataSize = frameCount * audioFormatInfo.FrameSize();
 			uint32_t data32 = 0;
@@ -202,6 +227,7 @@ namespace HephAudio
 			free(encodedBufferInfo.pBuffer);
 
 			return hephaudioBuffer;
+#endif
 		}
 		bool WavFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{
