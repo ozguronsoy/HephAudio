@@ -11,14 +11,14 @@ namespace HephAudio
 	{
 		StringBuffer AacFormat::Extensions()
 		{
-			return ".m4a .aac .alac";
+			return ".aac";
 		}
 		bool AacFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
-			audioFile.SetOffset(4);
-			uint64_t data64 = 0;
-			audioFile.Read(&data64, 8, Endian::Big);
-			return data64 == 0x667479704D344120;
+			audioFile.SetOffset(0);
+			uint16_t data16 = 0;
+			audioFile.Read(&data16, 2, Endian::Big);
+			return data16 == 0xFFF1 || data16 == 0xFFF9;
 		}
 		size_t AacFormat::FileFrameCount(const HephCommon::File& audioFile, const AudioFormatInfo& audioFormatInfo)
 		{
@@ -37,7 +37,7 @@ namespace HephAudio
 		}
 		AudioBuffer AacFormat::ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AacFormat::ReadFile", "Currently not supported due to the bugs in the FFmpegAudioDecoder class."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AacFormat::ReadFile", "Currently not supported."));
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
 			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
 			if (finishedPlaying != nullptr)

@@ -17,6 +17,7 @@ namespace HephAudio
 		size_t audioStreamIndex;
 		uint16_t channelCount;
 		uint32_t sampleRate;
+		int64_t firstPacketPts;
 		AVFormatContext* avFormatContext;
 		AVCodecContext* avCodecContext;
 		SwrContext* swrContext;
@@ -40,7 +41,7 @@ namespace HephAudio
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
 	private:
 		void OpenFile(const HephCommon::StringBuffer& audioFilePath);
-		int SeekFrame(size_t& frameIndex);
+		int SeekFrame(size_t& frameIndex, int64_t& outPacketPts);
 	};
 }
 #endif

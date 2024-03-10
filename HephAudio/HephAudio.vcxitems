@@ -14,6 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AacFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AiffFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ALawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AndroidAudioA.h" />
@@ -56,8 +57,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LanczosWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)AacFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)M4aFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MpegFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NuttallWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)OggFormat.h" />
@@ -87,6 +89,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WmaFormat.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AacFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AiffFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ALawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AndroidAudioA.cpp" />
@@ -118,8 +121,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)IEEE_FloatCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LanczosWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)AacFormat.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)M4aFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MpegFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NuttallWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)OggFormat.cpp" />

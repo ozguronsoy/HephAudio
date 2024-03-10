@@ -13,10 +13,6 @@ namespace HephAudio
 		pFileFormat(this->file.IsOpen() ? FileFormats::AudioFileFormatManager::FindFileFormat(this->file) : nullptr),
 		pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr)
 	{
-#if defined(HEPHAUDIO_USE_FFMPEG)
-		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AudioStream::AudioStream", "Streaming is currently not available due to seeking/decoding bugs."));
-#endif
-
 		if (this->pNativeAudio == nullptr)
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "pNativeAudio must not be nullptr."));
