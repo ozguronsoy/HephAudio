@@ -124,8 +124,7 @@ namespace HephAudio
 			return false;
 		}
 
-		int64_t seekedPacketPts;
-		const int ret = this->SeekFrame(frameIndex, seekedPacketPts);
+		const int ret = this->SeekFrame(frameIndex);
 		if (ret < 0)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Seek", "Failed to seek frame."));
@@ -159,8 +158,7 @@ namespace HephAudio
 
 		av_frame_unref(this->avFrame);
 
-		int64_t seekedPacketPts;
-		int ret = this->SeekFrame(frameIndex, seekedPacketPts);
+		int ret = this->SeekFrame(frameIndex);
 		if (ret < 0)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
@@ -172,7 +170,6 @@ namespace HephAudio
 		size_t readFrameCount = 0;
 		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
 		AVStream* avStream = this->avFormatContext->streams[audioStreamIndex];
-		bool seekedPackedFound = false;
 
 		while (readFrameCount < frameCount)
 		{
@@ -187,17 +184,6 @@ namespace HephAudio
 			{
 				HEPHAUDIO_LOG("Failed to read the frame, skipping it...", HEPH_CL_WARNING);
 				continue;
-			}
-
-			// skip the packets that are presented before the seeked packet
-			if (!seekedPackedFound)
-			{
-				seekedPackedFound = this->avPacket->pts == seekedPacketPts;
-				if (!seekedPackedFound)
-				{
-					av_packet_unref(this->avPacket);
-					continue;
-				}
 			}
 
 			if (this->avPacket->stream_index == this->audioStreamIndex)
@@ -237,9 +223,9 @@ namespace HephAudio
 								}
 							}
 
-							if (frameIndex + frameCount > currentFramesToRead)
+							if (frameIndex + frameCount > currentFrameCount)
 							{
-								currentFramesToRead = currentFramesToRead - frameIndex;
+								currentFramesToRead = currentFrameCount - frameIndex;
 							}
 						}
 
@@ -400,39 +386,35 @@ namespace HephAudio
 		if (ret < 0)
 		{
 			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "Failed to get pts of the first packet."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to get pts of the first packet."));
 		}
 		this->firstPacketPts = this->avPacket->pts;
 		av_packet_unref(this->avPacket);
 	}
-	int FFmpegAudioDecoder::SeekFrame(size_t& frameIndex, int64_t& outPacketPts)
+	int FFmpegAudioDecoder::SeekFrame(size_t& frameIndex)
 	{
+		constexpr int seekFlags = AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME;
+
 		int ret = 0;
 		bool endSeek = false;
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
-		int64_t timestamp = ((double)frameIndex / this->sampleRate) * avStream->time_base.den / avStream->time_base.num;
-		timestamp += this->firstPacketPts;
-		outPacketPts = this->firstPacketPts;
+		const int64_t timestamp = this->firstPacketPts + (((double)frameIndex / this->sampleRate) * avStream->time_base.den / avStream->time_base.num);
 
-	SEEK_START:
-		ret = avformat_seek_file(this->avFormatContext, this->audioStreamIndex, INT64_MIN, timestamp, timestamp, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
+		ret = avformat_seek_file(this->avFormatContext, this->audioStreamIndex, INT64_MIN, timestamp, timestamp, seekFlags);
 		if (ret < 0)
 		{
 			return ret;
 		}
 		avcodec_flush_buffers(this->avCodecContext);
 
-		if (endSeek)
-		{
-			outPacketPts = timestamp;
-			return 0;
-		}
-
 		// calculate frameIndex relative to the current frame pos
+		// and how many packets to skip after seek (seek does not always find the packet we are looking for)
+		size_t skippedPacketCount = -1;
 		int64_t packetDuration = 0;
 		int64_t deltaFrameIndex = 0;
 		do
 		{
+			skippedPacketCount++;
 			ret = av_read_frame(this->avFormatContext, this->avPacket);
 			if (ret < 0)
 			{
@@ -444,25 +426,41 @@ namespace HephAudio
 				continue;
 			}
 
-			const int64_t packetFrameIndex = (this->avPacket->pts - this->firstPacketPts) * this->sampleRate * avStream->time_base.num / avStream->time_base.den;
+			const int64_t packetFrameIndex = (double)(this->avPacket->pts - this->firstPacketPts) * this->sampleRate * avStream->time_base.num / avStream->time_base.den;
 			if (frameIndex < packetFrameIndex)
 			{
 				HEPHAUDIO_LOG("Failed to find the exact packet that contains the requested frames, picking the closest one...", HEPH_CL_WARNING);
 				deltaFrameIndex = 0;
-				timestamp = this->avPacket->pts;
 				av_packet_unref(this->avPacket);
 				break;
 			}
 
-			packetDuration = this->avPacket->duration * this->sampleRate * avStream->time_base.num / avStream->time_base.den;
+			packetDuration = (double)this->avPacket->duration * this->sampleRate * avStream->time_base.num / avStream->time_base.den;
 			deltaFrameIndex = frameIndex - packetFrameIndex;
-			timestamp = this->avPacket->pts;
 			av_packet_unref(this->avPacket);
 		} while (deltaFrameIndex >= packetDuration);
 
 		frameIndex = deltaFrameIndex;
-		endSeek = true;
-		goto SEEK_START;
+
+		// seek again and skip the unnecessary packets
+		ret = avformat_seek_file(this->avFormatContext, this->audioStreamIndex, INT64_MIN, timestamp, timestamp, seekFlags);
+		if (ret < 0)
+		{
+			return ret;
+		}
+		avcodec_flush_buffers(this->avCodecContext);
+
+		for (size_t i = 0; i < skippedPacketCount; i++)
+		{
+			ret = av_read_frame(this->avFormatContext, this->avPacket);
+			if (ret < 0)
+			{
+				return ret;
+			}
+			av_packet_unref(this->avPacket);
+		}
+
+		return 0;
 	}
 }
 #endif
