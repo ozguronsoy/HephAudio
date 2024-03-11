@@ -165,11 +165,10 @@ namespace HephAudio
 			return AudioBuffer(frameCount, this->GetOutputFormat());
 		}
 
-		const size_t fileFrameCount = this->GetFrameCount();
 		const AudioFormatInfo outputFormatInfo = this->GetOutputFormat();
 		size_t readFrameCount = 0;
 		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
-		AVStream* avStream = this->avFormatContext->streams[audioStreamIndex];
+		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
 
 		while (readFrameCount < frameCount)
 		{
