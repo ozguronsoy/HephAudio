@@ -69,6 +69,28 @@ namespace HephAudio
 	}
 	void FFmpegAudioEncoder::CloseFile()
 	{
+		if (this->IsFileOpen())
+		{
+			int ret = 0;
+
+			(void)avcodec_send_frame(this->avCodecContext, nullptr); // mark the stream as EOF
+			while (avcodec_receive_packet(this->avCodecContext, this->avPacket) >= 0)
+			{
+				if (av_interleaved_write_frame(this->avFormatContext, this->avPacket) >= 0)
+				{
+					this->avFrame->pts += this->avFrame->duration;
+				}
+			}
+			(void)av_interleaved_write_frame(this->avFormatContext, nullptr);
+
+			ret = av_write_trailer(this->avFormatContext);
+			if (ret < 0)
+			{
+				this->CloseFile();
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::CloseFile", "Failed to write the file trailer."));
+			}
+		}
+
 		if (this->avFrame != nullptr)
 		{
 			av_frame_unref(this->avFrame);
@@ -152,7 +174,7 @@ namespace HephAudio
 		{
 			uint8_t* pCurrentInputFrame = (uint8_t*)bufferToEncode.Begin() + i * inputFormatInfo.FrameSize();
 
-			size_t inputFrameCountToRead = this->avFrame->nb_samples;
+			size_t inputFrameCountToRead = av_rescale(this->avFrame->nb_samples, inputFormatInfo.sampleRate, this->outputFormatInfo.sampleRate);
 			if (i + inputFrameCountToRead > bufferToEncode.FrameCount())
 			{
 				inputFrameCountToRead = bufferToEncode.FrameCount() - i;
@@ -163,6 +185,10 @@ namespace HephAudio
 			{
 				this->CloseFile();
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to convert."));
+			}
+			else if (ret < this->avFrame->nb_samples)
+			{
+				(void)swr_convert(this->swrContext, this->avFrame->data, this->avFrame->nb_samples, nullptr, 0); // flush the buffered samples
 			}
 
 			ret = avcodec_send_frame(this->avCodecContext, this->avFrame);
@@ -175,6 +201,9 @@ namespace HephAudio
 			ret = avcodec_receive_packet(this->avCodecContext, this->avPacket);
 			if (ret == AVERROR(EAGAIN))
 			{
+				// not enough samples to encode, send more frames to the encoder
+				this->avFrame->pts += this->avFrame->duration;
+				i += inputFrameCountToRead;
 				continue;
 			}
 			else if (ret < 0)
@@ -183,7 +212,7 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to recieve AVPacket."));
 			}
 
-			ret = av_write_frame(this->avFormatContext, this->avPacket);
+			ret = av_interleaved_write_frame(this->avFormatContext, this->avPacket);
 			if (ret < 0)
 			{
 				this->CloseFile();
@@ -191,17 +220,12 @@ namespace HephAudio
 			}
 
 			this->avFrame->pts += this->avFrame->duration;
-			i += this->avFrame->nb_samples;
+			i += inputFrameCountToRead;
 
 			av_packet_unref(this->avPacket);
 		}
 
-		ret = av_write_trailer(this->avFormatContext);
-		if (ret < 0)
-		{
-			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to write the file trailer."));
-		}
+		(void)av_interleaved_write_frame(this->avFormatContext, nullptr);
 	}
 	void FFmpegAudioEncoder::OpenFile(const StringBuffer& audioFilePath, bool overwrite)
 	{
@@ -220,7 +244,7 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to allocate output format context."));
 		}
 
-		ret = avio_open(&this->avIoContext, this->audioFilePath.c_str(), AVIO_FLAG_READ_WRITE);
+		ret = avio_open(&this->avIoContext, this->audioFilePath.c_str(), AVIO_FLAG_WRITE);
 		if (ret < 0)
 		{
 			this->CloseFile();
@@ -267,8 +291,6 @@ namespace HephAudio
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to create AVStream."));
 		}
-		this->avStream->start_time = 0;
-		this->avStream->duration = 0;
 
 		ret = avcodec_parameters_from_context(this->avStream->codecpar, this->avCodecContext);
 		if (ret < 0)
@@ -276,6 +298,8 @@ namespace HephAudio
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to copy the codec parameters to the AVStream."));
 		}
+		this->avStream->time_base.num = 1;
+		this->avStream->time_base.den = this->outputFormatInfo.sampleRate;
 
 		if ((this->avFormatContext->oformat->flags & AVFMT_GLOBALHEADER) == AVFMT_GLOBALHEADER)
 		{
@@ -319,13 +343,6 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to allocate buffer(s) for AVFrame."));
 		}
 
-		this->avPacket = av_packet_alloc();
-		if (this->avPacket == nullptr)
-		{
-			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to allocate AVPacket."));
-		}
-
 		this->swrContext = swr_alloc();
 		if (this->swrContext == nullptr)
 		{
@@ -340,6 +357,7 @@ namespace HephAudio
 		ret = avformat_init_output(this->avFormatContext, nullptr);
 		if (ret < 0)
 		{
+			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to initialize the output file."));
 		}
 
@@ -350,8 +368,14 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to write the file header."));
 		}
 
-		this->avFrame->duration = (double)this->avFrame->nb_samples * this->outputFormatInfo.sampleRate * this->avStream->time_base.num / this->avStream->time_base.den;
-		this->avPacket->duration = this->avFrame->duration;
+		this->avFrame->duration = av_rescale((int64_t)this->avFrame->nb_samples * this->outputFormatInfo.sampleRate, this->avStream->time_base.num, this->avStream->time_base.den);
+
+		this->avPacket = av_packet_alloc();
+		if (this->avPacket == nullptr)
+		{
+			this->CloseFile();
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to allocate AVPacket."));
+		}
 	}
 	AVSampleFormat FFmpegAudioEncoder::AFI2AVSF(const AudioFormatInfo& afi) const
 	{
