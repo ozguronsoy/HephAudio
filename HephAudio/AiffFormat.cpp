@@ -258,6 +258,19 @@ namespace HephAudio
 		}
 		bool AiffFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			try
+			{
+				FFmpegAudioEncoder ffmpegAudioEncoder(filePath, buffer.FormatInfo(), overwrite);
+				ffmpegAudioEncoder.Encode(buffer);
+			}
+			catch (HephException)
+			{
+				return false;
+			}
+
+			return true;
+#else
 			try
 			{
 				const File audioFile(filePath, overwrite ? FileOpenMode::Overwrite : FileOpenMode::Write);
@@ -313,6 +326,7 @@ namespace HephAudio
 			}
 
 			return true;
+#endif
 		}
 		void AiffFormat::SampleRateFrom64(uint64_t srBits, AudioFormatInfo& formatInfo) const
 		{

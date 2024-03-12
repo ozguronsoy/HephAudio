@@ -1,6 +1,5 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "OggFormat.h"
-#include "FFmpegAudioDecoder.h"
 #include "../HephCommon/HeaderFiles/HephException.h"
 
 using namespace HephCommon;
@@ -48,7 +47,17 @@ namespace HephAudio
 		}
 		bool OggFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "OggFormat::SaveToFile", "Not implemented."));
+			try
+			{
+				FFmpegAudioEncoder ffmpegAudioEncoder(filePath, buffer.FormatInfo(), overwrite);
+				ffmpegAudioEncoder.Encode(buffer);
+			}
+			catch (HephException)
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

@@ -71,8 +71,6 @@ namespace HephAudio
 	{
 		if (this->IsFileOpen())
 		{
-			int ret = 0;
-
 			(void)avcodec_send_frame(this->avCodecContext, nullptr); // mark the stream as EOF
 			while (avcodec_receive_packet(this->avCodecContext, this->avPacket) >= 0)
 			{
@@ -83,7 +81,7 @@ namespace HephAudio
 			}
 			(void)av_interleaved_write_frame(this->avFormatContext, nullptr);
 
-			ret = av_write_trailer(this->avFormatContext);
+			int ret = av_write_trailer(this->avFormatContext);
 			if (ret < 0)
 			{
 				this->CloseFile();

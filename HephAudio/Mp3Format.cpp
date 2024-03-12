@@ -1,6 +1,5 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "Mp3Format.h"
-#include "FFmpegAudioDecoder.h"
 #include "../HephCommon/HeaderFiles/HephException.h"
 
 using namespace HephCommon;
@@ -48,7 +47,17 @@ namespace HephAudio
 		}
 		bool Mp3Format::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) 
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "Mp3Format::SaveToFile", "Not implemented."));
+			try
+			{
+				FFmpegAudioEncoder ffmpegAudioEncoder(filePath, buffer.FormatInfo(), overwrite);
+				ffmpegAudioEncoder.Encode(buffer);
+			}
+			catch (HephException)
+			{
+				return false;
+			}
+
+			return true;
 		}
 	}
 }
