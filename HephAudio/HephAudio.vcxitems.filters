@@ -282,6 +282,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)FFmpegAudioEncoder.h">
       <Filter>HeaderFiles\FFmpeg</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mp4Format.h">
+      <Filter>HeaderFiles\AudioFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)AudioProcessor.cpp">
@@ -469,6 +472,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)FFmpegAudioEncoder.cpp">
       <Filter>SourceFiles\FFmpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mp4Format.cpp">
+      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

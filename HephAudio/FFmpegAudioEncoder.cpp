@@ -95,7 +95,6 @@ namespace HephAudio
 
 		if (this->avFrame != nullptr)
 		{
-			av_frame_unref(this->avFrame);
 			av_frame_free(&this->avFrame);
 			this->avFrame = nullptr;
 		}

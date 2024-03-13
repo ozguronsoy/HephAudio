@@ -60,6 +60,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)LinuxAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)M4aFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Mp3Format.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Mp4Format.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MpegFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)NuttallWindow.h" />
@@ -125,6 +126,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)LinuxAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)M4aFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Mp3Format.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Mp4Format.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MpegFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)NuttallWindow.cpp" />

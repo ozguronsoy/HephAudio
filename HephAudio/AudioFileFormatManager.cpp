@@ -1,8 +1,9 @@
 #include "AudioFileFormatManager.h"
 #include "WavFormat.h"
 #include "AiffFormat.h"
-#include "Mp3Format.h"
 #include "MpegFormat.h"
+#include "Mp3Format.h"
+#include "Mp4Format.h"
 #include "OggFormat.h"
 #include "FlacFormat.h"
 #include "M4aFormat.h"
@@ -19,8 +20,9 @@ namespace HephAudio
 			new WavFormat(),
 			new AiffFormat(),
 #if defined(HEPHAUDIO_USE_FFMPEG)
-			new Mp3Format(),
 			new MpegFormat(),
+			new Mp3Format(),
+			new Mp4Format(),
 			new OggFormat(),
 			new FlacFormat(),
 			new M4aFormat(),

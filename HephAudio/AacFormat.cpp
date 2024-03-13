@@ -10,7 +10,7 @@ namespace HephAudio
 	{
 		StringBuffer AacFormat::Extensions()
 		{
-			return ".aac";
+			return ".aac .adts";
 		}
 		bool AacFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
