@@ -210,21 +210,21 @@ namespace HephAudio
 			const size_t readFrameCount = av_rescale(pRenderArgs->renderFrameCount, pStream->formatInfo.sampleRate, renderSampleRate);
 
 			size_t remainingFrameCount{ 0 };
-			if (pRenderArgs->renderFrameCount >= decodedBufferFrameCount)
-			{
-				remainingFrameCount = pRenderArgs->renderFrameCount - decodedBufferFrameCount;
-			}
-
 			if (decodedBufferFrameCount > 0)
 			{
-				pStream->decodedBuffer.Append(pStream->ffmpegAudioDecoder.DecodeWholePackets(remainingFrameCount));
+				if (pRenderArgs->renderFrameCount >= decodedBufferFrameCount)
+				{
+					remainingFrameCount = pRenderArgs->renderFrameCount - decodedBufferFrameCount;
+					pStream->decodedBuffer.Append(pStream->ffmpegAudioDecoder.DecodeWholePackets(remainingFrameCount));
+				}
 			}
 			else
 			{
+				remainingFrameCount = pRenderArgs->renderFrameCount;
 				pStream->decodedBuffer = pStream->ffmpegAudioDecoder.DecodeWholePackets(remainingFrameCount);
 			}
 
-			if (srRatio != 1.0)
+			if (srRatio != 1)
 			{
 				pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, renderFormat);
 				for (size_t i = 0; i < pRenderArgs->renderFrameCount; i++)
@@ -244,15 +244,8 @@ namespace HephAudio
 			}
 			else
 			{
-				if (pRenderResult->renderBuffer.FrameCount() == 0)
-				{
-					pRenderResult->renderBuffer = pStream->decodedBuffer.GetSubBuffer(0, remainingFrameCount);
-				}
-				else
-				{
-					pRenderResult->renderBuffer.Append(pStream->decodedBuffer.GetSubBuffer(0, remainingFrameCount));
-				}
-				pStream->decodedBuffer.Cut(0, remainingFrameCount);
+				pRenderResult->renderBuffer = pStream->decodedBuffer.GetSubBuffer(0, pRenderArgs->renderFrameCount);
+				pStream->decodedBuffer.Cut(0, pRenderArgs->renderFrameCount);
 			}
 
 
@@ -265,7 +258,7 @@ namespace HephAudio
 				const heph_float srRatio = (heph_float)renderFormat.sampleRate / (heph_float)pStream->formatInfo.sampleRate;
 				const size_t readFrameCount = (heph_float)pRenderArgs->renderFrameCount / srRatio;
 
-				if (srRatio != 1.0) // change sample rate
+				if (srRatio != 1) // change sample rate
 				{
 					pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, renderFormat);
 					const AudioBuffer originalBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
@@ -280,6 +273,10 @@ namespace HephAudio
 							pRenderResult->renderBuffer[i][j] = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
 						}
 					}
+				}
+				else
+				{
+					pRenderResult->renderBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
 				}
 
 				AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelCount);
@@ -298,5 +295,5 @@ namespace HephAudio
 		{
 			pStream->Release(false);
 		}
-	}
 			}
+		}
