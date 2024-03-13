@@ -39,6 +39,7 @@ namespace HephAudio
 		bool Seek(size_t frameIndex);
 		AudioBuffer Decode();
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
+		AudioBuffer DecodeWholePackets(size_t minFrameCount);
 	private:
 		void OpenFile(const HephCommon::StringBuffer& audioFilePath);
 		int SeekFrame(size_t& frameIndex);

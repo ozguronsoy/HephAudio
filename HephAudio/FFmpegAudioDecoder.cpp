@@ -144,7 +144,6 @@ namespace HephAudio
 			return AudioBuffer(frameCount, this->GetOutputFormat());
 		}
 
-
 		if (frameIndex >= this->fileDuration_frame)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioDecoder::Decode", "frameIndex out of bounds."));
@@ -155,8 +154,6 @@ namespace HephAudio
 		{
 			frameCount = this->fileDuration_frame - frameIndex;
 		}
-
-		av_frame_unref(this->avFrame);
 
 		int ret = this->SeekFrame(frameIndex);
 		if (ret < 0)
@@ -169,6 +166,17 @@ namespace HephAudio
 		size_t readFrameCount = 0;
 		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
+
+		// convert the decoded data to inner format
+		av_opt_set_chlayout(this->swrContext, "in_chlayout", &avStream->codecpar->ch_layout, 0);
+		av_opt_set_int(this->swrContext, "in_sample_rate", avStream->codecpar->sample_rate, 0);
+		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", (AVSampleFormat)avStream->codecpar->format, 0);
+
+		ret = swr_init(this->swrContext);
+		if (ret < 0)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to initialize SwrContext."));
+		}
 
 		while (readFrameCount < frameCount)
 		{
@@ -233,19 +241,6 @@ namespace HephAudio
 							currentFramesToRead = frameCount - readFrameCount;
 						}
 
-						// convert the decoded data to inner format
-						av_opt_set_chlayout(this->swrContext, "in_chlayout", &this->avFrame->ch_layout, 0);
-						av_opt_set_int(this->swrContext, "in_sample_rate", this->avFrame->sample_rate, 0);
-						av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", (AVSampleFormat)this->avFrame->format, 0);
-
-						ret = swr_init(this->swrContext);
-						if (ret < 0)
-						{
-							av_packet_unref(this->avPacket);
-							av_frame_unref(this->avFrame);
-							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to initialize SwrContext."));
-						}
-
 						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo);
 						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.Begin();
 						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, this->avFrame->data, currentFrameCount);
@@ -254,6 +249,16 @@ namespace HephAudio
 							av_packet_unref(this->avPacket);
 							av_frame_unref(this->avFrame);
 							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples."));
+						}
+						else if (ret < currentFrameCount)
+						{
+							ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, nullptr, 0);
+							if (ret < 0)
+							{
+								av_packet_unref(this->avPacket);
+								av_frame_unref(this->avFrame);
+								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples."));
+							}
 						}
 
 						for (size_t i = 0; i < currentFramesToRead; i++)
@@ -266,6 +271,118 @@ namespace HephAudio
 
 						readFrameCount += currentFramesToRead;
 						frameIndex = 0;
+					}
+					av_frame_unref(this->avFrame);
+				}
+			}
+			av_packet_unref(this->avPacket);
+		}
+
+		return decodedBuffer;
+	}
+	AudioBuffer FFmpegAudioDecoder::DecodeWholePackets(size_t minFrameCount)
+	{
+		if (!this->IsFileOpen())
+		{
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::DecodeWholePackets", "No open file to decode."));
+			return AudioBuffer(minFrameCount, this->GetOutputFormat());
+		}
+
+		int ret = 0;
+		AudioFormatInfo outputFormatInfo = this->GetOutputFormat();
+		size_t readFrameCount = 0;
+		AudioBuffer decodedBuffer(minFrameCount, outputFormatInfo);
+		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
+
+		// convert the decoded data to inner format
+		av_opt_set_chlayout(this->swrContext, "in_chlayout", &avStream->codecpar->ch_layout, 0);
+		av_opt_set_int(this->swrContext, "in_sample_rate", avStream->codecpar->sample_rate, 0);
+		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", (AVSampleFormat)avStream->codecpar->format, 0);
+
+		AVChannelLayout avChannelLayout;
+		av_channel_layout_default(&avChannelLayout, this->channelCount);
+		av_opt_set_chlayout(this->swrContext, "out_chlayout", &avChannelLayout, 0);
+
+		av_opt_set_int(this->swrContext, "out_sample_rate", avStream->codecpar->sample_rate, 0);
+		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", sizeof(heph_audio_sample) == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT, 0);
+
+		ret = swr_init(this->swrContext);
+		if (ret < 0)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to initialize SwrContext."));
+		}
+
+		while (readFrameCount < minFrameCount)
+		{
+			// get the next frame from file
+			ret = av_read_frame(this->avFormatContext, this->avPacket);
+			if (ret == AVERROR_EOF)
+			{
+				HEPHAUDIO_LOG("EOF, no more frames to read.", HEPH_CL_INFO);
+				return decodedBuffer;
+			}
+			else if (ret < 0)
+			{
+				HEPHAUDIO_LOG("Failed to read the frame, skipping it...", HEPH_CL_WARNING);
+				continue;
+			}
+
+			if (this->avPacket->stream_index == this->audioStreamIndex)
+			{
+				// send the packet to the decoder
+				ret = avcodec_send_packet(this->avCodecContext, this->avPacket);
+				if (ret == AVERROR_EOF)
+				{
+					av_packet_unref(this->avPacket);
+					HEPHAUDIO_LOG("EOF, no more frames to read.", HEPH_CL_INFO);
+					return decodedBuffer;
+				}
+				else if (ret < 0)
+				{
+					av_packet_unref(this->avPacket);
+					HEPHAUDIO_LOG("Failed to decode the packet, skipping it...", HEPH_CL_WARNING);
+					continue;
+				}
+
+				while (avcodec_receive_frame(this->avCodecContext, this->avFrame) >= 0)
+				{
+					const size_t currentFrameCount = this->avFrame->nb_samples;
+					if (currentFrameCount > 0)
+					{
+						if (readFrameCount + currentFrameCount > minFrameCount)
+						{
+							decodedBuffer.Resize(readFrameCount + currentFrameCount);
+						}
+
+						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo);
+						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.Begin();
+						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, this->avFrame->data, currentFrameCount);
+						if (ret < 0)
+						{
+							av_packet_unref(this->avPacket);
+							av_frame_unref(this->avFrame);
+							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to decode samples."));
+						}
+						else if (ret < currentFrameCount)
+						{
+							ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, nullptr, 0);
+							if (ret < 0)
+							{
+								av_packet_unref(this->avPacket);
+								av_frame_unref(this->avFrame);
+								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to decode samples."));
+							}
+						}
+
+						for (size_t i = 0; i < currentFrameCount; i++)
+						{
+							for (size_t j = 0; j < outputFormatInfo.channelCount; j++)
+							{
+								decodedBuffer[i + readFrameCount][j] = tempBuffer[i][j];
+							}
+						}
+
+						readFrameCount += currentFrameCount;
 					}
 					av_frame_unref(this->avFrame);
 				}
@@ -436,7 +553,7 @@ namespace HephAudio
 				break;
 			}
 
-			packetDuration = av_rescale(this->avPacket->duration*this->sampleRate, avStream->time_base.num, avStream->time_base.den);
+			packetDuration = av_rescale(this->avPacket->duration * this->sampleRate, avStream->time_base.num, avStream->time_base.den);
 			deltaFrameIndex = frameIndex - packetFrameIndex;
 			av_packet_unref(this->avPacket);
 		} while (deltaFrameIndex >= packetDuration);

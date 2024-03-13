@@ -7,6 +7,7 @@
 #include "NativeAudio.h"
 #include "IAudioCodec.h"
 #include "Audio.h"
+#include "FFmpegAudioDecoder.h"
 
 #define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY "audio_stream"_sb
 
@@ -22,6 +23,10 @@ namespace HephAudio
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
 		AudioObject* pAudioObject;
+#if defined(HEPHAUDIO_USE_FFMPEG)
+		FFmpegAudioDecoder ffmpegAudioDecoder;
+		AudioBuffer decodedBuffer;
+#endif
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio, const HephCommon::StringBuffer& filePath);
 		AudioStream(Audio& audio, const HephCommon::StringBuffer& filePath);

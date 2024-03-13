@@ -37,7 +37,6 @@ namespace HephAudio
 		}
 		AudioBuffer MpegFormat::ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "MpegFormat::ReadFile", "Currently not supported."));
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
 			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
 			if (finishedPlaying != nullptr)
