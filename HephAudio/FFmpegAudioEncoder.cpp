@@ -74,6 +74,10 @@ namespace HephAudio
 			(void)avcodec_send_frame(this->avCodecContext, nullptr); // mark the stream as EOF
 			while (avcodec_receive_packet(this->avCodecContext, this->avPacket) >= 0)
 			{
+				this->avPacket->pts = av_rescale_q(this->avPacket->pts, this->avCodecContext->time_base, this->avStream->time_base);
+				this->avPacket->dts = av_rescale_q(this->avPacket->dts, this->avCodecContext->time_base, this->avStream->time_base);
+				this->avPacket->duration = av_rescale_q(this->avPacket->duration, this->avCodecContext->time_base, this->avStream->time_base);
+
 				if (av_interleaved_write_frame(this->avFormatContext, this->avPacket) >= 0)
 				{
 					this->avFrame->pts += this->avFrame->duration;
@@ -210,6 +214,10 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to recieve AVPacket."));
 			}
 
+			this->avPacket->pts = av_rescale_q(this->avPacket->pts, this->avCodecContext->time_base, this->avStream->time_base);
+			this->avPacket->dts = av_rescale_q(this->avPacket->dts, this->avCodecContext->time_base, this->avStream->time_base);
+			this->avPacket->duration = av_rescale_q(this->avPacket->duration, this->avCodecContext->time_base, this->avStream->time_base);
+
 			ret = av_interleaved_write_frame(this->avFormatContext, this->avPacket);
 			if (ret < 0)
 			{
@@ -222,8 +230,6 @@ namespace HephAudio
 
 			av_packet_unref(this->avPacket);
 		}
-
-		(void)av_interleaved_write_frame(this->avFormatContext, nullptr);
 	}
 	void FFmpegAudioEncoder::OpenFile(const StringBuffer& audioFilePath, bool overwrite)
 	{
@@ -248,7 +254,6 @@ namespace HephAudio
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to open the output file."));
 		}
-
 		this->avFormatContext->pb = this->avIoContext;
 
 		const AVCodec* avCodec = avcodec_find_encoder(this->avFormatContext->oformat->audio_codec);
@@ -276,6 +281,11 @@ namespace HephAudio
 		this->avCodecContext->codec_tag = av_codec_get_tag(this->avFormatContext->oformat->codec_tag, this->avFormatContext->oformat->audio_codec);
 		this->avCodecContext->codec_type = AVMEDIA_TYPE_AUDIO;
 
+		if (this->avCodecContext->codec_id == AV_CODEC_ID_MP3) // otherwise encoder calculates the duration wrong
+		{
+			this->avCodecContext->bit_rate = 384000;
+		}
+
 		ret = avcodec_open2(this->avCodecContext, avCodec, nullptr);
 		if (ret < 0)
 		{
@@ -296,8 +306,6 @@ namespace HephAudio
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to copy the codec parameters to the AVStream."));
 		}
-		this->avStream->time_base.num = 1;
-		this->avStream->time_base.den = this->outputFormatInfo.sampleRate;
 
 		if ((this->avFormatContext->oformat->flags & AVFMT_GLOBALHEADER) == AVFMT_GLOBALHEADER)
 		{
@@ -332,7 +340,8 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to copy the ch_layout info to the AVFrame."));
 		}
 
-		this->avFrame->pts = 0;
+		this->avFrame->pts = this->avCodecContext->initial_padding;
+		this->avFrame->duration = this->avFrame->nb_samples;
 
 		ret = av_frame_get_buffer(this->avFrame, 0);
 		if (ret < 0)
@@ -365,8 +374,6 @@ namespace HephAudio
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to write the file header."));
 		}
-
-		this->avFrame->duration = av_rescale((int64_t)this->avFrame->nb_samples * this->outputFormatInfo.sampleRate, this->avStream->time_base.num, this->avStream->time_base.den);
 
 		this->avPacket = av_packet_alloc();
 		if (this->avPacket == nullptr)
