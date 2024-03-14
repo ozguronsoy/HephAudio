@@ -7,6 +7,8 @@
 
 namespace HephCommon
 {
+	bool ConsoleLogger::coloredOutput = true;
+
 	void ConsoleLogger::Log(StringBuffer message, const char* logLevel)
 	{
 		ConsoleLogger::Log(message, logLevel, "HephLibs");
@@ -72,13 +74,27 @@ namespace HephCommon
 
 #else
 
-		if (message.GetStringType() == StringType::ASCII)
+		if (ConsoleLogger::coloredOutput)
 		{
-			printf("\u001b[%sm%s[%s]: \033[0m%s\n", logLevel, libName.fc_str(), ConsoleLogger::CurrentTimeToString(StringType::ASCII).c_str(), message.c_str());
+			if (message.GetStringType() == StringType::ASCII)
+			{
+				printf("\x1b[%sm%s[%s]: \x1b[0m%s\n", logLevel, libName.fc_str(), ConsoleLogger::CurrentTimeToString(StringType::ASCII).c_str(), message.c_str());
+			}
+			else
+			{
+				printf("\x1b[%lsm%ls[%ls]: \x1b[0m%ls\n", StringBuffer(logLevel, StringType::Wide).wc_str(), libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), message.wc_str());
+			}
 		}
 		else
 		{
-			printf("\u001b[%lsm%ls[%ls]: \033[0m%ls\n", StringBuffer(logLevel, StringType::Wide).wc_str(), libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), message.wc_str());
+			if (message.GetStringType() == StringType::ASCII)
+			{
+				printf("%s[%s][%s]: %s\n", libName.fc_str(), ConsoleLogger::CurrentTimeToString(StringType::ASCII).c_str(), ConsoleLogger::GetLogLevelName(logLevel, StringType::ASCII).c_str(), message.c_str());
+			}
+			else
+			{
+				printf("%ls[%ls][%ls]: %ls\n", libName.fwc_str(), ConsoleLogger::CurrentTimeToString(StringType::Wide).wc_str(), ConsoleLogger::GetLogLevelName(logLevel, StringType::Wide).wc_str(), message.wc_str());
+			}
 		}
 
 #endif
@@ -123,6 +139,14 @@ namespace HephCommon
 	{
 		ConsoleLogger::Log(message, HEPH_CL_DEBUG, libName);
 	}
+	void ConsoleLogger::EnableColoredOutput() 
+	{
+		ConsoleLogger::coloredOutput = true;
+	}
+	void ConsoleLogger::DisableColoredOutput() 
+	{
+		ConsoleLogger::coloredOutput = false;
+	}
 	StringBuffer ConsoleLogger::CurrentTimeToString(StringType stringType)
 	{
 		constexpr uint8_t timeStringSize = 10;
@@ -136,5 +160,29 @@ namespace HephCommon
 		strftime(timeString, timeStringSize, "%T", localTime);
 
 		return StringBuffer(timeString, stringType);
+	}
+	StringBuffer ConsoleLogger::GetLogLevelName(const char* logLevel, StringType stringType)
+	{
+		if (strcmp(logLevel, HEPH_CL_INFO) == 0)
+		{
+			return StringBuffer("INFO", stringType);
+		}
+		else if (strcmp(logLevel, HEPH_CL_WARNING) == 0)
+		{
+			return StringBuffer("WARNING", stringType);
+		}
+		else if (strcmp(logLevel, HEPH_CL_ERROR) == 0)
+		{
+			return StringBuffer("ERROR", stringType);
+		}
+		else if (strcmp(logLevel, HEPH_CL_SUCCESS) == 0)
+		{
+			return StringBuffer("SUCCESS", stringType);
+		}
+		else if (strcmp(logLevel, HEPH_CL_DEBUG) == 0)
+		{
+			return StringBuffer("DEBUG", stringType);
+		}
+		return StringBuffer("UNKNOWN", stringType);
 	}
 }

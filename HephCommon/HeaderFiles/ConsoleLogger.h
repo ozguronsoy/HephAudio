@@ -12,6 +12,8 @@ namespace HephCommon
 {
 	class ConsoleLogger final
 	{
+	private:
+		static bool coloredOutput;
 	public:
 		ConsoleLogger() = delete;
 		ConsoleLogger(const ConsoleLogger&) = delete;
@@ -28,7 +30,10 @@ namespace HephCommon
 		static void LogSuccess(const StringBuffer& message, const StringBuffer& libName);
 		static void LogDebug(const StringBuffer& message);
 		static void LogDebug(const StringBuffer& message, const StringBuffer& libName);
+		static void EnableColoredOutput();
+		static void DisableColoredOutput();
 	private:
 		static StringBuffer CurrentTimeToString(StringType stringType);
+		static StringBuffer GetLogLevelName(const char* logLevel, StringType stringType);
 	};
 }
