@@ -13,6 +13,9 @@ namespace HephAudio
 		// Add -lOpenSLES to the compiler flags.
 		class AndroidAudioSLES final : public AndroidAudioBase
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			struct CallbackContext
 			{

@@ -12,6 +12,9 @@ namespace HephAudio
 		// Add -laaudio to the compiler flags.
 		class AndroidAudioA final : public AndroidAudioBase
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			AAudioStream* pRenderStream;
 			AAudioStream* pCaptureStream;

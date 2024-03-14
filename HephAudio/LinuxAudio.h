@@ -11,6 +11,9 @@ namespace HephAudio
 		// Uses ALSA, add -lasound to the compiler flags.
 		class LinuxAudio final : public NativeAudio
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			static constexpr long volume_max = INT32_MAX;
 		private:

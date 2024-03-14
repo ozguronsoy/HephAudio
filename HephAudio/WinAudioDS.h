@@ -12,6 +12,9 @@ namespace HephAudio
 		// Uses DirectSound; add -lDsound, -ldxguid, and -lWinmm to the compiler flags.
 		class WinAudioDS final : public WinAudioBase
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			HWND hwnd;
 		public:

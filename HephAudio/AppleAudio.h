@@ -11,6 +11,9 @@ namespace HephAudio
 		// Uses CoreAudio, add -framework CoreFoundation and -framework CoreAudio to the compiler flags.
 		class AppleAudio final : public NativeAudio
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			AudioDeviceIOProcID renderProcID;
 			AudioDeviceIOProcID captureProcID;

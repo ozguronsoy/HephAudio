@@ -14,6 +14,9 @@ namespace HephAudio
 		// Uses WASAPI
 		class WinAudio final : public WinAudioBase
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			Microsoft::WRL::ComPtr<IMMDeviceEnumerator> pEnumerator;
 			Microsoft::WRL::ComPtr<IAudioSessionManager> pRenderSessionManager;

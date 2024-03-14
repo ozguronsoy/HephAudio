@@ -13,6 +13,9 @@ namespace HephAudio
 		// Uses MMEAPI (waveIn and waveOut)
 		class WinAudioMME final : public WinAudioBase
 		{
+		public:
+			using NativeAudio::InitializeRender;
+			using NativeAudio::InitializeCapture;
 		private:
 			static constexpr uint32_t HDR_COUNT = 2;
 		private:
