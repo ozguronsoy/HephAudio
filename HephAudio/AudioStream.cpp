@@ -226,7 +226,7 @@ namespace HephAudio
 
 			if (srRatio != 1)
 			{
-				pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, renderFormat);
+				pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
 				for (size_t i = 0; i < pRenderArgs->renderFrameCount; i++)
 				{
 					const heph_float resampleIndex = i / srRatio;
@@ -260,7 +260,7 @@ namespace HephAudio
 
 				if (srRatio != 1) // change sample rate
 				{
-					pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, renderFormat);
+					pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
 					const AudioBuffer originalBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
 
 					for (size_t i = 0; i < pRenderArgs->renderFrameCount; i++)

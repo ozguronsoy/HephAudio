@@ -36,7 +36,6 @@ namespace HephAudio
 		AVSampleFormat AFI2AVSF(const AudioFormatInfo& afi) const;
 		static uint32_t GetClosestSupportedSampleRate(const AVCodec* avCodec, uint32_t targetSampleRate);
 		static AVSampleFormat GetClosestSupportedSampleFormat(FFmpegAudioEncoder* pEncoder, const AVCodec* avCodec, uint32_t targetFormatTag, uint16_t targetBitsPerSample);
-		static void PrintSupportedSampleFormats(const AVCodec* avCodec);
 	};
 }
 #endif

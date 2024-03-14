@@ -389,7 +389,7 @@ namespace HephAudio
 		case HEPHAUDIO_FORMAT_TAG_MULAW:
 			return AV_SAMPLE_FMT_U8;
 		case HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT:
-			return sizeof(heph_audio_sample) == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT;
+			return HEPHAUDIO_INTERNAL_SAMPLE_FMT;
 		case HEPHAUDIO_FORMAT_TAG_PCM:
 		{
 			switch (afi.bitsPerSample)
@@ -564,14 +564,6 @@ namespace HephAudio
 
 	ERROR:
 		RAISE_AND_THROW_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
-	}
-	void FFmpegAudioEncoder::PrintSupportedSampleFormats(const AVCodec* avCodec)
-	{
-		printf("SUPPORTED SAMPLE FORMATS:\n");
-		for (size_t i = 0; avCodec->sample_fmts[i] != AV_SAMPLE_FMT_NONE; i++)
-		{
-			printf("%s\n", av_get_sample_fmt_name(avCodec->sample_fmts[i]));
-		}
 	}
 }
 

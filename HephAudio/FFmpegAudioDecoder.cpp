@@ -299,13 +299,6 @@ namespace HephAudio
 		av_opt_set_int(this->swrContext, "in_sample_rate", avStream->codecpar->sample_rate, 0);
 		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", (AVSampleFormat)avStream->codecpar->format, 0);
 
-		AVChannelLayout avChannelLayout;
-		av_channel_layout_default(&avChannelLayout, this->channelCount);
-		av_opt_set_chlayout(this->swrContext, "out_chlayout", &avChannelLayout, 0);
-
-		av_opt_set_int(this->swrContext, "out_sample_rate", avStream->codecpar->sample_rate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", sizeof(heph_audio_sample) == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT, 0);
-
 		ret = swr_init(this->swrContext);
 		if (ret < 0)
 		{
@@ -451,7 +444,7 @@ namespace HephAudio
 		av_opt_set_chlayout(this->swrContext, "out_chlayout", &avChannelLayout, 0);
 
 		av_opt_set_int(this->swrContext, "out_sample_rate", this->sampleRate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", sizeof(heph_audio_sample) == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT, 0);
+		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", HEPHAUDIO_INTERNAL_SAMPLE_FMT, 0);
 
 		// Initialize codec for decoding
 		const AVCodec* avCodec = avcodec_find_decoder(this->avFormatContext->streams[audioStreamIndex]->codecpar->codec_id);
