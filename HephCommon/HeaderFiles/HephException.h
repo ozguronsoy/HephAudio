@@ -2,8 +2,10 @@
 #include "HephCommonShared.h"
 #include "StringBuffer.h"
 #include "Event.h"
-#include <vector>
 #include <cinttypes>
+#include <vector>
+#include <unordered_map>
+#include <thread>
 
 #define HEPH_EC_NONE 0
 #define HEPH_EC_FAIL -1
@@ -21,7 +23,7 @@ namespace HephCommon
 	struct HephException final
 	{
 	private:
-		static std::vector<HephException> exceptions;
+		static std::unordered_map<std::thread::id, std::vector<HephException>> threadIdToExceptionsMap;
 	public:
 		static Event OnException;
 	public:
@@ -36,7 +38,8 @@ namespace HephCommon
 		void Raise(const void* pSender) const;
 	public:
 		static const HephException& LastException();
-		static const std::vector<HephException>& AllExceptions();
+		static const HephException& GetException(size_t index);
+		static size_t GetExceptionCount();
 	};
 
 	struct HephExceptionEventArgs : public EventArgs
