@@ -8,9 +8,9 @@
 
 #define MAX_STOP_WAIT 200
 #define HAS_FORMAT_TAG(formatTag) ((dwFormats & formatTag) == formatTag)
-#define WINAUDIOMME_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_AND_THROW_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message)); }
-#define WINAUDIOMME_RENDER_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIOMME_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_AND_THROW_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); }
+#define WINAUDIOMME_RENDER_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); goto RENDER_EXIT; }
+#define WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 using namespace HephCommon;
 
@@ -421,7 +421,7 @@ namespace HephAudio
 					const MMRESULT mmres = waveOutWrite(hwo, pwhd, sizeof(WAVEHDR));
 					if (mmres != MMSYSERR_NOERROR)
 					{
-						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred whilst rendering."));
+						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred whilst rendering.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
 			}
@@ -448,10 +448,19 @@ namespace HephAudio
 					const MMRESULT mmres = waveInAddBuffer(hwi, pwhd, sizeof(WAVEHDR));
 					if (mmres != MMSYSERR_NOERROR)
 					{
-						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred whilst capturing."));
+						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred whilst capturing.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
 			}
+		}
+		StringBuffer WinAudioMME::GetErrorString(MMRESULT mmResult)
+		{
+			wchar_t errorMessage[MAXERRORLENGTH]{ };
+			if (waveOutGetErrorText(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+			{
+				return L"error message not found";
+			}
+			return errorMessage;
 		}
 	}
 }

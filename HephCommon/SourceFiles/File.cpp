@@ -14,7 +14,7 @@ namespace HephCommon
 			this->Open(openMode);
 			if (this->pFile == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, L"File::File", L"An error occurred whilst opening the file."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, "File::File", "An error occurred while opening the file.", "stdlib", strerror(errno)));
 			}
 
 			fseek(this->pFile, 0, SEEK_END);
@@ -52,7 +52,7 @@ namespace HephCommon
 			this->Open(openMode);
 			if (this->pFile == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, "File::File", "An error occurred whilst opening the file."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, "File::File", "An error occurred while opening the file.", "stdlib", strerror(errno)));
 			}
 
 			fseek(this->pFile, 0, SEEK_END);

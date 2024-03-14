@@ -22,7 +22,7 @@ namespace HephAudio
 						return;
 					}
 				}
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(hres, "WinAudioBase::InitializeCOM", "An error occurred whilst initializing COM."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(hres, "WinAudioBase::InitializeCOM", "An error occurred whilst initializing COM.", "Windows COM", _com_error(hres).ErrorMessage()));
 			}
 		}
 		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEX& wfx)

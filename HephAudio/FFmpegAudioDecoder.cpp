@@ -127,7 +127,7 @@ namespace HephAudio
 		const int ret = this->SeekFrame(frameIndex);
 		if (ret < 0)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Seek", "Failed to seek frame."));
+			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Seek", "Failed to seek frame.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 			return false;
 		}
 		return true;
@@ -158,7 +158,7 @@ namespace HephAudio
 		int ret = this->SeekFrame(frameIndex);
 		if (ret < 0)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame."));
+			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 			return AudioBuffer(frameCount, this->GetOutputFormat());
 		}
 
@@ -175,7 +175,7 @@ namespace HephAudio
 		ret = swr_init(this->swrContext);
 		if (ret < 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to initialize SwrContext."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to initialize SwrContext.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
 		while (readFrameCount < frameCount)
@@ -248,7 +248,7 @@ namespace HephAudio
 						{
 							av_packet_unref(this->avPacket);
 							av_frame_unref(this->avFrame);
-							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples."));
+							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 						}
 						else if (ret < currentFrameCount)
 						{
@@ -257,7 +257,7 @@ namespace HephAudio
 							{
 								av_packet_unref(this->avPacket);
 								av_frame_unref(this->avFrame);
-								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples."));
+								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to decode samples.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 							}
 						}
 
@@ -302,7 +302,7 @@ namespace HephAudio
 		ret = swr_init(this->swrContext);
 		if (ret < 0)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to initialize SwrContext."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to initialize SwrContext.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
 		while (readFrameCount < minFrameCount)
@@ -354,7 +354,7 @@ namespace HephAudio
 						{
 							av_packet_unref(this->avPacket);
 							av_frame_unref(this->avFrame);
-							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to decode samples."));
+							RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to decode samples.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 						}
 						else if (ret < currentFrameCount)
 						{
@@ -363,7 +363,7 @@ namespace HephAudio
 							{
 								av_packet_unref(this->avPacket);
 								av_frame_unref(this->avFrame);
-								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to decode samples."));
+								RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::DecodeWholePackets", "Failed to decode samples.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 							}
 						}
 
@@ -401,14 +401,14 @@ namespace HephAudio
 		if (ret < 0)
 		{
 			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Could not open the file."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Could not open the file.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
 		ret = avformat_find_stream_info(this->avFormatContext, nullptr);
 		if (ret < 0)
 		{
 			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "An error occurred while finding the stream info, file might be corrupted."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "An error occurred while finding the stream info, file might be corrupted.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
 		// Calculate duration of audio data in frames
@@ -444,7 +444,7 @@ namespace HephAudio
 		av_opt_set_chlayout(this->swrContext, "out_chlayout", &avChannelLayout, 0);
 
 		av_opt_set_int(this->swrContext, "out_sample_rate", this->sampleRate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", HEPHAUDIO_INTERNAL_SAMPLE_FMT, 0);
+		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT, 0);
 
 		// Initialize codec for decoding
 		const AVCodec* avCodec = avcodec_find_decoder(this->avFormatContext->streams[audioStreamIndex]->codecpar->codec_id);
@@ -466,14 +466,14 @@ namespace HephAudio
 		if (ret < 0)
 		{
 			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to create codec context from the codec parameters."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to create codec context from the codec parameters.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
 		ret = avcodec_open2(this->avCodecContext, avCodec, nullptr);
 		if (ret < 0)
 		{
 			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to open the av codec context."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to open the av codec context.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
 		// allocate frame and packet
@@ -495,7 +495,7 @@ namespace HephAudio
 		if (ret < 0)
 		{
 			this->CloseFile();
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to get pts of the first packet."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder", "Failed to get pts of the first packet.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 		this->firstPacketPts = this->avPacket->pts;
 		av_packet_unref(this->avPacket);

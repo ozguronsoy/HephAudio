@@ -60,7 +60,6 @@ namespace HephAudio
 			}
 			catch (HephException ex)
 			{
-				RAISE_HEPH_EXCEPTION(this, ex);
 				return nullptr;
 			}
 		}
@@ -209,15 +208,15 @@ namespace HephAudio
 		{
 			return captureFormat;
 		}
-		void NativeAudio::InitializeRender() 
+		void NativeAudio::InitializeRender()
 		{
 			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(2, 48000));
 		}
-		void NativeAudio::InitializeRender(uint16_t channelCount, uint32_t sampleRate) 
+		void NativeAudio::InitializeRender(uint16_t channelCount, uint32_t sampleRate)
 		{
 			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate));
 		}
-		void NativeAudio::InitializeRender(AudioFormatInfo format) 
+		void NativeAudio::InitializeRender(AudioFormatInfo format)
 		{
 			this->InitializeRender(nullptr, format);
 		}
@@ -321,9 +320,8 @@ namespace HephAudio
 			}
 			catch (HephException ex)
 			{
-				RAISE_HEPH_EXCEPTION(this, ex);
+				return false;
 			}
-			return false;
 		}
 		void NativeAudio::CheckAudioDevices()
 		{

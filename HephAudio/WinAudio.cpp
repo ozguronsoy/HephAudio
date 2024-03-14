@@ -7,15 +7,16 @@
 #include <VersionHelpers.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <audioclient.h>
+#include <comdef.h>
 
 using namespace HephCommon;
 using namespace Microsoft::WRL;
 
 #define PKEY_DEVICE_FRIENDLY_NAME {{ 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0 } }, 14}
-#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return retval; }
-#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto CAPTURE_EXIT; }
-#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return retval; }
+#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); goto RENDER_EXIT; }
+#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); goto CAPTURE_EXIT; }
+#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 namespace HephAudio
 {
@@ -247,7 +248,7 @@ namespace HephAudio
 			HRESULT hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), &this->pEnumerator);
 			if (FAILED(hresult))
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(hresult, "WinAudio", "An error occurred whilst initializing the audio device enumerator."));
+				RAISE_HEPH_EXCEPTION(this, HephException(hresult, "WinAudio", "An error occurred whilst initializing the audio device enumerator.", "WASAPI", _com_error(hresult).ErrorMessage()));
 				HEPHAUDIO_LOG("Device enumeration failed, terminating the device thread...", HEPH_CL_ERROR);
 				return;
 			}

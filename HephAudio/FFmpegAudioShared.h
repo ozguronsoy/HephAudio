@@ -1,6 +1,7 @@
 #pragma once
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "HephAudioShared.h"
+#include "../HephCommon/HeaderFiles/StringBuffer.h"
 
 extern "C"
 {
@@ -19,6 +20,16 @@ extern "C"
 
 namespace HephAudio
 {
+	inline HephCommon::StringBuffer FFmpegGetErrorMessage(int errorCode)
+	{
+		char errorMessage[AV_ERROR_MAX_STRING_SIZE]{ };
+		if (av_strerror(errorCode, errorMessage, AV_ERROR_MAX_STRING_SIZE) < 0)
+		{
+			return "error message not found.";
+		}
+		return errorMessage;
+	}
+
 	inline HEPH_CONSTEVAL AVSampleFormat InternalSampleFormat()
 	{
 #if HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
@@ -29,7 +40,8 @@ namespace HephAudio
 	}
 }
 
-#define HEPHAUDIO_INTERNAL_SAMPLE_FMT HephAudio::InternalSampleFormat()
+#define HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(errorCode) HephAudio::FFmpegGetErrorMessage(errorCode)
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT HephAudio::InternalSampleFormat()
 
 #endif
 

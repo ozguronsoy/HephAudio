@@ -5,15 +5,16 @@
 #include "../HephCommon/HeaderFiles/StopWatch.h"
 #include "../HephCommon/HeaderFiles/ConsoleLogger.h"
 #include <VersionHelpers.h>
+#include <comdef.h>
 
 #pragma comment (lib, "Dsound.lib")
 #pragma comment(lib, "Winmm.lib")
 
 #define IID_IDS_NOTIFY {0xB0210783, 0x89CD, 0x11D0, {0xAF, 0x08, 0x00, 0xA0, 0xC9, 0x25, 0xCD, 0x16}}
-#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto RENDER_EXIT; }
-#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); goto CAPTURE_EXIT; }
-#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
-#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); goto RENDER_EXIT; }
+#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); goto CAPTURE_EXIT; }
+#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 using namespace HephCommon;
 using namespace Microsoft::WRL;
@@ -58,7 +59,12 @@ namespace HephAudio
 				const MMRESULT mmResult = waveOutSetVolume(nullptr, (usv << 16) | usv);
 				if (mmResult != MMSYSERR_NOERROR)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::SetMasterVolume", "An error occurred whilst setting the master volume"));
+					wchar_t errorMessage[MAXERRORLENGTH]{ };
+					if (waveOutGetErrorText(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+					{
+						wcscpy(errorMessage, L"error message not found");
+					}
+					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::SetMasterVolume", "An error occurred whilst setting the master volume", "MMEAPI", errorMessage));
 				}
 			}
 		}
@@ -70,7 +76,12 @@ namespace HephAudio
 				const MMRESULT mmResult = waveOutGetVolume(nullptr, &dv);
 				if (mmResult != MMSYSERR_NOERROR)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::GetMasterVolume", "An error occurred whilst getting the master volume"));
+					wchar_t errorMessage[MAXERRORLENGTH]{ };
+					if (waveOutGetErrorText(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+					{
+						wcscpy(errorMessage, L"error message not found");
+					}
+					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::GetMasterVolume", "An error occurred whilst getting the master volume", "MMEAPI", errorMessage));
 					return -1.0;
 				}
 				return (heph_float)(dv & 0x0000FFFF) / (heph_float)UINT16_MAX;

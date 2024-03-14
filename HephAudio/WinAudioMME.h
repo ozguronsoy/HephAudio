@@ -3,13 +3,14 @@
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include "WinAudioBase.h"
+#include "../HephCommon/HeaderFiles/StringBuffer.h"
 #include <mmeapi.h>
 
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses MME (waveIn and waveOut)
+		// Uses MMEAPI (waveIn and waveOut)
 		class WinAudioMME final : public WinAudioBase
 		{
 		private:
@@ -36,6 +37,7 @@ namespace HephAudio
 			static size_t CalculateBufferSize(uint32_t byteRate, uint32_t sampleRate);
 			static void CALLBACK RenderCallback(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 			static void CALLBACK CaptureCallback(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
+			static HephCommon::StringBuffer GetErrorString(MMRESULT mmResult);
 		};
 	}
 }

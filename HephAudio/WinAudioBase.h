@@ -3,6 +3,7 @@
 #include "NativeAudio.h"
 #include <wrl.h>
 #include <mmeapi.h>
+#include <comdef.h>
 
 namespace HephAudio
 {
