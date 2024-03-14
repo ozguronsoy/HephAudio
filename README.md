@@ -185,6 +185,11 @@ void HandleExceptions(const EventParams& eventParams)
   const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
   StringBuffer exceptionString = "Error!\n" + ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n" + ex.message;
+  if (!ex.externalMessage.IsNullOrEmpty())
+  {
+	  exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
+  }
+
   ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
 }
 
