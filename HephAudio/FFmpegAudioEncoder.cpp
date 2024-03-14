@@ -1,5 +1,7 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "FFmpegAudioEncoder.h"
+#include "FFmpegAudioDecoder.h"
+#include "AudioProcessor.h"
 #include "../HephCommon/HeaderFiles/HephException.h"
 #include "../HephCommon/HeaderFiles/File.h"
 #include "../HephCommon/HeaderFiles/HephMath.h"
@@ -228,6 +230,24 @@ namespace HephAudio
 			i += inputFrameCountToRead;
 
 			av_packet_unref(this->avPacket);
+		}
+	}
+	void FFmpegAudioEncoder::Transcode(const StringBuffer& inputFilePath, const StringBuffer& outputFilePath, bool overwrite)
+	{
+		FFmpegAudioDecoder decoder(inputFilePath);
+		if (decoder.GetFrameCount() > 0)
+		{
+			FFmpegAudioEncoder encoder(outputFilePath, decoder.GetOutputFormat(), overwrite);
+			FFmpegAudioEncoder::Transcode(&decoder, encoder);
+		}
+	}
+	void FFmpegAudioEncoder::Transcode(const StringBuffer& inputFilePath, const StringBuffer& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite)
+	{
+		FFmpegAudioDecoder decoder(inputFilePath);
+		if (decoder.GetFrameCount() > 0)
+		{
+			FFmpegAudioEncoder encoder(outputFilePath, outputFormatInfo, overwrite);
+			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
 	void FFmpegAudioEncoder::OpenFile(const StringBuffer& audioFilePath, bool overwrite)
@@ -564,6 +584,49 @@ namespace HephAudio
 
 	ERROR:
 		RAISE_AND_THROW_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
+	}
+	void FFmpegAudioEncoder::Transcode(void* pDecoder, FFmpegAudioEncoder& encoder)
+	{
+		FFmpegAudioDecoder& decoder = *(FFmpegAudioDecoder*)pDecoder;
+		const uint32_t inputSampleRate = decoder.GetOutputFormat().sampleRate;
+		const size_t readSize = av_rescale(encoder.avFrame->nb_samples, inputSampleRate, encoder.outputFormatInfo.sampleRate);
+		const size_t minRequiredFrameCount = FFMAX(readSize, encoder.avFrame->nb_samples);
+		AudioBuffer decodedBuffer;
+
+		size_t i = 0;
+		while (i < decoder.GetFrameCount())
+		{
+			const size_t decodedBufferFrameCount = decodedBuffer.FrameCount();
+			if (decodedBufferFrameCount < minRequiredFrameCount)
+			{
+				const AudioBuffer tempDecodedBuffer = decoder.DecodeWholePackets(minRequiredFrameCount - decodedBufferFrameCount);
+				if (decodedBufferFrameCount == 0)
+				{
+					decodedBuffer = tempDecodedBuffer;
+				}
+				else
+				{
+					decodedBuffer.Append(tempDecodedBuffer);
+				}
+			}
+
+			if (inputSampleRate != encoder.outputFormatInfo.sampleRate)
+			{
+				AudioBuffer convertedBuffer(encoder.avFrame->nb_samples, encoder.outputFormatInfo);
+				AudioProcessor::ChangeSampleRate(decodedBuffer, convertedBuffer, 0, encoder.outputFormatInfo.sampleRate, encoder.avFrame->nb_samples);
+
+				encoder.Encode(convertedBuffer);
+				decodedBuffer.Cut(0, readSize);
+
+				i += readSize;
+			}
+			else
+			{
+				encoder.Encode(decodedBuffer.GetSubBuffer(0, encoder.avFrame->nb_samples));
+				decodedBuffer.Cut(0, encoder.avFrame->nb_samples);
+				i += encoder.avFrame->nb_samples;
+			}
+		}
 	}
 }
 
