@@ -5,9 +5,10 @@ namespace HephCommon
 	std::vector<HephException> HephException::exceptions = std::vector<HephException>(0);
 	Event HephException::OnException = Event();
 	
-	HephException::HephException() : errorCode(HEPH_EC_NONE), method(nullptr), message(nullptr), externalMessage(nullptr) { }
+	HephException::HephException() : errorCode(HEPH_EC_NONE), method(nullptr), message(nullptr), externalSource(nullptr), externalMessage(nullptr) { }
 	
-	HephException::HephException(int64_t errorCode, StringBuffer method, StringBuffer message) : errorCode(errorCode), method(method), message(message) {}
+	HephException::HephException(int64_t errorCode, StringBuffer method, StringBuffer message) 
+		: errorCode(errorCode), method(method), message(message), externalSource(nullptr), externalMessage(nullptr) {}
 	
 	HephException::HephException(int64_t errorCode, StringBuffer method, StringBuffer message, StringBuffer externalSource, StringBuffer externalMessage)
 		: errorCode(errorCode), method(method), message(message)

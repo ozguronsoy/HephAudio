@@ -942,11 +942,11 @@ namespace HephCommon
 		}
 		return this->Split(str.wc_str());
 	}
-	StringBuffer& StringBuffer::RemoveAt(size_t index)
+	void StringBuffer::RemoveAt(size_t index)
 	{
-		return this->RemoveAt(index, 1);
+		this->RemoveAt(index, 1);
 	}
-	StringBuffer& StringBuffer::RemoveAt(size_t index, size_t size)
+	void StringBuffer::RemoveAt(size_t index, size_t size)
 	{
 		if (index >= this->size)
 		{
@@ -982,60 +982,56 @@ namespace HephCommon
 
 		free(this->pData);
 		this->pData = pTemp;
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::Remove(char c)
+	void StringBuffer::Remove(char c)
 	{
 		char buffer[2] = { c, '\0' };
-		return this->Remove(buffer);
+		this->Remove(buffer);
 	}
-	StringBuffer& StringBuffer::Remove(wchar_t wc)
+	void StringBuffer::Remove(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
-		return this->Remove(buffer);
+		this->Remove(buffer);
 	}
-	StringBuffer& StringBuffer::Remove(const char* str)
+	void StringBuffer::Remove(const char* str)
 	{
 		const size_t index = this->Find(str);
 		if (index != StringBuffer::npos)
 		{
-			return this->RemoveAt(index, strlen(str));
+			this->RemoveAt(index, strlen(str));
 		}
-		return *this;
 	}
-	StringBuffer& StringBuffer::Remove(const wchar_t* wstr)
+	void StringBuffer::Remove(const wchar_t* wstr)
 	{
 		const size_t index = this->Find(wstr);
 		if (index != StringBuffer::npos)
 		{
-			return this->RemoveAt(index, wcslen(wstr));
+			this->RemoveAt(index, wcslen(wstr));
 		}
-		return *this;
 	}
-	StringBuffer& StringBuffer::Remove(const StringBuffer& str)
+	void StringBuffer::Remove(const StringBuffer& str)
 	{
 		if (str.charSize == sizeof(char))
 		{
-			return this->Remove(str.c_str());
+			this->Remove(str.c_str());
 		}
 		else
 		{
-			return this->Remove(str.wc_str());
+			this->Remove(str.wc_str());
 		}
 	}
 
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, char c)
+	void StringBuffer::ReplaceAt(size_t index, char c)
 	{
 		char buffer[2] = { c, '\0' };
-		return this->ReplaceAt(index, buffer);
+		this->ReplaceAt(index, buffer);
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, wchar_t wc)
+	void StringBuffer::ReplaceAt(size_t index, wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
-		return this->ReplaceAt(index, buffer);
+		this->ReplaceAt(index, buffer);
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const char* str)
+	void StringBuffer::ReplaceAt(size_t index, const char* str)
 	{
 		if (index >= this->size)
 		{
@@ -1046,7 +1042,8 @@ namespace HephCommon
 
 		if (strSize == 0)
 		{
-			return this->RemoveAt(index);
+			this->RemoveAt(index);
+			return;
 		}
 
 		if (index + strSize >= this->size)
@@ -1072,10 +1069,8 @@ namespace HephCommon
 			mbstowcs((wchar_t*)this->pData + index, str, strSize);
 			((wchar_t*)this->pData)[this->size] = L'\0';
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const wchar_t* wstr)
+	void StringBuffer::ReplaceAt(size_t index, const wchar_t* wstr)
 	{
 		if (index >= this->size)
 		{
@@ -1086,7 +1081,8 @@ namespace HephCommon
 
 		if (strSize == 0)
 		{
-			return this->RemoveAt(index);
+			this->RemoveAt(index);
+			return;
 		}
 
 		if (index + strSize >= this->size)
@@ -1112,31 +1108,29 @@ namespace HephCommon
 			wcstombs(this->pData + index, wstr, strSize);
 			this->pData[this->size] = '\0';
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::ReplaceAt(size_t index, const StringBuffer& str)
+	void StringBuffer::ReplaceAt(size_t index, const StringBuffer& str)
 	{
 		if (str.charSize == sizeof(char))
 		{
-			return this->ReplaceAt(index, str.c_str());
+			this->ReplaceAt(index, str.c_str());
 		}
 		else
 		{
-			return this->ReplaceAt(index, str.wc_str());
+			this->ReplaceAt(index, str.wc_str());
 		}
 	}
-	StringBuffer& StringBuffer::Insert(size_t index, char c)
+	void StringBuffer::Insert(size_t index, char c)
 	{
 		char buffer[2] = { c, '\0' };
-		return this->Insert(index, buffer);
+		this->Insert(index, buffer);
 	}
-	StringBuffer& StringBuffer::Insert(size_t index, wchar_t wc)
+	void StringBuffer::Insert(size_t index, wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
-		return this->Insert(index, buffer);
+		this->Insert(index, buffer);
 	}
-	StringBuffer& StringBuffer::Insert(size_t index, const char* str)
+	void StringBuffer::Insert(size_t index, const char* str)
 	{
 		if (index >= this->size)
 		{
@@ -1180,10 +1174,8 @@ namespace HephCommon
 		free(this->pData);
 		this->pData = pTemp;
 		this->size += strSize;
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::Insert(size_t index, const wchar_t* wstr)
+	void StringBuffer::Insert(size_t index, const wchar_t* wstr)
 	{
 		if (index >= this->size)
 		{
@@ -1227,31 +1219,29 @@ namespace HephCommon
 		free(this->pData);
 		this->pData = pTemp;
 		this->size += strSize;
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::Insert(size_t index, const StringBuffer& str)
+	void StringBuffer::Insert(size_t index, const StringBuffer& str)
 	{
 		if (str.charSize == sizeof(char))
 		{
-			return this->Insert(index, str.c_str());
+			this->Insert(index, str.c_str());
 		}
 		else
 		{
-			return this->Insert(index, str.wc_str());
+			this->Insert(index, str.wc_str());
 		}
 	}
-	StringBuffer& StringBuffer::TrimStart(char c)
+	void StringBuffer::TrimStart(char c)
 	{
 		char buffer[2] = { c, '\0' };
-		return this->TrimStart(buffer);
+		this->TrimStart(buffer);
 	}
-	StringBuffer& StringBuffer::TrimStart(wchar_t wc)
+	void StringBuffer::TrimStart(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
-		return this->TrimStart(buffer);
+		this->TrimStart(buffer);
 	}
-	StringBuffer& StringBuffer::TrimStart(const char* str)
+	void StringBuffer::TrimStart(const char* str)
 	{
 		const size_t strSize = strlen(str);
 		size_t iStart = 0;
@@ -1297,10 +1287,8 @@ namespace HephCommon
 			free(this->pData);
 			this->pData = pTemp;
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::TrimStart(const wchar_t* wstr)
+	void StringBuffer::TrimStart(const wchar_t* wstr)
 	{
 		const size_t strSize = wcslen(wstr);
 		size_t iStart = 0;
@@ -1346,28 +1334,29 @@ namespace HephCommon
 			free(this->pData);
 			this->pData = pTemp;
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::TrimStart(const StringBuffer& str)
+	void StringBuffer::TrimStart(const StringBuffer& str)
 	{
 		if (str.charSize == sizeof(char))
 		{
-			return this->TrimStart(str.c_str());
+			this->TrimStart(str.c_str());
 		}
-		return this->TrimStart(str.wc_str());
+		else
+		{
+			this->TrimStart(str.wc_str());
+		}
 	}
-	StringBuffer& StringBuffer::TrimEnd(char c)
+	void StringBuffer::TrimEnd(char c)
 	{
 		char buffer[2] = { c, '\0' };
-		return this->TrimEnd(buffer);
+		this->TrimEnd(buffer);
 	}
-	StringBuffer& StringBuffer::TrimEnd(wchar_t wc)
+	void StringBuffer::TrimEnd(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
-		return this->TrimEnd(buffer);
+		this->TrimEnd(buffer);
 	}
-	StringBuffer& StringBuffer::TrimEnd(const char* str)
+	void StringBuffer::TrimEnd(const char* str)
 	{
 		const size_t strSize = strlen(str);
 		size_t iEnd = this->size - strSize;
@@ -1413,10 +1402,8 @@ namespace HephCommon
 
 			this->pData = pTemp;
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::TrimEnd(const wchar_t* wstr)
+	void StringBuffer::TrimEnd(const wchar_t* wstr)
 	{
 		const size_t strSize = wcslen(wstr);
 		size_t iEnd = this->size - strSize;
@@ -1462,28 +1449,29 @@ namespace HephCommon
 
 			this->pData = pTemp;
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::TrimEnd(const StringBuffer& str)
+	void StringBuffer::TrimEnd(const StringBuffer& str)
 	{
 		if (str.charSize == sizeof(char))
 		{
-			return this->TrimEnd(str.c_str());
+			this->TrimEnd(str.c_str());
 		}
-		return this->TrimEnd(str.wc_str());
+		else
+		{
+			this->TrimEnd(str.wc_str());
+		}
 	}
-	StringBuffer& StringBuffer::Trim(char c)
+	void StringBuffer::Trim(char c)
 	{
 		char buffer[2] = { c, '\0' };
-		return this->Trim(buffer);
+		this->Trim(buffer);
 	}
-	StringBuffer& StringBuffer::Trim(wchar_t wc)
+	void StringBuffer::Trim(wchar_t wc)
 	{
 		wchar_t buffer[2] = { wc, L'\0' };
-		return this->Trim(buffer);
+		this->Trim(buffer);
 	}
-	StringBuffer& StringBuffer::Trim(const char* str)
+	void StringBuffer::Trim(const char* str)
 	{
 		const size_t strSize = strlen(str);
 		size_t iStart = 0;
@@ -1543,10 +1531,8 @@ namespace HephCommon
 			free(this->pData);
 			this->pData = pTemp;
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::Trim(const wchar_t* wstr)
+	void StringBuffer::Trim(const wchar_t* wstr)
 	{
 		const size_t strSize = wcslen(wstr);
 		size_t iStart = 0;
@@ -1555,7 +1541,7 @@ namespace HephCommon
 		if (this->charSize == sizeof(char))
 		{
 			char* str = (char*)malloc(strSize * sizeof(char) + sizeof(char));
-			if (wstr == nullptr)
+			if (str == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Trim", "Insufficient memory."));
 			}
@@ -1606,18 +1592,19 @@ namespace HephCommon
 			free(this->pData);
 			this->pData = pTemp;
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::Trim(const StringBuffer& str)
+	void StringBuffer::Trim(const StringBuffer& str)
 	{
 		if (str.charSize == sizeof(char))
 		{
-			return this->Trim(str.c_str());
+			this->Trim(str.c_str());
 		}
-		return this->Trim(str.wc_str());
+		else
+		{
+			this->Trim(str.wc_str());
+		}
 	}
-	StringBuffer& StringBuffer::Clear()
+	void StringBuffer::Clear()
 	{
 		const size_t charSize = this->charSize;
 		this->~StringBuffer();
@@ -1629,10 +1616,8 @@ namespace HephCommon
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringBuffer::Clear", "Insufficient memory."));
 		}
 		memset(this->pData, 0, this->charSize);
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::Reverse()
+	void StringBuffer::Reverse()
 	{
 		const size_t hs = this->size * 0.5;
 
@@ -1654,10 +1639,8 @@ namespace HephCommon
 				((wchar_t*)this->pData)[ir] = temp;
 			}
 		}
-
-		return *this;
 	}
-	StringBuffer& StringBuffer::ToLower()
+	void StringBuffer::ToLower()
 	{
 		if (this->charSize == sizeof(char))
 		{
@@ -1673,9 +1656,8 @@ namespace HephCommon
 				((wchar_t*)this->pData)[i] = towlower(((wchar_t*)this->pData)[i]);
 			}
 		}
-		return *this;
 	}
-	StringBuffer& StringBuffer::ToUpper()
+	void StringBuffer::ToUpper()
 	{
 		if (this->charSize == sizeof(char))
 		{
@@ -1691,7 +1673,6 @@ namespace HephCommon
 				((wchar_t*)this->pData)[i] = towupper(((wchar_t*)this->pData)[i]);
 			}
 		}
-		return *this;
 	}
 	bool StringBuffer::IsNumber() const
 	{
@@ -1735,6 +1716,35 @@ namespace HephCommon
 						return false;
 					}
 					hasDecimalPoint = true;
+				}
+			}
+		}
+
+		return true;
+	}
+	bool StringBuffer::IsNullOrEmpty() const
+	{
+		return (*this) == nullptr || this->size == 0 || this->CompareContent("");
+	}
+	bool StringBuffer::IsNullOrWhitespace() const
+	{
+		if (this->charSize == sizeof(char))
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				if (isspace(this->c_at(i)) == 0)
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i < this->size; i++)
+			{
+				if (iswspace(this->w_at(i)) == 0)
+				{
+					return false;
 				}
 			}
 		}
@@ -1800,8 +1810,8 @@ namespace HephCommon
 	StringBuffer StringBuffer::ToString(const Guid& guid)
 	{
 		char buffer[TO_STRING_BUFFER_SIZE]{ 0 };
-		sprintf(buffer, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x", guid.data1, guid.data2, guid.data3, 
-			guid.data4[0], guid.data4[1], guid.data4[2], guid.data4[3], 
+		sprintf(buffer, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x", guid.data1, guid.data2, guid.data3,
+			guid.data4[0], guid.data4[1], guid.data4[2], guid.data4[3],
 			guid.data4[4], guid.data4[5], guid.data4[6], guid.data4[7]);
 		return buffer;
 	}
@@ -1959,19 +1969,19 @@ namespace HephCommon
 		if (strings.size() > 0)
 		{
 			auto copyString = [](char* pTemp, const StringBuffer& str) -> void
-			{
-				if (str.pData != nullptr)
 				{
-					if (str.charSize == sizeof(char))
+					if (str.pData != nullptr)
 					{
-						memcpy(pTemp, str.pData, str.size * sizeof(char));
+						if (str.charSize == sizeof(char))
+						{
+							memcpy(pTemp, str.pData, str.size * sizeof(char));
+						}
+						else
+						{
+							wcstombs(pTemp, (wchar_t*)str.pData, str.size);
+						}
 					}
-					else
-					{
-						wcstombs(pTemp, (wchar_t*)str.pData, str.size);
-					}
-				}
-			};
+				};
 
 			const size_t separatorSize = strlen(separator);
 			const size_t separatorByteSize = separatorSize * sizeof(char);
@@ -2006,19 +2016,19 @@ namespace HephCommon
 		if (strings.size() > 0)
 		{
 			auto copyString = [](wchar_t* pTemp, const StringBuffer& str) -> void
-			{
-				if (str.pData != nullptr)
 				{
-					if (str.charSize == sizeof(wchar_t))
+					if (str.pData != nullptr)
 					{
-						memcpy(pTemp, str.pData, str.size * sizeof(wchar_t));
+						if (str.charSize == sizeof(wchar_t))
+						{
+							memcpy(pTemp, str.pData, str.size * sizeof(wchar_t));
+						}
+						else
+						{
+							mbstowcs(pTemp, str.pData, str.size);
+						}
 					}
-					else
-					{
-						mbstowcs(pTemp, str.pData, str.size);
-					}
-				}
-			};
+				};
 
 			const size_t separatorSize = wcslen(separator);
 			const size_t separatorByteSize = separatorSize * sizeof(wchar_t);
