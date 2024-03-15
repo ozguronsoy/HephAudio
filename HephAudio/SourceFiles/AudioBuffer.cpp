@@ -69,7 +69,7 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator=(const AudioBuffer& rhs)
 	{
-		if (this->pData != rhs.pData)
+		if (this != &rhs)
 		{
 			this->Empty();
 
@@ -91,7 +91,7 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator=(AudioBuffer&& rhs) noexcept
 	{
-		if (this->pData != rhs.pData)
+		if (this != &rhs)
 		{
 			this->Empty();
 

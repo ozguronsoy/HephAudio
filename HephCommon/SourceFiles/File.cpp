@@ -34,13 +34,16 @@ namespace HephCommon
 	}
 	File& File::operator=(File&& rhs) noexcept
 	{
-		this->pFile = rhs.pFile;
-		this->fileSize = rhs.fileSize;
-		this->filePath = rhs.filePath;
+		if (this != &rhs)
+		{
+			this->pFile = rhs.pFile;
+			this->fileSize = rhs.fileSize;
+			this->filePath = rhs.filePath;
 
-		rhs.pFile = nullptr;
-		rhs.fileSize = 0;
-		rhs.filePath = nullptr;
+			rhs.pFile = nullptr;
+			rhs.fileSize = 0;
+			rhs.filePath = nullptr;
+		}
 
 		return *this;
 	}

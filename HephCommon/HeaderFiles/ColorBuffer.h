@@ -112,7 +112,7 @@ namespace HephCommon
 		}
 		ColorBufferBase& operator=(ColorBufferBase&& rhs) noexcept
 		{
-			if (this->pData != rhs.pData)
+			if (this != &rhs)
 			{
 				this->Empty();
 

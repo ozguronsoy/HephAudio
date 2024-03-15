@@ -20,8 +20,12 @@ namespace HephCommon
 	CsvStream::CsvStream(CsvStream&& rhs) noexcept : file(std::move(rhs.file)), stringType(StringType::ASCII) {}
 	CsvStream& CsvStream::operator=(CsvStream&& rhs) noexcept
 	{
-		this->file = std::move(rhs.file);
-		this->stringType = rhs.stringType;
+		if (this != &rhs)
+		{
+			this->file = std::move(rhs.file);
+			this->stringType = rhs.stringType;
+		}
+
 		return *this;
 	}
 	CsvRecordVector CsvStream::Read() const

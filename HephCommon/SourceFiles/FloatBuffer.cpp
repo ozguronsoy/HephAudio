@@ -108,7 +108,7 @@ namespace HephCommon
 	}
 	FloatBuffer& FloatBuffer::operator=(FloatBuffer&& rhs) noexcept
 	{
-		if (this->pData != rhs.pData)
+		if (this != &rhs)
 		{
 			this->Empty();
 

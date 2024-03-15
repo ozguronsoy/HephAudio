@@ -10,15 +10,15 @@ namespace HephAudio
 
 	AudioPlaylist::AudioPlaylist(Audio& audio) : AudioPlaylist(audio.GetNativeAudio()) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<StringBuffer>& files)  : AudioPlaylist(pNativeAudio, TransitionEffect::None, 0, files) {}
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<StringBuffer>& files) : AudioPlaylist(pNativeAudio, TransitionEffect::None, 0, files) {}
 
 	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<StringBuffer>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s) 
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s)
 		: stream(pNativeAudio, nullptr), isPaused(true), applyFadeInOrDelay(false), transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s) {}
-	
+
 	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s) : AudioPlaylist(audio.GetNativeAudio()) {}
-	
+
 	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files)
 		: stream(pNativeAudio, nullptr), files(files), isPaused(true), applyFadeInOrDelay(false)
 		, transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s)
@@ -51,12 +51,16 @@ namespace HephAudio
 	}
 	AudioPlaylist& AudioPlaylist::operator=(AudioPlaylist&& rhs) noexcept
 	{
-		this->stream = std::move(rhs.stream);
-		this->files = std::move(rhs.files);
-		this->isPaused = rhs.isPaused;
-		this->applyFadeInOrDelay = rhs.applyFadeInOrDelay;
-		this->transitionEffect = rhs.transitionEffect;
-		this->transitionDuration_s = rhs.transitionDuration_s;
+		if (this != &rhs)
+		{
+			this->stream = std::move(rhs.stream);
+			this->files = std::move(rhs.files);
+			this->isPaused = rhs.isPaused;
+			this->applyFadeInOrDelay = rhs.applyFadeInOrDelay;
+			this->transitionEffect = rhs.transitionEffect;
+			this->transitionDuration_s = rhs.transitionDuration_s;
+		}
+
 		return *this;
 	}
 	size_t AudioPlaylist::Size() const

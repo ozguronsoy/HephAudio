@@ -39,25 +39,28 @@ namespace HephAudio
 	}
 	FFmpegAudioEncoder& FFmpegAudioEncoder::operator=(FFmpegAudioEncoder&& rhs) noexcept
 	{
-		this->CloseFile();
+		if (this != &rhs)
+		{
+			this->CloseFile();
 
-		this->audioFilePath = std::move(rhs.audioFilePath);
-		this->outputFormatInfo = rhs.outputFormatInfo;
-		this->avFormatContext = rhs.avFormatContext;
-		this->avIoContext = rhs.avIoContext;
-		this->avStream = rhs.avStream;
-		this->avCodecContext = rhs.avCodecContext;
-		this->swrContext = rhs.swrContext;
-		this->avPacket = rhs.avPacket;
-		this->avFrame = rhs.avFrame;
+			this->audioFilePath = std::move(rhs.audioFilePath);
+			this->outputFormatInfo = rhs.outputFormatInfo;
+			this->avFormatContext = rhs.avFormatContext;
+			this->avIoContext = rhs.avIoContext;
+			this->avStream = rhs.avStream;
+			this->avCodecContext = rhs.avCodecContext;
+			this->swrContext = rhs.swrContext;
+			this->avPacket = rhs.avPacket;
+			this->avFrame = rhs.avFrame;
 
-		rhs.avFormatContext = nullptr;
-		rhs.avIoContext = nullptr;
-		rhs.avStream = nullptr;
-		rhs.avCodecContext = nullptr;
-		rhs.swrContext = nullptr;
-		rhs.avPacket = nullptr;
-		rhs.avFrame = nullptr;
+			rhs.avFormatContext = nullptr;
+			rhs.avIoContext = nullptr;
+			rhs.avStream = nullptr;
+			rhs.avCodecContext = nullptr;
+			rhs.swrContext = nullptr;
+			rhs.avPacket = nullptr;
+			rhs.avFrame = nullptr;
+		}
 
 		return *this;
 	}

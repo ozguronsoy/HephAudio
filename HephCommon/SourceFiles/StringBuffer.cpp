@@ -366,7 +366,7 @@ namespace HephCommon
 	}
 	StringBuffer& StringBuffer::operator=(StringBuffer&& rhs) noexcept
 	{
-		if (this->pData != rhs.pData)
+		if (this != &rhs)
 		{
 			this->~StringBuffer();
 

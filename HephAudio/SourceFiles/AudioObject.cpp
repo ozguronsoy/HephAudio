@@ -20,19 +20,22 @@ namespace HephAudio
 	}
 	AudioObject& AudioObject::operator=(AudioObject&& rhs) noexcept
 	{
-		this->id = rhs.id;
-		this->filePath = std::move(rhs.filePath);
-		this->name = std::move(rhs.name);
-		this->isPaused = rhs.isPaused;
-		this->playCount = rhs.playCount;
-		this->volume = rhs.volume;
-		this->buffer = std::move(rhs.buffer);
-		this->frameIndex = rhs.frameIndex;
-		this->OnRender = rhs.OnRender;
-		this->OnFinishedPlaying = rhs.OnFinishedPlaying;
+		if (this != &rhs)
+		{
+			this->id = rhs.id;
+			this->filePath = std::move(rhs.filePath);
+			this->name = std::move(rhs.name);
+			this->isPaused = rhs.isPaused;
+			this->playCount = rhs.playCount;
+			this->volume = rhs.volume;
+			this->buffer = std::move(rhs.buffer);
+			this->frameIndex = rhs.frameIndex;
+			this->OnRender = rhs.OnRender;
+			this->OnFinishedPlaying = rhs.OnFinishedPlaying;
 
-		rhs.OnRender.ClearAll();
-		rhs.OnFinishedPlaying.ClearAll();
+			rhs.OnRender.ClearAll();
+			rhs.OnFinishedPlaying.ClearAll();
+		}
 
 		return *this;
 	}
