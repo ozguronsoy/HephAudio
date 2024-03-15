@@ -54,7 +54,7 @@ Test it using [SineWaveOscillator](/docs/HephAudio/Oscillators/SineWaveOscillato
 ```c++
 #include <iostream>
 #include <Audio.h>
-#include <SineWaveOscillator.h>
+#include <Oscillators/SineWaveOscillator.h>
 
 using namespace HephAudio;
 
