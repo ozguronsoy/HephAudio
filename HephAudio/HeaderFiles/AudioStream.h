@@ -28,13 +28,15 @@ namespace HephAudio
 		AudioBuffer decodedBuffer;
 #endif
 	public:
+		AudioStream(Native::NativeAudio* pNativeAudio);
+		AudioStream(Audio& audio);
 		AudioStream(Native::NativeAudio* pNativeAudio, const HephCommon::StringBuffer& filePath);
 		AudioStream(Audio& audio, const HephCommon::StringBuffer& filePath);
 		AudioStream(const AudioStream&) = delete;
 		AudioStream(AudioStream&& rhs) noexcept;
+		~AudioStream();
 		AudioStream& operator=(const AudioStream&) = delete;
 		AudioStream& operator=(AudioStream&& rhs) noexcept;
-		~AudioStream();
 		Native::NativeAudio* GetNativeAudio() const;
 		HephCommon::File* GetFile();
 		FileFormats::IAudioFileFormat* GetFileFormat() const;
@@ -42,6 +44,7 @@ namespace HephAudio
 		AudioObject* GetAudioObject() const;
 		const AudioFormatInfo& GetAudioFormatInfo() const;
 		size_t GetFrameCount() const;
+		void ChangeFile(const HephCommon::StringBuffer& newFilePath);
 		void Start();
 		void Stop();
 		heph_float GetPosition() const;

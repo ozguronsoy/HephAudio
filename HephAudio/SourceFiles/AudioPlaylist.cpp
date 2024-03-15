@@ -15,12 +15,12 @@ namespace HephAudio
 	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<StringBuffer>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
 
 	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s)
-		: stream(pNativeAudio, nullptr), isPaused(true), applyFadeInOrDelay(false), transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s) {}
+		: stream(pNativeAudio), isPaused(true), applyFadeInOrDelay(false), transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s) {}
 
 	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s) : AudioPlaylist(audio.GetNativeAudio()) {}
 
 	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files)
-		: stream(pNativeAudio, nullptr), files(files), isPaused(true), applyFadeInOrDelay(false)
+		: stream(pNativeAudio), files(files), isPaused(true), applyFadeInOrDelay(false)
 		, transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s)
 	{
 		if (this->files.size() > 0)
@@ -238,6 +238,15 @@ namespace HephAudio
 		try
 		{
 			this->stream = AudioStream(pNativeAudio, filePath);
+			if (filePath != nullptr)
+			{
+				AudioObject* pAudioObject = this->stream.GetAudioObject();
+				pAudioObject->OnRender += &AudioPlaylist::ApplyTransitionEffect;
+				pAudioObject->OnFinishedPlaying = &AudioPlaylist::OnFinishedPlaying;
+				pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
+				pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
+				pAudioObject->isPaused = this->isPaused;
+			}
 		}
 		catch (HephException& ex)
 		{
@@ -254,16 +263,6 @@ namespace HephAudio
 				filePath = nullptr;
 			}
 			goto OPEN_NEW_STREAM;
-		}
-
-		if (filePath != nullptr)
-		{
-			AudioObject* pAudioObject = this->stream.GetAudioObject();
-			pAudioObject->OnRender += &AudioPlaylist::ApplyTransitionEffect;
-			pAudioObject->OnFinishedPlaying = &AudioPlaylist::OnFinishedPlaying;
-			pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
-			pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
-			pAudioObject->isPaused = this->isPaused;
 		}
 	}
 	void AudioPlaylist::OnFinishedPlaying(const EventParams& eventParams)

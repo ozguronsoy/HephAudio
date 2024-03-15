@@ -54,7 +54,7 @@ namespace HephAudio
 			AudioObject* Load(const HephCommon::StringBuffer& filePath);
 			AudioObject* Load(const HephCommon::StringBuffer& filePath, uint32_t playCount);
 			AudioObject* Load(const HephCommon::StringBuffer& filePath, uint32_t playCount, bool isPaused);
-			AudioObject* CreateAudioObject(const HephCommon::StringBuffer& name, size_t bufferFrameCount);
+			AudioObject* CreateAudioObject(const HephCommon::StringBuffer& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo);
 			bool DestroyAudioObject(AudioObject* pAudioObject);
 			bool DestroyAudioObject(const HephCommon::Guid& audioObjectId);
 			bool AudioObjectExists(AudioObject* pAudioObject) const;

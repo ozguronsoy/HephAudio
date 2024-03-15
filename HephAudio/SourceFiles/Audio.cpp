@@ -58,7 +58,7 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
 		}
 	}
-	Audio(JavaVM* jvm, AudioAPI api)
+	Audio::Audio(JavaVM* jvm, AudioAPI api)
 	{
 		const uint32_t androidApiLevel = android_get_device_api_level();
 		if (androidApiLevel < 21)
@@ -164,9 +164,9 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->Load(filePath, playCount, isPaused);
 	}
-	AudioObject* Audio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount)
+	AudioObject* Audio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo)
 	{
-		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount);
+		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount, bufferFormatInfo);
 	}
 	bool Audio::DestroyAudioObject(AudioObject* pAudioObject)
 	{

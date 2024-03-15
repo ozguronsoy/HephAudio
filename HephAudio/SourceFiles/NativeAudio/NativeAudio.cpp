@@ -82,7 +82,7 @@ namespace HephAudio
 			}
 			return pao;
 		}
-		AudioObject* NativeAudio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount)
+		AudioObject* NativeAudio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
@@ -94,7 +94,7 @@ namespace HephAudio
 #endif
 
 			audioObject.name = name;
-			audioObject.buffer = AudioBuffer(bufferFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
+			audioObject.buffer = AudioBuffer(bufferFrameCount, bufferFormatInfo);
 			return &audioObject;
 		}
 		bool NativeAudio::DestroyAudioObject(AudioObject* pAudioObject)

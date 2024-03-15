@@ -8,8 +8,16 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
+	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio)
+		: pNativeAudio(pNativeAudio), pFileFormat(nullptr)
+		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr) {}
+
+	AudioStream::AudioStream(Audio& audio) 
+		: pNativeAudio(audio.GetNativeAudio()), pFileFormat(nullptr)
+		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr) {}
+
 	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const StringBuffer& filePath)
-		: pNativeAudio(pNativeAudio), file(filePath, FileOpenMode::Read), pFileFormat(nullptr)
+		: pNativeAudio(pNativeAudio), pFileFormat(nullptr)
 		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr)
 	{
 		if (this->pNativeAudio == nullptr)
@@ -17,39 +25,11 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "pNativeAudio must not be nullptr."));
 			this->Release(false);
 		}
-
-		if (this->file.IsOpen())
-		{
-			this->pFileFormat = FileFormats::AudioFileFormatManager::FindFileFormat(this->file);
-			if (this->pFileFormat == nullptr)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "File format '" + this->file.FileExtension() + "' is not supported."));
-				this->Release(false);
-			}
-
-			this->pAudioObject = pNativeAudio->CreateAudioObject("(Stream) " + this->file.FileName(), 0);
-			this->formatInfo = this->pFileFormat->ReadAudioFormatInfo(this->file);
-			this->frameCount = this->pFileFormat->FileFrameCount(this->file, this->formatInfo);
-
-			this->pAudioCodec = Codecs::AudioCodecManager::FindCodec(formatInfo.formatTag);
-			if (this->pAudioCodec == nullptr)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AudioStream::AudioStream", "Unsupported audio codec."));
-				this->Release(true);
-			}
-
-			this->pAudioObject->OnRender = &AudioStream::OnRender;
-			this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
-			this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
-			this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
-
-#if defined(HEPHAUDIO_USE_FFMPEG)
-			this->file.Close();
-			this->ffmpegAudioDecoder.ChangeFile(filePath);
-#endif
-		}
+		this->ChangeFile(filePath);
 	}
+	
 	AudioStream::AudioStream(Audio& audio, const StringBuffer& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
+	
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
 		: pNativeAudio(rhs.pNativeAudio), file(std::move(rhs.file)), pFileFormat(rhs.pFileFormat)
 		, pAudioCodec(rhs.pAudioCodec), formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pAudioObject(rhs.pAudioObject)
@@ -70,6 +50,10 @@ namespace HephAudio
 		rhs.pAudioCodec = nullptr;
 		rhs.formatInfo = AudioFormatInfo();
 		rhs.pAudioObject = nullptr;
+	}
+	AudioStream::~AudioStream()
+	{
+		this->Release(true);
 	}
 	AudioStream& AudioStream::operator=(AudioStream&& rhs) noexcept
 	{
@@ -105,10 +89,6 @@ namespace HephAudio
 
 		return *this;
 	}
-	AudioStream::~AudioStream()
-	{
-		this->Release(true);
-	}
 	Native::NativeAudio* AudioStream::GetNativeAudio() const
 	{
 		return this->pNativeAudio;
@@ -136,6 +116,55 @@ namespace HephAudio
 	size_t AudioStream::GetFrameCount() const
 	{
 		return this->frameCount;
+	}
+	void AudioStream::ChangeFile(const StringBuffer& newFilePath)
+	{
+		this->Stop();
+		this->file.Close();
+
+		this->file.Open(newFilePath, FileOpenMode::Read);
+		if (this->file.IsOpen())
+		{
+			this->pFileFormat = FileFormats::AudioFileFormatManager::FindFileFormat(this->file);
+			if (this->pFileFormat == nullptr)
+			{
+				this->Release(true);
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::ChangeFile", "File format '" + this->file.FileExtension() + "' is not supported."));
+			}
+
+			if (this->pAudioObject != nullptr)
+			{
+				this->pAudioObject->name = StringBuffer::Join(' ', { "(Stream)", this->file.FileName() });
+				this->pAudioObject->frameIndex = 0;
+				this->pAudioObject->playCount = 1;
+			}
+			else
+			{
+				const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
+				this->pAudioObject = this->pNativeAudio->CreateAudioObject(StringBuffer::Join(' ', { "(Stream)", this->file.FileName() }), 0, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
+
+				this->pAudioObject->OnRender = &AudioStream::OnRender;
+				this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
+				this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+				this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+			}
+
+
+			this->formatInfo = this->pFileFormat->ReadAudioFormatInfo(this->file);
+			this->frameCount = this->pFileFormat->FileFrameCount(this->file, this->formatInfo);
+
+#if defined(HEPHAUDIO_USE_FFMPEG)
+			this->file.Close();
+			this->ffmpegAudioDecoder.ChangeFile(newFilePath);
+#else
+			this->pAudioCodec = Codecs::AudioCodecManager::FindCodec(this->formatInfo.formatTag);
+			if (this->pAudioCodec == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AudioStream::ChangeFile", "Unsupported audio codec."));
+				this->Release(true);
+			}
+#endif
+		}
 	}
 	void AudioStream::Start()
 	{
@@ -272,6 +301,6 @@ namespace HephAudio
 		if (pStream != nullptr && pFinishedPlayingEventArgs->remainingLoopCount == 0)
 		{
 			pStream->Release(false);
-				}
-			}
 		}
+	}
+}
