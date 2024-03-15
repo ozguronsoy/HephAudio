@@ -27,7 +27,7 @@ HephAudio is a cross-platform audio library that provides:
 ### Playing Files
 Let's start by playing a wav file with the default output device. First we need to initialize the audio class for rendering (playing) by calling the ``InitializeRender`` method. Then simply call the ``Play`` method with the full path to the wav file.
 ```c++
-#include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include <Audio.h>
 
@@ -35,22 +35,19 @@ using namespace HephAudio; // so we don't have to write HephAudio:: every time
 
 int main()
 {
-  Audio audio;
+	Audio audio;
 
-  // Activate rendering (playing)
-  // nullptr -> default device
-  // 2 -> # of channels
-  // 16 -> 16 bit resolution.
-  // 48000 -> 48kHz sampling rate.
-  audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
+	// 2 -> # of channels
+	// 48000 -> 48 kHz sampling rate.
+	audio.InitializeRender(2, 48000);
 
-  audio.Play("some_path\\some_file.wav");
+	audio.Play("some_path\\some_file.wav");
 
-  // prevent from exiting the app
-  std::string s;
-  std::cin >> s;
+	// prevent from exiting the app
+	std::string s;
+	std::cin >> s;
   
-  return 0;
+	return 0;
 }
 ```
 If the audio data we want to play does not have the same format as the one we specified when initializing render, the sound will come out distorted. To prevent that we can call the ``Load`` method instead. This method converts the audio data to our target format before playing.
@@ -72,7 +69,7 @@ When you are done recording you can either call ``StopCapturing()`` method to de
 
 Sample code for recording audio for 5 seconds, saving it to a file, then playing the file:
 ```c++
-#include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include <thread>
 #include <chrono>
@@ -81,41 +78,55 @@ Sample code for recording audio for 5 seconds, saving it to a file, then playing
 #define SAMPLE_RATE 48000
 #define NUM_OF_CHANNELS 2
 
+using namespace HephCommon;
 using namespace HephAudio;
 
-AudioBuffer recordedAudio(0, HEPHAUDIO_INTERNAL_FORMAT(NUM_OF_CHANNELS, SAMPLE_RATE)); // create an audio buffer with 0 frames
+AudioBuffer recordedAudio;
 
 void RecordAudio(const EventParams& eventParams) // the event handler method
 {
-  AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)eventParams.pArgs; // cast the args to capture event args
-  recordedAudio.Append(pCaptureArgs->captureBuffer); // append the captured samples to the end of our buffer
+	AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)eventParams.pArgs; // cast the args to capture event args
+
+	if (recordedAudio == nullptr)
+	{
+		// first captured data
+		recordedAudio = pCaptureArgs->captureBuffer;
+	}
+	else
+	{
+		// append the captured samples to the end of our buffer
+		recordedAudio.Append(pCaptureArgs->captureBuffer);
+	}
 }
 
 int main()
 {
-  Audio audio;
+	Audio audio;
 
-  audio.SetOnCaptureHandler(&RecordAudio); // set an event handler for capturing
-  audio.InitializeCapture(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE)); // initialize with default device
+	// set an event handler for capturing
+	audio.SetOnCaptureHandler(&RecordAudio);
 
-  // record for 5 seconds, then stop capturing
-  std::this_thread::sleep_for(std::chrono::seconds(5));
-  audio.StopCapturing();
+	// initialize with default device
+	audio.InitializeCapture(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
 
-  // Save the recorded audio data to a file if it doesn't exist.
-  audio.SaveToFile("file_path\\fila_name.wav", false, recordedAudio);
+	// record for 5 seconds, then stop capturing
+	std::this_thread::sleep_for(std::chrono::seconds(5));
+	audio.StopCapturing();
 
-  recordedAudio.Empty(); // dispose of the unnecessary data
+	// Save the recorded audio data to a file if it doesn't exist.
+	audio.SaveToFile("file_path\\fila_name.wav", true, recordedAudio);
 
-  // play the recorded file.
-  audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
-  audio.Play("file_path\\fila_name.wav");
+	recordedAudio.Empty(); // dispose of the unnecessary data
 
-  // prevent from exiting the app
-  std::string s;
-  std::cin >> s;
-  
-  return 0;
+	// play the recorded file.
+	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
+	audio.Play("file_path\\fila_name.wav");
+
+	// prevent from exiting the app
+	std::string s;
+	std::cin >> s;
+
+	return 0;
 }
 ```
 
@@ -140,34 +151,35 @@ audio.InitializeRender(&renderDevices[0], AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_P
 Most of the signal processing is done by the ``AudioProcessor`` class. To apply effects we must obtain the ``AudioBuffer`` that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the ``AudioObject`` that is returned by the ``Play`` and ``Load`` methods.
 Here is a sample code for playing the file in 2x speed without changing the pitch:
 ```c++
-#include <stdio.h>
+#include <iostream>
 #include <string.h>
 #include <Audio.h>
 #include <AudioProcessor.h>
+#include <Windows/HannWindow.h>
 
 using namespace HephAudio;
 
 int main()
 {
-  Audio audio;
-  audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
+	Audio audio;
+	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
 
-  AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
+	AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
 
-  printf("applying sound effects...");
-  
-  HannWindow window; // windows will be explained later in the docs, for now select a HannWindow
-  AudioProcessor::ChangeSpeed(pAudioObject->buffer, 2.0, window); // plays in 2x speed without changing the pitch
+	printf("applying sound effects...\n");
 
-  printf("sound effects applied!");
+	HannWindow window; // windows will be explained later in the docs, for now select a HannWindow
+	AudioProcessor::ChangeSpeed(pAudioObject->buffer, 2.0, window); // plays in 2x speed without changing the pitch
 
-  pAudioObject->pause = false; // unpause
+	printf("sound effects applied!\n");
 
-  // prevent from exiting the app
-  std::string s;
-  std::cin >> s;
+	pAudioObject->isPaused = false; // unpause
 
-  return 0;
+	// prevent from exiting the app
+	std::string s;
+	std::cin >> s;
+
+	return 0;
 }
 ```
 ### Handling Exceptions
