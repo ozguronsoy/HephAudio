@@ -1,4 +1,8 @@
 ## HammingWindow Class
+```c++
+#include <Windows/HammingWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *HammingWindow*
 
 ### Methods
