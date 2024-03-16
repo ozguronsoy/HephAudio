@@ -376,3 +376,45 @@ Creates a file and saves the provided data.
 - **overwrite:** Indicates whether to write over the file if it already exists.
 - **returns:** ``true`` if the operation has succeeded, otherwise ``false``.
 <br><br><br><br>
+
+```c++
+void SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
+```
+Sets the provided handler as the only event handler.
+- **handler:** The method to handle the event.
+<br><br><br><br>
+
+```c++
+void AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
+```
+Adds the provided handler.
+- **handler:** The method to handle the event.
+<br><br><br><br>
+
+```c++
+void SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
+```
+Sets the provided handler as the only event handler.
+- **handler:** The method to handle the event.
+<br><br><br><br>
+
+```c++
+void AddOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
+```
+Adds the provided handler.
+- **handler:** The method to handle the event.
+<br><br><br><br>
+
+
+```c++
+void SetOnCaptureHandler(HephCommon::EventHandler handler);
+```
+Sets the provided handler as the only event handler.
+- **handler:** The method to handle the event.
+<br><br><br><br>
+
+```c++
+void AddOnCaptureHandler(HephCommon::EventHandler handler);
+```
+Adds the provided handler.
+- **handler:** The method to handle the event.
