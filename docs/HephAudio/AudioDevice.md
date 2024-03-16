@@ -1,4 +1,8 @@
 ## AudioDevice Struct
+```c++
+#include <AudioDevice.h>
+using namespace HephAudio;
+```
 
 ### Description
 Stores information about an audio device provided by the native API.
