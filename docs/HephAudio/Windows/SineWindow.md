@@ -1,4 +1,8 @@
 ## SineWindow Class
+```c++
+#include <Windows/SineWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *SineWindow*
 
 ### Methods
