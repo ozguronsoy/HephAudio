@@ -11,3 +11,18 @@ Implements rendering/capturing audio data and device enumeration via [DirectSoun
 > [!NOTE]
 > Requires Windows XP or higher.<br>
 > DirectSound is a legacy API that's superseded by WASAPI. which is used in the [WinAudio](/docs/HephAudio/NativeAudio/WinAudio.md) class.
+
+<br><br>
+
+### Methods
+```c++
+WinAudioDS();
+```
+Creates an instance and initializes it with the default values.
+<br><br><br><br>
+
+```c++
+~WinAudioDS();
+```
+Releases the resources.
+<br><br><br><br>
