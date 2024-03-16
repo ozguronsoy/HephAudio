@@ -38,4 +38,4 @@ The event that will be invoked every time new audio data is captured.
 <br><br>
 
 ### Methods
-See the [Audio](/docs/HephAudio/Audio.md) class for the method descriptions.
+See the [Audio](/docs/HephAudio/Audio.md#methods) class for the method descriptions.
