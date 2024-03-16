@@ -5,9 +5,6 @@ using namespace HephAudio::Native;
 ```
 **Inheritance:** *[NativeAudio](/docs/HephAudio/NativeAudio/NativeAudio.md)* -> *AppleAudio*
 
-> [Description](#description)<br>
-[Methods](#methods)
-
 ### Description
 Implements rendering/capturing audio data and device enumeration via [CoreAudio](https://developer.apple.com/documentation/coreaudio).
 <br><br>
