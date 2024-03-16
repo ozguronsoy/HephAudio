@@ -6,7 +6,6 @@ using namespace HephAudio::Native;
 **Inheritance:** *[NativeAudio](/docs/HephAudio/NativeAudio/NativeAudio.md)* -> *AppleAudio*
 
 > [Description](#description)<br>
-[Methods](#methods)<br>
 [Methods](#methods)
 
 ### Description
