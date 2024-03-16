@@ -1,24 +1,14 @@
 ## Window Class
+```c++
+#include <Windows/Window.h>
+using namespace HephAudio;
+```
 
 > [Description](#description)<br>
-[Parameters](#parameters)<br>
 [Methods](#methods)
 
 ### Description
 Base class for windows. Windows are used to reduce artifacts introduced by the Fourier transform. Check this [tutorial](/docs/tutorials/UsingWindows.md) to learn how and when to use windows.<br>
-<br><br>
-
-### Parameters
-```c++
-class Window
-{
-    size_t size;
-};
-```
-
-- ``size``
-<br><br>
-Size of the window in frames.
 <br><br>
 
 ### Methods
