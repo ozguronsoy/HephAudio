@@ -9,7 +9,7 @@ using namespace HephAudio::Native;
 [Methods](#methods)
 
 ### Description
-A base class for the classes that interact with the native audio APIs.
+Base class for the classes that interact with the native audio APIs.
 <br><br>
 
 ### Parameters
