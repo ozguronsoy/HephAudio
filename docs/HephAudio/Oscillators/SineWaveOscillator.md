@@ -1,4 +1,8 @@
 ## SineWaveOscillator Class
+```c++
+#include <Oscillators/SineWaveOscillator.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Oscillator](/docs/HephAudio/Oscillators/Oscillator.md)* -> *SineWaveOscillator*
 
 > [Description](#description)<br>

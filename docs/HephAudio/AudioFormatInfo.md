@@ -1,4 +1,8 @@
 ## AudioFormatInfo Struct
+```c++
+#include <AudioFormatInfo.h>
+using namespace HephAudio;
+```
 
 > [Description](#description)<br>
 [Macros](#macros)<br>

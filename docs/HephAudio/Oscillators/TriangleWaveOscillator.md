@@ -1,4 +1,8 @@
 ## TriangleWaveOscillator Class
+```c++
+#include <Oscillators/TriangleWaveOscillator.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Oscillator](/docs/HephAudio/Oscillators/Oscillator.md)* -> *TriangleWaveOscillator*
 
 > [Description](#description)<br>

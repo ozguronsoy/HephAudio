@@ -1,4 +1,8 @@
 ## SawToothWaveOscillator Class
+```c++
+#include <Oscillators/SawToothWaveOscillator.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Oscillator](/docs/HephAudio/Oscillators/Oscillator.md)* -> *SawToothWaveOscillator*
 
 > [Description](#description)<br>

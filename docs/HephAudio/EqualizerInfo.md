@@ -1,4 +1,8 @@
 ## EqualizerInfo Struct
+```c++
+#include <EqualizerInfo.h>
+using namespace HephAudio;
+```
 
 ### Description
 Container for equalizer effect parameters.

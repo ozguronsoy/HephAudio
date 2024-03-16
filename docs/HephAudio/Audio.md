@@ -1,5 +1,8 @@
 ## Audio class
-``#include <Audio.h>``
+```c++
+#include <Audio.h>
+using namespace HephAudio;
+```
 
 > [Description](#description)<br>
 [Enums](#enums)<br>

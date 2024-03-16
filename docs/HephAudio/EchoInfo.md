@@ -1,4 +1,8 @@
 ## EchoInfo Struct
+```c++
+#include <EchoInfo.h>
+using namespace HephAudio;
+```
 
 ### Description
 Container for echo effect parameters.

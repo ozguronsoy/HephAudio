@@ -1,4 +1,8 @@
 ## Oscillator Class
+```c++
+#include <Oscillators/Oscillator.h>
+using namespace HephAudio;
+```
 
 > [Description](#description)<br>
 [Parameters](#parameters)<br>

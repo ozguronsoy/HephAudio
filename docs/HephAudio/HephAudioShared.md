@@ -1,4 +1,8 @@
-## HephAudioS
+## HephAudioShared
+```c++
+#include <HephAudioShared.h>
+using namespace HephAudio;
+```
 
 > [Description](#description)<br>
 [Macros](#macros)<br>
