@@ -1,4 +1,8 @@
 ## RectangularWindow Class
+```c++
+#include <Windows/RectangularWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *RectangularWindow*
 
 ### Methods
