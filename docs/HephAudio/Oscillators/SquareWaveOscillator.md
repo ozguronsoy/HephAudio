@@ -1,4 +1,8 @@
 ## SquareWaveOscillator Class
+```c++
+#include <Oscillators/SquareWaveOscillator.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Oscillator](/docs/HephAudio/Oscillators/Oscillator.md)* -> *SquareWaveOscillator*
 
 > [Description](#description)<br>
