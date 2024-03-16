@@ -12,7 +12,7 @@ using namespace HephAudio::Native;
 
 
 ### Description
-Base class for the classes that interact with the android native audio APIs.
+Base class for the classes that interact with the android native audio APIs. This class implements the audio device enumeration.
 <br><br>
 
 ### Methods
