@@ -1,4 +1,8 @@
 ## HannWindow Class
+```c++
+#include <Windows/HannWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *HannWindow*
 
 ### Methods
