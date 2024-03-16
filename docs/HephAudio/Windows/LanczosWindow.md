@@ -1,4 +1,8 @@
 ## LanczosWindow Class
+```c++
+#include <Windows/LanczosWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *LanczosWindow*
 
 ### Methods
