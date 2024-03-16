@@ -38,7 +38,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\BlackmanNuttallWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\BlackmanWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EchoInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EncodedBufferInfo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\EncodedBufferInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EqualizerInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\ExactBlackmanWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioDecoder.h" />

@@ -150,7 +150,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\IAudioCodec.h">
       <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EncodedBufferInfo.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\EncodedBufferInfo.h">
       <Filter>HeaderFiles\AudioCodecs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\PcmCodec.h">
