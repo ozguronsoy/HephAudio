@@ -1,4 +1,8 @@
 ## BlackmanWindow Class
+```c++
+#include <Windows/BlackmanWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *BlackmanWindow*
 
 ### Methods
