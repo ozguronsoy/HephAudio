@@ -1,4 +1,8 @@
 ## GaussianWindow Class
+```c++
+#include <Windows/GaussianWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *GaussianWindow*
 
 ### Methods
