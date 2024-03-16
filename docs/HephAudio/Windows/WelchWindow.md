@@ -1,4 +1,8 @@
 ## WelchWindow Class
+```c++
+#include <Windows/WelchWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *WelchWindow*
 
 ### Methods
