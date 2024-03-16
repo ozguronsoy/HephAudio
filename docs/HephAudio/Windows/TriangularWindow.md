@@ -1,4 +1,8 @@
 ## TriangularWindow Class
+```c++
+#include <Windows/TriangularWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *TriangularWindow*
 
 ### Methods
