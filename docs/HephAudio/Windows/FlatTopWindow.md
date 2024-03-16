@@ -1,4 +1,8 @@
 ## FlatTopWindow Class
+```c++
+#include <Windows/FlatTopWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *FlatTopWindow*
 
 ### Methods
