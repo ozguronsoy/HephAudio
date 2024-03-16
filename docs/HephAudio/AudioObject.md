@@ -1,4 +1,8 @@
 ## AudioObject Struct
+```c++
+#include <AudioObject.h>
+using namespace HephAudio;
+```
 
 > [Description](#description)<br>
 [Macros](#macros)<br>
