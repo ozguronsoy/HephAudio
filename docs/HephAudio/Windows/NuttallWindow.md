@@ -1,4 +1,8 @@
 ## NuttallWindow Class
+```c++
+#include <Windows/NuttallWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *NuttallWindow*
 
 ### Methods
