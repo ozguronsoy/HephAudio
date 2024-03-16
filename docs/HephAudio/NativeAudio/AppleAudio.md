@@ -11,6 +11,7 @@ using namespace HephAudio::Native;
 
 ### Description
 Implements rendering/capturing audio data and device enumeration via [CoreAudio](https://developer.apple.com/documentation/coreaudio).
+<br><br>
 
 ### Methods
 ```c++
