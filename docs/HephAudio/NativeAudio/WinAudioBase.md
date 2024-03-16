@@ -8,7 +8,7 @@ using namespace HephAudio::Native;
 
 > [Description](#description)<br>
 [Methods](#methods)<br>
-[Protected Methods](#protected_methods)
+[Protected Methods](#protected-methods)
 
 ### Description
 Base class for the classes that interact with the windows native audio APIs.
