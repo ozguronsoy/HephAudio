@@ -1,4 +1,8 @@
 ## BartlettHannWindow Class
+```c++
+#include <Windows/BartlettHannWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *BartlettHannWindow*
 
 ### Methods
