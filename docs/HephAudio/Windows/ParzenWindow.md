@@ -1,4 +1,8 @@
 ## ParzenWindow Class
+```c++
+#include <Windows/ParzenWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *ParzenWindow*
 
 ### Methods
