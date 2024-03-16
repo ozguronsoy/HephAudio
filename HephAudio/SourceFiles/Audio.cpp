@@ -172,21 +172,41 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->DestroyAudioObject(pAudioObject);
 	}
+	bool Audio::DestroyAudioObject(const HephCommon::Guid& audioObjectId)
+	{
+		return this->pNativeAudio->DestroyAudioObject(audioObjectId);
+	}
 	bool Audio::AudioObjectExists(AudioObject* pAudioObject) const
 	{
 		return this->pNativeAudio->AudioObjectExists(pAudioObject);
+	}
+	bool Audio::AudioObjectExists(const HephCommon::Guid& audioObjectId) const
+	{
+		return this->pNativeAudio->AudioObjectExists(audioObjectId);
 	}
 	AudioObject* Audio::GetAudioObject(size_t index) const
 	{
 		return this->pNativeAudio->GetAudioObject(index);
 	}
+	AudioObject* Audio::GetAudioObject(const HephCommon::Guid& audioObjectId)
+	{
+		return this->pNativeAudio->GetAudioObject(audioObjectId);
+	}
 	AudioObject* Audio::GetAudioObject(const StringBuffer& audioObjectName) const
 	{
 		return this->pNativeAudio->GetAudioObject(audioObjectName);
 	}
-	void Audio::PauseCapture(bool pause)
+	size_t Audio::GetAudioObjectCount() const
 	{
-		this->pNativeAudio->PauseCapture(pause);
+		return this->pNativeAudio->GetAudioObjectCount();
+	}
+	void Audio::ResumeCapture()
+	{
+		this->pNativeAudio->ResumeCapture();
+	}
+	void Audio::PauseCapture()
+	{
+		this->pNativeAudio->PauseCapture();
 	}
 	bool Audio::IsCapturePaused() const
 	{
@@ -276,8 +296,8 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAudioDevices(deviceType);
 	}
-	bool Audio::SaveToFile(const StringBuffer& filePath, bool overwrite, AudioBuffer& buffer)
+	bool Audio::SaveToFile(AudioBuffer& buffer, const StringBuffer& filePath, bool overwrite)
 	{
-		return this->pNativeAudio->SaveToFile(filePath, overwrite, buffer);
+		return this->pNativeAudio->SaveToFile(buffer, filePath, overwrite);
 	}
 }

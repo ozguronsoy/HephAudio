@@ -572,7 +572,7 @@ namespace HephCommon
 	}
 	bool StringBuffer::operator==(std::nullptr_t rhs) const
 	{
-		return this->pData == nullptr;
+		return this->pData == rhs;
 	}
 	bool StringBuffer::operator!=(char rhs) const
 	{
@@ -598,7 +598,7 @@ namespace HephCommon
 	}
 	bool StringBuffer::operator!=(std::nullptr_t rhs) const
 	{
-		return this->pData != nullptr;
+		return this->pData != rhs;
 	}
 	char* StringBuffer::c_str() const
 	{

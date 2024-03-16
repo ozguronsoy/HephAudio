@@ -55,10 +55,15 @@ namespace HephAudio
 		AudioObject* Load(const HephCommon::StringBuffer& filePath, uint32_t playCount, bool isPaused);
 		AudioObject* CreateAudioObject(const HephCommon::StringBuffer& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo);
 		bool DestroyAudioObject(AudioObject* pAudioObject);
+		bool DestroyAudioObject(const HephCommon::Guid& audioObjectId);
 		bool AudioObjectExists(AudioObject* pAudioObject) const;
+		bool AudioObjectExists(const HephCommon::Guid& audioObjectId) const;
 		AudioObject* GetAudioObject(size_t index) const;
+		AudioObject* GetAudioObject(const HephCommon::Guid& audioObjectId);
 		AudioObject* GetAudioObject(const HephCommon::StringBuffer& audioObjectName) const;
-		void PauseCapture(bool pause);
+		size_t GetAudioObjectCount() const;
+		void ResumeCapture();
+		void PauseCapture();
 		bool IsCapturePaused() const;
 		uint32_t GetDeviceEnumerationPeriod() const;
 		void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
@@ -81,6 +86,6 @@ namespace HephAudio
 		AudioDevice GetCaptureDevice() const;
 		AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 		std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
-		bool SaveToFile(const HephCommon::StringBuffer& filePath, bool overwrite, AudioBuffer& buffer);
+		bool SaveToFile(AudioBuffer& buffer, const HephCommon::StringBuffer& filePath, bool overwrite);
 	};
 }

@@ -608,7 +608,7 @@ namespace HephAudio
 	}
 	bool AudioBuffer::operator!=(std::nullptr_t rhs) const
 	{
-		return this->pData == rhs;
+		return this->pData != rhs;
 	}
 	bool AudioBuffer::operator!=(const AudioBuffer& rhs) const
 	{

@@ -184,13 +184,22 @@ namespace HephAudio
 			}
 			return nullptr;
 		}
-		void NativeAudio::PauseCapture(bool pause)
+		size_t NativeAudio::GetAudioObjectCount() const
 		{
-			isCapturePaused = pause;
+			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
+			return this->audioObjects.size();
+		}
+		void NativeAudio::ResumeCapture()
+		{
+			this->isCapturePaused = false;
+		}
+		void NativeAudio::PauseCapture()
+		{
+			this->isCapturePaused = true;
 		}
 		bool NativeAudio::IsCapturePaused() const
 		{
-			return isCapturePaused;
+			return this->isCapturePaused;
 		}
 		uint32_t NativeAudio::GetDeviceEnumerationPeriod() const
 		{
@@ -304,7 +313,7 @@ namespace HephAudio
 
 			return result;
 		}
-		bool NativeAudio::SaveToFile(const StringBuffer& filePath, bool overwrite, AudioBuffer& buffer)
+		bool NativeAudio::SaveToFile(AudioBuffer& buffer, const StringBuffer& filePath, bool overwrite)
 		{
 			try
 			{
