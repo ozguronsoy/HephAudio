@@ -1,4 +1,8 @@
 ## HannPoissonWindow Class
+```c++
+#include <Windows/HannPoissonWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *HannPoissonWindow*
 
 ### Parameterse
