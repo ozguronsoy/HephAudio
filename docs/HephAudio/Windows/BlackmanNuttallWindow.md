@@ -1,4 +1,8 @@
 ## BlackmanNuttallWindow Class
+```c++
+#include <Windows/BlackmanNuttallWindow.h>
+using namespace HephAudio;
+```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *BlackmanNuttallWindow*
 
 ### Methods
