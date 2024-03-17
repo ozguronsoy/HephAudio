@@ -8,7 +8,7 @@ using namespace HephAudio;
 Container for equalizer effect parameters.
 <br><br>
 
-### Parameters
+### Fields
 ```c++
 struct EqualizerInfo
 {
