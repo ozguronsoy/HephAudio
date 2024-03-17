@@ -6,7 +6,7 @@ using namespace HephAudio;
 
 > [Description](#description)<br>
 [Macros](#macros)<br>
-[Parameters](#parameters)<br>
+[Fields](#fields)<br>
 [Methods](#methods)
 
 ### Description
@@ -30,7 +30,7 @@ The default handler for the ``AudioObject::OnRender`` event. Plays the audio dat
 An event handler for the ``AudioObject::OnRender`` event. Converts the audio data to the render format before playing.
 <br><br>
 
-### Parameters
+### Fields
 ```c++
 struct AudioObject
 {
