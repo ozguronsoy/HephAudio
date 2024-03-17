@@ -20,7 +20,7 @@ enum class AudioDeviceType : uint8_t
 ```
 <br><br>
 
-### Parameters
+### Fields
 ```c++
 struct AudioDevice
 {
