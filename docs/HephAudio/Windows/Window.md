@@ -5,7 +5,9 @@ using namespace HephAudio;
 ```
 
 > [Description](#description)<br>
-[Methods](#methods)
+[Methods](#methods)<br>
+[Protected Fields](#protected-fields)<br>
+[Protected Methods](#protected-methods)
 
 ### Description
 Base class for windows. Windows are used to reduce artifacts introduced by the Fourier transform. Check this [tutorial](/docs/tutorials/UsingWindows.md) to learn how and when to use windows.<br>
@@ -15,7 +17,7 @@ Base class for windows. Windows are used to reduce artifacts introduced by the F
 ```c++
 virtual ~Window() = default;
 ```
-Default virtual destructor.
+Releases the resources.
 <br><br><br><br>
 ```c++
 virtual heph_float operator[](size_t n) const = 0;
@@ -41,3 +43,31 @@ virtual void SetSize(size_t newSize);
 ```
 Sets the size (in frames) of the window.
 - **newSize:** The new size of the window.
+<br><br><br><br>
+
+### Protected Fields
+```c++
+class Window
+{
+	size_t size;
+}
+```
+
+- ``size``
+<br><br>
+Size of the window in samples.
+<br><br>
+
+### Protected Methods
+
+```c++
+Window();
+```
+Creates an instance and initializes it with the default values.
+<br><br><br><br>
+
+```c++
+Window(size_t size);
+```
+Creates an instance and initializes it with the provided values.
+- **size:** Size of the window in samples.
