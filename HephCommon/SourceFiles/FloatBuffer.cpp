@@ -81,7 +81,7 @@ namespace HephCommon
 
 		return *this;
 	}
-	FloatBuffer& FloatBuffer::operator=(std::nullptr_t rhs) 
+	FloatBuffer& FloatBuffer::operator=(std::nullptr_t rhs)
 	{
 		this->Empty();
 		return *this;
@@ -666,7 +666,7 @@ namespace HephCommon
 			FloatBuffer y(yFrameCount);
 			for (size_t i = iStart; i < iEnd; i++)
 			{
-				for (int j = (i < iEnd ? i : (iEnd - 1)); j >= 0 && (i - j) < h.frameCount; j--)
+				for (int j = (i < this->frameCount ? i : (this->frameCount - 1)); j >= 0 && (i - j) < h.frameCount; j--)
 				{
 					y.pData[i - iStart] += this->pData[j] * h.pData[i - j];
 				}

@@ -923,7 +923,7 @@ namespace HephAudio
 			{
 				for (size_t i = iStart; i < iEnd; i++)
 				{
-					for (int j = (i < iEnd ? i : (iEnd - 1)); j >= 0 && (i - j) < h.FrameCount(); j--)
+					for (int j = (i < this->frameCount ? i : (this->frameCount - 1)); j >= 0 && (i - j) < h.FrameCount(); j--)
 					{
 						y[i - iStart][ch] += (*this)[j][ch] * h[i - j];
 					}

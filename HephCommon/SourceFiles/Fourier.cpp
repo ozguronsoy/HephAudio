@@ -4,7 +4,7 @@ namespace HephCommon
 {
 	ComplexBuffer Fourier::FFT(const FloatBuffer& floatBuffer)
 	{
-		return Fourier::FFT(floatBuffer, floatBuffer.FrameCount());
+		return Fourier::FFT(floatBuffer, Fourier::CalculateFFTSize(floatBuffer.FrameCount()));
 	}
 	ComplexBuffer Fourier::FFT(const FloatBuffer& floatBuffer, size_t fftSize)
 	{
@@ -54,7 +54,7 @@ namespace HephCommon
 	{
 		if (!(bufferSize > 0 && !(bufferSize & (bufferSize - 1)))) // if not power of 2
 		{
-			return 1 << (size_t)ceil(log2(bufferSize)); // smallest power of 2 thats greater than nSample
+			return (size_t)1 << (size_t)ceil(log2(bufferSize)); // smallest power of 2 thats greater than nSample
 		}
 		return bufferSize;
 	}
@@ -79,7 +79,7 @@ namespace HephCommon
 		Complex a = Complex(-1.0, 0.0);
 		for (size_t i = 0; i < p; i++)
 		{
-			const size_t s = (1 << i);
+			const size_t s = ((size_t)1 << i);
 			const size_t s2 = s << 1;
 			Complex b = Complex(1.0, 0.0);
 			for (size_t j = 0; j < s; j++)
