@@ -6,7 +6,7 @@ using namespace HephAudio;
 
 > [Description](#description)<br>
 [Macros](#macros)<br>
-[Parameters](#parameters)<br>
+[Fields](#fields)<br>
 [Methods](#methods)
 
 ### Description
@@ -20,7 +20,7 @@ Stores information on how audio signals are represented digitally.
 Creates an ``AudioFormatInfo`` instance in the format HephAudio uses internally with the provided channel count and sample rate.
 <br><br>
 
-### Parameters
+### Fields
 ```c++
 struct AudioFormatInfo
 {
