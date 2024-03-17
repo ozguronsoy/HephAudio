@@ -5,7 +5,7 @@ using namespace HephAudio;
 ```
 **Inheritance:** *[Window](/docs/HephAudio/Windows/Window.md)* -> *HannPoissonWindow*
 
-### Parameterse
+### Fields
 ```c++
 class HannPoissonWindow final : public Window
 {
