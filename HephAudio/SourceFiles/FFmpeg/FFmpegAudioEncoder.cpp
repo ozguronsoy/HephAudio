@@ -186,7 +186,7 @@ namespace HephAudio
 				inputFrameCountToRead = bufferToEncode.FrameCount() - i;
 			}
 
-			ret = swr_convert(this->swrContext, this->avFrame->data, this->avFrame->nb_samples, &pCurrentInputFrame, inputFrameCountToRead);
+			ret = swr_convert(this->swrContext, this->avFrame->data, this->avFrame->nb_samples, (const uint8_t**)&pCurrentInputFrame, inputFrameCountToRead);
 			if (ret < 0)
 			{
 				this->CloseFile();

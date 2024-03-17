@@ -246,7 +246,7 @@ namespace HephAudio
 
 						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo);
 						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.Begin();
-						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, this->avFrame->data, currentFrameCount);
+						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, (const uint8_t**)this->avFrame->data, currentFrameCount);
 						if (ret < 0)
 						{
 							av_packet_unref(this->avPacket);
@@ -352,7 +352,7 @@ namespace HephAudio
 
 						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo);
 						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.Begin();
-						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, this->avFrame->data, currentFrameCount);
+						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, (const uint8_t**)this->avFrame->data, currentFrameCount);
 						if (ret < 0)
 						{
 							av_packet_unref(this->avPacket);
