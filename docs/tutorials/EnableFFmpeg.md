@@ -17,4 +17,5 @@ For Visual Studio, go to ``Properties`` -> ``Linker`` -> ``Additional Library Di
 
 - Add ``HEPHAUDIO_USE_FFMPEG`` to the preprocessor definitons.
 
-Now test it by building the app. If there are any errors due to version difference please contact me via e-mail so i can update the library.
+Now test it by building the app. If there are any errors due to version difference please contact me via e-mail so i can update the library. 
+Or create a pull request if you fixed it yourself.
