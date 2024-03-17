@@ -8,7 +8,7 @@ using namespace HephAudio;
 Container for echo effect parameters.
 <br><br>
 
-### Parameters
+### Fields
 ```c++
 struct EchoInfo
 {
