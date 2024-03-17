@@ -4,10 +4,10 @@ HephAudio is a cross-platform audio library that provides:
 - Audio device enumeration and selection.
 - Tools for storing and processing audio data with ease.
 - Easy to use sound effects and filters.
-- FFT for frequency analysis of audio signals.
+- FFT (uses [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/tree/cpp)) for frequency analysis of the audio signals.
 - Room impulse respnose simulation using source-image method.
 - Reading and writing WAV and AIFF files.
-- Decoding and encoding multiple audio codecs.
+- More file format and codec support via [FFmpeg](https://ffmpeg.org/). You will need to enable this feature, and download an FFmpeg build. See [EnableFFmpeg](/docs/tutorials/EnableFFmpeg) for more information.
 
 # Setup
 ### Visual Studio
