@@ -64,7 +64,7 @@ Speed of sound in dry air at 20°C in meters per second.
 ```c++
 typedef float heph_audio_sample;
 ```
-Type of the audio samples, float by default. Can be changed by adding one of the following macros to the compiler options:
+Type of the audio samples, float by default. Can be changed by defining one of the following macros:
 - ``HEPHAUDIO_SAMPLE_TYPE_FLOAT64`` for double
 - ``HEPHAUDIO_SAMPLE_TYPE_FLOAT32`` for float
 - ``HEPHAUDIO_SAMPLE_TYPE_HEPH_FLOAT`` for heph_float, which is explained in the [HephCommonShared](/docs/HephCommon/HephCommonShared.md) docs
