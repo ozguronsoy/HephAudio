@@ -19,7 +19,7 @@ Reads the portion of audio data from the file just before rendering.
 ```c++
 #define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY
 ```
-The key to find the ``AudioStream`` instance that created the ``AudioObject`` instance while handling the ``OnRender`` event.
+The key to find the ``AudioStream`` instance when handling events.
 <br><br>
 
 ### Methods
@@ -34,7 +34,7 @@ Creates an instance and initializes it with the provided values.
 AudioStream(Audio& audio);
 ```
 Creates an instance and initializes it with the provided values.
-- **audio:** Reference to the ``Audio`` instance that will be used to render audio data.
+- **audio:** Reference of the ``Audio`` instance that will be used to render audio data.
 <br><br><br><br>
 
 ```c++
@@ -49,7 +49,7 @@ Creates an instance and initializes it with the provided values.
 AudioStream(Audio& audio, const HephCommon::StringBuffer& filePath);
 ```
 Creates an instance and initializes it with the provided values.
-- **audio:** Reference to the ``Audio`` instance that will be used to render audio data.
+- **audio:** Reference of the ``Audio`` instance that will be used to render audio data.
 - **filePath:** Path of the file that will be played.
 <br><br><br><br>
 
