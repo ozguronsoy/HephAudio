@@ -38,7 +38,7 @@ Defines macros, data types, and methods that will be used in all HephAudio heade
 
 ```c++
 // these macros are for internal use
-// and will only be active if ``HEPHAUDIO_INFO_LOGGING`` is present in the compiler options
+// and will only be active if ``HEPHAUDIO_INFO_LOGGING`` is defined
   
 #define HEPHAUDIO_STOPWATCH_START
 #define HEPHAUDIO_STOPWATCH_RESET
@@ -55,8 +55,8 @@ Speed of sound in dry air at 20°C in meters per second.
 <br><br>
 
 ```c++
-#define HEPH_AUDIO_SAMPLE_MIN -1
-#define HEPH_AUDIO_SAMPLE_MAX 1
+#define HEPH_AUDIO_SAMPLE_MIN
+#define HEPH_AUDIO_SAMPLE_MAX
 #define HEPH_AUDIO_SAMPLE heph_audio_sample // explained in the data types section
 ```
   <br><br>
@@ -67,7 +67,7 @@ typedef float heph_audio_sample;
 Type of the audio samples, float by default. Can be changed by adding one of the following macros to the compiler options:
 - ``HEPHAUDIO_SAMPLE_TYPE_FLOAT64`` for double
 - ``HEPHAUDIO_SAMPLE_TYPE_FLOAT32`` for float
-- ``HEPHAUDIO_SAMPLE_TYPE_HEPH_FLOAT`` for heph_float, which is explained in the HephCommonFramework docs
+- ``HEPHAUDIO_SAMPLE_TYPE_HEPH_FLOAT`` for heph_float, which is explained in the [HephCommonShared](/docs/HephCommon/HephCommonShared.md) docs
 <br><br>
 
 ### Methods
