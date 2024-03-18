@@ -56,7 +56,15 @@ Speed of sound in dry air at 20°C in meters per second.
 
 ```c++
 #define HEPH_AUDIO_SAMPLE_MIN
+```
+Minimum value the ``heph_audio_sample`` can have.
+
+```c++
 #define HEPH_AUDIO_SAMPLE_MAX
+```
+Maximum value the ``heph_audio_sample`` can have.
+
+```c++
 #define HEPH_AUDIO_SAMPLE heph_audio_sample // explained in the data types section
 ```
   <br><br>
