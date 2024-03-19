@@ -11,7 +11,7 @@ namespace HephAudio
 	private:
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
-		void* pData;
+		heph_audio_sample* pData;
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);

@@ -1,6 +1,5 @@
 #include "AudioProcessor.h"
 #include "AudioCodecs/AudioCodecManager.h"
-#include "int24.h"
 #include "../HephCommon/HeaderFiles/HephException.h"
 #include "../HephCommon/HeaderFiles/Fourier.h"
 #include "../HephCommon/HeaderFiles/File.h"
@@ -163,54 +162,14 @@ namespace HephAudio
 	{
 		if (buffer.formatInfo.bitsPerSample > 8)
 		{
-			switch (buffer.formatInfo.bitsPerSample)
+			const uint16_t frameSize = buffer.formatInfo.FrameSize();
+			const uint16_t bytesPerSample = buffer.formatInfo.bitsPerSample / 8;
+			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
-			case 16:
-			{
-				for (size_t i = 0; i < buffer.frameCount; i++)
+				for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
 				{
-					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-					{
-						HephCommon::ChangeEndian((uint8_t*)((int16_t*)buffer.pData + i * buffer.formatInfo.channelCount + j), 2);
-					}
+					HephCommon::ChangeEndian((((uint8_t*)buffer.pData) + i * frameSize + j * bytesPerSample), bytesPerSample);
 				}
-			}
-			break;
-			case 24:
-			{
-				for (size_t i = 0; i < buffer.frameCount; i++)
-				{
-					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-					{
-						HephCommon::ChangeEndian((uint8_t*)((int24*)buffer.pData + i * buffer.formatInfo.channelCount + j), 3);
-					}
-				}
-			}
-			break;
-			case 32:
-			{
-				for (size_t i = 0; i < buffer.frameCount; i++)
-				{
-					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-					{
-						HephCommon::ChangeEndian((uint8_t*)((int32_t*)buffer.pData + i * buffer.formatInfo.channelCount + j), 4);
-					}
-				}
-			}
-			break;
-			case 64:
-			{
-				for (size_t i = 0; i < buffer.frameCount; i++)
-				{
-					for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
-					{
-						HephCommon::ChangeEndian((uint8_t*)((int64_t*)buffer.pData + i * buffer.formatInfo.channelCount + j), 8);
-					}
-				}
-			}
-			break;
-			default:
-				break;
 			}
 			buffer.formatInfo.endian = !buffer.formatInfo.endian;
 		}

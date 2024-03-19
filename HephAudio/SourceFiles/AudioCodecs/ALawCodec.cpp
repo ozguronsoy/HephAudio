@@ -52,6 +52,8 @@ namespace HephAudio
 		}
 		AudioBuffer ALawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
 		{
+			constexpr double scaleFactor = ((double)HEPH_AUDIO_SAMPLE_MAX) / INT16_MAX;
+
 			AudioBuffer resultBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
@@ -61,7 +63,7 @@ namespace HephAudio
 					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
 					const int16_t pcmSample = encodedSample < 128 ? decodeTable[encodedSample] : -decodeTable[encodedSample - 128];
 
-					resultBuffer[i][j] = (heph_float)pcmSample / INT16_MAX;
+					resultBuffer[i][j] = (double)pcmSample * scaleFactor;
 				}
 			}
 
@@ -69,6 +71,8 @@ namespace HephAudio
 		}
 		void ALawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
+			constexpr double scaleFactor = INT16_MAX / ((double)HEPH_AUDIO_SAMPLE_MAX);
+
 			AudioProcessor::ChangeSampleRate(bufferToEncode, 8000);
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
@@ -82,7 +86,7 @@ namespace HephAudio
 			{
 				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 				{
-					int16_t pcmSample = bufferToEncode[i][j] * INT16_MAX;
+					int16_t pcmSample = bufferToEncode[i][j] * scaleFactor;
 					uint8_t mask;
 					if (pcmSample >= 0)
 					{

@@ -15,56 +15,29 @@ namespace HephAudio
 		{
 			AudioBuffer resultBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
 
-			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
+			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
-				if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
+					double sample;
+					if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
 					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+						sample = ((float*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
+						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
-							float ieeSample = ((float*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-							HephCommon::ChangeEndian((uint8_t*)&ieeSample, sizeof(float));
-
-							resultBuffer[i][j] = ieeSample;
+							HephCommon::ChangeEndian((uint8_t*)&sample, sizeof(float));
 						}
 					}
-				}
-				else
-				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
+					else
 					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+						sample = ((double*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
+						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
-							double ieeSample = ((double*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-							HephCommon::ChangeEndian((uint8_t*)&ieeSample, sizeof(double));
-
-							resultBuffer[i][j] = ieeSample;
+							HephCommon::ChangeEndian((uint8_t*)&sample, sizeof(double));
 						}
 					}
-				}
-			}
-			else
-			{
-				if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
-				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
-					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
-						{
-							resultBuffer[i][j] = ((float*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-						}
-					}
-				}
-				else
-				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
-					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
-						{
-							resultBuffer[i][j] = ((double*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-						}
-					}
+					
+					resultBuffer[i][j] = sample * HEPH_AUDIO_SAMPLE_MAX;
 				}
 			}
 
@@ -72,63 +45,32 @@ namespace HephAudio
 		}
 		void IEEE_FloatCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
 		{
-			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
-			encodedBufferInfo.formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT;
-			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
-			encodedBufferInfo.formatInfo.bitsPerSample = bufferToEncode.FormatInfo().bitsPerSample;
-			encodedBufferInfo.formatInfo.sampleRate = bufferToEncode.FormatInfo().sampleRate;
 			AudioBuffer resultBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
-			if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
-			{
-				if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
-				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
-					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
-						{
-							float hephaudioSample = bufferToEncode[i][j];
-							HephCommon::ChangeEndian((uint8_t*)&hephaudioSample, sizeof(float));
+			const double scaleFactor = 1.0 / HEPH_AUDIO_SAMPLE_MAX;
 
-							((float*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = hephaudioSample;
-						}
-					}
-				}
-				else
-				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
-					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
-						{
-							double hephaudioSample = bufferToEncode[i][j];
-							HephCommon::ChangeEndian((uint8_t*)&hephaudioSample, sizeof(double));
-
-							((double*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = hephaudioSample;
-						}
-					}
-				}
-			}
-			else
+			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
-				if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
+					if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
 					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+						float encodedSample = bufferToEncode[i][j] * scaleFactor;
+						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
-							((float*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j];
+							HephCommon::ChangeEndian((uint8_t*)&encodedSample, sizeof(float));
 						}
+						((float*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = encodedSample;
 					}
-				}
-				else
-				{
-					for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
+					else
 					{
-						for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+						double encodedSample = bufferToEncode[i][j] * scaleFactor;
+						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
-							((double*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = bufferToEncode[i][j];
+							HephCommon::ChangeEndian((uint8_t*)&encodedSample, sizeof(double));
 						}
+						((double*)resultBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = encodedSample;
 					}
 				}
 			}

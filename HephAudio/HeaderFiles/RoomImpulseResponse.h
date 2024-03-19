@@ -31,6 +31,7 @@ namespace HephAudio
 		heph_float wallXZ;
 		heph_float c; // speed of sound
 		heph_float Vroom;
+		heph_float impulseResponseRange;
 		HephCommon::FloatBuffer frequencies;
 		HephCommon::FloatBuffer RT60;
 		HephCommon::FloatBuffer BX1; // wall reflection coefficients
@@ -39,7 +40,6 @@ namespace HephAudio
 		HephCommon::FloatBuffer BY2;
 		HephCommon::FloatBuffer BZ1;
 		HephCommon::FloatBuffer BZ2;
-		heph_float impulseResponseRange;
 	public:
 		RoomImpulseResponse(uint32_t sampleRate, HephCommon::Vector3 roomSize, heph_float c, heph_float frequencyAbsorptionCoefficients[][7], size_t nFrequency);
 		HephCommon::FloatBuffer SimulateRoomIR(const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, size_t fftSize, Window& window, uint32_t imageRangeLimit = defaultImageRangeLimit) const;

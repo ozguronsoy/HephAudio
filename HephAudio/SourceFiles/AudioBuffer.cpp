@@ -12,7 +12,7 @@ namespace HephAudio
 	{
 		if (frameCount > 0)
 		{
-			this->pData = malloc(this->Size());
+			this->pData = (heph_audio_sample*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory."));
@@ -26,7 +26,7 @@ namespace HephAudio
 	{
 		if (rhs.frameCount > 0)
 		{
-			this->pData = malloc(rhs.Size());
+			this->pData = (heph_audio_sample*)malloc(rhs.Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory."));
@@ -78,7 +78,7 @@ namespace HephAudio
 
 			if (rhs.frameCount > 0)
 			{
-				this->pData = malloc(rhs.Size());
+				this->pData = (heph_audio_sample*)malloc(rhs.Size());
 				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::operator=", "Insufficient memory."));
@@ -650,7 +650,7 @@ namespace HephAudio
 				return;
 			}
 
-			void* tempPtr = malloc(this->Size() + buffer.Size());
+			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Join", "Insufficient memory."));
@@ -677,7 +677,7 @@ namespace HephAudio
 			const size_t newFrameCount = frameIndex > this->frameCount ? (buffer.frameCount + frameIndex) : (this->frameCount + buffer.frameCount);
 			const size_t newSize = newFrameCount * this->formatInfo.FrameSize();
 
-			void* tempPtr = malloc(newSize);
+			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Insert", "Insufficient memory."));
@@ -716,7 +716,7 @@ namespace HephAudio
 			this->frameCount = this->frameCount - frameCount;
 			const size_t newSize = this->Size();
 
-			void* tempPtr = malloc(newSize);
+			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Cut", "Insufficient memory."));
@@ -754,7 +754,7 @@ namespace HephAudio
 			const size_t newFrameCount = frameIndex > this->frameCount ? (frameCount + frameIndex) : (this->frameCount + frameCount);
 			const size_t newSize = newFrameCount * this->formatInfo.FrameSize();
 
-			void* tempPtr = malloc(newSize);
+			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Replace", "Insufficient memory."));
@@ -804,7 +804,7 @@ namespace HephAudio
 			}
 			else
 			{
-				void* tempPtr = realloc(this->pData, newFrameCount * this->formatInfo.FrameSize());
+				heph_audio_sample* tempPtr = (heph_audio_sample*)realloc(this->pData, newFrameCount * this->formatInfo.FrameSize());
 				if (tempPtr == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Resize", "Insufficient memory."));

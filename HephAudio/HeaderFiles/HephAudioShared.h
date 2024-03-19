@@ -2,7 +2,8 @@
 #include "../HephCommon/HeaderFiles/HephCommonShared.h"
 #include <cmath>
 
-#ifndef HEPHAUDIO_FORMAT_TAG_PCM
+#if !defined(HEPHAUDIO_FORMAT_TAG_PCM)
+
 #define HEPHAUDIO_FORMAT_TAG_PCM 0x0001
 #define HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT 0x0003
 #define HEPHAUDIO_FORMAT_TAG_ALAW 0x0006
@@ -21,9 +22,11 @@
 #define HEPHAUDIO_FORMAT_TAG_MPEG4_AAC 0xA106
 #define HEPHAUDIO_FORMAT_TAG_FLAC 0xF1AC
 #define HEPHAUDIO_FORMAT_TAG_EXTENSIBLE 0xFFFE
+
 #endif
 
-#ifndef HEPHAUDIO_STOPWATCH_START
+#if !defined(HEPHAUDIO_STOPWATCH_START)
+
 #ifdef HEPHAUDIO_INFO_LOGGING
 #define HEPHAUDIO_STOPWATCH_START HephCommon::StopWatch::StaticStart()
 #define HEPHAUDIO_STOPWATCH_RESET HephCommon::StopWatch::StaticReset()
@@ -37,13 +40,22 @@
 #define HEPHAUDIO_STOPWATCH_STOP
 #define HEPHAUDIO_LOG(logMessage, logType)
 #endif
+
 #endif
 
-#ifndef HEPHAUDIO_SPEED_OF_SOUND
+#if !defined(HEPHAUDIO_SPEED_OF_SOUND)
 #define HEPHAUDIO_SPEED_OF_SOUND 343.0 // speed of sound in dry air at 20°C in meters per second
 #endif
 
-#ifndef HEPH_AUDIO_SAMPLE
+#if !defined(INT24_MAX)
+
+#define UINT24_MAX 16777215
+#define INT24_MIN (-8388608)
+#define INT24_MAX 8388607
+
+#endif
+
+#if !defined(HEPH_AUDIO_SAMPLE)
 
 #if defined(HEPHAUDIO_SAMPLE_TYPE_FLOAT64)
 typedef double heph_audio_sample;
@@ -60,6 +72,21 @@ typedef heph_float heph_audio_sample;
 #define HEPH_AUDIO_SAMPLE_MIN -1.0_hf
 #define HEPH_AUDIO_SAMPLE_MAX 1.0_hf
 #define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_S64)
+typedef int64_t heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN INT64_MIN
+#define HEPH_AUDIO_SAMPLE_MAX INT64_MAX
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_PCM
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_S32)
+typedef int32_t heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN INT32_MIN
+#define HEPH_AUDIO_SAMPLE_MAX INT32_MAX
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_PCM
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_S16)
+typedef int16_t heph_audio_sample;
+#define HEPH_AUDIO_SAMPLE_MIN INT16_MIN
+#define HEPH_AUDIO_SAMPLE_MAX INT16_MAX
+#define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_PCM
 #else
 typedef float heph_audio_sample;
 #define HEPH_AUDIO_SAMPLE_MIN -1.0f
@@ -68,6 +95,7 @@ typedef float heph_audio_sample;
 #endif
 
 #define HEPH_AUDIO_SAMPLE heph_audio_sample
+
 #endif
 
 #pragma region Helper Methods

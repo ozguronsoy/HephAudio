@@ -15,7 +15,7 @@ namespace HephAudio
 	class AudioPlaylist final
 	{
 	public:
-		enum TransitionEffect
+		enum TransitionEffect : uint8_t
 		{
 			None,
 			Delay,

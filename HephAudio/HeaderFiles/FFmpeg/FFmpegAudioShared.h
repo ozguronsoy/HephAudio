@@ -34,6 +34,18 @@ namespace HephAudio
 	{
 #if HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
 		return sizeof(heph_audio_sample) == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT;
+#elif HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_PCM
+		switch (sizeof(heph_audio_sample))
+		{
+		case 2:
+			return AV_SAMPLE_FMT_S16;
+		case 4:
+			return AV_SAMPLE_FMT_S32;
+		case 8:
+			return AV_SAMPLE_FMT_S64;
+		default:
+			return AV_SAMPLE_FMT_NONE;
+		}
 #else
 #error Unsupported internal format??
 #endif

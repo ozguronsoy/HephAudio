@@ -67,7 +67,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\OggFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Oscillators\Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\NativeAudio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\int24.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioRenderEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\ParzenWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\PcmCodec.h" />
@@ -133,7 +132,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\OggFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Oscillators\Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\NativeAudio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\int24.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\ParzenWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\PcmCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioStream.cpp" />
