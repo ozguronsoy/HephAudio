@@ -197,7 +197,11 @@ namespace HephAudio
 		heph_float factor = info.decayFactor;
 		size_t startFrameIndex = echoStartFrame + delayFrameCount;
 
-		buffer.Resize(echoStartFrame + delayFrameCount * info.reflectionCount + echoBuffer.frameCount);
+		const size_t echoEndFrame = echoStartFrame + delayFrameCount * info.reflectionCount + echoBuffer.frameCount;
+		if (echoEndFrame > buffer.frameCount)
+		{
+			buffer.Resize(echoEndFrame);
+		}
 
 		for (size_t i = 0; i < info.reflectionCount; i++, factor *= info.decayFactor, startFrameIndex += delayFrameCount)
 		{
