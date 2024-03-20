@@ -14,8 +14,8 @@ namespace HephAudio
 	class AudioProcessor final
 	{
 	private:
-		static constexpr size_t defaultHopSize = 1024u;
-		static constexpr size_t defaultFFTSize = 4096u;
+		static constexpr size_t DEFAULT_HOP_SIZE = 1024u;
+		static constexpr size_t DEFAULT_FFT_SIZE = 4096u;
 	public:
 		AudioProcessor() = delete;
 		AudioProcessor(const AudioProcessor&) = delete;
@@ -43,12 +43,12 @@ namespace HephAudio
 		static void Vibrato(AudioBuffer& buffer, heph_float depth, heph_float extent_semitone, const Oscillator& lfo);
 		static void Chorus(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, heph_float extent_semitone, const Oscillator& lfo);
 		static void Flanger(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, const Oscillator& lfo);
-		static void Wah(AudioBuffer& buffer, heph_float depth, heph_float damping, heph_float fcmin, heph_float fcmax, const Oscillator& lfo);
 		static void FixOverflow(AudioBuffer& buffer);
-		static void Normalize(AudioBuffer& buffer, heph_float peakAmplitude);
-		static void RmsNormalize(AudioBuffer& buffer, heph_float desiredRms);
+		static void Normalize(AudioBuffer& buffer, heph_audio_sample peakAmplitude);
+		static void RmsNormalize(AudioBuffer& buffer, heph_float rms);
 		static void HardClipDistortion(AudioBuffer& buffer, heph_float clippingLevel_dB);
-		static void SoftClipDistortion(AudioBuffer& buffer, heph_float alpha);
+		static void ArctanDistortion(AudioBuffer& buffer, heph_float alpha);
+		static void CubicDistortion(AudioBuffer& buffer, heph_float a);
 		static void Overdrive(AudioBuffer& buffer, heph_float drive);
 		static void Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha);
 		static void LinearFadeIn(AudioBuffer& buffer, heph_float duration_s);

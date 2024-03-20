@@ -57,12 +57,12 @@
 
 #if !defined(HEPH_AUDIO_SAMPLE)
 
-#if defined(HEPHAUDIO_SAMPLE_TYPE_FLOAT64)
+#if defined(HEPHAUDIO_SAMPLE_TYPE_DBL)
 typedef double heph_audio_sample;
 #define HEPH_AUDIO_SAMPLE_MIN -1.0
 #define HEPH_AUDIO_SAMPLE_MAX 1.0
 #define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
-#elif defined(HEPHAUDIO_SAMPLE_TYPE_FLOAT32)
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_FLT)
 typedef float heph_audio_sample;
 #define HEPH_AUDIO_SAMPLE_MIN -1.0f
 #define HEPH_AUDIO_SAMPLE_MAX 1.0f
@@ -95,6 +95,20 @@ typedef float heph_audio_sample;
 #endif
 
 #define HEPH_AUDIO_SAMPLE heph_audio_sample
+
+#if HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_PCM
+
+#define HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(sample) (((double)sample) / (-((double)HEPH_AUDIO_SAMPLE_MIN)))
+#define HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(fltSample) ((heph_audio_sample)((fltSample) * (-((double)HEPH_AUDIO_SAMPLE_MIN))))
+
+#elif HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
+
+#define HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(sample) sample
+#define HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(fltSample) fltSample
+
+#else
+#error heph_audio_sample/ieee_float conversions are not implemented for this internal format yet.
+#endif
 
 #endif
 
