@@ -67,18 +67,35 @@ Maximum value the ``heph_audio_sample`` can have.
 ```c++
 #define HEPH_AUDIO_SAMPLE heph_audio_sample // explained in the data types section
 ```
+
+```c++
+#define HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(sample)
+```
+``[HEPH_AUDIO_SAMPLE_MIN, HEPH_AUDIO_SAMPLE_MAX]`` -> ``[-1, 1]``
+
+```c++
+#define HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(fltSample)
+```
+``[-1, 1]`` -> ``[HEPH_AUDIO_SAMPLE_MIN, HEPH_AUDIO_SAMPLE_MAX]``
+
+
   <br><br>
 ### Data Types
 ```c++
 typedef float heph_audio_sample;
 ```
 Type of the audio samples, float by default. Can be changed by defining one of the following macros:
-- ``HEPHAUDIO_SAMPLE_TYPE_FLOAT64`` to select ``double``.
-- ``HEPHAUDIO_SAMPLE_TYPE_FLOAT32`` to select ``float``.
-- ``HEPHAUDIO_SAMPLE_TYPE_HEPH_FLOAT`` to select ``heph_float``, which is explained in the [HephCommonShared](/docs/HephCommon/HephCommonShared.md) docs.
+- ``HEPHAUDIO_SAMPLE_TYPE_DBL`` to select ``double``.
+- ``HEPHAUDIO_SAMPLE_TYPE_FLT`` to select ``float``.
 - ``HEPHAUDIO_SAMPLE_TYPE_S64`` to select ``int64_t``.
 - ``HEPHAUDIO_SAMPLE_TYPE_S32`` to select ``int32_t``.
 - ``HEPHAUDIO_SAMPLE_TYPE_S16`` to select ``int16_t``.
+
+> [!IMPORTANT]
+> HephAudio was initially designed to only use ``float`` or ``double`` as ``heph_audio_sample``.
+> Hence some features (mostly sound effects) may not work properly for the integer types.
+
+
 <br><br>
 
 ### Methods
