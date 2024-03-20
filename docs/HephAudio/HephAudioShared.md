@@ -76,6 +76,9 @@ Type of the audio samples, float by default. Can be changed by defining one of t
 - ``HEPHAUDIO_SAMPLE_TYPE_FLOAT64`` to select ``double``.
 - ``HEPHAUDIO_SAMPLE_TYPE_FLOAT32`` to select ``float``.
 - ``HEPHAUDIO_SAMPLE_TYPE_HEPH_FLOAT`` to select ``heph_float``, which is explained in the [HephCommonShared](/docs/HephCommon/HephCommonShared.md) docs.
+- ``HEPHAUDIO_SAMPLE_TYPE_S64`` to select ``int64_t``.
+- ``HEPHAUDIO_SAMPLE_TYPE_S32`` to select ``int32_t``.
+- ``HEPHAUDIO_SAMPLE_TYPE_S16`` to select ``int16_t``.
 <br><br>
 
 ### Methods
