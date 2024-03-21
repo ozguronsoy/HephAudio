@@ -18,7 +18,8 @@ Creates an instance and initializes it with provided values.
 - **size:** Size of the window in frames.
 <br><br><br><br>
 ```c++
-TukeyWindow(size_t size, heph_float alpha);
+TukeyWindow(size_t size,
+            heph_float alpha);
 ```
 Creates an instance and initializes it with provided values.
 - **size:** Size of the window in frames.
