@@ -34,7 +34,7 @@ Gets the error error description.
 ```c++
 #define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT
 ```
-Defines the [AVSampleFormat] that's internally used.
+Defines the [AVSampleFormat](https://ffmpeg.org/doxygen/trunk/group__lavu__sampfmts.html) that's internally used.
 
 
 ### Methods
