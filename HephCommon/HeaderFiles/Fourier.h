@@ -19,7 +19,6 @@ namespace HephCommon
 		static heph_float IndexToBinFrequency(size_t sampleRate, size_t fftSize, size_t index);
 		static size_t CalculateFFTSize(size_t bufferSize);
 	private:
-		static void ReverseBits(ComplexBuffer& complexBuffer, size_t fftSize);
 		static void FFT_Internal(ComplexBuffer& complexBuffer, size_t fftSize, bool isForward);
 	};
 }

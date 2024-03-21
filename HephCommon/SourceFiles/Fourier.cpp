@@ -1,8 +1,6 @@
 #include "Fourier.h"
-#if !defined(HEPH_FOURIER_USE_BUILT_IN_FFT)
 #include "../pocketfft/pocketfft_hdronly.h"
 #include <complex>
-#endif
 
 namespace HephCommon
 {
@@ -62,45 +60,8 @@ namespace HephCommon
 		}
 		return bufferSize;
 	}
-	void Fourier::ReverseBits(ComplexBuffer& complexBuffer, size_t fftSize)
-	{
-		size_t j = 0;
-		for (size_t i = 0; i < fftSize; i++)
-		{
-			if (i < j)
-			{
-				const Complex temp = complexBuffer[j];
-				complexBuffer[j] = complexBuffer[i];
-				complexBuffer[i] = temp;
-			}
-			j ^= fftSize - fftSize / ((i ^ (i + 1)) + 1);
-		}
-	}
 	void Fourier::Fourier::FFT_Internal(ComplexBuffer& complexBuffer, size_t fftSize, bool isForward)
 	{
-#if defined(HEPH_FOURIER_USE_BUILT_IN_FFT)
-		Fourier::ReverseBits(complexBuffer, fftSize);
-		const size_t p = log2(fftSize);
-		Complex a = Complex(-1.0, 0.0);
-		for (size_t i = 0; i < p; i++)
-		{
-			const size_t s = ((size_t)1 << i);
-			const size_t s2 = s << 1;
-			Complex b = Complex(1.0, 0.0);
-			for (size_t j = 0; j < s; j++)
-			{
-				for (size_t k = j; k < fftSize; k += s2)
-				{
-					const Complex temp = b * complexBuffer[k + s];
-					complexBuffer[k + s] = complexBuffer[k] - temp;
-					complexBuffer[k] += temp;
-				}
-				b *= a;
-			}
-			a.imaginary = isForward ? -sqrt((1.0 - a.real) * 0.5) : sqrt((1.0 - a.real) * 0.5);
-			a.real = sqrt((1.0 + a.real) * 0.5);
-		}
-#else
 		static pocketfft::stride_t stride_in{ sizeof(heph_float) };
 		static pocketfft::stride_t stride_out{ sizeof(Complex) };
 		static pocketfft::shape_t axes{ 0 };
@@ -108,6 +69,5 @@ namespace HephCommon
 		pocketfft::shape_t shape_in{ fftSize };
 		std::complex<heph_float>* pComplexBuffer = (std::complex<heph_float>*)complexBuffer.Begin();
 		pocketfft::c2c(shape_in, stride_out, stride_out, axes, isForward, pComplexBuffer, pComplexBuffer, 1.0_hf);
-#endif
 	}
 }
