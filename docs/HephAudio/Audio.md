@@ -265,7 +265,8 @@ Initializes render with the default device and the default format.
 <br><br><br><br>
 
 ```c++
-void InitializeRender(uint16_t channelCount, uint32_t sampleRate);
+void InitializeRender(uint16_t channelCount,
+                      uint32_t sampleRate);
 ```
 Initializes render with the default device and the internal format.
 - **channelCount:** Number of channels. Closest channel count will be selected if the provided one is not supported.
@@ -280,7 +281,8 @@ Initializes render with the default device and the provided format.
 <br><br><br><br>
 
 ```c++
-void InitializeRender(AudioDevice* device, AudioFormatInfo format);
+void InitializeRender(AudioDevice* device,
+                      AudioFormatInfo format);
 ```
 Initializes render with the provided device and the provided format.
 - **device:** Pointer to the render device which will be used. Can be ``nullptr`` if the default device is desired.
@@ -300,7 +302,8 @@ Initializes capture with the default device and the default format.
 <br><br><br><br>
 
 ```c++
-void InitializeCapture(uint16_t channelCount, uint32_t sampleRate);
+void InitializeCapture(uint16_t channelCount,
+                       uint32_t sampleRate);
 ```
 Initializes capture with the default device and the internal format.
 - **channelCount:** Number of channels. Closest channel count will be selected if the provided one is not supported.
@@ -315,7 +318,8 @@ Initializes capture with the default device and the provided format.
 <br><br><br><br>
 
 ```c++
-void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
+void InitializeCapture(AudioDevice* device,
+                       AudioFormatInfo format);
 ```
 Initializes capture with the provided device and the provided format.
 - **device:** Pointer to the capture device which will be used. Can be ``nullptr`` if the default device is desired.
@@ -371,7 +375,9 @@ Gets all the available [AudioDevices](/docs/HephAudio/AudioDevice.md) of the req
 <br><br><br><br>
 
 ```c++
-bool SaveToFile(AudioBuffer& buffer, const HephCommon::StringBuffer& filePath, bool overwrite);
+bool SaveToFile(AudioBuffer& buffer,
+                const HephCommon::StringBuffer& filePath,
+                bool overwrite);
 ```
 Creates a file and saves the provided data.
 - **buffer:** Audio data which will be saved.
