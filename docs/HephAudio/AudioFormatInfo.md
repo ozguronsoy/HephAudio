@@ -60,7 +60,10 @@ AudioFormatInfo();
 Creates an instance and initializes it with default values.
 <br><br><br><br>
 ```c++
-AudioFormatInfo(uint16_t formatTag, uint16_t nChannels, uint16_t bps, uint32_t sampleRate);
+AudioFormatInfo(uint16_t formatTag,
+                uint16_t nChannels,
+                uint16_t bps,
+                uint32_t sampleRate);
 ```
 Creates an instance and initializes it with provided values. Assigns ``HEPH_SYSTEM_ENDIAN`` to the ``AudioFormatInfo::endian`` field.
 <br><br><br><br>
