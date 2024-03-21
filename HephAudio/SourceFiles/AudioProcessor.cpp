@@ -717,7 +717,7 @@ namespace HephAudio
 				threads[i * buffer.formatInfo.channelCount + j] = std::thread(applyEqualizer, &buffer, &windowBuffer
 					, j, i * frameCountPerThread, frameCountPerThread
 					, hopSize, fftSize, nyquistFrequency
-					, &infos, overflowFactor);
+					, &infos, overflowFactor); // 
 			}
 		}
 
@@ -831,7 +831,7 @@ namespace HephAudio
 			{
 				synthesisMagnitudes[j].Reset();
 				synthesisFrequencies[j].Reset();
-				ComplexBuffer complexBuffer = ComplexBuffer(channels[j].GetSubBuffer(i, fftSize) * windowBuffer);
+				ComplexBuffer complexBuffer(channels[j].GetSubBuffer(i, fftSize) * windowBuffer);
 				Fourier::FFT(complexBuffer, fftSize);
 
 				for (size_t k = 0; k < nyquistFrequency; k++)
@@ -871,13 +871,22 @@ namespace HephAudio
 	}
 	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window)
 	{
-		AudioProcessor::PitchShiftMT(buffer, AudioProcessor::DEFAULT_HOP_SIZE, AudioProcessor::DEFAULT_FFT_SIZE, pitchChange_semitone, window);
+		AudioProcessor::PitchShiftMT(buffer, AudioProcessor::DEFAULT_HOP_SIZE, AudioProcessor::DEFAULT_FFT_SIZE, pitchChange_semitone, 0, window);
+	}
+	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone, size_t threadCountPerChannel, Window& window)
+	{
+		AudioProcessor::PitchShiftMT(buffer, AudioProcessor::DEFAULT_HOP_SIZE, AudioProcessor::DEFAULT_FFT_SIZE, pitchChange_semitone, threadCountPerChannel, window);
 	}
 	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window)
 	{
+		AudioProcessor::PitchShiftMT(buffer, hopSize, fftSize, pitchChange_semitone, 0, window);
+	}
+	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, size_t threadCountPerChannel, Window& window)
+	{
 		auto applyPitchShift = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, size_t channelIndex
-			, size_t hopSize, size_t fftSize, size_t nyquistFrequency
-			, heph_float shiftFactor, heph_float overflowFactor)
+			, size_t frameIndex, size_t frameCount, size_t hopSize
+			, size_t fftSize, size_t nyquistFrequency, heph_float shiftFactor
+			, heph_float overflowFactor)
 			{
 				constexpr heph_float twopi = 2.0 * Math::pi;
 
@@ -886,19 +895,19 @@ namespace HephAudio
 				FloatBuffer synthesisMagnitudes(nyquistFrequency);
 				FloatBuffer synthesisFrequencies(nyquistFrequency);
 
-				FloatBuffer channel(buffer->frameCount);
-				for (size_t i = 0; i < buffer->frameCount; i++)
+				FloatBuffer channel(frameCount);
+				for (size_t i = 0; i < frameCount; i++)
 				{
-					channel[i] = (*buffer)[i][channelIndex];
-					(*buffer)[i][channelIndex] = 0;
+					channel[i] = (*buffer)[i + frameIndex][channelIndex];
+					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < buffer->frameCount; i += hopSize)
+				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
 				{
 					synthesisMagnitudes.Reset();
 					synthesisFrequencies.Reset();
 
-					ComplexBuffer complexBuffer = ComplexBuffer(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer));
+					ComplexBuffer complexBuffer(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer));
 					Fourier::FFT(complexBuffer, fftSize);
 
 					for (size_t k = 0; k < nyquistFrequency; k++)
@@ -929,27 +938,39 @@ namespace HephAudio
 					}
 
 					Fourier::IFFT(complexBuffer, false);
-					for (size_t k = 0, l = i; k < fftSize && l < buffer->frameCount; k++, l++)
+					for (size_t k = 0, l = i + frameIndex; k < fftSize && l < buffer->frameCount; k++, l++)
 					{
 						(*buffer)[l][channelIndex] += complexBuffer[k].real * overflowFactor * (*pWindowBuffer)[k] / fftSize;
 					}
 				}
 			};
 
+		if (threadCountPerChannel == 0)
+		{
+			threadCountPerChannel = std::thread::hardware_concurrency() / buffer.formatInfo.channelCount;
+		}
+
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		window.SetSize(fftSize);
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const heph_float shiftFactor = pow(2.0, pitchChange_semitone / 12.0);
 		const heph_float overflowFactor = ((double)hopSize) / ((double)fftSize);
+		const size_t frameCountPerThread = Math::Ceil((heph_float)buffer.frameCount / (heph_float)threadCountPerChannel);
 		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<std::thread> threads(buffer.formatInfo.channelCount);
+		std::vector<std::thread> threads(buffer.formatInfo.channelCount * threadCountPerChannel);
 
-		for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+		for (size_t i = 0; i < threadCountPerChannel; i++)
 		{
-			threads[i] = std::thread(applyPitchShift, &buffer, &windowBuffer, i, hopSize, fftSize, nyquistFrequency, shiftFactor, overflowFactor);
+			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
+			{
+				threads[i * buffer.formatInfo.channelCount + j] = std::thread(applyPitchShift, &buffer, &windowBuffer
+					, j, i * frameCountPerThread, frameCountPerThread
+					, hopSize, fftSize, nyquistFrequency
+					, shiftFactor, overflowFactor);
+			}
 		}
 
-		for (size_t i = 0; i < buffer.formatInfo.channelCount; i++)
+		for (size_t i = 0; i < threads.size(); i++)
 		{
 			if (threads[i].joinable())
 			{

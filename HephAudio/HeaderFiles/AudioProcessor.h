@@ -68,7 +68,9 @@ namespace HephAudio
 		static void PitchShift(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window);
 		static void PitchShift(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window);
 		static void PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone, Window& window);
+		static void PitchShiftMT(AudioBuffer& buffer, heph_float pitchChange_semitone, size_t threadCountPerChannel, Window& window);
 		static void PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, Window& window);
+		static void PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, heph_float pitchChange_semitone, size_t threadCountPerChannel, Window& window);
 #pragma endregion
 #pragma region Filters
 	public:
