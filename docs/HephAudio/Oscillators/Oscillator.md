@@ -6,7 +6,8 @@ using namespace HephAudio;
 
 > [Description](#description)<br>
 [Fields](#fields)<br>
-[Methods](#methods)
+[Methods](#methods)<br>
+[Protected Methods](#protected-methods)
 
 ### Description
 Base class for oscillators. Oscillators are used for generating periodic signals. 
@@ -75,3 +76,25 @@ Generates a buffer with the provided size starting at the provided index.
 - **frameIndex:** Index of the first sample.
 - **frameCount:** Size of the buffer in frames.
 - **Returns:** The generated buffer.
+<br><br><br><br>
+
+
+### Protected Methods
+
+```c++
+Oscillator();
+```
+Creates an instance and initializes it with the default values.
+<br><br><br><br>
+
+```c++
+Oscillator(heph_float peakAmplitude,
+           heph_float frequency,
+           uint32_t sampleRate,
+           heph_float phase_rad);
+```
+Creates an instance and initializes it with the provided values.
+- **peakAmplitude:** Maximum amplitude of the signal.
+- **frequency:** Frequency of the signal.
+- **sampleRate:** Samples per second (Hz), the number of samples required to represent a one-second-long signal.
+- **phase_rad:** Phase angle (radian) of the signal.
