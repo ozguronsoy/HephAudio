@@ -38,7 +38,8 @@ Creates an instance and initializes it with the provided values.
 <br><br><br><br>
 
 ```c++
-AudioStream(Native::NativeAudio* pNativeAudio, const HephCommon::StringBuffer& filePath);
+AudioStream(Native::NativeAudio* pNativeAudio,
+            const HephCommon::StringBuffer& filePath);
 ```
 Creates an instance and initializes it with the provided values.
 - **pNativeAudio:** Pointer to the ``NativeAudio`` instance that will be used to render audio data.
@@ -46,7 +47,8 @@ Creates an instance and initializes it with the provided values.
 <br><br><br><br>
 
 ```c++
-AudioStream(Audio& audio, const HephCommon::StringBuffer& filePath);
+AudioStream(Audio& audio,
+            const HephCommon::StringBuffer& filePath);
 ```
 Creates an instance and initializes it with the provided values.
 - **audio:** Reference of the ``Audio`` instance that will be used to render audio data.
