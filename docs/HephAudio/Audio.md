@@ -200,7 +200,7 @@ Resumes capturing.
 <br><br><br><br>
 
 ```c++
-void ResumeCapture();
+void PauseCapture();
 ```
 Pauses capturing.
 <br><br><br><br>
