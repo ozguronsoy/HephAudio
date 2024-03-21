@@ -237,9 +237,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\LanczosWindow.h">
       <Filter>HeaderFiles\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\RoomImpulseResponse.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\WinAudioBase.h">
       <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
@@ -427,9 +424,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\LanczosWindow.cpp">
       <Filter>SourceFiles\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\RoomImpulseResponse.cpp">
-      <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\WinAudioBase.cpp">
       <Filter>SourceFiles\NativeAudio</Filter>

@@ -71,7 +71,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\ParzenWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\PcmCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioStream.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\RoomImpulseResponse.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Oscillators\SawToothWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Oscillators\SineWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\SineWindow.h" />
@@ -135,7 +134,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\ParzenWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\PcmCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioStream.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\RoomImpulseResponse.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Oscillators\SawToothWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Oscillators\SineWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\SineWindow.cpp" />
