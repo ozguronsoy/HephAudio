@@ -14,7 +14,7 @@ using namespace HephAudio;
 > [!IMPORTANT]
 > HephAudio provides neither the source code nor the binaries of FFmpeg. 
 > Hence you have to obtain them yourself and also enable FFmpeg via a preprocessor directive.
-> See [EnableFFmpeg](/docs/tutorials/EnableFFmpeg.md) for a step by step guide.
+> See [EnableFFmpeg](/docs/tutorials/EnableFFmpeg.md) for a step-by-step guide.
 
 <br><br>
 
