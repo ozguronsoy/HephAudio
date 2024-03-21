@@ -27,7 +27,7 @@ namespace HephAudio
 		AudioFormatInfo M4aFormat::ReadAudioFormatInfo(const HephCommon::File& audioFile)
 		{
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
-			return this->ffmpegAudioDecoder.GetOutputFormat();
+			return this->ffmpegAudioDecoder.GetOutputFormatInfo();
 		}
 		AudioBuffer M4aFormat::ReadFile(const HephCommon::File& audioFile)
 		{

@@ -34,7 +34,7 @@ namespace HephAudio
 		void ChangeFile(const HephCommon::StringBuffer& newAudioFilePath);
 		void CloseFile();
 		bool IsFileOpen() const;
-		AudioFormatInfo GetOutputFormat() const;
+		AudioFormatInfo GetOutputFormatInfo() const;
 		size_t GetFrameCount() const;
 		bool Seek(size_t frameIndex);
 		AudioBuffer Decode();

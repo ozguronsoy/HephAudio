@@ -29,31 +29,24 @@ namespace HephAudio
 		}
 		return errorMessage;
 	}
-
-	inline HEPH_CONSTEVAL AVSampleFormat InternalSampleFormat()
-	{
-#if HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
-		return sizeof(heph_audio_sample) == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT;
-#elif HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_PCM
-		switch (sizeof(heph_audio_sample))
-		{
-		case 2:
-			return AV_SAMPLE_FMT_S16;
-		case 4:
-			return AV_SAMPLE_FMT_S32;
-		case 8:
-			return AV_SAMPLE_FMT_S64;
-		default:
-			return AV_SAMPLE_FMT_NONE;
-		}
-#else
-#error Unsupported internal format??
-#endif
-	}
 }
 
 #define HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(errorCode) HephAudio::FFmpegGetErrorMessage(errorCode)
-#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT HephAudio::InternalSampleFormat()
+
+
+#if defined(HEPHAUDIO_SAMPLE_TYPE_DBL)
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT AV_SAMPLE_FMT_DBL
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_FLT)
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT AV_SAMPLE_FMT_FLT
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_S64)
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT AV_SAMPLE_FMT_S64
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_S32)
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT AV_SAMPLE_FMT_S32
+#elif defined(HEPHAUDIO_SAMPLE_TYPE_S16)
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT AV_SAMPLE_FMT_S16
+#else
+#define HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT AV_SAMPLE_FMT_FLT
+#endif
 
 #endif
 

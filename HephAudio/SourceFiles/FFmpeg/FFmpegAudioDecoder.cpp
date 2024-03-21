@@ -111,7 +111,7 @@ namespace HephAudio
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
 	}
-	AudioFormatInfo FFmpegAudioDecoder::GetOutputFormat() const
+	AudioFormatInfo FFmpegAudioDecoder::GetOutputFormatInfo() const
 	{
 		return HEPHAUDIO_INTERNAL_FORMAT(this->channelCount, this->sampleRate);
 	}
@@ -144,13 +144,13 @@ namespace HephAudio
 		if (!this->IsFileOpen())
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "No open file to decode."));
-			return AudioBuffer(frameCount, this->GetOutputFormat());
+			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
 		}
 
 		if (frameIndex >= this->fileDuration_frame)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioDecoder::Decode", "frameIndex out of bounds."));
-			return AudioBuffer(frameCount, this->GetOutputFormat());
+			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
 		}
 
 		if (frameIndex + frameCount > this->fileDuration_frame)
@@ -162,10 +162,10 @@ namespace HephAudio
 		if (ret < 0)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
-			return AudioBuffer(frameCount, this->GetOutputFormat());
+			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
 		}
 
-		const AudioFormatInfo outputFormatInfo = this->GetOutputFormat();
+		const AudioFormatInfo outputFormatInfo = this->GetOutputFormatInfo();
 		size_t readFrameCount = 0;
 		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
@@ -288,11 +288,11 @@ namespace HephAudio
 		if (!this->IsFileOpen())
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::DecodeWholePackets", "No open file to decode."));
-			return AudioBuffer(minFrameCount, this->GetOutputFormat());
+			return AudioBuffer(minFrameCount, this->GetOutputFormatInfo());
 		}
 
 		int ret = 0;
-		AudioFormatInfo outputFormatInfo = this->GetOutputFormat();
+		AudioFormatInfo outputFormatInfo = this->GetOutputFormatInfo();
 		size_t readFrameCount = 0;
 		AudioBuffer decodedBuffer(minFrameCount, outputFormatInfo);
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];

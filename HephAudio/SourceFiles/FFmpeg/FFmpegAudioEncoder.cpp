@@ -240,7 +240,7 @@ namespace HephAudio
 		FFmpegAudioDecoder decoder(inputFilePath);
 		if (decoder.GetFrameCount() > 0)
 		{
-			FFmpegAudioEncoder encoder(outputFilePath, decoder.GetOutputFormat(), overwrite);
+			FFmpegAudioEncoder encoder(outputFilePath, decoder.GetOutputFormatInfo(), overwrite);
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
@@ -614,7 +614,7 @@ namespace HephAudio
 	void FFmpegAudioEncoder::Transcode(void* pDecoder, FFmpegAudioEncoder& encoder)
 	{
 		FFmpegAudioDecoder& decoder = *(FFmpegAudioDecoder*)pDecoder;
-		const uint32_t inputSampleRate = decoder.GetOutputFormat().sampleRate;
+		const uint32_t inputSampleRate = decoder.GetOutputFormatInfo().sampleRate;
 		const size_t readSize = av_rescale(encoder.avFrame->nb_samples, inputSampleRate, encoder.outputFormatInfo.sampleRate);
 		const size_t minRequiredFrameCount = FFMAX(readSize, encoder.avFrame->nb_samples);
 		AudioBuffer decodedBuffer;

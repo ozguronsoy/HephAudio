@@ -27,7 +27,7 @@ namespace HephAudio
 		AudioFormatInfo AacFormat::ReadAudioFormatInfo(const HephCommon::File& audioFile)
 		{
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
-			return this->ffmpegAudioDecoder.GetOutputFormat();
+			return this->ffmpegAudioDecoder.GetOutputFormatInfo();
 		}
 		AudioBuffer AacFormat::ReadFile(const HephCommon::File& audioFile)
 		{

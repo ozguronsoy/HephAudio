@@ -73,7 +73,7 @@ namespace HephAudio
 		{
 #if defined(HEPHAUDIO_USE_FFMPEG)
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
-			return this->ffmpegAudioDecoder.GetOutputFormat();
+			return this->ffmpegAudioDecoder.GetOutputFormatInfo();
 #else
 			AudioFormatInfo formatInfo;
 			uint32_t data32 = 0, formType = 0, chunkSize = 0;
