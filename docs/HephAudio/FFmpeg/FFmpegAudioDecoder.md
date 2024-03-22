@@ -103,7 +103,7 @@ Gets to the frame at the provided index.
 ```c++
 AudioBuffer Decode();
 ```
-Decodes the whole file.
+Decodes the remaining part of the file.
 - **returns:** Decoded data.
 <br><br><br><br>
 
