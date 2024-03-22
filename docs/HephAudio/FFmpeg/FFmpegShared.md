@@ -22,7 +22,7 @@ using namespace HephAudio;
 
 Includes the FFmpeg headers and defines helper methods.
 
-
+<br><br>
 
 ### Macros
 
@@ -36,6 +36,7 @@ Gets the error error description.
 ```
 Defines the [AVSampleFormat](https://ffmpeg.org/doxygen/trunk/group__lavu__sampfmts.html) that's internally used.
 
+<br><br>
 
 ### Methods
 
