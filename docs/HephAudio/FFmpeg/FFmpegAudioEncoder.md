@@ -99,7 +99,7 @@ static void Transcode(const HephCommon::StringBuffer& inputFilePath,
                       bool overwrite);
 ```
 Converts the input file format to the output file format and saves it. 
-Uses the file extensions to determine the output codec.
+Uses the file extension to determine the output codec.
 - **inputFilePath:** Path of the input file.
 - **outputFilePath:** Path of the output file.
 - **overwrite:** Indicates whether to write over the output file if it already exists.
@@ -112,7 +112,7 @@ static void Transcode(const HephCommon::StringBuffer& inputFilePath,
                       bool overwrite);
 ```
 Converts the input file format to the output file format and saves it. 
-Uses the file extensions to determine the output codec.
+Uses the file extension to determine the output codec.
 - **inputFilePath:** Path of the input file.
 - **outputFilePath:** Path of the output file.
 - **outputFormatInfo:** Desired properties of the encoded data.
