@@ -16,6 +16,26 @@ extern "C"
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swresample.lib")
 
+
+
+#if LIBAVFORMAT_VERSION_MAJOR < 60
+#error unsupported libavformat version.
+#endif
+
+#if LIBAVCODEC_VERSION_MAJOR < 60
+#error unsupported libavcodec version.
+#endif
+
+#if LIBAVUTIL_VERSION_MAJOR < 58
+#error unsupported libavutil version.
+#endif
+
+#if LIBSWRESAMPLE_VERSION_MAJOR < 4
+#error unsupported libswresample version.
+#endif
+
+
+
 #if !defined(HEPHAUDIO_INTERNAL_SAMPLE_FMT)
 
 namespace HephAudio
