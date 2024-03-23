@@ -394,7 +394,7 @@ namespace HephAudio
 			case HEPHAUDIO_FORMAT_TAG_MP3:
 				streamDesc.mFormatID = kAudioFormatMPEGLayer3;
 				break;
-			case HEPHAUDIO_FORMAT_TAG_MPEG4_AAC:
+			case HEPHAUDIO_FORMAT_TAG_AAC:
 				streamDesc.mFormatID = kAudioFormatMPEG4AAC;
 				break;
 			case HEPHAUDIO_FORMAT_TAG_OPUS:
@@ -431,7 +431,7 @@ namespace HephAudio
 				format.formatTag = HEPHAUDIO_FORMAT_TAG_MP3;
 				break;
 			case kAudioFormatMPEG4AAC:
-				format.formatTag = HEPHAUDIO_FORMAT_TAG_MPEG4_AAC;
+				format.formatTag = HEPHAUDIO_FORMAT_TAG_AAC;
 				break;
 			case kAudioFormatOpus:
 				format.formatTag = HEPHAUDIO_FORMAT_TAG_OPUS;
