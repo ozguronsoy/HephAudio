@@ -45,3 +45,12 @@ inline HephCommon::StringBuffer FFmpegGetErrorMessage(int errorCode);
 ```
 Gets the error error description.
 - **errorCode:** Negative error code returned by an FFmpeg method.
+- **returns:** Error description.
+<br><br><br><br>
+
+```c++
+inline AVCodecID CodecIdFromAudioFormatInfo(const AudioFormatInfo& audioFormatInfo);
+```
+Gets the [AVCodecID](https://ffmpeg.org/doxygen/trunk/group__lavc__core.html#gaadca229ad2c20e060a14fec08a5cc7ce) from the provided audio format info.
+- **audioFormatInfo:** Audio format info.
+- **returns:** AVCodecID.
