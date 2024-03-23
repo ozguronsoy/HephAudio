@@ -14,20 +14,22 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	void AudioProcessor::ChangeBitsPerSample(AudioBuffer& buffer, uint16_t outputBitsPerSample)
 	{
-		if (buffer.formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM)
+		if (buffer.formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM ||
+			buffer.formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
 		{
-			IAudioCodec* pCodec = AudioCodecManager::FindCodec(HEPHAUDIO_FORMAT_TAG_PCM);
+			IAudioCodec* pCodec = AudioCodecManager::FindCodec(buffer.formatInfo.formatTag);
 			EncodedBufferInfo encodedBufferInfo;
 			encodedBufferInfo.formatInfo = buffer.formatInfo;
 			encodedBufferInfo.pBuffer = buffer.pData;
 			encodedBufferInfo.size_byte = buffer.Size();
 			encodedBufferInfo.size_frame = buffer.frameCount;
-			encodedBufferInfo.endian = HEPH_SYSTEM_ENDIAN;
 			buffer = pCodec->Decode(encodedBufferInfo);
 
 			encodedBufferInfo.formatInfo.bitsPerSample = outputBitsPerSample;
 			encodedBufferInfo.size_byte = buffer.Size();
 			pCodec->Encode(buffer, encodedBufferInfo);
+
+			buffer.formatInfo.bitRate = AudioFormatInfo::CalculateBitrate(buffer.formatInfo);
 		}
 		else
 		{
@@ -38,7 +40,7 @@ namespace HephAudio
 	{
 		if (buffer.formatInfo.channelCount != outputChannelCount)
 		{
-			AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, outputChannelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate));
+			AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, outputChannelCount, buffer.formatInfo.bitsPerSample, buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian));
 
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
@@ -63,7 +65,7 @@ namespace HephAudio
 		if (srRatio != 1.0)
 		{
 			const size_t targetFrameCount = Math::Ceil((heph_float)buffer.frameCount * srRatio);
-			AudioBuffer resultBuffer(targetFrameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate));
+			AudioBuffer resultBuffer(targetFrameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.channelCount, buffer.formatInfo.bitsPerSample, outputSampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian));
 
 			for (size_t i = 0; i < targetFrameCount; i++)
 			{
@@ -85,7 +87,7 @@ namespace HephAudio
 		if (srRatio != 1.0)
 		{
 			subBuffer.Resize(outFrameCount);
-			subBuffer.formatInfo.sampleRate = outputSampleRate;
+			subBuffer.formatInfo = AudioFormatInfo(subBuffer.formatInfo.formatTag, subBuffer.formatInfo.channelCount, subBuffer.formatInfo.bitsPerSample, outputSampleRate, subBuffer.formatInfo.bitRate, subBuffer.formatInfo.endian);
 
 			for (size_t i = 0; i < outFrameCount; i++)
 			{
@@ -143,7 +145,6 @@ namespace HephAudio
 		encodedBufferInfo.size_byte = buffer.Size();
 		encodedBufferInfo.size_frame = buffer.frameCount;
 		encodedBufferInfo.formatInfo = buffer.formatInfo;
-		encodedBufferInfo.endian = buffer.formatInfo.endian;
 
 		buffer = pAudioCodec->Decode(encodedBufferInfo);
 	}
@@ -160,7 +161,6 @@ namespace HephAudio
 		EncodedBufferInfo encodedBufferInfo;
 		encodedBufferInfo.size_frame = buffer.frameCount;
 		encodedBufferInfo.formatInfo = targetFormat;
-		encodedBufferInfo.endian = targetFormat.endian;
 
 		pAudioCodec->Encode(buffer, encodedBufferInfo);
 	}

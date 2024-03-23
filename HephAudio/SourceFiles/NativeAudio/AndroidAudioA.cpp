@@ -89,6 +89,8 @@ namespace HephAudio
 				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
 			}
 
+			renderFormat.bitRate = AudioFormatInfo::CalculateBitrate(renderFormat);
+
 			renderBufferFrameCount = renderFormat.ByteRate() * 0.03;
 
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_OUTPUT);
@@ -170,6 +172,8 @@ namespace HephAudio
 				captureFormat.bitsPerSample = 16;
 				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
 			}
+
+			captureFormat.bitRate = AudioFormatInfo::CalculateBitrate(captureFormat);
 
 			captureBufferFrameCount = captureFormat.ByteRate() * 0.03;
 

@@ -103,7 +103,12 @@ namespace HephAudio
 			audioFile.Read(&formatInfo.formatTag, 2, Endian::Little);
 			audioFile.Read(&formatInfo.channelCount, 2, Endian::Little);
 			audioFile.Read(&formatInfo.sampleRate, 4, Endian::Little);
-			audioFile.IncreaseOffset(6);
+
+			uint32_t byteRate;
+			audioFile.Read(&byteRate, 4, Endian::Little);
+			formatInfo.bitRate = byteRate * 8;
+
+			audioFile.IncreaseOffset(2);
 			audioFile.Read(&formatInfo.bitsPerSample, 2, Endian::Little);
 
 			if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_EXTENSIBLE)
@@ -161,7 +166,6 @@ namespace HephAudio
 			encodedBufferInfo.size_byte = wavAudioDataSize;
 			encodedBufferInfo.size_frame = wavAudioDataSize / wavFormatInfo.FrameSize();
 			encodedBufferInfo.formatInfo = wavFormatInfo;
-			encodedBufferInfo.endian = Endian::Little;
 
 			const AudioBuffer hephaudioBuffer = pAudioCodec->Decode(encodedBufferInfo);
 
@@ -169,7 +173,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 #endif
-		}
+	}
 		AudioBuffer WavFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
 #if defined(HEPHAUDIO_USE_FFMPEG)
@@ -219,7 +223,6 @@ namespace HephAudio
 			encodedBufferInfo.size_byte = wavAudioDataSize;
 			encodedBufferInfo.size_frame = frameCount;
 			encodedBufferInfo.formatInfo = audioFormatInfo;
-			encodedBufferInfo.endian = Endian::Little;
 
 			const AudioBuffer hephaudioBuffer = pAudioCodec->Decode(encodedBufferInfo);
 
@@ -227,7 +230,7 @@ namespace HephAudio
 
 			return hephaudioBuffer;
 #endif
-		}
+}
 		bool WavFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 #if defined(HEPHAUDIO_USE_FFMPEG)

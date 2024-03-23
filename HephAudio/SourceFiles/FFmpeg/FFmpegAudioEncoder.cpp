@@ -303,10 +303,11 @@ namespace HephAudio
 		this->avCodecContext->codec_tag = av_codec_get_tag(this->avFormatContext->oformat->codec_tag, this->avFormatContext->oformat->audio_codec);
 		this->avCodecContext->codec_type = AVMEDIA_TYPE_AUDIO;
 
-		if (this->avCodecContext->codec_id == AV_CODEC_ID_MP3) // otherwise encoder calculates the duration wrong
+		if (this->avCodecContext->codec_id == AV_CODEC_ID_MP3 && this->outputFormatInfo.bitRate == 0) // otherwise encoder calculates the duration wrong
 		{
-			this->avCodecContext->bit_rate = 384000;
+			this->outputFormatInfo.bitRate = 384000;
 		}
+		this->avCodecContext->bit_rate = this->outputFormatInfo.bitRate;
 
 		ret = avcodec_open2(this->avCodecContext, avCodec, nullptr);
 		if (ret < 0)
@@ -412,7 +413,7 @@ namespace HephAudio
 		case HEPHAUDIO_FORMAT_TAG_MULAW:
 			return AV_SAMPLE_FMT_U8;
 		case HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT:
-			return HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT;
+			return afi.bitsPerSample == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT;
 		case HEPHAUDIO_FORMAT_TAG_PCM:
 		{
 			switch (afi.bitsPerSample)

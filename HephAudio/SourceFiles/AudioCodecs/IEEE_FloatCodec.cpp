@@ -23,7 +23,7 @@ namespace HephAudio
 					if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
 					{
 						sample = ((float*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
+						if (encodedBufferInfo.formatInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
 							HephCommon::ChangeEndian((uint8_t*)&sample, sizeof(float));
 						}
@@ -31,7 +31,7 @@ namespace HephAudio
 					else
 					{
 						sample = ((double*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
-						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
+						if (encodedBufferInfo.formatInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
 							HephCommon::ChangeEndian((uint8_t*)&sample, sizeof(double));
 						}
@@ -57,7 +57,7 @@ namespace HephAudio
 					if (encodedBufferInfo.formatInfo.bitsPerSample == 32)
 					{
 						float encodedSample = bufferToEncode[i][j] * scaleFactor;
-						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
+						if (encodedBufferInfo.formatInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
 							HephCommon::ChangeEndian((uint8_t*)&encodedSample, sizeof(float));
 						}
@@ -66,7 +66,7 @@ namespace HephAudio
 					else
 					{
 						double encodedSample = bufferToEncode[i][j] * scaleFactor;
-						if (encodedBufferInfo.endian != HEPH_SYSTEM_ENDIAN)
+						if (encodedBufferInfo.formatInfo.endian != HEPH_SYSTEM_ENDIAN)
 						{
 							HephCommon::ChangeEndian((uint8_t*)&encodedSample, sizeof(double));
 						}

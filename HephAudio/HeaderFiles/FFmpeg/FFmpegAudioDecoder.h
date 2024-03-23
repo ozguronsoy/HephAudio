@@ -15,8 +15,6 @@ namespace HephAudio
 		HephCommon::StringBuffer audioFilePath;
 		size_t fileDuration_frame;
 		size_t audioStreamIndex;
-		uint16_t channelCount;
-		uint32_t sampleRate;
 		int64_t firstPacketPts;
 		AVFormatContext* avFormatContext;
 		AVCodecContext* avCodecContext;

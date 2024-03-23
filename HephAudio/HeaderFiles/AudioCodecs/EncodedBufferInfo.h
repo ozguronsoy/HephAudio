@@ -12,7 +12,6 @@ namespace HephAudio
 			size_t size_byte{ 0 };
 			size_t size_frame{ 0 };
 			AudioFormatInfo formatInfo{};
-			HephCommon::Endian endian{ HEPH_SYSTEM_ENDIAN };
 		};
 	}
 }

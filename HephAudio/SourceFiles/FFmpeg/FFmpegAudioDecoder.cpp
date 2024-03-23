@@ -10,16 +10,16 @@ namespace HephAudio
 {
 	FFmpegAudioDecoder::FFmpegAudioDecoder()
 		: audioFilePath(nullptr), fileDuration_frame(0), audioStreamIndex(FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND)
-		, channelCount(0), sampleRate(0), firstPacketPts(0), avFormatContext(nullptr)
-		, avCodecContext(nullptr), swrContext(nullptr), avFrame(nullptr), avPacket(nullptr) {}
+		, firstPacketPts(0), avFormatContext(nullptr), avCodecContext(nullptr)
+		, swrContext(nullptr), avFrame(nullptr), avPacket(nullptr) {}
 	FFmpegAudioDecoder::FFmpegAudioDecoder(const StringBuffer& audioFilePath) : FFmpegAudioDecoder()
 	{
 		this->OpenFile(audioFilePath);
 	}
 	FFmpegAudioDecoder::FFmpegAudioDecoder(FFmpegAudioDecoder&& rhs) noexcept
 		: audioFilePath(std::move(rhs.audioFilePath)), fileDuration_frame(rhs.fileDuration_frame), audioStreamIndex(rhs.audioStreamIndex)
-		, channelCount(rhs.channelCount), sampleRate(rhs.sampleRate), firstPacketPts(rhs.firstPacketPts), avFormatContext(rhs.avFormatContext)
-		, avCodecContext(rhs.avCodecContext), swrContext(nullptr), avFrame(rhs.avFrame), avPacket(rhs.avPacket)
+		, firstPacketPts(rhs.firstPacketPts), avFormatContext(rhs.avFormatContext), avCodecContext(rhs.avCodecContext)
+		, swrContext(rhs.swrContext), avFrame(rhs.avFrame), avPacket(rhs.avPacket)
 	{
 		rhs.avFormatContext = nullptr;
 		rhs.avCodecContext = nullptr;
@@ -40,8 +40,6 @@ namespace HephAudio
 			this->audioFilePath = std::move(rhs.audioFilePath);
 			this->fileDuration_frame = rhs.fileDuration_frame;
 			this->audioStreamIndex = rhs.audioStreamIndex;
-			this->channelCount = rhs.channelCount;
-			this->sampleRate = rhs.sampleRate;
 			this->firstPacketPts = rhs.firstPacketPts;
 			this->avFormatContext = rhs.avFormatContext;
 			this->avCodecContext = rhs.avCodecContext;
@@ -101,8 +99,6 @@ namespace HephAudio
 		this->audioFilePath = nullptr;
 		this->fileDuration_frame = 0;
 		this->audioStreamIndex = FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND;
-		this->channelCount = 0;
-		this->sampleRate = 0;
 		this->firstPacketPts = 0;
 	}
 	bool FFmpegAudioDecoder::IsFileOpen() const
@@ -113,7 +109,8 @@ namespace HephAudio
 	}
 	AudioFormatInfo FFmpegAudioDecoder::GetOutputFormatInfo() const
 	{
-		return HEPHAUDIO_INTERNAL_FORMAT(this->channelCount, this->sampleRate);
+		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
+		return HEPHAUDIO_INTERNAL_FORMAT(avStream->codecpar->ch_layout.nb_channels, avStream->codecpar->sample_rate);
 	}
 	size_t FFmpegAudioDecoder::GetFrameCount() const
 	{
@@ -416,14 +413,13 @@ namespace HephAudio
 
 		// Calculate duration of audio data in frames
 		this->audioStreamIndex = FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND;
+		AVStream* avStream = nullptr;
 		for (size_t i = 0; i < this->avFormatContext->nb_streams; i++)
 		{
-			AVStream* avStream = this->avFormatContext->streams[i];
+			avStream = this->avFormatContext->streams[i];
 			if (avStream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO)
 			{
 				this->fileDuration_frame = av_rescale(avStream->duration * avStream->codecpar->sample_rate, avStream->time_base.num, avStream->time_base.den);
-				this->channelCount = avStream->codecpar->ch_layout.nb_channels;
-				this->sampleRate = avStream->codecpar->sample_rate;
 				this->audioStreamIndex = i;
 				break;
 			}
@@ -442,11 +438,8 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "Failed to create SwrContext."));
 		}
 
-		AVChannelLayout avChannelLayout;
-		av_channel_layout_default(&avChannelLayout, this->channelCount);
-		av_opt_set_chlayout(this->swrContext, "out_chlayout", &avChannelLayout, 0);
-
-		av_opt_set_int(this->swrContext, "out_sample_rate", this->sampleRate, 0);
+		av_opt_set_chlayout(this->swrContext, "out_chlayout", &avStream->codecpar->ch_layout, 0);
+		av_opt_set_int(this->swrContext, "out_sample_rate", avStream->codecpar->sample_rate, 0);
 		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", HEPHAUDIO_FFMPEG_INTERNAL_SAMPLE_FMT, 0);
 
 		// Initialize codec for decoding
@@ -510,7 +503,7 @@ namespace HephAudio
 		int ret = 0;
 		bool endSeek = false;
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
-		const int64_t timestamp = this->firstPacketPts + av_rescale(frameIndex, avStream->time_base.den, (int64_t)avStream->time_base.num * this->sampleRate);
+		const int64_t timestamp = this->firstPacketPts + av_rescale(frameIndex, avStream->time_base.den, (int64_t)avStream->time_base.num * avStream->codecpar->sample_rate);
 
 		ret = avformat_seek_file(this->avFormatContext, this->audioStreamIndex, INT64_MIN, timestamp, timestamp, seekFlags);
 		if (ret < 0)
@@ -540,7 +533,7 @@ namespace HephAudio
 
 			skippedPacketCount++;
 
-			const int64_t packetFrameIndex = av_rescale((this->avPacket->pts - this->firstPacketPts) * this->sampleRate, avStream->time_base.num, avStream->time_base.den);
+			const int64_t packetFrameIndex = av_rescale((this->avPacket->pts - this->firstPacketPts) * avStream->codecpar->sample_rate, avStream->time_base.num, avStream->time_base.den);
 			if (frameIndex < packetFrameIndex)
 			{
 				HEPHAUDIO_LOG("Failed to find the exact packet that contains the requested frames, picking the closest one...", HEPH_CL_WARNING);
@@ -549,7 +542,7 @@ namespace HephAudio
 				break;
 			}
 
-			packetDuration = av_rescale(this->avPacket->duration * this->sampleRate, avStream->time_base.num, avStream->time_base.den);
+			packetDuration = av_rescale(this->avPacket->duration * avStream->codecpar->sample_rate, avStream->time_base.num, avStream->time_base.den);
 			deltaFrameIndex = frameIndex - packetFrameIndex;
 			av_packet_unref(this->avPacket);
 		} while (deltaFrameIndex >= packetDuration);

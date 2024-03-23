@@ -541,6 +541,7 @@ namespace HephAudio
 				afi.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 				afi.channelCount = (dsCaps.dwFlags & DSCAPS_SECONDARYSTEREO) == DSCAPS_SECONDARYSTEREO ? 2 : 1;
 				afi.bitsPerSample = (dsCaps.dwFlags & DSCAPS_SECONDARY16BIT) != DSCAPS_SECONDARY16BIT ? 8 : 16;
+				afi.bitRate = AudioFormatInfo::CalculateBitrate(afi);
 			}
 		}
 		void WinAudioDS::RestrictAudioFormatInfo(AudioFormatInfo& afi, const DSCCAPS& dscCaps)
@@ -551,6 +552,7 @@ namespace HephAudio
 				afi.bitsPerSample = 16;
 				afi.sampleRate = 44100;
 				afi.channelCount = dscCaps.dwChannels;
+				afi.bitRate = AudioFormatInfo::CalculateBitrate(afi);
 			}
 		}
 	}

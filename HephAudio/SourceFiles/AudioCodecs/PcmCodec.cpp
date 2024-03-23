@@ -23,7 +23,7 @@ namespace HephAudio
 				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 				{
 					uint8_t* pSample = (uint8_t*)encodedBufferInfo.pBuffer + i * frameSize + j * bytesPerSample;
-					const double floatSample = PcmCodec::ReadSample(pSample, bytesPerSample, encodedBufferInfo.endian);
+					const double floatSample = PcmCodec::ReadSample(pSample, bytesPerSample, encodedBufferInfo.formatInfo.endian);
 					resultBuffer[i][j] = floatSample * scaleFactor;
 				}
 			}
@@ -44,7 +44,7 @@ namespace HephAudio
 				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
 				{
 					uint8_t* pSample = ((uint8_t*)tempBuffer.Begin()) + i * frameSize + j * bytesPerSample;
-					WriteSample(pSample, bufferToEncode[i][j] * scaleFactor, bytesPerSample, encodedBufferInfo.endian);
+					WriteSample(pSample, bufferToEncode[i][j] * scaleFactor, bytesPerSample, encodedBufferInfo.formatInfo.endian);
 				}
 			}
 

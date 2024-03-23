@@ -400,9 +400,6 @@ namespace HephAudio
 			case HEPHAUDIO_FORMAT_TAG_OPUS:
 				streamDesc.mFormatID = kAudioFormatOpus;
 				break;
-			case HEPHAUDIO_FORMAT_TAG_QUALCOMM_PUREVOICE:
-				streamDesc.mFormatID = kAudioFormatQUALCOMM;
-				break;
 			default:
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));
 			}
@@ -439,12 +436,11 @@ namespace HephAudio
 			case kAudioFormatOpus:
 				format.formatTag = HEPHAUDIO_FORMAT_TAG_OPUS;
 				break;
-			case kAudioFormatQUALCOMM:
-				format.formatTag = HEPHAUDIO_FORMAT_TAG_QUALCOMM_PUREVOICE;
-				break;
 			default:
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));
 			}
+
+			format.bitRate = AudioFormatInfo::CalculateBitrate(format);
 		}
 		OSStatus AppleAudio::RenderCallback(AudioDeviceID device, const AudioTimeStamp* now, const AudioBufferList* indata,
 			const AudioTimeStamp* intime, AudioBufferList* outdata, const AudioTimeStamp* outtime, void* udata)

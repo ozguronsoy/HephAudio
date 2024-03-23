@@ -318,6 +318,7 @@ namespace HephAudio
 					|| HAS_FORMAT_TAG(WAVE_FORMAT_96M16) || HAS_FORMAT_TAG(WAVE_FORMAT_96M08))
 				{
 					closestFormat.sampleRate = 96000;
+					closestFormat.bitRate = AudioFormatInfo::CalculateBitrate(closestFormat);
 					return closestFormat;
 				}
 				else
@@ -332,6 +333,7 @@ namespace HephAudio
 					|| HAS_FORMAT_TAG(WAVE_FORMAT_48M16) || HAS_FORMAT_TAG(WAVE_FORMAT_48M08))
 				{
 					closestFormat.sampleRate = 48000;
+					closestFormat.bitRate = AudioFormatInfo::CalculateBitrate(closestFormat);
 					return closestFormat;
 				}
 				else
@@ -346,6 +348,7 @@ namespace HephAudio
 					|| HAS_FORMAT_TAG(WAVE_FORMAT_4M16) || HAS_FORMAT_TAG(WAVE_FORMAT_4M08))
 				{
 					closestFormat.sampleRate = 44100;
+					closestFormat.bitRate = AudioFormatInfo::CalculateBitrate(closestFormat);
 					return closestFormat;
 				}
 				else
@@ -360,6 +363,7 @@ namespace HephAudio
 					|| HAS_FORMAT_TAG(WAVE_FORMAT_2M16) || HAS_FORMAT_TAG(WAVE_FORMAT_2M08))
 				{
 					closestFormat.sampleRate = 22050;
+					closestFormat.bitRate = AudioFormatInfo::CalculateBitrate(closestFormat);
 					return closestFormat;
 				}
 				else
@@ -374,6 +378,7 @@ namespace HephAudio
 					|| HAS_FORMAT_TAG(WAVE_FORMAT_1M16) || HAS_FORMAT_TAG(WAVE_FORMAT_1M08))
 				{
 					closestFormat.sampleRate = 11025;
+					closestFormat.bitRate = AudioFormatInfo::CalculateBitrate(closestFormat);
 					return closestFormat;
 				}
 				else
@@ -390,6 +395,7 @@ namespace HephAudio
 				}
 			}
 
+			closestFormat.bitRate = AudioFormatInfo::CalculateBitrate(closestFormat);
 			return closestFormat;
 		}
 		size_t WinAudioMME::CalculateBufferSize(uint32_t byteRate, uint32_t sampleRate)

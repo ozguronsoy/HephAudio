@@ -3,7 +3,7 @@
 #include "AudioCodecs/AudioCodecManager.h"
 #include "../HephCommon/HeaderFiles/HephException.h"
 
-#define HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN (HEPHAUDIO_FORMAT_TAG_PCM << 8)
+#define AIFC_SOWT (HEPHAUDIO_FORMAT_TAG_PCM << 8)
 
 using namespace HephCommon;
 using namespace HephAudio::Codecs;
@@ -148,6 +148,7 @@ namespace HephAudio
 				audioFile.Read(&data32, 4, Endian::Big);
 			}
 
+			formatInfo.bitRate = AudioFormatInfo::CalculateBitrate(formatInfo);
 			return formatInfo;
 #endif
 		}
@@ -158,11 +159,11 @@ namespace HephAudio
 			return this->ffmpegAudioDecoder.Decode();
 #else
 			AudioFormatInfo audioFormatInfo = this->ReadAudioFormatInfo(audioFile);
-			Endian audioDataEndian = Endian::Big;
-			if (audioFormatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN)
+			audioFormatInfo.endian = Endian::Big;
+			if (audioFormatInfo.formatTag == AIFC_SOWT)
 			{
 				audioFormatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
-				audioDataEndian = Endian::Little;
+				audioFormatInfo.endian = Endian::Little;
 			}
 
 			IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(audioFormatInfo.formatTag);
@@ -188,7 +189,6 @@ namespace HephAudio
 			encodedBufferInfo.size_byte = audioDataSize;
 			encodedBufferInfo.size_frame = audioDataSize / audioFormatInfo.FrameSize();
 			encodedBufferInfo.formatInfo = audioFormatInfo;
-			encodedBufferInfo.endian = audioDataEndian;
 
 			const AudioBuffer hephaudioBuffer = pAudioCodec->Decode(encodedBufferInfo);
 
@@ -210,7 +210,6 @@ namespace HephAudio
 #else
 			const uint8_t bytesPerSample = audioFormatInfo.bitsPerSample / 8;
 			const size_t audioDataSize = frameCount * audioFormatInfo.FrameSize();
-			const Endian audioDataEndian = audioFormatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN ? Endian::Little : Endian::Big;
 			uint32_t data32 = 0;
 
 			if (finishedPlaying != nullptr)
@@ -247,7 +246,7 @@ namespace HephAudio
 			encodedBufferInfo.size_byte = audioDataSize;
 			encodedBufferInfo.size_frame = audioDataSize / audioFormatInfo.FrameSize();
 			encodedBufferInfo.formatInfo = audioFormatInfo;
-			encodedBufferInfo.endian = audioDataEndian;
+			encodedBufferInfo.formatInfo.endian = audioFormatInfo.formatTag == AIFC_SOWT ? Endian::Little : Endian::Big;
 
 			const AudioBuffer hephaudioBuffer = pAudioCodec->Decode(encodedBufferInfo);
 
@@ -483,7 +482,7 @@ namespace HephAudio
 				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 				break;
 			case 0x736F7774: // "sowt"
-				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM_BIG_ENDIAN;
+				formatInfo.formatTag = AIFC_SOWT;
 				break;
 			case 0x666C3332: // "fl32"
 			case 0x666C3634: // "fl64"
