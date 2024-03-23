@@ -9,13 +9,16 @@ To enable these implementations you need to follow a few simple steps;
 > [!NOTE]
 > The lib was tested with ***6.1***.
 
-- Add the path to the FFmpeg's include folder. Same way you added ``HephAudio/HeaderFiles`` and ``HephCommon/HeaderFiles``.
+- Include the FFmpeg header files.
+For Visual Studio, go to ``Properties`` -> ``C/C++`` -> ``General`` -> ``Additional Include Directories`` and add the include directory.
+Example: ``C:\FFmpeg\include``.
 
-- Add the path to the FFmpeg's lib folder.
-For Visual Studio, go to ``Properties`` -> ``Linker`` -> ``Additional Library Directories``.
-
+- Link the FFmpeg .lib files.
+For Visual Studio, go to ``Properties`` -> ``Linker`` -> ``Additional Library Directories`` and add the lib directory.
+Example: ``C:\FFmpeg\lib``.
 
 - Add ``HEPHAUDIO_USE_FFMPEG`` to the preprocessor definitons.
+For Visual Studio, go to ``Properties`` -> ``C/C++`` ``Preprocessor`` -> ``Preprocessor Definitons``.
 
 Now test it by building the app. If there are any errors due to version difference please contact me via e-mail so i can update the library. 
 Or create a pull request if you fixed it yourself.
