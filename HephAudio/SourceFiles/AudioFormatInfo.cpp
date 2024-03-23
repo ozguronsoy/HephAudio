@@ -17,13 +17,7 @@ namespace HephAudio
 		: formatTag(formatTag), channelCount(channelCount), bitsPerSample(bitsPerSample)
 		, sampleRate(sampleRate), bitRate(bitRate), endian(endian)
 	{
-		if (this->formatTag == HEPHAUDIO_FORMAT_TAG_PCM || 
-			this->formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT ||
-			this->formatTag == HEPHAUDIO_FORMAT_TAG_ALAW ||
-			this->formatTag == HEPHAUDIO_FORMAT_TAG_MULAW)
-		{
-			this->bitRate = AudioFormatInfo::CalculateBitrate(*this);
-		}
+		this->bitRate = AudioFormatInfo::CalculateBitrate(*this);
 	}
 
 	bool AudioFormatInfo::operator==(const AudioFormatInfo& rhs) const
@@ -48,6 +42,13 @@ namespace HephAudio
 	}
 	uint32_t AudioFormatInfo::CalculateBitrate(const AudioFormatInfo& formatInfo)
 	{
-		return formatInfo.channelCount * formatInfo.bitsPerSample * formatInfo.sampleRate;
+		if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM ||
+			formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT ||
+			formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_ALAW ||
+			formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_MULAW)
+		{
+			return formatInfo.channelCount * formatInfo.bitsPerSample * formatInfo.sampleRate;
+		}
+		return formatInfo.bitRate;
 	}
 }
