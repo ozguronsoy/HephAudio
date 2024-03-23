@@ -166,7 +166,7 @@ namespace HephAudio
 
 		av_opt_set_chlayout(this->swrContext, "in_chlayout", &inputChannelLayout, 0);
 		av_opt_set_int(this->swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", FFmpegAudioEncoder::AFI2AVSF(inputFormatInfo), 0);
+		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", FFmpegAudioEncoder::AFI2AVSF(this, inputFormatInfo), 0);
 
 		int ret = swr_init(this->swrContext);
 		if (ret < 0)
@@ -405,7 +405,7 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to allocate AVPacket."));
 		}
 	}
-	AVSampleFormat FFmpegAudioEncoder::AFI2AVSF(const AudioFormatInfo& afi) const
+	AVSampleFormat FFmpegAudioEncoder::AFI2AVSF(FFmpegAudioEncoder* pEncoder, const AudioFormatInfo& afi)
 	{
 		switch (afi.formatTag)
 		{
@@ -434,7 +434,8 @@ namespace HephAudio
 		}
 
 	ERROR:
-		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
+		RAISE_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
+		return AV_SAMPLE_FMT_NONE;
 	}
 	uint32_t FFmpegAudioEncoder::GetClosestSupportedSampleRate(const AVCodec* avCodec, uint32_t targetSampleRate)
 	{
@@ -610,7 +611,8 @@ namespace HephAudio
 		}
 
 	ERROR:
-		RAISE_AND_THROW_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
+		RAISE_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
+		return AV_SAMPLE_FMT_NONE;
 	}
 	void FFmpegAudioEncoder::Transcode(void* pDecoder, FFmpegAudioEncoder& encoder)
 	{
