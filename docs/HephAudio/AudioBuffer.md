@@ -159,3 +159,59 @@ Example: ``this_ch0 += rhs_ch0; this_ch1 += rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
 <br><br><br><br>
+
+```c++
+AudioBuffer operator-(heph_float rhs) const;
+```
+Subtracts a constant from each sample and returns the result in a new instance.
+- **rhs:** Constant value that will be subtracted from each sample.
+- **returns:**  A new buffer that stores the operation result.
+<br><br><br><br>
+
+```c++
+AudioBuffer operator-(const HephCommon::FloatBuffer& rhs) const;
+```
+Performs a point-by-point subtraction and returns the result in a new instance. 
+``rhs`` is subtracted from each channel independently. 
+Example: ``ch0 = this_ch0 - rhs; ch1 = this_ch1 - rhs;...``
+- **rhs:** Buffer that will be used in the operation.
+- **returns:**  A new buffer that stores the operation result.
+<br><br><br><br>
+
+```c++
+AudioBuffer operator-(const AudioBuffer& rhs) const;
+```
+Performs a point-by-point subtraction and returns the result in a new instance.
+Each channel is subtracted independently. 
+Example: ``ch0 = this_ch0 - rhs_ch0; ch1 = this_ch1 - rhs_ch1;...``
+- **rhs:** Buffer that will be used in the operation.
+- **returns:**  A new buffer that stores the operation result.
+<br><br><br><br>
+
+```c++
+AudioBuffer& operator-=(heph_float rhs);
+```
+Subtracts a constant from each sample and stores the result in the current instance.
+- **rhs:** Constant value that will be added to each sample.
+- **returns:** Reference to the current instance.
+<br><br><br><br>
+
+```c++
+AudioBuffer& operator-=(const HephCommon::FloatBuffer& rhs);
+```
+Performs a point-by-point subtraction and stores the result in the current instance.
+Each channel is subtracted independently. 
+Example: ``this_ch0 -= rhs; this_ch1 -= rhs;...``
+- **rhs:** Buffer that will be used in the operation.
+- **returns:** Reference to the current instance.
+<br><br><br><br>
+
+```c++
+AudioBuffer& operator-=(const AudioBuffer& rhs);
+```
+Performs a point-by-point subtraction and stores the result in the current instance.
+Each channel is subtracted independently. 
+Example: ``this_ch0 -= rhs_ch0; this_ch1 -= rhs_ch1;...``
+- **rhs:** Buffer that will be used in the operation.
+- **returns:** Reference to the current instance.
+<br><br><br><br>
