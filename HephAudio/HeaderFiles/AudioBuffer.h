@@ -59,6 +59,7 @@ namespace HephAudio
 		bool operator!=(const AudioBuffer& rhs) const;
 		size_t Size() const;
 		size_t FrameCount() const;
+		AudioFormatInfo FormatInfo() const;
 		AudioBuffer GetSubBuffer(size_t frameIndex, size_t frameCount) const;
 		void Append(const AudioBuffer& buffer);
 		void Insert(const AudioBuffer& buffer, size_t frameIndex);
@@ -78,7 +79,6 @@ namespace HephAudio
 		AudioBuffer Convolve(const AudioBuffer& h, HephCommon::ConvolutionMode convolutionMode) const;
 		heph_float CalculateDuration() const;
 		size_t CalculateFrameIndex(heph_float t_s) const;
-		AudioFormatInfo FormatInfo() const;
 		void* Begin() const;
 		void* End() const;
 	public:

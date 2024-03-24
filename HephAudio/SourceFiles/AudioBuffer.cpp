@@ -622,6 +622,10 @@ namespace HephAudio
 	{
 		return this->frameCount;
 	}
+	AudioFormatInfo AudioBuffer::FormatInfo() const
+	{
+		return this->formatInfo;
+	}
 	AudioBuffer AudioBuffer::GetSubBuffer(size_t frameIndex, size_t frameCount) const
 	{
 		AudioBuffer subBuffer(frameCount, this->formatInfo);
@@ -1001,10 +1005,6 @@ namespace HephAudio
 	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s) const
 	{
 		return CalculateFrameIndex(t_s, this->formatInfo);
-	}
-	AudioFormatInfo AudioBuffer::FormatInfo() const
-	{
-		return this->formatInfo;
 	}
 	void* AudioBuffer::Begin() const
 	{
