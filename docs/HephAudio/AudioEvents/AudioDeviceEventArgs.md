@@ -34,8 +34,8 @@ Audio device that caused the event.
 ### Methods
 
 ```c++
-AudioCaptureEventArgs(void* pNativeAudio,
-                      AudioDevice audioDevice);
+AudioDeviceEventArgs(void* pNativeAudio,
+                     AudioDevice audioDevice);
 ```
 Creates an instance and initializes it with the provided values.
 - **pNativeAudio:** Pointer to the [NativeAudio](/docs/HephAudio/NativeAudio/NativeAudio.md) instance that raised the event.
