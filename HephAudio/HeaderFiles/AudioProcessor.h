@@ -55,8 +55,6 @@ namespace HephAudio
 		static void LinearFadeIn(AudioBuffer& buffer, heph_float duration_s, size_t startIndex);
 		static void LinearFadeOut(AudioBuffer& buffer, heph_float duration_s);
 		static void LinearFadeOut(AudioBuffer& buffer, heph_float duration_s, size_t startIndex);
-		static void FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, heph_float speedOfSound, heph_float maxDistance);
-		static void FastSpatialize(AudioBuffer& buffer, const HephCommon::Vector3& source, const HephCommon::Vector3& reciever, heph_float speedOfSound, heph_float maxDistance);
 		static void Equalizer(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);
 		static void Equalizer(AudioBuffer& buffer, size_t hopSize, size_t fftSize, Window& window, const std::vector<EqualizerInfo>& infos);
 		static void EqualizerMT(AudioBuffer& buffer, Window& window, const std::vector<EqualizerInfo>& infos);
