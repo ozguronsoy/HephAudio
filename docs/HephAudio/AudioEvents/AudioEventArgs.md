@@ -21,7 +21,7 @@ Base struct for audio event args.
 ```c++
 struct AudioEventArgs : public HephCommon::EventArgs
 {
-  void* pNativeAudio;
+    void* pNativeAudio;
 }
 ```
 
