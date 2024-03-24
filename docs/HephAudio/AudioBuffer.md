@@ -116,7 +116,7 @@ Adds a constant to each sample and returns the result in a new instance.
 AudioBuffer operator+(const HephCommon::FloatBuffer& rhs) const;
 ```
 Performs a point-by-point summation and returns the result in a new instance. 
-``rhs`` is summed with each channel independently. 
+``rhs`` is summed with each channel independently.<br>
 Example: ``ch0 = this_ch0 + rhs; ch1 = this_ch1 + rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -126,7 +126,7 @@ Example: ``ch0 = this_ch0 + rhs; ch1 = this_ch1 + rhs;...``
 AudioBuffer operator+(const AudioBuffer& rhs) const;
 ```
 Performs a point-by-point summation and returns the result in a new instance.
-Each channel are summed independently. 
+Each channel are summed independently.<br>
 Example: ``ch0 = this_ch0 + rhs_ch0; ch1 = this_ch1 + rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -144,7 +144,7 @@ Adds a constant to each sample and stores the result in the current instance.
 AudioBuffer& operator+=(const HephCommon::FloatBuffer& rhs);
 ```
 Performs a point-by-point summation and stores the result in the current instance.
-Each channel are summed independently. 
+Each channel are summed independently.<br>
 Example: ``this_ch0 += rhs; this_ch1 += rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -154,7 +154,7 @@ Example: ``this_ch0 += rhs; this_ch1 += rhs;...``
 AudioBuffer& operator+=(const AudioBuffer& rhs);
 ```
 Performs a point-by-point summation and stores the result in the current instance.
-Each channel are summed independently. 
+Each channel are summed independently.<br>
 Example: ``this_ch0 += rhs_ch0; this_ch1 += rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -172,7 +172,7 @@ Subtracts a constant from each sample and returns the result in a new instance.
 AudioBuffer operator-(const HephCommon::FloatBuffer& rhs) const;
 ```
 Performs a point-by-point subtraction and returns the result in a new instance. 
-``rhs`` is subtracted from each channel independently. 
+``rhs`` is subtracted from each channel independently.<br>
 Example: ``ch0 = this_ch0 - rhs; ch1 = this_ch1 - rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -182,7 +182,7 @@ Example: ``ch0 = this_ch0 - rhs; ch1 = this_ch1 - rhs;...``
 AudioBuffer operator-(const AudioBuffer& rhs) const;
 ```
 Performs a point-by-point subtraction and returns the result in a new instance.
-Each channel is subtracted independently. 
+Each channel is subtracted independently.<br>
 Example: ``ch0 = this_ch0 - rhs_ch0; ch1 = this_ch1 - rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -200,7 +200,7 @@ Subtracts a constant from each sample and stores the result in the current insta
 AudioBuffer& operator-=(const HephCommon::FloatBuffer& rhs);
 ```
 Performs a point-by-point subtraction and stores the result in the current instance.
-Each channel is subtracted independently. 
+Each channel is subtracted independently.<br>
 Example: ``this_ch0 -= rhs; this_ch1 -= rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -210,7 +210,7 @@ Example: ``this_ch0 -= rhs; this_ch1 -= rhs;...``
 AudioBuffer& operator-=(const AudioBuffer& rhs);
 ```
 Performs a point-by-point subtraction and stores the result in the current instance.
-Each channel is subtracted independently. 
+Each channel is subtracted independently.<br>
 Example: ``this_ch0 -= rhs_ch0; this_ch1 -= rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -228,7 +228,7 @@ Multiplies a constant with each sample and returns the result in a new instance.
 AudioBuffer operator*(const HephCommon::FloatBuffer& rhs) const;
 ```
 Performs a point-by-point multiplication and returns the result in a new instance. 
-``rhs`` is multiplied from each channel independently. 
+``rhs`` is multiplied from each channel independently.<br>
 Example: ``ch0 = this_ch0 * rhs; ch1 = this_ch1 * rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -238,7 +238,7 @@ Example: ``ch0 = this_ch0 * rhs; ch1 = this_ch1 * rhs;...``
 AudioBuffer operator*(const AudioBuffer& rhs) const;
 ```
 Performs a point-by-point multiplication and returns the result in a new instance.
-Each channel is multiplied independently. 
+Each channel is multiplied independently.<br>
 Example: ``ch0 = this_ch0 * rhs_ch0; ch1 = this_ch1 * rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -256,7 +256,7 @@ Multiplies a constant from each sample and stores the result in the current inst
 AudioBuffer& operator*=(const HephCommon::FloatBuffer& rhs);
 ```
 Performs a point-by-point multiplication and stores the result in the current instance.
-Each channel is multiplied independently. 
+Each channel is multiplied independently.<br>
 Example: ``this_ch0 *= rhs; this_ch1 *= rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -266,7 +266,7 @@ Example: ``this_ch0 *= rhs; this_ch1 *= rhs;...``
 AudioBuffer& operator*=(const AudioBuffer& rhs);
 ```
 Performs a point-by-point multiplication and stores the result in the current instance.
-Each channel is multiplied independently. 
+Each channel is multiplied independently.<br>
 Example: ``this_ch0 *= rhs_ch0; this_ch1 *= rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -284,7 +284,7 @@ Divides each sample by a constant and returns the result in a new instance.
 AudioBuffer operator/(const HephCommon::FloatBuffer& rhs) const;
 ```
 Performs a point-by-point division and returns the result in a new instance. 
-Each channel is divided by ``rhs`` independently. 
+Each channel is divided by ``rhs`` independently.<br>
 Example: ``ch0 = this_ch0 / rhs; ch1 = this_ch1 / rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -294,7 +294,7 @@ Example: ``ch0 = this_ch0 / rhs; ch1 = this_ch1 / rhs;...``
 AudioBuffer operator/(const AudioBuffer& rhs) const;
 ```
 Performs a point-by-point division and returns the result in a new instance.
-Each channel is divided by ``rhs`` independently. 
+Each channel is divided by ``rhs`` independently.<br>
 Example: ``ch0 = this_ch0 / rhs_ch0; ch1 = this_ch1 / rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:**  A new buffer that stores the operation result.
@@ -312,7 +312,7 @@ Divides each sample by a constant and returns the result in the current instance
 AudioBuffer& operator/=(const HephCommon::FloatBuffer& rhs);
 ```
 Performs a point-by-point division and stores the result in the current instance.
-Each channel is divided by ``rhs`` independently. 
+Each channel is divided by ``rhs`` independently.<br>
 Example: ``this_ch0 /= rhs; this_ch1 /= rhs;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
@@ -322,8 +322,92 @@ Example: ``this_ch0 /= rhs; this_ch1 /= rhs;...``
 AudioBuffer& operator/=(const AudioBuffer& rhs);
 ```
 Performs a point-by-point division and stores the result in the current instance.
-Each channel is divided by ``rhs`` independently. 
+Each channel is divided by ``rhs`` independently.<br>
 Example: ``this_ch0 /= rhs_ch0; this_ch1 /= rhs_ch1;...``
 - **rhs:** Buffer that will be used in the operation.
 - **returns:** Reference to the current instance.
+<br><br><br><br>
+
+```c++
+AudioBuffer operator<<(size_t rhs) const;
+```
+Shifts the audio buffer to the left and returns the result in a new instance. 
+The frames at the end of the buffer will be set to zero.<br>
+Example: for ``rhs = 3``, ``frame_5 -> frame_2``.
+- **rhs:** Number of frames to shift.
+- **returns:**  A new buffer that stores the operation result.
+<br><br><br><br>
+
+```c++
+AudioBuffer& operator<<=(size_t rhs) const;
+```
+Shifts the audio buffer to the left and returns the result in the current instance. 
+The frames at the end of the buffer will be set to zero.<br>
+Example: for ``rhs = 3``, ``frame_5 -> frame_2``.
+- **rhs:** Number of frames to shift.
+- **returns:** Reference to the current instance.
+<br><br><br><br>
+
+```c++
+AudioBuffer operator>>(size_t rhs) const;
+```
+Shifts the audio buffer to the right and returns the result in a new instance. 
+The frames at the beginning of the buffer will be set to zero.<br>
+Example: for ``rhs = 3``, ``frame_2 -> frame_5``.
+- **rhs:** Number of frames to shift.
+- **returns:**  A new buffer that stores the operation result.
+<br><br><br><br>
+
+```c++
+AudioBuffer& operator>>=(size_t rhs) const;
+```
+Shifts the audio buffer to the left and returns the result in the current instance. 
+The frames at the beginning of the buffer will be set to zero.<br>
+Example: for ``rhs = 3``, ``frame_2 -> frame_5``.
+- **rhs:** Number of frames to shift.
+- **returns:** Reference to the current instance.
+<br><br><br><br>
+
+```c++
+bool operator==(std::nullptr_t rhs) const;
+```
+Checks whether the buffer is empty.
+- **returns:** ``true`` if the buffer is empty, otherwise ``false``.
+<br><br><br><br>
+
+```c++
+bool operator==(const AudioBuffer& rhs) const;
+```
+Compares the contents of two buffers.
+- **rhs:** Instance that will be compared to.
+- **returns:** ``true`` if the contents are equal, otherwise ``false``.
+<br><br><br><br>
+
+```c++
+bool operator!=(std::nullptr_t rhs) const;
+```
+Checks whether the buffer is not empty.
+- **returns:** ``true`` if the buffer is empty, otherwise ``false``.
+<br><br><br><br>
+
+```c++
+bool operator!=(const AudioBuffer& rhs) const;
+```
+Compares the contents of two buffers.
+- **rhs:** Instance that will be compared to.
+- **returns:** ``true`` if the contents are not equal, otherwise ``false``.
+<br><br><br><br>
+
+```c++
+size_t Size() const;
+```
+Calculates the size, in bytes, of the buffer.
+- **returns:** Size of the buffer in bytes.
+<br><br><br><br>
+
+```c++
+size_t FrameCount() const;
+```
+Gets the number of audio frames the buffer contains.
+- **returns:** Number of audio frames the buffer contains.
 <br><br><br><br>
