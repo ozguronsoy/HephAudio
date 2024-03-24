@@ -21,7 +21,7 @@ Stores the necessary arguments to handle an event.
 ```c++
 struct AudioCaptureEventArgs : public AudioEventArgs
 {
-  AudioBuffer captureBuffer;
+    AudioBuffer captureBuffer;
 }
 ```
 
