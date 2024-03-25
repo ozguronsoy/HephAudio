@@ -505,3 +505,355 @@ Changes the pitch of the audio data without changing the playback speed (multith
 - **threadCountPerChannel:** Number of threads to use per channel.
 - **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
 <br><br><br><br>
+
+```c++
+static void LowPassFilter(AudioBuffer& buffer,
+                          heph_float cutoffFreq,
+                          Window& window);
+```
+Removes the frequencies that are higher than the ``cutoffFreq``.
+- **buffer:** Audio data that will be filtered.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void LowPassFilter(AudioBuffer& buffer,
+                          size_t hopSize,
+                          size_t fftSize,
+                          heph_float cutoffFreq,
+                          Window& window);
+```
+Removes the frequencies that are higher than the ``cutoffFreq``.
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void LowPassFilterMT(AudioBuffer& buffer,
+                            heph_float cutoffFreq,
+                            Window& window);
+```
+Removes the frequencies that are higher than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void LowPassFilterMT(AudioBuffer& buffer,
+                            size_t hopSize,
+                            size_t fftSize,
+                            heph_float cutoffFreq,
+                            Window& window);
+```
+Removes the frequencies that are higher than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void LowPassFilterMT(AudioBuffer& buffer,
+                            heph_float cutoffFreq,
+                            size_t threadCountPerChannel,
+                            Window& window);
+```
+Removes the frequencies that are higher than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void LowPassFilterMT(AudioBuffer& buffer,
+                            size_t hopSize,
+                            size_t fftSize,
+                            heph_float cutoffFreq,
+                            size_t threadCountPerChannel,
+                            Window& window);
+```
+Removes the frequencies that are higher than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void HighPassFilter(AudioBuffer& buffer,
+                           heph_float cutoffFreq,
+                           Window& window);
+```
+Removes the frequencies that are lower than the ``cutoffFreq``.
+- **buffer:** Audio data that will be filtered.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void HighPassFilter(AudioBuffer& buffer,
+                           size_t hopSize,
+                           size_t fftSize,
+                           heph_float cutoffFreq,
+                           Window& window);
+```
+Removes the frequencies that are lower than the ``cutoffFreq``.
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void HighPassFilterMT(AudioBuffer& buffer,
+                             heph_float cutoffFreq,
+                             Window& window);
+```
+Removes the frequencies that are lower than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void HighPassFilterMT(AudioBuffer& buffer,
+                             size_t hopSize,
+                             size_t fftSize,
+                             heph_float cutoffFreq,
+                             Window& window);
+```
+Removes the frequencies that are lower than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void HighPassFilterMT(AudioBuffer& buffer,
+                             heph_float cutoffFreq,
+                             size_t threadCountPerChannel,
+                             Window& window);
+```
+Removes the frequencies that are lower than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void HighPassFilterMT(AudioBuffer& buffer,
+                             size_t hopSize,
+                             size_t fftSize,
+                             heph_float cutoffFreq,
+                             size_t threadCountPerChannel,
+                             Window& window);
+```
+Removes the frequencies that are lower than the ``cutoffFreq`` (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **cutoffFreq:** The cutoff frequency in Hz.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandPassFilter(AudioBuffer& buffer,
+                           heph_float lowCutoffFreq,
+                           heph_float highCutoffFreq,
+                           Window& window);
+```
+Removes the frequencies that are not in the provided frequency band.
+- **buffer:** Audio data that will be filtered.
+- **lowCutoffFreq:** Start frequency of the passband.
+- **highCutoffFreq:** End frequency of the passband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandPassFilter(AudioBuffer& buffer,
+                           size_t hopSize,
+                           size_t fftSize, 
+                           heph_float lowCutoffFreq,
+                           heph_float highCutoffFreq,
+                           Window& window);
+```
+Removes the frequencies that are not in the provided frequency band.
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **lowCutoffFreq:** Start frequency of the passband.
+- **highCutoffFreq:** End frequency of the passband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandPassFilterMT(AudioBuffer& buffer,
+                             heph_float lowCutoffFreq,
+                             heph_float highCutoffFreq,
+                             Window& window);
+```
+Removes the frequencies that are not in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **lowCutoffFreq:** Start frequency of the passband.
+- **highCutoffFreq:** End frequency of the passband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandPassFilterMT(AudioBuffer& buffer,
+                             size_t hopSize,
+                             size_t fftSize, 
+                             heph_float lowCutoffFreq,
+                             heph_float highCutoffFreq,
+                             Window& window);
+```
+Removes the frequencies that are not in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **lowCutoffFreq:** Start frequency of the passband.
+- **highCutoffFreq:** End frequency of the passband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandPassFilterMT(AudioBuffer& buffer,
+                             heph_float lowCutoffFreq,
+                             heph_float highCutoffFreq,
+                             size_t threadCountPerChannel,
+                             Window& window);
+```
+Removes the frequencies that are not in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **lowCutoffFreq:** Start frequency of the passband.
+- **highCutoffFreq:** End frequency of the passband.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandPassFilterMT(AudioBuffer& buffer,
+                             size_t hopSize,
+                             size_t fftSize, 
+                             heph_float lowCutoffFreq,
+                             heph_float highCutoffFreq,
+                             size_t threadCountPerChannel,
+                             Window& window);
+```
+Removes the frequencies that are not in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **lowCutoffFreq:** Start frequency of the passband.
+- **highCutoffFreq:** End frequency of the passband.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandCutFilter(AudioBuffer& buffer,
+                          heph_float lowCutoffFreq,
+                          heph_float highCutoffFreq,
+                          Window& window);
+```
+Removes the frequencies that are in the provided frequency band.
+- **buffer:** Audio data that will be filtered.
+- **lowCutoffFreq:** Start frequency of the stopband.
+- **highCutoffFreq:** End frequency of the stopband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandCutFilter(AudioBuffer& buffer,
+                          size_t hopSize,
+                          size_t fftSize, 
+                          heph_float lowCutoffFreq,
+                          heph_float highCutoffFreq,
+                          Window& window);
+```
+Removes the frequencies that are in the provided frequency band.
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **lowCutoffFreq:** Start frequency of the stopband.
+- **highCutoffFreq:** End frequency of the stopband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandCutFilterMT(AudioBuffer& buffer,
+                            heph_float lowCutoffFreq,
+                            heph_float highCutoffFreq,
+                            Window& window);
+```
+Removes the frequencies that are in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **lowCutoffFreq:** Start frequency of the stopband.
+- **highCutoffFreq:** End frequency of the stopband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandCutFilterMT(AudioBuffer& buffer,
+                            size_t hopSize,
+                            size_t fftSize, 
+                            heph_float lowCutoffFreq,
+                            heph_float highCutoffFreq,
+                            Window& window);
+```
+Removes the frequencies that are in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **lowCutoffFreq:** Start frequency of the stopband.
+- **highCutoffFreq:** End frequency of the stopband.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandCutFilterMT(AudioBuffer& buffer,
+                            heph_float lowCutoffFreq,
+                            heph_float highCutoffFreq,
+                            size_t threadCountPerChannel,
+                            Window& window);
+```
+Removes the frequencies that are in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **lowCutoffFreq:** Start frequency of the stopband.
+- **highCutoffFreq:** End frequency of the stopband.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void BandCutFilterMT(AudioBuffer& buffer,
+                            size_t hopSize,
+                            size_t fftSize, 
+                            heph_float lowCutoffFreq,
+                            heph_float highCutoffFreq,
+                            size_t threadCountPerChannel,
+                            Window& window);
+```
+Removes the frequencies that are in the provided frequency band (multithreaded).
+- **buffer:** Audio data that will be filtered.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **lowCutoffFreq:** Start frequency of the stopband.
+- **highCutoffFreq:** End frequency of the stopband.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
