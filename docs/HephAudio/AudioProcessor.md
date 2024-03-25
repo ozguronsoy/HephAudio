@@ -144,7 +144,7 @@ static void Tremolo(AudioBuffer& buffer,
 ```
 Changes the volume of the provided audio data periodically and adds the result (wet) to the input (dry) signal.
 - **buffer:** Audio data that the effect will be applied to.
-- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **depth:** Controls the dry/wet mix ratio. Range: ``[0, 1]``.
 - **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
 <br><br><br><br>
 
@@ -156,7 +156,7 @@ static void Vibrato(AudioBuffer& buffer,
 ```
 Changes the pitch of the provided audio data periodically and adds the result (wet) to the input (dry) signal.
 - **buffer:** Audio data that the effect will be applied to.
-- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **depth:** Controls the dry/wet mix ratio. Range: ``[0, 1]``.
 - **extent_semitone:** Maximum pitch change in terms of semitones.
 - **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
 <br><br><br><br>
@@ -173,7 +173,7 @@ static void Chorus(AudioBuffer& buffer,
 Delays the provided audio data and changes its pitch periodically. 
 Then adds the result (wet) to the input (dry) signal.
 - **buffer:** Audio data that the effect will be applied to.
-- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **depth:** Controls the dry/wet mix ratio. Range: ``[0, 1]``.
 - **feedbackGain:** Gain of the feedback sample.
 - **baseDelay_ms:** Constant delay, in milliseconds, that will be added to the wet signal.
 - **delay_ms:** Maximum value of the variable delay, in milliseconds, that will be added to the wet signal.
@@ -192,10 +192,83 @@ static void Flanger(AudioBuffer& buffer,
 ```
 Delays the provided audio data and adds the result (wet) to the input (dry) signal. The amount of delay applied changes periodically.
 - **buffer:** Audio data that the effect will be applied to.
-- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **depth:** Controls the dry/wet mix ratio. Range: ``[0, 1]``.
 - **feedbackGain:** Gain of the feedback sample.
 - **baseDelay_ms:** Constant delay, in milliseconds, that will be added to the wet signal.
 - **delay_ms:** Maximum value of the variable delay, in milliseconds, that will be added to the wet signal.
 The delay applied to wet samples changes periodically. The maximum delay that will be applied can be calculated as ``baseDelay_ms + delay_ms``.
 - **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
+<br><br><br><br>
+
+```c++
+static void FixOverflow(AudioBuffer& buffer);
+```
+Fixes the distortion due to floating point samples exceeding the [-1, 1] range.
+- **buffer:** Audio data that will be fixed.
+
+> [!IMPORTANT]
+> This method does ***NOT*** work with the integer types.
+
+<br><br><br><br>
+
+```c++
+static void Normalize(AudioBuffer& buffer,
+                      heph_audio_sample peakAmplitude);
+```
+Normalizes the audio data at the provided amplitude.
+- **buffer:** Audio data that will be normalized.
+- **peakAmplitude:** Peak amplitude of the output signal.
+<br><br><br><br>
+
+```c++
+static void RmsNormalize(AudioBuffer& buffer,
+                         heph_float rms);
+```
+Normalizes the audio data at the provided rms.
+- **buffer:** Audio data that will be normalized.
+- **rms:** Rms value of the output signal.
+<br><br><br><br>
+
+```c++
+static void HardClipDistortion(AudioBuffer& buffer,
+                               heph_float clippingLevel_dB);
+```
+Applies hard-clipping distortion.
+- **buffer:** Audio data that will be distorted.
+- **clippingLevel_dB:** Threshold value in decibels. Must be negative or zero.
+<br><br><br><br>
+
+```c++
+static void ArctanDistortion(AudioBuffer& buffer,
+                             heph_float alpha);
+```
+Applies soft-clipping distortion via ``arctan`` function.
+- **buffer:** Audio data that will be distorted.
+- **alpha:** Controls the amount of distortion. Range: ``[0, 1]``.
+<br><br><br><br>
+
+```c++
+static void CubicDistortion(AudioBuffer& buffer,
+                            heph_float a);
+```
+Applies cubic distortion.
+- **buffer:** Audio data that will be distorted.
+- **a:** Controls the amount of distortion. Range: ``[0, 1]``.
+<br><br><br><br>
+
+```c++
+static void Overdrive(AudioBuffer& buffer, heph_float drive);
+```
+Applies overdrive distortion.
+- **buffer:** Audio data that will be distorted.
+- **drive:** Controls the amount of distortion. Range: ``[0, 1]``.
+<br><br><br><br>
+
+```c++
+static void Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha);
+```
+Applies overdrive distortion.
+- **buffer:** Audio data that will be distorted.
+- **depth:** Controls the dry/wet mix ratio. Range: ``[0, 1]``.
+- **alpha:** Controls the amount of distortion. Range: ``[0, 1]``.
 <br><br><br><br>
