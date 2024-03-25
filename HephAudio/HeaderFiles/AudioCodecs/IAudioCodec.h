@@ -11,9 +11,9 @@ namespace HephAudio
 		{
 		public:
 			virtual ~IAudioCodec() = default;
-			virtual uint32_t Tag() const = 0;
-			virtual AudioBuffer Decode(const EncodedBufferInfo& encodedBufferInfo) const = 0;
-			virtual void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const = 0;
+			virtual uint32_t Tag() = 0;
+			virtual AudioBuffer Decode(const EncodedBufferInfo& encodedBufferInfo) = 0;
+			virtual void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) = 0;
 		};
 	}
 }

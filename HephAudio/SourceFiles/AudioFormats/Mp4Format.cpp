@@ -35,7 +35,7 @@ namespace HephAudio
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
 			return this->ffmpegAudioDecoder.Decode();
 		}
-		AudioBuffer Mp4Format::ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
+		AudioBuffer Mp4Format::ReadFile(const HephCommon::File& audioFile, Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
 			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);

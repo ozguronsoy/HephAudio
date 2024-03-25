@@ -6,11 +6,11 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		uint32_t MuLawCodec::Tag() const
+		uint32_t MuLawCodec::Tag()
 		{
 			return HEPHAUDIO_FORMAT_TAG_MULAW;
 		}
-		AudioBuffer MuLawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
+		AudioBuffer MuLawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo)
 		{
 			constexpr double scaleFactor = ((double)HEPH_AUDIO_SAMPLE_MAX) / INT16_MAX;
 
@@ -29,7 +29,7 @@ namespace HephAudio
 
 			return resultBuffer;
 		}
-		void MuLawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
+		void MuLawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo)
 		{
 			constexpr double scaleFactor = INT16_MAX / ((double)HEPH_AUDIO_SAMPLE_MAX);
 

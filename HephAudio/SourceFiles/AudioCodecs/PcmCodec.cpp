@@ -7,11 +7,11 @@ namespace HephAudio
 {
 	namespace Codecs
 	{
-		uint32_t PcmCodec::Tag() const
+		uint32_t PcmCodec::Tag()
 		{
 			return HEPHAUDIO_FORMAT_TAG_PCM;
 		}
-		AudioBuffer PcmCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
+		AudioBuffer PcmCodec::Decode(const EncodedBufferInfo& encodedBufferInfo)
 		{
 			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
 			const double scaleFactor = PcmCodec::GetScaleFactor(encodedBufferInfo.formatInfo);
@@ -30,7 +30,7 @@ namespace HephAudio
 
 			return resultBuffer;
 		}
-		void PcmCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
+		void PcmCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo)
 		{
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
 

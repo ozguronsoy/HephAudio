@@ -9,9 +9,9 @@ namespace HephAudio
 		class IEEE_FloatCodec final : public IAudioCodec
 		{
 		public:
-			uint32_t Tag() const override;
-			AudioBuffer Decode(const EncodedBufferInfo& encodedBufferInfo) const override;
-			void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const override;
+			uint32_t Tag() override;
+			AudioBuffer Decode(const EncodedBufferInfo& encodedBufferInfo) override;
+			void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) override;
 		};
 	}
 }

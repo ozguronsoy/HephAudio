@@ -27,7 +27,7 @@ namespace HephAudio
 			virtual size_t FileFrameCount(const HephCommon::File& audioFile, const AudioFormatInfo& audioFormatInfo) = 0;
 			virtual AudioFormatInfo ReadAudioFormatInfo(const HephCommon::File& audioFile) = 0;
 			virtual AudioBuffer ReadFile(const HephCommon::File& audioFile) = 0;
-			virtual AudioBuffer ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) = 0;
+			virtual AudioBuffer ReadFile(const HephCommon::File& audioFile, Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) = 0;
 			virtual bool SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) = 0;
 		};
 	}

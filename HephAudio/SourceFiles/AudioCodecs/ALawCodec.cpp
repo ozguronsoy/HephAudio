@@ -46,11 +46,11 @@ namespace HephAudio
 			7, 7, 7, 7, 7, 7, 7, 7,
 		};
 
-		uint32_t ALawCodec::Tag() const
+		uint32_t ALawCodec::Tag()
 		{
 			return HEPHAUDIO_FORMAT_TAG_ALAW;
 		}
-		AudioBuffer ALawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo) const
+		AudioBuffer ALawCodec::Decode(const EncodedBufferInfo& encodedBufferInfo)
 		{
 			constexpr double scaleFactor = ((double)HEPH_AUDIO_SAMPLE_MAX) / INT16_MAX;
 
@@ -69,7 +69,7 @@ namespace HephAudio
 
 			return resultBuffer;
 		}
-		void ALawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const
+		void ALawCodec::Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo)
 		{
 			constexpr double scaleFactor = INT16_MAX / ((double)HEPH_AUDIO_SAMPLE_MAX);
 

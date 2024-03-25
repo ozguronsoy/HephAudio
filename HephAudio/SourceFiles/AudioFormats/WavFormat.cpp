@@ -174,7 +174,7 @@ namespace HephAudio
 			return hephaudioBuffer;
 #endif
 	}
-		AudioBuffer WavFormat::ReadFile(const File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
+		AudioBuffer WavFormat::ReadFile(const File& audioFile, Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
 		{
 #if defined(HEPHAUDIO_USE_FFMPEG)
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());

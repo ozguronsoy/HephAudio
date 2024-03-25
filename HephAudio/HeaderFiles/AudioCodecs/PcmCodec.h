@@ -9,9 +9,9 @@ namespace HephAudio
 		class PcmCodec final : public IAudioCodec
 		{
 		public:
-			uint32_t Tag() const override;
-			AudioBuffer Decode(const EncodedBufferInfo& encodedBufferInfo) const override;
-			void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) const override;
+			uint32_t Tag() override;
+			AudioBuffer Decode(const EncodedBufferInfo& encodedBufferInfo) override;
+			void Encode(AudioBuffer& bufferToEncode, EncodedBufferInfo& encodedBufferInfo) override;
 		private:
 			double GetScaleFactor(const AudioFormatInfo& formatInfo) const;
 			double ReadSample(uint8_t* pData, uint16_t bytesPerSample, HephCommon::Endian endian) const;

@@ -14,7 +14,7 @@ namespace HephAudio
 			size_t FileFrameCount(const HephCommon::File& audioFile, const AudioFormatInfo& audioFormatInfo) override;
 			AudioFormatInfo ReadAudioFormatInfo(const HephCommon::File& audioFile) override;
 			AudioBuffer ReadFile(const HephCommon::File& audioFile) override;
-			AudioBuffer ReadFile(const HephCommon::File& audioFile, const Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) override;
+			AudioBuffer ReadFile(const HephCommon::File& audioFile, Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) override;
 			bool SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) override;
 		private:
 			void SampleRateFrom64(uint64_t srBits, AudioFormatInfo& formatInfo) const;
