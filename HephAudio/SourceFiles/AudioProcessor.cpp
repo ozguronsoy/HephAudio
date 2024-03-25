@@ -418,6 +418,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::ArctanDistortion(AudioBuffer& buffer, heph_float alpha)
 	{
+		alpha = 5 + alpha * 10;
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelCount; j++)
@@ -440,6 +441,8 @@ namespace HephAudio
 	}
 	void AudioProcessor::Overdrive(AudioBuffer& buffer, heph_float drive)
 	{
+		drive *= 0.8;
+
 		const heph_float a = sin(drive * Math::pi / 2.0);
 		const heph_float k = 2.0 * a / (1.0 - a);
 
@@ -454,7 +457,7 @@ namespace HephAudio
 	}
 	void AudioProcessor::Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha)
 	{
-		const heph_float& wetFactor = depth;
+		const heph_float wetFactor = depth * 0.5;
 		const heph_float dryFactor = 1.0 - wetFactor;
 
 		for (size_t i = 0; i < buffer.frameCount; i++)
