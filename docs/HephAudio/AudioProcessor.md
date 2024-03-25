@@ -397,3 +397,111 @@ Multithreaded equalizer.
 - **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
 - **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
 <br><br><br><br>
+
+```c++
+static void ChangeSpeed(AudioBuffer& buffer,
+                        heph_float speed,
+                        Window& window);
+```
+Changes the playback speed of the audio data without changing the pitch.
+- **buffer:** Audio data that the effect will be applied to.
+- **speed:** Playback speed multiplier.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void ChangeSpeed(AudioBuffer& buffer,
+                        size_t hopSize,
+                        size_t windowSize,
+                        heph_float speed,
+                        Window& window);
+```
+Changes the playback speed of the audio data without changing the pitch.
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **windowSize:** Window size.
+- **speed:** Playback speed multiplier.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void PitchShift(AudioBuffer& buffer,
+                       heph_float pitchChange_semitone,
+                       Window& window);
+```
+Changes the pitch of the audio data without changing the playback speed.
+- **buffer:** Audio data that the effect will be applied to.
+- **pitchChange_semitone:** Change in pitch in terms of semitones.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void PitchShift(AudioBuffer& buffer,
+                       size_t hopSize,
+                       size_t fftSize,
+                       heph_float pitchChange_semitone,
+                       Window& window);
+```
+Changes the pitch of the audio data without changing the playback speed.
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **pitchChange_semitone:** Change in pitch in terms of semitones.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void PitchShiftMT(AudioBuffer& buffer,
+                         heph_float pitchChange_semitone,
+                         Window& window);
+```
+Changes the pitch of the audio data without changing the playback speed (multithreaded).
+- **buffer:** Audio data that the effect will be applied to.
+- **pitchChange_semitone:** Change in pitch in terms of semitones.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void PitchShiftMT(AudioBuffer& buffer,
+                         heph_float pitchChange_semitone,
+                         size_t threadCountPerChannel,
+                         Window& window);
+```
+Changes the pitch of the audio data without changing the playback speed (multithreaded).
+- **buffer:** Audio data that the effect will be applied to.
+- **pitchChange_semitone:** Change in pitch in terms of semitones.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void PitchShiftMT(AudioBuffer& buffer,
+                         size_t hopSize,
+                         size_t fftSize,
+                         heph_float pitchChange_semitone,
+                         Window& window);
+```
+Changes the pitch of the audio data without changing the playback speed (multithreaded).
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **pitchChange_semitone:** Change in pitch in terms of semitones.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
+
+```c++
+static void PitchShiftMT(AudioBuffer& buffer,
+                         size_t hopSize,
+                         size_t fftSize,
+                         heph_float pitchChange_semitone,
+                         size_t threadCountPerChannel,
+                         Window& window);
+```
+Changes the pitch of the audio data without changing the playback speed (multithreaded).
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **pitchChange_semitone:** Change in pitch in terms of semitones.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+<br><br><br><br>
