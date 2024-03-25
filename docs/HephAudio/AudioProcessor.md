@@ -257,7 +257,8 @@ Applies cubic distortion.
 <br><br><br><br>
 
 ```c++
-static void Overdrive(AudioBuffer& buffer, heph_float drive);
+static void Overdrive(AudioBuffer& buffer,
+                      heph_float drive);
 ```
 Applies overdrive distortion.
 - **buffer:** Audio data that will be distorted.
@@ -265,10 +266,134 @@ Applies overdrive distortion.
 <br><br><br><br>
 
 ```c++
-static void Fuzz(AudioBuffer& buffer, heph_float depth, heph_float alpha);
+static void Fuzz(AudioBuffer& buffer,
+                 heph_float depth,
+                 heph_float alpha);
 ```
 Applies overdrive distortion.
 - **buffer:** Audio data that will be distorted.
 - **depth:** Controls the dry/wet mix ratio. Range: ``[0, 1]``.
 - **alpha:** Controls the amount of distortion. Range: ``[0, 1]``.
+<br><br><br><br>
+
+```c++
+static void LinearFadeIn(AudioBuffer& buffer,
+                         heph_float duration_s);
+```
+Applies linear fade-in.
+- **buffer:** Audio data that the effect will be applied to.
+- **duration_s:** Duration of the fade-in in seconds.
+<br><br><br><br>
+
+```c++
+static void LinearFadeIn(AudioBuffer& buffer,
+                         heph_float duration_s,
+                         size_t startIndex);
+```
+Applies linear fade-in.
+- **buffer:** Audio data that the effect will be applied to.
+- **duration_s:** Duration of the fade-in in seconds.
+- **startIndex:** Index of the first frame the effect will be applied to.
+<br><br><br><br>
+
+```c++
+static void LinearFadeOut(AudioBuffer& buffer,
+                          heph_float duration_s);
+```
+Applies linear fade-out.
+- **buffer:** Audio data that the effect will be applied to.
+- **duration_s:** Duration of the fade-out in seconds.
+<br><br><br><br>
+
+```c++
+static void LinearFadeOut(AudioBuffer& buffer,
+                          heph_float duration_s,
+                          size_t startIndex);
+```
+Applies linear fade-out.
+- **buffer:** Audio data that the effect will be applied to.
+- **duration_s:** Duration of the fade-out in seconds.
+- **startIndex:** Index of the first frame the effect will be applied to.
+<br><br><br><br>
+
+```c++
+static void Equalizer(AudioBuffer& buffer,
+                      Window& window,
+                      const std::vector<EqualizerInfo>& infos);
+```
+Equalizer.
+- **buffer:** Audio data that the effect will be applied to.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+- **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
+<br><br><br><br>
+
+```c++
+static void Equalizer(AudioBuffer& buffer,
+                      size_t hopSize,
+                      size_t fftSize,
+                      Window& window,
+                      const std::vector<EqualizerInfo>& infos);
+```
+Equalizer.
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+- **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
+<br><br><br><br>
+
+```c++
+static void EqualizerMT(AudioBuffer& buffer,
+                        Window& window,
+                        const std::vector<EqualizerInfo>& infos);
+```
+Multithreaded equalizer.
+- **buffer:** Audio data that the effect will be applied to.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+- **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
+<br><br><br><br>
+
+```c++
+static void EqualizerMT(AudioBuffer& buffer,
+                        size_t threadCountPerChannel,
+                        Window& window,
+                        const std::vector<EqualizerInfo>& infos);
+```
+Multithreaded equalizer.
+- **buffer:** Audio data that the effect will be applied to.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+- **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
+<br><br><br><br>
+
+```c++
+static void EqualizerMT(AudioBuffer& buffer,
+                        size_t hopSize,
+                        size_t fftSize,
+                        Window& window,
+                        const std::vector<EqualizerInfo>& infos);
+```
+Multithreaded equalizer.
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+- **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
+<br><br><br><br>
+
+```c++
+static void EqualizerMT(AudioBuffer& buffer,
+                        size_t hopSize,
+                        size_t fftSize,
+                        size_t threadCountPerChannel,
+                        Window& window,
+                        const std::vector<EqualizerInfo>& infos);
+```
+Multithreaded equalizer.
+- **buffer:** Audio data that the effect will be applied to.
+- **hopSize:** Hop size.
+- **fftSize:** Length of the FFT in samples.
+- **threadCountPerChannel:** Number of threads to use per channel.
+- **window:** [Window](/docs/HephAudio/Windows/Window.md) that will be applied to the audio signal.
+- **infos:** A vector of [EqualizerInfo](/docs/HephAudio/EqualizerInfo.md).
 <br><br><br><br>
