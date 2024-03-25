@@ -6,7 +6,6 @@
 #include "Oscillators/Oscillator.h"
 #include "Windows/Window.h"
 #include "../HephCommon/HeaderFiles/FloatBuffer.h"
-#include "../HephCommon/HeaderFiles/Vector.h"
 #include <vector>
 
 namespace HephAudio

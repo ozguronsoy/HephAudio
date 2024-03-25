@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\BitStream.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Color.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ColorBuffer.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Complex.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
@@ -17,9 +8,6 @@
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\CsvStream.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Event.h">
@@ -55,19 +43,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\JsonStream.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamHelpers.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StreamStatus.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringBuffer.h">
@@ -76,27 +52,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Vector.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\XmlStream.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\BitStream.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\XmlStream.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\CsvStream.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp">
@@ -120,16 +81,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\JsonStream.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StreamHelpers.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringBuffer.cpp">
