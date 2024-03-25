@@ -1,6 +1,6 @@
 # Introduction
 HephAudio is a cross-platform audio library that provides:
-- Playing and recording audio data in Windows, Linux, iOS, MacOS, and Android.
+- Playing and recording audio data in Windows, Linux, iOS, macOS, and Android.
 - Audio device enumeration and selection.
 - Tools for storing and processing audio data with ease.
 - Easy to use sound effects and filters.
