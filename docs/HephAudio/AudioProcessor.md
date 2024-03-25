@@ -134,7 +134,7 @@ static void SineLawPanning(AudioBuffer& buffer,
 ```
 Increases the volume of one channel while decreasing the other one (stereo only). Uses sin function to calculate the volumes.
 - **buffer:** Audio data that the effect will be applied to.
-- **panningFactor:** Determines how the channels' volume will be changed. Ranges between -1 and 1.<br> -1 means only the left channel will be audible and 1 means only the right channel will be audible.
+- **panningFactor:** Determines how the channels' volume will be changed. Range: ``[-1, 1]``.<br> -1 means only the left channel will be audible and 1 means only the right channel will be audible.
 <br><br><br><br>
 
 ```c++
@@ -142,8 +142,60 @@ static void Tremolo(AudioBuffer& buffer,
                     heph_float depth,
                     const Oscillator& lfo);
 ```
-Changes the volume of the provided audio data periodically.
+Changes the volume of the provided audio data periodically and adds the result (wet) to the input (dry) signal.
 - **buffer:** Audio data that the effect will be applied to.
-- **depth:** Determines the dry/wet mix ratio.
+- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
+<br><br><br><br>
+
+```c++
+static void Vibrato(AudioBuffer& buffer,
+                    heph_float depth,
+                    heph_float extent_semitone,
+                    const Oscillator& lfo);
+```
+Changes the pitch of the provided audio data periodically and adds the result (wet) to the input (dry) signal.
+- **buffer:** Audio data that the effect will be applied to.
+- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **extent_semitone:** Maximum pitch change in terms of semitones.
+- **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
+<br><br><br><br>
+
+```c++
+static void Chorus(AudioBuffer& buffer,
+                   heph_float depth,
+                   heph_float feedbackGain,
+                   heph_float baseDelay_ms,
+                   heph_float delay_ms,
+                   heph_float extent_semitone,
+                   const Oscillator& lfo);
+```
+Delays the provided audio data and changes its pitch periodically. 
+Then adds the result (wet) to the input (dry) signal.
+- **buffer:** Audio data that the effect will be applied to.
+- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **feedbackGain:** Gain of the feedback sample.
+- **baseDelay_ms:** Constant delay, in milliseconds, that will be added to the wet signal.
+- **delay_ms:** Maximum value of the variable delay, in milliseconds, that will be added to the wet signal.
+The delay applied to wet samples changes periodically. The maximum delay that will be applied can be calculated as ``baseDelay_ms + delay_ms``.
+- **extent_semitone:** Maximum pitch change in terms of semitones.
+- **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
+<br><br><br><br>
+
+```c++
+static void Flanger(AudioBuffer& buffer,
+                    heph_float depth,
+                    heph_float feedbackGain,
+                    heph_float baseDelay_ms,
+                    heph_float delay_ms,
+                    const Oscillator& lfo);
+```
+Delays the provided audio data and adds the result (wet) to the input (dry) signal. The amount of delay applied changes periodically.
+- **buffer:** Audio data that the effect will be applied to.
+- **depth:** Determines the dry/wet mix ratio. Range: ``[0, 1]``.
+- **feedbackGain:** Gain of the feedback sample.
+- **baseDelay_ms:** Constant delay, in milliseconds, that will be added to the wet signal.
+- **delay_ms:** Maximum value of the variable delay, in milliseconds, that will be added to the wet signal.
+The delay applied to wet samples changes periodically. The maximum delay that will be applied can be calculated as ``baseDelay_ms + delay_ms``.
 - **lfo:** A low-frequency [oscillator](/docs/HephAudio/Oscillators/Oscillator.md).
 <br><br><br><br>
