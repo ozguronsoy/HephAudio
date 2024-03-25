@@ -12,7 +12,7 @@ namespace HephAudio
 		: pNativeAudio(pNativeAudio), pFileFormat(nullptr)
 		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr) {}
 
-	AudioStream::AudioStream(Audio& audio) 
+	AudioStream::AudioStream(Audio& audio)
 		: pNativeAudio(audio.GetNativeAudio()), pFileFormat(nullptr)
 		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr) {}
 
@@ -27,9 +27,9 @@ namespace HephAudio
 		}
 		this->ChangeFile(filePath);
 	}
-	
+
 	AudioStream::AudioStream(Audio& audio, const StringBuffer& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
-	
+
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
 		: pNativeAudio(rhs.pNativeAudio), file(std::move(rhs.file)), pFileFormat(rhs.pFileFormat)
 		, pAudioCodec(rhs.pAudioCodec), formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pAudioObject(rhs.pAudioObject)
@@ -255,8 +255,14 @@ namespace HephAudio
 
 			if (renderSampleRate != pStream->formatInfo.sampleRate)
 			{
-				pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
-				AudioProcessor::ChangeSampleRate(pStream->decodedBuffer, pRenderResult->renderBuffer, 0, renderFormat.sampleRate, pRenderArgs->renderFrameCount);
+				pRenderResult->renderBuffer = pStream->decodedBuffer.GetSubBuffer(0, readFrameCount + 1);
+				
+				AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
+				if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
+				{
+					pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
+				}
+
 				pStream->decodedBuffer.Cut(0, readFrameCount);
 			}
 			else
@@ -277,9 +283,12 @@ namespace HephAudio
 
 				if (srRatio != 1)
 				{
-					pRenderResult->renderBuffer = AudioBuffer(pRenderArgs->renderFrameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
-					const AudioBuffer originalBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
-					AudioProcessor::ChangeSampleRate(originalBuffer, pRenderResult->renderBuffer, 0, renderFormat.sampleRate, pRenderArgs->renderFrameCount);
+					pRenderResult->renderBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount + 1, &pRenderResult->isFinishedPlaying);
+					AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
+					if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
+					{
+						pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
+					}
 				}
 				else
 				{

@@ -641,8 +641,13 @@ namespace HephAudio
 
 			if (inputSampleRate != encoder.outputFormatInfo.sampleRate)
 			{
-				AudioBuffer convertedBuffer(encoder.avFrame->nb_samples, encoder.outputFormatInfo);
-				AudioProcessor::ChangeSampleRate(decodedBuffer, convertedBuffer, 0, encoder.outputFormatInfo.sampleRate, encoder.avFrame->nb_samples);
+				AudioBuffer convertedBuffer = decodedBuffer.GetSubBuffer(0, readSize + 1);
+				AudioProcessor::ChangeSampleRate(convertedBuffer, encoder.outputFormatInfo.sampleRate);
+
+				if (convertedBuffer.FrameCount() != encoder.avFrame->nb_samples)
+				{
+					convertedBuffer.Resize(encoder.avFrame->nb_samples);
+				}
 
 				encoder.Encode(convertedBuffer);
 				decodedBuffer.Cut(0, readSize);

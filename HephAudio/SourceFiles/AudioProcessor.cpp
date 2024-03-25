@@ -81,26 +81,6 @@ namespace HephAudio
 			buffer = std::move(resultBuffer);
 		}
 	}
-	void AudioProcessor::ChangeSampleRate(const AudioBuffer& originalBuffer, AudioBuffer& subBuffer, size_t subBufferFrameIndex, uint32_t outputSampleRate, size_t outFrameCount)
-	{
-		const heph_float srRatio = (heph_float)outputSampleRate / (heph_float)originalBuffer.formatInfo.sampleRate;
-		if (srRatio != 1.0)
-		{
-			subBuffer.Resize(outFrameCount);
-			subBuffer.formatInfo = AudioFormatInfo(subBuffer.formatInfo.formatTag, subBuffer.formatInfo.channelCount, subBuffer.formatInfo.bitsPerSample, outputSampleRate, subBuffer.formatInfo.bitRate, subBuffer.formatInfo.endian);
-
-			for (size_t i = 0; i < outFrameCount; i++)
-			{
-				const heph_float resampleIndex = i / srRatio + subBufferFrameIndex;
-				const heph_float rho = resampleIndex - Math::Floor(resampleIndex);
-
-				for (size_t j = 0; j < subBuffer.formatInfo.channelCount && (resampleIndex + 1) < originalBuffer.frameCount; j++)
-				{
-					subBuffer[i][j] = originalBuffer[resampleIndex][j] * (1.0 - rho) + originalBuffer[resampleIndex + 1.0][j] * rho;
-				}
-			}
-		}
-	}
 	std::vector<FloatBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
 	{
 		std::vector<FloatBuffer> channels(buffer.formatInfo.channelCount, FloatBuffer(buffer.frameCount));

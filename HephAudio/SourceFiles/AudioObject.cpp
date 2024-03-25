@@ -77,9 +77,14 @@ namespace HephAudio
 		AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
 		const size_t readFrameCount = (heph_float)pRenderArgs->renderFrameCount * (heph_float)pAudioObject->buffer.FormatInfo().sampleRate / (heph_float)renderFormat.sampleRate;
 
-		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount);
+		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount + 1);
 
-		AudioProcessor::ChangeSampleRate(pAudioObject->buffer, pRenderResult->renderBuffer, pAudioObject->frameIndex, renderFormat.sampleRate, pRenderArgs->renderFrameCount);
+		AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
+		if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
+		{
+			pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
+		}
+
 		AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelCount);
 
 		pAudioObject->frameIndex += readFrameCount;
