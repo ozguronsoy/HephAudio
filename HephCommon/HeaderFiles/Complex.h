@@ -136,14 +136,6 @@ namespace HephCommon
 		}
 	};
 }
-inline heph_float abs(const HephCommon::Complex& rhs)
-{
-	return rhs.Magnitude();
-}
-inline heph_float phase(const HephCommon::Complex& rhs)
-{
-	return rhs.Phase();
-}
 inline constexpr HephCommon::Complex operator+(heph_float lhs, const HephCommon::Complex& rhs)
 {
 	return rhs + lhs;

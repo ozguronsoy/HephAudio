@@ -69,7 +69,6 @@ namespace HephCommon
 		heph_float* End() const;
 	};
 }
-HephCommon::FloatBuffer abs(const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator+(heph_float lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator-(heph_float lhs, const HephCommon::FloatBuffer& rhs);
 HephCommon::FloatBuffer operator*(heph_float lhs, const HephCommon::FloatBuffer& rhs);

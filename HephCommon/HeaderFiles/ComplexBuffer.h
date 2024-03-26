@@ -87,8 +87,6 @@ namespace HephCommon
 		Complex* End() const;
 	};
 };
-HephCommon::FloatBuffer abs(const HephCommon::ComplexBuffer& rhs);
-HephCommon::FloatBuffer phase(const HephCommon::ComplexBuffer& rhs);
 HephCommon::ComplexBuffer operator+(heph_float lhs, const HephCommon::ComplexBuffer& rhs);
 HephCommon::ComplexBuffer operator+(const HephCommon::Complex& lhs, const HephCommon::ComplexBuffer& rhs);
 HephCommon::ComplexBuffer operator+(const HephCommon::FloatBuffer& lhs, const HephCommon::ComplexBuffer& rhs);

@@ -913,24 +913,6 @@ namespace HephCommon
 		return this->pData + this->frameCount;
 	}
 }
-HephCommon::FloatBuffer abs(const HephCommon::ComplexBuffer& rhs)
-{
-	HephCommon::FloatBuffer resultBuffer = HephCommon::FloatBuffer(rhs.FrameCount());
-	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
-	{
-		resultBuffer[i] = rhs[i].Magnitude();
-	}
-	return resultBuffer;
-}
-HephCommon::FloatBuffer phase(const HephCommon::ComplexBuffer& rhs)
-{
-	HephCommon::FloatBuffer resultBuffer = HephCommon::FloatBuffer(rhs.FrameCount());
-	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
-	{
-		resultBuffer[i] = rhs[i].Phase();
-	}
-	return resultBuffer;
-}
 HephCommon::ComplexBuffer operator+(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
 {
 	return rhs + lhs;

@@ -86,7 +86,6 @@ namespace HephAudio
 		static size_t CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo);
 	};
 }
-HephAudio::AudioBuffer abs(const HephAudio::AudioBuffer& rhs);
 HephAudio::AudioBuffer operator+(heph_float lhs, const HephAudio::AudioBuffer& rhs);
 HephAudio::AudioBuffer operator+(const HephCommon::FloatBuffer& lhs, const HephAudio::AudioBuffer& rhs);
 HephAudio::AudioBuffer operator-(heph_float lhs, const HephAudio::AudioBuffer& rhs);

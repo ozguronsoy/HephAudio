@@ -1025,19 +1025,6 @@ namespace HephAudio
 		return t_s * (heph_float)formatInfo.ByteRate() / (heph_float)formatInfo.FrameSize();
 	}
 }
-HephAudio::AudioBuffer abs(const HephAudio::AudioBuffer& rhs)
-{
-	const HephAudio::AudioFormatInfo& audioFormatInfo = rhs.FormatInfo();
-	HephAudio::AudioBuffer resultBuffer = HephAudio::AudioBuffer(rhs.FrameCount(), audioFormatInfo);
-	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
-	{
-		for (size_t j = 0; j < audioFormatInfo.channelCount; j++)
-		{
-			resultBuffer[i][j] = Math::Abs(rhs[i][j]);
-		}
-	}
-	return resultBuffer;
-}
 HephAudio::AudioBuffer operator+(heph_float lhs, const HephAudio::AudioBuffer& rhs)
 {
 	return rhs + lhs;

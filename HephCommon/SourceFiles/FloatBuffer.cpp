@@ -691,15 +691,6 @@ namespace HephCommon
 		return this->pData + this->frameCount;
 	}
 }
-HephCommon::FloatBuffer abs(const HephCommon::FloatBuffer& rhs)
-{
-	HephCommon::FloatBuffer resultBuffer(rhs.FrameCount());
-	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
-	{
-		resultBuffer[i] = abs(rhs[i]);
-	}
-	return resultBuffer;
-}
 HephCommon::FloatBuffer operator+(heph_float lhs, const HephCommon::FloatBuffer& rhs)
 {
 	return rhs + lhs;
