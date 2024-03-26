@@ -5,19 +5,21 @@
 
 namespace HephCommon
 {
-	struct UserEventArgsHash final
-	{
-		size_t operator()(const StringBuffer& lhs) const
-		{
-			return lhs.Size();
-		}
-		bool operator()(const StringBuffer& lhs, const StringBuffer& rhs) const
-		{
-			return lhs.CompareContent(rhs);
-		}
-	};
 	class UserEventArgs final
 	{
+	private:
+		class UserEventArgsHash final
+		{
+		public:
+			size_t operator()(const StringBuffer& lhs) const
+			{
+				return lhs.Size();
+			}
+			bool operator()(const StringBuffer& lhs, const StringBuffer& rhs) const
+			{
+				return lhs.CompareContent(rhs);
+			}
+		};
 	private:
 		std::unordered_map<StringBuffer, void*, UserEventArgsHash> argsMap;
 	public:
