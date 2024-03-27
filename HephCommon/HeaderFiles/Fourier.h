@@ -20,7 +20,5 @@ namespace HephCommon
 		static size_t CalculateFFTSize(size_t bufferSize);
 		static FloatBuffer Convolve(const FloatBuffer& source, const FloatBuffer& kernel);
 		static FloatBuffer Convolve(const FloatBuffer& source, const FloatBuffer& kernel, ConvolutionMode convolutionMode);
-	private:
-		static void FFT_Internal(ComplexBuffer& complexBuffer, size_t fftSize, bool isForward);
 	};
 }
