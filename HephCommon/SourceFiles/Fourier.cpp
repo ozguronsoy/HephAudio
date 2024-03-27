@@ -138,6 +138,6 @@ namespace HephCommon
 
 		pocketfft::shape_t shape_in{ fftSize };
 		std::complex<heph_float>* pComplexBuffer = (std::complex<heph_float>*)complexBuffer.Begin();
-		pocketfft::c2c(shape_in, stride_out, stride_out, axes, isForward, pComplexBuffer, pComplexBuffer, 1.0_hf);
+		pocketfft::c2c(shape_in, stride_out, stride_out, axes, isForward, pComplexBuffer, pComplexBuffer, (heph_float)1.0);
 	}
 }

@@ -54,10 +54,8 @@ typedef double heph_float;
 typedef float heph_float;
 #endif
 
-inline HEPH_CONSTEVAL heph_float operator""_hf(long double x) { return (heph_float)x; }
-inline HEPH_CONSTEVAL heph_float operator""_hf(unsigned long long int x) { return (heph_float)x; }
-
 #define HEPH_FLOAT heph_float
+
 #endif
 
 
@@ -74,6 +72,7 @@ namespace HephCommon
 	extern Endian systemEndian;
 	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
 	constexpr inline Endian operator!(const Endian& lhs) { return lhs == Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
+
 #define HEPH_ENDIAN HephCommon::Endian
 #define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian
 #define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)
