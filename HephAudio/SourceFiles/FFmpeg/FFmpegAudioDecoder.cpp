@@ -1,8 +1,8 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "FFmpeg/FFmpegAudioDecoder.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "HephException.h"
+#include "File.h"
+#include "ConsoleLogger.h"
 
 using namespace HephCommon;
 

@@ -1,6 +1,6 @@
 #include "AudioPlaylist.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "HephException.h"
+#include "ConsoleLogger.h"
 
 using namespace HephCommon;
 

@@ -1,5 +1,5 @@
 #include "Oscillators/SquareWaveOscillator.h"
-#include "../HephCommon/HeaderFiles/HephMath.h"
+#include "HephMath.h"
 
 using namespace HephCommon;
 

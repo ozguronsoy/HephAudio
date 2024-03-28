@@ -1,14 +1,16 @@
 #ifdef _WIN32
 #include "NativeAudio/WinAudioDS.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "File.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 #include <VersionHelpers.h>
 #include <comdef.h>
 
+#if defined(_MSVC_LANG)
 #pragma comment (lib, "Dsound.lib")
 #pragma comment(lib, "Winmm.lib")
+#endif
 
 #define IID_IDS_NOTIFY {0xB0210783, 0x89CD, 0x11D0, {0xAF, 0x08, 0x00, 0xA0, 0xC9, 0x25, 0xCD, 0x16}}
 #define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); goto RENDER_EXIT; }

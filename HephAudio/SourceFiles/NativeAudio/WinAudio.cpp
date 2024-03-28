@@ -1,9 +1,9 @@
 #ifdef _WIN32
 #include "NativeAudio/WinAudio.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "File.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 #include <VersionHelpers.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <audioclient.h>

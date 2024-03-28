@@ -36,13 +36,8 @@ namespace HephAudio
 		void SetOnCaptureHandler(HephCommon::EventHandler handler);
 		void AddOnCaptureHandler(HephCommon::EventHandler handler);
 	public:
-#ifdef __ANDROID__
-		Audio(JavaVM* jvm);
-		Audio(JavaVM* jvm, AudioAPI api);
-#else
 		Audio();
 		Audio(AudioAPI api);
-#endif
 		Audio(const Audio&) = delete;
 		Audio& operator=(const Audio&) = delete;
 		~Audio();

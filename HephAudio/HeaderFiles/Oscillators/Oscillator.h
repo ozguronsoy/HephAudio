@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "../HephCommon/HeaderFiles/FloatBuffer.h"
+#include "FloatBuffer.h"
 #include <cmath>
 #include <cinttypes>
 

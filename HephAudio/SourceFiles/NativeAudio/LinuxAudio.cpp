@@ -1,9 +1,9 @@
 #if defined(__linux__) && !defined(__ANDROID__)
 #include "NativeAudio/LinuxAudio.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
+#include "File.h"
+#include "ConsoleLogger.h"
+#include "StopWatch.h"
 #include <unistd.h>
 
 #define SND_OK 0

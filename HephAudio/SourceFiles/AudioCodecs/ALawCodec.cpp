@@ -1,6 +1,6 @@
 #include "AudioCodecs/ALawCodec.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/HephMath.h"
+#include "HephMath.h"
 
 namespace HephAudio
 {

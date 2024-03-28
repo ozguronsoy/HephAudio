@@ -1,5 +1,5 @@
 #include "AudioCodecs/PcmCodec.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
+#include "HephException.h"
 
 using namespace HephCommon;
 

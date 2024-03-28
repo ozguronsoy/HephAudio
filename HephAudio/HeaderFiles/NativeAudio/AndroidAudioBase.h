@@ -11,10 +11,11 @@ namespace HephAudio
 		class AndroidAudioBase : public NativeAudio
 		{
 		protected:
-			JavaVM* jvm;
 			uint32_t deviceApiLevel;
 		public:
-			AndroidAudioBase(JavaVM* jvm);
+			static JavaVM* jvm;
+		public:
+			AndroidAudioBase();
 			AndroidAudioBase(const AndroidAudioBase&) = delete;
 			AndroidAudioBase& operator=(const AndroidAudioBase&) = delete;
 			virtual ~AndroidAudioBase();

@@ -1,5 +1,5 @@
 #include "Windows/NuttallWindow.h"
-#include "../HephCommon/HeaderFiles/HephMath.h"
+#include "HephMath.h"
 
 using namespace HephCommon;
 

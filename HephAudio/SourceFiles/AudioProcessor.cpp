@@ -1,9 +1,9 @@
 #include "AudioProcessor.h"
 #include "AudioCodecs/AudioCodecManager.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
-#include "../HephCommon/HeaderFiles/Fourier.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "HephException.h"
+#include "Fourier.h"
+#include "File.h"
+#include "ConsoleLogger.h"
 #include <thread>
 
 using namespace HephCommon;

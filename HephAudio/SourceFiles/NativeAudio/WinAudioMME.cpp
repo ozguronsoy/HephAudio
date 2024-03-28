@@ -1,9 +1,9 @@
 #if defined(_WIN32)
 #include "NativeAudio/WinAudioMME.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
+#include "StringBuffer.h"
 #include <VersionHelpers.h>
 
 #define MAX_STOP_WAIT 200

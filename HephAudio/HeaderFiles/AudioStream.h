@@ -7,7 +7,7 @@
 #include "AudioFormats/AudioFileFormatManager.h"
 #include "AudioCodecs/IAudioCodec.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
-#include "../HephCommon/HeaderFiles/File.h"
+#include "File.h"
 
 #define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY "audio_stream"_sb
 

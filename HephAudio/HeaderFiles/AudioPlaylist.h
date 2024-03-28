@@ -3,9 +3,9 @@
 #include "AudioStream.h"
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
-#include "../HephCommon/HeaderFiles/EventArgs.h"
-#include "../HephCommon/HeaderFiles/EventResult.h"
+#include "StringBuffer.h"
+#include "EventArgs.h"
+#include "EventResult.h"
 #include <vector>
 
 #define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY "audio_playlist"_sb

@@ -1,11 +1,11 @@
 #ifdef __ANDROID__
 #include "NativeAudio/AndroidAudioSLES.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "File.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 
-#define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message)); }
+#define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message, "OpenSL ES", "")); }
 
 using namespace HephCommon;
 
@@ -13,7 +13,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioSLES::AndroidAudioSLES(JavaVM* jvm) : AndroidAudioBase(jvm)
+		AndroidAudioSLES::AndroidAudioSLES() : AndroidAudioBase()
 			, audioEngineObject(nullptr), audioEngine(nullptr), outputMixObject(nullptr), audioPlayerObject(nullptr), audioPlayer(nullptr)
 			, audioRecorderObject(nullptr), audioRecorder(nullptr), masterVolumeObject(nullptr)
 		{
@@ -217,6 +217,8 @@ namespace HephAudio
 		}
 		SLAndroidDataFormat_PCM_EX  AndroidAudioSLES::ToSLFormat(AudioFormatInfo& formatInfo)
 		{
+			formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
+
 			SLAndroidDataFormat_PCM_EX pcmFormat;
 			pcmFormat.formatType = SL_DATAFORMAT_PCM;
 			pcmFormat.numChannels = formatInfo.channelCount;
@@ -224,7 +226,7 @@ namespace HephAudio
 			pcmFormat.bitsPerSample = formatInfo.bitsPerSample;
 			pcmFormat.containerSize = formatInfo.bitsPerSample;
 			pcmFormat.channelMask = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
-			pcmFormat.endianness = SL_BYTEORDER_LITTLEENDIAN;
+			pcmFormat.endianness = HEPH_SYSTEM_ENDIAN == Endian::Little ? SL_BYTEORDER_LITTLEENDIAN : SL_BYTEORDER_BIGENDIAN;
 			pcmFormat.representation = formatInfo.bitsPerSample == 8 ? SL_ANDROID_PCM_REPRESENTATION_UNSIGNED_INT : SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT;
 			return pcmFormat;
 		}
@@ -242,7 +244,7 @@ namespace HephAudio
 				SLresult slres = (*bufferQueue)->Enqueue(bufferQueue, pCallbackContext->pData, dataBuffer.Size());
 				if (slres != 0)
 				{
-					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, "AndroidAudioSLES", "An error occurred whilst rendering data."));
+					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, "AndroidAudioSLES", "An error occurred whilst rendering data.", "OpenSL ES", ""));
 					return;
 				}
 
@@ -271,7 +273,7 @@ namespace HephAudio
 				SLresult slres = (*simpleBufferQueue)->Enqueue(simpleBufferQueue, pCallbackContext->pData, captureCallbackSize);
 				if (slres != 0)
 				{
-					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, "AndroidAudioSLES", "An error occurred whilst capturing data."));
+					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, "AndroidAudioSLES", "An error occurred whilst capturing data.", "OpenSL ES", ""));
 					return;
 				}
 

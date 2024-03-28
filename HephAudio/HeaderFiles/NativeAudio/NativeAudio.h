@@ -6,8 +6,8 @@
 #include "EchoInfo.h"
 #include "AudioEvents/AudioDeviceEventArgs.h"
 #include "AudioEvents/AudioCaptureEventArgs.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
-#include "../HephCommon/HeaderFiles/Event.h"
+#include "HephException.h"
+#include "Event.h"
 #include <vector>
 #include <thread>
 #include <mutex>

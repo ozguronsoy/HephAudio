@@ -5,7 +5,7 @@
 #include "EqualizerInfo.h"
 #include "Oscillators/Oscillator.h"
 #include "Windows/Window.h"
-#include "../HephCommon/HeaderFiles/FloatBuffer.h"
+#include "FloatBuffer.h"
 #include <vector>
 
 namespace HephAudio

@@ -1,7 +1,7 @@
 #include "AudioFormats/WavFormat.h"
 #include "AudioProcessor.h"
 #include "AudioCodecs/AudioCodecManager.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
+#include "HephException.h"
 
 using namespace HephCommon;
 using namespace HephAudio::Codecs;

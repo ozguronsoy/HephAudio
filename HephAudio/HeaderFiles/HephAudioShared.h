@@ -1,5 +1,5 @@
 #pragma once
-#include "../HephCommon/HeaderFiles/HephCommonShared.h"
+#include "HephCommonShared.h"
 #include <cmath>
 
 #if !defined(HEPHAUDIO_FORMAT_TAG_PCM)

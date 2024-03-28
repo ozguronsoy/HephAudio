@@ -36,7 +36,7 @@ namespace HephAudio
 			CallbackContext renderCallbackContext;
 			CallbackContext captureCallbackContext;
 		public:
-			AndroidAudioSLES(JavaVM* jvm);
+			AndroidAudioSLES();
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
 			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
 			~AndroidAudioSLES();

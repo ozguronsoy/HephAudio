@@ -1,7 +1,7 @@
 #include "AudioBuffer.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
-#include "../HephCommon/HeaderFiles/HephMath.h"
+#include "HephException.h"
+#include "HephMath.h"
 
 using namespace HephCommon;
 

@@ -4,9 +4,9 @@
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
 #include "AudioEvents/AudioFinishedPlayingEventArgs.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
-#include "../HephCommon/HeaderFiles/Event.h"
-#include "../HephCommon/HeaderFiles/Guid.h"
+#include "StringBuffer.h"
+#include "Event.h"
+#include "Guid.h"
 #include <vector>
 
 #define HEPHAUDIO_INFINITE_LOOP 0

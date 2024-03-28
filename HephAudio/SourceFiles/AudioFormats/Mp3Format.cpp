@@ -1,6 +1,6 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "AudioFormats/Mp3Format.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
+#include "HephException.h"
 
 using namespace HephCommon;
 

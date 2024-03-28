@@ -22,7 +22,7 @@ namespace HephAudio
 			size_t captureBufferFrameCount;
 			heph_float masterVolume;
 		public:
-			AndroidAudioA(JavaVM* jvm);
+			AndroidAudioA();
 			AndroidAudioA(const AndroidAudioA&) = delete;
 			AndroidAudioA& operator=(const AndroidAudioA&) = delete;
 			~AndroidAudioA();

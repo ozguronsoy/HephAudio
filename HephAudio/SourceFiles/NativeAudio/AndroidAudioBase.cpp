@@ -1,7 +1,7 @@
 #ifdef __ANDROID__
 #include "NativeAudio/AndroidAudioBase.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 
 using namespace HephCommon;
 
@@ -9,8 +9,9 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioBase::AndroidAudioBase(JavaVM* jvm) : NativeAudio()
-			, jvm(jvm)
+		JavaVM* AndroidAudioBase::jvm = nullptr;
+
+		AndroidAudioBase::AndroidAudioBase() : NativeAudio()
 		{
 			HEPHAUDIO_STOPWATCH_START;
 
@@ -21,9 +22,9 @@ namespace HephAudio
 			}
 			else if (deviceApiLevel >= 23)
 			{
-				if (jvm == nullptr)
+				if (AndroidAudioBase::jvm == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr. Set the AndroidAudioBase::jvm static field first."));
 				}
 			}
 		}
@@ -88,10 +89,10 @@ namespace HephAudio
 		}
 		void AndroidAudioBase::GetEnv(JNIEnv** pEnv) const
 		{
-			jint jniResult = jvm->GetEnv((void**)pEnv, JNI_VERSION_1_6);
+			jint jniResult = AndroidAudioBase::jvm->GetEnv((void**)pEnv, JNI_VERSION_1_6);
 			if (jniResult == JNI_EDETACHED)
 			{
-				jniResult = jvm->AttachCurrentThread(pEnv, nullptr);
+				jniResult = AndroidAudioBase::jvm->AttachCurrentThread(pEnv, nullptr);
 				if (jniResult != JNI_OK)
 				{
 					RAISE_HEPH_EXCEPTION(this, HephException(jniResult, "AndroidAudioBase::GetAudioDevices", "Failed to attach to the current thread."));
@@ -113,4 +114,11 @@ namespace HephAudio
 		}
 	}
 }
+
+extern "C" __attribute__((weak)) jint JNI_OnLoad(JavaVM * vm, void* reserved)
+{
+	HephAudio::Native::AndroidAudioBase::jvm = vm;
+	return JNI_VERSION_1_6;
+}
+
 #endif

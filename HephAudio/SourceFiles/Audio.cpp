@@ -41,46 +41,6 @@ namespace HephAudio
 	{
 		this->pNativeAudio->OnCapture += handler;
 	}
-#ifdef __ANDROID__
-	Audio::Audio(JavaVM* jvm)
-	{
-		const uint32_t androidApiLevel = android_get_device_api_level();
-		if (androidApiLevel >= 27)
-		{
-			this->pNativeAudio = new AndroidAudioA(jvm);
-		}
-		else if (androidApiLevel >= 21)
-		{
-			this->pNativeAudio = new AndroidAudioSLES(jvm);
-		}
-		else
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
-		}
-	}
-	Audio::Audio(JavaVM* jvm, AudioAPI api)
-	{
-		const uint32_t androidApiLevel = android_get_device_api_level();
-		if (androidApiLevel < 21)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
-		}
-
-		switch (api)
-		{
-		case AudioAPI::AAudio:
-			this->pNativeAudio = new AndroidAudioA(jvm);
-			break;
-		case AudioAPI::OpenSLES:
-			this->pNativeAudio = new AndroidAudioSLES(jvm);
-			break;
-		case AudioAPI::Default:
-		default:
-			this->pNativeAudio = androidApiLevel >= 27 ? (NativeAudio*)new AndroidAudioA(jvm) : (NativeAudio*)new AndroidAudioSLES(jvm);
-			break;
-		}
-	}
-#else
 	Audio::Audio()
 	{
 #if defined(_WIN32)
@@ -91,6 +51,20 @@ namespace HephAudio
 		else
 		{
 			this->pNativeAudio = new WinAudioDS();
+		}
+#elif defined(__ANDROID__)
+		const uint32_t androidApiLevel = android_get_device_api_level();
+		if (androidApiLevel >= 27)
+		{
+			this->pNativeAudio = new AndroidAudioA();
+		}
+		else if (androidApiLevel >= 16)
+		{
+			this->pNativeAudio = new AndroidAudioSLES();
+		}
+		else
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 21 are not supported."));
 		}
 #elif defined(__linux__)
 		this->pNativeAudio = new LinuxAudio();
@@ -119,6 +93,26 @@ namespace HephAudio
 			this->pNativeAudio = IsWindowsVistaOrGreater() ? (NativeAudio*)new WinAudio() : (NativeAudio*)new WinAudioDS();
 			break;
 		}
+#elif defined(__ANDROID__)
+		const uint32_t androidApiLevel = android_get_device_api_level();
+		if (androidApiLevel < 16)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 16 are not supported."));
+		}
+
+		switch (api)
+		{
+		case AudioAPI::AAudio:
+			this->pNativeAudio = new AndroidAudioA();
+			break;
+		case AudioAPI::OpenSLES:
+			this->pNativeAudio = new AndroidAudioSLES();
+			break;
+		case AudioAPI::Default:
+		default:
+			this->pNativeAudio = androidApiLevel >= 27 ? (NativeAudio*)new AndroidAudioA() : (NativeAudio*)new AndroidAudioSLES();
+			break;
+		}
 #elif defined(__linux__)
 		this->pNativeAudio = new LinuxAudio();
 #elif defined(__APPLE__)
@@ -127,7 +121,6 @@ namespace HephAudio
 		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "Unsupported platform."));
 #endif
 	}
-#endif
 	Audio::~Audio()
 	{
 		if (this->pNativeAudio != nullptr)

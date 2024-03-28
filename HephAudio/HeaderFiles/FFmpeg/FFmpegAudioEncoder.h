@@ -3,7 +3,7 @@
 #include "HephAudioShared.h"
 #include "FFmpegAudioShared.h"
 #include "AudioBuffer.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "StringBuffer.h"
 
 namespace HephAudio
 {

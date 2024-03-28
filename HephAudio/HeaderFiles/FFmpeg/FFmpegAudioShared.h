@@ -2,7 +2,7 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "HephAudioShared.h"
 #include "AudioFormatInfo.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "StringBuffer.h"
 
 extern "C"
 {
@@ -12,11 +12,12 @@ extern "C"
 #include <libswresample/swresample.h>
 }
 
+#if defined(_WIN32) && defined(_MSVC_LANG)
 #pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "swresample.lib")
-
+#endif
 
 
 #if LIBAVFORMAT_VERSION_MAJOR < 60

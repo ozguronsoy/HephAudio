@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "StringBuffer.h"
 #include <cinttypes>
 
 namespace HephAudio

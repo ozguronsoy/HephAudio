@@ -5,8 +5,8 @@
 #include "AudioCodecs/IAudioCodec.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "FFmpeg/FFmpegAudioEncoder.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "File.h"
+#include "StringBuffer.h"
 #include <memory>
 
 namespace HephAudio

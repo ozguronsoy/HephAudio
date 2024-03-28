@@ -1,4 +1,5 @@
 #pragma once
+#if defined(_WIN32)
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include <wrl.h>
@@ -23,3 +24,4 @@ namespace HephAudio
 		};
 	}
 }
+#endif

@@ -3,7 +3,7 @@
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include "WinAudioBase.h"
-#include "../HephCommon/HeaderFiles/StringBuffer.h"
+#include "StringBuffer.h"
 #include <mmeapi.h>
 
 namespace HephAudio

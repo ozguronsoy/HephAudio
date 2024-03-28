@@ -1,14 +1,14 @@
 #ifdef __ANDROID__
 #include "NativeAudio/AndroidAudioA.h"
 #include "AudioProcessor.h"
-#include "../HephCommon/HeaderFiles/File.h"
-#include "../HephCommon/HeaderFiles/HephMath.h"
-#include "../HephCommon/HeaderFiles/StopWatch.h"
-#include "../HephCommon/HeaderFiles/ConsoleLogger.h"
+#include "File.h"
+#include "HephMath.h"
+#include "StopWatch.h"
+#include "ConsoleLogger.h"
 
-#define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message)); }
-#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message)); goto RENDER_EXIT; }
-#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message)); goto CAPTURE_EXIT; }
+#define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); }
+#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message,"AAudio", AAudio_convertResultToText(ares))); goto RENDER_EXIT; }
+#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); goto CAPTURE_EXIT; }
 
 using namespace HephCommon;
 
@@ -16,7 +16,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		AndroidAudioA::AndroidAudioA(JavaVM* jvm) : AndroidAudioBase(jvm)
+		AndroidAudioA::AndroidAudioA() : AndroidAudioBase()
 			, pRenderStream(nullptr), pCaptureStream(nullptr), renderBufferFrameCount(0), captureBufferFrameCount(0), masterVolume(1.0)
 		{
 			if (deviceApiLevel < 27)
@@ -55,38 +55,46 @@ namespace HephAudio
 
 			StopRendering();
 
-			aaudio_result_t  ares;
+			aaudio_result_t ares;
 			AAudioStreamBuilder* streamBuilder;
 			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, "AndroidAudioA::InitializeRender", "An error occurred whilst creating the stream builder.");
 
 			renderFormat = format;
 
-			if (deviceApiLevel >= 31)
+			if (format.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
 			{
-				switch (format.bitsPerSample)
-				{
-				case 16:
-					renderFormat.bitsPerSample = 16;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-					break;
-				case 24:
-					renderFormat.bitsPerSample = 24;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
-					break;
-				case 32:
-					renderFormat.bitsPerSample = 32;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
-					break;
-				default:
-					renderFormat.bitsPerSample = 16;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-					break;
-				}
+				renderFormat.bitsPerSample = 32;
+				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_FLOAT);
 			}
 			else
 			{
-				renderFormat.bitsPerSample = 16;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+				if (deviceApiLevel >= 31)
+				{
+					switch (format.bitsPerSample)
+					{
+					case 16:
+						renderFormat.bitsPerSample = 16;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+						break;
+					case 24:
+						renderFormat.bitsPerSample = 24;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
+						break;
+					case 32:
+						renderFormat.bitsPerSample = 32;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
+						break;
+					default:
+						renderFormat.bitsPerSample = 16;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+						break;
+					}
+				}
+				else
+				{
+					renderFormat.bitsPerSample = 16;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+				}
 			}
 
 			renderFormat.bitRate = AudioFormatInfo::CalculateBitrate(renderFormat);
@@ -145,32 +153,37 @@ namespace HephAudio
 
 			captureFormat = format;
 
-			if (deviceApiLevel >= 31)
+			if (format.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
 			{
-				switch (format.bitsPerSample)
-				{
-				case 16:
-					captureFormat.bitsPerSample = 16;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-					break;
-				case 24:
-					captureFormat.bitsPerSample = 24;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I24_PACKED);
-					break;
-				case 32:
-					captureFormat.bitsPerSample = 32;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
-					break;
-				default:
-					captureFormat.bitsPerSample = 16;
-					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
-					break;
-				}
+				captureFormat.bitsPerSample = 32;
+				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_FLOAT);
 			}
-			else
-			{
-				captureFormat.bitsPerSample = 16;
-				AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+			else {
+				if (deviceApiLevel >= 31) {
+					switch (format.bitsPerSample) {
+					case 16:
+						captureFormat.bitsPerSample = 16;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+						break;
+					case 24:
+						captureFormat.bitsPerSample = 24;
+						AAudioStreamBuilder_setFormat(streamBuilder,
+							AAUDIO_FORMAT_PCM_I24_PACKED);
+						break;
+					case 32:
+						captureFormat.bitsPerSample = 32;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I32);
+						break;
+					default:
+						captureFormat.bitsPerSample = 16;
+						AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+						break;
+					}
+				}
+				else {
+					captureFormat.bitsPerSample = 16;
+					AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_I16);
+				}
 			}
 
 			captureFormat.bitRate = AudioFormatInfo::CalculateBitrate(captureFormat);
@@ -236,7 +249,7 @@ namespace HephAudio
 				aaudio_result_t result = AAudioStream_write(pRenderStream, dataBuffer.Begin(), dataBuffer.FrameCount(), writeTimeoutNanos);
 				if (result < 0)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred whilst rendering."));
+					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred whilst rendering.", "AAudio", AAudio_convertResultToText(result)));
 					goto RENDER_EXIT;
 				}
 
@@ -265,7 +278,7 @@ namespace HephAudio
 
 				if (result < 0)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred whilst capturing."));
+					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred whilst capturing.", "AAudio", AAudio_convertResultToText(result)));
 					goto CAPTURE_EXIT;
 				}
 

@@ -1,5 +1,6 @@
+#if defined(_WIN32)
 #include "NativeAudio/WinAudioBase.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
+#include "HephException.h"
 #include <combaseapi.h>
 
 using namespace HephCommon;
@@ -43,3 +44,4 @@ namespace HephAudio
 		}
 	}
 }
+#endif

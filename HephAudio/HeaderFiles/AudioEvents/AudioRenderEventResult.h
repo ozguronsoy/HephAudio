@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "../HephCommon/HeaderFiles/EventResult.h"
+#include "EventResult.h"
 #include "AudioBuffer.h"
 
 namespace HephAudio

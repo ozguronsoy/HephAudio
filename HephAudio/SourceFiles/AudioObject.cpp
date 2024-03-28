@@ -1,8 +1,8 @@
 #include "AudioObject.h"
 #include "AudioProcessor.h"
 #include "NativeAudio/NativeAudio.h"
-#include "../HephCommon/HeaderFiles/HephMath.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
+#include "HephMath.h"
+#include "HephException.h"
 
 using namespace HephCommon;
 

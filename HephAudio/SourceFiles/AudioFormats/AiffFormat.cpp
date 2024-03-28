@@ -1,7 +1,7 @@
 #include "AudioFormats/AiffFormat.h"
 #include "AudioProcessor.h"
 #include "AudioCodecs/AudioCodecManager.h"
-#include "../HephCommon/HeaderFiles/HephException.h"
+#include "HephException.h"
 
 #define AIFC_SOWT (HEPHAUDIO_FORMAT_TAG_PCM << 8)
 
