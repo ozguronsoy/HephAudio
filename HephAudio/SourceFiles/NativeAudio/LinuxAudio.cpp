@@ -7,9 +7,26 @@
 #include <unistd.h>
 
 #define SND_OK 0
-#define LINUX_ENUMERATE_DEVICE_EXCPT(r, linuxAudio, method, message) result = r; if (result != SND_OK) { RAISE_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
-#define LINUX_EXCPT(r, linuxAudio, method, message) result = r; if (result < SND_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message)); }
-#define LINUX_RENDER_CAPTURE_EXCPT(r, linuxAudio, method, message) result = r; if (result < SND_OK) { RAISE_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message)); return; }
+#define LINUX_ENUMERATE_DEVICE_EXCPT(r, linuxAudio, method, message)                                            \
+	result = r;                                                                                                 \
+	if (result != SND_OK)                                                                                       \
+	{                                                                                                           \
+		RAISE_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message, "ALSA", snd_strerror(result))); \
+		return NativeAudio::DEVICE_ENUMERATION_FAIL;                                                            \
+	}
+#define LINUX_EXCPT(r, linuxAudio, method, message)                                                                       \
+	result = r;                                                                                                           \
+	if (result < SND_OK)                                                                                                  \
+	{                                                                                                                     \
+		RAISE_AND_THROW_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message, "ALSA", snd_strerror(result))); \
+	}
+#define LINUX_RENDER_CAPTURE_EXCPT(r, linuxAudio, method, message)                                              \
+	result = r;                                                                                                 \
+	if (result < SND_OK)                                                                                        \
+	{                                                                                                           \
+		RAISE_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message, "ALSA", snd_strerror(result))); \
+		return;                                                                                                 \
+	}
 
 using namespace HephCommon;
 
@@ -56,7 +73,7 @@ namespace HephAudio
 				LINUX_EXCPT(snd_mixer_open(&mixer, 0), this, "LinuxAudio::SetMasterVolume", "Failed to open the mixer.");
 				LINUX_EXCPT(snd_mixer_attach(mixer, cardID.c_str()), this, "LinuxAudio::SetMasterVolume", "Failed to open the mixer.");
 				LINUX_EXCPT(snd_mixer_selem_register(mixer, nullptr, nullptr), this, "LinuxAudio::SetMasterVolume", "Failed to open the mixer.");
-				LINUX_EXCPT(snd_mixer_load(mixer), this, "LinuxAudio::SetMasterVolume", "An error occurred whilst loading the mixer.");
+				LINUX_EXCPT(snd_mixer_load(mixer), this, "LinuxAudio::SetMasterVolume", "An error occurred while loading the mixer.");
 
 				snd_mixer_elem_t* mixerElem = snd_mixer_first_elem(mixer);
 				if (mixerElem == nullptr)
@@ -69,9 +86,9 @@ namespace HephAudio
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "LinuxAudio::SetMasterVolume", "No mixer playback volume element found."));
 				}
 
-				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, "LinuxAudio::SetMasterVolume", "An error occurred whilst setting the volume range.");
-				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_all(mixerElem, volume * LinuxAudio::volume_max * 2 - LinuxAudio::volume_max), this, "LinuxAudio::SetMasterVolume", "An error occurred whilst setting the volume.");
-				LINUX_EXCPT(snd_mixer_close(mixer), this, "LinuxAudio::SetMasterVolume", "An error occurred whilst closing the mixer.");
+				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, "LinuxAudio::SetMasterVolume", "An error occurred while setting the volume range.");
+				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_all(mixerElem, volume * LinuxAudio::volume_max * 2 - LinuxAudio::volume_max), this, "LinuxAudio::SetMasterVolume", "An error occurred while setting the volume.");
+				LINUX_EXCPT(snd_mixer_close(mixer), this, "LinuxAudio::SetMasterVolume", "An error occurred while closing the mixer.");
 			}
 		}
 		heph_float LinuxAudio::GetMasterVolume() const
@@ -86,7 +103,7 @@ namespace HephAudio
 				LINUX_EXCPT(snd_mixer_open(&mixer, 0), this, "LinuxAudio::GetMasterVolume", "Failed to open the mixer.");
 				LINUX_EXCPT(snd_mixer_attach(mixer, cardID.c_str()), this, "LinuxAudio::GetMasterVolume", "Failed to open the mixer.");
 				LINUX_EXCPT(snd_mixer_selem_register(mixer, nullptr, nullptr), this, "LinuxAudio::GetMasterVolume", "Failed to open the mixer.");
-				LINUX_EXCPT(snd_mixer_load(mixer), this, "LinuxAudio::GetMasterVolume", "An error occurred whilst loading the mixer.");
+				LINUX_EXCPT(snd_mixer_load(mixer), this, "LinuxAudio::GetMasterVolume", "An error occurred while loading the mixer.");
 
 				snd_mixer_elem_t* mixerElem = snd_mixer_first_elem(mixer);
 				if (mixerElem == nullptr)
@@ -99,9 +116,9 @@ namespace HephAudio
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "LinuxAudio::GetMasterVolume", "No mixer playback volume element found."));
 				}
 
-				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, "LinuxAudio::GetMasterVolume", "An error occurred whilst getting the volume range.");
-				LINUX_EXCPT(snd_mixer_selem_get_playback_volume(mixerElem, SND_MIXER_SCHN_MONO, &value), this, "LinuxAudio::GetMasterVolume", "An error occurred whilst getting the volume.");
-				LINUX_EXCPT(snd_mixer_close(mixer), this, "LinuxAudio::GetMasterVolume", "An error occurred whilst closing the mixer.");
+				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, "LinuxAudio::GetMasterVolume", "An error occurred while getting the volume range.");
+				LINUX_EXCPT(snd_mixer_selem_get_playback_volume(mixerElem, SND_MIXER_SCHN_MONO, &value), this, "LinuxAudio::GetMasterVolume", "An error occurred while getting the volume.");
+				LINUX_EXCPT(snd_mixer_close(mixer), this, "LinuxAudio::GetMasterVolume", "An error occurred while closing the mixer.");
 
 				return ((heph_float)value + LinuxAudio::volume_max) / (LinuxAudio::volume_max * 2.0);
 			}
@@ -114,22 +131,23 @@ namespace HephAudio
 
 			int result;
 			snd_pcm_hw_params_t* pcmHwParams;
+			snd_pcm_sw_params_t* pcmSwParams;
 
 			StopRendering();
 
 			renderDeviceId = device != nullptr ? device->id : "default";
 			renderFormat = format;
 
-			LINUX_EXCPT(snd_pcm_open(&renderPcm, renderDeviceId.c_str(), SND_PCM_STREAM_PLAYBACK, 0), this, "LinuxAudio::InitializeRender", "An error occurred whilst opening pcm.");
+			LINUX_EXCPT(snd_pcm_open(&renderPcm, renderDeviceId.c_str(), SND_PCM_STREAM_PLAYBACK, 0), this, "LinuxAudio::InitializeRender", "An error occurred while opening pcm.");
 
-			LINUX_EXCPT(snd_pcm_hw_params_malloc(&pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred whilst allocating space for pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_any(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred whilst reading the pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_access(renderPcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeRender", "An error occurred whilst setting access to the pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_malloc(&pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while allocating space for pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_any(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while reading the pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_set_access(renderPcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeRender", "An error occurred while setting access to the pcm hw params.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_format(renderPcm, pcmHwParams, ToPcmFormat(renderFormat)), this, "LinuxAudio::InitializeRender", "Unsupported bps.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_channels(renderPcm, pcmHwParams, renderFormat.channelCount), this, "LinuxAudio::InitializeRender", "Unsupported channel count.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_rate(renderPcm, pcmHwParams, renderFormat.sampleRate, 0), this, "LinuxAudio::InitializeRender", "Unsupported sample rate.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(renderPcm, pcmHwParams, renderFormat.sampleRate * 0.05), this, "LinuxAudio::InitializeRender", "An error occurred whilst setting the pcm buffer size.");
-			LINUX_EXCPT(snd_pcm_hw_params(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred whilst configuring the pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(renderPcm, pcmHwParams, renderFormat.sampleRate * 0.5), this, "LinuxAudio::InitializeRender", "An error occurred while setting the pcm buffer size.");
+			LINUX_EXCPT(snd_pcm_hw_params(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while configuring the pcm hw params.");
 			snd_pcm_hw_params_free(pcmHwParams);
 
 			isRenderInitialized = true;
@@ -165,16 +183,16 @@ namespace HephAudio
 			captureDeviceId = device != nullptr ? device->id : "default";
 			captureFormat = format;
 
-			LINUX_EXCPT(snd_pcm_open(&capturePcm, captureDeviceId.c_str(), SND_PCM_STREAM_CAPTURE, 0), this, "LinuxAudio::InitializeCapture", "An error occurred whilst opening pcm.");
+			LINUX_EXCPT(snd_pcm_open(&capturePcm, captureDeviceId.c_str(), SND_PCM_STREAM_CAPTURE, 0), this, "LinuxAudio::InitializeCapture", "An error occurred while opening pcm.");
 
-			LINUX_EXCPT(snd_pcm_hw_params_malloc(&pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred whilst allocating space for pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_any(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred whilst reading the pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_access(capturePcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeCapture", "An error occurred whilst setting access to the pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_malloc(&pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while allocating space for pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_any(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while reading the pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_set_access(capturePcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeCapture", "An error occurred while setting access to the pcm hw params.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_format(capturePcm, pcmHwParams, ToPcmFormat(captureFormat)), this, "LinuxAudio::InitializeCapture", "Unsupported bps.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_channels(capturePcm, pcmHwParams, captureFormat.channelCount), this, "LinuxAudio::InitializeCapture", "Unsupported channel count.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_rate(capturePcm, pcmHwParams, captureFormat.sampleRate, 0), this, "LinuxAudio::InitializeCapture", "Unsupported sample rate.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(capturePcm, pcmHwParams, captureFormat.sampleRate * 0.05), this, "LinuxAudio::InitializeCapture", "An error occurred whilst setting the pcm buffer size.");
-			LINUX_EXCPT(snd_pcm_hw_params(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred whilst configuring the pcm hw params.");
+			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(capturePcm, pcmHwParams, captureFormat.sampleRate * 0.1), this, "LinuxAudio::InitializeCapture", "An error occurred while setting the pcm buffer size.");
+			LINUX_EXCPT(snd_pcm_hw_params(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while configuring the pcm hw params.");
 			snd_pcm_hw_params_free(pcmHwParams);
 
 			isCaptureInitialized = true;
@@ -205,9 +223,9 @@ namespace HephAudio
 			int cardID = -1, deviceID = -1;
 			int result;
 
-			LINUX_ENUMERATE_DEVICE_EXCPT(snd_card_next(&cardID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst getting the next card.");
-			LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_card_info_malloc(&cardInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst allocating memory for card info.");
-			LINUX_ENUMERATE_DEVICE_EXCPT(snd_pcm_info_malloc(&pcmInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst allocating memory for device info.");
+			LINUX_ENUMERATE_DEVICE_EXCPT(snd_card_next(&cardID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while getting the next card.");
+			LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_card_info_malloc(&cardInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while allocating memory for card info.");
+			LINUX_ENUMERATE_DEVICE_EXCPT(snd_pcm_info_malloc(&pcmInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while allocating memory for device info.");
 			while (cardID != -1)
 			{
 				if (snd_card_load(cardID)) // check if the card is available
@@ -215,11 +233,11 @@ namespace HephAudio
 					StringBuffer cardName = "hw:" + StringBuffer::ToString(cardID);
 					snd_ctl_t* ctl;
 
-					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_open(&ctl, cardName.c_str(), SND_CTL_READONLY), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst opening the card controls.");
-					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_card_info(ctl, cardInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst reading the card info.");
+					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_open(&ctl, cardName.c_str(), SND_CTL_READONLY), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while opening the card controls.");
+					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_card_info(ctl, cardInfo), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while reading the card info.");
 					cardName = snd_ctl_card_info_get_name(cardInfo);
 
-					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_pcm_next_device(ctl, &deviceID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst getting the next device.");
+					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_pcm_next_device(ctl, &deviceID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while getting the next device.");
 					while (deviceID != -1)
 					{
 						snd_pcm_info_set_device(pcmInfo, deviceID);
@@ -237,12 +255,12 @@ namespace HephAudio
 							}
 						}
 
-						LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_pcm_next_device(ctl, &deviceID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst getting the next device.");
+						LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_pcm_next_device(ctl, &deviceID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while getting the next device.");
 					}
 
 					snd_ctl_close(ctl);
 				}
-				LINUX_ENUMERATE_DEVICE_EXCPT(snd_card_next(&cardID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred whilst getting the next card.");
+				LINUX_ENUMERATE_DEVICE_EXCPT(snd_card_next(&cardID), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while getting the next card.");
 			}
 
 			snd_ctl_card_info_free(cardInfo);
@@ -257,6 +275,25 @@ namespace HephAudio
 			int result;
 
 			LINUX_RENDER_CAPTURE_EXCPT(snd_pcm_start(renderPcm), this, "LinuxAudio", "Failed to start rendering.");
+
+			{
+				while (snd_pcm_state(renderPcm) != SND_PCM_STATE_RUNNING);
+
+				const size_t tempFrameCount = snd_pcm_avail_update(renderPcm);
+				const size_t tempSize = tempFrameCount * renderFormat.FrameSize();
+				void* pTempData = malloc(tempSize);
+				if (pTempData == nullptr)
+				{
+					RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "LinuxAudio", "Insufficient memory."));
+					return;
+				}
+				memset(pTempData, 0, tempSize);
+
+				snd_pcm_writei(renderPcm, pTempData, tempFrameCount);
+				free(pTempData);
+				usleep(5000);
+			}
+
 			while (!disposing && isRenderInitialized)
 			{
 				availableFrameCount = snd_pcm_avail_update(renderPcm);
@@ -265,49 +302,57 @@ namespace HephAudio
 					Mix(buffer, buffer.FrameCount());
 					snd_pcm_writei(renderPcm, buffer.Begin(), buffer.FrameCount());
 				}
+				usleep(5000);
 			}
 		}
 		void LinuxAudio::CaptureData()
 		{
-			AudioBuffer buffer(captureFormat.sampleRate * 0.01f, captureFormat);
 			snd_pcm_uframes_t availableFrameCount;
 			int result;
 
 			LINUX_RENDER_CAPTURE_EXCPT(snd_pcm_start(capturePcm), this, "LinuxAudio", "Failed to start capturing.");
 			while (!disposing && isCaptureInitialized)
 			{
-				if (!isCapturePaused && OnCapture)
+				if (!isCapturePaused)
 				{
 					availableFrameCount = snd_pcm_avail_update(capturePcm);
-					if (availableFrameCount >= buffer.FrameCount())
+					if (availableFrameCount > 0)
 					{
+						AudioBuffer buffer(availableFrameCount, captureFormat);
 						snd_pcm_readi(capturePcm, buffer.Begin(), buffer.FrameCount());
 
-						AudioBuffer temp(buffer.FrameCount(), captureFormat);
-						memcpy(temp.Begin(), buffer.Begin(), temp.Size());
-						AudioProcessor::ConvertToInnerFormat(temp);
-						AudioCaptureEventArgs captureEventArgs(this, temp);
-						OnCapture(&captureEventArgs, nullptr);
+						if (OnCapture)
+						{
+							AudioProcessor::ConvertToInnerFormat(buffer);
+							AudioCaptureEventArgs captureEventArgs(this, buffer);
+							OnCapture(&captureEventArgs, nullptr);
+						}
 					}
 				}
 			}
 		}
 		snd_pcm_format_t LinuxAudio::ToPcmFormat(const AudioFormatInfo& format) const
 		{
-			switch (format.bitsPerSample)
+			if (format.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
 			{
-			case 8:
-				return snd_pcm_format_t::SND_PCM_FORMAT_U8;
-			case 16:
-				return snd_pcm_format_t::SND_PCM_FORMAT_S16;
-			case 24:
-				return snd_pcm_format_t::SND_PCM_FORMAT_S24;
-			case 32:
-				return snd_pcm_format_t::SND_PCM_FORMAT_S32;
-			default:
-				break;
+				return format.bitsPerSample == sizeof(double) ? snd_pcm_format_t::SND_PCM_FORMAT_FLOAT64 : snd_pcm_format_t::SND_PCM_FORMAT_FLOAT;
 			}
-			return snd_pcm_format_t::SND_PCM_FORMAT_S16;
+			else
+			{
+				switch (format.bitsPerSample)
+				{
+				case 8:
+					return snd_pcm_format_t::SND_PCM_FORMAT_U8;
+				case 16:
+					return snd_pcm_format_t::SND_PCM_FORMAT_S16;
+				case 24:
+					return snd_pcm_format_t::SND_PCM_FORMAT_S24;
+				case 32:
+					return snd_pcm_format_t::SND_PCM_FORMAT_S32;
+				default:
+					return snd_pcm_format_t::SND_PCM_FORMAT_S16;
+				}
+			}
 		}
 	}
 }

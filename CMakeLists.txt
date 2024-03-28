@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22.1)
 # min supported version is 14
 set (CMAKE_CXX_STANDARD 14)
  
-# set (FFMPEG_ROOT "/path/to/FFmpeg")
+# set (FFMPEG_ROOT "path/to/ffmpeg")
 
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
 if (POLICY CMP0025)
@@ -27,7 +27,31 @@ file(GLOB HEPH_AUDIO
     HephAudio/HephAudio/SourceFiles/Windows/*.cpp)
 
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+    add_executable(
+        ${CMAKE_PROJECT_NAME}
+        ${HEPH_AUDIO})
+
+    target_link_libraries(
+        ${CMAKE_PROJECT_NAME}
+        Dsound
+        Winmm
+    )
+
+    if (DEFINED FFMPEG_ROOT)
+        include_directories(${FFMPEG_ROOT}/include)
+        target_link_libraries(
+            ${CMAKE_PROJECT_NAME}
+            ${FFMPEG_ROOT}/lib/avcodec.lib
+            ${FFMPEG_ROOT}/lib/avformat.lib
+            ${FFMPEG_ROOT}/lib/avutil.lib
+            ${FFMPEG_ROOT}/lib/swresample.lib
+        )
+        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
+    endif ()
+
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
     add_library(
         ${CMAKE_PROJECT_NAME} SHARED
@@ -47,32 +71,28 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
         )
     endif()
 
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
     add_executable(
         ${CMAKE_PROJECT_NAME}
-        ${HEPH_AUDIO})
+        ${HEPH_AUDIO}
+    )
 
     target_link_libraries(
         ${CMAKE_PROJECT_NAME}
-        Dsound
-        Winmm
+        asound
     )
 
-    if(DEFINED FFMPEG_ROOT)
+    if (DEFINED FFMPEG_ROOT)
         include_directories(${FFMPEG_ROOT}/include)
         target_link_libraries(
             ${CMAKE_PROJECT_NAME}
-            ${FFMPEG_ROOT}/lib/avcodec.lib
-            ${FFMPEG_ROOT}/lib/avformat.lib
-            ${FFMPEG_ROOT}/lib/avutil.lib
-            ${FFMPEG_ROOT}/lib/swresample.lib
+            ${FFMPEG_ROOT}/lib/libavcodec.so
+            ${FFMPEG_ROOT}/lib/libavformat.so
+            ${FFMPEG_ROOT}/lib/libavutil.so
+            ${FFMPEG_ROOT}/lib/libswresample.so
         )
         add_definitions(-DHEPHAUDIO_USE_FFMPEG)
     endif ()
 
 endif ()
-
-message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
-message("CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION})
-message("FFMPEG_ROOT: " ${FFMPEG_ROOT})
