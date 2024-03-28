@@ -6,6 +6,8 @@
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 
+#if __ANDROID_API__ >= 27
+
 #define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); }
 #define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message,"AAudio", AAudio_convertResultToText(ares))); goto RENDER_EXIT; }
 #define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); goto CAPTURE_EXIT; }
@@ -17,11 +19,12 @@ namespace HephAudio
 	namespace Native
 	{
 		AndroidAudioA::AndroidAudioA() : AndroidAudioBase()
-			, pRenderStream(nullptr), pCaptureStream(nullptr), renderBufferFrameCount(0), captureBufferFrameCount(0), masterVolume(1.0)
+			, pRenderStream(nullptr), pCaptureStream(nullptr)
+			, renderBufferFrameCount(0), captureBufferFrameCount(0), masterVolume(1.0)
 		{
 			if (deviceApiLevel < 27)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioA::AndroidAudioA", "The minimum supported Api level is 27."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::AndroidAudioA", "The minimum supported API level is 27."));
 			}
 
 			this->EnumerateAudioDevices();
@@ -302,4 +305,57 @@ namespace HephAudio
 		}
 	}
 }
+
+#endif
+
+using namespace HephCommon;
+
+namespace HephAudio
+{
+	namespace Native
+	{
+		AndroidAudioA::AndroidAudioA() : AndroidAudioBase()
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::AndroidAudioA", "The minimum supported API level is 27."));
+		}
+		AndroidAudioA::~AndroidAudioA()
+		{
+			HEPHAUDIO_STOPWATCH_RESET;
+			HEPHAUDIO_LOG("Destructing AndroidAudioA...", HEPH_CL_INFO);
+
+			disposing = true;
+			JoinRenderThread();
+			JoinCaptureThread();
+			StopRendering();
+			StopCapturing();
+
+			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+		}
+		void AndroidAudioA::SetMasterVolume(heph_float volume)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetMasterVolume", "The minimum supported Api level is 27."));
+		}
+		heph_float AndroidAudioA::GetMasterVolume() const
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetMasterVolume", "The minimum supported Api level is 27."));
+		}
+		void AndroidAudioA::InitializeRender(AudioDevice* device, AudioFormatInfo format)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::InitializeRender", "The minimum supported Api level is 27."));
+		}
+		void AndroidAudioA::StopRendering()
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::StopRendering", "The minimum supported Api level is 27."));
+		}
+		void AndroidAudioA::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::InitializeCapture", "The minimum supported Api level is 27."));
+		}
+		void AndroidAudioA::StopCapturing()
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::StopCapturing", "The minimum supported Api level is 27."));
+		}
+	}
+}
+
 #endif
