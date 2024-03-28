@@ -17,10 +17,9 @@ Base class for the classes that interact with the android native audio APIs. Thi
 
 ### Methods
 ```c++
-AndroidAudioBase(JavaVM* jvm);
+AndroidAudioBase();
 ```
-Creates an instance and initializes it with the provided values.
-- **jvm:** Pointer to the java virtual machine.
+Creates an instance and initializes it with the default values.
 <br><br><br><br>
 
 ```c++
