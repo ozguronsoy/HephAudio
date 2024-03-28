@@ -462,7 +462,7 @@ namespace HephAudio
 		StringBuffer WinAudioMME::GetErrorString(MMRESULT mmResult)
 		{
 			wchar_t errorMessage[MAXERRORLENGTH]{ };
-			if (waveOutGetErrorText(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+			if (waveOutGetErrorTextW(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
 			{
 				return L"error message not found";
 			}

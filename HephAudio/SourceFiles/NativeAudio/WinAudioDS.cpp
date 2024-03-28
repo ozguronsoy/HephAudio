@@ -62,7 +62,7 @@ namespace HephAudio
 				if (mmResult != MMSYSERR_NOERROR)
 				{
 					wchar_t errorMessage[MAXERRORLENGTH]{ };
-					if (waveOutGetErrorText(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+					if (waveOutGetErrorTextW(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
 					{
 						wcscpy(errorMessage, L"error message not found");
 					}
@@ -79,7 +79,7 @@ namespace HephAudio
 				if (mmResult != MMSYSERR_NOERROR)
 				{
 					wchar_t errorMessage[MAXERRORLENGTH]{ };
-					if (waveOutGetErrorText(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+					if (waveOutGetErrorTextW(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
 					{
 						wcscpy(errorMessage, L"error message not found");
 					}

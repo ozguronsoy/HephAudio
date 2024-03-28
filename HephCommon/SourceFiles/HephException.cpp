@@ -3,6 +3,7 @@
 namespace HephCommon
 {
 	std::unordered_map<std::thread::id, std::vector<HephException>> HephException::threadIdToExceptionsMap = std::unordered_map<std::thread::id, std::vector<HephException>>();
+	HephException HephException::DefaultException = HephException(HEPH_EC_NONE, "Default", "Default");
 	Event HephException::OnException = Event();
 
 	HephException::HephException() : errorCode(HEPH_EC_NONE), method(nullptr), message(nullptr), externalSource(nullptr), externalMessage(nullptr) { }
@@ -23,12 +24,12 @@ namespace HephCommon
 	const HephException& HephException::LastException()
 	{
 		const std::vector<HephException>& exceptions = HephException::threadIdToExceptionsMap[std::this_thread::get_id()];
-		return exceptions.size() > 0 ? exceptions[exceptions.size() - 1] : HephException();
+		return exceptions.size() > 0 ? exceptions[exceptions.size() - 1] : HephException::DefaultException;
 	}
 	const HephException& HephException::GetException(size_t index)
 	{
 		const std::vector<HephException>& exceptions = HephException::threadIdToExceptionsMap[std::this_thread::get_id()];
-		return exceptions.size() > index ? exceptions[index] : HephException();
+		return exceptions.size() > index ? exceptions[index] : HephException::DefaultException;
 	}
 	size_t HephException::GetExceptionCount()
 	{

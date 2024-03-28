@@ -13,6 +13,7 @@ using namespace HephCommon;
 using namespace Microsoft::WRL;
 
 #define PKEY_DEVICE_FRIENDLY_NAME {{ 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0 } }, 14}
+#define WINAUDIO_EXCPT_RET_VOID(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return; }
 #define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return retval; }
 #define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); goto RENDER_EXIT; }
 #define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); goto CAPTURE_EXIT; }
@@ -68,8 +69,8 @@ namespace HephAudio
 
 				ComPtr<ISimpleAudioVolume> pVolume = nullptr;
 				HRESULT hres;
-				WINAUDIO_EXCPT(this->pRenderSessionManager->GetSimpleAudioVolume(nullptr, 0, &pVolume), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
-				WINAUDIO_EXCPT(pVolume->SetMasterVolume(volume, nullptr), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionManager->GetSimpleAudioVolume(nullptr, 0, &pVolume), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
+				WINAUDIO_EXCPT_RET_VOID(pVolume->SetMasterVolume(volume, nullptr), "WinAudio::SetMasterVolume", "An error occurred whilst setting the master volume.");
 				pVolume = nullptr;
 			}
 		}
@@ -147,7 +148,7 @@ namespace HephAudio
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT(this->pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
 			}
 		}
 		void WinAudio::SetIconPath(StringBuffer iconPath)
@@ -155,7 +156,7 @@ namespace HephAudio
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT(this->pRenderSessionControl->SetIconPath(iconPath.fwc_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetIconPath(iconPath.fwc_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
 			}
 		}
 		bool WinAudio::EnumerateAudioDevices()

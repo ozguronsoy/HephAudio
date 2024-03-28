@@ -25,6 +25,7 @@ namespace HephCommon
 	private:
 		static std::unordered_map<std::thread::id, std::vector<HephException>> threadIdToExceptionsMap;
 	public:
+		static HephException DefaultException;
 		static Event OnException;
 	public:
 		int64_t errorCode;
