@@ -9,16 +9,19 @@ To enable these implementations you need to follow a few simple steps;
 > [!NOTE]
 > The lib was tested with ***6.1***.
 
-- Include the FFmpeg header files.
+- Include the FFmpeg header files.<br>
 For Visual Studio, go to ``Properties`` -> ``C/C++`` -> ``General`` -> ``Additional Include Directories`` and add the include directory.
-Example: ``C:\FFmpeg\include``.
+Example: ``C:\FFmpeg\include``.<br>
+If you use ***CMake***, set the ``FFMPEG_ROOT``.
 
-- Link the FFmpeg .lib files.
+- Link the FFmpeg .lib files.<br>
 For Visual Studio, go to ``Properties`` -> ``Linker`` -> ``Additional Library Directories`` and add the lib directory.
-Example: ``C:\FFmpeg\lib``.
+Example: ``C:\FFmpeg\lib``.<br>
+If you use ***CMake***, set the ``FFMPEG_ROOT``.
 
-- Add ``HEPHAUDIO_USE_FFMPEG`` to the preprocessor definitons.
-For Visual Studio, go to ``Properties`` -> ``C/C++`` ``Preprocessor`` -> ``Preprocessor Definitons``.
+- Add ``HEPHAUDIO_USE_FFMPEG`` to the preprocessor definitons.<br>
+For Visual Studio, go to ``Properties`` -> ``C/C++`` ``Preprocessor`` -> ``Preprocessor Definitons``.<br>
+If you use ***CMake***, set the ``FFMPEG_ROOT``.
 
 Now test it by building the app. If there are any errors due to version difference please contact me via e-mail so i can update the library. 
 Or create a pull request if you fixed it yourself.
