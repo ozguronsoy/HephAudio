@@ -6,14 +6,32 @@ using namespace HephAudio::Native;
 **Inheritance:** *[NativeAudio](/docs/HephAudio/NativeAudio/NativeAudio.md)* -> *AndroidAudioBase*
 
 > [Description](#description)<br>
+[Fields](#fields)<br>
 [Methods](#methods)<br>
-[Protected Parameters](#protected-parameters)<br>
+[Protected Fields](#protected-fields)<br>
 [Protected Methods](#protected-methods)
 
 
 ### Description
 Base class for the classes that interact with the android native audio APIs. This class implements the audio device enumeration.
 <br><br>
+
+### Fields
+
+```c++
+class AndroidAudioBase : public NativeAudio
+{
+	static JavaVM* jvm;
+}
+```
+
+- ``jvm``
+<br><br>
+Pointer to the java virtual machine.
+Set by the ``JNI_OnLoad`` method. This method is declared with the weak attribute and can be overrided.
+<br><br>
+
+
 
 ### Methods
 ```c++
@@ -29,24 +47,21 @@ Releases the resources.
 <br><br><br><br>
 
 
-### Protected Parameters
+### Protected Fields
 ```c++
 class AndroidAudioBase : public NativeAudio
 {
-	JavaVM* jvm;
 	uint32_t deviceApiLevel;
 }
 ```
-
-- ``jvm``
-<br><br>
-Pointer to the java virtual machine.
-<br><br>
 
 - ``deviceApiLevel``
 <br><br>
 The API level of the current android device.
 <br><br>
+
+
+
 
 ### Protected Methods
 ```c++
