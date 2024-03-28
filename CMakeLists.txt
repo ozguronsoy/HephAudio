@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.22.1)
 
+# min supported version is 14
 set (CMAKE_CXX_STANDARD 14)
  
-#set (FFMPEG_ROOT "/path/to/FFmpeg")
+# set (FFMPEG_ROOT "/path/to/FFmpeg")
 
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
 if (POLICY CMP0025)
@@ -30,7 +31,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
     add_library(
         ${CMAKE_PROJECT_NAME} SHARED
-        native-lib.cpp # your main.cpp file
         ${HEPH_AUDIO})
 
     target_link_libraries(
@@ -51,7 +51,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     add_executable(
         ${CMAKE_PROJECT_NAME}
-        main.cpp # your main.cpp file
         ${HEPH_AUDIO})
 
     target_link_libraries(
@@ -73,8 +72,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     endif ()
 
 endif ()
-
-add_definitions(-DHEPHAUDIO_INFO_LOGGING)
 
 message("CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
 message("CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION})
