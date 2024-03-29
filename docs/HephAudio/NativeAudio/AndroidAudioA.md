@@ -13,6 +13,14 @@ Implements rendering/capturing audio data via [AAudio](https://developer.android
 
 <br><br>
 
+### Macros
+
+```c++
+#define HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
+```
+The minimum API level required.
+<br><br>
+
 ### Methods
 ```c++
 AndroidAudioA();
