@@ -67,7 +67,7 @@ namespace HephAudio
 		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
 		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
 	}
-	void AudioObject::EnsureFormatRenderHandler(const HephCommon::EventParams& eventParams)
+	void AudioObject::MatchFormatRenderHandler(const HephCommon::EventParams& eventParams)
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;

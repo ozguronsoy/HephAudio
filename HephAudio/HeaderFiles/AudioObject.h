@@ -11,7 +11,7 @@
 
 #define HEPHAUDIO_INFINITE_LOOP 0
 #define HEPHAUDIO_RENDER_HANDLER_DEFAULT &HephAudio::AudioObject::DefaultRenderHandler
-#define HEPHAUDIO_RENDER_HANDLER_ENSURE_FORMAT &HephAudio::AudioObject::EnsureFormatRenderHandler
+#define HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT &HephAudio::AudioObject::MatchFormatRenderHandler
 
 namespace HephAudio
 {
@@ -33,6 +33,6 @@ namespace HephAudio
 		heph_float GetPosition() const;
 		void SetPosition(heph_float position);
 		static void DefaultRenderHandler(const HephCommon::EventParams& eventParams);
-		static void EnsureFormatRenderHandler(const HephCommon::EventParams& eventParams);
+		static void MatchFormatRenderHandler(const HephCommon::EventParams& eventParams);
 	};
 }
