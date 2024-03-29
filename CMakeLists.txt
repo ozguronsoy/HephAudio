@@ -71,6 +71,18 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
         )
     endif()
 
+    if (DEFINED FFMPEG_ROOT)
+        include_directories(${FFMPEG_ROOT}/include)
+        target_link_libraries(
+            ${CMAKE_PROJECT_NAME}
+            ${FFMPEG_ROOT}/lib/libavcodec.so
+            ${FFMPEG_ROOT}/lib/libavformat.so
+            ${FFMPEG_ROOT}/lib/libavutil.so
+            ${FFMPEG_ROOT}/lib/libswresample.so
+        )
+        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
+    endif ()
+
 elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
     add_executable(
