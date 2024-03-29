@@ -13,6 +13,14 @@ Implements rendering/capturing audio data via [OpenSL ES](https://developer.andr
 
 <br><br>
 
+### Macros
+
+```c++
+#define HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
+```
+The minimum API level required.
+<br><br>
+
 ### Methods
 ```c++
 AndroidAudioSLES();
