@@ -15,7 +15,7 @@ Holds the information that's necessary to play audio.
 
 ### Macros
 ```c++
-#define HEPHAUDIO_INFINITE_LOOP 0
+#define HEPHAUDIO_INFINITE_LOOP
 ```
 
 ```c++
@@ -25,7 +25,7 @@ The default handler for the ``AudioObject::OnRender`` event. Plays the audio dat
 <br><br>
 
 ```c++
-#define HEPHAUDIO_RENDER_HANDLER_ENSURE_FORMAT
+#define HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT
 ```
 An event handler for the ``AudioObject::OnRender`` event. Converts the audio data to the render format before playing.
 <br><br>
@@ -144,7 +144,7 @@ The default handler for the ``AudioObject::OnRender`` event. Plays the audio dat
 <br><br><br><br>
 
 ```c++
-static void EnsureFormatRenderHandler(const HephCommon::EventParams& eventParams);
+static void MatchFormatRenderHandler(const HephCommon::EventParams& eventParams);
 ```
 An event handler for the ``AudioObject::OnRender`` event. Converts the audio data to the render format before playing.
 - **eventParams:** Event parameters.
