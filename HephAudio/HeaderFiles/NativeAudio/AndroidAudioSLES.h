@@ -5,12 +5,13 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 
+#define HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL 21
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses OpenSL ES, min api target = 21. Use AndroidAudioA for api level 27 or greater (uses AAudio).
-		// Add -lOpenSLES to the compiler flags.
+		// Uses OpenSL ES
 		class AndroidAudioSLES final : public AndroidAudioBase
 		{
 		public:

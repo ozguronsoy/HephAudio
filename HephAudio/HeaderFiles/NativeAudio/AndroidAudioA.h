@@ -1,24 +1,26 @@
 #pragma once
 #ifdef __ANDROID__
+#define HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL 27
+
 #include "HephAudioShared.h"
 #include "AndroidAudioBase.h"
-#if __ANDROID_API__ >= 27
+#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 #include <aaudio/AAudio.h>
 #endif
+
 
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses AAudio, min api target = 27. Use AndroidAudioSLES for api level 26 or lower (min 21) (uses OpenSL ES).
-		// Add -laaudio to the compiler flags.
+		// Uses AAudio
 		class AndroidAudioA final : public AndroidAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
 		private:
-#if __ANDROID_API__ >= 27
+#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 			AAudioStream* pRenderStream;
 			AAudioStream* pCaptureStream;
 			size_t renderBufferFrameCount;
@@ -36,7 +38,7 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
-#if __ANDROID_API__ >= 27
+#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 		private:
 			void RenderData();
 			void CaptureData();

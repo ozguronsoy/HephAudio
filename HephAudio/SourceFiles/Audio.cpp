@@ -54,11 +54,11 @@ namespace HephAudio
 		}
 #elif defined(__ANDROID__)
 		const uint32_t androidApiLevel = android_get_device_api_level();
-		if (androidApiLevel >= 27)
+		if (androidApiLevel >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
 		{
 			this->pNativeAudio = new AndroidAudioA();
 		}
-		else if (androidApiLevel >= 16)
+		else if (androidApiLevel >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 		{
 			this->pNativeAudio = new AndroidAudioSLES();
 		}
@@ -95,7 +95,7 @@ namespace HephAudio
 		}
 #elif defined(__ANDROID__)
 		const uint32_t androidApiLevel = android_get_device_api_level();
-		if (androidApiLevel < 16)
+		if (androidApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under 16 are not supported."));
 		}
@@ -110,7 +110,7 @@ namespace HephAudio
 			break;
 		case AudioAPI::Default:
 		default:
-			this->pNativeAudio = androidApiLevel >= 27 ? (NativeAudio*)new AndroidAudioA() : (NativeAudio*)new AndroidAudioSLES();
+			this->pNativeAudio = androidApiLevel >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL ? (NativeAudio*)new AndroidAudioA() : (NativeAudio*)new AndroidAudioSLES();
 			break;
 		}
 #elif defined(__linux__)

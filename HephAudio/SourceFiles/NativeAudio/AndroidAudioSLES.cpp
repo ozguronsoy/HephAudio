@@ -17,9 +17,9 @@ namespace HephAudio
 			, audioEngineObject(nullptr), audioEngine(nullptr), outputMixObject(nullptr), audioPlayerObject(nullptr), audioPlayer(nullptr)
 			, audioRecorderObject(nullptr), audioRecorder(nullptr), masterVolumeObject(nullptr)
 		{
-			if (deviceApiLevel < 16)
+			if (deviceApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported Api level is 16."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + "."));
 			}
 
 			renderCallbackContext.pAndroidAudio = this;

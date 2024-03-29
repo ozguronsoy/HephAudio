@@ -8,7 +8,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses ALSA, add -lasound to the compiler flags.
+		// Uses ALSA
 		class LinuxAudio final : public NativeAudio
 		{
 		public:
