@@ -366,3 +366,6 @@ FodyWeavers.xsd
 /ConsoleApplication1/ConsoleApplication1.vcxproj
 /ConsoleApplication1/ConsoleApplication1.vcxproj.filters
 /ConsoleApplication1/ConsoleApplication1.cpp
+/HephAudio.sln
+/HephAudio/HephAudio.vcxitems
+/HephAudio/HephAudio.vcxitems.filters
