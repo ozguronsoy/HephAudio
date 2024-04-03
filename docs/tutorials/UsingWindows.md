@@ -57,8 +57,8 @@ void MyHighPassFilter(AudioBuffer& buffer, heph_float cutoffFrequency, Window& w
 			// remove the frequencies lower than the cutoff frequency
 			for (size_t k = 0; k < stopIndex && k < nyquistFrequency; k++)
 			{
-				frequencyComponents[k].real = 0;
-				frequencyComponents[k].imaginary = 0;
+				frequencyComponents[k].real(0);
+				frequencyComponents[k].imag(0);
 				frequencyComponents[fftSize - k - 1] = frequencyComponents[k].Conjugate();
 			}
 
@@ -69,7 +69,7 @@ void MyHighPassFilter(AudioBuffer& buffer, heph_float cutoffFrequency, Window& w
 			// apply window again and scale
 			for (size_t k = 0, l = i; k < fftSize && l < frameCount; k++, l++)
 			{
-				buffer[l][j] += frequencyComponents[k].real * windowBuffer[k] / fftSize;
+				buffer[l][j] += frequencyComponents[k].real() * windowBuffer[k] / fftSize;
 			}
 		}
 	}
