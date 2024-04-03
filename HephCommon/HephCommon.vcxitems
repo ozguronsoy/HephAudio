@@ -33,6 +33,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp" />

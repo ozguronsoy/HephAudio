@@ -90,6 +90,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeaderFiles">

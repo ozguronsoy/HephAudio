@@ -66,7 +66,7 @@ namespace HephCommon
 	}
 	void Fourier::IFFT(ComplexBuffer& complexBuffer, bool scale)
 	{
-		static pocketfft::stride_t stride_in{ sizeof(Complex) }; 
+		static pocketfft::stride_t stride_in{ sizeof(Complex) };
 		static pocketfft::stride_t stride_out{ sizeof(Complex) };
 		static pocketfft::shape_t axes{ 0 };
 
@@ -74,7 +74,7 @@ namespace HephCommon
 		pocketfft::shape_t shape_in{ fftSize };
 		std::complex<heph_float>* pComplexBuffer = (std::complex<heph_float>*)complexBuffer.Begin();
 
-		pocketfft::c2c(shape_in, stride_in, stride_out, axes, false, (const std::complex<heph_float>*)pComplexBuffer, pComplexBuffer, 
+		pocketfft::c2c(shape_in, stride_in, stride_out, axes, false, (const std::complex<heph_float>*)pComplexBuffer, pComplexBuffer,
 			scale ? ((heph_float)1.0 / (heph_float)fftSize) : (heph_float)1.0);
 	}
 	heph_float Fourier::BinFrequencyToIndex(size_t sampleRate, size_t fftSize, heph_float frequency)
@@ -118,12 +118,12 @@ namespace HephCommon
 
 			for (size_t i = 0; i < source.FrameCount(); i++)
 			{
-				tf[i].real = source[i];
+				tf[i].real(source[i]);
 			}
 
 			for (size_t i = 0; i < kernel.FrameCount(); i++)
 			{
-				tfKernel[i].real = kernel[i];
+				tfKernel[i].real(kernel[i]);
 			}
 
 			Fourier::FFT(tf);
@@ -159,7 +159,7 @@ namespace HephCommon
 		FloatBuffer result(yFrameCount);
 		for (size_t i = iStart; i < iEnd; i++)
 		{
-			result[i - iStart] = tf[i].real / fftSize;
+			result[i - iStart] = tf[i].real() / fftSize;
 		}
 		return result;
 	}

@@ -29,8 +29,8 @@ namespace HephCommon
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				(*this)[i].real = rhs.begin()[i];
-				(*this)[i].imaginary = 0;
+				(*this)[i].real(rhs.begin()[i]);
+				(*this)[i].imag(0);
 			}
 		}
 	}
@@ -58,8 +58,8 @@ namespace HephCommon
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				(*this)[i].real = rhs[i];
-				(*this)[i].imaginary = 0;
+				(*this)[i].real(rhs[i]);
+				(*this)[i].imag(0);
 			}
 		}
 	}
@@ -111,8 +111,8 @@ namespace HephCommon
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				(*this)[i].real = rhs.begin()[i];
-				(*this)[i].imaginary = 0;
+				(*this)[i].real(rhs.begin()[i]);
+				(*this)[i].imag(0);
 			}
 		}
 
@@ -155,8 +155,8 @@ namespace HephCommon
 			}
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				(*this)[i].real = rhs[i];
-				(*this)[i].imaginary = 0;
+				(*this)[i].real(rhs[i]);
+				(*this)[i].imag(0);
 			}
 		}
 
@@ -247,8 +247,8 @@ namespace HephCommon
 
 		for (; i < resultBuffer.frameCount; i++)
 		{
-			resultBuffer[i].real = rhs[i];
-			resultBuffer[i].imaginary = 0;
+			resultBuffer[i].real(rhs[i]);
+			resultBuffer[i].imag(0);
 		}
 
 		return resultBuffer;
@@ -336,8 +336,8 @@ namespace HephCommon
 
 		for (; i < resultBuffer.frameCount; i++)
 		{
-			resultBuffer[i].real = -rhs[i];
-			resultBuffer[i].imaginary = 0;
+			resultBuffer[i].real(-rhs[i]);
+			resultBuffer[i].imag(0);
 		}
 
 		return resultBuffer;
