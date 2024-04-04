@@ -3,38 +3,15 @@
 #include <Complex.h>
 using namespace HephCommon;
 ```
+**Inheritance:** *[std::complex<heph_float>](https://en.cppreference.com/w/cpp/numeric/complex)* -> *Complex*
 
 > [Description](#description)<br>
-[Fields](#fields)<br>
 [Methods](#methods)<br>
 [Literals](#literals)
 
 ### Description
 Struct for representing complex numbers.
 <br><br>
-
-
-
-### Fields
-
-```c++
-struct Complex final
-{
-    heph_float real;
-    heph_float imaginary;
-}
-```
-
-- **real**
-<br><br>
-Real part of the complex number.
-<br><br>
-
-- **imaginary**
-<br><br>
-Imaginary part of the complex number.
-<br><br>
-
 
 
 ### Methods
@@ -47,11 +24,11 @@ Creates an instance and initializes it with the default values.
 
 ```c++
 constexpr Complex(heph_float real,
-                  heph_float imaginary);
+                  heph_float imag);
 ```
 Creates an instance and initializes it with the provided values.
 - **real:** Real part of the complex number.
-- **imaginary:** Imaginary part of the complex number.
+- **imag:** Imaginary part of the complex number.
 <br><br><br><br>
 
 ```c++
@@ -84,11 +61,27 @@ Returns a new instance with inverted values.
 <br><br><br><br>
 
 ```c++
+constexpr Complex operator+(heph_float rhs) const;
+```
+Sums with a real number and stores the result in a new instance.
+- **rhs:** Right hand side.
+- **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
 constexpr Complex operator+(const Complex& rhs) const;
 ```
 Sums two complex numbers and stores the result in a new instance.
 - **rhs:** Right hand side.
 - **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
+constexpr Complex& operator+=(heph_float rhs);
+```
+Sums with a real number and stores the result in the current instance.
+- **rhs:** Right hand side.
+- **returns:** Reference to current instance.
 <br><br><br><br>
 
 ```c++
@@ -100,11 +93,27 @@ Sums two complex numbers and stores the result in the current instance.
 <br><br><br><br>
 
 ```c++
+constexpr Complex operator-(heph_float rhs) const;
+```
+Subtracts a real number and stores the result in a new instance.
+- **rhs:** Right hand side.
+- **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
 constexpr Complex operator-(const Complex& rhs) const;
 ```
 Subtracts two complex numbers and stores the result in a new instance.
 - **rhs:** Right hand side.
 - **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
+constexpr Complex& operator-=(heph_float rhs);
+```
+Subtracts a real number and stores the result in the current instance.
+- **rhs:** Right hand side.
+- **returns:** Reference to current instance.
 <br><br><br><br>
 
 ```c++
@@ -116,11 +125,27 @@ Subtracts two complex numbers and stores the result in the current instance.
 <br><br><br><br>
 
 ```c++
+constexpr Complex operator*(heph_float rhs) const;
+```
+Multiplies with a real number and stores the result in a new instance.
+- **rhs:** Right hand side.
+- **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
 constexpr Complex operator*(const Complex& rhs) const;
 ```
 Multiplies two complex numbers and stores the result in a new instance.
 - **rhs:** Right hand side.
 - **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
+constexpr Complex& operator*=(heph_float rhs);
+```
+Multiplies with a real number and stores the result in the current instance.
+- **rhs:** Right hand side.
+- **returns:** Reference to current instance.
 <br><br><br><br>
 
 ```c++
@@ -132,11 +157,27 @@ Multiplies two complex numbers and stores the result in the current instance.
 <br><br><br><br>
 
 ```c++
+constexpr Complex operator/(heph_float rhs) const;
+```
+Divides with a real number and stores the result in a new instance.
+- **rhs:** Right hand side.
+- **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
 constexpr Complex operator/(const Complex& rhs) const;
 ```
 Divides two complex numbers and stores the result in a new instance.
 - **rhs:** Right hand side.
 - **returns:** New instance with the operation result.
+<br><br><br><br>
+
+```c++
+constexpr Complex& operator/=(heph_float rhs);
+```
+Divides with a real number and stores the result in the current instance.
+- **rhs:** Right hand side.
+- **returns:** Reference to current instance.
 <br><br><br><br>
 
 ```c++
@@ -161,70 +202,6 @@ constexpr bool operator!=(const Complex& rhs) const;
 Compares two complex numbers.
 - **rhs:** Right hand side.
 - **returns:** ``true`` if the complex numbers are not equal, otherwise ``false``.
-<br><br><br><br>
-
-```c++
-constexpr Complex operator+(heph_float rhs) const;
-```
-Sums with a real number and stores the result in a new instance.
-- **rhs:** Right hand side.
-- **returns:** New instance with the operation result.
-<br><br><br><br>
-
-```c++
-constexpr Complex& operator+=(heph_float rhs);
-```
-Sums with a real number and stores the result in the current instance.
-- **rhs:** Right hand side.
-- **returns:** Reference to current instance.
-<br><br><br><br>
-
-```c++
-constexpr Complex operator-(heph_float rhs) const;
-```
-Subtracts a real number and stores the result in a new instance.
-- **rhs:** Right hand side.
-- **returns:** New instance with the operation result.
-<br><br><br><br>
-
-```c++
-constexpr Complex& operator-=(heph_float rhs);
-```
-Subtracts a real number and stores the result in the current instance.
-- **rhs:** Right hand side.
-- **returns:** Reference to current instance.
-<br><br><br><br>
-
-```c++
-constexpr Complex operator*(heph_float rhs) const;
-```
-Multiplies with a real number and stores the result in a new instance.
-- **rhs:** Right hand side.
-- **returns:** New instance with the operation result.
-<br><br><br><br>
-
-```c++
-constexpr Complex& operator*=(heph_float rhs);
-```
-Multiplies with a real number and stores the result in the current instance.
-- **rhs:** Right hand side.
-- **returns:** Reference to current instance.
-<br><br><br><br>
-
-```c++
-constexpr Complex operator/(heph_float rhs) const;
-```
-Divides with a real number and stores the result in a new instance.
-- **rhs:** Right hand side.
-- **returns:** New instance with the operation result.
-<br><br><br><br>
-
-```c++
-constexpr Complex& operator/=(heph_float rhs);
-```
-Divides with a real number and stores the result in the current instance.
-- **rhs:** Right hand side.
-- **returns:** Reference to current instance.
 <br><br><br><br>
 
 ```c++
