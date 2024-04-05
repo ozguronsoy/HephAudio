@@ -34,14 +34,13 @@ Changes the bit depth of the pcm audio data.
 <br><br><br><br>
 
 ```c++
-static void ChangeNumberOfChannels(AudioBuffer& buffer,
-                                   uint16_t outputChannelCount);
+static void ChangeChannelLayout(AudioBuffer& buffer,
+                                const AudioChannelLayout& outputChannelLayout);
 ```
-Changes the number of channels (samples) an audio frame contains. 
-This method only takes the average of all current channels, and copies it to the output channels. 
-Do not use this method for proper upmixing or downmixing.
+Changes the [channel layout](/docs/HephAudio/AudioChannelLayout.md). 
+Currently only supports mono and stereo outputs.
 - **buffer:** Audio data that will be changed.
-- **outputChannelCount:** New number of channels.
+- **outputChannelLayout:** New channel layout.
 <br><br><br><br>
 
 ```c++
