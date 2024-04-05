@@ -78,7 +78,7 @@ namespace HephAudio
 			if (pao != nullptr && this->isRenderInitialized)
 			{
 				AudioProcessor::ChangeSampleRate(pao->buffer, this->renderFormat.sampleRate);
-				AudioProcessor::ChangeNumberOfChannels(pao->buffer, this->renderFormat.channelLayout.count);
+				AudioProcessor::ChangeChannelLayout(pao->buffer, this->renderFormat.channelLayout);
 			}
 			return pao;
 		}

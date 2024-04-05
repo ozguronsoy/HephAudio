@@ -90,6 +90,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WmaFormat.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AacFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AiffFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\ALawCodec.cpp" />

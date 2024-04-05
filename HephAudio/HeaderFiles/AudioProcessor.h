@@ -22,7 +22,7 @@ namespace HephAudio
 #pragma region Converts, Mix, Split/Merge Channels
 	public:
 		static void ChangeBitsPerSample(AudioBuffer& buffer, uint16_t outputBitsPerSample);
-		static void ChangeNumberOfChannels(AudioBuffer& buffer, uint16_t outputChannelCount);
+		static void ChangeChannelLayout(AudioBuffer& buffer, const AudioChannelLayout& outputChannelLayout);
 		static void ChangeSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate);
 		static std::vector<HephCommon::FloatBuffer> SplitChannels(const AudioBuffer& buffer);
 		static AudioBuffer MergeChannels(const std::vector<HephCommon::FloatBuffer>& channels, uint32_t sampleRate);

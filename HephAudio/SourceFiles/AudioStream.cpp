@@ -271,6 +271,7 @@ namespace HephAudio
 				pStream->decodedBuffer.Cut(0, pRenderArgs->renderFrameCount);
 			}
 
+			AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, renderFormat.channelLayout);
 
 			pAudioObject->frameIndex += readFrameCount;
 			pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pStream->frameCount;
@@ -295,7 +296,7 @@ namespace HephAudio
 					pRenderResult->renderBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
 				}
 
-				AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelLayout.count);
+				AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, renderFormat.channelLayout);
 
 				pAudioObject->frameIndex += readFrameCount;
 			}

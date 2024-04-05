@@ -465,5 +465,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\Mp4Format.cpp">
       <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
   </ItemGroup>
 </Project>

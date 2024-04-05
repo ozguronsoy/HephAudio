@@ -5,9 +5,91 @@
 #include "File.h"
 #include "ConsoleLogger.h"
 #include <thread>
+#include <unordered_map>
 
 using namespace HephCommon;
 using namespace HephAudio::Codecs;
+
+#pragma region Downmix Lookup Tables
+typedef std::unordered_map<HephAudio::AudioChannelMask, std::unordered_map<HephAudio::AudioChannelMask, float>> hephaudio_downmix_lookup_table_t;
+
+static hephaudio_downmix_lookup_table_t _mono_table =
+{
+	{
+		HephAudio::AudioChannelMask::FrontCenter,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 0.707f },
+			{ HephAudio::AudioChannelMask::FrontRight, 0.707f },
+			{ HephAudio::AudioChannelMask::FrontCenter, 1.0f },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1.0f },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::SideLeft, 0.5f },
+			{ HephAudio::AudioChannelMask::SideRight, 0.5f },
+			{ HephAudio::AudioChannelMask::BackLeft, 0.5f },
+			{ HephAudio::AudioChannelMask::BackRight, 0.5f },
+			{ HephAudio::AudioChannelMask::BackCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::TopCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0.5f },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0.5f },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0.354f },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0.354f },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 0.5f }
+		}
+	}
+};
+
+static hephaudio_downmix_lookup_table_t _stereo_table =
+{
+	{
+		HephAudio::AudioChannelMask::FrontLeft,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 1.0f },
+			{ HephAudio::AudioChannelMask::FrontRight, 0.0f },
+			{ HephAudio::AudioChannelMask::FrontCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1.0f },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0.0f },
+			{ HephAudio::AudioChannelMask::SideLeft, 0.707f },
+			{ HephAudio::AudioChannelMask::SideRight, 0.0f },
+			{ HephAudio::AudioChannelMask::BackLeft, 0.707f },
+			{ HephAudio::AudioChannelMask::BackRight, 0.0f },
+			{ HephAudio::AudioChannelMask::BackCenter, 0.5f },
+			{ HephAudio::AudioChannelMask::TopCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0.707f },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0.0f },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 0.5f },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0.5f },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0.0f },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 0.5f }
+		}
+	},
+	{
+		HephAudio::AudioChannelMask::FrontRight,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 0.0f },
+			{ HephAudio::AudioChannelMask::FrontRight, 1.0f },
+			{ HephAudio::AudioChannelMask::FrontCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1.0f },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0.0f },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::SideLeft, 0.0f },
+			{ HephAudio::AudioChannelMask::SideRight, 0.707f },
+			{ HephAudio::AudioChannelMask::BackLeft, 0.0f },
+			{ HephAudio::AudioChannelMask::BackRight, 0.707f },
+			{ HephAudio::AudioChannelMask::BackCenter, 0.5f },
+			{ HephAudio::AudioChannelMask::TopCenter, 0.707f },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0.0f },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0.707f },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 0.5f },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0.0f },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0.5f },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 0.5f }
+		}
+	}
+};
+#pragma endregion
 
 namespace HephAudio
 {
@@ -36,24 +118,58 @@ namespace HephAudio
 			RAISE_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioProcessor::ChangeBitsPerSample", "Audio buffer is not raw PCM."));
 		}
 	}
-	void AudioProcessor::ChangeNumberOfChannels(AudioBuffer& buffer, uint16_t outputChannelCount)
+	void AudioProcessor::ChangeChannelLayout(AudioBuffer& buffer, const AudioChannelLayout& outputChannelLayout)
 	{
-		if (buffer.formatInfo.channelLayout.count != outputChannelCount)
+		if (buffer.formatInfo.channelLayout != outputChannelLayout)
 		{
-			AudioBuffer resultBuffer(buffer.frameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, AudioChannelLayout::DefaultChannelLayout(outputChannelCount),
-				buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian));
+			if (buffer.formatInfo.channelLayout.mask == AudioChannelMask::Unknown || outputChannelLayout.mask == AudioChannelMask::Unknown ||
+				buffer.formatInfo.channelLayout.count == 0 || outputChannelLayout.count == 0 ||
+				buffer.formatInfo.channelLayout.count != AudioChannelLayout::GetChannelCount(buffer.formatInfo.channelLayout) ||
+				outputChannelLayout.count != AudioChannelLayout::GetChannelCount(outputChannelLayout))
+			{
+				HEPHAUDIO_LOG("unsupported channel mapping, returning.", HEPH_CL_WARNING);
+				return;
+			}
+
+			const std::vector<AudioChannelMask> inputMapping = AudioChannelLayout::GetChannelMapping(buffer.formatInfo.channelLayout);
+			const std::vector<AudioChannelMask> outputMapping = AudioChannelLayout::GetChannelMapping(outputChannelLayout);
+
+			if (inputMapping.size() == 0 || outputMapping.size() == 0)
+			{
+				HEPHAUDIO_LOG("unsupported channel mapping, returning.", HEPH_CL_WARNING);
+				return;
+			}
+
+			hephaudio_downmix_lookup_table_t* pTable = nullptr;
+			switch (outputChannelLayout.count)
+			{
+			case 1:
+				pTable = &_mono_table;
+				break;
+			case 2:
+				pTable = &_stereo_table;
+				break;
+			default:
+				HEPHAUDIO_LOG("unsupported channel mapping, returning.", HEPH_CL_WARNING);
+				return;
+			}
+
+			AudioBuffer resultBuffer(
+				buffer.frameCount,
+				AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, outputChannelLayout,
+					buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian)
+			);
 
 			for (size_t i = 0; i < buffer.frameCount; i++)
 			{
-				heph_audio_sample averageValue = 0.0;
-				for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
+				for (size_t j = 0; j < outputMapping.size(); j++)
 				{
-					averageValue += buffer[i][j] / buffer.formatInfo.channelLayout.count;
-				}
-
-				for (size_t j = 0; j < resultBuffer.formatInfo.channelLayout.count; j++)
-				{
-					resultBuffer[i][j] = averageValue;
+					double outSample = 0.0;
+					for (size_t k = 0; k < inputMapping.size(); k++)
+					{
+						outSample += buffer[i][k] * (*pTable)[outputMapping[j]][inputMapping[k]] / inputMapping.size();
+					}
+					resultBuffer[i][j] = outSample;
 				}
 			}
 

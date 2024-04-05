@@ -1,6 +1,7 @@
 #pragma once
 #include "HephAudioShared.h"
 #include <cstdint>
+#include <vector>
 
 #define HEPHAUDIO_CH_MASK_MONO (HephAudio::AudioChannelMask::FrontCenter)
 #define HEPHAUDIO_CH_MASK_STEREO (HephAudio::AudioChannelMask::FrontLeft | HephAudio::AudioChannelMask::FrontRight)
@@ -157,5 +158,25 @@ namespace HephAudio
 		{
 			return AudioChannelLayout(channelCount, AudioChannelLayout::DefaultChannelMask(channelCount));
 		}
+		static constexpr uint16_t GetChannelCount(AudioChannelMask mask)
+		{
+			uint16_t channelCount = 0;
+			uint32_t mask32 = (uint32_t)mask;
+			for (size_t i = 0; i < 32; i++)
+			{
+				if (mask32 & 1)
+				{
+					channelCount++;
+				}
+				mask32 >>= 1;
+			}
+			return channelCount;
+		}
+		static constexpr uint16_t GetChannelCount(const AudioChannelLayout& layout)
+		{
+			return AudioChannelLayout::GetChannelCount(layout.mask);
+		}
+		static std::vector<AudioChannelMask> GetChannelMapping(AudioChannelMask mask);
+		static std::vector<AudioChannelMask> GetChannelMapping(const AudioChannelLayout& layout);
 	};
 }
