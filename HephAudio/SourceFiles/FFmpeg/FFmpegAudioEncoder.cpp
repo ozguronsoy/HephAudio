@@ -160,9 +160,7 @@ namespace HephAudio
 		}
 
 		const AudioFormatInfo inputFormatInfo = bufferToEncode.FormatInfo();
-
-		AVChannelLayout inputChannelLayout;
-		av_channel_layout_default(&inputChannelLayout, inputFormatInfo.channelCount);
+		AVChannelLayout inputChannelLayout = ToAVChannelLayout(inputFormatInfo.channelLayout);
 
 		av_opt_set_chlayout(this->swrContext, "in_chlayout", &inputChannelLayout, 0);
 		av_opt_set_int(this->swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
@@ -297,7 +295,7 @@ namespace HephAudio
 
 		this->outputFormatInfo.sampleRate = FFmpegAudioEncoder::GetClosestSupportedSampleRate(avCodec, this->outputFormatInfo.sampleRate);
 		this->avCodecContext->sample_rate = this->outputFormatInfo.sampleRate;
-		av_channel_layout_default(&this->avCodecContext->ch_layout, this->outputFormatInfo.channelCount);
+		this->avCodecContext->ch_layout = ToAVChannelLayout(this->outputFormatInfo.channelLayout);
 
 		this->avCodecContext->codec_id = this->avFormatContext->oformat->audio_codec;
 		this->avCodecContext->codec_tag = av_codec_get_tag(this->avFormatContext->oformat->codec_tag, this->avFormatContext->oformat->audio_codec);

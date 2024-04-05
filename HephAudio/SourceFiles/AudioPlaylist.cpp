@@ -343,7 +343,7 @@ namespace HephAudio
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
 			{
 				const heph_float factor = (i + pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
-				for (size_t j = 0; j < renderFormatInfo.channelCount; j++)
+				for (size_t j = 0; j < renderFormatInfo.channelLayout.count; j++)
 				{
 					pRenderResult->renderBuffer[i][j] *= factor;
 				}
@@ -363,7 +363,7 @@ namespace HephAudio
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
 			{
 				const heph_float factor = (fileFrameCount - i - pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
-				for (size_t j = 0; j < renderFormatInfo.channelCount; j++)
+				for (size_t j = 0; j < renderFormatInfo.channelLayout.count; j++)
 				{
 					pRenderResult->renderBuffer[i][j] *= factor;
 				}

@@ -2,19 +2,19 @@
 
 namespace HephAudio
 {
-	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(0, 0, 0, 0, HEPH_SYSTEM_ENDIAN) { }
+	AudioFormatInfo::AudioFormatInfo() : AudioFormatInfo(0, 0, AudioChannelLayout(), 0, HEPH_SYSTEM_ENDIAN) { }
 
-	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bitsPerSample, uint32_t sampleRate)
-		: AudioFormatInfo(formatTag, channelCount, bitsPerSample, sampleRate, 128000, HEPH_SYSTEM_ENDIAN) {}
+	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate)
+		: AudioFormatInfo(formatTag, bitsPerSample, chLayout, sampleRate, 128000, HEPH_SYSTEM_ENDIAN) {}
 
-	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bitsPerSample, uint32_t sampleRate, uint32_t bitRate)
-		: AudioFormatInfo(formatTag, channelCount, bitsPerSample, sampleRate, bitRate, HEPH_SYSTEM_ENDIAN) {}
+	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate)
+		: AudioFormatInfo(formatTag, bitsPerSample, chLayout, sampleRate, bitRate, HEPH_SYSTEM_ENDIAN) {}
 
-	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bitsPerSample, uint32_t sampleRate, HephCommon::Endian endian)
-		: AudioFormatInfo(formatTag, channelCount, bitsPerSample, sampleRate, 128000, endian) {}
+	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, HephCommon::Endian endian)
+		: AudioFormatInfo(formatTag, bitsPerSample, chLayout, sampleRate, 128000, endian) {}
 
-	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t channelCount, uint16_t bitsPerSample, uint32_t sampleRate, uint32_t bitRate, HephCommon::Endian endian)
-		: formatTag(formatTag), channelCount(channelCount), bitsPerSample(bitsPerSample)
+	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate, HephCommon::Endian endian)
+		: formatTag(formatTag), bitsPerSample(bitsPerSample), channelLayout(chLayout)
 		, sampleRate(sampleRate), bitRate(bitRate), endian(endian)
 	{
 		this->bitRate = AudioFormatInfo::CalculateBitrate(*this);
@@ -23,18 +23,18 @@ namespace HephAudio
 	bool AudioFormatInfo::operator==(const AudioFormatInfo& rhs) const
 	{
 		return this->formatTag == rhs.formatTag && this->bitsPerSample == rhs.bitsPerSample
-			&& this->channelCount == rhs.channelCount && this->sampleRate == rhs.sampleRate
+			&& this->channelLayout == rhs.channelLayout && this->sampleRate == rhs.sampleRate
 			&& this->bitRate == rhs.bitRate && this->endian == rhs.endian;
 	}
 	bool AudioFormatInfo::operator!=(const AudioFormatInfo& rhs) const
 	{
 		return this->formatTag != rhs.formatTag || this->bitsPerSample != rhs.bitsPerSample
-			|| this->channelCount != rhs.channelCount || this->sampleRate != rhs.sampleRate
+			|| this->channelLayout != rhs.channelLayout || this->sampleRate != rhs.sampleRate
 			|| this->bitRate != rhs.bitRate || this->endian != rhs.endian;
 	}
 	uint16_t AudioFormatInfo::FrameSize() const
 	{
-		return this->channelCount * this->bitsPerSample / 8;
+		return this->channelLayout.count * this->bitsPerSample / 8;
 	}
 	uint32_t AudioFormatInfo::ByteRate() const
 	{
@@ -47,7 +47,7 @@ namespace HephAudio
 			formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_ALAW ||
 			formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_MULAW)
 		{
-			return formatInfo.channelCount * formatInfo.bitsPerSample * formatInfo.sampleRate;
+			return formatInfo.channelLayout.count * formatInfo.bitsPerSample * formatInfo.sampleRate;
 		}
 		return formatInfo.bitRate;
 	}

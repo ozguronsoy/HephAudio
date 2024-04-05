@@ -20,7 +20,7 @@ namespace HephAudio
 			this->Reset();
 		}
 	}
-	AudioBuffer::AudioBuffer(size_t frameCount, uint16_t channelCount, uint32_t sampleRate) : AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate)) {}
+	AudioBuffer::AudioBuffer(size_t frameCount, AudioChannelLayout channelLayout, uint32_t sampleRate) : AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate)) {}
 	AudioBuffer::AudioBuffer(std::nullptr_t rhs) : AudioBuffer() {}
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) : formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(nullptr)
 	{
@@ -54,7 +54,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(this->frameCount, this->formatInfo);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = -(*this)[i][j];
 			}
@@ -111,7 +111,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] += rhs;
 			}
@@ -126,7 +126,7 @@ namespace HephAudio
 
 		for (i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] + rhs[i];
 			}
@@ -134,7 +134,7 @@ namespace HephAudio
 
 		for (; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = rhs[i];
 			}
@@ -155,7 +155,7 @@ namespace HephAudio
 
 		for (i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] + rhs[i][j];
 			}
@@ -163,7 +163,7 @@ namespace HephAudio
 
 		for (; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = rhs[i][j];
 			}
@@ -175,7 +175,7 @@ namespace HephAudio
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] += rhs;
 			}
@@ -187,7 +187,7 @@ namespace HephAudio
 		this->Resize(Math::Max(this->frameCount, rhs.FrameCount()));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] += rhs[i];
 			}
@@ -204,7 +204,7 @@ namespace HephAudio
 		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] += rhs[i][j];
 			}
@@ -216,7 +216,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] -= rhs;
 			}
@@ -231,7 +231,7 @@ namespace HephAudio
 
 		for (i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] - rhs[i];
 			}
@@ -239,7 +239,7 @@ namespace HephAudio
 
 		for (; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = -rhs[i];
 			}
@@ -260,7 +260,7 @@ namespace HephAudio
 
 		for (i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] - rhs[i][j];
 			}
@@ -268,7 +268,7 @@ namespace HephAudio
 
 		for (; i < resultBuffer.frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = -rhs[i][j];
 			}
@@ -280,7 +280,7 @@ namespace HephAudio
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] -= rhs;
 			}
@@ -292,7 +292,7 @@ namespace HephAudio
 		this->Resize(Math::Max(this->frameCount, rhs.FrameCount()));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] -= rhs[i];
 			}
@@ -309,7 +309,7 @@ namespace HephAudio
 		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] -= rhs[i][j];
 			}
@@ -321,7 +321,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] *= rhs;
 			}
@@ -334,7 +334,7 @@ namespace HephAudio
 		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] * rhs[i];
 			}
@@ -352,7 +352,7 @@ namespace HephAudio
 		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] * rhs[i][j];
 			}
@@ -363,7 +363,7 @@ namespace HephAudio
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] *= rhs;
 			}
@@ -376,7 +376,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < rhs.FrameCount(); i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] *= rhs[i];
 				}
@@ -391,7 +391,7 @@ namespace HephAudio
 			this->Resize(rhs.FrameCount());
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] *= rhs[i];
 				}
@@ -411,7 +411,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < rhs.frameCount; i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] *= rhs[i][j];
 				}
@@ -426,7 +426,7 @@ namespace HephAudio
 			this->Resize(rhs.frameCount);
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] *= rhs[i][j];
 				}
@@ -440,7 +440,7 @@ namespace HephAudio
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] /= rhs;
 			}
@@ -453,7 +453,7 @@ namespace HephAudio
 		const size_t minFrameCount = Math::Min(this->frameCount, rhs.FrameCount());
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] / rhs[i];
 			}
@@ -471,7 +471,7 @@ namespace HephAudio
 		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				resultBuffer[i][j] = (*this)[i][j] / rhs[i][j];
 			}
@@ -482,7 +482,7 @@ namespace HephAudio
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				(*this)[i][j] /= rhs;
 			}
@@ -495,7 +495,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < rhs.FrameCount(); i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] /= rhs[i];
 				}
@@ -510,7 +510,7 @@ namespace HephAudio
 			this->Resize(rhs.FrameCount());
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] /= rhs[i];
 				}
@@ -530,7 +530,7 @@ namespace HephAudio
 		{
 			for (size_t i = 0; i < rhs.frameCount; i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] /= rhs[i][j];
 				}
@@ -545,7 +545,7 @@ namespace HephAudio
 			this->Resize(rhs.frameCount);
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+				for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 				{
 					(*this)[i][j] /= rhs[i][j];
 				}
@@ -836,7 +836,7 @@ namespace HephAudio
 		heph_audio_sample minSample = INT32_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				const heph_audio_sample& currentSample = (*this)[i][j];
 				if (currentSample < minSample)
@@ -852,7 +852,7 @@ namespace HephAudio
 		heph_audio_sample maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				const heph_audio_sample& currentSample = (*this)[i][j];
 				if (currentSample > maxSample)
@@ -868,7 +868,7 @@ namespace HephAudio
 		heph_audio_sample maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				heph_audio_sample currentSample = Math::Abs((*this)[i][j]);
 				if (currentSample > maxSample)
@@ -884,12 +884,12 @@ namespace HephAudio
 		heph_float sumOfSamplesSquared = 0.0;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			for (size_t j = 0; j < this->formatInfo.channelCount; j++)
+			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
 				sumOfSamplesSquared += (*this)[i][j] * (*this)[i][j];
 			}
 		}
-		return sqrt(sumOfSamplesSquared / this->frameCount / this->formatInfo.channelCount);
+		return sqrt(sumOfSamplesSquared / this->frameCount / this->formatInfo.channelLayout.count);
 	}
 	AudioBuffer AudioBuffer::Convolve(const FloatBuffer& h) const
 	{
@@ -932,7 +932,7 @@ namespace HephAudio
 		}
 
 		AudioBuffer y(yFrameCount, this->formatInfo);
-		for (size_t ch = 0; ch < this->formatInfo.channelCount; ch++)
+		for (size_t ch = 0; ch < this->formatInfo.channelLayout.count; ch++)
 		{
 			for (size_t i = iStart; i < iEnd; i++)
 			{
@@ -985,7 +985,7 @@ namespace HephAudio
 		}
 
 		AudioBuffer y(yFrameCount, this->formatInfo);
-		const uint16_t minChannelCount = Math::Min(this->formatInfo.channelCount, h.formatInfo.channelCount);
+		const uint16_t minChannelCount = Math::Min(this->formatInfo.channelLayout.count, h.formatInfo.channelLayout.count);
 		for (size_t ch = 0; ch < minChannelCount; ch++)
 		{
 			for (size_t i = iStart; i < iEnd; i++)
@@ -1038,7 +1038,7 @@ HephAudio::AudioBuffer operator-(heph_float lhs, const HephAudio::AudioBuffer& r
 	HephAudio::AudioBuffer resultBuffer(rhs);
 	for (size_t i = 0; i < rhs.FrameCount(); i++)
 	{
-		for (size_t j = 0; j < rhs.FormatInfo().channelCount; j++)
+		for (size_t j = 0; j < rhs.FormatInfo().channelLayout.count; j++)
 		{
 			resultBuffer[i][j] = lhs - rhs[i][j];
 		}
@@ -1053,7 +1053,7 @@ HephAudio::AudioBuffer operator-(const FloatBuffer& lhs, const HephAudio::AudioB
 
 	for (i = 0; i < minFrameCount; i++)
 	{
-		for (size_t j = 0; j < rhs.FormatInfo().channelCount; j++)
+		for (size_t j = 0; j < rhs.FormatInfo().channelLayout.count; j++)
 		{
 			resultBuffer[i][j] = lhs[i] - rhs[i][j];
 		}
@@ -1061,7 +1061,7 @@ HephAudio::AudioBuffer operator-(const FloatBuffer& lhs, const HephAudio::AudioB
 
 	for (; i < resultBuffer.FrameCount(); i++)
 	{
-		for (size_t j = 0; j < rhs.FormatInfo().channelCount; j++)
+		for (size_t j = 0; j < rhs.FormatInfo().channelLayout.count; j++)
 		{
 			resultBuffer[i][j] = -rhs[i][j];
 		}
@@ -1082,7 +1082,7 @@ HephAudio::AudioBuffer operator/(heph_float lhs, const HephAudio::AudioBuffer& r
 	HephAudio::AudioBuffer resultBuffer(rhs);
 	for (size_t i = 0; i < rhs.FrameCount(); i++)
 	{
-		for (size_t j = 0; j < rhs.FormatInfo().channelCount; j++)
+		for (size_t j = 0; j < rhs.FormatInfo().channelLayout.count; j++)
 		{
 			resultBuffer[i][j] = lhs / rhs[i][j];
 		}
@@ -1095,7 +1095,7 @@ HephAudio::AudioBuffer operator/(const FloatBuffer& lhs, const HephAudio::AudioB
 	const size_t minFrameCount = Math::Min(lhs.FrameCount(), rhs.FrameCount());
 	for (size_t i = 0; i < minFrameCount; i++)
 	{
-		for (size_t j = 0; j < rhs.FormatInfo().channelCount; j++)
+		for (size_t j = 0; j < rhs.FormatInfo().channelLayout.count; j++)
 		{
 			resultBuffer[i][j] = lhs[i] / rhs[i][j];
 		}

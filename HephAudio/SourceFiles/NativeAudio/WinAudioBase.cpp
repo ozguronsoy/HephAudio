@@ -28,13 +28,13 @@ namespace HephAudio
 		}
 		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEX& wfx)
 		{
-			return AudioFormatInfo(wfx.wFormatTag, wfx.nChannels, wfx.wBitsPerSample, wfx.nSamplesPerSec);
+			return AudioFormatInfo(wfx.wFormatTag, wfx.wBitsPerSample, AudioChannelLayout::DefaultChannelLayout(wfx.nChannels), wfx.nSamplesPerSec);
 		}
 		WAVEFORMATEX WinAudioBase::AFI2WFX(const AudioFormatInfo& afi)
 		{
 			WAVEFORMATEX wfx{ 0 };
 			wfx.wFormatTag = afi.formatTag;
-			wfx.nChannels = afi.channelCount;
+			wfx.nChannels = afi.channelLayout.count;
 			wfx.nSamplesPerSec = afi.sampleRate;
 			wfx.nAvgBytesPerSec = afi.ByteRate();
 			wfx.nBlockAlign = afi.FrameSize();

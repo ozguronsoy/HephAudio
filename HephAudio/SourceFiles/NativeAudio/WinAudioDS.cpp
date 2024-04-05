@@ -541,8 +541,8 @@ namespace HephAudio
 			if (!IsWindowsVistaOrGreater())
 			{
 				afi.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
-				afi.channelCount = (dsCaps.dwFlags & DSCAPS_SECONDARYSTEREO) == DSCAPS_SECONDARYSTEREO ? 2 : 1;
-				afi.bitsPerSample = (dsCaps.dwFlags & DSCAPS_SECONDARY16BIT) != DSCAPS_SECONDARY16BIT ? 8 : 16;
+				afi.channelLayout = (dsCaps.dwFlags & DSCAPS_SECONDARYSTEREO) ? HEPHAUDIO_CH_LAYOUT_STEREO : HEPHAUDIO_CH_LAYOUT_MONO;
+				afi.bitsPerSample = (dsCaps.dwFlags & DSCAPS_SECONDARY16BIT) ? 16 : 8;
 				afi.bitRate = AudioFormatInfo::CalculateBitrate(afi);
 			}
 		}
@@ -553,7 +553,7 @@ namespace HephAudio
 				afi.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
 				afi.bitsPerSample = 16;
 				afi.sampleRate = 44100;
-				afi.channelCount = dscCaps.dwChannels;
+				afi.channelLayout = dscCaps.dwChannels == 2 ? HEPHAUDIO_CH_LAYOUT_STEREO : HEPHAUDIO_CH_LAYOUT_MONO;
 				afi.bitRate = AudioFormatInfo::CalculateBitrate(afi);
 			}
 		}

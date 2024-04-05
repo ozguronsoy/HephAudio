@@ -13,7 +13,7 @@ namespace HephAudio
 	{
 		NativeAudio::NativeAudio()
 			: mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
-			, renderFormat(AudioFormatInfo(1, 2, 16, 48000)), captureFormat(AudioFormatInfo(1, 2, 16, 48000)), disposing(false)
+			, renderFormat(AudioFormatInfo(1, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000)), captureFormat(AudioFormatInfo(1, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000)), disposing(false)
 			, isRenderInitialized(false), isCaptureInitialized(false), isCapturePaused(false), deviceEnumerationPeriod_ms(100)
 		{
 			HEPHAUDIO_STOPWATCH_START;
@@ -78,7 +78,7 @@ namespace HephAudio
 			if (pao != nullptr && this->isRenderInitialized)
 			{
 				AudioProcessor::ChangeSampleRate(pao->buffer, this->renderFormat.sampleRate);
-				AudioProcessor::ChangeNumberOfChannels(pao->buffer, this->renderFormat.channelCount);
+				AudioProcessor::ChangeNumberOfChannels(pao->buffer, this->renderFormat.channelLayout.count);
 			}
 			return pao;
 		}
@@ -219,11 +219,11 @@ namespace HephAudio
 		}
 		void NativeAudio::InitializeRender()
 		{
-			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(2, 48000));
+			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(HEPHAUDIO_CH_LAYOUT_STEREO, 48000));
 		}
-		void NativeAudio::InitializeRender(uint16_t channelCount, uint32_t sampleRate)
+		void NativeAudio::InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate)
 		{
-			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate));
+			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate));
 		}
 		void NativeAudio::InitializeRender(AudioFormatInfo format)
 		{
@@ -231,11 +231,11 @@ namespace HephAudio
 		}
 		void NativeAudio::InitializeCapture()
 		{
-			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(2, 48000));
+			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(HEPHAUDIO_CH_LAYOUT_STEREO, 48000));
 		}
-		void NativeAudio::InitializeCapture(uint16_t channelCount, uint32_t sampleRate)
+		void NativeAudio::InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate)
 		{
-			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelCount, sampleRate));
+			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate));
 		}
 		void NativeAudio::InitializeCapture(AudioFormatInfo format)
 		{
@@ -416,7 +416,7 @@ namespace HephAudio
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
 			const size_t mixedAOCount = GetAOCountToMix();
-			AudioBuffer mixBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
+			AudioBuffer mixBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelLayout, renderFormat.sampleRate));
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
@@ -433,7 +433,7 @@ namespace HephAudio
 
 					for (size_t j = 0; j < frameCount && j < rResult.renderBuffer.FrameCount(); j++)
 					{
-						for (size_t k = 0; k < renderFormat.channelCount; k++)
+						for (size_t k = 0; k < renderFormat.channelLayout.count; k++)
 						{
 							mixBuffer[j][k] += rResult.renderBuffer[j][k] * volume;
 						}

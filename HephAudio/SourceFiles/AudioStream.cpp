@@ -141,7 +141,7 @@ namespace HephAudio
 			else
 			{
 				const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
-				this->pAudioObject = this->pNativeAudio->CreateAudioObject(StringBuffer::Join(' ', { "(Stream)", this->file.FileName() }), 0, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelCount, renderFormat.sampleRate));
+				this->pAudioObject = this->pNativeAudio->CreateAudioObject(StringBuffer::Join(' ', { "(Stream)", this->file.FileName() }), 0, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelLayout, renderFormat.sampleRate));
 
 				this->pAudioObject->OnRender = &AudioStream::OnRender;
 				this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
@@ -295,7 +295,7 @@ namespace HephAudio
 					pRenderResult->renderBuffer = pStream->pFileFormat->ReadFile(pStream->file, pStream->pAudioCodec, pStream->formatInfo, pAudioObject->frameIndex, pRenderArgs->renderFrameCount, &pRenderResult->isFinishedPlaying);
 				}
 
-				AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelCount);
+				AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelLayout.count);
 
 				pAudioObject->frameIndex += readFrameCount;
 			}

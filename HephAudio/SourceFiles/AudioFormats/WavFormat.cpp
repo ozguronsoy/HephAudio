@@ -101,7 +101,7 @@ namespace HephAudio
 			const uint64_t fmtChunkEnd = audioFile.GetOffset() + chunkSize;
 
 			audioFile.Read(&formatInfo.formatTag, 2, Endian::Little);
-			audioFile.Read(&formatInfo.channelCount, 2, Endian::Little);
+			audioFile.Read(&formatInfo.channelLayout.count, 2, Endian::Little);
 			audioFile.Read(&formatInfo.sampleRate, 4, Endian::Little);
 
 			uint32_t byteRate;
@@ -115,8 +115,13 @@ namespace HephAudio
 			{
 				uint16_t extensionSize;
 				audioFile.Read(&extensionSize, 2, Endian::Little);
-				audioFile.IncreaseOffset(extensionSize - 16);
+				audioFile.IncreaseOffset(2);
+				audioFile.Read(&formatInfo.channelLayout.mask, 4, Endian::Little);
 				audioFile.Read(&formatInfo.formatTag, 2, Endian::Little);
+			}
+			else
+			{
+				formatInfo.channelLayout = AudioChannelLayout::DefaultChannelLayout(formatInfo.channelLayout.count);
 			}
 
 			audioFile.SetOffset(fmtChunkEnd);
@@ -262,7 +267,7 @@ namespace HephAudio
 				data32 = 16;
 				audioFile.Write(&data32, 4, Endian::Little);
 				audioFile.Write(&bufferFormatInfo.formatTag, 2, Endian::Little);
-				audioFile.Write(&bufferFormatInfo.channelCount, 2, Endian::Little);
+				audioFile.Write(&bufferFormatInfo.channelLayout.count, 2, Endian::Little);
 				audioFile.Write(&bufferFormatInfo.sampleRate, 4, Endian::Little);
 				data32 = bufferFormatInfo.ByteRate();
 				audioFile.Write(&data32, 4, Endian::Little);

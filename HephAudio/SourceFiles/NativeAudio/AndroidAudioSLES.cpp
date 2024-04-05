@@ -221,11 +221,11 @@ namespace HephAudio
 
 			SLAndroidDataFormat_PCM_EX pcmFormat;
 			pcmFormat.formatType = SL_DATAFORMAT_PCM;
-			pcmFormat.numChannels = formatInfo.channelCount;
+			pcmFormat.numChannels = formatInfo.channelLayout.count;
 			pcmFormat.sampleRate = formatInfo.sampleRate * 1000;
 			pcmFormat.bitsPerSample = formatInfo.bitsPerSample;
 			pcmFormat.containerSize = formatInfo.bitsPerSample;
-			pcmFormat.channelMask = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
+			pcmFormat.channelMask = SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT; // TODO convert channel mask to sl_channel_mask
 			pcmFormat.endianness = HEPH_SYSTEM_ENDIAN == Endian::Little ? SL_BYTEORDER_LITTLEENDIAN : SL_BYTEORDER_BIGENDIAN;
 			pcmFormat.representation = formatInfo.bitsPerSample == 8 ? SL_ANDROID_PCM_REPRESENTATION_UNSIGNED_INT : SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT;
 			return pcmFormat;

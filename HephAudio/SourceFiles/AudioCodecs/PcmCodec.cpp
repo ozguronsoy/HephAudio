@@ -13,14 +13,14 @@ namespace HephAudio
 		}
 		AudioBuffer PcmCodec::Decode(const EncodedBufferInfo& encodedBufferInfo)
 		{
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
+			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelLayout, encodedBufferInfo.formatInfo.sampleRate));
 			const double scaleFactor = PcmCodec::GetScaleFactor(encodedBufferInfo.formatInfo);
 			const uint16_t frameSize = encodedBufferInfo.formatInfo.FrameSize();
 			const uint16_t bytesPerSample = encodedBufferInfo.formatInfo.bitsPerSample / 8;
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
-				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelLayout.count; j++)
 				{
 					uint8_t* pSample = (uint8_t*)encodedBufferInfo.pBuffer + i * frameSize + j * bytesPerSample;
 					const double floatSample = PcmCodec::ReadSample(pSample, bytesPerSample, encodedBufferInfo.formatInfo.endian);
@@ -41,7 +41,7 @@ namespace HephAudio
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
-				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelLayout.count; j++)
 				{
 					uint8_t* pSample = ((uint8_t*)tempBuffer.Begin()) + i * frameSize + j * bytesPerSample;
 					WriteSample(pSample, bufferToEncode[i][j] * scaleFactor, bytesPerSample, encodedBufferInfo.formatInfo.endian);

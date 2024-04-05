@@ -233,9 +233,9 @@ namespace HephAudio
 	{
 		this->pNativeAudio->InitializeRender();
 	}
-	void Audio::InitializeRender(uint16_t channelCount, uint32_t sampleRate)
+	void Audio::InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate)
 	{
-		this->pNativeAudio->InitializeRender(channelCount, sampleRate);
+		this->pNativeAudio->InitializeRender(channelLayout, sampleRate);
 	}
 	void Audio::InitializeRender(AudioFormatInfo format)
 	{
@@ -253,9 +253,9 @@ namespace HephAudio
 	{
 		this->pNativeAudio->InitializeCapture();
 	}
-	void Audio::InitializeCapture(uint16_t channelCount, uint32_t sampleRate)
+	void Audio::InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate)
 	{
-		this->pNativeAudio->InitializeCapture(channelCount, sampleRate);
+		this->pNativeAudio->InitializeCapture(channelLayout, sampleRate);
 	}
 	void Audio::InitializeCapture(AudioFormatInfo format)
 	{

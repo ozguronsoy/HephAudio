@@ -73,12 +73,12 @@ namespace HephAudio
 			AudioFormatInfo GetRenderFormat() const;
 			AudioFormatInfo GetCaptureFormat() const;
 			void InitializeRender();
-			void InitializeRender(uint16_t channelCount, uint32_t sampleRate);
+			void InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate);
 			void InitializeRender(AudioFormatInfo format);
 			virtual void InitializeRender(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopRendering() = 0;
 			void InitializeCapture();
-			void InitializeCapture(uint16_t channelCount, uint32_t sampleRate);
+			void InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate);
 			void InitializeCapture(AudioFormatInfo format);
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopCapturing() = 0;

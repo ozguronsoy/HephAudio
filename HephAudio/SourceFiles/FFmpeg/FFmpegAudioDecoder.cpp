@@ -110,7 +110,7 @@ namespace HephAudio
 	AudioFormatInfo FFmpegAudioDecoder::GetOutputFormatInfo() const
 	{
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
-		return HEPHAUDIO_INTERNAL_FORMAT(avStream->codecpar->ch_layout.nb_channels, avStream->codecpar->sample_rate);
+		return HEPHAUDIO_INTERNAL_FORMAT(HephAudio::FromAVChannelLayout(avStream->codecpar->ch_layout), avStream->codecpar->sample_rate);
 	}
 	size_t FFmpegAudioDecoder::GetFrameCount() const
 	{
@@ -263,7 +263,7 @@ namespace HephAudio
 
 						for (size_t i = 0; i < currentFramesToRead; i++)
 						{
-							for (size_t j = 0; j < outputFormatInfo.channelCount; j++)
+							for (size_t j = 0; j < outputFormatInfo.channelLayout.count; j++)
 							{
 								decodedBuffer[i + readFrameCount][j] = tempBuffer[i + frameIndex][j];
 							}
@@ -369,7 +369,7 @@ namespace HephAudio
 
 						for (size_t i = 0; i < currentFrameCount; i++)
 						{
-							for (size_t j = 0; j < outputFormatInfo.channelCount; j++)
+							for (size_t j = 0; j < outputFormatInfo.channelLayout.count; j++)
 							{
 								decodedBuffer[i + readFrameCount][j] = tempBuffer[i][j];
 							}

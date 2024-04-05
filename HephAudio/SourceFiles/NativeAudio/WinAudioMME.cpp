@@ -77,9 +77,9 @@ namespace HephAudio
 			WINAUDIOMME_EXCPT(waveOutGetDevCaps(deviceID, &deviceCaps, sizeof(WAVEOUTCAPS)), this, "WinAudioMME::InitializeRender", "An error occurred whilst getting the render device caps.");
 
 			this->renderFormat = this->GetClosestFormat(deviceCaps.dwFormats, format);
-			if (this->renderFormat.channelCount > deviceCaps.wChannels || this->renderFormat.channelCount == 0)
+			if (this->renderFormat.channelLayout.count > deviceCaps.wChannels || this->renderFormat.channelLayout.count == 0)
 			{
-				this->renderFormat.channelCount = deviceCaps.wChannels;
+				this->renderFormat.channelLayout = deviceCaps.wChannels == 2 ? HEPHAUDIO_CH_LAYOUT_STEREO : HEPHAUDIO_CH_LAYOUT_MONO;
 			}
 			const WAVEFORMATEX wfx = this->AFI2WFX(this->renderFormat);
 
@@ -166,9 +166,9 @@ namespace HephAudio
 			WINAUDIOMME_EXCPT(waveInGetDevCaps(deviceID, &deviceCaps, sizeof(WAVEINCAPS)), this, "WinAudioMME::InitializeCapture", "An error occurred whilst getting the capture device caps.");
 
 			this->captureFormat = this->GetClosestFormat(deviceCaps.dwFormats, format);
-			if (this->captureFormat.channelCount > deviceCaps.wChannels || this->captureFormat.channelCount == 0)
+			if (this->captureFormat.channelLayout.count > deviceCaps.wChannels || this->captureFormat.channelLayout.count == 0)
 			{
-				this->captureFormat.channelCount = deviceCaps.wChannels;
+				this->captureFormat.channelLayout = deviceCaps.wChannels == 2 ? HEPHAUDIO_CH_LAYOUT_STEREO : HEPHAUDIO_CH_LAYOUT_MONO;
 			}
 			const WAVEFORMATEX wfx = this->AFI2WFX(this->captureFormat);
 

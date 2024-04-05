@@ -357,7 +357,7 @@ namespace HephAudio
 		{
 			streamDesc.mSampleRate = renderFormat.sampleRate;
 			streamDesc.mBitsPerChannel = renderFormat.bitsPerSample;
-			streamDesc.mChannelsPerFrame = renderFormat.channelCount;
+			streamDesc.mChannelsPerFrame = renderFormat.channelLayout.count;
 			streamDesc.mBytesPerFrame = renderFormat.FrameSize();
 			streamDesc.mFramesPerPacket = 1;
 			streamDesc.mBytesPerPacket = streamDesc.mBytesPerFrame * streamDesc.mFramesPerPacket;
@@ -408,7 +408,7 @@ namespace HephAudio
 		{
 			format.sampleRate = streamDesc.mSampleRate;
 			format.bitsPerSample = streamDesc.mBitsPerChannel;
-			format.channelCount = streamDesc.mChannelsPerFrame;
+			format.channelLayout = AudioChannelLayout::DefaultChannelLayout(streamDesc.mChannelsPerFrame);
 
 			switch (streamDesc.mFormatID)
 			{

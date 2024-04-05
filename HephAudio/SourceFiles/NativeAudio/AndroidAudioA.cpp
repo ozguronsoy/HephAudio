@@ -107,7 +107,7 @@ namespace HephAudio
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_OUTPUT);
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
 			AAudioStreamBuilder_setSampleRate(streamBuilder, format.sampleRate);
-			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelCount);
+			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelLayout.count);
 			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, renderBufferFrameCount);
 
 			if (device != nullptr)
@@ -196,7 +196,7 @@ namespace HephAudio
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_INPUT);
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
 			AAudioStreamBuilder_setSampleRate(streamBuilder, format.sampleRate);
-			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelCount);
+			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelLayout.count);
 			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, captureBufferFrameCount);
 
 			if (device != nullptr)

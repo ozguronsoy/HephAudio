@@ -144,7 +144,7 @@ namespace HephAudio
 			LINUX_EXCPT(snd_pcm_hw_params_any(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while reading the pcm hw params.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_access(renderPcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeRender", "An error occurred while setting access to the pcm hw params.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_format(renderPcm, pcmHwParams, ToPcmFormat(renderFormat)), this, "LinuxAudio::InitializeRender", "Unsupported bps.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_channels(renderPcm, pcmHwParams, renderFormat.channelCount), this, "LinuxAudio::InitializeRender", "Unsupported channel count.");
+			LINUX_EXCPT(snd_pcm_hw_params_set_channels(renderPcm, pcmHwParams, renderFormat.channelLayout.count), this, "LinuxAudio::InitializeRender", "Unsupported channel count.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_rate(renderPcm, pcmHwParams, renderFormat.sampleRate, 0), this, "LinuxAudio::InitializeRender", "Unsupported sample rate.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(renderPcm, pcmHwParams, renderFormat.sampleRate * 0.5), this, "LinuxAudio::InitializeRender", "An error occurred while setting the pcm buffer size.");
 			LINUX_EXCPT(snd_pcm_hw_params(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while configuring the pcm hw params.");
@@ -189,7 +189,7 @@ namespace HephAudio
 			LINUX_EXCPT(snd_pcm_hw_params_any(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while reading the pcm hw params.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_access(capturePcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeCapture", "An error occurred while setting access to the pcm hw params.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_format(capturePcm, pcmHwParams, ToPcmFormat(captureFormat)), this, "LinuxAudio::InitializeCapture", "Unsupported bps.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_channels(capturePcm, pcmHwParams, captureFormat.channelCount), this, "LinuxAudio::InitializeCapture", "Unsupported channel count.");
+			LINUX_EXCPT(snd_pcm_hw_params_set_channels(capturePcm, pcmHwParams, captureFormat.channelLayout.count), this, "LinuxAudio::InitializeCapture", "Unsupported channel count.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_rate(capturePcm, pcmHwParams, captureFormat.sampleRate, 0), this, "LinuxAudio::InitializeCapture", "Unsupported sample rate.");
 			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(capturePcm, pcmHwParams, captureFormat.sampleRate * 0.1), this, "LinuxAudio::InitializeCapture", "An error occurred while setting the pcm buffer size.");
 			LINUX_EXCPT(snd_pcm_hw_params(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while configuring the pcm hw params.");

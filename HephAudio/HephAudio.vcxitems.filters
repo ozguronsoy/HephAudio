@@ -279,6 +279,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\Mp4Format.h">
       <Filter>HeaderFiles\AudioFormats</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">

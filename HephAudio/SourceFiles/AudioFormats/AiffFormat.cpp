@@ -112,7 +112,9 @@ namespace HephAudio
 			audioFile.Read(&chunkSize, 4, Endian::Big);
 			const uint32_t commChunkEnd = audioFile.GetOffset() + chunkSize;
 
-			audioFile.Read(&formatInfo.channelCount, 2, Endian::Big);
+			audioFile.Read(&formatInfo.channelLayout.count, 2, Endian::Big);
+			formatInfo.channelLayout = AudioChannelLayout::DefaultChannelLayout(formatInfo.channelLayout.count);
+
 			audioFile.IncreaseOffset(4);
 			audioFile.Read(&formatInfo.bitsPerSample, 2, Endian::Big);
 			audioFile.Read(&srBits, 8, Endian::Big);
@@ -291,7 +293,7 @@ namespace HephAudio
 				data32 = 22 + compressionName.Size();
 				audioFile.Write(&data32, 4, Endian::Big);
 
-				audioFile.Write(&bufferFormatInfo.channelCount, 2, Endian::Big);
+				audioFile.Write(&bufferFormatInfo.channelLayout.count, 2, Endian::Big);
 
 				data32 = buffer.FrameCount();
 				audioFile.Write(&data32, 4, Endian::Big);
@@ -317,7 +319,7 @@ namespace HephAudio
 					AudioProcessor::ChangeEndian(buffer);
 				}
 
-				audioFile.WriteFromBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.FrameCount() * bufferFormatInfo.channelCount);
+				audioFile.WriteFromBuffer(buffer.Begin(), bufferFormatInfo.bitsPerSample / 8, buffer.FrameCount() * bufferFormatInfo.channelLayout.count);
 			}
 			catch (HephException)
 			{

@@ -85,7 +85,7 @@ namespace HephAudio
 			pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
 		}
 
-		AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelCount);
+		AudioProcessor::ChangeNumberOfChannels(pRenderResult->renderBuffer, renderFormat.channelLayout.count);
 
 		pAudioObject->frameIndex += readFrameCount;
 		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();

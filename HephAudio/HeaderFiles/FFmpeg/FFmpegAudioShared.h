@@ -146,6 +146,27 @@ namespace HephAudio
 			return AV_CODEC_ID_NONE;
 		}
 	}
+
+	inline AVChannelLayout ToAVChannelLayout(const AudioChannelLayout& audioChannelLayout)
+	{
+		AVChannelLayout avChannelLayout{};
+		avChannelLayout.order = AV_CHANNEL_ORDER_NATIVE;
+		avChannelLayout.nb_channels = audioChannelLayout.count;
+		avChannelLayout.u.mask = (uint64_t)audioChannelLayout.mask;
+		return avChannelLayout;
+	}
+
+	inline AudioChannelLayout FromAVChannelLayout(const AVChannelLayout& avChannelLayout)
+	{
+		AudioChannelLayout audioChannelLayout;
+
+		audioChannelLayout.count = avChannelLayout.nb_channels;
+		
+		uint32_t avChMask = (uint32_t)avChannelLayout.u.mask;
+		audioChannelLayout.mask = (AudioChannelMask)avChMask;
+
+		return audioChannelLayout;
+	}
 }
 
 #define HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(errorCode) HephAudio::FFmpegGetErrorMessage(errorCode)

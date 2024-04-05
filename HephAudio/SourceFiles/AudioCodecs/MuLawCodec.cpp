@@ -14,13 +14,13 @@ namespace HephAudio
 		{
 			constexpr double scaleFactor = ((double)HEPH_AUDIO_SAMPLE_MAX) / INT16_MAX;
 
-			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelCount, encodedBufferInfo.formatInfo.sampleRate));
+			AudioBuffer resultBuffer = AudioBuffer(encodedBufferInfo.size_frame, HEPHAUDIO_INTERNAL_FORMAT(encodedBufferInfo.formatInfo.channelLayout, encodedBufferInfo.formatInfo.sampleRate));
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
-				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelLayout.count; j++)
 				{
-					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelCount + j];
+					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelLayout.count + j];
 					const int16_t pcmSample = MuLawCodec::MuLawToPcm(encodedSample);
 
 					resultBuffer[i][j] = (double)pcmSample * scaleFactor;
@@ -37,20 +37,20 @@ namespace HephAudio
 			encodedBufferInfo.size_byte = bufferToEncode.Size();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
 			encodedBufferInfo.formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_MULAW;
-			encodedBufferInfo.formatInfo.channelCount = bufferToEncode.FormatInfo().channelCount;
+			encodedBufferInfo.formatInfo.channelLayout = bufferToEncode.FormatInfo().channelLayout;
 			encodedBufferInfo.formatInfo.bitsPerSample = 8;
 			encodedBufferInfo.formatInfo.sampleRate = 8000;
 			AudioBuffer tempBuffer = AudioBuffer(encodedBufferInfo.size_frame, encodedBufferInfo.formatInfo);
 
 			for (size_t i = 0; i < encodedBufferInfo.size_frame; i++)
 			{
-				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelCount; j++)
+				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelLayout.count; j++)
 				{
 					int16_t pcmSample = bufferToEncode[i][j] * scaleFactor;
 					const int8_t sign = (pcmSample & 0x8000) >> 8;
 					pcmSample = HephCommon::Math::Min(abs(pcmSample), 32767) + 132;
 					const int16_t segment = MuLawCodec::FindSegment((pcmSample & 0x7F80) >> 7);
-					((uint8_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelCount + j] = ~(sign | (segment << 4) | ((pcmSample >> (segment + 3)) & 0x0F));
+					((uint8_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelLayout.count + j] = ~(sign | (segment << 4) | ((pcmSample >> (segment + 3)) & 0x0F));
 				}
 			}
 

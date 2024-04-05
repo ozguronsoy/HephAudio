@@ -12,39 +12,45 @@ namespace HephAudio
 		Capture = 2,
 		All = Render | Capture
 	};
-	struct AudioDevice
-	{
-		HephCommon::StringBuffer id{ "" };
-		HephCommon::StringBuffer name{ "" };
-		AudioDeviceType type{ AudioDeviceType::Render };
-		bool isDefault{ false };
-	};
+
 	constexpr AudioDeviceType operator|(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		return (AudioDeviceType)((uint8_t)lhs | (uint8_t)rhs);
 	}
-	constexpr AudioDeviceType operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	constexpr AudioDeviceType& operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
-		return lhs | rhs;
+		lhs = lhs | rhs;
+		return lhs;
 	}
 	constexpr AudioDeviceType operator&(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		return (AudioDeviceType)((uint8_t)lhs & (uint8_t)rhs);
 	}
-	constexpr AudioDeviceType operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	constexpr AudioDeviceType& operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
-		return lhs & rhs;
+		lhs = lhs & rhs;
+		return lhs;
 	}
 	constexpr AudioDeviceType operator^(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		return (AudioDeviceType)((uint8_t)lhs ^ (uint8_t)rhs);
 	}
-	constexpr AudioDeviceType operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	constexpr AudioDeviceType& operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
-		return lhs ^ rhs;
+		lhs = lhs ^ rhs;
+		return lhs;
 	}
 	constexpr AudioDeviceType operator~(const AudioDeviceType& lhs)
 	{
 		return (AudioDeviceType)(~(uint8_t)lhs);
 	}
+
+	struct AudioDevice
+	{
+		HephCommon::StringBuffer id;
+		HephCommon::StringBuffer name;
+		AudioDeviceType type;
+		bool isDefault;
+		AudioDevice() : id(""), name(""), type(AudioDeviceType::Render), isDefault(false) {}
+	};
 }
