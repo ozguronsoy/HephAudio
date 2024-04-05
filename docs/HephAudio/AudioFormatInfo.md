@@ -25,8 +25,8 @@ Creates an ``AudioFormatInfo`` instance in the format HephAudio uses internally 
 struct AudioFormatInfo
 {
     uint16_t formatTag;
-    uint16_t channelCount;
     uint16_t bitsPerSample;
+    AudioChannelLayout channelLayout;
     uint32_t sampleRate;
     uint32_t bitRate;
     HephCommon::Endian endian;
@@ -37,22 +37,27 @@ struct AudioFormatInfo
 <br><br>
 Tag of the format that audio data is encoded with.
 <br><br>
-- ``channelCount``
-<br><br>
-Number of channels present in the audio buffer. This will be 1 for Mono and 2 for Stereo audio. For stereo, the first channel will be played through the left, and the second will be played through the right.
-<br><br>
+
 - ``bitsPerSample``
 <br><br>
 Bit depth, the number of bits required to represent a sample.
 <br><br>
+
+- ``channelLayout``
+<br><br>
+[Channel layout](/docs/HephAudio/AudioChannelLayout.md).
+<br><br>
+
 - ``sampleRate``
 <br><br>
 Samples per second (Hz), the number of samples required to represent a one-second-long audio signal.
 <br><br>
+
 - ``bitRate``
 <br><br>
 Bits per second (bps), the number of bits required to represent a one-second-long audio signal.
 <br><br>
+
 - ``endian``
 <br><br>
 Endianness, the order in which bytes within a sample are stored.
@@ -68,8 +73,8 @@ Creates an instance and initializes it with default values.
 
 ```c++
 AudioFormatInfo(uint16_t formatTag,
-                uint16_t nChannels,
-                uint16_t bps,
+                uint16_t bitsPerSample,
+                AudioChannelLayout chLayout,
                 uint32_t sampleRate);
 ```
 Creates an instance and initializes it with provided values. Assigns ``HEPH_SYSTEM_ENDIAN`` to the ``AudioFormatInfo::endian`` field.
@@ -77,9 +82,30 @@ Creates an instance and initializes it with provided values. Assigns ``HEPH_SYST
 
 ```c++
 AudioFormatInfo(uint16_t formatTag,
-                uint16_t nChannels,
-                uint16_t bps,
+                uint16_t bitsPerSample,
+                AudioChannelLayout chLayout,
                 uint32_t sampleRate,
+                uint32_t bitRate);
+```
+Creates an instance and initializes it with provided values. Assigns ``HEPH_SYSTEM_ENDIAN`` to the ``AudioFormatInfo::endian`` field.
+<br><br><br><br>
+
+```c++
+AudioFormatInfo(uint16_t formatTag,
+                uint16_t bitsPerSample,
+                AudioChannelLayout chLayout,
+                uint32_t sampleRate,
+                HephCommon::Endian endian);
+```
+Creates an instance and initializes it with provided values.
+<br><br><br><br>
+
+```c++
+AudioFormatInfo(uint16_t formatTag,
+                uint16_t bitsPerSample,
+                AudioChannelLayout chLayout,
+                uint32_t sampleRate,
+                uint32_t bitRate,
                 HephCommon::Endian endian);
 ```
 Creates an instance and initializes it with provided values.
