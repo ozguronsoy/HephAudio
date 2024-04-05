@@ -272,8 +272,8 @@ namespace HephAudio
 			ComPtr<IAudioRenderClient> pRenderClient = nullptr;
 			ComPtr<IMMDevice> pDevice = nullptr;
 			LPWSTR deviceId = nullptr;
-			WAVEFORMATEX* closestFormat = nullptr;
-			WAVEFORMATEX wfx = WinAudioBase::AFI2WFX(format);
+			WAVEFORMATEXTENSIBLE* closestFormat = nullptr;
+			WAVEFORMATEXTENSIBLE wfx = WinAudioBase::AFI2WFX(format);
 			HANDLE hEvent = nullptr;
 			UINT32 padding, nFramesAvailable, bufferSize;
 			AudioBuffer dataBuffer;
@@ -298,18 +298,17 @@ namespace HephAudio
 			}
 			WINAUDIO_RENDER_THREAD_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)pAudioClient.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the render device.");
 
-			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wfx, &closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, (const WAVEFORMATEX*)&wfx, (WAVEFORMATEX**)&closestFormat), "WinAudio::InitializeRender", "An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr)
 			{
 				format = WinAudioBase::WFX2AFI(*closestFormat);
-				format.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
-				wfx = WinAudioBase::AFI2WFX(format);
+				wfx = *closestFormat;
 				CoTaskMemFree(closestFormat);
 				closestFormat = nullptr;
 			}
 			this->renderFormat = format;
 
-			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, &wfx, nullptr), "WinAudio::InitializeRender", "An error occurred whilst initializing the audio client.");
+			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 0, 0, (const WAVEFORMATEX*)&wfx, nullptr), "WinAudio::InitializeRender", "An error occurred whilst initializing the audio client.");
 			WINAUDIO_RENDER_THREAD_EXCPT(pDevice->Activate(__uuidof(IAudioSessionManager), CLSCTX_INPROC_SERVER, nullptr, (void**)this->pRenderSessionManager.GetAddressOf()), "WinAudio::InitializeRender", "An error occurred whilst activating the session manager.");
 			pDevice = nullptr;
 
@@ -385,8 +384,8 @@ namespace HephAudio
 			ComPtr<IAudioCaptureClient> pCaptureClient = nullptr;
 			ComPtr<IMMDevice> pDevice = nullptr;
 			LPWSTR deviceId = nullptr;
-			WAVEFORMATEX* closestFormat = nullptr;
-			WAVEFORMATEX wfx = WinAudioBase::AFI2WFX(format);
+			WAVEFORMATEXTENSIBLE* closestFormat = nullptr;
+			WAVEFORMATEXTENSIBLE wfx = WinAudioBase::AFI2WFX(format);
 			UINT32 bufferSize, nFramesAvailable, packetLength;
 			BYTE* captureBuffer = nullptr;
 			DWORD flags = 0;
@@ -412,18 +411,17 @@ namespace HephAudio
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pDevice->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)pAudioClient.GetAddressOf()), "WinAudio::InitializeCapture", "An error occurred whilst activating the device.");
 			pDevice = nullptr;
 
-			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, &wfx, &closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED, (const WAVEFORMATEX*)&wfx, (WAVEFORMATEX**)&closestFormat), "WinAudio::InitializeCapture", "An error occurred whilst checking if the given format is supported.");
 			if (closestFormat != nullptr)
 			{
 				format = WinAudioBase::WFX2AFI(*closestFormat);
-				format.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
-				wfx = WinAudioBase::AFI2WFX(format);
+				wfx = *closestFormat;
 				CoTaskMemFree(closestFormat);
 				closestFormat = nullptr;
 			}
 			this->captureFormat = format;
 
-			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, requestedBufferDuration_rt, 0, &wfx, nullptr), "WinAudio::InitializeCapture", "An error occurred whilst initializing the audio client.");
+			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->Initialize(AUDCLNT_SHAREMODE_SHARED, 0, requestedBufferDuration_rt, 0, (const WAVEFORMATEX*)&wfx, nullptr), "WinAudio::InitializeCapture", "An error occurred whilst initializing the audio client.");
 
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred whilst capturing the samples.");
 			halfActualBufferDuration_ms = 500.0 * bufferSize / this->captureFormat.sampleRate;

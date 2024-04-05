@@ -81,9 +81,9 @@ namespace HephAudio
 			{
 				this->renderFormat.channelLayout = deviceCaps.wChannels == 2 ? HEPHAUDIO_CH_LAYOUT_STEREO : HEPHAUDIO_CH_LAYOUT_MONO;
 			}
-			const WAVEFORMATEX wfx = this->AFI2WFX(this->renderFormat);
+			const WAVEFORMATEXTENSIBLE wfx = this->AFI2WFX(this->renderFormat);
 
-			WINAUDIOMME_EXCPT(waveOutOpen(&this->hwo, deviceID, &wfx, (DWORD_PTR)&WinAudioMME::RenderCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeRender", "An error occurred whilst openning the render device.");
+			WINAUDIOMME_EXCPT(waveOutOpen(&this->hwo, deviceID, (WAVEFORMATEX*)&wfx, (DWORD_PTR)&WinAudioMME::RenderCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeRender", "An error occurred whilst openning the render device.");
 
 			const size_t bufferSize_byte = WinAudioMME::CalculateBufferSize(this->renderFormat.ByteRate(), this->renderFormat.sampleRate);
 			for (size_t i = 0; i < WinAudioMME::HDR_COUNT; i++)
@@ -170,9 +170,9 @@ namespace HephAudio
 			{
 				this->captureFormat.channelLayout = deviceCaps.wChannels == 2 ? HEPHAUDIO_CH_LAYOUT_STEREO : HEPHAUDIO_CH_LAYOUT_MONO;
 			}
-			const WAVEFORMATEX wfx = this->AFI2WFX(this->captureFormat);
+			const WAVEFORMATEXTENSIBLE wfx = this->AFI2WFX(this->captureFormat);
 
-			WINAUDIOMME_EXCPT(waveInOpen(&this->hwi, deviceID, &wfx, (DWORD_PTR)&WinAudioMME::CaptureCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeCapture", "An error occurred whilst starting capture.");
+			WINAUDIOMME_EXCPT(waveInOpen(&this->hwi, deviceID, (WAVEFORMATEX*)&wfx, (DWORD_PTR)&WinAudioMME::CaptureCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeCapture", "An error occurred whilst starting capture.");
 
 			const size_t bufferSize_byte = WinAudioMME::CalculateBufferSize(this->captureFormat.ByteRate(), this->captureFormat.sampleRate);
 

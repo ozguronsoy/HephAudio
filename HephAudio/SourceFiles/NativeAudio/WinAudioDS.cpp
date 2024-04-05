@@ -201,7 +201,7 @@ namespace HephAudio
 			size_t nFramesToRead;
 			HANDLE hEvents[notificationCount]{ nullptr };
 			DSBPOSITIONNOTIFY notifyInfos[notificationCount]{ 0 };
-			WAVEFORMATEX wfx{ 0 };
+			WAVEFORMATEXTENSIBLE wfx{ 0 };
 			HRESULT hres;
 
 			WINAUDIODS_RENDER_THREAD_EXCPT(DirectSoundCreate(&deviceId, pDirectSound.GetAddressOf(), nullptr), "WinAudioDS::InitializeRender", "An error occurred whilst initializing render.");
@@ -218,7 +218,7 @@ namespace HephAudio
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
 			bufferDesc.dwBufferBytes = this->renderFormat.ByteRate() / 100 * (notificationCount - 1);
 			bufferDesc.dwReserved = 0;
-			bufferDesc.lpwfxFormat = &wfx;
+			bufferDesc.lpwfxFormat = (WAVEFORMATEX*)&wfx;
 			bufferDesc.guid3DAlgorithm = GUID_NULL;
 			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSound->CreateSoundBuffer(&bufferDesc, pDirectSoundBuffer.GetAddressOf(), nullptr), "WinAudioDS::InitializeRender", "An error occurred whilst creating a render buffer.");
 
@@ -303,7 +303,7 @@ namespace HephAudio
 			ComPtr<IDirectSoundNotify> pDirectSoundNotify = nullptr;
 			DSCCAPS dscCaps{ 0 };
 			DSCBUFFERDESC bufferDesc{ 0 };
-			WAVEFORMATEX wfx{ 0 };
+			WAVEFORMATEXTENSIBLE wfx{ 0 };
 			void* audioPtr1 = nullptr;
 			void* audioPtr2 = nullptr;
 			DWORD audioBytes1, audioBytes2, captureCursor, readCursor;
@@ -323,7 +323,7 @@ namespace HephAudio
 			bufferDesc.dwSize = sizeof(DSCBUFFERDESC);
 			bufferDesc.dwFlags = 0;
 			bufferDesc.dwBufferBytes = this->captureFormat.ByteRate() * bufferDuration_s * (notificationCount - 1);
-			bufferDesc.lpwfxFormat = &wfx;
+			bufferDesc.lpwfxFormat = (WAVEFORMATEX*)&wfx;
 			bufferDesc.dwFXCount = 0;
 			bufferDesc.lpDSCFXDesc = nullptr;
 			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCapture->CreateCaptureBuffer(&bufferDesc, pDirectSoundCaptureBuffer.GetAddressOf(), nullptr), "WinAudioDS::InitializeCapture", "An error occurred whilst creating a capture buffer.");

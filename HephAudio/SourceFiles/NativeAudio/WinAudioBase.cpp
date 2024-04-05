@@ -26,20 +26,40 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(hres, "WinAudioBase::InitializeCOM", "An error occurred whilst initializing COM.", "Windows COM", _com_error(hres).ErrorMessage()));
 			}
 		}
-		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEX& wfx)
+		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEXTENSIBLE& wfx)
 		{
-			return AudioFormatInfo(wfx.wFormatTag, wfx.wBitsPerSample, AudioChannelLayout::DefaultChannelLayout(wfx.nChannels), wfx.nSamplesPerSec);
+			if (wfx.Format.cbSize != 0)
+			{
+				return AudioFormatInfo(wfx.SubFormat.Data1, wfx.Format.wBitsPerSample, 
+					AudioChannelLayout(wfx.Format.nChannels, (AudioChannelMask)wfx.dwChannelMask), wfx.Format.nSamplesPerSec);
+			}
+			return AudioFormatInfo(wfx.Format.wFormatTag, wfx.Format.wBitsPerSample, AudioChannelLayout::DefaultChannelLayout(wfx.Format.nChannels), wfx.Format.nSamplesPerSec);
 		}
-		WAVEFORMATEX WinAudioBase::AFI2WFX(const AudioFormatInfo& afi)
+		WAVEFORMATEXTENSIBLE WinAudioBase::AFI2WFX(const AudioFormatInfo& afi)
 		{
-			WAVEFORMATEX wfx{ 0 };
-			wfx.wFormatTag = afi.formatTag;
-			wfx.nChannels = afi.channelLayout.count;
-			wfx.nSamplesPerSec = afi.sampleRate;
-			wfx.nAvgBytesPerSec = afi.ByteRate();
-			wfx.nBlockAlign = afi.FrameSize();
-			wfx.wBitsPerSample = afi.bitsPerSample;
-			wfx.cbSize = 0;
+			WAVEFORMATEXTENSIBLE wfx{ 0 };
+			wfx.Format.wFormatTag = HEPHAUDIO_FORMAT_TAG_EXTENSIBLE;
+			wfx.Format.nChannels = afi.channelLayout.count;
+			wfx.dwChannelMask = (uint32_t)afi.channelLayout.mask;
+			wfx.Format.nSamplesPerSec = afi.sampleRate;
+			wfx.Format.nAvgBytesPerSec = afi.ByteRate();
+			wfx.Format.nBlockAlign = afi.FrameSize();
+			wfx.Format.wBitsPerSample = afi.bitsPerSample;
+			wfx.Format.cbSize = 22;
+			wfx.Samples.wValidBitsPerSample = wfx.Format.wBitsPerSample;
+			wfx.SubFormat.Data1 = afi.formatTag;
+			wfx.SubFormat.Data2 = 0;
+			wfx.SubFormat.Data2 = 0;
+			wfx.SubFormat.Data3 = 0x10;
+			wfx.SubFormat.Data4[0] = 0x80;
+			wfx.SubFormat.Data4[1] = 0;
+			wfx.SubFormat.Data4[2] = 0;
+			wfx.SubFormat.Data4[3] = 0xAA;
+			wfx.SubFormat.Data4[4] = 0;
+			wfx.SubFormat.Data4[5] = 0x38;
+			wfx.SubFormat.Data4[6] = 0x9B;
+			wfx.SubFormat.Data4[7] = 0x71;
+
 			return wfx;
 		}
 	}

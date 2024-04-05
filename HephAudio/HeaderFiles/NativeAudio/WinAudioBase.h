@@ -4,6 +4,7 @@
 #include "NativeAudio.h"
 #include <wrl.h>
 #include <mmeapi.h>
+#include <mmreg.h>
 #include <comdef.h>
 
 namespace HephAudio
@@ -19,8 +20,8 @@ namespace HephAudio
 			virtual ~WinAudioBase() = default;
 		protected:
 			void InitializeCOM() const;
-			static AudioFormatInfo WFX2AFI(const WAVEFORMATEX& wfx);
-			static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi);
+			static AudioFormatInfo WFX2AFI(const WAVEFORMATEXTENSIBLE& wfx);
+			static WAVEFORMATEXTENSIBLE AFI2WFX(const AudioFormatInfo& afi);
 		};
 	}
 }
