@@ -71,6 +71,13 @@ namespace HephAudio
 			case 3:
 				pTable = &AudioChannelMixingLookupTables::_3_channels_table;
 				break;
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+				pTable = &AudioChannelMixingLookupTables::_other_channels_table;
+				break;
 			default:
 				HEPHAUDIO_LOG("unsupported channel mapping, returning.", HEPH_CL_WARNING);
 				return;
@@ -82,12 +89,12 @@ namespace HephAudio
 					buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian)
 			);
 
-			for (size_t i = 0; i < inputMapping.size(); i++)
+			for (size_t i = 0; i < outputMapping.size(); i++)
 			{
 				size_t mappedChannelCount = 0;
-				for (size_t j = 0; j < outputMapping.size(); j++)
+				for (size_t j = 0; j < inputMapping.size(); j++)
 				{
-					if ((*pTable)[outputMapping[j]][inputMapping[i]] != 0)
+					if ((*pTable)[outputMapping[i]][inputMapping[j]] != 0)
 					{
 						mappedChannelCount++;
 					}
@@ -95,14 +102,14 @@ namespace HephAudio
 
 				if (mappedChannelCount > 0)
 				{
-					for (size_t j = 0; j < outputMapping.size(); j++)
+					for (size_t j = 0; j < inputMapping.size(); j++)
 					{
-						const float mappingCoeff = (*pTable)[outputMapping[j]][inputMapping[i]];
+						const float mappingCoeff = (*pTable)[outputMapping[i]][inputMapping[j]];
 						if (mappingCoeff != 0)
 						{
 							for (size_t k = 0; k < buffer.frameCount; k++)
 							{
-								resultBuffer[k][j] += buffer[k][i] * mappingCoeff / mappedChannelCount;
+								resultBuffer[k][i] += buffer[k][j] * mappingCoeff / mappedChannelCount;
 							}
 						}
 					}

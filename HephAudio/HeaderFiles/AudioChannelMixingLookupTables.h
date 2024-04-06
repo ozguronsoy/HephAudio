@@ -17,5 +17,6 @@ namespace HephAudio
 		static hephaudio_channel_mixing_lookup_table_t _mono_table;
 		static hephaudio_channel_mixing_lookup_table_t _stereo_table;
 		static hephaudio_channel_mixing_lookup_table_t _3_channels_table;
+		static hephaudio_channel_mixing_lookup_table_t _other_channels_table;
 	};
 }
