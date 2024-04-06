@@ -18,24 +18,24 @@ static hephaudio_downmix_lookup_table_t _mono_table =
 	{
 		HephAudio::AudioChannelMask::FrontCenter,
 		{
-			{ HephAudio::AudioChannelMask::FrontLeft, 0.707f },
-			{ HephAudio::AudioChannelMask::FrontRight, 0.707f },
-			{ HephAudio::AudioChannelMask::FrontCenter, 1.0f },
-			{ HephAudio::AudioChannelMask::LowFrequency, 1.0f },
-			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::SideLeft, 0.5f },
-			{ HephAudio::AudioChannelMask::SideRight, 0.5f },
-			{ HephAudio::AudioChannelMask::BackLeft, 0.5f },
-			{ HephAudio::AudioChannelMask::BackRight, 0.5f },
-			{ HephAudio::AudioChannelMask::BackCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::TopCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::TopFrontLeft, 0.5f },
-			{ HephAudio::AudioChannelMask::TopFrontRight, 0.5f },
-			{ HephAudio::AudioChannelMask::TopFrontCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::TopBackLeft, 0.354f },
-			{ HephAudio::AudioChannelMask::TopBackRight, 0.354f },
-			{ HephAudio::AudioChannelMask::TopBackCenter, 0.5f }
+			{ HephAudio::AudioChannelMask::FrontLeft, 1 },
+			{ HephAudio::AudioChannelMask::FrontRight, 1 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::SideLeft, 1 },
+			{ HephAudio::AudioChannelMask::SideRight, 1 },
+			{ HephAudio::AudioChannelMask::BackLeft, 1 },
+			{ HephAudio::AudioChannelMask::BackRight, 1 },
+			{ HephAudio::AudioChannelMask::BackCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 1 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 1 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 1 }
 		}
 	}
 };
@@ -45,47 +45,169 @@ static hephaudio_downmix_lookup_table_t _stereo_table =
 	{
 		HephAudio::AudioChannelMask::FrontLeft,
 		{
-			{ HephAudio::AudioChannelMask::FrontLeft, 1.0f },
-			{ HephAudio::AudioChannelMask::FrontRight, 0.0f },
-			{ HephAudio::AudioChannelMask::FrontCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::LowFrequency, 1.0f },
-			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0.0f },
-			{ HephAudio::AudioChannelMask::SideLeft, 0.707f },
-			{ HephAudio::AudioChannelMask::SideRight, 0.0f },
-			{ HephAudio::AudioChannelMask::BackLeft, 0.707f },
-			{ HephAudio::AudioChannelMask::BackRight, 0.0f },
-			{ HephAudio::AudioChannelMask::BackCenter, 0.5f },
-			{ HephAudio::AudioChannelMask::TopCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::TopFrontLeft, 0.707f },
-			{ HephAudio::AudioChannelMask::TopFrontRight, 0.0f },
-			{ HephAudio::AudioChannelMask::TopFrontCenter, 0.5f },
-			{ HephAudio::AudioChannelMask::TopBackLeft, 0.5f },
-			{ HephAudio::AudioChannelMask::TopBackRight, 0.0f },
-			{ HephAudio::AudioChannelMask::TopBackCenter, 0.5f }
+			{ HephAudio::AudioChannelMask::FrontLeft, 1 },
+			{ HephAudio::AudioChannelMask::FrontRight, 0 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::SideLeft, 1 },
+			{ HephAudio::AudioChannelMask::SideRight, 0 },
+			{ HephAudio::AudioChannelMask::BackLeft, 1 },
+			{ HephAudio::AudioChannelMask::BackRight, 0 },
+			{ HephAudio::AudioChannelMask::BackCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 1 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 1 }
 		}
 	},
 	{
 		HephAudio::AudioChannelMask::FrontRight,
 		{
-			{ HephAudio::AudioChannelMask::FrontLeft, 0.0f },
-			{ HephAudio::AudioChannelMask::FrontRight, 1.0f },
-			{ HephAudio::AudioChannelMask::FrontCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::LowFrequency, 1.0f },
-			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0.0f },
-			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::SideLeft, 0.0f },
-			{ HephAudio::AudioChannelMask::SideRight, 0.707f },
-			{ HephAudio::AudioChannelMask::BackLeft, 0.0f },
-			{ HephAudio::AudioChannelMask::BackRight, 0.707f },
-			{ HephAudio::AudioChannelMask::BackCenter, 0.5f },
-			{ HephAudio::AudioChannelMask::TopCenter, 0.707f },
-			{ HephAudio::AudioChannelMask::TopFrontLeft, 0.0f },
-			{ HephAudio::AudioChannelMask::TopFrontRight, 0.707f },
-			{ HephAudio::AudioChannelMask::TopFrontCenter, 0.5f },
-			{ HephAudio::AudioChannelMask::TopBackLeft, 0.0f },
-			{ HephAudio::AudioChannelMask::TopBackRight, 0.5f },
-			{ HephAudio::AudioChannelMask::TopBackCenter, 0.5f }
+			{ HephAudio::AudioChannelMask::FrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::FrontRight, 1 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::SideLeft, 0 },
+			{ HephAudio::AudioChannelMask::SideRight, 1 },
+			{ HephAudio::AudioChannelMask::BackLeft, 0 },
+			{ HephAudio::AudioChannelMask::BackRight, 1 },
+			{ HephAudio::AudioChannelMask::BackCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 1 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 1 }
+		}
+	}
+};
+
+static hephaudio_downmix_lookup_table_t _3_channels_table =
+{
+	{
+		HephAudio::AudioChannelMask::FrontLeft,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 1 },
+			{ HephAudio::AudioChannelMask::FrontRight, 0 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 0 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::SideLeft, 1 },
+			{ HephAudio::AudioChannelMask::SideRight, 0 },
+			{ HephAudio::AudioChannelMask::BackLeft, 1 },
+			{ HephAudio::AudioChannelMask::BackRight, 0 },
+			{ HephAudio::AudioChannelMask::BackCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 1 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 0 }
+		}
+	},
+	{
+		HephAudio::AudioChannelMask::FrontRight,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::FrontRight, 1 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 0 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::SideLeft, 0 },
+			{ HephAudio::AudioChannelMask::SideRight, 1 },
+			{ HephAudio::AudioChannelMask::BackLeft, 0 },
+			{ HephAudio::AudioChannelMask::BackRight, 1 },
+			{ HephAudio::AudioChannelMask::BackCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 1 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 0 }
+		}
+	},
+	{
+		// for surround
+		HephAudio::AudioChannelMask::FrontCenter,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::FrontRight, 0 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 0 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::SideLeft, 0 },
+			{ HephAudio::AudioChannelMask::SideRight, 0 },
+			{ HephAudio::AudioChannelMask::BackLeft, 0 },
+			{ HephAudio::AudioChannelMask::BackRight, 0 },
+			{ HephAudio::AudioChannelMask::BackCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 1 }
+		}
+	},
+	{
+		// for 2_1
+		HephAudio::AudioChannelMask::BackCenter,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::FrontRight, 0 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 0 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 1 },
+			{ HephAudio::AudioChannelMask::SideLeft, 0 },
+			{ HephAudio::AudioChannelMask::SideRight, 0 },
+			{ HephAudio::AudioChannelMask::BackLeft, 0 },
+			{ HephAudio::AudioChannelMask::BackRight, 0 },
+			{ HephAudio::AudioChannelMask::BackCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 1 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 1 }
+		}
+	},
+	{
+		// for 2_point_1
+		HephAudio::AudioChannelMask::LowFrequency,
+		{
+			{ HephAudio::AudioChannelMask::FrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::FrontRight, 0 },
+			{ HephAudio::AudioChannelMask::FrontCenter, 0 },
+			{ HephAudio::AudioChannelMask::LowFrequency, 1 },
+			{ HephAudio::AudioChannelMask::FrontLeftOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::FrontRightOfCenter, 0 },
+			{ HephAudio::AudioChannelMask::SideLeft, 0 },
+			{ HephAudio::AudioChannelMask::SideRight, 0 },
+			{ HephAudio::AudioChannelMask::BackLeft, 0 },
+			{ HephAudio::AudioChannelMask::BackRight, 0 },
+			{ HephAudio::AudioChannelMask::BackCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontRight, 0 },
+			{ HephAudio::AudioChannelMask::TopFrontCenter, 0 },
+			{ HephAudio::AudioChannelMask::TopBackLeft, 0 },
+			{ HephAudio::AudioChannelMask::TopBackRight, 0 },
+			{ HephAudio::AudioChannelMask::TopBackCenter, 0 }
 		}
 	}
 };
@@ -149,6 +271,9 @@ namespace HephAudio
 			case 2:
 				pTable = &_stereo_table;
 				break;
+			case 3:
+				pTable = &_3_channels_table;
+				break;
 			default:
 				HEPHAUDIO_LOG("unsupported channel mapping, returning.", HEPH_CL_WARNING);
 				return;
@@ -164,11 +289,21 @@ namespace HephAudio
 			{
 				for (size_t j = 0; j < outputMapping.size(); j++)
 				{
+					size_t mappedChannelCount = 0;
+					for (size_t k = 0; k < inputMapping.size(); k++)
+					{
+						if ((*pTable)[outputMapping[j]][inputMapping[k]] != 0)
+						{
+							mappedChannelCount++;
+						}
+					}
+
 					double outSample = 0.0;
 					for (size_t k = 0; k < inputMapping.size(); k++)
 					{
-						outSample += buffer[i][k] * (*pTable)[outputMapping[j]][inputMapping[k]] / inputMapping.size();
+						outSample += buffer[i][k] * (*pTable)[outputMapping[j]][inputMapping[k]] / mappedChannelCount;
 					}
+
 					resultBuffer[i][j] = outSample;
 				}
 			}
