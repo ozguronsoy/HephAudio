@@ -41,7 +41,7 @@ namespace HephAudio
 	}
 	heph_float AudioObject::GetPosition() const
 	{
-		return Math::Min((heph_float)this->frameIndex / this->buffer.FrameCount(), (heph_float)1.0);
+		return HephMath::Min((heph_float)this->frameIndex / this->buffer.FrameCount(), (heph_float)1.0);
 	}
 	void AudioObject::SetPosition(heph_float position)
 	{

@@ -4,26 +4,26 @@
 #include <cinttypes>
 #include <float.h>
 
-#define HEPH_PI 3.14159265358979323846l
-#define HEPH_E 2.71828182845904523536l
+#define HEPH_MATH_PI 3.14159265358979323846l
+#define HEPH_MATH_E 2.71828182845904523536l
 
 namespace HephCommon
 {
-	class Math final
+	class HephMath final
 	{
 	public:
-		static constexpr long double pi_l = HEPH_PI;
-		static constexpr double pi = HEPH_PI;
-		static constexpr float pi_f = HEPH_PI;
-		static constexpr heph_float pi_hf = HEPH_PI;
-		static constexpr long double e_l = HEPH_E;
-		static constexpr double e = HEPH_E;
-		static constexpr float e_f = HEPH_E;
-		static constexpr heph_float e_hf = HEPH_E;
+		static constexpr long double pi_l = HEPH_MATH_PI;
+		static constexpr double pi = HEPH_MATH_PI;
+		static constexpr float pi_f = HEPH_MATH_PI;
+		static constexpr heph_float pi_hf = HEPH_MATH_PI;
+		static constexpr long double e_l = HEPH_MATH_E;
+		static constexpr double e = HEPH_MATH_E;
+		static constexpr float e_f = HEPH_MATH_E;
+		static constexpr heph_float e_hf = HEPH_MATH_E;
 	public:
-		Math() = delete;
-		Math(const Math&) = delete;
-		Math& operator=(const Math&) = delete;
+		HephMath() = delete;
+		HephMath(const HephMath&) = delete;
+		HephMath& operator=(const HephMath&) = delete;
 	public:
 #pragma region Sgn
 		static constexpr float Sgn(float x)
@@ -270,80 +270,62 @@ namespace HephCommon
 #pragma region RadToDeg
 		static constexpr float RadToDeg(float x)
 		{
-			return x * 180.0f / Math::pi_f;
+			return x * 180.0f / HephMath::pi_f;
 		}
 		static constexpr double RadToDeg(double x)
 		{
-			return x * 180.0 / Math::pi;
+			return x * 180.0 / HephMath::pi;
 		}
 		static constexpr long double RadToDeg(long double x)
 		{
-			return x * 180.0L / Math::pi_l;
+			return x * 180.0L / HephMath::pi_l;
 		}
 		static constexpr double RadToDeg(int32_t x)
 		{
-			return x * 180.0 / Math::pi;
+			return x * 180.0 / HephMath::pi;
 		}
 		static constexpr double RadToDeg(uint32_t x)
 		{
-			return x * 180.0 / Math::pi;
+			return x * 180.0 / HephMath::pi;
 		}
 		static constexpr long double RadToDeg(int64_t x)
 		{
-			return x * 180.0L / Math::pi_l;
+			return x * 180.0L / HephMath::pi_l;
 		}
 		static constexpr long double RadToDeg(uint64_t x)
 		{
-			return x * 180.0L / Math::pi_l;
+			return x * 180.0L / HephMath::pi_l;
 		}
 #pragma endregion
 #pragma region DegToRad
 		static constexpr float DegToRad(float x)
 		{
-			return x * Math::pi_f / 180.0f;
+			return x * HephMath::pi_f / 180.0f;
 		}
 		static constexpr double DegToRad(double x)
 		{
-			return x * Math::pi / 180.0;
+			return x * HephMath::pi / 180.0;
 		}
 		static constexpr long double DegToRad(long double x)
 		{
-			return x * Math::pi_l / 180.0L;
+			return x * HephMath::pi_l / 180.0L;
 		}
 		static constexpr double DegToRad(int32_t x)
 		{
-			return x * Math::pi / 180.0;
+			return x * HephMath::pi / 180.0;
 		}
 		static constexpr double DegToRad(uint32_t x)
 		{
-			return x * Math::pi / 180.0;
+			return x * HephMath::pi / 180.0;
 		}
 		static constexpr long double DegToRad(int64_t x)
 		{
-			return x * Math::pi_l / 180.0L;
+			return x * HephMath::pi_l / 180.0L;
 		}
 		static constexpr long double DegToRad(uint64_t x)
 		{
-			return x * Math::pi_l / 180.0L;
+			return x * HephMath::pi_l / 180.0L;
 		}
 #pragma endregion
 	};
 }
-#pragma region Literals
-inline HEPH_CONSTEVAL long double operator""_rad(unsigned long long int x)
-{
-	return HephCommon::Math::RadToDeg((uint64_t)x);
-}
-inline HEPH_CONSTEVAL long double operator""_rad(long double x)
-{
-	return HephCommon::Math::RadToDeg(x);
-}
-inline HEPH_CONSTEVAL long double operator""_deg(unsigned long long int x)
-{
-	return HephCommon::Math::DegToRad((uint64_t)x);
-}
-inline HEPH_CONSTEVAL long double operator""_deg(long double x)
-{
-	return HephCommon::Math::DegToRad(x);
-}
-#pragma endregion

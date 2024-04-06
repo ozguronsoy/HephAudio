@@ -131,8 +131,8 @@ namespace HephCommon
 	}
 	FloatBuffer FloatBuffer::operator+(const FloatBuffer& rhs) const
 	{
-		FloatBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
-		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		FloatBuffer resultBuffer(HephMath::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = HephMath::Min(this->frameCount, rhs.frameCount);
 		size_t i;
 
 		for (i = 0; i < minFrameCount; i++)
@@ -157,7 +157,7 @@ namespace HephCommon
 	}
 	FloatBuffer& FloatBuffer::operator+=(const FloatBuffer& rhs)
 	{
-		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
+		this->Resize(HephMath::Max(this->frameCount, rhs.frameCount));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			(*this)[i] += rhs[i];
@@ -175,8 +175,8 @@ namespace HephCommon
 	}
 	FloatBuffer FloatBuffer::operator-(const FloatBuffer& rhs) const
 	{
-		FloatBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
-		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		FloatBuffer resultBuffer(HephMath::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = HephMath::Min(this->frameCount, rhs.frameCount);
 		size_t i;
 
 		for (i = 0; i < minFrameCount; i++)
@@ -201,7 +201,7 @@ namespace HephCommon
 	}
 	FloatBuffer& FloatBuffer::operator-=(const FloatBuffer& rhs)
 	{
-		this->Resize(Math::Max(this->frameCount, rhs.frameCount));
+		this->Resize(HephMath::Max(this->frameCount, rhs.frameCount));
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			(*this)[i] -= rhs[i];
@@ -219,8 +219,8 @@ namespace HephCommon
 	}
 	FloatBuffer FloatBuffer::operator*(const FloatBuffer& rhs) const
 	{
-		FloatBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
-		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		FloatBuffer resultBuffer(HephMath::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = HephMath::Min(this->frameCount, rhs.frameCount);
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
 			resultBuffer[i] = (*this)[i] * rhs[i];
@@ -270,8 +270,8 @@ namespace HephCommon
 	}
 	FloatBuffer FloatBuffer::operator/(const FloatBuffer& rhs) const
 	{
-		FloatBuffer resultBuffer(Math::Max(this->frameCount, rhs.frameCount));
-		const size_t minFrameCount = Math::Min(this->frameCount, rhs.frameCount);
+		FloatBuffer resultBuffer(HephMath::Max(this->frameCount, rhs.frameCount));
+		const size_t minFrameCount = HephMath::Min(this->frameCount, rhs.frameCount);
 		for (size_t i = 0; i < minFrameCount; i++)
 		{
 			resultBuffer[i] = (*this)[i] / rhs[i];
@@ -507,7 +507,7 @@ namespace HephCommon
 	{
 		if (frameCount > 0)
 		{
-			const size_t newFrameCount = Math::Max(frameIndex + frameCount, this->frameCount);
+			const size_t newFrameCount = HephMath::Max(frameIndex + frameCount, this->frameCount);
 			const size_t newSize = newFrameCount * sizeof(heph_float);
 
 			heph_float* pTemp = (heph_float*)malloc(newSize);

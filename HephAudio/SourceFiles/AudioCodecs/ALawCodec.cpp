@@ -95,7 +95,7 @@ namespace HephAudio
 					else
 					{
 						mask = 0x55;
-						pcmSample = HephCommon::Math::Min(-pcmSample, 32767);
+						pcmSample = HephCommon::HephMath::Min(-pcmSample, 32767);
 					}
 
 					uint8_t compressedByte;

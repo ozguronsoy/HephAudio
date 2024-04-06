@@ -12,11 +12,11 @@ namespace HephAudio
 	{
 		if (n < this->haN)
 		{
-			return 0.5 * (1.0 - cos(2.0 * Math::pi * n / this->aN));
+			return 0.5 * (1.0 - cos(2.0 * HephMath::pi * n / this->aN));
 		}
 		else if (n > this->hN)
 		{
-			return 0.5 * (1.0 - cos(2.0 * Math::pi * (this->N - n) / this->aN));
+			return 0.5 * (1.0 - cos(2.0 * HephMath::pi * (this->N - n) / this->aN));
 		}
 		return 1.0;
 	}

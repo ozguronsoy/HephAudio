@@ -182,7 +182,7 @@ namespace HephAudio
 	}
 	heph_float AudioStream::GetPosition() const
 	{
-		return this->pAudioObject != nullptr ? Math::Min((heph_float)this->pAudioObject->frameIndex / this->frameCount, (heph_float)1.0) : 0;
+		return this->pAudioObject != nullptr ? HephMath::Min((heph_float)this->pAudioObject->frameIndex / this->frameCount, (heph_float)1.0) : 0;
 	}
 	void AudioStream::SetPosition(heph_float position)
 	{
