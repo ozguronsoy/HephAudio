@@ -387,7 +387,7 @@ Compares the contents of two buffers.
 bool operator!=(std::nullptr_t rhs) const;
 ```
 Checks whether the buffer is not empty.
-- **returns:** ``true`` if the buffer is empty, otherwise ``false``.
+- **returns:** ``true`` if the buffer is not empty, otherwise ``false``.
 <br><br><br><br>
 
 ```c++
