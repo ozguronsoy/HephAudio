@@ -276,10 +276,18 @@ namespace HephAudio
 		}
 		this->avFormatContext->pb = this->avIoContext;
 
-		const AVCodec* avCodec = avcodec_find_encoder(this->avFormatContext->oformat->audio_codec);
+		AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(this->outputFormatInfo);
+		ret = avformat_query_codec(this->avFormatContext->oformat, codecID, FF_COMPLIANCE_NORMAL);
+		if (ret < 0)
+		{
+			HEPHAUDIO_LOG("Requested file format cannot store the requested codec. Encoding with the default codec.", HEPH_CL_WARNING);
+			codecID = this->avFormatContext->oformat->audio_codec;
+		}
+		
+		const AVCodec* avCodec = avcodec_find_encoder(codecID);
 		if (avCodec == nullptr)
 		{
-			const StringBuffer codecName = avcodec_get_name(this->avFormatContext->oformat->audio_codec);
+			const StringBuffer codecName = avcodec_get_name(codecID);
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "No encoder found for the " + codecName + " codec."));
 		}
@@ -297,8 +305,8 @@ namespace HephAudio
 		this->avCodecContext->sample_rate = this->outputFormatInfo.sampleRate;
 		this->avCodecContext->ch_layout = ToAVChannelLayout(this->outputFormatInfo.channelLayout);
 
-		this->avCodecContext->codec_id = this->avFormatContext->oformat->audio_codec;
-		this->avCodecContext->codec_tag = av_codec_get_tag(this->avFormatContext->oformat->codec_tag, this->avFormatContext->oformat->audio_codec);
+		this->avCodecContext->codec_id = codecID;
+		this->avCodecContext->codec_tag = av_codec_get_tag(this->avFormatContext->oformat->codec_tag, codecID);
 		this->avCodecContext->codec_type = AVMEDIA_TYPE_AUDIO;
 
 		if (this->avCodecContext->codec_id == AV_CODEC_ID_MP3 && this->outputFormatInfo.bitRate == 0) // otherwise encoder calculates the duration wrong
