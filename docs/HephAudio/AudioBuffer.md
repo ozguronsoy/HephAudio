@@ -361,7 +361,7 @@ Example: for ``rhs = 3``, ``frame_2 -> frame_5``.
 ```c++
 AudioBuffer& operator>>=(size_t rhs) const;
 ```
-Shifts the audio buffer to the left and returns the result in the current instance. 
+Shifts the audio buffer to the right and returns the result in the current instance. 
 The frames at the beginning of the buffer will be set to zero.<br>
 Example: for ``rhs = 3``, ``frame_2 -> frame_5``.
 - **rhs:** Number of frames to shift.
