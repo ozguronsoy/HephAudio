@@ -9,7 +9,7 @@ using namespace HephAudio::Native;
 Implements rendering/capturing audio data via [AAudio](https://developer.android.com/ndk/guides/audio/aaudio/aaudio).
 
 > [!NOTE]
-> Requires Android 8.1 (API level 27) or higher.<br>
+> Requires Android 8.0 (API level 26) or higher.<br>
 
 <br><br>
 
