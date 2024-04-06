@@ -77,7 +77,7 @@ Gets the address of the first sample of the frame at the provided index.
 ```c++
 AudioBuffer operator-() const;
 ```
-Creates a new audio instance that stores the inverted version of the audio signal.
+Creates a new instance that stores the inverted version of the audio signal.
 - **returns:** A new buffer that stores the inverted audio signal.
 <br><br><br><br>
 
