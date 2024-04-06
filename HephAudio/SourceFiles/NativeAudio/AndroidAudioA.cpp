@@ -108,6 +108,18 @@ namespace HephAudio
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
 			AAudioStreamBuilder_setSampleRate(streamBuilder, format.sampleRate);
 			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelLayout.count);
+
+#if __ANDROID_API__ >= 32
+			if (format.channelLayout.count == 1)
+			{
+				AAudioStreamBuilder_setChannelMask(streamBuilder, AAUDIO_CHANNEL_MONO);
+			}
+			else
+			{
+				AAudioStreamBuilder_setChannelMask(streamBuilder, (aaudio_channel_mask_t)format.channelLayout.mask);
+			}
+#endif
+
 			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, renderBufferFrameCount);
 
 			if (device != nullptr)
@@ -197,6 +209,18 @@ namespace HephAudio
 			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
 			AAudioStreamBuilder_setSampleRate(streamBuilder, format.sampleRate);
 			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelLayout.count);
+
+#if __ANDROID_API__ >= 32
+			if (format.channelLayout.count == 1)
+			{
+				AAudioStreamBuilder_setChannelMask(streamBuilder, AAUDIO_CHANNEL_MONO);
+			}
+			else
+			{
+				AAudioStreamBuilder_setChannelMask(streamBuilder, (aaudio_channel_mask_t)format.channelLayout.mask);
+			}
+#endif
+
 			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, captureBufferFrameCount);
 
 			if (device != nullptr)
