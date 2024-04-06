@@ -19,23 +19,23 @@ namespace HephCommon
 
 		if (message.GetStringType() == StringType::ASCII)
 		{
-			if (logLevel == HEPH_CL_INFO)
+			if (strcmp(logLevel, HEPH_CL_INFO))
 			{
 				__android_log_print(ANDROID_LOG_INFO, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == HEPH_CL_WARNING)
+			else if (strcmp(logLevel, HEPH_CL_WARNING))
 			{
 				__android_log_print(ANDROID_LOG_WARN, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == HEPH_CL_ERROR)
+			else if (strcmp(logLevel, HEPH_CL_ERROR))
 			{
 				__android_log_print(ANDROID_LOG_ERROR, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == HEPH_CL_SUCCESS)
+			else if (strcmp(logLevel, HEPH_CL_SUCCESS))
 			{
 				__android_log_print(ANDROID_LOG_VERBOSE, libName.fc_str(), "%s", message.c_str());
 			}
-			else if (logLevel == HEPH_CL_DEBUG)
+			else if (strcmp(logLevel, HEPH_CL_DEBUG))
 			{
 				__android_log_print(ANDROID_LOG_DEBUG, libName.fc_str(), "%s", message.c_str());
 			}
@@ -46,23 +46,23 @@ namespace HephCommon
 		}
 		else
 		{
-			if (logLevel == HEPH_CL_INFO)
+			if (strcmp(logLevel, HEPH_CL_INFO))
 			{
 				__android_log_print(ANDROID_LOG_INFO, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == HEPH_CL_WARNING)
+			else if (strcmp(logLevel, HEPH_CL_WARNING))
 			{
 				__android_log_print(ANDROID_LOG_WARN, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == HEPH_CL_ERROR)
+			else if (strcmp(logLevel, HEPH_CL_ERROR))
 			{
 				__android_log_print(ANDROID_LOG_ERROR, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == HEPH_CL_SUCCESS)
+			else if (strcmp(logLevel, HEPH_CL_SUCCESS))
 			{
 				__android_log_print(ANDROID_LOG_VERBOSE, libName.fc_str(), "%ls", message.wc_str());
 			}
-			else if (logLevel == HEPH_CL_DEBUG)
+			else if (strcmp(logLevel, HEPH_CL_DEBUG))
 			{
 				__android_log_print(ANDROID_LOG_DEBUG, libName.fc_str(), "%ls", message.wc_str());
 			}
@@ -139,11 +139,11 @@ namespace HephCommon
 	{
 		ConsoleLogger::Log(message, HEPH_CL_DEBUG, libName);
 	}
-	void ConsoleLogger::EnableColoredOutput() 
+	void ConsoleLogger::EnableColoredOutput()
 	{
 		ConsoleLogger::coloredOutput = true;
 	}
-	void ConsoleLogger::DisableColoredOutput() 
+	void ConsoleLogger::DisableColoredOutput()
 	{
 		ConsoleLogger::coloredOutput = false;
 	}
