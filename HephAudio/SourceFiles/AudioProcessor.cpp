@@ -285,26 +285,30 @@ namespace HephAudio
 					buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian)
 			);
 
-			for (size_t i = 0; i < buffer.frameCount; i++)
+			for (size_t i = 0; i < inputMapping.size(); i++)
 			{
+				size_t mappedChannelCount = 0;
 				for (size_t j = 0; j < outputMapping.size(); j++)
 				{
-					size_t mappedChannelCount = 0;
-					for (size_t k = 0; k < inputMapping.size(); k++)
+					if ((*pTable)[outputMapping[j]][inputMapping[i]] != 0)
 					{
-						if ((*pTable)[outputMapping[j]][inputMapping[k]] != 0)
+						mappedChannelCount++;
+					}
+				}
+
+				if (mappedChannelCount > 0)
+				{
+					for (size_t j = 0; j < outputMapping.size(); j++)
+					{
+						const float mappingCoeff = (*pTable)[outputMapping[j]][inputMapping[i]];
+						if (mappingCoeff != 0)
 						{
-							mappedChannelCount++;
+							for (size_t k = 0; k < buffer.frameCount; k++)
+							{
+								resultBuffer[k][j] += buffer[k][i] * mappingCoeff / mappedChannelCount;
+							}
 						}
 					}
-
-					double outSample = 0.0;
-					for (size_t k = 0; k < inputMapping.size(); k++)
-					{
-						outSample += buffer[i][k] * (*pTable)[outputMapping[j]][inputMapping[k]] / mappedChannelCount;
-					}
-
-					resultBuffer[i][j] = outSample;
 				}
 			}
 
