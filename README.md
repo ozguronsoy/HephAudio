@@ -178,37 +178,31 @@ int main()
 ### Handling Exceptions
 Every error that occurs while using the library raises an ``OnException`` event but only some exception will actually throw. Using this event we can log the exception details to a file or for this instance, simply print it to console.
 
-In this example, we will create a ``StringBuffer`` with 4 characters and we will try to access to its 5th element. This is going to throw an invalid argument exception.
+In this example, we will try to open a non-existing file. This is going to throw an exception.
 ```c++
 #include <HephException.h>
 #include <ConsoleLogger.h>
 
 using namespace HephCommon;
 
-void HandleExceptions(const EventParams& eventParams)
+void HandleException(const EventParams& eventParams)
 {
-  const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
+	const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
-  StringBuffer exceptionString = "Error!\n" + ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n" + ex.message;
-  if (!ex.externalMessage.IsNullOrEmpty())
-  {
-	  exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
-  }
+	std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
+	if (ex.externalMessage != "")
+	{
+		exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
+	}
 
-  ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
+	ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
 }
 
 int main()
 {
-  HephException::OnException = &HandleExceptions;
-
-  StringBuffer str = "text";
-
-  // invalid argument, index out of bounds
-  // this will first raise an OnException event, then will throw the exception.
-  ConsoleLogger::LogInfo(str.c_at(4));
-
-  return 0;
+	HephException::OnException = &HandleExceptions;
+	File f("thisFileDoesNotExist.txt", FileOpenMode::Read);
+	return 0;
 }
 ```
 With this we conclude our introduction to the HephAudio library. To learn more about the library and audio in general visit the docs folder.
