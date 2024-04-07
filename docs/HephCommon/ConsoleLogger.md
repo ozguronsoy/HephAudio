@@ -35,7 +35,7 @@ Log levels.
 ### Methods
 
 ```c++
-static void Log(std::string message,
+static void Log(const std::string& message,
                 const char* logLevel);
 ```
 Prints the provided message to the console.
@@ -44,7 +44,7 @@ Prints the provided message to the console.
 <br><br><br><br>
 
 ```c++
-static void Log(std::string message,
+static void Log(const std::string& message,
                 const char* logLevel,
                 std::string libName);
 ```
