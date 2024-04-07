@@ -64,7 +64,11 @@ namespace HephAudio
 		}
 		std::string WinAudioBase::GetComErrorMessage(HRESULT hr)
 		{
-			return StringHelpers::WideToStr(_com_error(hr).ErrorMessage());
+			if (sizeof(TCHAR) == sizeof(wchar_t))
+			{
+				return StringHelpers::WideToStr((wchar_t*)_com_error(hr).ErrorMessage());
+			}
+			return (char*)_com_error(hr).ErrorMessage();
 		}
 	}
 }

@@ -248,7 +248,16 @@ namespace HephAudio
 
 				AudioDevice device;
 				device.id = StringHelpers::ToString(i);
-				device.name = StringHelpers::WideToStr(deviceCaps.szPname);
+
+				if (sizeof(TCHAR) == sizeof(wchar_t))
+				{
+					device.name = StringHelpers::WideToStr((wchar_t*)deviceCaps.szPname);
+				}
+				else
+				{
+					device.name = (char*)deviceCaps.szPname;
+				}
+				
 				device.type = AudioDeviceType::Render;
 				device.isDefault = (i == 0);
 
@@ -263,7 +272,16 @@ namespace HephAudio
 
 				AudioDevice device;
 				device.id = StringHelpers::ToString(i);
-				device.name = StringHelpers::WideToStr(deviceCaps.szPname);
+
+				if (sizeof(TCHAR) == sizeof(wchar_t))
+				{
+					device.name = StringHelpers::WideToStr((wchar_t*)deviceCaps.szPname);
+				}
+				else
+				{
+					device.name = (char*)deviceCaps.szPname;
+				}
+
 				device.type = AudioDeviceType::Render;
 				device.isDefault = (i == 0);
 
