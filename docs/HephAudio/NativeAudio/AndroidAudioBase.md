@@ -73,7 +73,7 @@ Gets the pointer to the jni environment.
 
 
 ```c++
-HephCommon::StringBuffer JStringToString(JNIEnv* env, jstring jStr) const;
+std::string JStringToString(JNIEnv* env, jstring jStr) const;
 ```
 Converts JNI string to C string.
 - **env:** Pointer to the java virtual machine.

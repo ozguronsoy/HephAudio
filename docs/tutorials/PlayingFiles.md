@@ -18,7 +18,7 @@ void HandleExceptions(const EventParams& eventParams)
 {
     const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
-    StringBuffer exceptionString = "Error!\n" + ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n" + ex.message;
+    std::string exceptionString = "Error!\n" + ex.method + " (" + std::string::ToHexString(ex.errorCode) + ")\n" + ex.message;
     if (!ex.externalMessage.IsNullOrEmpty())
     {
 	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
@@ -70,7 +70,7 @@ void HandleExceptions(const EventParams& eventParams)
 {
     const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
-    StringBuffer exceptionString = "Error!\n" + ex.method + " (" + StringBuffer::ToHexString(ex.errorCode) + ")\n" + ex.message;
+    std::string exceptionString = "Error!\n" + ex.method + " (" + std::string::ToHexString(ex.errorCode) + ")\n" + ex.message;
     if (!ex.externalMessage.IsNullOrEmpty())
     {
 	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";

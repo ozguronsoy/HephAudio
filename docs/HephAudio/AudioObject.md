@@ -35,8 +35,8 @@ An event handler for the ``AudioObject::OnRender`` event. Converts the audio dat
 struct AudioObject
 {
 	HephCommon::Guid id;
-	HephCommon::StringBuffer filePath;
-	HephCommon::StringBuffer name;
+	std::string filePath;
+	std::string name;
 	bool isPaused;
 	uint32_t playCount;
 	heph_float volume;

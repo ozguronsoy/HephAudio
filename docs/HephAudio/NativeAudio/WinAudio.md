@@ -31,14 +31,14 @@ Releases the resources.
 <br><br><br><br>
 
 ```c++
-void SetDisplayName(HephCommon::StringBuffer displayName);
+void SetDisplayName(std::string displayName);
 ```
 Sets the name that's displayed in the Volume mixer app.
 - **displayName:** Name that will be displayed in the Volume mixer app.
 <br><br><br><br>
 
 ```c++
-void SetIconPath(HephCommon::StringBuffer iconPath);
+void SetIconPath(std::string iconPath);
 ```
 Sets the path to the icon that's displayed in the Volume mixer app.
 - **displayName:** Path to the icon that will be displayed in the Volume mixer app.

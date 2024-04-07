@@ -41,7 +41,7 @@ Defines the [AVSampleFormat](https://ffmpeg.org/doxygen/trunk/group__lavu__sampf
 ### Methods
 
 ```c++
-inline HephCommon::StringBuffer FFmpegGetErrorMessage(int errorCode);
+inline std::string FFmpegGetErrorMessage(int errorCode);
 ```
 Gets the error error description.
 - **errorCode:** Negative error code returned by an FFmpeg method.

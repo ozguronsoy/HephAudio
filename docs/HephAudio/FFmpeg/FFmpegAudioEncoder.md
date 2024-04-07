@@ -34,7 +34,7 @@ Creates an instance and initializes it with the default values.
 <br><br><br><br>
 
 ```c++
-FFmpegAudioEncoder(const HephCommon::StringBuffer& audioFilePath,
+FFmpegAudioEncoder(const std::string& audioFilePath,
                    AudioFormatInfo outputFormatInfo,
                    bool overwrite);
 ```
@@ -65,7 +65,7 @@ Releases the resources of the current instance, then moves the ownership of the 
 <br><br><br><br>
 
 ```c++
-void ChangeFile(const HephCommon::StringBuffer& newAudioFilePath,
+void ChangeFile(const std::string& newAudioFilePath,
                 bool overwrite);
 ```
 Closes the current file and opens the new file.
@@ -94,8 +94,8 @@ Encodes the provided buffer and appends it to the file.
 <br><br><br><br>
 
 ```c++
-static void Transcode(const HephCommon::StringBuffer& inputFilePath,
-                      const HephCommon::StringBuffer& outputFilePath,
+static void Transcode(const std::string& inputFilePath,
+                      const std::string& outputFilePath,
                       bool overwrite);
 ```
 Converts the input file format to the output file format and saves it. 
@@ -106,8 +106,8 @@ Uses the file extension to determine the output codec.
 <br><br><br><br>
 
 ```c++
-static void Transcode(const HephCommon::StringBuffer& inputFilePath,
-                      const HephCommon::StringBuffer& outputFilePath,
+static void Transcode(const std::string& inputFilePath,
+                      const std::string& outputFilePath,
                       AudioFormatInfo outputFormatInfo,
                       bool overwrite);
 ```

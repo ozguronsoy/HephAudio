@@ -33,7 +33,7 @@ Creates an instance and initializes it with the default values.
 <br><br><br><br>
 
 ```c++
-FFmpegAudioDecoder(const HephCommon::StringBuffer& audioFilePath);
+FFmpegAudioDecoder(const std::string& audioFilePath);
 ```
 Creates an instance and initializes it with the provided values.
 - **audioFilePath:** Path of the file that will be decoded.
@@ -60,7 +60,7 @@ Releases the resources of the current instance, then moves the ownership of the 
 <br><br><br><br>
 
 ```c++
-void ChangeFile(const HephCommon::StringBuffer& newAudioFilePath);
+void ChangeFile(const std::string& newAudioFilePath);
 ```
 Changes the file that's being decoded.
 - **newAudioFilePath:** Path of the file that will be decoded.

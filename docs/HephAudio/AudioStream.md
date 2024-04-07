@@ -39,7 +39,7 @@ Creates an instance and initializes it with the provided values.
 
 ```c++
 AudioStream(Native::NativeAudio* pNativeAudio,
-            const HephCommon::StringBuffer& filePath);
+            const std::string& filePath);
 ```
 Creates an instance and initializes it with the provided values.
 - **pNativeAudio:** Pointer to the ``NativeAudio`` instance that will be used to render audio data.
@@ -48,7 +48,7 @@ Creates an instance and initializes it with the provided values.
 
 ```c++
 AudioStream(Audio& audio,
-            const HephCommon::StringBuffer& filePath);
+            const std::string& filePath);
 ```
 Creates an instance and initializes it with the provided values.
 - **audio:** Reference of the ``Audio`` instance that will be used to render audio data.
@@ -126,7 +126,7 @@ Gets the number of audio frames the file contains.
 <br><br><br><br>
 
 ```c++
-void ChangeFile(const HephCommon::StringBuffer& newFilePath);
+void ChangeFile(const std::string& newFilePath);
 ```
 Changes the file that's currently playing with the provided one.
 - **newFilePath:** Path of the file that will be played.

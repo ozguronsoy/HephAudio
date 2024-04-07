@@ -24,8 +24,8 @@ enum class AudioDeviceType : uint8_t
 ```c++
 struct AudioDevice
 {
-    HephCommon::StringBuffer id;
-    HephCommon::StringBuffer name;
+    std::string id;
+    std::string name;
     AudioDeviceType type;
     bool isDefault;
 };

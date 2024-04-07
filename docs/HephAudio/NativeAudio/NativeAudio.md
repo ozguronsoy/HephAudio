@@ -69,8 +69,8 @@ class NativeAudio
 	std::thread renderThread;
 	std::thread captureThread;
 	std::thread deviceThread;
-	HephCommon::StringBuffer renderDeviceId;
-	HephCommon::StringBuffer captureDeviceId;
+	std::string renderDeviceId;
+	std::string captureDeviceId;
 	AudioFormatInfo renderFormat;
 	AudioFormatInfo captureFormat;
 	bool disposing;

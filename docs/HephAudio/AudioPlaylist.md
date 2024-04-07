@@ -56,7 +56,7 @@ Creates an instance and initializes it with the provided values.
 
 ```c++
 AudioPlaylist(Native::NativeAudio* pNativeAudio,
-              const std::vector<HephCommon::StringBuffer>& files);
+              const std::vector<std::string>& files);
 ```
 Creates an instance and initializes it with the provided values.
 - **pNativeAudio:** Pointer to the ``NativeAudio`` instance that will be used to play the files.
@@ -65,7 +65,7 @@ Creates an instance and initializes it with the provided values.
 
 ```c++
 AudioPlaylist(Audio& audio,
-              const std::vector<HephCommon::StringBuffer>& files);
+              const std::vector<std::string>& files);
 ```
 Creates an instance and initializes it with the provided values.
 - **audio:** Reference of the ``Audio`` instance that will be used to play the files.
@@ -98,7 +98,7 @@ Creates an instance and initializes it with the provided values.
 AudioPlaylist(Native::NativeAudio* pNativeAudio,
               TransitionEffect transitionEffect,
               heph_float transitionDuration_s,
-              const std::vector<HephCommon::StringBuffer>& files);
+              const std::vector<std::string>& files);
 ```
 Creates an instance and initializes it with the provided values.
 - **pNativeAudio:** Pointer to the ``NativeAudio`` instance that will be used to play the files.
@@ -111,7 +111,7 @@ Creates an instance and initializes it with the provided values.
 AudioPlaylist(Audio& audio,
               TransitionEffect transitionEffect,
               heph_float transitionDuration_s,
-              const std::vector<HephCommon::StringBuffer>& files);
+              const std::vector<std::string>& files);
 ```
 Creates an instance and initializes it with the provided values.
 - **audio:** Reference of the ``Audio`` instance that will be used to play the files.
@@ -197,21 +197,21 @@ Gets whether the playlist is paused (stopped).
 <br><br><br><br>
 
 ```c++
-void Add(const HephCommon::StringBuffer& filePath);
+void Add(const std::string& filePath);
 ```
 Adds a file to the end of the playlist.
 - **filePath:** File path.
 <br><br><br><br>
 
 ```c++
-void Add(const std::vector<HephCommon::StringBuffer>& files);
+void Add(const std::vector<std::string>& files);
 ```
 Adds the provided files to the end of the playlist.
 - **files:** File paths.
 <br><br><br><br>
 
 ```c++
-void Insert(const HephCommon::StringBuffer& filePath,
+void Insert(const std::string& filePath,
             size_t index);
 ```
 Adds the provided file to the playlist.
@@ -220,7 +220,7 @@ Adds the provided file to the playlist.
 <br><br><br><br>
 
 ```c++
-void Insert(const std::vector<HephCommon::StringBuffer>& files,
+void Insert(const std::vector<std::string>& files,
             size_t index);
 ```
 Adds the provided files to the playlist.
@@ -245,7 +245,7 @@ Removes the files at the provided index from the playlist.
 <br><br><br><br>
 
 ```c++
-void Remove(const HephCommon::StringBuffer& filePath);
+void Remove(const std::string& filePath);
 ```
 Removes the file with the provided path from the playlist.
 - **filePath:** Path of the file that will be removed.

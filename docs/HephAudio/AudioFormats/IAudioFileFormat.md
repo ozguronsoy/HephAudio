@@ -24,14 +24,14 @@ Releases the resources.
 <br><br><br><br>
 
 ```c++
-virtual HephCommon::StringBuffer Extensions();
+virtual std::string Extensions();
 ```
 Gets the file extensions that are used for this format.
 - **returns:** String of extensions each seperated by whitespace.
 <br><br><br><br>
 
 ```c++
-virtual bool VerifyExtension(const HephCommon::StringBuffer& extension);
+virtual bool VerifyExtension(const std::string& extension);
 ```
 Checks whether the provided extension is used for this format.
 - **extension:** Extension that will be checked.
@@ -92,7 +92,7 @@ Reads and decodes the specified portion of the file.
 
 
 ```c++
-virtual bool SaveToFile(const HephCommon::StringBuffer& filePath,
+virtual bool SaveToFile(const std::string& filePath,
                         AudioBuffer& buffer,
                         bool overwrite);
 ```

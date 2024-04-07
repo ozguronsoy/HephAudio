@@ -23,7 +23,7 @@ Class for storing extra event arguments as key/value pairs. Wrapper class for an
 ### Methods
 
 ```c++
-void* operator[](const StringBuffer& key) const;
+void* operator[](const std::string& key) const;
 ```
 Gets the argument with the provided key.
 - **key:** Key to find the desired argument.
@@ -38,7 +38,7 @@ Gets the number of arguments stored.
 <br><br><br><br>
 
 ```c++
-bool Exists(const StringBuffer& key) const;
+bool Exists(const std::string& key) const;
 ```
 Checks whether an argument exists with the provided key.
 - **key:** Key that will be checked.
@@ -46,7 +46,7 @@ Checks whether an argument exists with the provided key.
 <br><br><br><br>
 
 ```c++
-void Add(const StringBuffer& key,
+void Add(const std::string& key,
          void* pUserArg);
 ```
 Adds a new argument.
@@ -55,7 +55,7 @@ Adds a new argument.
 <br><br><br><br>
 
 ```c++
-void Remove(const StringBuffer& key);
+void Remove(const std::string& key);
 ```
 Removes the argument with the provided key.
 - **key:** Key of the argument that will be removed.

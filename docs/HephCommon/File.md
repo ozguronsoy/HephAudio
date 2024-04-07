@@ -37,7 +37,7 @@ Creates an instance and initializes it with the default values.
 <br><br><br><br>
 
 ```c++
-File(const StringBuffer& filePath,
+File(const std::string& filePath,
      FileOpenMode openMode);
 ```
 Creates an instance and initializes it with the provided values.
@@ -67,7 +67,7 @@ Releases the resources of the current buffer, then moves the ownership of the co
 <br><br><br><br>
 
 ```c++
-void Open(const StringBuffer& filePath,
+void Open(const std::string& filePath,
           FileOpenMode openMode);
 ```
 Opens the file.
@@ -109,21 +109,21 @@ Gets the file size in bytes.
 <br><br><br><br>
 
 ```c++
-StringBuffer FilePath() const;
+std::string FilePath() const;
 ```
 Gets the full file path.
 - **returns:** File path.
 <br><br><br><br>
 
 ```c++
-StringBuffer FileName() const;
+std::string FileName() const;
 ```
 Gets the name of the file with extension.
 - **returns:** File name.
 <br><br><br><br>
 
 ```c++
-StringBuffer FileExtension() const;
+std::string FileExtension() const;
 ```
 Gets the extension of the file.
 - **returns:** File extension.
@@ -202,7 +202,7 @@ Writes data to the file.
 <br><br><br><br>
 
 ```c++
-static bool FileExists(StringBuffer filePath);
+static bool FileExists(std::string filePath);
 ```
 Checks whether a file exists at the provided path.
 - **filePath:** Path that will be checked.
@@ -210,7 +210,7 @@ Checks whether a file exists at the provided path.
 <br><br><br><br>
 
 ```c++
-static StringBuffer GetFileName(const StringBuffer& filePath);
+static std::string GetFileName(const std::string& filePath);
 ```
 Gets the name of the file with extension.
 - **filePath:** File path.
@@ -218,7 +218,7 @@ Gets the name of the file with extension.
 <br><br><br><br>
 
 ```c++
-static StringBuffer GetFileExtension(const StringBuffer& filePath);
+static std::string GetFileExtension(const std::string& filePath);
 ```
 Gets the extension of the file.
 - **filePath:** File path.

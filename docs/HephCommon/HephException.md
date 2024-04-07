@@ -54,10 +54,10 @@ struct HephException final
 {
     static Event OnException;
     int64_t errorCode;
-    StringBuffer method;
-    StringBuffer message;
-    StringBuffer externalSource;
-    StringBuffer externalMessage;
+    std::string method;
+    std::string message;
+    std::string externalSource;
+    std::string externalMessage;
 }
 ```
 
@@ -103,18 +103,18 @@ Creates an instance and initializes it with the default values.
 
 ```c++
 HephException(int64_t errorCode,
-              StringBuffer method,
-              StringBuffer message);
+              std::string method,
+              std::string message);
 ```
 Creates an instance and initializes it with the provided values.
 <br><br><br><br>
 
 ```c++
 HephException(int64_t errorCode,
-              StringBuffer method,
-              StringBuffer message,
-              StringBuffer externalSource,
-              StringBuffer externalMessage);
+              std::string method,
+              std::string message,
+              std::string externalSource,
+              std::string externalMessage);
 ```
 Creates an instance and initializes it with the provided values.
 <br><br><br><br>

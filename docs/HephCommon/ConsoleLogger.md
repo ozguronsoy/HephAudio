@@ -35,7 +35,7 @@ Log levels.
 ### Methods
 
 ```c++
-static void Log(StringBuffer message,
+static void Log(std::string message,
                 const char* logLevel);
 ```
 Prints the provided message to the console.
@@ -44,9 +44,9 @@ Prints the provided message to the console.
 <br><br><br><br>
 
 ```c++
-static void Log(StringBuffer message,
+static void Log(std::string message,
                 const char* logLevel,
-                StringBuffer libName);
+                std::string libName);
 ```
 Prints the provided message to the console.
 - **message:** Message that will be printed.
@@ -55,15 +55,15 @@ Prints the provided message to the console.
 <br><br><br><br>
 
 ```c++
-static void LogInfo(const StringBuffer& message);
+static void LogInfo(const std::string& message);
 ```
 Prints the provided message to the console with log level set to info.
 - **message:** Message that will be printed.
 <br><br><br><br>
 
 ```c++
-static void LogInfo(const StringBuffer& message,
-                    StringBuffer libName);
+static void LogInfo(const std::string& message,
+                    std::string libName);
 ```
 Prints the provided message to the console with log level set to info.
 - **message:** Message that will be printed.
@@ -71,15 +71,15 @@ Prints the provided message to the console with log level set to info.
 <br><br><br><br>
 
 ```c++
-static void LogWarning(const StringBuffer& message);
+static void LogWarning(const std::string& message);
 ```
 Prints the provided message to the console with log level set to warning.
 - **message:** Message that will be printed.
 <br><br><br><br>
 
 ```c++
-static void LogWarning(const StringBuffer& message,
-                       StringBuffer libName);
+static void LogWarning(const std::string& message,
+                       std::string libName);
 ```
 Prints the provided message to the console with log level set to warning.
 - **message:** Message that will be printed.
@@ -87,15 +87,15 @@ Prints the provided message to the console with log level set to warning.
 <br><br><br><br>
 
 ```c++
-static void LogError(const StringBuffer& message);
+static void LogError(const std::string& message);
 ```
 Prints the provided message to the console with log level set to error.
 - **message:** Message that will be printed.
 <br><br><br><br>
 
 ```c++
-static void LogError(const StringBuffer& message,
-                     StringBuffer libName);
+static void LogError(const std::string& message,
+                     std::string libName);
 ```
 Prints the provided message to the console with log level set to error.
 - **message:** Message that will be printed.
@@ -103,15 +103,15 @@ Prints the provided message to the console with log level set to error.
 <br><br><br><br>
 
 ```c++
-static void LogSuccess(const StringBuffer& message);
+static void LogSuccess(const std::string& message);
 ```
 Prints the provided message to the console with log level set to success.
 - **message:** Message that will be printed.
 <br><br><br><br>
 
 ```c++
-static void LogSuccess(const StringBuffer& message,
-                       StringBuffer libName);
+static void LogSuccess(const std::string& message,
+                       std::string libName);
 ```
 Prints the provided message to the console with log level set to success.
 - **message:** Message that will be printed.
@@ -119,15 +119,15 @@ Prints the provided message to the console with log level set to success.
 <br><br><br><br>
 
 ```c++
-static void LogDebug(const StringBuffer& message);
+static void LogDebug(const std::string& message);
 ```
 Prints the provided message to the console with log level set to debug.
 - **message:** Message that will be printed.
 <br><br><br><br>
 
 ```c++
-static void LogDebug(const StringBuffer& message,
-                     StringBuffer libName);
+static void LogDebug(const std::string& message,
+                     std::string libName);
 ```
 Prints the provided message to the console with log level set to debug.
 - **message:** Message that will be printed.

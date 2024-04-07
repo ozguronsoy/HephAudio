@@ -57,7 +57,7 @@ Gets the pointer to the [NativeAudio]((/docs/HephAudio/NativeAudio/NativeAudio.m
 <br><br><br><br>
 
 ```c++
-AudioObject* Play(const HephCommon::StringBuffer& filePath);
+AudioObject* Play(const std::string& filePath);
 ```
 Reads the file, then starts playing it.
 - **filePath:** Path of the file which will be played.
@@ -65,7 +65,7 @@ Reads the file, then starts playing it.
 <br><br><br><br>
 
 ```c++
-AudioObject* Play(const HephCommon::StringBuffer& filePath,
+AudioObject* Play(const std::string& filePath,
                   uint32_t playCount);
 ```
 Reads the file, then starts playing it.
@@ -75,7 +75,7 @@ Reads the file, then starts playing it.
 <br><br><br><br>
 
 ```c++
-AudioObject* Play(const HephCommon::StringBuffer& filePath,
+AudioObject* Play(const std::string& filePath,
                   uint32_t playCount,
                   bool isPaused);
 ```
@@ -87,7 +87,7 @@ Reads the file, then starts playing it if the ``isPaused`` parameter is ``false`
 <br><br><br><br>
 
 ```c++
-AudioObject* Load(const HephCommon::StringBuffer& filePath);
+AudioObject* Load(const std::string& filePath);
 ```
 Reads the file, then converts the audio data to the render format but does not start playing it.
 - **filePath:** Path of the file which will be loaded.
@@ -95,7 +95,7 @@ Reads the file, then converts the audio data to the render format but does not s
 <br><br><br><br>
 
 ```c++
-AudioObject* Load(const HephCommon::StringBuffer& filePath,
+AudioObject* Load(const std::string& filePath,
                   uint32_t playCount);
 ```
 Reads the file, then converts the audio data to the render format but does not start playing it.
@@ -105,7 +105,7 @@ Reads the file, then converts the audio data to the render format but does not s
 <br><br><br><br>
 
 ```c++
-AudioObject* Load(const HephCommon::StringBuffer& filePath,
+AudioObject* Load(const std::string& filePath,
                   uint32_t playCount,
                   bool isPaused);
 ```
@@ -117,7 +117,7 @@ Reads the file, then converts the audio data to the render format, then starts p
 <br><br><br><br>
 
 ```c++
-AudioObject* CreateAudioObject(const HephCommon::StringBuffer& name,
+AudioObject* CreateAudioObject(const std::string& name,
                                size_t bufferFrameCount,
                                AudioFormatInfo bufferFormatInfo);
 ```
@@ -179,7 +179,7 @@ Gets the [AudioObject](/docs/HephAudio/AudioObject.md) with the provided id.
 <br><br><br><br>
 
 ```c++
-AudioObject* GetAudioObject(const HephCommon::StringBuffer& audioObjectName) const;
+AudioObject* GetAudioObject(const std::string& audioObjectName) const;
 ```
 Gets the first [AudioObject](/docs/HephAudio/AudioObject.md) with the provided name.
 - **audioObjectName:** Name of the audio object.
@@ -333,7 +333,7 @@ Stops capturing and frees the resources used for capturing.
 <br><br><br><br>
 
 ```c++
-AudioDevice GetAudioDeviceById(const HephCommon::StringBuffer& deviceId) const;
+AudioDevice GetAudioDeviceById(const std::string& deviceId) const;
 ```
 Gets the [AudioDevice](/docs/HephAudio/AudioDevice.md) with the provided id.
 - **deviceId:** Unique id of the audio device.
@@ -376,7 +376,7 @@ Gets all the available [AudioDevices](/docs/HephAudio/AudioDevice.md) of the req
 
 ```c++
 bool SaveToFile(AudioBuffer& buffer,
-                const HephCommon::StringBuffer& filePath,
+                const std::string& filePath,
                 bool overwrite);
 ```
 Creates a file and saves the provided data.
