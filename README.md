@@ -206,4 +206,4 @@ int main()
 	return 0;
 }
 ```
-With this we conclude our introduction to the HephAudio library. To learn more about the library and audio in general visit the docs folder.
+With this we conclude our introduction to the HephAudio library. To learn more about the library and audio in general visit the [docs](/docs).
