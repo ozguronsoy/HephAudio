@@ -49,3 +49,11 @@ static WAVEFORMATEX AFI2WFX(const AudioFormatInfo& afi);
 Converts [AudioFormatInfo](/docs/HephAudio/AudioFormatInfo.md) struct to [WAVEFORMATEX](https://learn.microsoft.com/en-us/windows/win32/api/mmeapi/ns-mmeapi-waveformatex) struct.
 - **afi:** AudioFormatInfo struct.
 - **returns:** WAVEFORMATEX struct.
+<br><br><br><br>
+
+```c++
+static std::string GetComErrorMessage(HRESULT hr);
+```
+Gets the COM error message.
+- **hr:** Error code.
+- **returns:** Error message.
