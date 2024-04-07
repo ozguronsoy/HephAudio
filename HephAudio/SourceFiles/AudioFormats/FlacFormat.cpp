@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer FlacFormat::Extensions()
+		std::string FlacFormat::Extensions()
 		{
-			return ".flac";
+			return "flac";
 		}
 		bool FlacFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -44,7 +44,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool FlacFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool FlacFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

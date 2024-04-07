@@ -3,12 +3,12 @@
 #include "AudioStream.h"
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
-#include "StringBuffer.h"
 #include "EventArgs.h"
 #include "EventResult.h"
+#include <string>
 #include <vector>
 
-#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY HephCommon::StringBuffer("audio_playlist")
+#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY std::string("audio_playlist")
 
 namespace HephAudio
 {
@@ -25,7 +25,7 @@ namespace HephAudio
 		};
 	private:
 		AudioStream stream;
-		std::vector<HephCommon::StringBuffer> files;
+		std::vector<std::string> files;
 		bool isPaused;
 		bool applyFadeInOrDelay;
 		TransitionEffect transitionEffect;
@@ -33,17 +33,17 @@ namespace HephAudio
 	public:
 		AudioPlaylist(Native::NativeAudio* pNativeAudio);
 		AudioPlaylist(Audio& audio);
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<HephCommon::StringBuffer>& files);
-		AudioPlaylist(Audio& audio, const std::vector<HephCommon::StringBuffer>& files);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::string>& files);
+		AudioPlaylist(Audio& audio, const std::vector<std::string>& files);
 		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s);
 		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s);
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files);
-		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files);
+		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files);
 		AudioPlaylist(const AudioPlaylist&) = delete;
 		AudioPlaylist(AudioPlaylist&& rhs) noexcept;
 		AudioPlaylist& operator=(const AudioPlaylist&) = delete;
-		AudioPlaylist& operator=(const HephCommon::StringBuffer& rhs);
-		AudioPlaylist& operator=(const std::vector<HephCommon::StringBuffer>& rhs);
+		AudioPlaylist& operator=(const std::string& rhs);
+		AudioPlaylist& operator=(const std::vector<std::string>& rhs);
 		AudioPlaylist& operator=(AudioPlaylist&& rhs) noexcept;
 		size_t Size() const;
 		Native::NativeAudio* GetNativeAudio() const;
@@ -54,13 +54,13 @@ namespace HephAudio
 		void Start();
 		void Stop();
 		bool IsPaused() const;
-		void Add(const HephCommon::StringBuffer& filePath);
-		void Add(const std::vector<HephCommon::StringBuffer>& files);
-		void Insert(const HephCommon::StringBuffer& filePath, size_t index);
-		void Insert(const std::vector<HephCommon::StringBuffer>& files, size_t index);
+		void Add(const std::string& filePath);
+		void Add(const std::vector<std::string>& files);
+		void Insert(const std::string& filePath, size_t index);
+		void Insert(const std::vector<std::string>& files, size_t index);
 		void Remove(size_t index);
 		void Remove(size_t index, size_t count);
-		void Remove(const HephCommon::StringBuffer& filePath);
+		void Remove(const std::string& filePath);
 		void Skip();
 		void Skip(size_t n);
 		void Clear();

@@ -15,7 +15,7 @@ namespace HephAudio
 		public:
 			static void RegisterFileFormat(IAudioFileFormat* format);
 			static IAudioFileFormat* FindFileFormat(const HephCommon::File& file);
-			static IAudioFileFormat* FindFileFormat(HephCommon::StringBuffer filePath);
+			static IAudioFileFormat* FindFileFormat(const std::string& filePath);
 		};
 	}
 }

@@ -19,7 +19,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + "."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioSLES::AndroidAudioSLES", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + "."));
 			}
 
 			renderCallbackContext.pAndroidAudio = this;
@@ -48,7 +48,7 @@ namespace HephAudio
 
 			(*audioEngineObject)->Destroy(audioEngineObject);
 
-			HEPHAUDIO_LOG("AndroidAudioSLES destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AndroidAudioSLES destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioSLES::SetMasterVolume(heph_float volume)
 		{
@@ -65,7 +65,7 @@ namespace HephAudio
 		void AndroidAudioSLES::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopRendering();
 
@@ -118,7 +118,7 @@ namespace HephAudio
 
 			isRenderInitialized = true;
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioSLES::StopRendering()
 		{
@@ -126,7 +126,7 @@ namespace HephAudio
 			{
 				SLresult slres;
 				isRenderInitialized = false;
-				renderDeviceId = L"";
+				renderDeviceId = "";
 				ANDROIDAUDIO_EXCPT((*audioPlayer)->SetPlayState(audioPlayer, SL_PLAYSTATE_STOPPED), this, "AndroidAudioSLES::StopRendering", "An error occurred whilst rendering data.");
 				if (audioPlayerObject != nullptr)
 				{
@@ -145,7 +145,7 @@ namespace HephAudio
 		void AndroidAudioSLES::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopCapturing();
 
@@ -196,7 +196,7 @@ namespace HephAudio
 
 			isCaptureInitialized = true;
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioSLES::StopCapturing()
 		{
@@ -204,7 +204,7 @@ namespace HephAudio
 			{
 				SLresult slres;
 				isCaptureInitialized = false;
-				captureDeviceId = L"";
+				captureDeviceId = "";
 				ANDROIDAUDIO_EXCPT((*audioRecorder)->SetRecordState(audioRecorder, SL_RECORDSTATE_STOPPED), this, "AndroidAudioSLES::StopCapturing", "An error occurred whilst capturing data.");
 				if (audioRecorderObject != nullptr)
 				{

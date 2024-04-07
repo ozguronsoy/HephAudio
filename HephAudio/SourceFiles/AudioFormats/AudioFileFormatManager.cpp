@@ -9,6 +9,7 @@
 #include "AudioFormats/M4aFormat.h"
 #include "AudioFormats/AacFormat.h"
 #include "AudioFormats/WmaFormat.h"
+#include "StringHelpers.h"
 
 using namespace HephCommon;
 
@@ -33,14 +34,14 @@ namespace HephAudio
 
 		void AudioFileFormatManager::RegisterFileFormat(IAudioFileFormat* format)
 		{
-			const std::vector<StringBuffer> newFormatExtensions = format->Extensions().Split(' ');
+			const std::vector<std::string> newFormatExtensions = StringHelpers::Split(format->Extensions(), " ");
 			for (size_t i = 0; i < formats.size(); i++)
 			{
-				const StringBuffer currentFormatExtensions = formats.at(i)->Extensions();
+				const std::string currentFormatExtensions = formats.at(i)->Extensions();
 				for (size_t j = 0; j < newFormatExtensions.size(); j++)
 				{
 					// If format is already registered, remove it and add the new implementation.
-					if (currentFormatExtensions.Contains(newFormatExtensions[j]))
+					if (currentFormatExtensions.find_first_of(newFormatExtensions[j]) != std::string::npos)
 					{
 						delete formats.at(i);
 						formats.erase(formats.begin() + i);
@@ -49,6 +50,7 @@ namespace HephAudio
 					}
 				}
 			}
+			formats.push_back(format);
 		}
 		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(const File& file)
 		{
@@ -61,9 +63,9 @@ namespace HephAudio
 			}
 			return nullptr;
 		}
-		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(StringBuffer filePath)
+		IAudioFileFormat* AudioFileFormatManager::FindFileFormat(const std::string& filePath)
 		{
-			const StringBuffer fileExtension = File::GetFileExtension(filePath);
+			const std::string fileExtension = File::GetFileExtension(filePath);
 			for (size_t i = 0; i < formats.size(); i++)
 			{
 				if (formats.at(i)->VerifyExtension(fileExtension))

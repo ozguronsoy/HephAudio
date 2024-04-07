@@ -1,6 +1,6 @@
 #pragma once
 #include "HephCommonShared.h"
-#include "StringBuffer.h"
+#include <string>
 
 #define HEPH_CL_INFO "36"
 #define HEPH_CL_WARNING "33"
@@ -18,22 +18,23 @@ namespace HephCommon
 		ConsoleLogger() = delete;
 		ConsoleLogger(const ConsoleLogger&) = delete;
 		ConsoleLogger& operator=(const ConsoleLogger&) = delete;
-		static void Log(StringBuffer message, const char* logLevel);
-		static void Log(StringBuffer message, const char* logLevel, StringBuffer libName);
-		static void LogInfo(const StringBuffer& message);
-		static void LogInfo(const StringBuffer& message, const StringBuffer& libName);
-		static void LogWarning(const StringBuffer& message);
-		static void LogWarning(const StringBuffer& message, const StringBuffer& libName);
-		static void LogError(const StringBuffer& message);
-		static void LogError(const StringBuffer& message, const StringBuffer& libName);
-		static void LogSuccess(const StringBuffer& message);
-		static void LogSuccess(const StringBuffer& message, const StringBuffer& libName);
-		static void LogDebug(const StringBuffer& message);
-		static void LogDebug(const StringBuffer& message, const StringBuffer& libName);
+	public:
+		static void Log(const std::string& message, const char* logLevel);
+		static void Log(const std::string& message, const char* logLevel, const std::string& libName);
+		static void LogInfo(const std::string& message);
+		static void LogInfo(const std::string& message, const std::string& libName);
+		static void LogWarning(const std::string& message);
+		static void LogWarning(const std::string& message, const std::string& libName);
+		static void LogError(const std::string& message);
+		static void LogError(const std::string& message, const std::string& libName);
+		static void LogSuccess(const std::string& message);
+		static void LogSuccess(const std::string& message, const std::string& libName);
+		static void LogDebug(const std::string& message);
+		static void LogDebug(const std::string& message, const std::string& libName);
 		static void EnableColoredOutput();
 		static void DisableColoredOutput();
 	private:
-		static StringBuffer CurrentTimeToString(StringType stringType);
-		static StringBuffer GetLogLevelName(const char* logLevel, StringType stringType);
+		static std::string CurrentTimeToString();
+		static std::string GetLogLevelName(const char* logLevel);
 	};
 }

@@ -6,6 +6,7 @@
 #include "NativeAudio/AndroidAudioSLES.h"
 #include "NativeAudio/LinuxAudio.h"
 #include "NativeAudio/AppleAudio.h"
+#include "StringHelpers.h"
 #if defined(_WIN32)
 #include <VersionHelpers.h>
 #elif defined(__ANDROID__)
@@ -64,7 +65,7 @@ namespace HephAudio
 		}
 		else
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under " + StringBuffer::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
 		}
 #elif defined(__linux__)
 		this->pNativeAudio = new LinuxAudio();
@@ -97,7 +98,7 @@ namespace HephAudio
 		const uint32_t androidApiLevel = android_get_device_api_level();
 		if (androidApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under " + StringBuffer::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Audio::Audio", "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
 		}
 
 		switch (api)
@@ -133,31 +134,31 @@ namespace HephAudio
 	{
 		return this->pNativeAudio;
 	}
-	AudioObject* Audio::Play(const StringBuffer& filePath)
+	AudioObject* Audio::Play(const std::string& filePath)
 	{
 		return this->pNativeAudio->Play(filePath);
 	}
-	AudioObject* Audio::Play(const StringBuffer& filePath, uint32_t playCount)
+	AudioObject* Audio::Play(const std::string& filePath, uint32_t playCount)
 	{
 		return this->pNativeAudio->Play(filePath, playCount);
 	}
-	AudioObject* Audio::Play(const StringBuffer& filePath, uint32_t playCount, bool isPaused)
+	AudioObject* Audio::Play(const std::string& filePath, uint32_t playCount, bool isPaused)
 	{
 		return this->pNativeAudio->Play(filePath, playCount, isPaused);
 	}
-	AudioObject* Audio::Load(const StringBuffer& filePath)
+	AudioObject* Audio::Load(const std::string& filePath)
 	{
 		return this->pNativeAudio->Load(filePath);
 	}
-	AudioObject* Audio::Load(const StringBuffer& filePath, uint32_t playCount)
+	AudioObject* Audio::Load(const std::string& filePath, uint32_t playCount)
 	{
 		return this->pNativeAudio->Load(filePath, playCount);
 	}
-	AudioObject* Audio::Load(const StringBuffer& filePath, uint32_t playCount, bool isPaused)
+	AudioObject* Audio::Load(const std::string& filePath, uint32_t playCount, bool isPaused)
 	{
 		return this->pNativeAudio->Load(filePath, playCount, isPaused);
 	}
-	AudioObject* Audio::CreateAudioObject(const StringBuffer& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo)
+	AudioObject* Audio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo)
 	{
 		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount, bufferFormatInfo);
 	}
@@ -185,7 +186,7 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAudioObject(audioObjectId);
 	}
-	AudioObject* Audio::GetAudioObject(const StringBuffer& audioObjectName) const
+	AudioObject* Audio::GetAudioObject(const std::string& audioObjectName) const
 	{
 		return this->pNativeAudio->GetAudioObject(audioObjectName);
 	}
@@ -269,7 +270,7 @@ namespace HephAudio
 	{
 		this->pNativeAudio->StopCapturing();
 	}
-	AudioDevice Audio::GetAudioDeviceById(const StringBuffer& deviceId) const
+	AudioDevice Audio::GetAudioDeviceById(const std::string& deviceId) const
 	{
 		return this->pNativeAudio->GetAudioDeviceById(deviceId);
 	}
@@ -289,7 +290,7 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetAudioDevices(deviceType);
 	}
-	bool Audio::SaveToFile(AudioBuffer& buffer, const StringBuffer& filePath, bool overwrite)
+	bool Audio::SaveToFile(AudioBuffer& buffer, const std::string& filePath, bool overwrite)
 	{
 		return this->pNativeAudio->SaveToFile(buffer, filePath, overwrite);
 	}

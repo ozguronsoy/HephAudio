@@ -24,7 +24,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::AndroidAudioA", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::AndroidAudioA", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 			}
 
 			this->EnumerateAudioDevices();
@@ -41,7 +41,7 @@ namespace HephAudio
 			StopRendering();
 			StopCapturing();
 
-			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::SetMasterVolume(heph_float volume)
 		{
@@ -124,7 +124,7 @@ namespace HephAudio
 
 			if (device != nullptr)
 			{
-				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::ASCII ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
+				AAudioStreamBuilder_setDeviceId(streamBuilder, std::stoi(device->id.c_str()));
 				renderDeviceId = device->id;
 			}
 
@@ -133,20 +133,20 @@ namespace HephAudio
 
 			if (device == nullptr)
 			{
-				renderDeviceId = StringBuffer::ToString(AAudioStream_getDeviceId(pRenderStream));
+				renderDeviceId = StringHelpers::ToString(AAudioStream_getDeviceId(pRenderStream));
 			}
 
 			isRenderInitialized = true;
 			renderThread = std::thread(&AndroidAudioA::RenderData, this);
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::StopRendering()
 		{
 			if (isRenderInitialized)
 			{
 				isRenderInitialized = false;
-				renderDeviceId = L"";
+				renderDeviceId = "";
 				renderBufferFrameCount = 0;
 				aaudio_result_t  ares;
 				ANDROIDAUDIO_EXCPT(AAudioStream_close(pRenderStream), this, "AndroidAudioA::StopRendering", "An error occurred whilst closing the render stream.");
@@ -225,7 +225,7 @@ namespace HephAudio
 
 			if (device != nullptr)
 			{
-				AAudioStreamBuilder_setDeviceId(streamBuilder, device->id.GetStringType() == StringType::ASCII ? std::stoi(device->id.c_str()) : std::stoi(device->id.wc_str()));
+				AAudioStreamBuilder_setDeviceId(streamBuilder, std::stoi(device->id.c_str()));
 				captureDeviceId = device->id;
 			}
 
@@ -234,20 +234,20 @@ namespace HephAudio
 
 			if (device == nullptr)
 			{
-				captureDeviceId = StringBuffer::ToString(AAudioStream_getDeviceId(pCaptureStream));
+				captureDeviceId = StringHelpers::ToString(AAudioStream_getDeviceId(pCaptureStream));
 			}
 
 			isCaptureInitialized = true;
 			captureThread = std::thread(&AndroidAudioA::CaptureData, this);
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::StopCapturing()
 		{
 			if (isCaptureInitialized)
 			{
 				isCaptureInitialized = false;
-				captureDeviceId = L"";
+				captureDeviceId = "";
 				captureBufferFrameCount = 0;
 				aaudio_result_t  ares;
 				ANDROIDAUDIO_EXCPT(AAudioStream_close(pCaptureStream), this, "AndroidAudioA::StopCapturing", "An error occurred whilst closing the capture stream.");
@@ -340,7 +340,7 @@ namespace HephAudio
 	{
 		AndroidAudioA::AndroidAudioA() : AndroidAudioBase()
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::AndroidAudioA", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::AndroidAudioA", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		AndroidAudioA::~AndroidAudioA()
 		{
@@ -353,31 +353,31 @@ namespace HephAudio
 			StopRendering();
 			StopCapturing();
 
-			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::SetMasterVolume(heph_float volume)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetMasterVolume", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetMasterVolume", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		heph_float AndroidAudioA::GetMasterVolume() const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetMasterVolume", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetMasterVolume", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		void AndroidAudioA::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::InitializeRender", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::InitializeRender", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		void AndroidAudioA::StopRendering()
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::StopRendering", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::StopRendering", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		void AndroidAudioA::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::InitializeCapture", "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::InitializeCapture", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		void AndroidAudioA::StopCapturing()
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "The minimum supported API level is " + StringBuffer::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 	}
 }

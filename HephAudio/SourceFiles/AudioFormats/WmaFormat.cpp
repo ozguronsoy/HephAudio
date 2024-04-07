@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer WmaFormat::Extensions()
+		std::string WmaFormat::Extensions()
 		{
-			return ".wma .asf .wmv";
+			return "wma asf wmv";
 		}
 		bool WmaFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -45,7 +45,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool WmaFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool WmaFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

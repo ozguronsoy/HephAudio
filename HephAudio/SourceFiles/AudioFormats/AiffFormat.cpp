@@ -20,9 +20,9 @@ namespace HephAudio
 		static constexpr uint32_t ssndID = 0x53534E44; // "SSND"
 		static constexpr uint32_t aifc_v1 = 0xA2805140;
 
-		StringBuffer AiffFormat::Extensions()
+		std::string AiffFormat::Extensions()
 		{
-			return ".aif .aiff .aifc";
+			return "aif aiff aifc";
 		}
 		bool AiffFormat::VerifySignature(const File& audioFile)
 		{
@@ -257,7 +257,7 @@ namespace HephAudio
 			return hephaudioBuffer;
 #endif
 		}
-		bool AiffFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool AiffFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 #if defined(HEPHAUDIO_USE_FFMPEG)
 			try
@@ -277,7 +277,7 @@ namespace HephAudio
 				const File audioFile(filePath, overwrite ? FileOpenMode::Overwrite : FileOpenMode::Write);
 				const AudioFormatInfo& bufferFormatInfo = buffer.FormatInfo();
 				uint32_t data32 = 0, compressionType = 0;
-				StringBuffer compressionName;
+				std::string compressionName;
 
 				audioFile.Write(&formID, 4, Endian::Big);
 				data32 = 4;
@@ -290,7 +290,7 @@ namespace HephAudio
 
 				audioFile.Write(&commID, 4, Endian::Big);
 				this->FormatTagTo32(bufferFormatInfo, compressionType, compressionName);
-				data32 = 22 + compressionName.Size();
+				data32 = 22 + compressionName.size();
 				audioFile.Write(&data32, 4, Endian::Big);
 
 				audioFile.Write(&bufferFormatInfo.channelLayout.count, 2, Endian::Big);
@@ -305,7 +305,7 @@ namespace HephAudio
 				audioFile.Write(&data32, 2, Endian::Big);
 
 				audioFile.Write(&compressionType, 4, Endian::Big);
-				audioFile.Write(compressionName.Begin(), compressionName.Size(), HEPH_SYSTEM_ENDIAN);
+				audioFile.Write(compressionName.c_str(), compressionName.size(), HEPH_SYSTEM_ENDIAN);
 
 				audioFile.Write(&ssndID, 4, Endian::Big);
 				data32 = buffer.Size() + 8;
@@ -507,7 +507,7 @@ namespace HephAudio
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AiffFormat", "Unknown codec."));
 			}
 		}
-		void AiffFormat::FormatTagTo32(const AudioFormatInfo& audioFormatInfo, uint32_t& outTagBits, StringBuffer& outCompressionName) const
+		void AiffFormat::FormatTagTo32(const AudioFormatInfo& audioFormatInfo, uint32_t& outTagBits, std::string& outCompressionName) const
 		{
 			switch (audioFormatInfo.formatTag)
 			{

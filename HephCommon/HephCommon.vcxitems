@@ -29,7 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
   </ItemGroup>
   <ItemGroup>
@@ -44,7 +44,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephCommonFramework.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp" />
   </ItemGroup>
 </Project>

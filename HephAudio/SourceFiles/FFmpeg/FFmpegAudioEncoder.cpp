@@ -12,10 +12,10 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	FFmpegAudioEncoder::FFmpegAudioEncoder()
-		: audioFilePath(nullptr), avFormatContext(nullptr), avIoContext(nullptr)
+		: audioFilePath(""), avFormatContext(nullptr), avIoContext(nullptr)
 		, avStream(nullptr), avCodecContext(nullptr), swrContext(nullptr)
 		, avPacket(nullptr), avFrame(nullptr) {}
-	FFmpegAudioEncoder::FFmpegAudioEncoder(const StringBuffer& audioFilePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
+	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::string& audioFilePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
 	{
 		this->outputFormatInfo = outputFormatInfo;
 		this->ChangeFile(audioFilePath, overwrite);
@@ -64,9 +64,9 @@ namespace HephAudio
 
 		return *this;
 	}
-	void FFmpegAudioEncoder::ChangeFile(const StringBuffer& newAudioFilePath, bool overwrite)
+	void FFmpegAudioEncoder::ChangeFile(const std::string& newAudioFilePath, bool overwrite)
 	{
-		if (!this->audioFilePath.CompareContent(newAudioFilePath))
+		if (this->audioFilePath != newAudioFilePath)
 		{
 			this->CloseFile();
 			this->OpenFile(newAudioFilePath, overwrite);
@@ -136,11 +136,11 @@ namespace HephAudio
 			this->avFormatContext = nullptr;
 		}
 
-		this->audioFilePath = nullptr;
+		this->audioFilePath = "";
 	}
 	bool FFmpegAudioEncoder::IsFileOpen() const
 	{
-		return this->audioFilePath != nullptr && this->avFormatContext != nullptr
+		return this->audioFilePath != "" && this->avFormatContext != nullptr
 			&& this->avIoContext != nullptr && this->avStream != nullptr
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
@@ -233,7 +233,7 @@ namespace HephAudio
 			av_packet_unref(this->avPacket);
 		}
 	}
-	void FFmpegAudioEncoder::Transcode(const StringBuffer& inputFilePath, const StringBuffer& outputFilePath, bool overwrite)
+	void FFmpegAudioEncoder::Transcode(const std::string& inputFilePath, const std::string& outputFilePath, bool overwrite)
 	{
 		FFmpegAudioDecoder decoder(inputFilePath);
 		if (decoder.GetFrameCount() > 0)
@@ -242,7 +242,7 @@ namespace HephAudio
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
-	void FFmpegAudioEncoder::Transcode(const StringBuffer& inputFilePath, const StringBuffer& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite)
+	void FFmpegAudioEncoder::Transcode(const std::string& inputFilePath, const std::string& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite)
 	{
 		FFmpegAudioDecoder decoder(inputFilePath);
 		if (decoder.GetFrameCount() > 0)
@@ -251,7 +251,7 @@ namespace HephAudio
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
-	void FFmpegAudioEncoder::OpenFile(const StringBuffer& audioFilePath, bool overwrite)
+	void FFmpegAudioEncoder::OpenFile(const std::string& audioFilePath, bool overwrite)
 	{
 		if (!overwrite && File::FileExists(audioFilePath))
 		{
@@ -259,7 +259,7 @@ namespace HephAudio
 			return;
 		}
 
-		this->audioFilePath = StringBuffer(audioFilePath, StringType::ASCII);
+		this->audioFilePath = audioFilePath;
 
 		int ret = avformat_alloc_output_context2(&this->avFormatContext, nullptr, nullptr, this->audioFilePath.c_str());
 		if (ret < 0)
@@ -283,11 +283,11 @@ namespace HephAudio
 			HEPHAUDIO_LOG("Requested file format cannot store the requested codec. Encoding with the default codec.", HEPH_CL_WARNING);
 			codecID = this->avFormatContext->oformat->audio_codec;
 		}
-		
+
 		const AVCodec* avCodec = avcodec_find_encoder(codecID);
 		if (avCodec == nullptr)
 		{
-			const StringBuffer codecName = avcodec_get_name(codecID);
+			const std::string codecName = avcodec_get_name(codecID);
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "No encoder found for the " + codecName + " codec."));
 		}
@@ -311,7 +311,7 @@ namespace HephAudio
 
 		if (this->avCodecContext->codec_id == AV_CODEC_ID_MP3 && this->outputFormatInfo.bitRate == 0) // otherwise encoder calculates the duration wrong
 		{
-			this->outputFormatInfo.bitRate = 384000;
+			this->outputFormatInfo.bitRate = 128000;
 		}
 		this->avCodecContext->bit_rate = this->outputFormatInfo.bitRate;
 

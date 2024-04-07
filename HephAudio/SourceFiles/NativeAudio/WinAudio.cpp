@@ -13,11 +13,11 @@ using namespace HephCommon;
 using namespace Microsoft::WRL;
 
 #define PKEY_DEVICE_FRIENDLY_NAME {{ 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0 } }, 14}
-#define WINAUDIO_EXCPT_RET_VOID(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return; }
-#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return retval; }
-#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); goto RENDER_EXIT; }
-#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); goto CAPTURE_EXIT; }
-#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", _com_error(hres).ErrorMessage())); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIO_EXCPT_RET_VOID(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return; }
+#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return retval; }
+#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); goto RENDER_EXIT; }
+#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); goto CAPTURE_EXIT; }
+#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 namespace HephAudio
 {
@@ -58,7 +58,7 @@ namespace HephAudio
 
 			CoUninitialize();
 
-			HEPHAUDIO_LOG("WinAudio destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("WinAudio destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudio::SetMasterVolume(heph_float volume)
 		{
@@ -92,7 +92,7 @@ namespace HephAudio
 		void WinAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			this->StopRendering();
 
@@ -104,7 +104,7 @@ namespace HephAudio
 				i++;
 			}
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudio::StopRendering()
 		{
@@ -119,7 +119,7 @@ namespace HephAudio
 		void WinAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			this->StopCapturing();
 
@@ -131,7 +131,7 @@ namespace HephAudio
 				i++;
 			}
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudio::StopCapturing()
 		{
@@ -143,20 +143,20 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
-		void WinAudio::SetDisplayName(StringBuffer displayName)
+		void WinAudio::SetDisplayName(std::string displayName)
 		{
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(displayName.fwc_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(StringHelpers::StrToWide(displayName.c_str()).c_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred whilst setting the display name.");
 			}
 		}
-		void WinAudio::SetIconPath(StringBuffer iconPath)
+		void WinAudio::SetIconPath(std::string iconPath)
 		{
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetIconPath(iconPath.fwc_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetIconPath(StringHelpers::StrToWide(iconPath.c_str()).c_str(), nullptr), "WinAudio::SetIconPath", "An error occurred whilst setting the icon path.");
 			}
 		}
 		bool WinAudio::EnumerateAudioDevices()
@@ -178,7 +178,7 @@ namespace HephAudio
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(hres, "WinAudio::GetAudioDevices", "An error occurred whilst getting the default render device id.");
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDefaultRender->GetId(&defaultRenderId), "WinAudio::GetAudioDevices", "An error occurred whilst getting the default render device id.");
 			}
-			StringBuffer defaultRenderIdStr = defaultRenderId != nullptr ? defaultRenderId : L"";
+			std::string defaultRenderIdStr = StringHelpers::WideToStr(defaultRenderId != nullptr ? defaultRenderId : L"");
 
 			// Get default capture devices id, we will use it later to identify the default capture device.
 			hres = this->pEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &pDefaultCapture);
@@ -187,7 +187,7 @@ namespace HephAudio
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(hres, "WinAudio::GetAudioDevices", "An error occurred whilst getting the default capture device id.");
 				WINAUDIO_ENUMERATE_DEVICE_EXCPT(pDefaultCapture->GetId(&defaultCaptureId), "WinAudio::GetAudioDevices", "An error occurred whilst getting the default capture device id.");
 			}
-			StringBuffer defaultCaptureIdStr = defaultCaptureId != nullptr ? defaultCaptureId : L"";
+			std::string defaultCaptureIdStr = StringHelpers::WideToStr(defaultCaptureId != nullptr ? defaultCaptureId : L"");
 
 			UINT deviceCount = 0;
 			WINAUDIO_ENUMERATE_DEVICE_EXCPT(pCollection->GetCount(&deviceCount), "WinAudio::GetAudioDevices", "An error occurred whilst getting the device count.");
@@ -216,11 +216,11 @@ namespace HephAudio
 
 				if (variant.vt != VT_EMPTY)
 				{
-					device.name = variant.pwszVal;
+					device.name = StringHelpers::WideToStr(variant.pwszVal);
 					PropVariantClear(&variant);
 				}
 
-				device.id = deviceId;
+				device.id = StringHelpers::WideToStr(deviceId);
 				device.type = WinAudio::DataFlowToDeviceType(dataFlow);
 				device.isDefault = (device.type == AudioDeviceType::Render && device.id == defaultRenderIdStr) || (device.type == AudioDeviceType::Capture && device.id == defaultCaptureIdStr);
 				this->audioDevices.push_back(device);
@@ -249,7 +249,7 @@ namespace HephAudio
 			HRESULT hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), &this->pEnumerator);
 			if (FAILED(hresult))
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(hresult, "WinAudio", "An error occurred whilst initializing the audio device enumerator.", "WASAPI", _com_error(hresult).ErrorMessage()));
+				RAISE_HEPH_EXCEPTION(this, HephException(hresult, "WinAudio", "An error occurred whilst initializing the audio device enumerator.", "WASAPI", WinAudioBase::GetComErrorMessage(hresult)));
 				HEPHAUDIO_LOG("Device enumeration failed, terminating the device thread...", HEPH_CL_ERROR);
 				return;
 			}
@@ -286,13 +286,13 @@ namespace HephAudio
 			}
 			else
 			{
-				WINAUDIO_RENDER_THREAD_EXCPT(this->pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
+				WINAUDIO_RENDER_THREAD_EXCPT(this->pEnumerator->GetDevice(StringHelpers::StrToWide(device->id).c_str(), &pDevice), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
 			}
 
 			WINAUDIO_RENDER_THREAD_EXCPT(pDevice->GetId(&deviceId), "WinAudio::InitializeRender", "An error occurred whilst getting the render device.");
 			if (deviceId != nullptr)
 			{
-				this->renderDeviceId = deviceId;
+				this->renderDeviceId = StringHelpers::WideToStr(deviceId);
 				CoTaskMemFree(deviceId);
 				deviceId = nullptr;
 			}
@@ -398,13 +398,13 @@ namespace HephAudio
 			}
 			else
 			{
-				WINAUDIO_CAPTURE_THREAD_EXCPT(this->pEnumerator->GetDevice(device->id.wc_str(), &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
+				WINAUDIO_CAPTURE_THREAD_EXCPT(this->pEnumerator->GetDevice(StringHelpers::StrToWide(device->id).c_str(), &pDevice), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
 			}
 
 			WINAUDIO_CAPTURE_THREAD_EXCPT(pDevice->GetId(&deviceId), "WinAudio::InitializeCapture", "An error occurred whilst getting the device.");
 			if (deviceId != nullptr)
 			{
-				this->captureDeviceId = deviceId;
+				this->captureDeviceId = StringHelpers::WideToStr(deviceId);
 				CoTaskMemFree(deviceId);
 				deviceId = nullptr;
 			}

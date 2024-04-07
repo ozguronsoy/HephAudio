@@ -16,7 +16,7 @@ namespace HephAudio
 		: pNativeAudio(audio.GetNativeAudio()), pFileFormat(nullptr)
 		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr) {}
 
-	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const StringBuffer& filePath)
+	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const std::string& filePath)
 		: pNativeAudio(pNativeAudio), pFileFormat(nullptr)
 		, pAudioCodec(nullptr), frameCount(0), pAudioObject(nullptr)
 	{
@@ -28,7 +28,7 @@ namespace HephAudio
 		this->ChangeFile(filePath);
 	}
 
-	AudioStream::AudioStream(Audio& audio, const StringBuffer& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
+	AudioStream::AudioStream(Audio& audio, const std::string& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
 
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
 		: pNativeAudio(rhs.pNativeAudio), file(std::move(rhs.file)), pFileFormat(rhs.pFileFormat)
@@ -117,7 +117,7 @@ namespace HephAudio
 	{
 		return this->frameCount;
 	}
-	void AudioStream::ChangeFile(const StringBuffer& newFilePath)
+	void AudioStream::ChangeFile(const std::string& newFilePath)
 	{
 		this->Stop();
 		this->file.Close();
@@ -134,14 +134,14 @@ namespace HephAudio
 
 			if (this->pAudioObject != nullptr)
 			{
-				this->pAudioObject->name = StringBuffer::Join(' ', { "(Stream)", this->file.FileName() });
+				this->pAudioObject->name = "(stream)" + this->file.FileName();
 				this->pAudioObject->frameIndex = 0;
 				this->pAudioObject->playCount = 1;
 			}
 			else
 			{
 				const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
-				this->pAudioObject = this->pNativeAudio->CreateAudioObject(StringBuffer::Join(' ', { "(Stream)", this->file.FileName() }), 0, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelLayout, renderFormat.sampleRate));
+				this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + this->file.FileName(), 0, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelLayout, renderFormat.sampleRate));
 
 				this->pAudioObject->OnRender = &AudioStream::OnRender;
 				this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
@@ -256,7 +256,7 @@ namespace HephAudio
 			if (renderSampleRate != pStream->formatInfo.sampleRate)
 			{
 				pRenderResult->renderBuffer = pStream->decodedBuffer.GetSubBuffer(0, readFrameCount + 1);
-				
+
 				AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
 				if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
 				{

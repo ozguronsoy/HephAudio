@@ -46,12 +46,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringBuffer.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">
@@ -84,13 +82,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringBuffer.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeaderFiles">

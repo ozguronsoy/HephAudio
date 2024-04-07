@@ -2,7 +2,7 @@
 
 namespace HephCommon
 {
-	void* UserEventArgs::operator[](const StringBuffer& key) const
+	void* UserEventArgs::operator[](const std::string& key) const
 	{
 		return this->Exists(key) ? this->argsMap.at(key) : nullptr;
 	}
@@ -10,15 +10,15 @@ namespace HephCommon
 	{
 		return this->argsMap.size();
 	}
-	bool UserEventArgs::Exists(const StringBuffer& key) const
+	bool UserEventArgs::Exists(const std::string& key) const
 	{
 		return this->argsMap.count(key) > 0;
 	}
-	void UserEventArgs::Add(const StringBuffer& key, void* pUserArg)
+	void UserEventArgs::Add(const std::string& key, void* pUserArg)
 	{
 		this->argsMap[key] = pUserArg;
 	}
-	void UserEventArgs::Remove(const StringBuffer& key)
+	void UserEventArgs::Remove(const std::string& key)
 	{
 		this->argsMap.erase(key);
 	}

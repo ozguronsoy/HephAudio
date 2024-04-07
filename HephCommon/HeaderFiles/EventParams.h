@@ -2,9 +2,7 @@
 #include "HephCommonShared.h"
 #include "EventArgs.h"
 #include "EventResult.h"
-#include "StringBuffer.h"
 #include "UserEventArgs.h"
-#include <unordered_map>
 
 namespace HephCommon
 {

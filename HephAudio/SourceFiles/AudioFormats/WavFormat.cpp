@@ -16,9 +16,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer WavFormat::Extensions()
+		std::string WavFormat::Extensions()
 		{
-			return ".wav .wave";
+			return "wav wave";
 		}
 		bool WavFormat::VerifySignature(const File& audioFile)
 		{
@@ -236,7 +236,7 @@ namespace HephAudio
 			return hephaudioBuffer;
 #endif
 }
-		bool WavFormat::SaveToFile(const StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool WavFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 #if defined(HEPHAUDIO_USE_FFMPEG)
 			try

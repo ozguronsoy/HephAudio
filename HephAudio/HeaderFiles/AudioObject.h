@@ -4,7 +4,6 @@
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
 #include "AudioEvents/AudioFinishedPlayingEventArgs.h"
-#include "StringBuffer.h"
 #include "Event.h"
 #include "Guid.h"
 #include <vector>
@@ -18,8 +17,8 @@ namespace HephAudio
 	struct AudioObject
 	{
 		HephCommon::Guid id;
-		HephCommon::StringBuffer filePath;
-		HephCommon::StringBuffer name;
+		std::string filePath;
+		std::string name;
 		bool isPaused;
 		uint32_t playCount;
 		heph_float volume;

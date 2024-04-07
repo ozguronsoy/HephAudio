@@ -3,7 +3,6 @@
 #include "EventArgs.h"
 #include "EventResult.h"
 #include "EventParams.h"
-#include "StringBuffer.h"
 #include "UserEventArgs.h"
 #include <vector>
 #include <cinttypes>

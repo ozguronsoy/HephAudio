@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer Mp4Format::Extensions()
+		std::string Mp4Format::Extensions()
 		{
-			return ".mp4 .m4a .m4p .m4b .m4r .m4v";
+			return "mp4 m4a m4p m4b m4r m4v";
 		}
 		bool Mp4Format::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -45,7 +45,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool Mp4Format::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool Mp4Format::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

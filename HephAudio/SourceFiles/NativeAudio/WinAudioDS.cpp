@@ -13,10 +13,10 @@
 #endif
 
 #define IID_IDS_NOTIFY {0xB0210783, 0x89CD, 0x11D0, {0xAF, 0x08, 0x00, 0xA0, 0xC9, 0x25, 0xCD, 0x16}}
-#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); goto RENDER_EXIT; }
-#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); goto CAPTURE_EXIT; }
-#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
-#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message, "DirectSound", _com_error(hres).ErrorMessage())); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); goto RENDER_EXIT; }
+#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); goto CAPTURE_EXIT; }
+#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 using namespace HephCommon;
 using namespace Microsoft::WRL;
@@ -51,7 +51,7 @@ namespace HephAudio
 
 			CoUninitialize();
 
-			HEPHAUDIO_LOG("WinAudioDS destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("WinAudioDS destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioDS::SetMasterVolume(heph_float volume)
 		{
@@ -61,10 +61,10 @@ namespace HephAudio
 				const MMRESULT mmResult = waveOutSetVolume(nullptr, (usv << 16) | usv);
 				if (mmResult != MMSYSERR_NOERROR)
 				{
-					wchar_t errorMessage[MAXERRORLENGTH]{ };
-					if (waveOutGetErrorTextW(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+					char errorMessage[MAXERRORLENGTH]{ };
+					if (waveOutGetErrorTextA(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
 					{
-						wcscpy(errorMessage, L"error message not found");
+						strcpy(errorMessage, "error message not found");
 					}
 					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::SetMasterVolume", "An error occurred whilst setting the master volume", "MMEAPI", errorMessage));
 				}
@@ -78,10 +78,10 @@ namespace HephAudio
 				const MMRESULT mmResult = waveOutGetVolume(nullptr, &dv);
 				if (mmResult != MMSYSERR_NOERROR)
 				{
-					wchar_t errorMessage[MAXERRORLENGTH]{ };
-					if (waveOutGetErrorTextW(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+					char errorMessage[MAXERRORLENGTH]{ };
+					if (waveOutGetErrorTextA(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
 					{
-						wcscpy(errorMessage, L"error message not found");
+						strcpy(errorMessage, "error message not found");
 					}
 					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::GetMasterVolume", "An error occurred whilst getting the master volume", "MMEAPI", errorMessage));
 					return -1.0;
@@ -93,7 +93,7 @@ namespace HephAudio
 		void WinAudioDS::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			this->StopRendering();
 
@@ -118,14 +118,14 @@ namespace HephAudio
 				i++;
 			}
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioDS::StopRendering()
 		{
 			if (this->isRenderInitialized)
 			{
 				this->isRenderInitialized = false;
-				this->renderDeviceId = L"";
+				this->renderDeviceId = "";
 				this->JoinRenderThread();
 				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
@@ -133,7 +133,7 @@ namespace HephAudio
 		void WinAudioDS::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			this->StopCapturing();
 
@@ -158,14 +158,14 @@ namespace HephAudio
 				i++;
 			}
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioDS::StopCapturing()
 		{
 			if (this->isCaptureInitialized)
 			{
 				this->isCaptureInitialized = false;
-				this->captureDeviceId = L"";
+				this->captureDeviceId = "";
 				this->JoinCaptureThread();
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
@@ -430,9 +430,9 @@ namespace HephAudio
 				HRESULT hres;
 				WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(GetDeviceID(&src, &defaultDeviceId), wads, "WinAudioDS", "An error occurred whilst enumerating render devices.");
 
-				AudioDevice device = AudioDevice();
+				AudioDevice device;
 				device.id = GuidToString(lpGuid);
-				device.name = StringBuffer(lpcstrDescription);
+				device.name = StringHelpers::WideToStr(lpcstrDescription);
 				device.type = AudioDeviceType::Render;
 				device.isDefault = device.id == GuidToString(&defaultDeviceId);
 				wads->audioDevices.push_back(device);
@@ -464,7 +464,7 @@ namespace HephAudio
 
 				AudioDevice device = AudioDevice();
 				device.id = GuidToString(lpGuid);
-				device.name = StringBuffer(lpcstrDescription);
+				device.name = StringHelpers::WideToStr(lpcstrDescription);
 				device.type = AudioDeviceType::Capture;
 				device.isDefault = device.id == GuidToString(&defaultDeviceId);
 				wads->audioDevices.push_back(device);
@@ -472,52 +472,46 @@ namespace HephAudio
 
 			return TRUE;
 		}
-		StringBuffer WinAudioDS::GuidToString(LPGUID guid)
+		std::string WinAudioDS::GuidToString(LPGUID guid)
 		{
-			StringBuffer result = "";
-			StringBuffer temp = StringBuffer::ToHexString((uint32_t)guid->Data1);
-			temp.ToLower();
-			result += temp.SubString(2, temp.Size() - 2) + "-";
+			std::string result = "";
+			std::string temp = StringHelpers::ToHexString((uint32_t)guid->Data1);
+			result += temp.substr(2, temp.size() - 2) + "-";
 
-			temp = StringBuffer::ToHexString(guid->Data2);
-			temp.ToLower();
-			result += temp.SubString(2, temp.Size() - 2) + "-";
+			temp = StringHelpers::ToHexString(guid->Data2);
+			result += temp.substr(2, temp.size() - 2) + "-";
 
-			temp = StringBuffer::ToHexString(guid->Data3);
-			temp.ToLower();
-			result += temp.SubString(2, temp.Size() - 2) + "-";
+			temp = StringHelpers::ToHexString(guid->Data3);
+			result += temp.substr(2, temp.size() - 2) + "-";
 
-			temp = StringBuffer::ToHexString(guid->Data4[0]);
-			temp.ToLower();
-			result += temp.SubString(2, temp.Size() - 2);
+			temp = StringHelpers::ToHexString(guid->Data4[0]);
+			result += temp.substr(2, temp.size() - 2);
 
-			temp = StringBuffer::ToHexString(guid->Data4[1]);
-			temp.ToLower();
-			result += temp.SubString(2, temp.Size() - 2) + "-";
+			temp = StringHelpers::ToHexString(guid->Data4[1]);
+			result += temp.substr(2, temp.size() - 2) + "-";
 
 			for (size_t i = 2; i < 8; i++)
 			{
-				temp = StringBuffer::ToHexString(guid->Data4[i]);
-				temp.ToLower();
-				result += temp.SubString(2, temp.Size() - 2);
+				temp = StringHelpers::ToHexString(guid->Data4[i]);
+				result += temp.substr(2, temp.size() - 2);
 			}
 
 			return result;
 		}
-		GUID WinAudioDS::StringToGuid(StringBuffer str)
+		GUID WinAudioDS::StringToGuid(const std::string& str)
 		{
 			GUID guid = GUID();
-			guid.Data1 = StringBuffer::HexStringToU32(str.SubString(0, 8));
-			guid.Data2 = StringBuffer::HexStringToU16(str.SubString(9, 4));
-			guid.Data3 = StringBuffer::HexStringToU16(str.SubString(14, 4));
-			guid.Data4[0] = StringBuffer::HexStringToU16(str.SubString(19, 2));
-			guid.Data4[1] = StringBuffer::HexStringToU16(str.SubString(21, 2));
-			guid.Data4[2] = StringBuffer::HexStringToU16(str.SubString(24, 2));
-			guid.Data4[3] = StringBuffer::HexStringToU16(str.SubString(26, 2));
-			guid.Data4[4] = StringBuffer::HexStringToU16(str.SubString(28, 2));
-			guid.Data4[5] = StringBuffer::HexStringToU16(str.SubString(30, 2));
-			guid.Data4[6] = StringBuffer::HexStringToU16(str.SubString(32, 2));
-			guid.Data4[7] = StringBuffer::HexStringToU16(str.SubString(34, 2));
+			guid.Data1 = StringHelpers::HexStringToU32(str.substr(0, 8));
+			guid.Data2 = StringHelpers::HexStringToU16(str.substr(9, 4));
+			guid.Data3 = StringHelpers::HexStringToU16(str.substr(14, 4));
+			guid.Data4[0] = StringHelpers::HexStringToU16(str.substr(19, 2));
+			guid.Data4[1] = StringHelpers::HexStringToU16(str.substr(21, 2));
+			guid.Data4[2] = StringHelpers::HexStringToU16(str.substr(24, 2));
+			guid.Data4[3] = StringHelpers::HexStringToU16(str.substr(26, 2));
+			guid.Data4[4] = StringHelpers::HexStringToU16(str.substr(28, 2));
+			guid.Data4[5] = StringHelpers::HexStringToU16(str.substr(30, 2));
+			guid.Data4[6] = StringHelpers::HexStringToU16(str.substr(32, 2));
+			guid.Data4[7] = StringHelpers::HexStringToU16(str.substr(34, 2));
 			return guid;
 		}
 		void WinAudioDS::RestrictAudioFormatInfo(AudioFormatInfo& afi, const DSCAPS& dsCaps)

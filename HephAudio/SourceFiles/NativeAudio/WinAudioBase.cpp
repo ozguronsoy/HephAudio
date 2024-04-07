@@ -23,7 +23,7 @@ namespace HephAudio
 						return;
 					}
 				}
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(hres, "WinAudioBase::InitializeCOM", "An error occurred whilst initializing COM.", "Windows COM", _com_error(hres).ErrorMessage()));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(hres, "WinAudioBase::InitializeCOM", "An error occurred whilst initializing COM.", "Windows COM", WinAudioBase::GetComErrorMessage(hres)));
 			}
 		}
 		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEXTENSIBLE& wfx)
@@ -61,6 +61,10 @@ namespace HephAudio
 			wfx.SubFormat.Data4[7] = 0x71;
 
 			return wfx;
+		}
+		std::string WinAudioBase::GetComErrorMessage(HRESULT hr)
+		{
+			return StringHelpers::WideToStr(_com_error(hr).ErrorMessage());
 		}
 	}
 }

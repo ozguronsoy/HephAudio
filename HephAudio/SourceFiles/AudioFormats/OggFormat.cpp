@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer OggFormat::Extensions()
+		std::string OggFormat::Extensions()
 		{
-			return ".ogg .oga .ogv";
+			return "ogg oga ogv";
 		}
 		bool OggFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -44,7 +44,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool OggFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool OggFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

@@ -9,7 +9,7 @@
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "File.h"
 
-#define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY HephCommon::StringBuffer("audio_stream")
+#define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY std::string("audio_stream")
 
 namespace HephAudio
 {
@@ -30,8 +30,8 @@ namespace HephAudio
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio);
 		AudioStream(Audio& audio);
-		AudioStream(Native::NativeAudio* pNativeAudio, const HephCommon::StringBuffer& filePath);
-		AudioStream(Audio& audio, const HephCommon::StringBuffer& filePath);
+		AudioStream(Native::NativeAudio* pNativeAudio, const std::string& filePath);
+		AudioStream(Audio& audio, const std::string& filePath);
 		AudioStream(const AudioStream&) = delete;
 		AudioStream(AudioStream&& rhs) noexcept;
 		~AudioStream();
@@ -44,7 +44,7 @@ namespace HephAudio
 		AudioObject* GetAudioObject() const;
 		const AudioFormatInfo& GetAudioFormatInfo() const;
 		size_t GetFrameCount() const;
-		void ChangeFile(const HephCommon::StringBuffer& newFilePath);
+		void ChangeFile(const std::string& newFilePath);
 		void Start();
 		void Stop();
 		heph_float GetPosition() const;

@@ -3,7 +3,6 @@
 #include "AudioProcessor.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
-#include "StringBuffer.h"
 #include <VersionHelpers.h>
 
 #define MAX_STOP_WAIT 200
@@ -35,7 +34,7 @@ namespace HephAudio
 			this->StopRendering();
 			this->StopCapturing();
 
-			HEPHAUDIO_LOG("WinAudioMME destructed in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("WinAudioMME destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioMME::SetMasterVolume(heph_float volume)
 		{
@@ -60,14 +59,14 @@ namespace HephAudio
 		void WinAudioMME::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			this->StopRendering();
 
 			MMRESULT mmres = MMSYSERR_NOERROR;
 
-			const UINT deviceID = device == nullptr ? 0 : StringBuffer::StringToU32(device->id);
-			this->renderDeviceId = StringBuffer::ToString(deviceID);
+			const UINT deviceID = device == nullptr ? 0 : StringHelpers::StringToU32(device->id);
+			this->renderDeviceId = StringHelpers::ToString(deviceID);
 			if (deviceID >= waveOutGetNumDevs())
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudioMME::InitializeRender", "Render device not found."));
@@ -112,7 +111,7 @@ namespace HephAudio
 
 			this->isRenderInitialized = true;
 
-			HEPHAUDIO_LOG("Render initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioMME::StopRendering()
 		{
@@ -149,14 +148,14 @@ namespace HephAudio
 		void WinAudioMME::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			this->StopCapturing();
 
 			MMRESULT mmres = MMSYSERR_NOERROR;
 
-			const UINT deviceID = device == nullptr ? 0 : StringBuffer::StringToU32(device->id);
-			this->captureDeviceId = StringBuffer::ToString(deviceID);
+			const UINT deviceID = device == nullptr ? 0 : StringHelpers::StringToU32(device->id);
+			this->captureDeviceId = StringHelpers::ToString(deviceID);
 			if (deviceID >= waveInGetNumDevs())
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudioMME::InitializeCapture", "Capture device not found."));
@@ -204,7 +203,7 @@ namespace HephAudio
 
 			this->isCaptureInitialized = true;
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void WinAudioMME::StopCapturing()
 		{
@@ -248,8 +247,8 @@ namespace HephAudio
 				WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(waveOutGetDevCaps(i, &deviceCaps, sizeof(WAVEOUTCAPS)), this, "WinAudioMME", "An error occurred whilst enumerating render devices.");
 
 				AudioDevice device;
-				device.id = StringBuffer::ToString(i);
-				device.name = deviceCaps.szPname;
+				device.id = StringHelpers::ToString(i);
+				device.name = StringHelpers::WideToStr(deviceCaps.szPname);
 				device.type = AudioDeviceType::Render;
 				device.isDefault = (i == 0);
 
@@ -263,8 +262,8 @@ namespace HephAudio
 				WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(waveInGetDevCaps(i, &deviceCaps, sizeof(WAVEINCAPS)), this, "WinAudioMME", "An error occurred whilst enumerating capture devices.");
 
 				AudioDevice device;
-				device.id = StringBuffer::ToString(i);
-				device.name = deviceCaps.szPname;
+				device.id = StringHelpers::ToString(i);
+				device.name = StringHelpers::WideToStr(deviceCaps.szPname);
 				device.type = AudioDeviceType::Render;
 				device.isDefault = (i == 0);
 
@@ -459,12 +458,12 @@ namespace HephAudio
 				}
 			}
 		}
-		StringBuffer WinAudioMME::GetErrorString(MMRESULT mmResult)
+		std::string WinAudioMME::GetErrorString(MMRESULT mmResult)
 		{
-			wchar_t errorMessage[MAXERRORLENGTH]{ };
-			if (waveOutGetErrorTextW(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
+			char errorMessage[MAXERRORLENGTH]{ };
+			if (waveOutGetErrorTextA(mmResult, errorMessage, MAXERRORLENGTH) != MMSYSERR_NOERROR)
 			{
-				return L"error message not found";
+				return "error message not found";
 			}
 			return errorMessage;
 		}

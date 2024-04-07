@@ -65,7 +65,7 @@ namespace HephAudio
 					jstring deviceName = (jstring)env->CallObjectMethod(deviceNameObject, toStringMethodId);
 
 					AudioDevice audioDevice;
-					audioDevice.id = StringBuffer::ToString(deviceId).c_str();
+					audioDevice.id = StringHelpers::ToString(deviceId).c_str();
 					audioDevice.name = JStringToString(env, deviceName);
 					audioDevice.type = isSink ? AudioDeviceType::Render : AudioDeviceType::Capture;
 					audioDevice.isDefault = false;
@@ -103,14 +103,14 @@ namespace HephAudio
 				RAISE_HEPH_EXCEPTION(this, HephException(jniResult, "AndroidAudioBase::GetAudioDevices", "Could not get the current jni environment."));
 			}
 		}
-		StringBuffer AndroidAudioBase::JStringToString(JNIEnv* env, jstring jStr) const
+		std::string AndroidAudioBase::JStringToString(JNIEnv* env, jstring jStr) const
 		{
 			std::string value;
 			const jchar* raw = env->GetStringChars(jStr, 0);
 			jsize len = env->GetStringLength(jStr);
 			value.assign(raw, raw + len);
 			env->ReleaseStringChars(jStr, raw);
-			return value.c_str();
+			return value;
 		}
 	}
 }

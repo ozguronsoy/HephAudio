@@ -35,8 +35,8 @@ namespace HephAudio
 			void CaptureData(GUID deviceId);
 			static BOOL CALLBACK RenderDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID pWinAudioDS);
 			static BOOL CALLBACK CaptureDeviceEnumerationCallback(LPGUID lpGuid, LPCWSTR lpcstrDescription, LPCWSTR lpcstrModule, LPVOID pWinAudioDS);
-			static HephCommon::StringBuffer GuidToString(LPGUID guid);
-			static GUID StringToGuid(HephCommon::StringBuffer str);
+			static std::string GuidToString(LPGUID guid);
+			static GUID StringToGuid(const std::string& str);
 			static void RestrictAudioFormatInfo(AudioFormatInfo& afi, const DSCAPS& dsCaps);
 			static void RestrictAudioFormatInfo(AudioFormatInfo& afi, const DSCCAPS& dscCaps);
 		};

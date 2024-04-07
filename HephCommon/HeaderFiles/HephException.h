@@ -1,7 +1,7 @@
 #pragma once
 #include "HephCommonShared.h"
-#include "StringBuffer.h"
 #include "Event.h"
+#include <string>
 #include <cinttypes>
 #include <vector>
 #include <unordered_map>
@@ -29,13 +29,13 @@ namespace HephCommon
 		static Event OnException;
 	public:
 		int64_t errorCode;
-		StringBuffer method;
-		StringBuffer message;
-		StringBuffer externalSource;
-		StringBuffer externalMessage;
+		std::string method;
+		std::string message;
+		std::string externalSource;
+		std::string externalMessage;
 		HephException();
-		HephException(int64_t errorCode, StringBuffer method, StringBuffer message);
-		HephException(int64_t errorCode, StringBuffer method, StringBuffer message, StringBuffer externalSource, StringBuffer externalMessage);
+		HephException(int64_t errorCode, const std::string& method, const std::string& message);
+		HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
 		void Raise(const void* pSender) const;
 	public:
 		static const HephException& LastException();

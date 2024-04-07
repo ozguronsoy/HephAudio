@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer MpegFormat::Extensions()
+		std::string MpegFormat::Extensions()
 		{
-			return ".mpeg .mpg .mpg1 .mpg2";
+			return "mpeg mpg mpg1 mpg2";
 		}
 		bool MpegFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -45,7 +45,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool MpegFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool MpegFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

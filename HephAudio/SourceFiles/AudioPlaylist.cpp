@@ -10,16 +10,16 @@ namespace HephAudio
 
 	AudioPlaylist::AudioPlaylist(Audio& audio) : AudioPlaylist(audio.GetNativeAudio()) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<StringBuffer>& files) : AudioPlaylist(pNativeAudio, TransitionEffect::None, 0, files) {}
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::string>& files) : AudioPlaylist(pNativeAudio, TransitionEffect::None, 0, files) {}
 
-	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<StringBuffer>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
+	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<std::string>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
 
 	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s)
 		: stream(pNativeAudio), isPaused(true), applyFadeInOrDelay(false), transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s) {}
 
 	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s) : AudioPlaylist(audio.GetNativeAudio()) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files)
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files)
 		: stream(pNativeAudio), files(files), isPaused(true), applyFadeInOrDelay(false)
 		, transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s)
 	{
@@ -29,7 +29,7 @@ namespace HephAudio
 		}
 	}
 
-	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<HephCommon::StringBuffer>& files)
+	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files)
 		: AudioPlaylist(audio.GetNativeAudio(), transitionEffect, transitionDuration_s, files) {}
 
 	AudioPlaylist::AudioPlaylist(AudioPlaylist&& rhs) noexcept :
@@ -37,13 +37,13 @@ namespace HephAudio
 		, isPaused(rhs.isPaused), applyFadeInOrDelay(rhs.applyFadeInOrDelay)
 		, transitionEffect(rhs.transitionEffect), transitionDuration_s(rhs.transitionDuration_s) {}
 
-	AudioPlaylist& AudioPlaylist::operator=(const HephCommon::StringBuffer& rhs)
+	AudioPlaylist& AudioPlaylist::operator=(const std::string& rhs)
 	{
 		this->Clear();
 		this->Add(rhs);
 		return *this;
 	}
-	AudioPlaylist& AudioPlaylist::operator=(const std::vector<HephCommon::StringBuffer>& rhs)
+	AudioPlaylist& AudioPlaylist::operator=(const std::vector<std::string>& rhs)
 	{
 		this->Clear();
 		this->Add(rhs);
@@ -107,7 +107,7 @@ namespace HephAudio
 	{
 		return this->isPaused;
 	}
-	void AudioPlaylist::Add(const StringBuffer& filePath)
+	void AudioPlaylist::Add(const std::string& filePath)
 	{
 		this->files.push_back(filePath);
 		if (this->files.size() == 1)
@@ -115,7 +115,7 @@ namespace HephAudio
 			this->ChangeFile();
 		}
 	}
-	void AudioPlaylist::Add(const std::vector<HephCommon::StringBuffer>& files)
+	void AudioPlaylist::Add(const std::vector<std::string>& files)
 	{
 		if (files.size() > 0)
 		{
@@ -126,7 +126,7 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioPlaylist::Insert(const StringBuffer& filePath, size_t index)
+	void AudioPlaylist::Insert(const std::string& filePath, size_t index)
 	{
 		if (index > this->files.size())
 		{
@@ -140,7 +140,7 @@ namespace HephAudio
 			this->ChangeFile();
 		}
 	}
-	void AudioPlaylist::Insert(const std::vector<HephCommon::StringBuffer>& files, size_t index)
+	void AudioPlaylist::Insert(const std::vector<std::string>& files, size_t index)
 	{
 		if (files.size() > 0)
 		{
@@ -191,7 +191,7 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioPlaylist::Remove(const HephCommon::StringBuffer& filePath)
+	void AudioPlaylist::Remove(const std::string& filePath)
 	{
 		for (size_t i = 0; i < this->files.size(); i++)
 		{
@@ -224,12 +224,12 @@ namespace HephAudio
 		this->files.clear();
 		Native::NativeAudio* pNativeAudio = this->stream.GetNativeAudio();
 		this->stream.Release();
-		this->stream = AudioStream(pNativeAudio, nullptr);
+		this->stream = AudioStream(pNativeAudio, "");
 	}
 	void AudioPlaylist::ChangeFile()
 	{
 		this->applyFadeInOrDelay = this->stream.GetAudioObject() != nullptr; // don't apply fade-in and delay effects for the first file
-		StringBuffer filePath = this->files.size() > 0 ? this->files[0] : nullptr;
+		std::string filePath = this->files.size() > 0 ? this->files[0] : "";
 
 		Native::NativeAudio* pNativeAudio = this->stream.GetNativeAudio();
 		this->stream.Release();
@@ -238,7 +238,7 @@ namespace HephAudio
 		try
 		{
 			this->stream = AudioStream(pNativeAudio, filePath);
-			if (filePath != nullptr)
+			if (filePath != "")
 			{
 				AudioObject* pAudioObject = this->stream.GetAudioObject();
 				pAudioObject->OnRender += &AudioPlaylist::ApplyTransitionEffect;
@@ -253,13 +253,13 @@ namespace HephAudio
 			this->files.erase(this->files.begin());
 			if (this->files.size() > 0)
 			{
-				const StringBuffer oldFilePath = std::move(filePath);
+				const std::string oldFilePath = std::move(filePath);
 				filePath = this->files[0];
-				HEPHAUDIO_LOG(StringBuffer::Join("", { "Could not play \"", oldFilePath, "\", trying next file..." }), HEPH_CL_ERROR);
+				HEPHAUDIO_LOG("Could not play \"" + oldFilePath + "\", trying next file...", HEPH_CL_ERROR);
 			}
 			else
 			{
-				HEPHAUDIO_LOG(StringBuffer::Join("", { "Could not play \"", filePath, "\", playlist finished." }), HEPH_CL_ERROR);
+				HEPHAUDIO_LOG("Could not play \"" + filePath + "\", playlist finished.", HEPH_CL_ERROR);
 				filePath = nullptr;
 			}
 			goto OPEN_NEW_STREAM;

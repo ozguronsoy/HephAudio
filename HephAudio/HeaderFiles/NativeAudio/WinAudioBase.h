@@ -2,6 +2,7 @@
 #if defined(_WIN32)
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
+#include "StringHelpers.h"
 #include <wrl.h>
 #include <mmeapi.h>
 #include <mmreg.h>
@@ -22,6 +23,7 @@ namespace HephAudio
 			void InitializeCOM() const;
 			static AudioFormatInfo WFX2AFI(const WAVEFORMATEXTENSIBLE& wfx);
 			static WAVEFORMATEXTENSIBLE AFI2WFX(const AudioFormatInfo& afi);
+			static std::string GetComErrorMessage(HRESULT hr);
 		};
 	}
 }

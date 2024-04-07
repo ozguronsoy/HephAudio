@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer M4aFormat::Extensions()
+		std::string M4aFormat::Extensions()
 		{
-			return ".m4a .alac";
+			return "m4a alac";
 		}
 		bool M4aFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -44,7 +44,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool M4aFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool M4aFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

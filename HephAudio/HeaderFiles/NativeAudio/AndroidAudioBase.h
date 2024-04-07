@@ -1,6 +1,7 @@
 #pragma once
 #ifdef __ANDROID__
 #include "NativeAudio.h"
+#include "StringHelpers.h"
 #include <jni.h>
 #include <android/api-level.h>
 
@@ -22,7 +23,7 @@ namespace HephAudio
 		protected:
 			bool EnumerateAudioDevices() override;
 			void GetEnv(JNIEnv** pEnv) const;
-			HephCommon::StringBuffer JStringToString(JNIEnv* env, jstring jStr) const;
+			std::string JStringToString(JNIEnv* env, jstring jStr) const;
 		};
 	}
 }

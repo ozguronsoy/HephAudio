@@ -9,10 +9,10 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	FFmpegAudioDecoder::FFmpegAudioDecoder()
-		: audioFilePath(nullptr), fileDuration_frame(0), audioStreamIndex(FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND)
+		: audioFilePath(""), fileDuration_frame(0), audioStreamIndex(FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND)
 		, firstPacketPts(0), avFormatContext(nullptr), avCodecContext(nullptr)
 		, swrContext(nullptr), avFrame(nullptr), avPacket(nullptr) {}
-	FFmpegAudioDecoder::FFmpegAudioDecoder(const StringBuffer& audioFilePath) : FFmpegAudioDecoder()
+	FFmpegAudioDecoder::FFmpegAudioDecoder(const std::string& audioFilePath) : FFmpegAudioDecoder()
 	{
 		this->OpenFile(audioFilePath);
 	}
@@ -56,9 +56,9 @@ namespace HephAudio
 
 		return *this;
 	}
-	void FFmpegAudioDecoder::ChangeFile(const StringBuffer& newAudioFilePath)
+	void FFmpegAudioDecoder::ChangeFile(const std::string& newAudioFilePath)
 	{
-		if (!this->audioFilePath.CompareContent(newAudioFilePath))
+		if (this->audioFilePath != newAudioFilePath)
 		{
 			this->CloseFile();
 			this->OpenFile(newAudioFilePath);
@@ -96,14 +96,14 @@ namespace HephAudio
 			this->avFormatContext = nullptr;
 		}
 
-		this->audioFilePath = nullptr;
+		this->audioFilePath = "";
 		this->fileDuration_frame = 0;
 		this->audioStreamIndex = FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND;
 		this->firstPacketPts = 0;
 	}
 	bool FFmpegAudioDecoder::IsFileOpen() const
 	{
-		return this->audioFilePath != nullptr && this->avFormatContext != nullptr
+		return this->audioFilePath != "" && this->avFormatContext != nullptr
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
 	}
@@ -385,7 +385,7 @@ namespace HephAudio
 
 		return decodedBuffer;
 	}
-	void FFmpegAudioDecoder::OpenFile(const StringBuffer& audioFilePath)
+	void FFmpegAudioDecoder::OpenFile(const std::string& audioFilePath)
 	{
 		if (!File::FileExists(audioFilePath))
 		{
@@ -393,11 +393,9 @@ namespace HephAudio
 			return;
 		}
 
-		this->audioFilePath = StringBuffer(audioFilePath, StringType::ASCII);
+		this->audioFilePath = audioFilePath;
 
-		int ret = 0;
-
-		ret = avformat_open_input(&this->avFormatContext, this->audioFilePath.c_str(), nullptr, nullptr);
+		int ret = avformat_open_input(&this->avFormatContext, this->audioFilePath.c_str(), nullptr, nullptr);
 		if (ret < 0)
 		{
 			this->CloseFile();
@@ -446,7 +444,7 @@ namespace HephAudio
 		const AVCodec* avCodec = avcodec_find_decoder(this->avFormatContext->streams[audioStreamIndex]->codecpar->codec_id);
 		if (avCodec == nullptr)
 		{
-			const StringBuffer codecName = avcodec_get_name(this->avFormatContext->streams[audioStreamIndex]->codecpar->codec_id);
+			const std::string codecName = avcodec_get_name(this->avFormatContext->streams[audioStreamIndex]->codecpar->codec_id);
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "No decoder found for the " + codecName + " codec."));
 		}

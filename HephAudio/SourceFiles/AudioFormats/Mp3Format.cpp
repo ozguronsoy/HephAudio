@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer Mp3Format::Extensions()
+		std::string Mp3Format::Extensions()
 		{
-			return ".mp3";
+			return "mp3";
 		}
 		bool Mp3Format::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -44,7 +44,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool Mp3Format::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite) 
+		bool Mp3Format::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite) 
 		{
 			try
 			{

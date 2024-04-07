@@ -2,7 +2,7 @@
 #if defined(HEPHAUDIO_USE_FFMPEG)
 #include "HephAudioShared.h"
 #include "AudioFormatInfo.h"
-#include "StringBuffer.h"
+#include <string>
 
 extern "C"
 {
@@ -42,7 +42,7 @@ extern "C"
 
 namespace HephAudio
 {
-	inline HephCommon::StringBuffer FFmpegGetErrorMessage(int errorCode)
+	inline std::string FFmpegGetErrorMessage(int errorCode)
 	{
 		char errorMessage[AV_ERROR_MAX_STRING_SIZE]{ };
 		if (av_strerror(errorCode, errorMessage, AV_ERROR_MAX_STRING_SIZE) < 0)
@@ -161,9 +161,25 @@ namespace HephAudio
 		AudioChannelLayout audioChannelLayout;
 
 		audioChannelLayout.count = avChannelLayout.nb_channels;
-		
+
 		uint32_t avChMask = (uint32_t)avChannelLayout.u.mask;
 		audioChannelLayout.mask = (AudioChannelMask)avChMask;
+
+		// some formats like WAV and AIFF do not set mono and stereo masks
+		if (audioChannelLayout.mask == AudioChannelMask::Unknown)
+		{
+			switch (audioChannelLayout.count)
+			{
+			case 1:
+				audioChannelLayout.mask = HEPHAUDIO_CH_MASK_MONO;
+				break;
+			case 2:
+				audioChannelLayout.mask = HEPHAUDIO_CH_MASK_STEREO;
+				break;
+			default:
+				break;
+			}
+		}
 
 		return audioChannelLayout;
 	}

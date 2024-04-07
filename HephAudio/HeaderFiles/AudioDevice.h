@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "StringBuffer.h"
+#include <string>
 #include <cinttypes>
 
 namespace HephAudio
@@ -47,8 +47,8 @@ namespace HephAudio
 
 	struct AudioDevice
 	{
-		HephCommon::StringBuffer id;
-		HephCommon::StringBuffer name;
+		std::string id;
+		std::string name;
 		AudioDeviceType type;
 		bool isDefault;
 		AudioDevice() : id(""), name(""), type(AudioDeviceType::Render), isDefault(false) {}

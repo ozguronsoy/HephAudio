@@ -1,6 +1,6 @@
 #pragma once
 #include "HephCommonShared.h"
-#include "StringBuffer.h"
+#include <string>
 #include <memory>
 
 namespace HephCommon
@@ -17,24 +17,24 @@ namespace HephCommon
 	private:
 		FILE* pFile;
 		uint64_t fileSize;
-		StringBuffer filePath;
+		std::string filePath;
 	public:
 		File();
-		File(const StringBuffer& filePath, FileOpenMode openMode);
+		File(const std::string& filePath, FileOpenMode openMode);
 		File(const File&) = delete;
 		File(File&& rhs) noexcept;
 		~File();
 		File& operator=(const File&) = delete;
 		File& operator=(File&& rhs) noexcept;
-		void Open(const StringBuffer& filePath, FileOpenMode openMode);
+		void Open(const std::string& filePath, FileOpenMode openMode);
 		void Close();
 		void Flush();
 		bool IsOpen() const;
 		FILE* GetInternalFilePtr() const;
 		uint64_t FileSize() const;
-		StringBuffer FilePath() const;
-		StringBuffer FileName() const;
-		StringBuffer FileExtension() const;
+		std::string FilePath() const;
+		std::string FileName() const;
+		std::string FileExtension() const;
 		uint64_t GetOffset() const;
 		void SetOffset(uint64_t offset) const;
 		void IncreaseOffset(uint64_t offset) const;
@@ -46,9 +46,9 @@ namespace HephCommon
 	private:
 		void Open(FileOpenMode openMode);
 	public:
-		static bool FileExists(StringBuffer filePath);
-		static StringBuffer GetFileName(const StringBuffer& filePath);
-		static StringBuffer GetFileExtension(const StringBuffer& filePath);
+		static bool FileExists(const std::string& filePath);
+		static std::string GetFileName(const std::string& filePath);
+		static std::string GetFileExtension(const std::string& filePath);
 	};
 }
 constexpr HephCommon::FileOpenMode operator|(const HephCommon::FileOpenMode& lhs, const HephCommon::FileOpenMode& rhs)

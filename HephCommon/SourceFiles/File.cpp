@@ -6,10 +6,10 @@
 
 namespace HephCommon
 {
-	File::File() : pFile(nullptr), fileSize(0), filePath(nullptr) { }
-	File::File(const StringBuffer& filePath, FileOpenMode openMode) : pFile(nullptr), fileSize(0), filePath(filePath)
+	File::File() : pFile(nullptr), fileSize(0), filePath("") { }
+	File::File(const std::string& filePath, FileOpenMode openMode) : pFile(nullptr), fileSize(0), filePath(filePath)
 	{
-		if (this->filePath != nullptr && this->filePath != "" && this->filePath != L"")
+		if (this->filePath != "")
 		{
 			this->Open(openMode);
 			if (this->pFile == nullptr)
@@ -26,7 +26,7 @@ namespace HephCommon
 	{
 		rhs.pFile = nullptr;
 		rhs.fileSize = 0;
-		rhs.filePath = nullptr;
+		rhs.filePath = "";
 	}
 	File::~File()
 	{
@@ -42,14 +42,14 @@ namespace HephCommon
 
 			rhs.pFile = nullptr;
 			rhs.fileSize = 0;
-			rhs.filePath = nullptr;
+			rhs.filePath = "";
 		}
 
 		return *this;
 	}
-	void File::Open(const StringBuffer& filePath, FileOpenMode openMode)
+	void File::Open(const std::string& filePath, FileOpenMode openMode)
 	{
-		if (this->pFile == nullptr)
+		if (this->pFile == nullptr && filePath != "")
 		{
 			this->filePath = filePath;
 			this->Open(openMode);
@@ -90,15 +90,15 @@ namespace HephCommon
 	{
 		return this->fileSize;
 	}
-	StringBuffer File::FilePath() const
+	std::string File::FilePath() const
 	{
 		return this->filePath;
 	}
-	StringBuffer File::FileName() const
+	std::string File::FileName() const
 	{
 		return File::GetFileName(this->filePath);
 	}
-	StringBuffer File::FileExtension() const
+	std::string File::FileExtension() const
 	{
 		return File::GetFileExtension(this->filePath);
 	}
@@ -151,7 +151,7 @@ namespace HephCommon
 	}
 	void File::Open(FileOpenMode openMode)
 	{
-		StringBuffer strOpenMode = "";
+		std::string strOpenMode = "";
 		switch (openMode)
 		{
 		case FileOpenMode::Read:
@@ -178,11 +178,11 @@ namespace HephCommon
 		default:
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "File::File", "Invalid mode."));
 		}
-		this->pFile = fopen(this->filePath.fc_str(), strOpenMode.fc_str());
+		this->pFile = fopen(this->filePath.c_str(), strOpenMode.c_str());
 	}
-	bool File::FileExists(StringBuffer filePath)
+	bool File::FileExists(const std::string& filePath)
 	{
-		FILE* pFile = fopen(filePath.fc_str(), "rb");
+		FILE* pFile = fopen(filePath.c_str(), "rb");
 		if (pFile != nullptr)
 		{
 			fclose(pFile);
@@ -190,18 +190,19 @@ namespace HephCommon
 		}
 		return false;
 	}
-	StringBuffer File::GetFileName(const StringBuffer& filePath)
+	std::string File::GetFileName(const std::string& filePath)
 	{
-#if defined(__ANDROID__) || defined(__linux__) || defined(__APPLE__)
-		std::vector<StringBuffer> sfp = filePath.Split('/');
+#if defined(_WIN32)
+		constexpr char delimiter = '\\';
 #else
-		std::vector<StringBuffer> sfp = filePath.Split('\\');
+		constexpr char delimiter = '/';
 #endif
-		return sfp.at(sfp.size() - 1);
+		const size_t index = filePath.find_last_of(delimiter);
+		return index == std::string::npos ? filePath : filePath.substr(index + 1);
 	}
-	StringBuffer File::GetFileExtension(const StringBuffer& filePath)
+	std::string File::GetFileExtension(const std::string& filePath)
 	{
-		std::vector<StringBuffer> sfp = filePath.Split('.');
-		return '.' + sfp.at(sfp.size() - 1);
+		const size_t index = filePath.find_last_of('.');
+		return index == std::string::npos ? filePath : filePath.substr(index + 1);
 	}
 }

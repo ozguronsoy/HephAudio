@@ -4,6 +4,7 @@
 #include "File.h"
 #include "ConsoleLogger.h"
 #include "StopWatch.h"
+#include "StringHelpers.h"
 #include <unistd.h>
 
 #define SND_OK 0
@@ -60,7 +61,7 @@ namespace HephAudio
 				snd_pcm_close(capturePcm);
 			}
 
-			HEPHAUDIO_LOG("LinuxAudio destructed in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("LinuxAudio destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::SetMasterVolume(heph_float volume)
 		{
@@ -68,7 +69,7 @@ namespace HephAudio
 			{
 				snd_mixer_t* mixer;
 				int result;
-				const StringBuffer cardID = renderDeviceId == "default" ? "hw:0" : ("hw:" + renderDeviceId.Split(',')[0].Split(':')[1]);
+				const std::string cardID = renderDeviceId == "default" ? "hw:0" : ("hw:" + StringHelpers::Split(StringHelpers::Split(renderDeviceId, ",")[0], ":")[1]);
 
 				LINUX_EXCPT(snd_mixer_open(&mixer, 0), this, "LinuxAudio::SetMasterVolume", "Failed to open the mixer.");
 				LINUX_EXCPT(snd_mixer_attach(mixer, cardID.c_str()), this, "LinuxAudio::SetMasterVolume", "Failed to open the mixer.");
@@ -98,7 +99,7 @@ namespace HephAudio
 				snd_mixer_t* mixer;
 				int result;
 				long value;
-				const StringBuffer cardID = renderDeviceId == "default" ? "hw:0" : ("hw:" + renderDeviceId.Split(',')[0].Split(':')[1]);
+				const std::string cardID = renderDeviceId == "default" ? "hw:0" : ("hw:" + StringHelpers::Split(StringHelpers::Split(renderDeviceId, ",")[0], ":")[1]);
 
 				LINUX_EXCPT(snd_mixer_open(&mixer, 0), this, "LinuxAudio::GetMasterVolume", "Failed to open the mixer.");
 				LINUX_EXCPT(snd_mixer_attach(mixer, cardID.c_str()), this, "LinuxAudio::GetMasterVolume", "Failed to open the mixer.");
@@ -127,7 +128,7 @@ namespace HephAudio
 		void LinuxAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : (char*)("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			int result;
 			snd_pcm_hw_params_t* pcmHwParams;
@@ -153,7 +154,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&LinuxAudio::RenderData, this);
 
-			HEPHAUDIO_LOG("Render initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::StopRendering()
 		{
@@ -173,7 +174,7 @@ namespace HephAudio
 		void LinuxAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
 			HEPHAUDIO_STOPWATCH_RESET;
-			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : (char*)("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
+			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			int result;
 			snd_pcm_hw_params_t* pcmHwParams;
@@ -198,7 +199,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&LinuxAudio::CaptureData, this);
 
-			HEPHAUDIO_LOG("Capture initialized in " + HephCommon::StringBuffer::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::StopCapturing()
 		{
@@ -230,7 +231,7 @@ namespace HephAudio
 			{
 				if (snd_card_load(cardID)) // check if the card is available
 				{
-					StringBuffer cardName = "hw:" + StringBuffer::ToString(cardID);
+					std::string cardName = "hw:" + StringHelpers::ToString(cardID);
 					snd_ctl_t* ctl;
 
 					LINUX_ENUMERATE_DEVICE_EXCPT(snd_ctl_open(&ctl, cardName.c_str(), SND_CTL_READONLY), this, "LinuxAudio::EnumerateAudioDevices", "An error occurred while opening the card controls.");
@@ -247,7 +248,7 @@ namespace HephAudio
 							if (snd_ctl_pcm_info(ctl, pcmInfo) == SND_OK)
 							{
 								AudioDevice device;
-								device.id = "plughw:" + StringBuffer::ToString(cardID) + ',' + StringBuffer::ToString(deviceID);
+								device.id = "plughw:" + StringHelpers::ToString(cardID) + ',' + StringHelpers::ToString(deviceID);
 								device.name = cardName + " " + snd_pcm_info_get_name(pcmInfo);
 								device.type = i == 1 ? AudioDeviceType::Capture : AudioDeviceType::Render;
 								device.isDefault = (cardID == 0 && deviceID == 0); // "plughw:0,0" is the default device

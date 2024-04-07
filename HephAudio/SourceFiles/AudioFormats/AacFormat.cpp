@@ -8,9 +8,9 @@ namespace HephAudio
 {
 	namespace FileFormats
 	{
-		StringBuffer AacFormat::Extensions()
+		std::string AacFormat::Extensions()
 		{
-			return ".aac .adts";
+			return "aac adts";
 		}
 		bool AacFormat::VerifySignature(const HephCommon::File& audioFile)
 		{
@@ -44,7 +44,7 @@ namespace HephAudio
 			}
 			return decodedBuffer;
 		}
-		bool AacFormat::SaveToFile(const HephCommon::StringBuffer& filePath, AudioBuffer& buffer, bool overwrite)
+		bool AacFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
 			try
 			{

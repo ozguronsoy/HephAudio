@@ -3,7 +3,7 @@
 #include "HephAudioShared.h"
 #include "FFmpegAudioShared.h"
 #include "AudioBuffer.h"
-#include "StringBuffer.h"
+#include <string>
 
 namespace HephAudio
 {
@@ -12,7 +12,7 @@ namespace HephAudio
 	private:
 		static constexpr size_t AUDIO_STREAM_INDEX_NOT_FOUND = -1;
 	private:
-		HephCommon::StringBuffer audioFilePath;
+		std::string audioFilePath;
 		size_t fileDuration_frame;
 		size_t audioStreamIndex;
 		int64_t firstPacketPts;
@@ -23,13 +23,13 @@ namespace HephAudio
 		AVPacket* avPacket;
 	public:
 		FFmpegAudioDecoder();
-		FFmpegAudioDecoder(const HephCommon::StringBuffer& audioFilePath);
+		FFmpegAudioDecoder(const std::string& audioFilePath);
 		FFmpegAudioDecoder(FFmpegAudioDecoder&& rhs) noexcept;
 		FFmpegAudioDecoder(const FFmpegAudioDecoder&) = delete;
 		~FFmpegAudioDecoder();
 		FFmpegAudioDecoder& operator=(const FFmpegAudioDecoder&) = delete;
 		FFmpegAudioDecoder& operator=(FFmpegAudioDecoder&& rhs) noexcept;
-		void ChangeFile(const HephCommon::StringBuffer& newAudioFilePath);
+		void ChangeFile(const std::string& newAudioFilePath);
 		void CloseFile();
 		bool IsFileOpen() const;
 		AudioFormatInfo GetOutputFormatInfo() const;
@@ -39,7 +39,7 @@ namespace HephAudio
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
 		AudioBuffer DecodeWholePackets(size_t minFrameCount);
 	private:
-		void OpenFile(const HephCommon::StringBuffer& audioFilePath);
+		void OpenFile(const std::string& audioFilePath);
 		int SeekFrame(size_t& frameIndex);
 	};
 }
