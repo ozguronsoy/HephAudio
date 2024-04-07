@@ -31,4 +31,4 @@ Finds the codec with the provided tag.
 static void RegisterCodec(IAudioCodec* pNewCodec);
 ```
 Registers the provided codec implementation. If an implementation for that codec is already registered, removes it first.
-- **pNewCodec:** Pointer to the new [IAudioCodec](/docs/HephAudio/AudioCodecs/IAudioCodec.md) instance.
+- **pNewCodec:** Pointer to the new [IAudioCodec](/docs/HephAudio/AudioCodecs/IAudioCodec.md) instance. This instance must live until the end of the program.
