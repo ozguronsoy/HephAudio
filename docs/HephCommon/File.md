@@ -202,7 +202,7 @@ Writes data to the file.
 <br><br><br><br>
 
 ```c++
-static bool FileExists(std::string filePath);
+static bool FileExists(const std::string& filePath);
 ```
 Checks whether a file exists at the provided path.
 - **filePath:** Path that will be checked.
