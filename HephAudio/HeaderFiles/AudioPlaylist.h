@@ -8,7 +8,7 @@
 #include "EventResult.h"
 #include <vector>
 
-#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY "audio_playlist"_sb
+#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY HephCommon::StringBuffer("audio_playlist")
 
 namespace HephAudio
 {

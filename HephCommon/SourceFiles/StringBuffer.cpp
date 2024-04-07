@@ -2098,19 +2098,3 @@ HephCommon::StringBuffer operator*(size_t lhs, const HephCommon::StringBuffer& r
 {
 	return rhs * lhs;
 }
-HephCommon::StringBuffer operator""_sb(char c)
-{
-	return (HephCommon::StringBuffer)c;
-}
-HephCommon::StringBuffer operator""_sb(wchar_t wc)
-{
-	return (HephCommon::StringBuffer)wc;
-}
-HephCommon::StringBuffer operator""_sb(const char* str, size_t)
-{
-	return (HephCommon::StringBuffer)str;
-}
-HephCommon::StringBuffer operator""_sb(const wchar_t* wstr, size_t)
-{
-	return (HephCommon::StringBuffer)wstr;
-}

@@ -9,7 +9,7 @@
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "File.h"
 
-#define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY "audio_stream"_sb
+#define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY HephCommon::StringBuffer("audio_stream")
 
 namespace HephAudio
 {

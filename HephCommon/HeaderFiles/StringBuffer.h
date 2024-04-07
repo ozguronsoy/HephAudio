@@ -209,7 +209,3 @@ HephCommon::StringBuffer operator+(wchar_t lhs, const HephCommon::StringBuffer& 
 HephCommon::StringBuffer operator+(const char* const lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator+(const wchar_t* const lhs, const HephCommon::StringBuffer& rhs);
 HephCommon::StringBuffer operator*(size_t lhs, const HephCommon::StringBuffer& rhs);
-HephCommon::StringBuffer operator""_sb(char c);
-HephCommon::StringBuffer operator""_sb(wchar_t wc);
-HephCommon::StringBuffer operator""_sb(const char* str, size_t);
-HephCommon::StringBuffer operator""_sb(const wchar_t* wstr, size_t);
