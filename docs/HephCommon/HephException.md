@@ -52,6 +52,7 @@ Raises the ``HephException::OnException`` event first, then throws.
 ```c++
 struct HephException final
 {
+    static HephException DefaultException;
     static Event OnException;
     int64_t errorCode;
     std::string method;
@@ -60,6 +61,11 @@ struct HephException final
     std::string externalMessage;
 }
 ```
+
+- **DefaultException**
+<br><br>
+Exception instance that will be returned when ``LastException`` and ``GetException`` methods fail.
+<br><br>
 
 - **OnException**
 <br><br>
@@ -103,18 +109,18 @@ Creates an instance and initializes it with the default values.
 
 ```c++
 HephException(int64_t errorCode,
-              std::string method,
-              std::string message);
+              const std::string& method,
+              const std::string& message);
 ```
 Creates an instance and initializes it with the provided values.
 <br><br><br><br>
 
 ```c++
 HephException(int64_t errorCode,
-              std::string method,
-              std::string message,
-              std::string externalSource,
-              std::string externalMessage);
+              const std::string& method,
+              const std::string& message,
+              const std::string& externalSource,
+              const std::string& externalMessage);
 ```
 Creates an instance and initializes it with the provided values.
 <br><br><br><br>
