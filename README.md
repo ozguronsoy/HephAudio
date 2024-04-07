@@ -182,6 +182,7 @@ In this example, we will try to open a non-existing file. This is going to throw
 ```c++
 #include <HephException.h>
 #include <ConsoleLogger.h>
+#include <StringHelpers.h>
 
 using namespace HephCommon;
 
