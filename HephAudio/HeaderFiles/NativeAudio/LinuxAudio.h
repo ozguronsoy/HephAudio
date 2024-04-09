@@ -32,9 +32,10 @@ namespace HephAudio
 			void StopCapturing() override;
 		private:
 			bool EnumerateAudioDevices() override;
-			void RenderData();
-			void CaptureData();
+			void RenderData(useconds_t bufferDuration_us);
+			void CaptureData(useconds_t bufferDuration_us);
 			snd_pcm_format_t ToPcmFormat(const AudioFormatInfo& format) const;
+			snd_pcm_chmap* ToPcmChmap(const AudioFormatInfo& format) const;
 		};
 	}
 }

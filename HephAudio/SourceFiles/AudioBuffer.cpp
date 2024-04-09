@@ -833,7 +833,7 @@ namespace HephAudio
 	}
 	heph_audio_sample AudioBuffer::Min() const
 	{
-		heph_audio_sample minSample = INT32_MAX;
+		heph_audio_sample minSample = HEPH_AUDIO_SAMPLE_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
@@ -849,7 +849,7 @@ namespace HephAudio
 	}
 	heph_audio_sample AudioBuffer::Max() const
 	{
-		heph_audio_sample maxSample = INT32_MIN;
+		heph_audio_sample maxSample = HEPH_AUDIO_SAMPLE_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
@@ -865,7 +865,7 @@ namespace HephAudio
 	}
 	heph_audio_sample AudioBuffer::AbsMax() const
 	{
-		heph_audio_sample maxSample = INT32_MIN;
+		heph_audio_sample maxSample = HEPH_AUDIO_SAMPLE_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)

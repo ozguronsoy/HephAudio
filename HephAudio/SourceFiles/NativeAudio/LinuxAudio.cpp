@@ -130,9 +130,11 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
+			// adjust these if buffer overrun occurs constantly.
+			constexpr useconds_t latency = 10000;
+			constexpr useconds_t bufferDuration = latency / 2;
+
 			int result;
-			snd_pcm_hw_params_t* pcmHwParams;
-			snd_pcm_sw_params_t* pcmSwParams;
 
 			StopRendering();
 
@@ -141,18 +143,21 @@ namespace HephAudio
 
 			LINUX_EXCPT(snd_pcm_open(&renderPcm, renderDeviceId.c_str(), SND_PCM_STREAM_PLAYBACK, 0), this, "LinuxAudio::InitializeRender", "An error occurred while opening pcm.");
 
-			LINUX_EXCPT(snd_pcm_hw_params_malloc(&pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while allocating space for pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_any(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while reading the pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_access(renderPcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeRender", "An error occurred while setting access to the pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_format(renderPcm, pcmHwParams, ToPcmFormat(renderFormat)), this, "LinuxAudio::InitializeRender", "Unsupported bps.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_channels(renderPcm, pcmHwParams, renderFormat.channelLayout.count), this, "LinuxAudio::InitializeRender", "Unsupported channel count.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_rate(renderPcm, pcmHwParams, renderFormat.sampleRate, 0), this, "LinuxAudio::InitializeRender", "Unsupported sample rate.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(renderPcm, pcmHwParams, renderFormat.sampleRate * 0.5), this, "LinuxAudio::InitializeRender", "An error occurred while setting the pcm buffer size.");
-			LINUX_EXCPT(snd_pcm_hw_params(renderPcm, pcmHwParams), this, "LinuxAudio::InitializeRender", "An error occurred while configuring the pcm hw params.");
-			snd_pcm_hw_params_free(pcmHwParams);
+			LINUX_EXCPT(snd_pcm_set_params(renderPcm,
+				ToPcmFormat(renderFormat),
+				SND_PCM_ACCESS_RW_INTERLEAVED,
+				renderFormat.channelLayout.count,
+				renderFormat.sampleRate,
+				1,
+				latency),
+				this, "LinuxAudio::InitializeRender", "An error occurred while setting the snd_pcm params");
+
+			snd_pcm_chmap* pcm_chmap = ToPcmChmap(renderFormat);
+			LINUX_EXCPT(snd_pcm_set_chmap(renderPcm, pcm_chmap), this, "LinuxAudio::InitializeRender", "An error occurred while setting the channel mapping");
+			free(pcm_chmap);
 
 			isRenderInitialized = true;
-			renderThread = std::thread(&LinuxAudio::RenderData, this);
+			renderThread = std::thread(&LinuxAudio::RenderData, this, bufferDuration);
 
 			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
@@ -176,8 +181,11 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
+			// adjust these if buffer underrun occurs constantly.
+			constexpr useconds_t latency = 10000;
+			constexpr useconds_t bufferDuration = latency / 2;
+
 			int result;
-			snd_pcm_hw_params_t* pcmHwParams;
 
 			StopCapturing();
 
@@ -186,18 +194,21 @@ namespace HephAudio
 
 			LINUX_EXCPT(snd_pcm_open(&capturePcm, captureDeviceId.c_str(), SND_PCM_STREAM_CAPTURE, 0), this, "LinuxAudio::InitializeCapture", "An error occurred while opening pcm.");
 
-			LINUX_EXCPT(snd_pcm_hw_params_malloc(&pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while allocating space for pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_any(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while reading the pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_access(capturePcm, pcmHwParams, SND_PCM_ACCESS_RW_INTERLEAVED), this, "LinuxAudio::InitializeCapture", "An error occurred while setting access to the pcm hw params.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_format(capturePcm, pcmHwParams, ToPcmFormat(captureFormat)), this, "LinuxAudio::InitializeCapture", "Unsupported bps.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_channels(capturePcm, pcmHwParams, captureFormat.channelLayout.count), this, "LinuxAudio::InitializeCapture", "Unsupported channel count.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_rate(capturePcm, pcmHwParams, captureFormat.sampleRate, 0), this, "LinuxAudio::InitializeCapture", "Unsupported sample rate.");
-			LINUX_EXCPT(snd_pcm_hw_params_set_buffer_size(capturePcm, pcmHwParams, captureFormat.sampleRate * 0.1), this, "LinuxAudio::InitializeCapture", "An error occurred while setting the pcm buffer size.");
-			LINUX_EXCPT(snd_pcm_hw_params(capturePcm, pcmHwParams), this, "LinuxAudio::InitializeCapture", "An error occurred while configuring the pcm hw params.");
-			snd_pcm_hw_params_free(pcmHwParams);
+			LINUX_EXCPT(snd_pcm_set_params(capturePcm,
+				ToPcmFormat(captureFormat),
+				SND_PCM_ACCESS_RW_INTERLEAVED,
+				captureFormat.channelLayout.count,
+				captureFormat.sampleRate,
+				1,
+				latency),
+				this, "LinuxAudio::InitializeCapture", "An error occurred while setting the snd_pcm params");
+
+			snd_pcm_chmap* pcm_chmap = ToPcmChmap(captureFormat);
+			LINUX_EXCPT(snd_pcm_set_chmap(capturePcm, pcm_chmap), this, "LinuxAudio::InitializeCapture", "An error occurred while setting the channel mapping");
+			free(pcm_chmap);
 
 			isCaptureInitialized = true;
-			captureThread = std::thread(&LinuxAudio::CaptureData, this);
+			captureThread = std::thread(&LinuxAudio::CaptureData, this, bufferDuration);
 
 			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
@@ -269,66 +280,73 @@ namespace HephAudio
 
 			return NativeAudio::DEVICE_ENUMERATION_SUCCESS;
 		}
-		void LinuxAudio::RenderData()
+		void LinuxAudio::RenderData(useconds_t bufferDuration_us)
 		{
-			AudioBuffer buffer(renderFormat.sampleRate * 0.01f, renderFormat);
-			snd_pcm_uframes_t availableFrameCount;
+			AudioBuffer buffer(renderFormat.sampleRate * (bufferDuration_us / 1e6f), renderFormat);
+			snd_pcm_sframes_t availableFrameCount;
+			snd_pcm_sframes_t writtenFrameCount;
 			int result;
 
 			LINUX_RENDER_CAPTURE_EXCPT(snd_pcm_start(renderPcm), this, "LinuxAudio", "Failed to start rendering.");
-
-			{
-				while (snd_pcm_state(renderPcm) != SND_PCM_STATE_RUNNING);
-
-				const size_t tempFrameCount = snd_pcm_avail_update(renderPcm);
-				const size_t tempSize = tempFrameCount * renderFormat.FrameSize();
-				void* pTempData = malloc(tempSize);
-				if (pTempData == nullptr)
-				{
-					RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "LinuxAudio", "Insufficient memory."));
-					return;
-				}
-				memset(pTempData, 0, tempSize);
-
-				snd_pcm_writei(renderPcm, pTempData, tempFrameCount);
-				free(pTempData);
-				usleep(5000);
-			}
-
+			while (snd_pcm_state(renderPcm) != SND_PCM_STATE_RUNNING);
 			while (!disposing && isRenderInitialized)
 			{
 				availableFrameCount = snd_pcm_avail_update(renderPcm);
 				if (availableFrameCount >= buffer.FrameCount())
 				{
 					Mix(buffer, buffer.FrameCount());
-					snd_pcm_writei(renderPcm, buffer.Begin(), buffer.FrameCount());
+					writtenFrameCount = snd_pcm_writei(renderPcm, buffer.Begin(), buffer.FrameCount());
+					if (writtenFrameCount < 0)
+					{
+						HEPHAUDIO_LOG("An error occurred while rendering, attempting to recover.", HEPH_CL_WARNING);
+						result = snd_pcm_recover(renderPcm, writtenFrameCount, 1);
+						if (result < 0)
+						{
+							LINUX_RENDER_CAPTURE_EXCPT(result, this, "LinuxAudio", "Failed to recover from the render error.");
+						}
+					}
 				}
-				usleep(5000);
+				usleep(bufferDuration_us / 2);
 			}
 		}
-		void LinuxAudio::CaptureData()
+		void LinuxAudio::CaptureData(useconds_t bufferDuration_us)
 		{
-			snd_pcm_uframes_t availableFrameCount;
+			const snd_pcm_sframes_t bufferDuration_frame = captureFormat.sampleRate * (bufferDuration_us / 1e6f);
+			snd_pcm_sframes_t availableFrameCount;
+			snd_pcm_sframes_t readFrameCount;
 			int result;
 
 			LINUX_RENDER_CAPTURE_EXCPT(snd_pcm_start(capturePcm), this, "LinuxAudio", "Failed to start capturing.");
+			while (snd_pcm_state(capturePcm) != SND_PCM_STATE_RUNNING);
 			while (!disposing && isCaptureInitialized)
 			{
 				if (!isCapturePaused)
 				{
 					availableFrameCount = snd_pcm_avail_update(capturePcm);
-					if (availableFrameCount > 0)
+					if (availableFrameCount >= bufferDuration_frame)
 					{
-						AudioBuffer buffer(availableFrameCount, captureFormat);
-						snd_pcm_readi(capturePcm, buffer.Begin(), buffer.FrameCount());
-
-						if (OnCapture)
+						AudioBuffer buffer(bufferDuration_frame, captureFormat);
+						readFrameCount = snd_pcm_readi(capturePcm, buffer.Begin(), buffer.FrameCount());
+						if (readFrameCount < 0)
 						{
-							AudioProcessor::ConvertToInnerFormat(buffer);
-							AudioCaptureEventArgs captureEventArgs(this, buffer);
-							OnCapture(&captureEventArgs, nullptr);
+							HEPHAUDIO_LOG("An error occurred while capturing, attempting to recover.", HEPH_CL_WARNING);
+							result = snd_pcm_recover(capturePcm, readFrameCount, 1);
+							if (result < 0)
+							{
+								LINUX_RENDER_CAPTURE_EXCPT(result, this, "LinuxAudio", "Failed to recover from the capture error.");
+							}
+						}
+						else
+						{
+							if (OnCapture)
+							{
+								AudioProcessor::ConvertToInnerFormat(buffer);
+								AudioCaptureEventArgs captureEventArgs(this, buffer);
+								OnCapture(&captureEventArgs, nullptr);
+							}
 						}
 					}
+					usleep(bufferDuration_us / 2);
 				}
 			}
 		}
@@ -354,6 +372,78 @@ namespace HephAudio
 					return snd_pcm_format_t::SND_PCM_FORMAT_S16;
 				}
 			}
+		}
+		snd_pcm_chmap* LinuxAudio::ToPcmChmap(const AudioFormatInfo& format) const
+		{
+			snd_pcm_chmap* pcm_chmap = (snd_pcm_chmap*)malloc(sizeof(int) * (format.channelLayout.count + 1));
+			pcm_chmap->channels = renderFormat.channelLayout.count;
+
+			const std::vector<AudioChannelMask> channelMapping = AudioChannelLayout::GetChannelMapping(renderFormat.channelLayout);
+			for (size_t i = 0; i < channelMapping.size(); i++)
+			{
+				switch (channelMapping[i])
+				{
+				case AudioChannelMask::FrontLeft:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_FL;
+					break;
+				case AudioChannelMask::FrontRight:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_FR;
+					break;
+				case AudioChannelMask::FrontCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_FC;
+					break;
+				case AudioChannelMask::LowFrequency:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_LFE;
+					break;
+				case AudioChannelMask::BackLeft:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_RL;
+					break;
+				case AudioChannelMask::BackRight:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_RR;
+					break;
+				case AudioChannelMask::FrontLeftOfCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_FLC;
+					break;
+				case AudioChannelMask::FrontRightOfCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_FRC;
+					break;
+				case AudioChannelMask::BackCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_RC;
+					break;
+				case AudioChannelMask::SideLeft:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_SL;
+					break;
+				case AudioChannelMask::SideRight:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_SR;
+					break;
+				case AudioChannelMask::TopCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TC;
+					break;
+				case AudioChannelMask::TopFrontLeft:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TFL;
+					break;
+				case AudioChannelMask::TopFrontCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TFC;
+					break;
+				case AudioChannelMask::TopFrontRight:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TFR;
+					break;
+				case AudioChannelMask::TopBackLeft:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TRL;
+					break;
+				case AudioChannelMask::TopBackCenter:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TRC;
+					break;
+				case AudioChannelMask::TopBackRight:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_TRR;
+					break;
+				default:
+					pcm_chmap->pos[i] = snd_pcm_chmap_position::SND_CHMAP_UNKNOWN;
+					break;
+				}
+			}
+
+			return pcm_chmap;
 		}
 	}
 }
