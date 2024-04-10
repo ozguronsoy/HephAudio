@@ -35,15 +35,15 @@ int main()
     Audio audio;
     
     // initialize rendering with the default device
-    // param1: # of channels
+    // param1: channel layout
     // param2: sample rate
-    audio.InitializeRender(2, 48000);
+    audio.InitializeRender(HEPHAUDIO_CH_LAYOUT_STEREO, 48000);
 
     // play a file
     AudioObject* pAudioObject = audio.Play("some_path/some_file.wav");
 
     // convert the audio data to the render format before rendering
-    // this will prevent distortion due to sample rate or # of channels mismatch.
+    // this will prevent distortion due to sample rate or channel layout mismatch.
     // not necessary when using Load instead of Play
     pAudioObject->OnRender = HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT;
 
@@ -87,9 +87,9 @@ int main()
     Audio audio;
     
     // initialize rendering with the default device
-    // param1: # of channels
+    // param1: channel layout
     // param2: sample rate
-    audio.InitializeRender(2, 48000);
+    audio.InitializeRender(HEPHAUDIO_CH_LAYOUT_STEREO, 48000);
 
     AudioStream audioStream(audio, "some_path/some_file.wav");
     audioStream.Start();
