@@ -30,9 +30,8 @@ int main()
 {
 	Audio audio;
 
-	// 2 -> # of channels
 	// 48000 -> 48 kHz sampling rate.
-	audio.InitializeRender(2, 48000);
+	audio.InitializeRender(HEPHAUDIO_CH_LAYOUT_STEREO, 48000);
 
 	audio.Play("some_path\\some_file.wav");
 
@@ -69,7 +68,6 @@ Sample code for recording audio for 5 seconds, saving it to a file, then playing
 #include <Audio.h>
 
 #define SAMPLE_RATE 48000
-#define NUM_OF_CHANNELS 2
 
 using namespace HephCommon;
 using namespace HephAudio;
@@ -80,6 +78,7 @@ void RecordAudio(const EventParams& eventParams) // the event handler method
 {
 	AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)eventParams.pArgs; // cast the args to capture event args
 
+	AudioProcessor::ConvertToInnerFormat(pCaptureArgs->captureBuffer);
 	if (recordedAudio == nullptr)
 	{
 		// first captured data
@@ -100,7 +99,7 @@ int main()
 	audio.SetOnCaptureHandler(&RecordAudio);
 
 	// initialize with default device
-	audio.InitializeCapture(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
+	audio.InitializeCapture(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, SAMPLE_RATE));
 
 	// record for 5 seconds, then stop capturing
 	std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -112,7 +111,7 @@ int main()
 	recordedAudio.Empty(); // dispose of the unnecessary data
 
 	// play the recorded file.
-	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, NUM_OF_CHANNELS, 16, SAMPLE_RATE));
+	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, SAMPLE_RATE));
 	audio.Play("file_path\\fila_name.wav");
 
 	// prevent from exiting the app
@@ -155,7 +154,7 @@ using namespace HephAudio;
 int main()
 {
 	Audio audio;
-	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));
+	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000));
 
 	AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
 
