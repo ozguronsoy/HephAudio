@@ -391,9 +391,9 @@ If the buffer is expanded, new elements will be initialized to zero.
 <br><br><br><br>
 
 ```c++
-void Empty();
+void Release();
 ```
-Releases the resources and sets all of the fields to their default values.
+Releases the resources.
 <br><br><br><br>
 
 ```c++
