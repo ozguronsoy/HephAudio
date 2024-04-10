@@ -1,6 +1,5 @@
 #if defined(_WIN32)
 #include "NativeAudio/WinAudioMME.h"
-#include "AudioProcessor.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 #include <VersionHelpers.h>
@@ -462,7 +461,6 @@ namespace HephAudio
 					{
 						AudioBuffer buffer(pwhd->dwBufferLength / pAudio->captureFormat.FrameSize(), pAudio->captureFormat);
 						memcpy(buffer.Begin(), pwhd->lpData, pwhd->dwBufferLength);
-						AudioProcessor::ConvertToInnerFormat(buffer);
 						AudioCaptureEventArgs captureEventArgs(pAudio, buffer);
 						pAudio->OnCapture(&captureEventArgs, nullptr);
 					}

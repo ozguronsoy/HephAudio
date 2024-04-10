@@ -14,7 +14,6 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AacFormat.h" />
@@ -92,7 +91,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WmaFormat.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AacFormat.cpp" />

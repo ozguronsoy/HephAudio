@@ -1,6 +1,5 @@
 #if defined(__APPLE__)
 #include "NativeAudio/AppleAudio.h"
-#include "AudioProcessor.h"
 #include "File.h"
 #include "ConsoleLogger.h"
 #include "StopWatch.h"
@@ -478,7 +477,6 @@ namespace HephAudio
 					offset += indata->mBuffers[i].mDataByteSize;
 				}
 
-				AudioProcessor::ConvertToInnerFormat(buffer);
 				AudioCaptureEventArgs captureEventArgs(appleAudio, buffer);
 				appleAudio->OnCapture(&captureEventArgs, nullptr);
 			}

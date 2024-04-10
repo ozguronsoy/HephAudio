@@ -1,6 +1,5 @@
 #ifdef __ANDROID__
 #include "NativeAudio/AndroidAudioA.h"
-#include "AudioProcessor.h"
 #include "File.h"
 #include "HephMath.h"
 #include "StopWatch.h"
@@ -312,7 +311,6 @@ namespace HephAudio
 				if (OnCapture)
 				{
 					AudioBuffer tempBuffer = dataBuffer;
-					AudioProcessor::ConvertToInnerFormat(tempBuffer);
 					AudioCaptureEventArgs captureEventArgs(this, tempBuffer);
 					OnCapture(&captureEventArgs, nullptr);
 				}

@@ -1,6 +1,5 @@
 #ifdef _WIN32
 #include "NativeAudio/WinAudio.h"
-#include "AudioProcessor.h"
 #include "File.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
@@ -440,10 +439,9 @@ namespace HephAudio
 					{
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->GetBuffer(&captureBuffer, &nFramesAvailable, &flags, nullptr, nullptr), "WinAudio", "An error occurred whilst capturing the samples.");
 
-						AudioBuffer temp(nFramesAvailable, this->captureFormat);
-						memcpy(temp.Begin(), captureBuffer, temp.Size());
-						AudioProcessor::ConvertToInnerFormat(temp);
-						AudioCaptureEventArgs captureEventArgs(this, temp);
+						AudioBuffer buffer(nFramesAvailable, this->captureFormat);
+						memcpy(buffer.Begin(), captureBuffer, buffer.Size());
+						AudioCaptureEventArgs captureEventArgs(this, buffer);
 						this->OnCapture(&captureEventArgs, nullptr);
 
 						WINAUDIO_CAPTURE_THREAD_EXCPT(pCaptureClient->ReleaseBuffer(nFramesAvailable), "WinAudio", "An error occurred whilst capturing the samples.");

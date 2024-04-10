@@ -1,6 +1,5 @@
 #ifdef _WIN32
 #include "NativeAudio/WinAudioDS.h"
-#include "AudioProcessor.h"
 #include "File.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
@@ -307,8 +306,7 @@ namespace HephAudio
 			void* audioPtr1 = nullptr;
 			void* audioPtr2 = nullptr;
 			DWORD audioBytes1, audioBytes2, captureCursor, readCursor;
-			size_t nFramesToRead;
-			AudioBuffer dataBuffer;
+			size_t nFramesToRead, nBytesToRead;
 			HANDLE hEvents[notificationCount]{ nullptr };
 			DSBPOSITIONNOTIFY notifyInfos[notificationCount]{ 0 };
 			HRESULT hres;
@@ -329,7 +327,7 @@ namespace HephAudio
 			WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCapture->CreateCaptureBuffer(&bufferDesc, pDirectSoundCaptureBuffer.GetAddressOf(), nullptr), "WinAudioDS::InitializeCapture", "An error occurred whilst creating a capture buffer.");
 
 			nFramesToRead = this->captureFormat.sampleRate * bufferDuration_s;
-			dataBuffer = AudioBuffer(nFramesToRead, this->captureFormat);
+			nBytesToRead = nFramesToRead * this->captureFormat.FrameSize();
 
 			for (size_t i = 0; i < notificationCount; i++)
 			{
@@ -338,7 +336,7 @@ namespace HephAudio
 				{
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(E_FAIL, "WinAudioDS::InitializeCapture", "An error occurred whilst setting the capture event handles.");
 				}
-				notifyInfos[i].dwOffset = (i + 1) * dataBuffer.Size() - 1;
+				notifyInfos[i].dwOffset = (i + 1) * nBytesToRead - 1;
 				notifyInfos[i].hEventNotify = hEvents[i];
 			}
 			notifyInfos[notificationCount - 1].dwOffset = DSBPN_OFFSETSTOP;
@@ -369,17 +367,16 @@ namespace HephAudio
 					}
 
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->GetCurrentPosition(&captureCursor, &readCursor), "WinAudioDS", "An error occurred whilst capturing the samples.");
-					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Lock(readCursor, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, 0), "WinAudioDS", "An error occurred whilst capturing the samples.");
-					memcpy(dataBuffer.Begin(), audioPtr1, audioBytes1);
+					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Lock(readCursor, nBytesToRead, &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, 0), "WinAudioDS", "An error occurred whilst capturing the samples.");
+					AudioBuffer buffer(nFramesToRead, this->captureFormat);
+					memcpy(buffer.Begin(), audioPtr1, audioBytes1);
 					if (audioPtr2 != nullptr)
 					{
-						memcpy((uint8_t*)dataBuffer.Begin() + audioBytes1, audioPtr2, audioBytes2);
+						memcpy((uint8_t*)buffer.Begin() + audioBytes1, audioPtr2, audioBytes2);
 					}
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred whilst capturing the samples.");
 
-					AudioBuffer tempBuffer = dataBuffer;
-					AudioProcessor::ConvertToInnerFormat(tempBuffer);
-					AudioCaptureEventArgs captureEventArgs(this, tempBuffer);
+					AudioCaptureEventArgs captureEventArgs(this, buffer);
 					this->OnCapture(&captureEventArgs, nullptr);
 				}
 				else

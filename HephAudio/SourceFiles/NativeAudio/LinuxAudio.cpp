@@ -1,6 +1,5 @@
 #if defined(__linux__) && !defined(__ANDROID__)
 #include "NativeAudio/LinuxAudio.h"
-#include "AudioProcessor.h"
 #include "File.h"
 #include "ConsoleLogger.h"
 #include "StopWatch.h"
@@ -340,7 +339,6 @@ namespace HephAudio
 						{
 							if (OnCapture)
 							{
-								AudioProcessor::ConvertToInnerFormat(buffer);
 								AudioCaptureEventArgs captureEventArgs(this, buffer);
 								OnCapture(&captureEventArgs, nullptr);
 							}
