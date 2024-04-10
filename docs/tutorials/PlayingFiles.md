@@ -10,6 +10,7 @@ Playing files via ``Audio::Play`` method.
 #include <iostream>
 #include <Audio.h>
 #include <ConsoleLogger.h>
+#include <StringHelpers.h>
 
 using namespace HephCommon;
 using namespace HephAudio;
@@ -18,8 +19,8 @@ void HandleExceptions(const EventParams& eventParams)
 {
     const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
-    std::string exceptionString = "Error!\n" + ex.method + " (" + std::string::ToHexString(ex.errorCode) + ")\n" + ex.message;
-    if (!ex.externalMessage.IsNullOrEmpty())
+    std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
+    if (ex.externalMessage != "")
     {
 	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
     }
@@ -62,6 +63,7 @@ Playing files via ``AudioStream``.
 #include <Audio.h>
 #include <AudioStream.h>
 #include <ConsoleLogger.h>
+#include <StringHelpers.h>
 
 using namespace HephCommon;
 using namespace HephAudio;
@@ -70,8 +72,8 @@ void HandleExceptions(const EventParams& eventParams)
 {
     const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
-    std::string exceptionString = "Error!\n" + ex.method + " (" + std::string::ToHexString(ex.errorCode) + ")\n" + ex.message;
-    if (!ex.externalMessage.IsNullOrEmpty())
+    std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
+    if (ex.externalMessage != "")
     {
 	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
     }
