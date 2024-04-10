@@ -21,7 +21,7 @@ void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo)
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
         const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
-        for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++)
+        for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             buffer[i][j] *= volume;
         }
@@ -41,7 +41,7 @@ void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
         const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
-        for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++)
+        for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             const heph_float drySample = buffer[i][j];
             const heph_float wetSample = drySample * volume;
@@ -88,7 +88,7 @@ void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
         const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
-        for (size_t j = 0; j < buffer.FormatInfo().channelCount; j++)
+        for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             const heph_float drySample = buffer[i][j];
             const heph_float wetSample = drySample * volume;
