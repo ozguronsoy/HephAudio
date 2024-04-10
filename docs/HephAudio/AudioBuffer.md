@@ -22,7 +22,7 @@ Creates an instance and initializes it with the default values.
 
 ```c++
 AudioBuffer(size_t frameCount,
-            AudioFormatInfo formatInfo);
+            const AudioFormatInfo& formatInfo);
 ```
 Creates an instance and initializes it with the provided values.
 - **frameCount:** Number of audio frames the buffer contains.
@@ -31,12 +31,12 @@ Creates an instance and initializes it with the provided values.
 
 ```c++
 AudioBuffer(size_t frameCount,
-            uint16_t channelCount,
+            const AudioChannelLayout& channelLayout,
             uint32_t sampleRate);
 ```
 Creates an instance and initializes it with the provided values.
 - **frameCount:** Number of audio frames the buffer contains.
-- **channelCount:** Number of channels. Number of samples that each audio frame contains.
+- **channelLayout:** [Channel layout](/docs/HephAudio/AudioChannelLayout.md).
 - **sampleRate:** Samples per second (Hz), the number of samples required to represent a one-second-long audio signal.
 <br><br><br><br>
 
@@ -413,10 +413,54 @@ Gets the number of audio frames the buffer contains.
 <br><br><br><br>
 
 ```c++
-AudioFormatInfo FrameCount() const;
+const AudioFormatInfo& FormatInfo() const;
 ```
-Gets a copy of the audio format info.
-- **returns:** Copy of the audio format info.
+Gets the audio format info.
+- **returns:** Audio format info.
+<br><br><br><br>
+
+```c++
+void SetFormatInfo(const AudioChannelLayout& channelLayout,
+                   uint32_t sampleRate) const;
+```
+Sets the audio format info.
+- **channelLayout:** New channel layout.
+- **sampleRate:** New sample rate.
+<br><br><br><br>
+
+```c++
+void SetFormatInfo(const AudioFormatInfo& audioFormatInfo) const;
+```
+Sets the audio format info.
+- **audioFormatInfo:** New format info.
+<br><br><br><br>
+
+```c++
+void SetChannelLayout(const AudioChannelLayout& channelLayout);
+```
+Sets the channel layout.
+- **channelLayout:** New channel layout.
+<br><br><br><br>
+
+```c++
+void SetSampleRate(uint32_t sampleRate);
+```
+Sets the sample rate.
+- **sampleRate:** New sample rate.
+<br><br><br><br>
+
+```c++
+void SetBitsPerSample(uint16_t bitsPerSample);
+```
+Sets the bit depth.
+- **bitsPerSample:** New bit depth.
+<br><br><br><br>
+
+```c++
+void SetBitRate(uint32_t bitRate);
+```
+Sets the bit rate.
+- **bitRate:** New bit rate.
 <br><br><br><br>
 
 ```c++
@@ -483,9 +527,9 @@ If the buffer is expanded, new samples will be initialized to zero.
 <br><br><br><br>
 
 ```c++
-void Empty();
+void Release();
 ```
-Releases the audio data and sets all other fields to their default values.
+Releases the audio data.
 <br><br><br><br>
 
 ```c++
@@ -551,21 +595,6 @@ Calculates the convolution.
 <br><br><br><br>
 
 ```c++
-heph_float CalculateDuration() const;
-```
-Calculates the duration of the buffers in terms of seconds.
-- **returns:** Duration of the buffer in seconds.
-<br><br><br><br>
-
-```c++
-size_t CalculateFrameIndex(heph_float t_s) const;
-```
-Calculates the frame index the provided time corresponds to.
-- **t_s:** Time in seconds.
-- **returns:** Frame index.
-<br><br><br><br>
-
-```c++
 void* Begin() const;
 ```
 Gets the address of the first sample of the first frame.
@@ -577,22 +606,4 @@ void* End() const;
 ```
 Gets the address of the end of the buffer.
 - **returns:** Address of the end of the buffer.
-<br><br><br><br>
-
-```c++
-static heph_float CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo);
-```
-Calculates the duration in terms of seconds.
-- **frameCount:** Number of frames.
-- **formatInfo:** Format info that will be used to calculate the duration.
-- **returns:** Duration in seconds.
-<br><br><br><br>
-
-```c++
-static size_t CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo);
-```
-Calculates the frame index the provided time corresponds to.
-- **t_s:** Time in seconds.
-- **formatInfo:** Format info that will be used to calculate the frame index.
-- **returns:** Index of the frame the provided time corresponds to.
 <br><br><br><br>
