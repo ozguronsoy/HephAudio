@@ -8,7 +8,7 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	AudioBuffer::AudioBuffer() : frameCount(0), pData(nullptr) { }
-	AudioBuffer::AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo) : formatInfo(formatInfo), frameCount(frameCount), pData(nullptr)
+	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo) : formatInfo(formatInfo), frameCount(frameCount), pData(nullptr)
 	{
 		if (frameCount > 0)
 		{
@@ -20,7 +20,7 @@ namespace HephAudio
 			this->Reset();
 		}
 	}
-	AudioBuffer::AudioBuffer(size_t frameCount, AudioChannelLayout channelLayout, uint32_t sampleRate) : AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate)) {}
+	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate) : AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate)) {}
 	AudioBuffer::AudioBuffer(std::nullptr_t rhs) : AudioBuffer() {}
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) : formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), pData(nullptr)
 	{
@@ -42,7 +42,7 @@ namespace HephAudio
 	}
 	AudioBuffer::~AudioBuffer()
 	{
-		this->Empty();
+		this->Release();
 		this->formatInfo = AudioFormatInfo();
 	}
 	heph_audio_sample* AudioBuffer::operator[](size_t frameIndex) const
@@ -63,7 +63,7 @@ namespace HephAudio
 	}
 	AudioBuffer& AudioBuffer::operator=(std::nullptr_t rhs)
 	{
-		this->Empty();
+		this->Release();
 		this->formatInfo = AudioFormatInfo();
 		return *this;
 	}
@@ -71,7 +71,7 @@ namespace HephAudio
 	{
 		if (this != &rhs)
 		{
-			this->Empty();
+			this->Release();
 
 			this->formatInfo = rhs.formatInfo;
 			this->frameCount = rhs.frameCount;
@@ -93,7 +93,7 @@ namespace HephAudio
 	{
 		if (this != &rhs)
 		{
-			this->Empty();
+			this->Release();
 
 			this->frameCount = rhs.frameCount;
 			this->formatInfo = rhs.formatInfo;
@@ -622,9 +622,61 @@ namespace HephAudio
 	{
 		return this->frameCount;
 	}
-	AudioFormatInfo AudioBuffer::FormatInfo() const
+	const AudioFormatInfo& AudioBuffer::FormatInfo() const
 	{
 		return this->formatInfo;
+	}
+	void AudioBuffer::SetFormatInfo(const AudioChannelLayout& channelLayout, uint32_t sampleRate)
+	{
+		this->SetFormatInfo(
+			AudioFormatInfo(
+				this->formatInfo.formatTag,
+				this->formatInfo.bitsPerSample,
+				channelLayout,
+				sampleRate,
+				this->formatInfo.bitRate,
+				this->formatInfo.endian)
+		);
+	}
+	void AudioBuffer::SetFormatInfo(const AudioFormatInfo& audioFormatInfo)
+	{
+		if (audioFormatInfo != this->formatInfo)
+		{
+			this->Release();
+
+			this->formatInfo = audioFormatInfo;
+
+			this->pData = (heph_audio_sample*)malloc(this->Size());
+			if (this->pData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::SetFormatInfo", "Insufficient memory."));
+			}
+			(void)memset(this->pData, 0, this->Size());
+		}
+	}
+	void AudioBuffer::SetChannelLayout(const AudioChannelLayout& channelLayout)
+	{
+		this->SetFormatInfo(channelLayout, this->formatInfo.sampleRate);
+	}
+	void AudioBuffer::SetSampleRate(uint32_t sampleRate)
+	{
+		this->formatInfo.sampleRate = sampleRate;
+	}
+	void AudioBuffer::SetBitsPerSample(uint16_t bitsPerSample)
+	{
+		this->SetFormatInfo(
+			AudioFormatInfo(
+				this->formatInfo.formatTag,
+				bitsPerSample,
+				this->formatInfo.channelLayout,
+				this->formatInfo.sampleRate,
+				this->formatInfo.bitRate,
+				this->formatInfo.endian)
+		);
+	}
+	void AudioBuffer::SetBitRate(uint32_t bitRate)
+	{
+		this->formatInfo.bitRate = bitRate;
 	}
 	AudioBuffer AudioBuffer::GetSubBuffer(size_t frameIndex, size_t frameCount) const
 	{
@@ -804,7 +856,7 @@ namespace HephAudio
 		{
 			if (newFrameCount == 0)
 			{
-				this->Empty();
+				this->Release();
 			}
 			else
 			{
@@ -822,9 +874,8 @@ namespace HephAudio
 			}
 		}
 	}
-	void AudioBuffer::Empty()
+	void AudioBuffer::Release()
 	{
-		this->frameCount = 0;
 		if (this->pData != nullptr)
 		{
 			free(this->pData);
@@ -998,14 +1049,6 @@ namespace HephAudio
 		}
 		return y;
 	}
-	heph_float AudioBuffer::CalculateDuration() const
-	{
-		return CalculateDuration(this->frameCount, this->formatInfo);
-	}
-	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s) const
-	{
-		return CalculateFrameIndex(t_s, this->formatInfo);
-	}
 	void* AudioBuffer::Begin() const
 	{
 		return this->pData;
@@ -1013,16 +1056,6 @@ namespace HephAudio
 	void* AudioBuffer::End() const
 	{
 		return (uint8_t*)this->pData + this->Size();
-	}
-	heph_float AudioBuffer::CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo)
-	{
-		if (formatInfo.ByteRate() == 0) { return 0.0; }
-		return (heph_float)frameCount * (heph_float)formatInfo.FrameSize() / (heph_float)formatInfo.ByteRate();
-	}
-	size_t AudioBuffer::CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo)
-	{
-		if (formatInfo.FrameSize() == 0) { return 0.0; }
-		return t_s * (heph_float)formatInfo.ByteRate() / (heph_float)formatInfo.FrameSize();
 	}
 }
 HephAudio::AudioBuffer operator+(heph_float lhs, const HephAudio::AudioBuffer& rhs)

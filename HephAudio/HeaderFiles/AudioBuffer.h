@@ -14,8 +14,8 @@ namespace HephAudio
 		heph_audio_sample* pData;
 	public:
 		AudioBuffer();
-		AudioBuffer(size_t frameCount, AudioFormatInfo formatInfo);
-		AudioBuffer(size_t frameCount, AudioChannelLayout channelLayout, uint32_t sampleRate);
+		AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo);
+		AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 		AudioBuffer(std::nullptr_t rhs);
 		AudioBuffer(const AudioBuffer& rhs);
 		AudioBuffer(AudioBuffer&& rhs) noexcept;
@@ -59,7 +59,13 @@ namespace HephAudio
 		bool operator!=(const AudioBuffer& rhs) const;
 		size_t Size() const;
 		size_t FrameCount() const;
-		AudioFormatInfo FormatInfo() const;
+		const AudioFormatInfo& FormatInfo() const;
+		void SetFormatInfo(const AudioChannelLayout& channelLayout, uint32_t sampleRate);
+		void SetFormatInfo(const AudioFormatInfo& audioFormatInfo);
+		void SetChannelLayout(const AudioChannelLayout& channelLayout);
+		void SetSampleRate(uint32_t sampleRate);
+		void SetBitsPerSample(uint16_t bitsPerSample);
+		void SetBitRate(uint32_t bitRate);
 		AudioBuffer GetSubBuffer(size_t frameIndex, size_t frameCount) const;
 		void Append(const AudioBuffer& buffer);
 		void Insert(const AudioBuffer& buffer, size_t frameIndex);
@@ -68,7 +74,7 @@ namespace HephAudio
 		void Replace(const AudioBuffer& buffer, size_t frameIndex, size_t frameCount);
 		void Reset();
 		void Resize(size_t newFrameCount);
-		void Empty();
+		void Release();
 		heph_audio_sample Min() const;
 		heph_audio_sample Max() const;
 		heph_audio_sample AbsMax() const;
@@ -77,13 +83,8 @@ namespace HephAudio
 		AudioBuffer Convolve(const HephCommon::FloatBuffer& h, HephCommon::ConvolutionMode convolutionMode) const;
 		AudioBuffer Convolve(const AudioBuffer& h) const;
 		AudioBuffer Convolve(const AudioBuffer& h, HephCommon::ConvolutionMode convolutionMode) const;
-		heph_float CalculateDuration() const;
-		size_t CalculateFrameIndex(heph_float t_s) const;
 		void* Begin() const;
 		void* End() const;
-	public:
-		static heph_float CalculateDuration(size_t frameCount, AudioFormatInfo formatInfo);
-		static size_t CalculateFrameIndex(heph_float t_s, AudioFormatInfo formatInfo);
 	};
 }
 HephAudio::AudioBuffer operator+(heph_float lhs, const HephAudio::AudioBuffer& rhs);

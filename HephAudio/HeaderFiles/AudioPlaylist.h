@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY std::string("audio_playlist")
+#define HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY "audio_playlist"
 
 namespace HephAudio
 {

@@ -49,7 +49,7 @@ namespace HephCommon
 	}
 	FloatBuffer::~FloatBuffer()
 	{
-		this->Empty();
+		this->Release();
 	}
 	heph_float& FloatBuffer::operator[](size_t frameIndex) const
 	{
@@ -66,7 +66,7 @@ namespace HephCommon
 	}
 	FloatBuffer& FloatBuffer::operator=(const std::initializer_list<heph_float>& rhs)
 	{
-		this->Empty();
+		this->Release();
 
 		this->frameCount = rhs.size();
 		if (this->frameCount > 0)
@@ -83,14 +83,14 @@ namespace HephCommon
 	}
 	FloatBuffer& FloatBuffer::operator=(std::nullptr_t rhs)
 	{
-		this->Empty();
+		this->Release();
 		return *this;
 	}
 	FloatBuffer& FloatBuffer::operator=(const FloatBuffer& rhs)
 	{
 		if (this->pData != rhs.pData)
 		{
-			this->Empty();
+			this->Release();
 
 			this->frameCount = rhs.frameCount;
 			if (this->frameCount > 0)
@@ -110,7 +110,7 @@ namespace HephCommon
 	{
 		if (this != &rhs)
 		{
-			this->Empty();
+			this->Release();
 
 			this->frameCount = rhs.frameCount;
 			this->pData = rhs.pData;
@@ -382,7 +382,7 @@ namespace HephCommon
 	{
 		if (this->pData == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FloatBuffer::At", "Empty buffer."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FloatBuffer::At", "Release buffer."));
 		}
 		if (frameIndex >= this->frameCount)
 		{
@@ -471,7 +471,7 @@ namespace HephCommon
 			}
 			if (frameCount == this->frameCount)
 			{
-				this->Empty();
+				this->Release();
 				return;
 			}
 
@@ -553,7 +553,7 @@ namespace HephCommon
 		{
 			if (newFrameCount == 0)
 			{
-				this->Empty();
+				this->Release();
 			}
 			else
 			{
@@ -571,7 +571,7 @@ namespace HephCommon
 			}
 		}
 	}
-	void FloatBuffer::Empty()
+	void FloatBuffer::Release()
 	{
 		this->frameCount = 0;
 		if (this->pData != nullptr)

@@ -281,6 +281,7 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -468,5 +469,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixer.cpp" />
   </ItemGroup>
 </Project>

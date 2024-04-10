@@ -80,7 +80,7 @@ namespace HephCommon
 		void Replace(const ComplexBuffer& buffer, size_t frameIndex, size_t frameCount);
 		void Reset();
 		void Resize(size_t newFrameCount);
-		void Empty();
+		void Release();
 		ComplexBuffer Convolve(const ComplexBuffer& h) const;
 		ComplexBuffer Convolve(const ComplexBuffer& h, ConvolutionMode convolutionMode) const;
 		Complex* Begin() const;

@@ -58,7 +58,7 @@ namespace HephCommon
 		void Replace(const FloatBuffer& rhs, size_t frameIndex, size_t frameCount);
 		void Reset();
 		void Resize(size_t newFrameCount);
-		void Empty();
+		void Release();
 		heph_float Min() const;
 		heph_float Max() const;
 		heph_float AbsMax() const;

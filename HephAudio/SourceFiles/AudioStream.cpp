@@ -192,7 +192,7 @@ namespace HephAudio
 
 #if defined(HEPHAUDIO_USE_FFMPEG)
 			this->ffmpegAudioDecoder.Seek(this->pAudioObject->frameIndex);
-			this->decodedBuffer.Empty();
+			this->decodedBuffer.Release();
 #endif
 		}
 	}
@@ -218,7 +218,7 @@ namespace HephAudio
 
 #if defined(HEPHAUDIO_USE_FFMPEG)
 		this->ffmpegAudioDecoder.CloseFile();
-		this->decodedBuffer.Empty();
+		this->decodedBuffer.Release();
 #endif
 	}
 	void AudioStream::OnRender(const EventParams& eventParams)
