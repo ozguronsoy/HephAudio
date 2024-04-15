@@ -255,6 +255,14 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
+		void AndroidAudioA::GetNativeParams(NativeAudioParams& nativeParams) const
+		{
+			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetNativeParams", "Not implemented."));
+		}
+		void AndroidAudioA::SetNativeParams(const NativeAudioParams& nativeParams)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetNativeParams", "Not implemented."));
+		}
 		void AndroidAudioA::RenderData()
 		{
 			constexpr uint64_t stateChangeTimeoutNanos = 200 * 1000000;
@@ -376,6 +384,14 @@ namespace HephAudio
 		void AndroidAudioA::StopCapturing()
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+		}
+		void AndroidAudioA::GetNativeParams(NativeAudioParams& nativeParams) const
+		{
+			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetNativeParams", "Not implemented."));
+		}
+		void AndroidAudioA::SetNativeParams(const NativeAudioParams& nativeParams)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetNativeParams", "Not implemented."));
 		}
 	}
 }

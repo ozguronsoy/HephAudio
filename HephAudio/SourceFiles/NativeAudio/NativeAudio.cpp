@@ -209,13 +209,13 @@ namespace HephAudio
 		{
 			this->deviceEnumerationPeriod_ms = deviceEnumerationPeriod_ms;
 		}
-		AudioFormatInfo NativeAudio::GetRenderFormat() const
+		const AudioFormatInfo& NativeAudio::GetRenderFormat() const
 		{
-			return renderFormat;
+			return this->renderFormat;
 		}
-		AudioFormatInfo NativeAudio::GetCaptureFormat() const
+		const AudioFormatInfo& NativeAudio::GetCaptureFormat() const
 		{
-			return captureFormat;
+			return this->captureFormat;
 		}
 		void NativeAudio::InitializeRender()
 		{

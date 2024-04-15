@@ -28,6 +28,8 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
+			void GetNativeParams(NativeAudioParams& nativeParams) const override;
+			void SetNativeParams(const NativeAudioParams& nativeParams) override;
 		private:
 			bool EnumerateAudioDevices() override;
 			void CheckAudioDevices() override;

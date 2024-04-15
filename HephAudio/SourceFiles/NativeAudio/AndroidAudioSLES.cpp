@@ -214,6 +214,14 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
+		void AndroidAudioSLES::GetNativeParams(NativeAudioParams& nativeParams) const
+		{
+			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioSLES::GetNativeParams", "Not implemented."));
+		}
+		void AndroidAudioSLES::SetNativeParams(const NativeAudioParams& nativeParams)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioSLES::SetNativeParams", "Not implemented."));
+		}
 		SLAndroidDataFormat_PCM_EX  AndroidAudioSLES::ToSLFormat(AudioFormatInfo& formatInfo)
 		{
 			formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;

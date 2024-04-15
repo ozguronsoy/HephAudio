@@ -226,6 +226,14 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
+		void LinuxAudio::GetNativeParams(NativeAudioParams& nativeParams) const
+		{
+			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "LinuxAudio::GetNativeParams", "Not implemented."));
+		}
+		void LinuxAudio::SetNativeParams(const NativeAudioParams& nativeParams)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "LinuxAudio::SetNativeParams", "Not implemented."));
+		}
 		bool LinuxAudio::EnumerateAudioDevices()
 		{
 			snd_pcm_stream_t streamTypes[2] = { SND_PCM_STREAM_PLAYBACK, SND_PCM_STREAM_CAPTURE };

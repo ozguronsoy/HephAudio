@@ -47,6 +47,8 @@ namespace HephAudio
 			void StopRendering();
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 			void StopCapturing();
+			void GetNativeParams(NativeAudioParams& nativeParams) const override;
+			void SetNativeParams(const NativeAudioParams& nativeParams) override;
 		private:
 			SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);

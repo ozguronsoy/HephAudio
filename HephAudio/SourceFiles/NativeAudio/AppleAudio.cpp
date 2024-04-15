@@ -208,6 +208,14 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
+		void AppleAudio::GetNativeParams(NativeAudioParams& nativeParams) const
+		{
+			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AppleAudio::GetNativeParams", "Not implemented."));
+		}
+		void AppleAudio::SetNativeParams(const NativeAudioParams& nativeParams)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AppleAudio::SetNativeParams", "Not implemented."));
+		}
 		bool AppleAudio::EnumerateAudioDevices()
 		{
 			AudioObjectPropertyAddress propertyList;

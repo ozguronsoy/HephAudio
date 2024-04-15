@@ -64,8 +64,8 @@ namespace HephAudio
 		void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
 		void SetMasterVolume(heph_float volume);
 		heph_float GetMasterVolume() const;
-		AudioFormatInfo GetRenderFormat() const;
-		AudioFormatInfo GetCaptureFormat() const;
+		const AudioFormatInfo& GetRenderFormat() const;
+		const AudioFormatInfo& GetCaptureFormat() const;
 		void InitializeRender();
 		void InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate);
 		void InitializeRender(AudioFormatInfo format);
@@ -76,6 +76,8 @@ namespace HephAudio
 		void InitializeCapture(AudioFormatInfo format);
 		void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
 		void StopCapturing();
+		void GetNativeParams(Native::NativeAudioParams& nativeParams) const;
+		void SetNativeParams(const Native::NativeAudioParams& nativeParams);
 		AudioDevice GetAudioDeviceById(const std::string& deviceId) const;
 		AudioDevice GetRenderDevice() const;
 		AudioDevice GetCaptureDevice() const;

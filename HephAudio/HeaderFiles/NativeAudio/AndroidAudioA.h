@@ -38,6 +38,8 @@ namespace HephAudio
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
 			void StopCapturing() override;
+			void GetNativeParams(NativeAudioParams& nativeParams) const override;
+			void SetNativeParams(const NativeAudioParams& nativeParams) override;
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 		private:
 			void RenderData();

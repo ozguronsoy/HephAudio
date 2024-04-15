@@ -222,11 +222,11 @@ namespace HephAudio
 	{
 		return this->pNativeAudio->GetMasterVolume();
 	}
-	AudioFormatInfo Audio::GetRenderFormat() const
+	const AudioFormatInfo& Audio::GetRenderFormat() const
 	{
 		return this->pNativeAudio->GetRenderFormat();
 	}
-	AudioFormatInfo Audio::GetCaptureFormat() const
+	const AudioFormatInfo& Audio::GetCaptureFormat() const
 	{
 		return this->pNativeAudio->GetCaptureFormat();
 	}
@@ -269,6 +269,14 @@ namespace HephAudio
 	void Audio::StopCapturing()
 	{
 		this->pNativeAudio->StopCapturing();
+	}
+	void Audio::GetNativeParams(Native::NativeAudioParams& nativeParams) const
+	{
+		this->pNativeAudio->GetNativeParams(nativeParams);
+	}
+	void Audio::SetNativeParams(const NativeAudioParams& nativeParams)
+	{
+		this->pNativeAudio->SetNativeParams(nativeParams);
 	}
 	AudioDevice Audio::GetAudioDeviceById(const std::string& deviceId) const
 	{

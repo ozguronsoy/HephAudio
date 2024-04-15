@@ -169,6 +169,14 @@ namespace HephAudio
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
+		void WinAudioDS::GetNativeParams(NativeAudioParams& nativeParams) const
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "WinAudioDS::GetNativeParams", "Not implemented."));
+		}
+		void WinAudioDS::SetNativeParams(const NativeAudioParams& nativeParams)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "WinAudioDS::SetNativeParams", "Not implemented."));
+		}
 		bool WinAudioDS::EnumerateAudioDevices()
 		{
 			HRESULT hres;

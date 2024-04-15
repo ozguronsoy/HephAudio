@@ -6,6 +6,7 @@
 #include "EchoInfo.h"
 #include "AudioEvents/AudioDeviceEventArgs.h"
 #include "AudioEvents/AudioCaptureEventArgs.h"
+#include "Params/NativeAudioParams.h"
 #include "HephException.h"
 #include "Event.h"
 #include "StringHelpers.h"
@@ -72,8 +73,8 @@ namespace HephAudio
 			void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
 			virtual void SetMasterVolume(heph_float volume) = 0;
 			virtual heph_float GetMasterVolume() const = 0;
-			AudioFormatInfo GetRenderFormat() const;
-			AudioFormatInfo GetCaptureFormat() const;
+			const AudioFormatInfo& GetRenderFormat() const;
+			const AudioFormatInfo& GetCaptureFormat() const;
 			void InitializeRender();
 			void InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate);
 			void InitializeRender(AudioFormatInfo format);
@@ -84,6 +85,8 @@ namespace HephAudio
 			void InitializeCapture(AudioFormatInfo format);
 			virtual void InitializeCapture(AudioDevice* device, AudioFormatInfo format) = 0;
 			virtual void StopCapturing() = 0;
+			virtual void GetNativeParams(NativeAudioParams& nativeParams) const = 0;
+			virtual void SetNativeParams(const NativeAudioParams& nativeParams) = 0;
 			AudioDevice GetAudioDeviceById(const std::string& deviceId) const;
 			AudioDevice GetRenderDevice() const;
 			AudioDevice GetCaptureDevice() const;
