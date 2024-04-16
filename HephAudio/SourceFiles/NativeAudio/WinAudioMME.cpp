@@ -41,7 +41,7 @@ namespace HephAudio
 			{
 				const uint16_t usv = volume * UINT16_MAX;
 				MMRESULT mmres;
-				WINAUDIOMME_EXCPT(waveOutSetVolume(this->hwo, (usv << 16) | usv), this, "WinAudioMME::GetMasterVolume", "An error occurred whilst setting the master volume");
+				WINAUDIOMME_EXCPT(waveOutSetVolume(this->hwo, (usv << 16) | usv), this, "WinAudioMME::GetMasterVolume", "An error occurred while setting the master volume");
 			}
 		}
 		heph_float WinAudioMME::GetMasterVolume() const
@@ -50,7 +50,7 @@ namespace HephAudio
 			{
 				DWORD dv;
 				MMRESULT mmres;
-				WINAUDIOMME_EXCPT(waveOutGetVolume(this->hwo, &dv), this, "WinAudioMME::GetMasterVolume", "An error occurred whilst getting the master volume");
+				WINAUDIOMME_EXCPT(waveOutGetVolume(this->hwo, &dv), this, "WinAudioMME::GetMasterVolume", "An error occurred while getting the master volume");
 				return (heph_float)(dv & 0x0000FFFF) / (heph_float)UINT16_MAX;
 			}
 			return -1.0;
@@ -72,7 +72,7 @@ namespace HephAudio
 			}
 
 			WAVEOUTCAPS deviceCaps{ 0 };
-			WINAUDIOMME_EXCPT(waveOutGetDevCaps(deviceID, &deviceCaps, sizeof(WAVEOUTCAPS)), this, "WinAudioMME::InitializeRender", "An error occurred whilst getting the render device caps.");
+			WINAUDIOMME_EXCPT(waveOutGetDevCaps(deviceID, &deviceCaps, sizeof(WAVEOUTCAPS)), this, "WinAudioMME::InitializeRender", "An error occurred while getting the render device caps.");
 
 			this->renderFormat = this->GetClosestFormat(deviceCaps.dwFormats, format);
 			if (this->renderFormat.channelLayout.count > deviceCaps.wChannels || this->renderFormat.channelLayout.count == 0)
@@ -81,7 +81,7 @@ namespace HephAudio
 			}
 			const WAVEFORMATEXTENSIBLE wfx = this->AFI2WFX(this->renderFormat);
 
-			WINAUDIOMME_EXCPT(waveOutOpen(&this->hwo, deviceID, (WAVEFORMATEX*)&wfx, (DWORD_PTR)&WinAudioMME::RenderCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeRender", "An error occurred whilst openning the render device.");
+			WINAUDIOMME_EXCPT(waveOutOpen(&this->hwo, deviceID, (WAVEFORMATEX*)&wfx, (DWORD_PTR)&WinAudioMME::RenderCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeRender", "An error occurred while openning the render device.");
 
 			const size_t bufferSize_byte = WinAudioMME::CalculateBufferSize(this->renderFormat.ByteRate(), this->renderFormat.sampleRate);
 			for (size_t i = 0; i < WinAudioMME::HDR_COUNT; i++)
@@ -105,7 +105,7 @@ namespace HephAudio
 
 			for (size_t i = 0; i < WinAudioMME::HDR_COUNT; i++)
 			{
-				WINAUDIOMME_EXCPT(waveOutWrite(this->hwo, &this->renderHdrs[i], sizeof(WAVEHDR)), this, "WinAudioMME::InitializeRender", "An error occurred whilst starting render.");
+				WINAUDIOMME_EXCPT(waveOutWrite(this->hwo, &this->renderHdrs[i], sizeof(WAVEHDR)), this, "WinAudioMME::InitializeRender", "An error occurred while starting render.");
 			}
 
 			this->isRenderInitialized = true;
@@ -161,7 +161,7 @@ namespace HephAudio
 			}
 
 			WAVEINCAPS deviceCaps{ 0 };
-			WINAUDIOMME_EXCPT(waveInGetDevCaps(deviceID, &deviceCaps, sizeof(WAVEINCAPS)), this, "WinAudioMME::InitializeCapture", "An error occurred whilst getting the capture device caps.");
+			WINAUDIOMME_EXCPT(waveInGetDevCaps(deviceID, &deviceCaps, sizeof(WAVEINCAPS)), this, "WinAudioMME::InitializeCapture", "An error occurred while getting the capture device caps.");
 
 			this->captureFormat = this->GetClosestFormat(deviceCaps.dwFormats, format);
 			if (this->captureFormat.channelLayout.count > deviceCaps.wChannels || this->captureFormat.channelLayout.count == 0)
@@ -170,7 +170,7 @@ namespace HephAudio
 			}
 			const WAVEFORMATEXTENSIBLE wfx = this->AFI2WFX(this->captureFormat);
 
-			WINAUDIOMME_EXCPT(waveInOpen(&this->hwi, deviceID, (WAVEFORMATEX*)&wfx, (DWORD_PTR)&WinAudioMME::CaptureCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeCapture", "An error occurred whilst starting capture.");
+			WINAUDIOMME_EXCPT(waveInOpen(&this->hwi, deviceID, (WAVEFORMATEX*)&wfx, (DWORD_PTR)&WinAudioMME::CaptureCallback, (DWORD_PTR)this, CALLBACK_FUNCTION), this, "WinAudioMME::InitializeCapture", "An error occurred while starting capture.");
 
 			const size_t bufferSize_byte = WinAudioMME::CalculateBufferSize(this->captureFormat.ByteRate(), this->captureFormat.sampleRate);
 
@@ -195,10 +195,10 @@ namespace HephAudio
 
 			for (size_t i = 0; i < WinAudioMME::HDR_COUNT; i++)
 			{
-				WINAUDIOMME_EXCPT(waveInAddBuffer(this->hwi, &this->captureHdrs[i], sizeof(WAVEHDR)), this, "WinAudioMME::InitializeCapture", "An error occurred whilst starting capture.");
+				WINAUDIOMME_EXCPT(waveInAddBuffer(this->hwi, &this->captureHdrs[i], sizeof(WAVEHDR)), this, "WinAudioMME::InitializeCapture", "An error occurred while starting capture.");
 			}
 
-			WINAUDIOMME_EXCPT(waveInStart(this->hwi), this, "WinAudioMME::InitializeCapture", "An error occurred whilst starting capture.");
+			WINAUDIOMME_EXCPT(waveInStart(this->hwi), this, "WinAudioMME::InitializeCapture", "An error occurred while starting capture.");
 
 			this->isCaptureInitialized = true;
 
@@ -238,11 +238,11 @@ namespace HephAudio
 		}
 		void WinAudioMME::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "WinAudioMME::GetNativeParams", "Not implemented."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_OPERATION, "WinAudioMME::GetNativeParams", "Native params not supported."));
 		}
 		void WinAudioMME::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "WinAudioMME::SetNativeParams", "Not implemented."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_OPERATION, "WinAudioMME::SetNativeParams", "Native params not supported."));
 		}
 		bool WinAudioMME::EnumerateAudioDevices()
 		{
@@ -251,7 +251,7 @@ namespace HephAudio
 			for (size_t i = 0; i < deviceCount; i++)
 			{
 				WAVEOUTCAPS deviceCaps{ 0 };
-				WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(waveOutGetDevCaps(i, &deviceCaps, sizeof(WAVEOUTCAPS)), this, "WinAudioMME", "An error occurred whilst enumerating render devices.");
+				WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(waveOutGetDevCaps(i, &deviceCaps, sizeof(WAVEOUTCAPS)), this, "WinAudioMME", "An error occurred while enumerating render devices.");
 
 				AudioDevice device;
 				device.id = StringHelpers::ToString(i);
@@ -275,7 +275,7 @@ namespace HephAudio
 			for (size_t i = 0; i < deviceCount; i++)
 			{
 				WAVEINCAPS deviceCaps{ 0 };
-				WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(waveInGetDevCaps(i, &deviceCaps, sizeof(WAVEINCAPS)), this, "WinAudioMME", "An error occurred whilst enumerating capture devices.");
+				WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(waveInGetDevCaps(i, &deviceCaps, sizeof(WAVEINCAPS)), this, "WinAudioMME", "An error occurred while enumerating capture devices.");
 
 				AudioDevice device;
 				device.id = StringHelpers::ToString(i);
@@ -451,7 +451,7 @@ namespace HephAudio
 					const MMRESULT mmres = waveOutWrite(hwo, pwhd, sizeof(WAVEHDR));
 					if (mmres != MMSYSERR_NOERROR)
 					{
-						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred whilst rendering.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
+						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred while rendering.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
 			}
@@ -477,7 +477,7 @@ namespace HephAudio
 					const MMRESULT mmres = waveInAddBuffer(hwi, pwhd, sizeof(WAVEHDR));
 					if (mmres != MMSYSERR_NOERROR)
 					{
-						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred whilst capturing.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
+						RAISE_HEPH_EXCEPTION(pAudio, HephException(mmres, "WinAudioMME", "An error occurred while capturing.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
 			}

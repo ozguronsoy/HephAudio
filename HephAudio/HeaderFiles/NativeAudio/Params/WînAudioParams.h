@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		struct WinAudioParams : public NativeAudioParams
+		struct WinAudioParams final : public NativeAudioParams
 		{
 			tagCLSCTX renderClsCtx;
 			tagCLSCTX captureClsCtx;
@@ -25,7 +25,6 @@ namespace HephAudio
 				, renderStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK), captureStreamFlags(0)
 				, renderBufferDuration_ms(0), captureBufferDuration_ms(40)
 				, renderPeriodicity_ms(0), capturePeriodicity_ms(0) {}
-			virtual ~WinAudioParams() = default;
 		};
 	}
 }

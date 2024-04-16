@@ -18,7 +18,7 @@ namespace HephAudio
 			deviceApiLevel = android_get_device_api_level();
 			if (deviceApiLevel == -1)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioBase::AndroidAudioBase", "An error occurred whilst getting the current device's API level."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioBase::AndroidAudioBase", "An error occurred while getting the current device's API level."));
 			}
 			else if (deviceApiLevel >= 23)
 			{

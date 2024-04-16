@@ -59,7 +59,7 @@ namespace HephAudio
 
 			aaudio_result_t ares;
 			AAudioStreamBuilder* streamBuilder;
-			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, "AndroidAudioA::InitializeRender", "An error occurred whilst creating the stream builder.");
+			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, "AndroidAudioA::InitializeRender", "An error occurred while creating the stream builder.");
 
 			renderFormat = format;
 
@@ -127,8 +127,8 @@ namespace HephAudio
 				renderDeviceId = device->id;
 			}
 
-			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pRenderStream), this, "AndroidAudioA::InitializeRender", "An error occurred whilst opening the render stream.");
-			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, "AndroidAudioA::InitializeRender", "An error occurred whilst deleting the stream builder.");
+			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pRenderStream), this, "AndroidAudioA::InitializeRender", "An error occurred while opening the render stream.");
+			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, "AndroidAudioA::InitializeRender", "An error occurred while deleting the stream builder.");
 
 			if (device == nullptr)
 			{
@@ -148,7 +148,7 @@ namespace HephAudio
 				renderDeviceId = "";
 				renderBufferFrameCount = 0;
 				aaudio_result_t  ares;
-				ANDROIDAUDIO_EXCPT(AAudioStream_close(pRenderStream), this, "AndroidAudioA::StopRendering", "An error occurred whilst closing the render stream.");
+				ANDROIDAUDIO_EXCPT(AAudioStream_close(pRenderStream), this, "AndroidAudioA::StopRendering", "An error occurred while closing the render stream.");
 				JoinRenderThread();
 				pRenderStream = nullptr;
 				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
@@ -163,7 +163,7 @@ namespace HephAudio
 
 			aaudio_result_t  ares;
 			AAudioStreamBuilder* streamBuilder;
-			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, "AndroidAudioA::InitializeCapture", "An error occurred whilst creating the stream builder.");
+			ANDROIDAUDIO_EXCPT(AAudio_createStreamBuilder(&streamBuilder), this, "AndroidAudioA::InitializeCapture", "An error occurred while creating the stream builder.");
 
 			captureFormat = format;
 
@@ -228,8 +228,8 @@ namespace HephAudio
 				captureDeviceId = device->id;
 			}
 
-			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pCaptureStream), this, "AndroidAudioA::InitializeCapture", "An error occurred whilst opening the capture stream.");
-			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, "AndroidAudioA::InitializeCapture", "An error occurred whilst deleting the stream builder.");
+			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_openStream(streamBuilder, &pCaptureStream), this, "AndroidAudioA::InitializeCapture", "An error occurred while opening the capture stream.");
+			ANDROIDAUDIO_EXCPT(AAudioStreamBuilder_delete(streamBuilder), this, "AndroidAudioA::InitializeCapture", "An error occurred while deleting the stream builder.");
 
 			if (device == nullptr)
 			{
@@ -249,7 +249,7 @@ namespace HephAudio
 				captureDeviceId = "";
 				captureBufferFrameCount = 0;
 				aaudio_result_t  ares;
-				ANDROIDAUDIO_EXCPT(AAudioStream_close(pCaptureStream), this, "AndroidAudioA::StopCapturing", "An error occurred whilst closing the capture stream.");
+				ANDROIDAUDIO_EXCPT(AAudioStream_close(pCaptureStream), this, "AndroidAudioA::StopCapturing", "An error occurred while closing the capture stream.");
 				JoinCaptureThread();
 				pCaptureStream = nullptr;
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
@@ -273,8 +273,8 @@ namespace HephAudio
 
 			aaudio_stream_state_t initialState = AAudioStream_getState(pRenderStream);
 			aaudio_stream_state_t currentState = AAUDIO_STREAM_STATE_UNINITIALIZED;
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT(AAudioStream_requestStart(pRenderStream), this, "AndroidAudioA", "An error occurred whilst starting the render stream.");
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT(AAudioStream_waitForStateChange(pRenderStream, initialState, &currentState, stateChangeTimeoutNanos), this, "AndroidAudioA", "An error occurred whilst starting the render stream.");
+			ANDROIDAUDIO_RENDER_THREAD_EXCPT(AAudioStream_requestStart(pRenderStream), this, "AndroidAudioA", "An error occurred while starting the render stream.");
+			ANDROIDAUDIO_RENDER_THREAD_EXCPT(AAudioStream_waitForStateChange(pRenderStream, initialState, &currentState, stateChangeTimeoutNanos), this, "AndroidAudioA", "An error occurred while starting the render stream.");
 
 			while (!disposing && isRenderInitialized)
 			{
@@ -283,7 +283,7 @@ namespace HephAudio
 				aaudio_result_t result = AAudioStream_write(pRenderStream, dataBuffer.Begin(), dataBuffer.FrameCount(), writeTimeoutNanos);
 				if (result < 0)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred whilst rendering.", "AAudio", AAudio_convertResultToText(result)));
+					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred while rendering.", "AAudio", AAudio_convertResultToText(result)));
 					goto RENDER_EXIT;
 				}
 
@@ -303,8 +303,8 @@ namespace HephAudio
 
 			aaudio_stream_state_t initialState = AAudioStream_getState(pCaptureStream);
 			aaudio_stream_state_t currentState = AAUDIO_STREAM_STATE_UNINITIALIZED;
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(AAudioStream_requestStart(pCaptureStream), this, "AndroidAudioA", "An error occurred whilst starting the capture stream.");
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(AAudioStream_waitForStateChange(pCaptureStream, initialState, &currentState, stateChangeTimeoutNanos), this, "AndroidAudioA", "An error occurred whilst starting the render stream.");
+			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(AAudioStream_requestStart(pCaptureStream), this, "AndroidAudioA", "An error occurred while starting the capture stream.");
+			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(AAudioStream_waitForStateChange(pCaptureStream, initialState, &currentState, stateChangeTimeoutNanos), this, "AndroidAudioA", "An error occurred while starting the render stream.");
 
 			while (!disposing && isCaptureInitialized)
 			{
@@ -312,7 +312,7 @@ namespace HephAudio
 
 				if (result < 0)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred whilst capturing.", "AAudio", AAudio_convertResultToText(result)));
+					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred while capturing.", "AAudio", AAudio_convertResultToText(result)));
 					goto CAPTURE_EXIT;
 				}
 
