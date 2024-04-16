@@ -228,7 +228,7 @@ namespace HephAudio
 		}
 		void LinuxAudio::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "LinuxAudio::GetNativeParams", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "LinuxAudio::GetNativeParams", "Not implemented."));
 		}
 		void LinuxAudio::SetNativeParams(const NativeAudioParams& nativeParams)
 		{

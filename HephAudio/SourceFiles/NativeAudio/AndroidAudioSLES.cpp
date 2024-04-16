@@ -216,7 +216,7 @@ namespace HephAudio
 		}
 		void AndroidAudioSLES::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioSLES::GetNativeParams", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioSLES::GetNativeParams", "Not implemented."));
 		}
 		void AndroidAudioSLES::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
