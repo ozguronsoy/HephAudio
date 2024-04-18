@@ -3,7 +3,7 @@
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
 #include "WinAudioBase.h"
-#include "Params/WînAudioParams.h"
+#include "Params/WasapiParams.h"
 #include <wrl.h>
 #include <Mmdeviceapi.h>
 #include <audiopolicy.h>
@@ -19,7 +19,7 @@ namespace HephAudio
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
 		private:
-			WinAudioParams params;
+			WasapiParams params;
 			Microsoft::WRL::ComPtr<IMMDeviceEnumerator> pEnumerator;
 			Microsoft::WRL::ComPtr<IAudioSessionManager> pRenderSessionManager;
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pRenderSessionControl;

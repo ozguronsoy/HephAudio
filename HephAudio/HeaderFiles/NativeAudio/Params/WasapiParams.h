@@ -1,4 +1,5 @@
 #pragma once
+#if defined(_WIN32)
 #include "HephAudioShared.h"
 #include "NativeAudioParams.h"
 #include <audiopolicy.h>
@@ -7,7 +8,7 @@ namespace HephAudio
 {
 	namespace Native
 	{
-		struct WinAudioParams final : public NativeAudioParams
+		struct WasapiParams final : public NativeAudioParams
 		{
 			tagCLSCTX renderClsCtx;
 			tagCLSCTX captureClsCtx;
@@ -19,7 +20,7 @@ namespace HephAudio
 			heph_float captureBufferDuration_ms;
 			heph_float renderPeriodicity_ms;
 			heph_float capturePeriodicity_ms;
-			WinAudioParams()
+			WasapiParams()
 				: renderClsCtx(CLSCTX_INPROC_SERVER), captureClsCtx(CLSCTX_INPROC_SERVER)
 				, renderShareMode(AUDCLNT_SHAREMODE_SHARED), captureShareMode(AUDCLNT_SHAREMODE_SHARED)
 				, renderStreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK), captureStreamFlags(0)
@@ -28,3 +29,4 @@ namespace HephAudio
 		};
 	}
 }
+#endif

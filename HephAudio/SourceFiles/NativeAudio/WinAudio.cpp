@@ -145,23 +145,23 @@ namespace HephAudio
 		}
 		void WinAudio::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			WinAudioParams* pWinAudioParams = dynamic_cast<WinAudioParams*>(&nativeParams);
-			if (pWinAudioParams == nullptr)
+			WasapiParams* pWasapiParams = dynamic_cast<WasapiParams*>(&nativeParams);
+			if (pWasapiParams == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudio::GetNativeParams", "nativeParams must be a WinAudioParams instance."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudio::GetNativeParams", "nativeParams must be a WasapiParams instance."));
 				return;
 			}
-			(*pWinAudioParams) = this->params;
+			(*pWasapiParams) = this->params;
 		}
 		void WinAudio::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			const WinAudioParams* pWinAudioParams = dynamic_cast<const WinAudioParams*>(&nativeParams);
-			if (pWinAudioParams == nullptr)
+			const WasapiParams* pWasapiParams = dynamic_cast<const WasapiParams*>(&nativeParams);
+			if (pWasapiParams == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudio::SetNativeParams", "nativeParams must be a WinAudioParams instance."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudio::SetNativeParams", "nativeParams must be a WasapiParams instance."));
 				return;
 			}
-			this->params = *pWinAudioParams;
+			this->params = *pWasapiParams;
 		}
 		void WinAudio::SetDisplayName(std::string displayName)
 		{
