@@ -224,8 +224,6 @@ namespace HephAudio
 		}
 		SLAndroidDataFormat_PCM_EX  AndroidAudioSLES::ToSLFormat(AudioFormatInfo& formatInfo)
 		{
-			formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
-
 			SLAndroidDataFormat_PCM_EX pcmFormat;
 			pcmFormat.formatType = SL_DATAFORMAT_PCM;
 			pcmFormat.sampleRate = formatInfo.sampleRate * 1000;
@@ -234,7 +232,17 @@ namespace HephAudio
 			pcmFormat.numChannels = formatInfo.channelLayout.count;
 			pcmFormat.channelMask = (SLuint32)formatInfo.channelLayout.mask;
 			pcmFormat.endianness = HEPH_SYSTEM_ENDIAN == Endian::Little ? SL_BYTEORDER_LITTLEENDIAN : SL_BYTEORDER_BIGENDIAN;
-			pcmFormat.representation = formatInfo.bitsPerSample == 8 ? SL_ANDROID_PCM_REPRESENTATION_UNSIGNED_INT : SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT;
+
+			if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
+			{
+				pcmFormat.representation = SL_ANDROID_PCM_REPRESENTATION_FLOAT;
+			}
+			else
+			{
+				pcmFormat.representation = formatInfo.bitsPerSample == 8 ? SL_ANDROID_PCM_REPRESENTATION_UNSIGNED_INT : SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT;
+				formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_PCM;
+			}
+
 			return pcmFormat;
 		}
 		void AndroidAudioSLES::BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext)

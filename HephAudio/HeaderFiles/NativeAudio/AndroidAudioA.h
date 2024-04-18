@@ -4,6 +4,7 @@
 
 #include "HephAudioShared.h"
 #include "AndroidAudioBase.h"
+#include "Params/AAudioParams.h"
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 #include <aaudio/AAudio.h>
 #endif
@@ -21,6 +22,7 @@ namespace HephAudio
 			using NativeAudio::InitializeCapture;
 		private:
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
+			AAudioParams params;
 			AAudioStream* pRenderStream;
 			AAudioStream* pCaptureStream;
 			size_t renderBufferFrameCount;
@@ -42,9 +44,10 @@ namespace HephAudio
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 		private:
-			void RenderData();
-			void CaptureData();
 			heph_float GetFinalAOVolume(AudioObject* pAudioObject) const override;
+			static aaudio_data_callback_result_t RenderCallback(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames);
+			static aaudio_data_callback_result_t CaptureCallback(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames);
+			static void ErrorCallback(AAudioStream* stream, void* userData, aaudio_result_t error);
 #endif
 		};
 	}

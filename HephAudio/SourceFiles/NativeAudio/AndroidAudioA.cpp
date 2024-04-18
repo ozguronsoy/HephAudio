@@ -8,8 +8,6 @@
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 
 #define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); }
-#define ANDROIDAUDIO_RENDER_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message,"AAudio", AAudio_convertResultToText(ares))); goto RENDER_EXIT; }
-#define ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(ar, androidAudio, method, message) ares = ar; if(ares != AAUDIO_OK) { RAISE_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); goto CAPTURE_EXIT; }
 
 using namespace HephCommon;
 
@@ -35,8 +33,6 @@ namespace HephAudio
 			HEPHAUDIO_LOG("Destructing AndroidAudioA...", HEPH_CL_INFO);
 
 			disposing = true;
-			JoinRenderThread();
-			JoinCaptureThread();
 			StopRendering();
 			StopCapturing();
 
@@ -101,12 +97,21 @@ namespace HephAudio
 
 			renderFormat.bitRate = AudioFormatInfo::CalculateBitrate(renderFormat);
 
-			renderBufferFrameCount = renderFormat.ByteRate() * 0.03;
+			renderBufferFrameCount = this->renderFormat.sampleRate * this->params.renderBufferDuration_ms * 1e-3;
 
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_OUTPUT);
-			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
+			AAudioStreamBuilder_setSharingMode(streamBuilder, this->params.renderShareMode);
+			AAudioStreamBuilder_setPerformanceMode(streamBuilder, this->params.renderPerformanceMode);
 			AAudioStreamBuilder_setSampleRate(streamBuilder, format.sampleRate);
 			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelLayout.count);
+			AAudioStreamBuilder_setFramesPerDataCallback(streamBuilder, renderBufferFrameCount);
+			AAudioStreamBuilder_setDataCallback(streamBuilder, &AndroidAudioA::RenderCallback, this);
+			AAudioStreamBuilder_setErrorCallback(streamBuilder, &AndroidAudioA::ErrorCallback, this);
+
+#if __ANDROID_API__ >= 28
+			AAudioStreamBuilder_setContentType(streamBuilder, this->params.renderContentType);
+			AAudioStreamBuilder_setUsage(streamBuilder, this->params.renderUsage);
+#endif
 
 #if __ANDROID_API__ >= 32
 			if (format.channelLayout.count == 1)
@@ -118,8 +123,6 @@ namespace HephAudio
 				AAudioStreamBuilder_setChannelMask(streamBuilder, (aaudio_channel_mask_t)format.channelLayout.mask);
 			}
 #endif
-
-			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, renderBufferFrameCount);
 
 			if (device != nullptr)
 			{
@@ -136,7 +139,7 @@ namespace HephAudio
 			}
 
 			isRenderInitialized = true;
-			renderThread = std::thread(&AndroidAudioA::RenderData, this);
+			ANDROIDAUDIO_EXCPT(AAudioStream_requestStart(pRenderStream), this, "AndroidAudioA::InitializeRender", "Failed to start the render stream.");
 
 			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
@@ -202,12 +205,21 @@ namespace HephAudio
 
 			captureFormat.bitRate = AudioFormatInfo::CalculateBitrate(captureFormat);
 
-			captureBufferFrameCount = captureFormat.ByteRate() * 0.03;
+			captureBufferFrameCount = this->captureFormat.sampleRate * this->params.captureBufferDuration_ms * 1e-3;
 
 			AAudioStreamBuilder_setDirection(streamBuilder, AAUDIO_DIRECTION_INPUT);
-			AAudioStreamBuilder_setSharingMode(streamBuilder, AAUDIO_SHARING_MODE_SHARED);
+			AAudioStreamBuilder_setSharingMode(streamBuilder, this->params.captureShareMode);
+			AAudioStreamBuilder_setPerformanceMode(streamBuilder, this->params.capturePerformanceMode);
 			AAudioStreamBuilder_setSampleRate(streamBuilder, format.sampleRate);
 			AAudioStreamBuilder_setChannelCount(streamBuilder, format.channelLayout.count);
+			AAudioStreamBuilder_setFramesPerDataCallback(streamBuilder, captureBufferFrameCount);
+			AAudioStreamBuilder_setDataCallback(streamBuilder, &AndroidAudioA::CaptureCallback, this);
+			AAudioStreamBuilder_setErrorCallback(streamBuilder, &AndroidAudioA::ErrorCallback, this);
+
+#if __ANDROID_API__ >= 28
+			AAudioStreamBuilder_setContentType(streamBuilder, this->params.captureContentType);
+			AAudioStreamBuilder_setUsage(streamBuilder, this->params.captureUsage);
+#endif
 
 #if __ANDROID_API__ >= 32
 			if (format.channelLayout.count == 1)
@@ -219,8 +231,6 @@ namespace HephAudio
 				AAudioStreamBuilder_setChannelMask(streamBuilder, (aaudio_channel_mask_t)format.channelLayout.mask);
 			}
 #endif
-
-			AAudioStreamBuilder_setBufferCapacityInFrames(streamBuilder, captureBufferFrameCount);
 
 			if (device != nullptr)
 			{
@@ -237,7 +247,7 @@ namespace HephAudio
 			}
 
 			isCaptureInitialized = true;
-			captureThread = std::thread(&AndroidAudioA::CaptureData, this);
+			ANDROIDAUDIO_EXCPT(AAudioStream_requestStart(pCaptureStream), this, "AndroidAudioA::InitializeCapture", "Failed to start the capture stream.");
 
 			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
@@ -257,81 +267,66 @@ namespace HephAudio
 		}
 		void AndroidAudioA::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetNativeParams", "Not implemented."));
+			AAudioParams* pAAudioParams = dynamic_cast<AAudioParams*>(&nativeParams);
+			if (pAAudioParams == nullptr)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AndroidAudioA::GetNativeParams", "nativeParams must be a AAudioParams instance."));
+				return;
+			}
+			(*pAAudioParams) = this->params;
 		}
 		void AndroidAudioA::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetNativeParams", "Not implemented."));
-		}
-		void AndroidAudioA::RenderData()
-		{
-			constexpr uint64_t stateChangeTimeoutNanos = 200 * 1000000;
-			constexpr uint64_t writeTimeoutNanos = 10 * 1000000;
-
-			AudioBuffer dataBuffer = AudioBuffer(renderFormat.sampleRate * 0.01, renderFormat);
-			aaudio_result_t  ares;
-
-			aaudio_stream_state_t initialState = AAudioStream_getState(pRenderStream);
-			aaudio_stream_state_t currentState = AAUDIO_STREAM_STATE_UNINITIALIZED;
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT(AAudioStream_requestStart(pRenderStream), this, "AndroidAudioA", "An error occurred while starting the render stream.");
-			ANDROIDAUDIO_RENDER_THREAD_EXCPT(AAudioStream_waitForStateChange(pRenderStream, initialState, &currentState, stateChangeTimeoutNanos), this, "AndroidAudioA", "An error occurred while starting the render stream.");
-
-			while (!disposing && isRenderInitialized)
+			const AAudioParams* pAAudioParams = dynamic_cast<const AAudioParams*>(&nativeParams);
+			if (pAAudioParams == nullptr)
 			{
-				Mix(dataBuffer, dataBuffer.FrameCount());
-
-				aaudio_result_t result = AAudioStream_write(pRenderStream, dataBuffer.Begin(), dataBuffer.FrameCount(), writeTimeoutNanos);
-				if (result < 0)
-				{
-					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred while rendering.", "AAudio", AAudio_convertResultToText(result)));
-					goto RENDER_EXIT;
-				}
-
-				dataBuffer.Reset();
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AndroidAudioA::SetNativeParams", "nativeParams must be a AAudioParams instance."));
+				return;
 			}
-		RENDER_EXIT:
-			AAudioStream_requestStop(pRenderStream);
-			AAudioStream_waitForStateChange(pRenderStream, AAUDIO_STREAM_STATE_STOPPING, &currentState, stateChangeTimeoutNanos);
-		}
-		void AndroidAudioA::CaptureData()
-		{
-			constexpr uint64_t stateChangeTimeoutNanos = 200e6;
-			constexpr uint64_t readTimeoutNanos = 10e6;
-
-			AudioBuffer dataBuffer = AudioBuffer(captureFormat.sampleRate * 0.01, captureFormat);
-			aaudio_result_t  ares;
-
-			aaudio_stream_state_t initialState = AAudioStream_getState(pCaptureStream);
-			aaudio_stream_state_t currentState = AAUDIO_STREAM_STATE_UNINITIALIZED;
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(AAudioStream_requestStart(pCaptureStream), this, "AndroidAudioA", "An error occurred while starting the capture stream.");
-			ANDROIDAUDIO_CAPTURE_THREAD_EXCPT(AAudioStream_waitForStateChange(pCaptureStream, initialState, &currentState, stateChangeTimeoutNanos), this, "AndroidAudioA", "An error occurred while starting the render stream.");
-
-			while (!disposing && isCaptureInitialized)
-			{
-				aaudio_result_t result = AAudioStream_read(pCaptureStream, dataBuffer.Begin(), dataBuffer.FrameCount(), readTimeoutNanos);
-
-				if (result < 0)
-				{
-					RAISE_HEPH_EXCEPTION(this, HephException(result, "AndroidAudioA", "An error occurred while capturing.", "AAudio", AAudio_convertResultToText(result)));
-					goto CAPTURE_EXIT;
-				}
-
-				if (OnCapture)
-				{
-					AudioBuffer tempBuffer = dataBuffer;
-					AudioCaptureEventArgs captureEventArgs(this, tempBuffer);
-					OnCapture(&captureEventArgs, nullptr);
-				}
-
-				dataBuffer.Reset();
-			}
-		CAPTURE_EXIT:
-			AAudioStream_requestStop(pCaptureStream);
-			AAudioStream_waitForStateChange(pCaptureStream, AAUDIO_STREAM_STATE_STOPPING, &currentState, stateChangeTimeoutNanos);
+			this->params = *pAAudioParams;
 		}
 		heph_float AndroidAudioA::GetFinalAOVolume(AudioObject* pAudioObject) const
 		{
 			return NativeAudio::GetFinalAOVolume(pAudioObject) * masterVolume;
+		}
+		aaudio_data_callback_result_t AndroidAudioA::RenderCallback(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames)
+		{
+			AndroidAudioA* pAudio = (AndroidAudioA*)userData;
+			if (pAudio != nullptr)
+			{
+				if (!pAudio->disposing && pAudio->isRenderInitialized)
+				{
+					AudioBuffer buffer(numFrames, pAudio->renderFormat);
+					pAudio->Mix(buffer, numFrames);
+					memcpy(audioData, buffer.Begin(), numFrames * pAudio->renderFormat.FrameSize());
+					return AAUDIO_CALLBACK_RESULT_CONTINUE;
+				}
+			}
+			return AAUDIO_CALLBACK_RESULT_STOP;
+		}
+		aaudio_data_callback_result_t AndroidAudioA::CaptureCallback(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames)
+		{
+			AndroidAudioA* pAudio = (AndroidAudioA*)userData;
+			if (pAudio != nullptr)
+			{
+				if (!pAudio->disposing && pAudio->isCaptureInitialized)
+				{
+					if (!pAudio->isCapturePaused && pAudio->OnCapture)
+					{
+						AudioBuffer buffer(numFrames, pAudio->captureFormat);
+						memcpy(buffer.Begin(), audioData, buffer.Size());
+						AudioCaptureEventArgs captureEventArgs(pAudio, buffer);
+						pAudio->OnCapture(&captureEventArgs, nullptr);
+					}
+					return AAUDIO_CALLBACK_RESULT_CONTINUE;
+				}
+			}
+			return AAUDIO_CALLBACK_RESULT_STOP;
+		}
+		void AndroidAudioA::ErrorCallback(AAudioStream* stream, void* userData, aaudio_result_t error)
+		{
+			const std::string direction = AAudioStream_getDirection(stream) == AAUDIO_DIRECTION_OUTPUT ? "rendering" : "capturing";
+			RAISE_HEPH_EXCEPTION(userData, HephException(error, "AndroidAudioA", "An error occurred while " + direction, "AAudio", AAudio_convertResultToText(error)));
 		}
 	}
 }

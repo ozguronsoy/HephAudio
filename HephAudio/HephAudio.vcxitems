@@ -35,6 +35,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AudioFileFormatManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioPlaylist.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioProcessor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\NativeAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\WînAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\BartlettHannWindow.h" />
