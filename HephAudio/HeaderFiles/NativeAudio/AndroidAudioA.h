@@ -1,7 +1,5 @@
 #pragma once
 #ifdef __ANDROID__
-#define HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL 26
-
 #include "HephAudioShared.h"
 #include "AndroidAudioBase.h"
 #include "Params/AAudioParams.h"

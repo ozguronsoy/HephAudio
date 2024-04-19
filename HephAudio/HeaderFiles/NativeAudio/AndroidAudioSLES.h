@@ -1,11 +1,10 @@
 #pragma once
-#ifdef __ANDROID__
+#if defined(__ANDROID__) && __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
 #include "HephAudioShared.h"
 #include "AndroidAudioBase.h"
+#include "Params/OpenSLParams.h"
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
-
-#define HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL 21
 
 namespace HephAudio
 {
@@ -21,11 +20,13 @@ namespace HephAudio
 			struct CallbackContext
 			{
 				AndroidAudioSLES* pAndroidAudio;
-				SLint8* pDataBase;
 				SLint8* pData;
-				SLuint32 bufferSize;
+				SLuint32 index;
+				SLuint32 bufferSize_byte;
+				SLuint32 bufferSize_frame;
 			};
 		private:
+			OpenSLParams params;
 			SLObjectItf audioEngineObject;
 			SLEngineItf audioEngine;
 			SLObjectItf outputMixObject;

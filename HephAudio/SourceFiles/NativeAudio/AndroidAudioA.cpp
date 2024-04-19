@@ -378,11 +378,11 @@ namespace HephAudio
 		}
 		void AndroidAudioA::StopCapturing()
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::StopCapturing", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
 		void AndroidAudioA::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetNativeParams", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetNativeParams", "Not implemented."));
 		}
 		void AndroidAudioA::SetNativeParams(const NativeAudioParams& nativeParams)
 		{

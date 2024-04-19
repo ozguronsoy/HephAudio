@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "HephCommonShared.h"
 #include <cmath>
 
@@ -41,7 +41,7 @@
 #endif
 
 #if !defined(HEPHAUDIO_SPEED_OF_SOUND)
-#define HEPHAUDIO_SPEED_OF_SOUND 343.0 // speed of sound in dry air at 20°C in meters per second
+#define HEPHAUDIO_SPEED_OF_SOUND 343.0 // speed of sound in dry air at 20 deg C in meters per second
 #endif
 
 #if !defined(INT24_MAX)
@@ -101,6 +101,13 @@ typedef float heph_audio_sample;
 #else
 #error heph_audio_sample/ieee_float conversions are not implemented for this internal format yet.
 #endif
+
+#endif
+
+#if !defined(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
+
+#define HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL 21
+#define HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL 26
 
 #endif
 
