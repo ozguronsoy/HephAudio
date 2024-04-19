@@ -17,23 +17,23 @@ namespace HephCommon
 	{
 #if defined(__ANDROID__)
 
-		if (strcmp(logLevel, HEPH_CL_INFO))
+		if (strcmp(logLevel, HEPH_CL_INFO) == 0)
 		{
 			__android_log_print(ANDROID_LOG_INFO, libName.c_str(), "%s", message.c_str());
 		}
-		else if (strcmp(logLevel, HEPH_CL_WARNING))
+		else if (strcmp(logLevel, HEPH_CL_WARNING) == 0)
 		{
 			__android_log_print(ANDROID_LOG_WARN, libName.c_str(), "%s", message.c_str());
 		}
-		else if (strcmp(logLevel, HEPH_CL_ERROR))
+		else if (strcmp(logLevel, HEPH_CL_ERROR) == 0)
 		{
 			__android_log_print(ANDROID_LOG_ERROR, libName.c_str(), "%s", message.c_str());
 		}
-		else if (strcmp(logLevel, HEPH_CL_SUCCESS))
+		else if (strcmp(logLevel, HEPH_CL_SUCCESS) == 0)
 		{
 			__android_log_print(ANDROID_LOG_VERBOSE, libName.c_str(), "%s", message.c_str());
 		}
-		else if (strcmp(logLevel, HEPH_CL_DEBUG))
+		else if (strcmp(logLevel, HEPH_CL_DEBUG) == 0)
 		{
 			__android_log_print(ANDROID_LOG_DEBUG, libName.c_str(), "%s", message.c_str());
 		}
