@@ -235,6 +235,7 @@ namespace HephAudio
 
 			if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
 			{
+				pcmFormat.formatType = SL_ANDROID_DATAFORMAT_PCM_EX;
 				pcmFormat.representation = SL_ANDROID_PCM_REPRESENTATION_FLOAT;
 			}
 			else
