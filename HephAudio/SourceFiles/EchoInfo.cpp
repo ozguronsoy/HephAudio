@@ -14,6 +14,6 @@ namespace HephAudio
 		const size_t echoStartFrame = bufferFrameCount * this->echoStartPosition;
 		const size_t echoBufferFrameCount = bufferFrameCount * this->echoEndPosition - echoStartFrame;
 		const size_t resultBufferFrameCount = echoStartFrame + delayFrameCount * this->reflectionCount + echoBufferFrameCount;
-		return HephCommon::HephMath::Max(resultBufferFrameCount, bufferFrameCount);
+		return HEPH_MATH_MAX(resultBufferFrameCount, bufferFrameCount);
 	}
 }

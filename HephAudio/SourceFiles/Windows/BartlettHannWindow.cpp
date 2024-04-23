@@ -9,7 +9,7 @@ namespace HephAudio
 	BartlettHannWindow::BartlettHannWindow(size_t size) : Window(size) { this->SetSize(size); }
 	heph_float BartlettHannWindow::operator[](size_t n) const 
 	{
-		return 0.62 - 0.48 * fabs(n / this->N - 0.5) - 0.38 * cos(2.0 * HephMath::pi * n / this->N);
+		return 0.62 - 0.48 * fabs(n / this->N - 0.5) - 0.38 * cos(2.0 * HEPH_MATH_PI * n / this->N);
 	}
 	void BartlettHannWindow::SetSize(size_t newSize) 
 	{

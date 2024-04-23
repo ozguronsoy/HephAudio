@@ -448,7 +448,7 @@ namespace HephAudio
 		if (avCodec->supported_samplerates != nullptr)
 		{
 			int32_t closestSampleRate = avCodec->supported_samplerates[0];
-			int32_t closestAbsDeltaSampleRate = HephMath::Abs((int)targetSampleRate - avCodec->supported_samplerates[0]);
+			int32_t closestAbsDeltaSampleRate = abs((int)targetSampleRate - avCodec->supported_samplerates[0]);
 			for (size_t i = 1; avCodec->supported_samplerates[i] != 0; i++)
 			{
 				if (avCodec->supported_samplerates[i] == targetSampleRate)
@@ -456,7 +456,7 @@ namespace HephAudio
 					return targetSampleRate;
 				}
 
-				const int32_t currentAbsDeltaSampleRate = HephMath::Abs((int)targetSampleRate - avCodec->supported_samplerates[i]);
+				const int32_t currentAbsDeltaSampleRate = abs((int)targetSampleRate - avCodec->supported_samplerates[i]);
 				if (currentAbsDeltaSampleRate < closestAbsDeltaSampleRate)
 				{
 					closestAbsDeltaSampleRate = currentAbsDeltaSampleRate;

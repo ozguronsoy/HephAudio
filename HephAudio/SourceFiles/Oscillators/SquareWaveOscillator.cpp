@@ -11,6 +11,7 @@ namespace HephAudio
 		: Oscillator(peakAmplitude, frequency, sampleRate, phase_rad) {}
 	heph_float SquareWaveOscillator::operator[](size_t n) const
 	{
-		return this->peakAmplitude * HephMath::Sgn(sin(2.0 * HephMath::pi * this->frequency * n / this->sampleRate + this->phase_rad));
+		const heph_float sample = sin(2.0 * HEPH_MATH_PI * this->frequency * n / this->sampleRate + this->phase_rad);
+		return this->peakAmplitude * HEPH_MATH_SGN(sample);
 	}
 }

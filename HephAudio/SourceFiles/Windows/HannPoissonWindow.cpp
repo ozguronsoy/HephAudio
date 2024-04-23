@@ -10,7 +10,7 @@ namespace HephAudio
 	HannPoissonWindow::HannPoissonWindow(size_t size, heph_float alpha) : Window(size), alpha(alpha) { this->SetSize(size); }
 	heph_float HannPoissonWindow::operator[](size_t n) const 
 	{
-		return 0.5 * (1.0 - cos(2.0 * HephMath::pi * n / this->N)) * exp(-this->alpha * fabs(this->N - 2.0 * n) / this->N);
+		return 0.5 * (1.0 - cos(2.0 * HEPH_MATH_PI * n / this->N)) * exp(-this->alpha * fabs(this->N - 2.0 * n) / this->N);
 	}
 	void HannPoissonWindow::SetSize(size_t newSize) 
 	{

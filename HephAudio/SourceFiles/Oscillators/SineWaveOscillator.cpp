@@ -11,6 +11,6 @@ namespace HephAudio
 		: Oscillator(peakAmplitude, frequency, sampleRate, phase_rad) {}
 	heph_float SineWaveOscillator::operator[](size_t n) const
 	{
-		return this->peakAmplitude * sin(2.0 * HephMath::pi * this->frequency * n / this->sampleRate + this->phase_rad);
+		return this->peakAmplitude * sin(2.0 * HEPH_MATH_PI * this->frequency * n / this->sampleRate + this->phase_rad);
 	}
 }
