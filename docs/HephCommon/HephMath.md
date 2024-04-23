@@ -1,22 +1,15 @@
-## HephMath class
+## HephMath
 ```c++
 #include <HephMath.h>
-using namespace HephCommon;
 ```
 
 > [Description](#description)<br>
-[Macros](#macros)<br>
-[Fields](#fields)<br>
-[Methods](#methods)
+[Macros](#macros)
 
 
 ### Description
-Defines the constexpr versions of some of the math functions.
+Defines math macros.
 <br><br>
-
-> [!NOTE]
-> This class only contains static methods and cannot be instantiated.
-
 
 
 ### Macros
@@ -27,73 +20,32 @@ Defines the constexpr versions of some of the math functions.
 ```
 <br><br>
 
-
-### Fields
-
 ```c++
-class HephMath final
-{
-    static constexpr long double pi_l;
-    static constexpr double pi;
-    static constexpr float pi_f;
-    static constexpr heph_float pi_hf;
-    static constexpr long double e_l;
-    static constexpr double e;
-    static constexpr float e_f;
-    static constexpr heph_float e_hf;
-};
+#define HEPH_MATH_SGN
 ```
+Gets the sign of a real number.
 <br><br>
 
-
-### Methods
+```c++
+#define HEPH_MATH_MIN(a, b)
+```
+Gets the minimum of the provided numbers.
+<br><br>
 
 ```c++
-static constexpr float Sgn(float x);
+#define HEPH_MATH_MAX(a, b)
 ```
-<br><br><br><br>
+Gets the maximum of the provided numbers.
+<br><br>
 
 ```c++
-static constexpr float Max(float a, float b);
+HEPH_MATH_RAD_TO_DEG(x)
 ```
-<br><br><br><br>
+Converts radians to degrees.
+<br><br>
 
 ```c++
-static constexpr float Min(float a, float b);
+HEPH_MATH_DEG_TO_RAD(x)
 ```
-<br><br><br><br>
-
-```c++
-static constexpr float Abs(float x);
-```
-<br><br><br><br>
-
-```c++
-static constexpr float Round(float x);
-```
-<br><br><br><br>
-
-```c++
-static constexpr float Floor(float x);
-```
-<br><br><br><br>
-
-```c++
-static constexpr float Ceil(float x);
-```
-<br><br><br><br>
-
-```c++
-static constexpr float Mod(float a, float b);
-```
-<br><br><br><br>
-
-```c++
-static constexpr float RadToDeg(float x);
-```
-<br><br><br><br>
-
-```c++
-static constexpr float DegToRad(float x);
-```
-<br><br><br><br>
+Converts degrees to radians.
+<br><br>
