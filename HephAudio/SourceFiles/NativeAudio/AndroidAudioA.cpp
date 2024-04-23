@@ -40,7 +40,11 @@ namespace HephAudio
 		}
 		void AndroidAudioA::SetMasterVolume(heph_float volume)
 		{
-			masterVolume = HephMath::Max(0.0, HephMath::Min((double)volume, 1.0));
+			if (volume < 0)
+			{
+				volume = -volume;
+			}
+			masterVolume = HEPH_MATH_MIN(volume, 1);
 		}
 		heph_float AndroidAudioA::GetMasterVolume() const
 		{
