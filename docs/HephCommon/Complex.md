@@ -6,8 +6,7 @@ using namespace HephCommon;
 **Inheritance:** *[std::complex<heph_float>](https://en.cppreference.com/w/cpp/numeric/complex)* -> *Complex*
 
 > [Description](#description)<br>
-[Methods](#methods)<br>
-[Literals](#literals)
+[Methods](#methods)
 
 ### Description
 Struct for representing complex numbers.
@@ -231,14 +230,3 @@ heph_float Phase() const;
 Calculates the phase angle of the complex number in radians.
 - **returns:** Phase angle in radians.
 <br><br><br><br>
-
-
-### Literals
-
-```c++
-1_j
-1.5_j
-1_J
-1.5_J
-```
-Creates a ``Complex`` instance with the real part set to 0, and the imaginary part set to the value.
