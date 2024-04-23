@@ -75,7 +75,7 @@ namespace HephAudio
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
 		AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
-		const size_t readFrameCount = (heph_float)pRenderArgs->renderFrameCount * (heph_float)pAudioObject->buffer.FormatInfo().sampleRate / (heph_float)renderFormat.sampleRate;
+		const size_t readFrameCount = ceil((heph_float)pRenderArgs->renderFrameCount * (heph_float)pAudioObject->buffer.FormatInfo().sampleRate / (heph_float)renderFormat.sampleRate);
 
 		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount + 1);
 
