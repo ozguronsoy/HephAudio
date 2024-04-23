@@ -51,19 +51,3 @@ inline HephCommon::Complex operator/(heph_float lhs, const HephCommon::Complex& 
 {
 	return HephCommon::Complex(lhs, 0) / rhs;
 }
-inline HephCommon::Complex operator""_j(unsigned long long int x)
-{
-	return HephCommon::Complex(0, x);
-}
-inline HephCommon::Complex operator""_j(long double x)
-{
-	return HephCommon::Complex(0, x);
-}
-inline HephCommon::Complex operator""_J(unsigned long long int x)
-{
-	return HephCommon::Complex(0, x);
-}
-inline HephCommon::Complex operator""_J(long double x)
-{
-	return HephCommon::Complex(0, x);
-}
