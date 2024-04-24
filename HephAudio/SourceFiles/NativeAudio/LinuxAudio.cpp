@@ -129,10 +129,6 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
-			// adjust these if buffer overrun occurs constantly.
-			constexpr useconds_t latency = 10000;
-			constexpr useconds_t bufferDuration = latency / 2;
-
 			int result;
 
 			StopRendering();
@@ -141,6 +137,9 @@ namespace HephAudio
 			renderFormat = format;
 
 			LINUX_EXCPT(snd_pcm_open(&renderPcm, renderDeviceId.c_str(), SND_PCM_STREAM_PLAYBACK, 0), this, "LinuxAudio::InitializeRender", "An error occurred while opening pcm.");
+
+			const useconds_t bufferDuration = this->params.renderBufferDuration_ms * 1000;
+			const useconds_t latency = bufferDuration * 2;
 
 			LINUX_EXCPT(snd_pcm_set_params(renderPcm,
 				ToPcmFormat(renderFormat),
@@ -180,10 +179,6 @@ namespace HephAudio
 			HEPHAUDIO_STOPWATCH_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
-			// adjust these if buffer underrun occurs constantly.
-			constexpr useconds_t latency = 10000;
-			constexpr useconds_t bufferDuration = latency / 2;
-
 			int result;
 
 			StopCapturing();
@@ -192,6 +187,9 @@ namespace HephAudio
 			captureFormat = format;
 
 			LINUX_EXCPT(snd_pcm_open(&capturePcm, captureDeviceId.c_str(), SND_PCM_STREAM_CAPTURE, 0), this, "LinuxAudio::InitializeCapture", "An error occurred while opening pcm.");
+
+			const useconds_t bufferDuration = this->params.captureBufferDuration_ms * 1000;
+			const useconds_t latency = bufferDuration * 2;
 
 			LINUX_EXCPT(snd_pcm_set_params(capturePcm,
 				ToPcmFormat(captureFormat),
@@ -228,11 +226,23 @@ namespace HephAudio
 		}
 		void LinuxAudio::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "LinuxAudio::GetNativeParams", "Not implemented."));
+			AlsaParams* pAlsaParams = dynamic_cast<AlsaParams*>(&nativeParams);
+			if (pAlsaParams == nullptr)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "LinuxAudio::GetNativeParams", "nativeParams must be a AlsaParams instance."));
+				return;
+			}
+			(*pAlsaParams) = this->params;
 		}
 		void LinuxAudio::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "LinuxAudio::SetNativeParams", "Not implemented."));
+			const AlsaParams* pAlsaParams = dynamic_cast<const AlsaParams*>(&nativeParams);
+			if (pAlsaParams == nullptr)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "LinuxAudio::SetNativeParams", "nativeParams must be a AlsaParams instance."));
+				return;
+			}
+			this->params = *pAlsaParams;
 		}
 		bool LinuxAudio::EnumerateAudioDevices()
 		{

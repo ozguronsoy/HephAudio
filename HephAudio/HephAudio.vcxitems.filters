@@ -285,6 +285,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\WasapiParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\OpenSLParams.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AlsaParams.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">

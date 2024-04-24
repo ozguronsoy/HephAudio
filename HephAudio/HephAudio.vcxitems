@@ -36,6 +36,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioPlaylist.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AlsaParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\NativeAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\OpenSLParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\WasapiParams.h" />

@@ -2,6 +2,7 @@
 #if defined(__linux__) && !defined(__ANDROID__)
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
+#include "Params/AlsaParams.h"
 #include <alsa/asoundlib.h>
 
 namespace HephAudio
@@ -17,6 +18,7 @@ namespace HephAudio
 		private:
 			static constexpr long volume_max = INT32_MAX;
 		private:
+			AlsaParams params;
 			snd_pcm_t* renderPcm;
 			snd_pcm_t* capturePcm;
 		public:
