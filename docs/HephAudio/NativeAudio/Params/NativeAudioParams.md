@@ -8,7 +8,7 @@ using namespace HephAudio::Native;
 [Methods](#methods)
 
 ### Description
-Base class for storing the native audio API specific parameters.
+Base struct for storing the native audio API specific parameters.
 <br><br>
 
 ### Methods
