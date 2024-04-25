@@ -10,11 +10,52 @@ HephAudio is a cross-platform audio library that provides:
 
 # Setup
 ### Visual Studio
-1) Clone the repo.
+1) Clone the repo to your project's root folder.
 2) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the HephCommon and HephAudio header files.
 3) Now right click the solution and go to ``Add -> Existing Project``, under the HephCommon folder select ``HephCommon.vcxitems`` to add to your project. Repeat the same process for HephAudio.
 4) Right click to your project, ``Add -> Reference -> Shared Projects`` and check both HephAudio and HephCommon.
 5) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to ``Configuration Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions`` and add ``_CRT_SECURE_NO_WARNINGS``.
+
+### VS Code
+1) Clone the repo to your project's root folder.
+2) Configure your project to use CMake.
+3) Create a ``CMakeLists.txt`` file at your project's root folder.<br>
+An example cmake file:
+```
+cmake_minimum_required(VERSION 3.22.1)
+
+# your project name
+project("myapplication")
+
+# if not set, HephAudio/CMakeLists.txt will set the CMAKE_CXX_STANDARD to 14
+set (CMAKE_CXX_STANDARD 14)
+
+# This will:
+# include the files at ${HEPH_FFMPEG_ROOT}/include folder
+# link the libraries at ${HEPH_FFMPEG_ROOT}/lib/ (Ex: avcodec.lib for Windows, libavcodec.so for other platforms)
+# define HEPHAUDIO_USE_FFMPEG
+# remove this if you don't want to use FFmpeg
+set (HEPH_FFMPEG_ROOT "/path/to/ffmpeg")
+
+# execute the HephAudio/CMakeLists.txt file
+include(${CMAKE_CURRENT_SOURCE_DIR}/HephAudio/CMakeLists.txt)
+
+add_executable(
+    ${CMAKE_PROJECT_NAME}
+    ${HEPH_AUDIO}
+    # your files
+    main.cpp
+)
+
+target_link_libraries(
+    ${CMAKE_PROJECT_NAME}
+    ${HEPHAUDIO_LINK_LIBS}
+    # your libs
+)
+
+# extra definitions
+add_definitions(-DHEPHAUDIO_INFO_LOGGING)
+```
 
 # Getting Started
 ### Playing Files
