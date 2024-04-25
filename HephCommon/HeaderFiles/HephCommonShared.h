@@ -27,6 +27,30 @@
 
 #endif
 
+#if !defined(HEPH_ENV_64_BIT) && !defined(HEPH_ENV_32_BIT)
+
+#if defined(_WIN32) || defined(_WIN64)
+
+#if defined(_WIN64)
+#define HEPH_ENV_64_BIT
+#else
+#define HEPH_ENV_32_BIT
+#endif
+
+#elif defined(__GNUC__)
+#if defined(__x86_64__) || defined(__ppc64__)
+#define HEPH_ENV_64_BIT
+#else
+#define HEPH_ENV_32_BIT
+#endif
+
+#else
+#error unsupported environment
+
+#endif
+
+#endif
+
 #if !defined(HEPH_CONSTEVAL)
 
 #if CPP_VERSION >= CPP_VERSION_20
