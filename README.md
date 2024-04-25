@@ -10,16 +10,17 @@ HephAudio is a cross-platform audio library that provides:
 
 # Setup
 ### Visual Studio
-1) Clone the repo to your project's root folder.
-2) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the HephCommon and HephAudio header files.
-3) Now right click the solution and go to ``Add -> Existing Project``, under the HephCommon folder select ``HephCommon.vcxitems`` to add to your project. Repeat the same process for HephAudio.
-4) Right click to your project, ``Add -> Reference -> Shared Projects`` and check both HephAudio and HephCommon.
-5) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to ``Configuration Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions`` and add ``_CRT_SECURE_NO_WARNINGS``.
+1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).
+2) Copy the repo to the folder you created.
+3) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the HephCommon and HephAudio header files.
+4) Now right click the solution and go to ``Add -> Existing Project``, under the HephCommon folder select ``HephCommon.vcxitems`` to add to your project. Repeat the same process for HephAudio.
+5) Right click to your project, ``Add -> Reference -> Shared Projects`` and check both HephAudio and HephCommon.
+6) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to ``Configuration Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions`` and add ``_CRT_SECURE_NO_WARNINGS``.
 
 ### VS Code
-1) Clone the repo to your project's root folder.
-2) Configure your project to use CMake.
-3) Create a ``CMakeLists.txt`` file at your project's root folder.<br>
+1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).
+2) Copy the repo to the folder you created.
+3) Create a ``CMakeLists.txt`` file at your project's root folder and build it.<br>
 An example cmake file:
 ```
 cmake_minimum_required(VERSION 3.22.1)
