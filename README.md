@@ -16,6 +16,7 @@ HephAudio is a cross-platform audio library that provides:
 4) Now right click the solution and go to ``Add -> Existing Project``, under the HephCommon folder select ``HephCommon.vcxitems`` to add to your project. Repeat the same process for HephAudio.
 5) Right click to your project, ``Add -> Reference -> Shared Projects`` and check both HephAudio and HephCommon.
 6) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to ``Configuration Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions`` and add ``_CRT_SECURE_NO_WARNINGS``.
+<br><br>
 
 ### VS Code
 1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).
