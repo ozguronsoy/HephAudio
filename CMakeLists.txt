@@ -115,6 +115,12 @@ elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(
         HEPHAUDIO_LINK_LIBS
         asound
+	${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf_c++4.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libhdf5_hl.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libhdf5.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libcurl.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libz.a
     )
 
     if (DEFINED HEPH_FFMPEG_ROOT)
