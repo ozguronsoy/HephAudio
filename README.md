@@ -4,6 +4,7 @@ HephAudio is a cross-platform audio library that provides:
 - Audio device enumeration and selection.
 - Tools for storing and processing audio data with ease.
 - Easy to use sound effects and filters.
+- Spatialization (3D audio) via HRTF.
 - FFT (uses [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/tree/cpp)) for frequency analysis of the audio signals.
 - Reading and writing WAV and AIFF files.
 - More file format and codec support via [FFmpeg](https://ffmpeg.org/). You will need to enable this feature, and download an FFmpeg build. See [EnableFFmpeg](/docs/tutorials/EnableFFmpeg.md) for more information.
@@ -15,13 +16,16 @@ HephAudio is a cross-platform audio library that provides:
 3) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the HephCommon and HephAudio header files.
 4) Now right click the solution and go to ``Add -> Existing Project``, under the HephCommon folder select ``HephCommon.vcxitems`` to add to your project. Repeat the same process for HephAudio.
 5) Right click to your project, ``Add -> Reference -> Shared Projects`` and check both HephAudio and HephCommon.
-6) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to ``Configuration Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions`` and add ``_CRT_SECURE_NO_WARNINGS``.
+6) Right click to your project, go to ``Configuration Properties -> Linker -> General -> Additional Library Directories`` and add ``path_to_hephaudio/dependencies``.
+7) Copy the required dll files from the dependencies to the build output folder.
+8) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to ``Configuration Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions`` and add ``_CRT_SECURE_NO_WARNINGS``.
 <br><br>
 
 ### VS Code
 1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).
 2) Copy the repo to the folder you created.
-3) Create a ``CMakeLists.txt`` file at your project's root folder and build it.<br>
+3) Copy the required dll files from the dependencies to the build output folder.
+4) Create a ``CMakeLists.txt`` file at your project's root folder and build it.<br>
 An example cmake file:
 ```
 cmake_minimum_required(VERSION 3.22.1)
