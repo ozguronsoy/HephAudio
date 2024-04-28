@@ -94,8 +94,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\WinAudioMME.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\Window.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WmaFormat.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Spatializer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AacFormat.cpp" />

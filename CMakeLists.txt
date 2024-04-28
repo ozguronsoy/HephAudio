@@ -8,6 +8,10 @@ if (CMAKE_CXX_STANDARD LESS 14)
     message( FATAL_ERROR "the minimum required C++ standard is 14.")
 endif ()
 
+if (NOT DEFINED CMAKE_SIZEOF_VOID_P)
+    message( FATAL_ERROR "CMAKE_SIZEOF_VOID_P is not set, call project() before running this cmake.")
+endif()
+
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
 if (POLICY CMP0025)
     cmake_policy(SET CMP0025 NEW)
@@ -29,14 +33,39 @@ file(GLOB HEPH_AUDIO
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/Windows/*.cpp
     )
 
+if (DEFINED MSVC)
+    link_directories(${CMAKE_CURRENT_LIST_DIR}/dependencies)
+else()
+    file(GLOB HEPH_AUDIO
+        ${HEPH_AUDIO}
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/src/*.cpp
+    )
+endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(
         HEPHAUDIO_LINK_LIBS 
         Dsound
         Winmm
     )
+
+    if (NOT DEFINED MSVC)
+
+        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+            set(
+                HEPHAUDIO_LINK_LIBS
+                ${HEPHAUDIO_LINK_LIBS}
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/win/netcdf.lib
+            )
+        else()
+            set(
+                HEPHAUDIO_LINK_LIBS
+                ${HEPHAUDIO_LINK_LIBS}
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/win/netcdf_x64.lib
+            )
+        endif()
+
+    endif()
 
     if (DEFINED HEPH_FFMPEG_ROOT)
         include_directories(${HEPH_FFMPEG_ROOT}/include)

@@ -260,7 +260,7 @@ namespace HephAudio
 			else
 			{
 				HEPHAUDIO_LOG("Could not play \"" + filePath + "\", playlist finished.", HEPH_CL_ERROR);
-				filePath = nullptr;
+				filePath = "";
 			}
 			goto OPEN_NEW_STREAM;
 		}

@@ -286,6 +286,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\OpenSLParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AlsaParams.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Spatializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -473,5 +474,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />
   </ItemGroup>
 </Project>
