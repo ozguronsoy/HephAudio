@@ -113,7 +113,7 @@ elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(
         HEPHAUDIO_LINK_LIBS
         asound
-	${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf_c++4.a
+	    ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf_c++4.a
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf.a
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libhdf5_hl.a
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libhdf5.a
@@ -134,4 +134,29 @@ elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         add_definitions(-DHEPHAUDIO_USE_FFMPEG)
     endif ()
 
+elseif ((CMAKE_SYSTEM_NAME STREQUAL "Darwin") OR (CMAKE_SYSTEM_NAME STREQUAL "iOS"))
+    set(
+        HEPHAUDIO_LINK_LIBS
+        "-framework CoreFoundation"
+        "-framework CoreAudio"
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libnetcdf_c++4.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libnetcdf.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libhdf5_hl.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libhdf5.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libcurl.a
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libz.a
+    )
+
+    if (DEFINED HEPH_FFMPEG_ROOT)
+        include_directories(${HEPH_FFMPEG_ROOT}/include)
+        set(
+            HEPHAUDIO_LINK_LIBS
+            ${HEPHAUDIO_LINK_LIBS}
+            ${HEPH_FFMPEG_ROOT}/lib/libavcodec.so
+            ${HEPH_FFMPEG_ROOT}/lib/libavformat.so
+            ${HEPH_FFMPEG_ROOT}/lib/libavutil.so
+            ${HEPH_FFMPEG_ROOT}/lib/libswresample.so
+        )
+        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
+    endif ()
 endif ()
