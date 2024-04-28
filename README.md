@@ -24,7 +24,7 @@ HephAudio is a cross-platform audio library that provides:
 ### VS Code
 1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).
 2) Copy the repo to the folder you created.
-3) Copy the required dll files from the dependencies to the build output folder.
+3) **(WINDOWS ONLY)** Copy the required dll files from the dependencies to the build output folder.
 4) Create a ``CMakeLists.txt`` file at your project's root folder and build it.<br>
 An example cmake file:
 ```
