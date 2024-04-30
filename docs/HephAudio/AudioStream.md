@@ -84,27 +84,6 @@ Gets the pointer to the ``NativeAudio`` instance that's used for rendering audio
 <br><br><br><br>
 
 ```c++
-HephCommon::File* GetFile();
-```
-Gets the pointer to the ``File`` instance that's being played.
-- **returns:** Pointer to the ``File`` instance.
-<br><br><br><br>
-
-```c++
-FileFormats::IAudioFileFormat* GetFileFormat() const;
-```
-Gets the format of the file.
-- **returns:** The file format.
-<br><br><br><br>
-
-```c++
-Codecs::IAudioCodec* GetAudioCodec() const;
-```
-Gets the codec of the audio data.
-- **returns:** The codec of the audio data.
-<br><br><br><br>
-
-```c++
 AudioObject* GetAudioObject() const;
 ```
 Gets the ``AudioObject`` instance that's created to play audio data.
