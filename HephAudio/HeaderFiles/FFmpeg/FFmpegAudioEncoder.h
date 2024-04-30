@@ -1,5 +1,4 @@
 #pragma once
-#if defined(HEPHAUDIO_USE_FFMPEG)
 #include "HephAudioShared.h"
 #include "FFmpegAudioShared.h"
 #include "AudioBuffer.h"
@@ -41,4 +40,3 @@ namespace HephAudio
 		static void Transcode(void* pDecoder, FFmpegAudioEncoder& encoder);
 	};
 }
-#endif

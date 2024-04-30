@@ -1,3 +1,4 @@
+#if !defined(__ANDROID__)
 #include "Spatializer.h"
 #include "HephException.h"
 #include "File.h"
@@ -6,7 +7,7 @@
 #include "AudioProcessor.h"
 #include "Windows/HannWindow.h"
 #include "ConsoleLogger.h"
-#include "../../dependencies/libsofa/src/SOFA.h"
+#include <../../dependencies/libsofa/src/SOFA.h>
 #include <cmath>
 #include <vector>
 
@@ -15,22 +16,22 @@
 #if defined(HEPH_ENV_64_BIT)
 
 #if defined(_DEBUG)
-#pragma comment(lib, "libsofa/lib/win/libsofa_debug_x64.lib")
+#pragma comment(lib, "libsofa/lib/windows/libsofa_debug_x64.lib")
 #else
-#pragma comment(lib, "libsofa/lib/win/libsofa_x64.lib")
+#pragma comment(lib, "libsofa/lib/windows/libsofa_x64.lib")
 #endif
 
-#pragma comment(lib, "libsofa/lib/win/netcdf_x64.lib")
+#pragma comment(lib, "libsofa/lib/windows/netcdf_x64.lib")
 
 #else
 
 #if defined(_DEBUG)
-#pragma comment(lib, "libsofa/lib/win/libsofa_debug.lib")
+#pragma comment(lib, "libsofa/lib/windows/libsofa_debug.lib")
 #else
-#pragma comment(lib, "libsofa/lib/win/libsofa.lib")
+#pragma comment(lib, "libsofa/lib/windows/libsofa.lib")
 #endif
 
-#pragma comment(lib, "libsofa/lib/win/netcdf.lib")
+#pragma comment(lib, "libsofa/lib/windows/netcdf.lib")
 
 #endif
 
@@ -383,3 +384,4 @@ namespace HephAudio
 		return Spatializer::INDEX_NOT_FOUND;
 	}
 }
+#endif

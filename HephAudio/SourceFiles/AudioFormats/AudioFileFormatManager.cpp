@@ -20,7 +20,6 @@ namespace HephAudio
 		std::vector<IAudioFileFormat*> formats = {
 			new WavFormat(),
 			new AiffFormat(),
-#if defined(HEPHAUDIO_USE_FFMPEG)
 			new MpegFormat(),
 			new Mp3Format(),
 			new Mp4Format(),
@@ -28,8 +27,7 @@ namespace HephAudio
 			new FlacFormat(),
 			new M4aFormat(),
 			new AacFormat(),
-			new WmaFormat(),
-#endif
+			new WmaFormat()
 		};
 
 		void AudioFileFormatManager::RegisterFileFormat(IAudioFileFormat* format)

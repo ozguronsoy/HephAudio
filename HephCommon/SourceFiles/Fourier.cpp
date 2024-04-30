@@ -1,5 +1,5 @@
 #include "Fourier.h"
-#include "../../dependencies/pocketfft/pocketfft_hdronly.h"
+#include <../../dependencies/pocketfft/pocketfft_hdronly.h>
 #include <complex>
 
 namespace HephCommon

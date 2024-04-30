@@ -357,7 +357,7 @@ namespace HephAudio
 
 		const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
 		const heph_float duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
-		const size_t fileFrameCount = pPlaylist->stream.GetFileFormat()->FileFrameCount(*pPlaylist->stream.GetFile(), pPlaylist->stream.GetAudioFormatInfo());
+		const size_t fileFrameCount = pPlaylist->stream.GetFrameCount();
 		if (pAudioObject->frameIndex + duration_sample >= fileFrameCount + pRenderArgs->renderFrameCount)
 		{
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)

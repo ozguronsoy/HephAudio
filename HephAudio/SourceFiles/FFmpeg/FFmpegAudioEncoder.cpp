@@ -1,4 +1,3 @@
-#if defined(HEPHAUDIO_USE_FFMPEG)
 #include "FFmpeg/FFmpegAudioEncoder.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "AudioProcessor.h"
@@ -669,5 +668,3 @@ namespace HephAudio
 		}
 	}
 }
-
-#endif

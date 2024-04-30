@@ -15,10 +15,8 @@ namespace HephAudio
 	{
 		class IAudioFileFormat
 		{
-#if defined(HEPHAUDIO_USE_FFMPEG)
 		protected:
 			FFmpegAudioDecoder ffmpegAudioDecoder;
-#endif
 		public:
 			virtual ~IAudioFileFormat() = default;
 			virtual std::string Extensions() = 0;
@@ -27,7 +25,7 @@ namespace HephAudio
 			virtual size_t FileFrameCount(const HephCommon::File& audioFile, const AudioFormatInfo& audioFormatInfo) = 0;
 			virtual AudioFormatInfo ReadAudioFormatInfo(const HephCommon::File& audioFile) = 0;
 			virtual AudioBuffer ReadFile(const HephCommon::File& audioFile) = 0;
-			virtual AudioBuffer ReadFile(const HephCommon::File& audioFile, Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying) = 0;
+			virtual AudioBuffer ReadFile(const HephCommon::File& audioFile, size_t frameIndex, size_t frameCount) = 0;
 			virtual bool SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite) = 0;
 		};
 	}

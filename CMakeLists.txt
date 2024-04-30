@@ -18,6 +18,7 @@ endif ()
 include_directories(
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/HeaderFiles
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/HeaderFiles
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/include
     )
 
 file(GLOB HEPH_AUDIO
@@ -33,14 +34,10 @@ file(GLOB HEPH_AUDIO
 
 if (DEFINED MSVC)
     link_directories(${CMAKE_CURRENT_LIST_DIR}/dependencies)
-else()
-    file(GLOB HEPH_AUDIO
-        ${HEPH_AUDIO}
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/src/*.cpp
-    )
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
     set(
         HEPHAUDIO_LINK_LIBS 
         Dsound
@@ -49,34 +46,38 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     if (NOT DEFINED MSVC)
 
+        file(GLOB HEPH_AUDIO
+                ${HEPH_AUDIO}
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/src/*.cpp
+        )
+
         if (CMAKE_SIZEOF_VOID_P EQUAL 4)
             set(
                 HEPHAUDIO_LINK_LIBS
                 ${HEPHAUDIO_LINK_LIBS}
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/win/netcdf.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/windows/netcdf.lib
+
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avcodec.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avformat.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avdevice.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avutil.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/swresample.lib
             )
         else()
             set(
                 HEPHAUDIO_LINK_LIBS
                 ${HEPHAUDIO_LINK_LIBS}
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/win/netcdf_x64.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/windows/netcdf_x64.lib
+
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avcodec_x64.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avformat_x64.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avdevice_x64.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avutil_x64.lib
+                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/swresample_x64.lib
             )
         endif()
 
     endif()
-
-    if (DEFINED HEPH_FFMPEG_ROOT)
-        include_directories(${HEPH_FFMPEG_ROOT}/include)
-        set(
-            HEPHAUDIO_LINK_LIBS
-            ${HEPHAUDIO_LINK_LIBS}
-            ${HEPH_FFMPEG_ROOT}/lib/avcodec.lib
-            ${HEPH_FFMPEG_ROOT}/lib/avformat.lib
-            ${HEPH_FFMPEG_ROOT}/lib/avutil.lib
-            ${HEPH_FFMPEG_ROOT}/lib/swresample.lib
-        )
-        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
-    endif ()
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
@@ -95,20 +96,24 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
         )
     endif()
 
-    if (DEFINED HEPH_FFMPEG_ROOT)
-        include_directories(${HEPH_FFMPEG_ROOT}/include)
-        set(
-            HEPHAUDIO_LINK_LIBS
-            ${HEPHAUDIO_LINK_LIBS}
-            ${HEPH_FFMPEG_ROOT}/lib/libavcodec.so
-            ${HEPH_FFMPEG_ROOT}/lib/libavformat.so
-            ${HEPH_FFMPEG_ROOT}/lib/libavutil.so
-            ${HEPH_FFMPEG_ROOT}/lib/libswresample.so
-        )
-        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
-    endif ()
+    set(
+        HEPHAUDIO_LINK_LIBS
+        ${HEPHAUDIO_LINK_LIBS}
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavcodec.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavfilter.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavformat.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavdevice.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavutil.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libswresample.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libswscale.so
+    )
 
-elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
+    file(GLOB HEPH_AUDIO
+            ${HEPH_AUDIO}
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/src/*.cpp
+    )
 
     set(
         HEPHAUDIO_LINK_LIBS
@@ -121,20 +126,18 @@ elseif  (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libz.a
     )
 
-    if (DEFINED HEPH_FFMPEG_ROOT)
-        include_directories(${HEPH_FFMPEG_ROOT}/include)
-        set(
-            HEPHAUDIO_LINK_LIBS
-            ${HEPHAUDIO_LINK_LIBS}
-            ${HEPH_FFMPEG_ROOT}/lib/libavcodec.so
-            ${HEPH_FFMPEG_ROOT}/lib/libavformat.so
-            ${HEPH_FFMPEG_ROOT}/lib/libavutil.so
-            ${HEPH_FFMPEG_ROOT}/lib/libswresample.so
-        )
-        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
-    endif ()
+    set(
+        HEPHAUDIO_LINK_LIBS
+        ${HEPHAUDIO_LINK_LIBS}
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavcodec.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavformat.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavdevice.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavutil.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libswresample.so
+    )
 
 elseif ((CMAKE_SYSTEM_NAME STREQUAL "Darwin") OR (CMAKE_SYSTEM_NAME STREQUAL "iOS"))
+    
     set(
         HEPHAUDIO_LINK_LIBS
         "-framework CoreFoundation"
@@ -147,16 +150,14 @@ elseif ((CMAKE_SYSTEM_NAME STREQUAL "Darwin") OR (CMAKE_SYSTEM_NAME STREQUAL "iO
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libz.a
     )
 
-    if (DEFINED HEPH_FFMPEG_ROOT)
-        include_directories(${HEPH_FFMPEG_ROOT}/include)
-        set(
-            HEPHAUDIO_LINK_LIBS
-            ${HEPHAUDIO_LINK_LIBS}
-            ${HEPH_FFMPEG_ROOT}/lib/libavcodec.so
-            ${HEPH_FFMPEG_ROOT}/lib/libavformat.so
-            ${HEPH_FFMPEG_ROOT}/lib/libavutil.so
-            ${HEPH_FFMPEG_ROOT}/lib/libswresample.so
-        )
-        add_definitions(-DHEPHAUDIO_USE_FFMPEG)
-    endif ()
+    set(
+        HEPHAUDIO_LINK_LIBS
+        ${HEPHAUDIO_LINK_LIBS}
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavcodec.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavformat.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavdevice.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavutil.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libswresample.so
+    )
+
 endif ()

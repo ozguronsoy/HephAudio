@@ -1,4 +1,3 @@
-#if defined(HEPHAUDIO_USE_FFMPEG)
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "HephException.h"
 #include "File.h"
@@ -568,4 +567,3 @@ namespace HephAudio
 		return 0;
 	}
 }
-#endif

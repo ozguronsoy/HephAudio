@@ -1,4 +1,3 @@
-#if defined(HEPHAUDIO_USE_FFMPEG)
 #include "AudioFormats/OggFormat.h"
 #include "HephException.h"
 
@@ -34,15 +33,10 @@ namespace HephAudio
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
 			return this->ffmpegAudioDecoder.Decode();
 		}
-		AudioBuffer OggFormat::ReadFile(const HephCommon::File& audioFile, Codecs::IAudioCodec* pAudioCodec, const AudioFormatInfo& audioFormatInfo, size_t frameIndex, size_t frameCount, bool* finishedPlaying)
+		AudioBuffer OggFormat::ReadFile(const HephCommon::File& audioFile, size_t frameIndex, size_t frameCount)
 		{
 			this->ffmpegAudioDecoder.ChangeFile(audioFile.FilePath());
-			const AudioBuffer decodedBuffer = this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
-			if (finishedPlaying != nullptr)
-			{
-				*finishedPlaying = (frameIndex + frameCount) >= this->ffmpegAudioDecoder.GetFrameCount();
-			}
-			return decodedBuffer;
+			return this->ffmpegAudioDecoder.Decode(frameIndex, frameCount);
 		}
 		bool OggFormat::SaveToFile(const std::string& filePath, AudioBuffer& buffer, bool overwrite)
 		{
@@ -60,4 +54,3 @@ namespace HephAudio
 		}
 	}
 }
-#endif

@@ -4,8 +4,6 @@
 #include "AudioObject.h"
 #include "Audio.h"
 #include "NativeAudio/NativeAudio.h"
-#include "AudioFormats/AudioFileFormatManager.h"
-#include "AudioCodecs/IAudioCodec.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "File.h"
 
@@ -17,16 +15,11 @@ namespace HephAudio
 	{
 	private:
 		Native::NativeAudio* pNativeAudio;
-		HephCommon::File file;
-		FileFormats::IAudioFileFormat* pFileFormat;
-		Codecs::IAudioCodec* pAudioCodec;
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
 		AudioObject* pAudioObject;
-#if defined(HEPHAUDIO_USE_FFMPEG)
 		FFmpegAudioDecoder ffmpegAudioDecoder;
 		AudioBuffer decodedBuffer;
-#endif
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio);
 		AudioStream(Audio& audio);
@@ -38,9 +31,6 @@ namespace HephAudio
 		AudioStream& operator=(const AudioStream&) = delete;
 		AudioStream& operator=(AudioStream&& rhs) noexcept;
 		Native::NativeAudio* GetNativeAudio() const;
-		HephCommon::File* GetFile();
-		FileFormats::IAudioFileFormat* GetFileFormat() const;
-		Codecs::IAudioCodec* GetAudioCodec() const;
 		AudioObject* GetAudioObject() const;
 		const AudioFormatInfo& GetAudioFormatInfo() const;
 		size_t GetFrameCount() const;

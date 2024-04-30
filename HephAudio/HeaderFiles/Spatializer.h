@@ -1,4 +1,5 @@
 #pragma once
+#if !defined(__ANDROID__)
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
 #include "FloatBuffer.h"
@@ -49,3 +50,4 @@ namespace HephAudio
 		size_t FindMeasurementIndex(double azimuth_deg, double elevation_deg) const;
 	};
 }
+#endif

@@ -1,5 +1,4 @@
 #pragma once
-#if defined(HEPHAUDIO_USE_FFMPEG)
 #include "HephAudioShared.h"
 #include "FFmpegAudioShared.h"
 #include "AudioBuffer.h"
@@ -43,4 +42,3 @@ namespace HephAudio
 		int SeekFrame(size_t& frameIndex);
 	};
 }
-#endif
