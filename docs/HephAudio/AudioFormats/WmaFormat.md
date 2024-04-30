@@ -8,5 +8,3 @@ using namespace HephAudio::FileFormats;
 ### Description
 Class for reading/writing WMA files.
 
-> [!NOTE]
-> Only supported when FFmpeg is enabled.
