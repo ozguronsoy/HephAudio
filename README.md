@@ -4,16 +4,15 @@ HephAudio is a cross-platform audio library that provides:
 - Audio device enumeration and selection.
 - Tools for storing and processing audio data with ease.
 - Easy to use sound effects and filters.
-- Spatialization (3D audio) via HRTF.
-- FFT (uses [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/tree/cpp)) for frequency analysis of the audio signals.
-- Reading and writing WAV and AIFF files.
-- More file format and codec support via [FFmpeg](https://ffmpeg.org/). You will need to enable this feature, and download an FFmpeg build. See [EnableFFmpeg](/docs/tutorials/EnableFFmpeg.md) for more information.
+- Spatialization via HRTF.
+- FFT for frequency analysis of the audio signals.
+- Encoding, decoding, and transcoding audio files via [FFmpeg](https://ffmpeg.org/).
 
 # Setup
 ### Visual Studio
 1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).
 2) Copy the repo to the folder you created.
-3) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the HephCommon and HephAudio header files.
+3) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the ``HephCommon/HeaderFiles``, ``HephAudio/HeaderFiles``, and  ``dependencies/ffmpeg/include``.
 4) Now right click the solution and go to ``Add -> Existing Project``, under the HephCommon folder select ``HephCommon.vcxitems`` to add to your project. Repeat the same process for HephAudio.
 5) Right click to your project, ``Add -> Reference -> Shared Projects`` and check both HephAudio and HephCommon.
 6) Right click to your project, go to ``Configuration Properties -> Linker -> General -> Additional Library Directories`` and add ``path_to_hephaudio/dependencies``.
@@ -35,13 +34,6 @@ project("myapplication")
 
 # if not set, HephAudio/CMakeLists.txt will set the CMAKE_CXX_STANDARD to 14
 set (CMAKE_CXX_STANDARD 14)
-
-# This will:
-# include the files at ${HEPH_FFMPEG_ROOT}/include folder
-# link the libraries at ${HEPH_FFMPEG_ROOT}/lib/ (Ex: avcodec.lib for Windows, libavcodec.so for other platforms)
-# define HEPHAUDIO_USE_FFMPEG
-# remove this if you don't want to use FFmpeg
-set (HEPH_FFMPEG_ROOT "/path/to/ffmpeg")
 
 # execute the HephAudio/CMakeLists.txt file
 include(${CMAKE_CURRENT_SOURCE_DIR}/HephAudio/CMakeLists.txt)
