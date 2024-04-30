@@ -7,6 +7,3 @@ using namespace HephAudio::FileFormats;
 
 ### Description
 Class for reading/writing FLAC files.
-
-> [!NOTE]
-> Only supported when FFmpeg is enabled.
