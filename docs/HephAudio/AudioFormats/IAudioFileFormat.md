@@ -74,19 +74,13 @@ Reads the whole file and decodes to internal format.
 
 ```c++
 virtual AudioBuffer ReadFile(const HephCommon::File& audioFile,
-                             Codecs::IAudioCodec* pAudioCodec,
-                             const AudioFormatInfo& audioFormatInfo,
                              size_t frameIndex,
-                             size_t frameCount,
-                             bool* finishedPlaying);
+                             size_t frameCount);
 ```
 Reads and decodes the specified portion of the file.
 - **audioFile:** Audio file.
-- **pAudioCodec:** Codec the audio data is encoded with.
-- **audioFormatInfo:** Format info obtained by calling the ``ReadAudioFormatInfo`` method.
 - **frameIndex:** Index of the first frame that will be read.
 - **frameCount:** Number of frames to read.
-- **finishedPlaying:** Indicates whether the EOF is reached.
 - **returns:** Audio data.
 <br><br><br><br>
 
@@ -116,8 +110,4 @@ class IAudioFileFormat
 - ``ffmpegAudioDecoder``
 <br><br>
 FFmpeg decoder.
-
-> [!NOTE]
-> This field only exists when FFmpeg is enabled.
-
 <br><br>
