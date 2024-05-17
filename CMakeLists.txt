@@ -10,6 +10,10 @@ if (NOT DEFINED CMAKE_SIZEOF_VOID_P)
     message( FATAL_ERROR "CMAKE_SIZEOF_VOID_P is not set, call project() before running this cmake.")
 endif()
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    message( FATAL_ERROR "CMAKE_SIZEOF_VOID_P is set to 4, 32-bit is not supported.")
+endif()
+
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
 if (POLICY CMP0025)
     cmake_policy(SET CMP0025 NEW)
@@ -46,36 +50,19 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     if (NOT DEFINED MSVC)
 
-        file(GLOB HEPH_AUDIO
-                ${HEPH_AUDIO}
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/src/*.cpp
+        set(
+            HEPHAUDIO_LINK_LIBS
+            ${HEPHAUDIO_LINK_LIBS}
+            
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/mingw/mysofa.lib
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/zlib.lib
+            
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avcodec.lib
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avformat.lib
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avdevice.lib
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avutil.lib
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/swresample.lib
         )
-
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            set(
-                HEPHAUDIO_LINK_LIBS
-                ${HEPHAUDIO_LINK_LIBS}
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/windows/netcdf.lib
-
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avcodec.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avformat.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avdevice.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avutil.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/swresample.lib
-            )
-        else()
-            set(
-                HEPHAUDIO_LINK_LIBS
-                ${HEPHAUDIO_LINK_LIBS}
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/windows/netcdf_x64.lib
-
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avcodec_x64.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avformat_x64.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avdevice_x64.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/avutil_x64.lib
-                ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/swresample_x64.lib
-            )
-        endif()
 
     endif()
 
@@ -99,6 +86,10 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(
         HEPHAUDIO_LINK_LIBS
         ${HEPHAUDIO_LINK_LIBS}
+
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libmysofa.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libzlib.so
+
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavcodec.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavfilter.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavformat.so
@@ -118,17 +109,10 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(
         HEPHAUDIO_LINK_LIBS
         asound
-	    ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf_c++4.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libnetcdf.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libhdf5_hl.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libhdf5.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libcurl.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/linux/libz.a
-    )
+	    
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/libmysofa.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/libzlib.so
 
-    set(
-        HEPHAUDIO_LINK_LIBS
-        ${HEPHAUDIO_LINK_LIBS}
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavcodec.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavformat.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavdevice.so
@@ -142,17 +126,10 @@ elseif ((CMAKE_SYSTEM_NAME STREQUAL "Darwin") OR (CMAKE_SYSTEM_NAME STREQUAL "iO
         HEPHAUDIO_LINK_LIBS
         "-framework CoreFoundation"
         "-framework CoreAudio"
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libnetcdf_c++4.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libnetcdf.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libhdf5_hl.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libhdf5.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libcurl.a
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/lib/macos/libz.a
-    )
 
-    set(
-        HEPHAUDIO_LINK_LIBS
-        ${HEPHAUDIO_LINK_LIBS}
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/macos/libmysofa.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/macos/libzlib.so
+
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavcodec.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavformat.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavdevice.so

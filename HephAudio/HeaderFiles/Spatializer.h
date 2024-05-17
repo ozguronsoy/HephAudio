@@ -3,7 +3,7 @@
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
 #include "FloatBuffer.h"
-#include "ComplexBuffer.h"
+#include <../../dependencies/libmysofa/include/mysofa.h>
 #include <string>
 #include <vector>
 
@@ -17,37 +17,25 @@ namespace HephAudio
 	class Spatializer final
 	{
 	private:
-		static constexpr size_t INDEX_NOT_FOUND = -1;
-	private:
-		struct SourcePosition
-		{
-			double azimuth_deg;
-			double elevation_deg;
-		};
-		struct TransferFunctions
-		{
-			HephCommon::ComplexBuffer left;
-			HephCommon::ComplexBuffer right;
-		};
-	private:
-		std::string sofaFilePath;
-		size_t measurementCount;
+		MYSOFA_EASY* pEasy;
 		size_t frameCount;
 		uint32_t sampleRate;
-		double deltaAzimuth_deg;
-		double deltaElevation_deg;
-		HephCommon::FloatBuffer windowBuffer;
-		std::vector<Spatializer::TransferFunctions> transferFunctions;
-		std::vector<Spatializer::SourcePosition> sourcePositions;
 	public:
 		Spatializer();
-		Spatializer(const std::string& sofaFilePath);
+		Spatializer(const std::string& sofaFilePath, uint32_t sampleRate);
+		Spatializer(const Spatializer&) = delete;
+		Spatializer(Spatializer&& rhs) noexcept;
+		~Spatializer();
+		Spatializer& operator=(const Spatializer&) = delete;
+		Spatializer& operator=(Spatializer&& rhs) noexcept;
 		uint32_t GetSampleRate() const;
-		void ReadSofaFile(const std::string& sofaFilePath);
-		void Process(AudioBuffer& buffer, double azimuth_deg, double elevation_deg);
+		size_t GetFrameCount() const;
+		void OpenSofaFile(const std::string& sofaFilePath, uint32_t sampleRate);
+		void CloseSofaFile();
+		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg);
+		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const HephCommon::FloatBuffer& windowBuffer);
 	private:
-		Spatializer::TransferFunctions InterpolateRectangular(double azimuth_deg, double elevation_deg) const;
-		size_t FindMeasurementIndex(double azimuth_deg, double elevation_deg) const;
+		static std::string GetErrorString(int errorCode);
 	};
 }
 #endif

@@ -2,6 +2,10 @@
 #include "HephCommonShared.h"
 #include <cmath>
 
+#if !defined(HEPH_ENV_64_BIT)
+#error 32-bit is not supported!
+#endif
+
 #if !defined(HEPHAUDIO_FORMAT_TAG_PCM)
 
 #define HEPHAUDIO_FORMAT_TAG_PCM 0x0001

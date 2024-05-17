@@ -12,17 +12,10 @@ extern "C"
 }
 
 #if defined(_WIN32) && defined(_MSVC_LANG)
-#if defined(HEPH_ENV_64_BIT)
-#pragma comment(lib, "ffmpeg/lib/windows/avcodec_x64.lib")
-#pragma comment(lib, "ffmpeg/lib/windows/avformat_x64.lib")
-#pragma comment(lib, "ffmpeg/lib/windows/avutil_x64.lib")
-#pragma comment(lib, "ffmpeg/lib/windows/swresample_x64.lib")
-#else
 #pragma comment(lib, "ffmpeg/lib/windows/avcodec.lib")
 #pragma comment(lib, "ffmpeg/lib/windows/avformat.lib")
 #pragma comment(lib, "ffmpeg/lib/windows/avutil.lib")
 #pragma comment(lib, "ffmpeg/lib/windows/swresample.lib")
-#endif
 #endif
 
 
