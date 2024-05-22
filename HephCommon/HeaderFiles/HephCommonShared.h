@@ -29,22 +29,23 @@
 
 #if !defined(HEPH_ENV_64_BIT) && !defined(HEPH_ENV_32_BIT)
 
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(_MSC_VER) || (defined(__INTEL_COMPILER) && defined(_WIN32))
 
-#if defined(_WIN64)
+#if defined(_M_X64) || defined(_WIN64)
 #define HEPH_ENV_64_BIT
 #else
 #define HEPH_ENV_32_BIT
 #endif
 
-#elif defined(__GNUC__)
-#if defined(__x86_64__) || defined(__ppc64__)
+#elif defined(__clang__) || defined(__INTEL_COMPILER) || defined(__GNUC__)
+#if defined(__x86_64__) || defined(__ppc64__) || defined(__aarch64__)
 #define HEPH_ENV_64_BIT
 #else
 #define HEPH_ENV_32_BIT
 #endif
 
 #else
+
 #error unsupported environment
 
 #endif
@@ -86,7 +87,7 @@ typedef float heph_float;
 namespace HephCommon
 {
 #if !defined(HEPH_ENDIAN)
-	
+
 	enum Endian : uint8_t
 	{
 		Little = 0x00,
@@ -104,7 +105,7 @@ namespace HephCommon
 #endif
 
 #if !defined(HEPH_CONVOLUTION_MODE)
-	
+
 	enum ConvolutionMode
 	{
 		Full = 0,
