@@ -88,7 +88,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
         ${HEPHAUDIO_LINK_LIBS}
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libmysofa.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libzlib.so
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavcodec.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/libavfilter.so
@@ -111,7 +110,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         asound
 	    
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/libmysofa.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/libzlib.so
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavcodec.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavformat.so
@@ -120,7 +118,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libswresample.so
     )
 
-elseif ((CMAKE_SYSTEM_NAME STREQUAL "Darwin") OR (CMAKE_SYSTEM_NAME STREQUAL "iOS"))
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     
     set(
         HEPHAUDIO_LINK_LIBS
@@ -128,13 +126,28 @@ elseif ((CMAKE_SYSTEM_NAME STREQUAL "Darwin") OR (CMAKE_SYSTEM_NAME STREQUAL "iO
         "-framework CoreAudio"
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/macos/libmysofa.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/macos/libzlib.so
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavcodec.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavformat.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavdevice.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavutil.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libswresample.so
+    )
+
+elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+
+    set (
+            HEPHAUDIO_LINK_LIBS
+            "-framework CoreFoundation"
+            "-framework CoreAudio"
+
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/ios/libmysofa.so
+
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavcodec.so
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavformat.so
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavdevice.so
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavutil.so
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libswresample.so
     )
 
 endif ()
