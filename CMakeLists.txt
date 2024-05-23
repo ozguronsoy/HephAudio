@@ -100,11 +100,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-    file(GLOB HEPH_AUDIO
-            ${HEPH_AUDIO}
-            ${CMAKE_CURRENT_LIST_DIR}/dependencies/libsofa/src/*.cpp
-    )
-
     set(
         HEPHAUDIO_LINK_LIBS
         asound

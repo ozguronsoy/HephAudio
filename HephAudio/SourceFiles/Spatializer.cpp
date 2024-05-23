@@ -1,4 +1,3 @@
-#if !defined(__ANDROID__)
 #include "Spatializer.h"
 #include "HephException.h"
 #include "File.h"
@@ -199,4 +198,3 @@ namespace HephAudio
 		}
 	}
 }
-#endif

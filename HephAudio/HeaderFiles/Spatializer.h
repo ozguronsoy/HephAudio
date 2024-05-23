@@ -1,5 +1,4 @@
 #pragma once
-#if !defined(__ANDROID__)
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
 #include "FloatBuffer.h"
@@ -38,4 +37,3 @@ namespace HephAudio
 		static std::string GetErrorString(int errorCode);
 	};
 }
-#endif
