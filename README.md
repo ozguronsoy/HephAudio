@@ -224,7 +224,7 @@ In this example, we will try to open a non-existing file. This is going to throw
 
 using namespace HephCommon;
 
-void HandleException(const EventParams& eventParams)
+void HandleExceptions(const EventParams& eventParams)
 {
 	const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
 
