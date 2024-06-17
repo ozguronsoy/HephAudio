@@ -371,3 +371,4 @@ FodyWeavers.xsd
 /HephAudio/HephAudio.vcxitems.filters
 /HephAudio/HeaderFiles/AudioChannelMixer.h
 /HephAudio/SourceFiles/AudioChannelMixer.cpp
+/ConsoleApplication1/ConsoleApplication1.cpp
