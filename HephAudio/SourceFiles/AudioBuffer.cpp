@@ -12,7 +12,7 @@ namespace HephAudio
 	{
 		if (frameCount > 0)
 		{
-			this->pData = (heph_audio_sample*)malloc(this->Size());
+			this->pData = (heph_audio_sample_t*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory."));
@@ -26,7 +26,7 @@ namespace HephAudio
 	{
 		if (rhs.frameCount > 0)
 		{
-			this->pData = (heph_audio_sample*)malloc(rhs.Size());
+			this->pData = (heph_audio_sample_t*)malloc(rhs.Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::AudioBuffer", "Insufficient memory."));
@@ -45,9 +45,9 @@ namespace HephAudio
 		this->Release();
 		this->formatInfo = AudioFormatInfo();
 	}
-	heph_audio_sample* AudioBuffer::operator[](size_t frameIndex) const
+	heph_audio_sample_t* AudioBuffer::operator[](size_t frameIndex) const
 	{
-		return (heph_audio_sample*)(((uint8_t*)this->pData) + this->formatInfo.FrameSize() * frameIndex);
+		return (heph_audio_sample_t*)(((uint8_t*)this->pData) + this->formatInfo.FrameSize() * frameIndex);
 	}
 	AudioBuffer AudioBuffer::operator-() const
 	{
@@ -78,7 +78,7 @@ namespace HephAudio
 
 			if (rhs.frameCount > 0)
 			{
-				this->pData = (heph_audio_sample*)malloc(rhs.Size());
+				this->pData = (heph_audio_sample_t*)malloc(rhs.Size());
 				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::operator=", "Insufficient memory."));
@@ -646,7 +646,7 @@ namespace HephAudio
 
 			this->formatInfo = audioFormatInfo;
 
-			this->pData = (heph_audio_sample*)malloc(this->Size());
+			this->pData = (heph_audio_sample_t*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::SetFormatInfo", "Insufficient memory."));
@@ -706,7 +706,7 @@ namespace HephAudio
 				return;
 			}
 
-			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(this->Size() + buffer.Size());
+			heph_audio_sample_t* tempPtr = (heph_audio_sample_t*)malloc(this->Size() + buffer.Size());
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Join", "Insufficient memory."));
@@ -733,7 +733,7 @@ namespace HephAudio
 			const size_t newFrameCount = frameIndex > this->frameCount ? (buffer.frameCount + frameIndex) : (this->frameCount + buffer.frameCount);
 			const size_t newSize = newFrameCount * this->formatInfo.FrameSize();
 
-			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(newSize);
+			heph_audio_sample_t* tempPtr = (heph_audio_sample_t*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Insert", "Insufficient memory."));
@@ -772,7 +772,7 @@ namespace HephAudio
 			this->frameCount = this->frameCount - frameCount;
 			const size_t newSize = this->Size();
 
-			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(newSize);
+			heph_audio_sample_t* tempPtr = (heph_audio_sample_t*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Cut", "Insufficient memory."));
@@ -810,7 +810,7 @@ namespace HephAudio
 			const size_t newFrameCount = frameIndex > this->frameCount ? (frameCount + frameIndex) : (this->frameCount + frameCount);
 			const size_t newSize = newFrameCount * this->formatInfo.FrameSize();
 
-			heph_audio_sample* tempPtr = (heph_audio_sample*)malloc(newSize);
+			heph_audio_sample_t* tempPtr = (heph_audio_sample_t*)malloc(newSize);
 			if (tempPtr == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Replace", "Insufficient memory."));
@@ -860,7 +860,7 @@ namespace HephAudio
 			}
 			else
 			{
-				heph_audio_sample* tempPtr = (heph_audio_sample*)realloc(this->pData, newFrameCount * this->formatInfo.FrameSize());
+				heph_audio_sample_t* tempPtr = (heph_audio_sample_t*)realloc(this->pData, newFrameCount * this->formatInfo.FrameSize());
 				if (tempPtr == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AudioBuffer::Resize", "Insufficient memory."));
@@ -882,14 +882,14 @@ namespace HephAudio
 			this->pData = nullptr;
 		}
 	}
-	heph_audio_sample AudioBuffer::Min() const
+	heph_audio_sample_t AudioBuffer::Min() const
 	{
-		heph_audio_sample minSample = HEPH_AUDIO_SAMPLE_MAX;
+		heph_audio_sample_t minSample = HEPH_AUDIO_SAMPLE_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
-				const heph_audio_sample& currentSample = (*this)[i][j];
+				const heph_audio_sample_t& currentSample = (*this)[i][j];
 				if (currentSample < minSample)
 				{
 					minSample = currentSample;
@@ -898,14 +898,14 @@ namespace HephAudio
 		}
 		return minSample;
 	}
-	heph_audio_sample AudioBuffer::Max() const
+	heph_audio_sample_t AudioBuffer::Max() const
 	{
-		heph_audio_sample maxSample = HEPH_AUDIO_SAMPLE_MIN;
+		heph_audio_sample_t maxSample = HEPH_AUDIO_SAMPLE_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
-				const heph_audio_sample& currentSample = (*this)[i][j];
+				const heph_audio_sample_t& currentSample = (*this)[i][j];
 				if (currentSample > maxSample)
 				{
 					maxSample = currentSample;
@@ -914,14 +914,14 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	heph_audio_sample AudioBuffer::AbsMax() const
+	heph_audio_sample_t AudioBuffer::AbsMax() const
 	{
-		heph_audio_sample maxSample = HEPH_AUDIO_SAMPLE_MIN;
+		heph_audio_sample_t maxSample = HEPH_AUDIO_SAMPLE_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
 			{
-				heph_audio_sample currentSample = abs((*this)[i][j]);
+				heph_audio_sample_t currentSample = abs((*this)[i][j]);
 				if (currentSample > maxSample)
 				{
 					maxSample = currentSample;

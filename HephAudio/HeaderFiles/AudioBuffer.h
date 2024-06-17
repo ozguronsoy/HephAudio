@@ -11,7 +11,7 @@ namespace HephAudio
 	private:
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
-		heph_audio_sample* pData;
+		heph_audio_sample_t* pData;
 	public:
 		AudioBuffer();
 		AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo);
@@ -20,7 +20,7 @@ namespace HephAudio
 		AudioBuffer(const AudioBuffer& rhs);
 		AudioBuffer(AudioBuffer&& rhs) noexcept;
 		~AudioBuffer();
-		heph_audio_sample* operator[](size_t frameIndex) const;
+		heph_audio_sample_t* operator[](size_t frameIndex) const;
 		AudioBuffer operator-() const;
 		AudioBuffer& operator=(std::nullptr_t rhs);
 		AudioBuffer& operator=(const AudioBuffer& rhs);
@@ -75,9 +75,9 @@ namespace HephAudio
 		void Reset();
 		void Resize(size_t newFrameCount);
 		void Release();
-		heph_audio_sample Min() const;
-		heph_audio_sample Max() const;
-		heph_audio_sample AbsMax() const;
+		heph_audio_sample_t Min() const;
+		heph_audio_sample_t Max() const;
+		heph_audio_sample_t AbsMax() const;
 		heph_float Rms() const;
 		AudioBuffer Convolve(const HephCommon::FloatBuffer& h) const;
 		AudioBuffer Convolve(const HephCommon::FloatBuffer& h, HephCommon::ConvolutionMode convolutionMode) const;

@@ -42,7 +42,7 @@ namespace HephAudio
 		static void Chorus(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, heph_float extent_semitone, const Oscillator& lfo);
 		static void Flanger(AudioBuffer& buffer, heph_float depth, heph_float feedbackGain, heph_float baseDelay_ms, heph_float delay_ms, const Oscillator& lfo);
 		static void FixOverflow(AudioBuffer& buffer);
-		static void Normalize(AudioBuffer& buffer, heph_audio_sample peakAmplitude);
+		static void Normalize(AudioBuffer& buffer, heph_audio_sample_t peakAmplitude);
 		static void RmsNormalize(AudioBuffer& buffer, heph_float rms);
 		static void HardClipDistortion(AudioBuffer& buffer, heph_float clippingLevel_dB);
 		static void ArctanDistortion(AudioBuffer& buffer, heph_float alpha);

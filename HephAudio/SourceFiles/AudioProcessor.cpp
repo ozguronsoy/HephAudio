@@ -229,7 +229,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				const heph_audio_sample temp = buffer[i][j];
+				const heph_audio_sample_t temp = buffer[i][j];
 				buffer[i][j] = buffer[buffer.frameCount - i - 1][j];
 				buffer[buffer.frameCount - i - 1][j] = temp;
 			}
@@ -341,7 +341,7 @@ namespace HephAudio
 
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				heph_audio_sample wetSample = 0.0;
+				heph_audio_sample_t wetSample = 0.0;
 				if (resampleIndex + 1.0 < buffer.frameCount)
 				{
 					wetSample = buffer[resampleIndex][j] * (1.0 - rho) + buffer[resampleIndex + 1.0][j] * rho;
@@ -378,7 +378,7 @@ namespace HephAudio
 
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				heph_audio_sample wetSample;
+				heph_audio_sample_t wetSample;
 				if (resampleIndex + 1.0 < buffer.frameCount)
 				{
 					wetSample = ((buffer[resampleIndex][j] * (1.0 - rho) + buffer[resampleIndex + 1.0][j] * rho) * 0.5) + (feedbackBuffer[j] * 0.5);
@@ -416,7 +416,7 @@ namespace HephAudio
 			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				const heph_audio_sample wetSample = (buffer[i - currentDelay_sample][j] * 0.5) + (feedbackBuffer[j] * 0.5);
+				const heph_audio_sample_t wetSample = (buffer[i - currentDelay_sample][j] * 0.5) + (feedbackBuffer[j] * 0.5);
 				resultBuffer[i][j] = wetFactor * wetSample + dryFactor * buffer[i][j];
 				feedbackBuffer[j] = feedbackGain * wetSample;
 			}
@@ -426,15 +426,15 @@ namespace HephAudio
 	}
 	void AudioProcessor::FixOverflow(AudioBuffer& buffer)
 	{
-		const heph_audio_sample maxSample = buffer.AbsMax();
+		const heph_audio_sample_t maxSample = buffer.AbsMax();
 		if (maxSample > HEPH_AUDIO_SAMPLE_MAX)
 		{
 			buffer /= maxSample;
 		}
 	}
-	void AudioProcessor::Normalize(AudioBuffer& buffer, heph_audio_sample peakAmplitude)
+	void AudioProcessor::Normalize(AudioBuffer& buffer, heph_audio_sample_t peakAmplitude)
 	{
-		const heph_audio_sample maxSample = buffer.AbsMax();
+		const heph_audio_sample_t maxSample = buffer.AbsMax();
 		if (maxSample != 0 && maxSample != peakAmplitude)
 		{
 			buffer *= (heph_float)peakAmplitude / maxSample;
@@ -459,12 +459,12 @@ namespace HephAudio
 	}
 	void AudioProcessor::HardClipDistortion(AudioBuffer& buffer, heph_float clippingLevel_dB)
 	{
-		const heph_audio_sample clippingLevel = HephAudio::DecibelToGain(clippingLevel_dB) * HEPH_AUDIO_SAMPLE_MAX;
+		const heph_audio_sample_t clippingLevel = HephAudio::DecibelToGain(clippingLevel_dB) * HEPH_AUDIO_SAMPLE_MAX;
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				heph_audio_sample& sample = buffer[i][j];
+				heph_audio_sample_t& sample = buffer[i][j];
 				if (sample > clippingLevel)
 				{
 					sample = clippingLevel;
