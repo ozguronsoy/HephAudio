@@ -54,15 +54,15 @@ Speed of sound in dry air at 20°C in meters per second.
 ```c++
 #define HEPH_AUDIO_SAMPLE_MIN
 ```
-Minimum value the ``heph_audio_sample`` can have.
+Minimum value the ``heph_audio_sample_t`` can have.
 
 ```c++
 #define HEPH_AUDIO_SAMPLE_MAX
 ```
-Maximum value the ``heph_audio_sample`` can have.
+Maximum value the ``heph_audio_sample_t`` can have.
 
 ```c++
-#define HEPH_AUDIO_SAMPLE heph_audio_sample // explained in the data types section
+#define HEPH_AUDIO_SAMPLE heph_audio_sample_t // explained in the data types section
 ```
 
 ```c++
@@ -79,17 +79,17 @@ Maximum value the ``heph_audio_sample`` can have.
   <br><br>
 ### Data Types
 ```c++
-typedef float heph_audio_sample;
+typedef float heph_audio_sample_t;
 ```
 Type of the audio samples, float by default. Can be changed by defining one of the following macros:
-- ``HEPHAUDIO_SAMPLE_TYPE_DBL`` to select ``double``.
-- ``HEPHAUDIO_SAMPLE_TYPE_FLT`` to select ``float``.
-- ``HEPHAUDIO_SAMPLE_TYPE_S64`` to select ``int64_t``.
-- ``HEPHAUDIO_SAMPLE_TYPE_S32`` to select ``int32_t``.
-- ``HEPHAUDIO_SAMPLE_TYPE_S16`` to select ``int16_t``.
+- ``HEPH_AUDIO_SAMPLE_TYPE_DBL`` to select ``double``.
+- ``HEPH_AUDIO_SAMPLE_TYPE_FLT`` to select ``float``.
+- ``HEPH_AUDIO_SAMPLE_TYPE_S64`` to select ``int64_t``.
+- ``HEPH_AUDIO_SAMPLE_TYPE_S32`` to select ``int32_t``.
+- ``HEPH_AUDIO_SAMPLE_TYPE_S16`` to select ``int16_t``.
 
 > [!IMPORTANT]
-> HephAudio was initially designed to only use ``float`` or ``double`` as ``heph_audio_sample``.
+> HephAudio was initially designed to only use ``float`` or ``double`` as ``heph_audio_sample_t``.
 > Hence some features (mostly sound effects) may not work properly for the integer types.
 
 
