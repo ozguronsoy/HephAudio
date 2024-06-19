@@ -7,13 +7,13 @@
 #include <unordered_map>
 #include <thread>
 
-#define HEPH_EC_NONE 0
-#define HEPH_EC_FAIL -1
-#define HEPH_EC_INVALID_ARGUMENT -2
-#define HEPH_EC_NOT_IMPLEMENTED -3
-#define HEPH_EC_INSUFFICIENT_MEMORY -4
-#define HEPH_EC_NOT_FOUND -5
-#define HEPH_EC_INVALID_OPERATION -6
+#define HEPH_EC_NONE (0)
+#define HEPH_EC_FAIL (-1)
+#define HEPH_EC_INVALID_ARGUMENT (-2)
+#define HEPH_EC_NOT_IMPLEMENTED (-3)
+#define HEPH_EC_INSUFFICIENT_MEMORY (-4)
+#define HEPH_EC_NOT_FOUND (-5)
+#define HEPH_EC_INVALID_OPERATION (-6)
 
 #define RAISE_HEPH_EXCEPTION(sender, ex) ex.Raise(sender)
 #define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex) RAISE_HEPH_EXCEPTION(sender, ex); throw ex

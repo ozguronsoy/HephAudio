@@ -4,9 +4,9 @@
 #include <map>
 #include <thread>
 
-#define HEPH_SW_NANO 1e-9
-#define HEPH_SW_MICRO 1e-6
-#define HEPH_SW_MILLI 1e-3
+#define HEPH_SW_NANO (1e-9)
+#define HEPH_SW_MICRO (1e-6)
+#define HEPH_SW_MILLI (1e-3)
 
 namespace HephCommon
 {

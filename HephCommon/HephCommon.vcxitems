@@ -31,8 +31,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Simd.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Simd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />

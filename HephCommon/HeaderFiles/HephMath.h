@@ -4,8 +4,8 @@
 #include <cinttypes>
 #include <float.h>
 
-#define HEPH_MATH_PI 3.14159265358979323846
-#define HEPH_MATH_E 2.71828182845904523536
+#define HEPH_MATH_PI (3.14159265358979323846)
+#define HEPH_MATH_E (2.71828182845904523536)
 
 #define HEPH_MATH_SGN(x) ((x) > 0 ? 1 : ((x) < 0 ? -1 : 0))
 

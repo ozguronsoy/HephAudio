@@ -50,6 +50,7 @@
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Simd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">
@@ -87,6 +88,7 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Simd.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeaderFiles">
