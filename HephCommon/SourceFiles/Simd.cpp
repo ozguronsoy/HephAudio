@@ -30,6 +30,13 @@ namespace HephCommon
 		const __m256 m_rhs = _mm256_load_ps(rhs);
 		_mm256_store_ps(destination, _mm256_div_ps(m_lhs, m_rhs));
 	}
+	void SIMD::Fmadd(float* destination, const float* a, const float* b, const float* c) noexcept
+	{
+		const __m256 m_a = _mm256_load_ps(a);
+		const __m256 m_b = _mm256_load_ps(b);
+		const __m256 m_c = _mm256_load_ps(c);
+		_mm256_store_ps(destination, _mm256_fmadd_ps(m_a, m_b, m_c));
+	}
 	float SIMD::SumElems256(const float* v) noexcept
 	{
 		const __m256 m256 = _mm256_load_ps(v);
@@ -63,6 +70,13 @@ namespace HephCommon
 		const __m256d m_rhs = _mm256_load_pd(rhs);
 		_mm256_store_pd(destination, _mm256_div_pd(m_lhs, m_rhs));
 	}
+	void SIMD::Fmadd(double* destination, const double* a, const double* b, const double* c) noexcept
+	{
+		const __m256d m_a = _mm256_load_pd(a);
+		const __m256d m_b = _mm256_load_pd(b);
+		const __m256d m_c = _mm256_load_pd(c);
+		_mm256_store_pd(destination, _mm256_fmadd_pd(m_a, m_b, m_c));
+	}
 	double SIMD::SumElems256(const double* v) noexcept
 	{
 		const __m256d m256 = _mm256_load_pd(v);
@@ -95,6 +109,11 @@ namespace HephCommon
 		const __m256i m_rhs = _mm256_loadu_epi16((const void*)rhs);
 		_mm256_storeu_epi16((void*)destination, _mm256_div_epi16(m_lhs, m_rhs));
 	}
+	void SIMD::Fmadd(int16_t* destination, const int16_t* a, const int16_t* b, const int16_t* c) noexcept
+	{
+		SIMD::Mul256(destination, a, b);
+		SIMD::Add256(destination, destination, c);
+	}
 	int16_t SIMD::SumElems256(const int16_t* v) noexcept
 	{
 		const __m256i m256 = _mm256_loadu_epi16((const void*)v);
@@ -120,6 +139,10 @@ namespace HephCommon
 	void SIMD::Div256(uint16_t* destination, const uint16_t* lhs, const uint16_t* rhs) noexcept
 	{
 		SIMD::Div256((int16_t*)destination, (int16_t*)lhs, (int16_t*)rhs);
+	}
+	void SIMD::Fmadd(uint16_t* destination, const uint16_t* a, const uint16_t* b, const uint16_t* c) noexcept
+	{
+		SIMD::Fmadd((int16_t*)destination, (int16_t*)a, (int16_t*)b, (int16_t*)c);
 	}
 	uint16_t SIMD::SumElems256(const uint16_t* v) noexcept
 	{
@@ -151,6 +174,11 @@ namespace HephCommon
 		const __m256i m_rhs = _mm256_loadu_epi32((const void*)rhs);
 		_mm256_storeu_epi32((void*)destination, _mm256_div_epi32(m_lhs, m_rhs));
 	}
+	void SIMD::Fmadd(int32_t* destination, const int32_t* a, const int32_t* b, const int32_t* c) noexcept
+	{
+		SIMD::Mul256(destination, a, b);
+		SIMD::Add256(destination, destination, c);
+	}
 	int32_t SIMD::SumElems256(const int32_t* v) noexcept
 	{
 		const __m256i m256 = _mm256_loadu_epi32((const void*)v);
@@ -175,6 +203,10 @@ namespace HephCommon
 	void SIMD::Div256(uint32_t* destination, const uint32_t* lhs, const uint32_t* rhs) noexcept
 	{
 		SIMD::Div256((int32_t*)destination, (int32_t*)lhs, (int32_t*)rhs);
+	}
+	void SIMD::Fmadd(uint32_t* destination, const uint32_t* a, const uint32_t* b, const uint32_t* c) noexcept
+	{
+		SIMD::Fmadd((int32_t*)destination, (int32_t*)a, (int32_t*)b, (int32_t*)c);
 	}
 	uint32_t SIMD::SumElems256(const uint32_t* v) noexcept
 	{
@@ -206,6 +238,11 @@ namespace HephCommon
 		const __m256i m_rhs = _mm256_loadu_epi64((const void*)rhs);
 		_mm256_storeu_epi64((void*)destination, _mm256_div_epi64(m_lhs, m_rhs));
 	}
+	void SIMD::Fmadd(int64_t* destination, const int64_t* a, const int64_t* b, const int64_t* c) noexcept
+	{
+		SIMD::Mul256(destination, a, b);
+		SIMD::Add256(destination, destination, c);
+	}
 	int64_t SIMD::SumElems256(const int64_t* v) noexcept 
 	{
 		const __m256i m256 = _mm256_loadu_epi64((const void*)v);
@@ -229,6 +266,10 @@ namespace HephCommon
 	void SIMD::Div256(uint64_t* destination, const uint64_t* lhs, const uint64_t* rhs) noexcept
 	{
 		SIMD::Div256((int64_t*)destination, (int64_t*)lhs, (int64_t*)rhs);
+	}
+	void SIMD::Fmadd(uint64_t* destination, const uint64_t* a, const uint64_t* b, const uint64_t* c) noexcept
+	{
+		SIMD::Fmadd((int64_t*)destination, (int64_t*)a, (int64_t*)b, (int64_t*)c);
 	}
 	uint64_t SIMD::SumElems256(const uint64_t* v) noexcept
 	{
