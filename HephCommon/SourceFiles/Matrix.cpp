@@ -10,16 +10,7 @@
 #define SIMD_REGISTER_SIZE_BYTE (SIMD_REGISTER_SIZE_BIT / 8)
 #define SIMD_VECTOR_SIZE (SIMD_REGISTER_SIZE_BYTE / sizeof(heph_matrix_element_t))
 
-#define CALC_ALIGNED_SIZE(s) ((((s) % SIMD_REGISTER_SIZE_BYTE) == 0) ? (s) : ((s) + (SIMD_REGISTER_SIZE_BYTE - ((s) % SIMD_REGISTER_SIZE_BYTE))))
-#define CALC_PADDED_SIZE(s, b) (((s) + (b-1)) / (b) * (b))
-
-#if defined(_MSVC_LANG) || defined(__INTEL_COMPILER)
-#define aligned_malloc(size, alignment) _aligned_malloc(size, alignment)
-#define aligned_free _aligned_free
-#else
-#define aligned_malloc(size, alignment) aligned_alloc(alignment, size)
-#define aligned_free free
-#endif
+#define CALC_ALIGNED_SIZE(s, b) (((s) + (b-1)) / (b) * (b))
 
 namespace HephCommon
 {
@@ -29,9 +20,9 @@ namespace HephCommon
 		if (this->row != 0 && this->col != 0)
 		{
 			size_t matrixSize = this->Size();
-			matrixSize = CALC_ALIGNED_SIZE(matrixSize);
+			matrixSize = CALC_ALIGNED_SIZE(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 
-			this->pData = (heph_matrix_element_t*)aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
+			this->pData = (heph_matrix_element_t*)heph_aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix::Matrix", "Insufficient memory."));
@@ -44,7 +35,7 @@ namespace HephCommon
 		if (!rhs.IsEmpty())
 		{
 			const size_t matrixSize = rhs.Size();
-			this->pData = (heph_matrix_element_t*)aligned_malloc(CALC_ALIGNED_SIZE(matrixSize), SIMD_REGISTER_SIZE_BYTE);
+			this->pData = (heph_matrix_element_t*)heph_aligned_malloc(CALC_ALIGNED_SIZE(matrixSize, SIMD_REGISTER_SIZE_BYTE), SIMD_REGISTER_SIZE_BYTE);
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix::Matrix", "Insufficient memory."));
@@ -57,9 +48,9 @@ namespace HephCommon
 		if (this->col != 0)
 		{
 			size_t matrixSize = this->Size();
-			matrixSize = CALC_ALIGNED_SIZE(matrixSize);
+			matrixSize = CALC_ALIGNED_SIZE(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 
-			this->pData = (heph_matrix_element_t*)aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
+			this->pData = (heph_matrix_element_t*)heph_aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix::Matrix", "Insufficient memory."));
@@ -105,9 +96,9 @@ namespace HephCommon
 			if (!rhs.IsEmpty())
 			{
 				size_t matrixSize = rhs.Size();
-				matrixSize = CALC_ALIGNED_SIZE(matrixSize);
+				matrixSize = CALC_ALIGNED_SIZE(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 
-				this->pData = (heph_matrix_element_t*)aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
+				this->pData = (heph_matrix_element_t*)heph_aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix::operator=", "Insufficient memory."));
@@ -127,9 +118,9 @@ namespace HephCommon
 		if (this->col != 0)
 		{
 			size_t matrixSize = this->Size();
-			matrixSize = CALC_ALIGNED_SIZE(matrixSize);
+			matrixSize = CALC_ALIGNED_SIZE(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 
-			this->pData = (heph_matrix_element_t*)aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
+			this->pData = (heph_matrix_element_t*)heph_aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix::operator=", "Insufficient memory."));
@@ -357,7 +348,7 @@ namespace HephCommon
 	{
 		if (this->pData != nullptr)
 		{
-			aligned_free(this->pData);
+			heph_aligned_free(this->pData);
 			this->pData = nullptr;
 		}
 		this->row = 0;
@@ -395,9 +386,9 @@ namespace HephCommon
 		}
 
 		size_t newSize = newRow * newCol * sizeof(heph_matrix_element_t);
-		newSize = CALC_ALIGNED_SIZE(newSize);
+		newSize = CALC_ALIGNED_SIZE(newSize, SIMD_REGISTER_SIZE_BYTE);
 
-		heph_matrix_element_t* pTemp = (heph_matrix_element_t*)aligned_malloc(newSize, SIMD_REGISTER_SIZE_BYTE);
+		heph_matrix_element_t* pTemp = (heph_matrix_element_t*)heph_aligned_malloc(newSize, SIMD_REGISTER_SIZE_BYTE);
 		if (pTemp == nullptr)
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix::Resize", "Insufficient memory."));
@@ -416,7 +407,7 @@ namespace HephCommon
 		this->row = newRow;
 		this->col = newCol;
 
-		aligned_free(this->pData);
+		heph_aligned_free(this->pData);
 		this->pData = pTemp;
 	}
 	Matrix Matrix::Transpose() const
@@ -449,7 +440,7 @@ namespace HephCommon
 		Matrix tempRhs = rhs.Transpose();
 
 		// add padding
-		tempLhs.Resize(CALC_PADDED_SIZE(tempLhs.row, threadCount), CALC_PADDED_SIZE(tempLhs.col, SIMD_VECTOR_SIZE));
+		tempLhs.Resize(CALC_ALIGNED_SIZE(tempLhs.row, threadCount), CALC_ALIGNED_SIZE(tempLhs.col, SIMD_VECTOR_SIZE));
 		tempRhs.Resize(tempRhs.row, tempLhs.col);
 
 		const size_t operationsPerThread = tempLhs.row / threadCount;
@@ -471,6 +462,7 @@ namespace HephCommon
 			}
 		}
 
+		// remove padding
 		result.Resize(lhs.row, rhs.col);
 
 		return result;
@@ -494,9 +486,9 @@ namespace HephCommon
 		if (this->col != 0)
 		{
 			size_t matrixSize = this->Size();
-			matrixSize = CALC_ALIGNED_SIZE(matrixSize);
+			matrixSize = CALC_ALIGNED_SIZE(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 
-			this->pData = (heph_matrix_element_t*)aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
+			this->pData = (heph_matrix_element_t*)heph_aligned_malloc(matrixSize, SIMD_REGISTER_SIZE_BYTE);
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "Matrix", "Insufficient memory."));

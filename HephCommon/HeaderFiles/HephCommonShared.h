@@ -62,6 +62,17 @@
 
 #endif
 
+#if !defined(heph_aligned_malloc)
+
+#if defined(_MSVC_LANG) || defined(__INTEL_COMPILER)
+#define heph_aligned_malloc(size, alignment) _aligned_malloc(size, alignment)
+#define heph_aligned_free _aligned_free
+#else
+#define heph_aligned_malloc(size, alignment) aligned_alloc(alignment, size)
+#define heph_aligned_free free
+#endif
+
+#endif
 
 #if (!defined(_MSC_VER) || defined(__INTEL_COMPILER))
 
