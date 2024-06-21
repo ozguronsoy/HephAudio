@@ -507,26 +507,38 @@ namespace HephCommon
 	}
 	void Matrix::DotInternal(Matrix* pResult, const Matrix* pLhs, const Matrix* pRhs, size_t r, size_t operationCount)
 	{
+		constexpr size_t M = 16;
+
 		heph_matrix_element_t* pResultData = pResult->pData + r * pResult->col;
 		heph_matrix_element_t* pLhsData;
 		heph_matrix_element_t* pRhsData;
+		heph_matrix_element_t* pRhsData2;
 		heph_matrix_element_t* c1_end;
 		heph_matrix_element_t* c2_end;
 
+		heph_matrix_element_t* pRhsDataEnd = pRhs->pData + pRhs->ElementCount();
+
 		const size_t r1_end = r + operationCount;
-		size_t r1;
+		size_t r1, i;
 
 		heph_matrix_element_t resultVector[SIMD_VECTOR_SIZE]{};
 
 		for (r1 = r; r1 < r1_end; ++r1)
 		{
-			for (c2_end = pResultData + pRhs->row, pRhsData = pRhs->pData; pResultData < c2_end; ++pResultData) // rhs->row due to transpose
+			c2_end = pResultData + pRhs->row;
+			pRhsData = pRhs->pData;
+			for (; pResultData < c2_end; pResultData += M)
 			{
 				pLhsData = pLhs->pData + r1 * pLhs->col;
-				for (c1_end = pLhsData + pLhs->col; pLhsData < c1_end; pLhsData += SIMD_VECTOR_SIZE, pRhsData += SIMD_VECTOR_SIZE)
+				c1_end = pLhsData + pLhs->col;
+				for (; pLhsData < c1_end; pLhsData += SIMD_VECTOR_SIZE, pRhsData += SIMD_VECTOR_SIZE)
 				{
-					SIMD::Mul256(resultVector, pLhsData, pRhsData);
-					(*pResultData) += SIMD::SumElems256(resultVector);
+					pRhsData2 = pRhsData;
+					for (i = 0; i < M && pRhsData2 < pRhsDataEnd; ++i, pRhsData2 += pRhs->col)
+					{
+						SIMD::Mul256(resultVector, pLhsData, pRhsData2);
+						(*(pResultData + i)) += SIMD::SumElems256(resultVector);
+					}
 				}
 			}
 		}
