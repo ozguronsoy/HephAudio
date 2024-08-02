@@ -4,7 +4,6 @@
 #include <string>
 #include <cinttypes>
 #include <vector>
-#include <unordered_map>
 #include <thread>
 
 #define HEPH_EC_NONE (0)
@@ -22,10 +21,8 @@ namespace HephCommon
 {
 	struct HephException final
 	{
-	private:
-		static std::unordered_map<std::thread::id, std::vector<HephException>> threadIdToExceptionsMap;
 	public:
-		static HephException DefaultException;
+		static thread_local std::vector<HephException> Exceptions;
 		static Event OnException;
 	public:
 		int64_t errorCode;
@@ -37,10 +34,6 @@ namespace HephCommon
 		HephException(int64_t errorCode, const std::string& method, const std::string& message);
 		HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
 		void Raise(const void* pSender) const;
-	public:
-		static const HephException& LastException();
-		static const HephException& GetException(size_t index);
-		static size_t GetExceptionCount();
 	};
 
 	struct HephExceptionEventArgs : public EventArgs
