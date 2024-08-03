@@ -3,13 +3,14 @@
 #include "AudioDevice.h"
 #include "AudioObject.h"
 #include "AudioFormatInfo.h"
-#include "EchoInfo.h"
+#include "IAudioDecoder.h"
 #include "AudioEvents/AudioDeviceEventArgs.h"
 #include "AudioEvents/AudioCaptureEventArgs.h"
 #include "Params/NativeAudioParams.h"
 #include "HephException.h"
 #include "Event.h"
 #include "StringHelpers.h"
+#include <memory>
 #include <string>
 #include <vector>
 #include <thread>
@@ -25,6 +26,7 @@ namespace HephAudio
 			static constexpr bool DEVICE_ENUMERATION_FAIL = false;
 			static constexpr bool DEVICE_ENUMERATION_SUCCESS = true;
 		protected:
+			std::shared_ptr<IAudioDecoder> pAudioDecoder;
 			std::vector<AudioObject> audioObjects;
 			std::vector<AudioDevice> audioDevices;
 			std::thread::id mainThreadId;
@@ -51,6 +53,8 @@ namespace HephAudio
 			NativeAudio(const NativeAudio&) = delete;
 			NativeAudio& operator=(const NativeAudio&) = delete;
 			virtual ~NativeAudio() = default;
+			void SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder);
+			std::shared_ptr<IAudioDecoder> GetAudioDecoder() const;
 			AudioObject* Play(const std::string& filePath);
 			AudioObject* Play(const std::string& filePath, uint32_t playCount);
 			AudioObject* Play(const std::string& filePath, uint32_t playCount, bool isPaused);
@@ -92,7 +96,6 @@ namespace HephAudio
 			AudioDevice GetCaptureDevice() const;
 			AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 			std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
-			bool SaveToFile(AudioBuffer& buffer, const std::string& filePath, bool overwrite);
 		protected:
 			virtual bool EnumerateAudioDevices() = 0;
 			virtual void CheckAudioDevices();

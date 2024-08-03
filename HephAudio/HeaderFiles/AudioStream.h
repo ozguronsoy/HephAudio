@@ -1,10 +1,7 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "AudioBuffer.h"
-#include "AudioObject.h"
 #include "Audio.h"
-#include "NativeAudio/NativeAudio.h"
-#include "FFmpeg/FFmpegAudioDecoder.h"
+#include "AudioBuffer.h"
 #include "File.h"
 
 #define HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY "audio_stream"
@@ -18,7 +15,6 @@ namespace HephAudio
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
 		AudioObject* pAudioObject;
-		FFmpegAudioDecoder ffmpegAudioDecoder;
 		AudioBuffer decodedBuffer;
 	public:
 		AudioStream(Native::NativeAudio* pNativeAudio);

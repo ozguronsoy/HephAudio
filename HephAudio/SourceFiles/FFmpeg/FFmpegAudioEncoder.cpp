@@ -633,7 +633,7 @@ namespace HephAudio
 			const size_t decodedBufferFrameCount = decodedBuffer.FrameCount();
 			if (decodedBufferFrameCount < minRequiredFrameCount)
 			{
-				const AudioBuffer tempDecodedBuffer = decoder.DecodeWholePackets(minRequiredFrameCount - decodedBufferFrameCount);
+				const AudioBuffer tempDecodedBuffer = decoder.Decode(minRequiredFrameCount - decodedBufferFrameCount);
 				if (decodedBufferFrameCount == 0)
 				{
 					decodedBuffer = tempDecodedBuffer;

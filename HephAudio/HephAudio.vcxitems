@@ -16,8 +16,6 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AacFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AiffFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\ALawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\AndroidAudioA.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\AndroidAudioBase.h" />
@@ -32,7 +30,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioFinishedPlayingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormatInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AudioFileFormatManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioPlaylist.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
@@ -51,7 +48,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioDecoder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioEncoder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioShared.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\FlacFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\FlatTopWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\GaussianWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\HammingWindow.h" />
@@ -60,18 +56,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephAudioShared.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioRenderEventResult.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\IAudioCodec.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\IAudioFileFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\IEEE_FloatCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\LanczosWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\LinuxAudio.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\M4aFormat.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\Mp3Format.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\Mp4Format.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\MpegFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\MuLawCodec.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\NuttallWindow.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\OggFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Oscillators\Oscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\NativeAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioRenderEventArgs.h" />
@@ -86,22 +76,20 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Oscillators\TriangleWaveOscillator.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\TriangularWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\TukeyWindow.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WavFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\WelchWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\WinAudio.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\WinAudioBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\WinAudioDS.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\WinAudioMME.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\Window.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WmaFormat.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Spatializer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioDecoder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\IAudioDecoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AacFormat.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AiffFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\ALawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioA.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioBase.cpp" />
@@ -111,7 +99,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\AudioCodecManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormatInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AudioFileFormatManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioPlaylist.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BartlettHannWindow.cpp" />
@@ -123,7 +110,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\ExactBlackmanWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioDecoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioEncoder.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\FlacFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\FlatTopWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\GaussianWindow.cpp" />
@@ -133,13 +119,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\IEEE_FloatCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\LanczosWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\LinuxAudio.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\M4aFormat.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\Mp3Format.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\Mp4Format.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\MpegFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\MuLawCodec.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\NuttallWindow.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\OggFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Oscillators\Oscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\NativeAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\ParzenWindow.cpp" />
@@ -153,13 +134,11 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Oscillators\TriangleWaveOscillator.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\TriangularWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\TukeyWindow.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\WavFormat.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\WelchWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\WinAudio.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\WinAudioBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\WinAudioDS.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\WinAudioMME.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\Window.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\WmaFormat.cpp" />
   </ItemGroup>
 </Project>

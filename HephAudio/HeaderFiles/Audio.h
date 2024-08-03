@@ -42,6 +42,8 @@ namespace HephAudio
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
 		Native::NativeAudio* GetNativeAudio() const;
+		void SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder);
+		std::shared_ptr<IAudioDecoder> GetAudioDecoder() const;
 		AudioObject* Play(const std::string& filePath);
 		AudioObject* Play(const std::string& filePath, uint32_t playCount);
 		AudioObject* Play(const std::string& filePath, uint32_t playCount, bool isPaused);
@@ -83,6 +85,5 @@ namespace HephAudio
 		AudioDevice GetCaptureDevice() const;
 		AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 		std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
-		bool SaveToFile(AudioBuffer& buffer, const std::string& filePath, bool overwrite);
 	};
 }

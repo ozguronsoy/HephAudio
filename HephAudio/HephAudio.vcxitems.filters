@@ -66,18 +66,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioProcessor.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AiffFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AudioFileFormatManager.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\IAudioFileFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WavFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioDevice.h">
       <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
@@ -252,32 +240,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioShared.h">
       <Filter>HeaderFiles\FFmpeg</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\Mp3Format.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\OggFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\FlacFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\M4aFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\WmaFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\AacFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\MpegFormat.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioEncoder.h">
       <Filter>HeaderFiles\FFmpeg</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormats\Mp4Format.h">
-      <Filter>HeaderFiles\AudioFormats</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
@@ -287,16 +251,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\OpenSLParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AlsaParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Spatializer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioDecoder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
       <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AiffFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\WavFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioObject.cpp">
       <Filter>SourceFiles\AudioStructs</Filter>
@@ -315,9 +274,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioSLES.cpp">
       <Filter>SourceFiles\NativeAudio</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AudioFileFormatManager.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EchoInfo.cpp">
       <Filter>SourceFiles\AudioStructs</Filter>
@@ -445,35 +401,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioDecoder.cpp">
       <Filter>SourceFiles\FFmpeg</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\Mp3Format.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\OggFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\FlacFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\M4aFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\WmaFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\AacFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\MpegFormat.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioEncoder.cpp">
       <Filter>SourceFiles\FFmpeg</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormats\Mp4Format.cpp">
-      <Filter>SourceFiles\AudioFormats</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\IAudioDecoder.cpp" />
   </ItemGroup>
 </Project>

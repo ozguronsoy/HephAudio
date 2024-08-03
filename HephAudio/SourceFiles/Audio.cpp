@@ -134,6 +134,14 @@ namespace HephAudio
 	{
 		return this->pNativeAudio;
 	}
+	void Audio::SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder)
+	{
+		this->pNativeAudio->SetAudioDecoder(pNewDecoder);
+	}
+	std::shared_ptr<IAudioDecoder> Audio::GetAudioDecoder() const
+	{
+		return this->pNativeAudio->GetAudioDecoder();
+	}
 	AudioObject* Audio::Play(const std::string& filePath)
 	{
 		return this->pNativeAudio->Play(filePath);
@@ -297,9 +305,5 @@ namespace HephAudio
 	std::vector<AudioDevice> Audio::GetAudioDevices(AudioDeviceType deviceType) const
 	{
 		return this->pNativeAudio->GetAudioDevices(deviceType);
-	}
-	bool Audio::SaveToFile(AudioBuffer& buffer, const std::string& filePath, bool overwrite)
-	{
-		return this->pNativeAudio->SaveToFile(buffer, filePath, overwrite);
 	}
 }

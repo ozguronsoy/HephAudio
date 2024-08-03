@@ -1,9 +1,10 @@
 #include "NativeAudio/NativeAudio.h"
 #include "AudioProcessor.h"
-#include "AudioFormats/AudioFileFormatManager.h"
+#include "FFmpeg/FFmpegAudioDecoder.h"
 #include "StopWatch.h"
 #include "ConsoleLogger.h"
 #include "HephMath.h"
+#include "File.h"
 
 using namespace HephCommon;
 
@@ -12,11 +13,24 @@ namespace HephAudio
 	namespace Native
 	{
 		NativeAudio::NativeAudio()
-			: mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
+			: pAudioDecoder(new FFmpegAudioDecoder()), mainThreadId(std::this_thread::get_id()), renderDeviceId(""), captureDeviceId("")
 			, renderFormat(AudioFormatInfo(1, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000)), captureFormat(AudioFormatInfo(1, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000)), disposing(false)
 			, isRenderInitialized(false), isCaptureInitialized(false), isCapturePaused(false), deviceEnumerationPeriod_ms(100)
 		{
 			HEPHAUDIO_STOPWATCH_START;
+		}
+		void NativeAudio::SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder)
+		{
+			if (pNewDecoder == nullptr)
+			{
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "NativeAudio::SetAudioDecoder", "Decoder cannot be null"));
+				return;
+			}
+			this->pAudioDecoder = pNewDecoder;
+		}
+		std::shared_ptr<IAudioDecoder> NativeAudio::GetAudioDecoder() const
+		{
+			return this->pAudioDecoder;
 		}
 		AudioObject* NativeAudio::Play(const std::string& filePath)
 		{
@@ -34,25 +48,19 @@ namespace HephAudio
 
 				std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
-				File audioFile(filePath, FileOpenMode::Read);
-				FileFormats::IAudioFileFormat* format = FileFormats::AudioFileFormatManager::FindFileFormat(audioFile);
-
-				if (format == nullptr)
-				{
-					RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "NativeAudio::Play", "File format '" + audioFile.FileExtension() + "' is not supported."));
-					return nullptr;
-				}
-
 #if CPP_VERSION >= CPP_VERSION_17
-				AudioObject& audioObject = audioObjects.emplace_back();
+				AudioObject& audioObject = this->audioObjects.emplace_back();
 #else
-				audioObjects.emplace_back();
-				AudioObject& audioObject = audioObjects[audioObjects.size() - 1];
+				this->audioObjects.emplace_back();
+				AudioObject& audioObject = this->audioObjects[audioObjects.size() - 1];
 #endif
 
 				audioObject.filePath = filePath;
-				audioObject.name = audioFile.FileName();
-				audioObject.buffer = format->ReadFile(audioFile);
+				audioObject.name = File::GetFileName(filePath);
+
+				this->pAudioDecoder->ChangeFile(filePath);
+				audioObject.buffer = this->pAudioDecoder->Decode();
+				
 				audioObject.playCount = playCount;
 				audioObject.isPaused = isPaused;
 
@@ -312,25 +320,6 @@ namespace HephAudio
 			}
 
 			return result;
-		}
-		bool NativeAudio::SaveToFile(AudioBuffer& buffer, const std::string& filePath, bool overwrite)
-		{
-			try
-			{
-				FileFormats::IAudioFileFormat* format = FileFormats::AudioFileFormatManager::FindFileFormat(filePath);
-
-				if (format == nullptr)
-				{
-					RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "NativeAudio::SaveToFile", "File format '" + File::GetFileExtension(filePath) + "' is not supported."));
-					return false;
-				}
-
-				return format->SaveToFile(filePath, buffer, overwrite);
-			}
-			catch (HephException ex)
-			{
-				return false;
-			}
 		}
 		void NativeAudio::CheckAudioDevices()
 		{
