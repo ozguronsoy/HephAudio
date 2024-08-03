@@ -14,8 +14,8 @@ namespace HephAudio
             aaudio_sharing_mode_t captureShareMode;
             aaudio_performance_mode_t renderPerformanceMode;
             aaudio_performance_mode_t capturePerformanceMode;
-            heph_float renderBufferDuration_ms;
-            heph_float captureBufferDuration_ms;
+            double renderBufferDuration_ms;
+            double captureBufferDuration_ms;
 
 #if __ANDROID_API__ >= 28
             aaudio_content_type_t renderContentType;

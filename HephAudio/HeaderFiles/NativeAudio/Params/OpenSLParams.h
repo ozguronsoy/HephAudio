@@ -10,8 +10,8 @@ namespace HephAudio
     {
         struct OpenSLParams final : public NativeAudioParams
         {
-            heph_float renderBufferDuration_ms;
-            heph_float captureBufferDuration_ms;
+            double renderBufferDuration_ms;
+            double captureBufferDuration_ms;
             OpenSLParams()
                 : renderBufferDuration_ms(10), captureBufferDuration_ms(10) {}
         };

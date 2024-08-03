@@ -21,7 +21,7 @@ namespace HephAudio
 		std::string name;
 		bool isPaused;
 		uint32_t playCount;
-		heph_float volume;
+		double volume;
 		AudioBuffer buffer;
 		size_t frameIndex;
 		HephCommon::Event OnRender;
@@ -29,8 +29,8 @@ namespace HephAudio
 		AudioObject();
 		AudioObject(AudioObject&& rhs) noexcept;
 		AudioObject& operator=(AudioObject&& rhs) noexcept;
-		heph_float GetPosition() const;
-		void SetPosition(heph_float position);
+		double GetPosition() const;
+		void SetPosition(double position);
 		static void DefaultRenderHandler(const HephCommon::EventParams& eventParams);
 		static void MatchFormatRenderHandler(const HephCommon::EventParams& eventParams);
 	};

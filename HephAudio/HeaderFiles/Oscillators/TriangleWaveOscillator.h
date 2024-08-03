@@ -9,7 +9,7 @@ namespace HephAudio
 	public:
 		TriangleWaveOscillator();
 		TriangleWaveOscillator(uint32_t sampleRate);
-		TriangleWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad);
-		heph_float operator[](size_t n) const override;
+		TriangleWaveOscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);
+		double operator[](size_t n) const override;
 	};
 }

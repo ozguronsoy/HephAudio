@@ -7,13 +7,13 @@ namespace HephAudio
 	class ParzenWindow final : public Window
 	{
 	private:
-		heph_float hN;
-		heph_float hL;
-		heph_float qL;
+		double hN;
+		double hL;
+		double qL;
 	public:
 		ParzenWindow();
 		ParzenWindow(size_t size);
-		heph_float operator[](size_t n) const override;
+		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;
 	};
 }

@@ -7,14 +7,14 @@ namespace HephAudio
 	class HannPoissonWindow final : public Window
 	{
 	private:
-		heph_float N;
+		double N;
 	public:
-		heph_float alpha;
+		double alpha;
 	public:
 		HannPoissonWindow();
 		HannPoissonWindow(size_t size);
-		HannPoissonWindow(size_t size, heph_float alpha);
-		heph_float operator[](size_t n) const override;
+		HannPoissonWindow(size_t size, double alpha);
+		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;
 	};
 }

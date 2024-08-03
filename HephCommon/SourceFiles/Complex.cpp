@@ -3,7 +3,7 @@
 namespace HephCommon
 {
 	Complex::Complex() : Complex(0, 0) {}
-	Complex::Complex(heph_float real, heph_float imag) : std::complex<heph_float>(real, imag) {}
+	Complex::Complex(double real, double imag) : std::complex<double>(real, imag) {}
 	Complex Complex::operator+() const
 	{
 		return Complex(this->real(), this->imag());
@@ -12,7 +12,7 @@ namespace HephCommon
 	{
 		return Complex(-this->real(), -this->imag());
 	}
-	Complex Complex::operator+(heph_float rhs) const
+	Complex Complex::operator+(double rhs) const
 	{
 		return Complex(this->real() + rhs, this->imag());
 	}
@@ -20,7 +20,7 @@ namespace HephCommon
 	{
 		return Complex(this->real() + rhs.real(), this->imag() + rhs.imag());
 	}
-	Complex& Complex::operator+=(heph_float rhs)
+	Complex& Complex::operator+=(double rhs)
 	{
 		this->real(this->real() + rhs);
 		return *this;
@@ -31,7 +31,7 @@ namespace HephCommon
 		this->imag(this->imag() + rhs.imag());
 		return *this;
 	}
-	Complex Complex::operator-(heph_float rhs) const
+	Complex Complex::operator-(double rhs) const
 	{
 		return Complex(this->real() - rhs, this->imag());
 	}
@@ -39,7 +39,7 @@ namespace HephCommon
 	{
 		return Complex(this->real() - rhs.real(), this->imag() - rhs.imag());
 	}
-	Complex& Complex::operator-=(heph_float rhs)
+	Complex& Complex::operator-=(double rhs)
 	{
 		this->real(this->real() - rhs);
 		return *this;
@@ -50,7 +50,7 @@ namespace HephCommon
 		this->imag(this->imag() - rhs.imag());
 		return *this;
 	}
-	Complex Complex::operator*(heph_float rhs) const
+	Complex Complex::operator*(double rhs) const
 	{
 		return Complex(this->real() * rhs, this->imag() * rhs);
 	}
@@ -58,7 +58,7 @@ namespace HephCommon
 	{
 		return Complex(this->real() * rhs.real() - this->imag() * rhs.imag(), this->imag() * rhs.real() + this->real() * rhs.imag());
 	}
-	Complex& Complex::operator*=(heph_float rhs)
+	Complex& Complex::operator*=(double rhs)
 	{
 		this->real(this->real() * rhs);
 		this->imag(this->imag() * rhs);
@@ -66,24 +66,24 @@ namespace HephCommon
 	}
 	Complex& Complex::operator*=(const Complex& rhs)
 	{
-		const heph_float newReal = this->real() * rhs.real() - this->imag() * rhs.imag();
+		const double newReal = this->real() * rhs.real() - this->imag() * rhs.imag();
 		this->imag(this->imag() * rhs.real() + this->real() * rhs.imag());
 		this->real(newReal);
 		return *this;
 	}
-	Complex Complex::operator/(heph_float rhs) const
+	Complex Complex::operator/(double rhs) const
 	{
 		return Complex(this->real() / rhs, this->imag() / rhs);
 	}
 	Complex Complex::operator/(const Complex& rhs) const
 	{
 		Complex result;
-		const heph_float denomiter = rhs.real() * rhs.real() + rhs.imag() * rhs.imag();
+		const double denomiter = rhs.real() * rhs.real() + rhs.imag() * rhs.imag();
 		result.real((this->real() * rhs.real() + this->imag() * rhs.imag()) / denomiter);
 		result.imag((this->imag() * rhs.real() - this->real() * rhs.imag()) / denomiter);
 		return result;
 	}
-	Complex& Complex::operator/=(heph_float rhs)
+	Complex& Complex::operator/=(double rhs)
 	{
 		this->real(this->real() / rhs);
 		this->imag(this->imag() / rhs);
@@ -91,8 +91,8 @@ namespace HephCommon
 	}
 	Complex& Complex::operator/=(const Complex& rhs)
 	{
-		const heph_float denomiter = rhs.real() * rhs.real() + rhs.imag() * rhs.imag();
-		const heph_float newReal = (this->real() * rhs.real() + this->imag() * rhs.imag()) / denomiter;
+		const double denomiter = rhs.real() * rhs.real() + rhs.imag() * rhs.imag();
+		const double newReal = (this->real() * rhs.real() + this->imag() * rhs.imag()) / denomiter;
 		this->imag((this->imag() * rhs.real() - this->real() * rhs.imag()) / denomiter);
 		this->real(newReal);
 		return *this;
@@ -109,15 +109,15 @@ namespace HephCommon
 	{
 		return Complex(this->real(), -this->imag());
 	}
-	heph_float Complex::MagnitudeSquared() const
+	double Complex::MagnitudeSquared() const
 	{
 		return this->real() * this->real() + this->imag() * this->imag();
 	}
-	heph_float Complex::Magnitude() const
+	double Complex::Magnitude() const
 	{
 		return std::sqrt(this->MagnitudeSquared());
 	}
-	heph_float Complex::Phase() const
+	double Complex::Phase() const
 	{
 		return std::atan2(this->imag(), this->real());
 	}

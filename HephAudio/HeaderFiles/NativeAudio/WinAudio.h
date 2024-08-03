@@ -28,8 +28,8 @@ namespace HephAudio
 			WinAudio(const WinAudio&) = delete;
 			WinAudio& operator=(const WinAudio&) = delete;
 			~WinAudio();
-			void SetMasterVolume(heph_float volume) override;
-			heph_float GetMasterVolume() const override;
+			void SetMasterVolume(double volume) override;
+			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;

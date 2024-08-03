@@ -5,10 +5,10 @@ namespace HephAudio
 {
 	struct EqualizerInfo
 	{
-		heph_float f1;
-		heph_float f2;
-		heph_float amplitude;
+		double f1;
+		double f2;
+		double amplitude;
 		EqualizerInfo();
-		EqualizerInfo(heph_float f1, heph_float f2, heph_float amplitude);
+		EqualizerInfo(double f1, double f2, double amplitude);
 	};
 }

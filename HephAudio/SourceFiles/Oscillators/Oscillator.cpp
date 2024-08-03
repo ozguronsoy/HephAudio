@@ -5,7 +5,7 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	Oscillator::Oscillator() : peakAmplitude(1), sampleRate(48000), frequency(1), phase_rad(0) {}
-	Oscillator::Oscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad)
+	Oscillator::Oscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad)
 		: peakAmplitude(peakAmplitude), sampleRate(sampleRate), frequency(frequency), phase_rad(phase_rad) { }
 	FloatBuffer Oscillator::GenerateBuffer() const
 	{

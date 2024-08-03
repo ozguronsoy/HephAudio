@@ -424,7 +424,7 @@ namespace HephAudio
 
 				if (!pAudioObject->isPaused)
 				{
-					const heph_float volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
+					const double volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
 					const Guid audioObjectId = pAudioObject->id;
 
 					AudioRenderEventArgs rArgs(pAudioObject, this, frameCount);
@@ -488,7 +488,7 @@ namespace HephAudio
 			}
 			return result;
 		}
-		heph_float NativeAudio::GetFinalAOVolume(AudioObject* pAudioObject) const
+		double NativeAudio::GetFinalAOVolume(AudioObject* pAudioObject) const
 		{
 			return pAudioObject->volume;
 		}

@@ -4,7 +4,7 @@
 namespace HephAudio
 {
 	EchoInfo::EchoInfo() : EchoInfo(0, 0, 0, 0, 1) {}
-	EchoInfo::EchoInfo(uint32_t reflectionCount, heph_float reflectionDelay_s, heph_float decayFactor, heph_float echoStartPosition, heph_float echoEndPosition)
+	EchoInfo::EchoInfo(uint32_t reflectionCount, double reflectionDelay_s, double decayFactor, double echoStartPosition, double echoEndPosition)
 		: reflectionCount(reflectionCount), reflectionDelay_s(reflectionDelay_s), decayFactor(decayFactor), echoStartPosition(echoStartPosition), echoEndPosition(echoEndPosition)
 	{}
 	size_t EchoInfo::CalculateAudioBufferFrameCount(const AudioBuffer& buffer) const

@@ -7,8 +7,8 @@ namespace HephAudio
 {
 	TukeyWindow::TukeyWindow() : TukeyWindow(0) {}
 	TukeyWindow::TukeyWindow(size_t size) : Window(size), alpha(0) { this->SetSize(size); this->SetAlpha(0); }
-	TukeyWindow::TukeyWindow(size_t size, heph_float alpha) : Window(size), alpha(alpha) { this->SetSize(size); this->SetAlpha(alpha); }
-	heph_float TukeyWindow::operator[](size_t n) const 
+	TukeyWindow::TukeyWindow(size_t size, double alpha) : Window(size), alpha(alpha) { this->SetSize(size); this->SetAlpha(alpha); }
+	double TukeyWindow::operator[](size_t n) const 
 	{
 		if (n < this->haN)
 		{
@@ -28,11 +28,11 @@ namespace HephAudio
 		this->aN = this->alpha * this->N;
 		this->haN = 0.5 * this->aN;
 	}
-	heph_float TukeyWindow::GetAlpha() const 
+	double TukeyWindow::GetAlpha() const 
 	{
 		return this->alpha;
 	}
-	void TukeyWindow::SetAlpha(heph_float alpha) 
+	void TukeyWindow::SetAlpha(double alpha) 
 	{
 		this->alpha = alpha;
 		this->aN = this->alpha * this->N;

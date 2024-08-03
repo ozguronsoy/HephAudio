@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	SineWindow::SineWindow() : SineWindow(0) {}
 	SineWindow::SineWindow(size_t size) : Window(size) { this->SetSize(size); }
-	heph_float SineWindow::operator[](size_t n) const 
+	double SineWindow::operator[](size_t n) const 
 	{
 		return  sin(HEPH_MATH_PI * n / this->N);
 	}

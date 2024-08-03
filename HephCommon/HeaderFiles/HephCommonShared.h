@@ -81,20 +81,6 @@
 #endif
 
 
-
-#if !defined(HEPH_FLOAT)
-
-#if defined(HEPH_HIGH_PRECISION_FLOAT)
-typedef double heph_float;
-#else
-typedef float heph_float;
-#endif
-
-#define HEPH_FLOAT heph_float
-
-#endif
-
-
 namespace HephCommon
 {
 #if !defined(HEPH_ENDIAN)

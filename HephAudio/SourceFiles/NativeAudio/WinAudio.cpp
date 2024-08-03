@@ -60,7 +60,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("WinAudio destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void WinAudio::SetMasterVolume(heph_float volume)
+		void WinAudio::SetMasterVolume(double volume)
 		{
 			if (this->pRenderSessionManager != nullptr)
 			{
@@ -74,7 +74,7 @@ namespace HephAudio
 				pVolume = nullptr;
 			}
 		}
-		heph_float WinAudio::GetMasterVolume() const
+		double WinAudio::GetMasterVolume() const
 		{
 			float volume = -1.0f;
 

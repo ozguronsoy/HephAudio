@@ -37,8 +37,8 @@ namespace HephAudio
 		void ChangeFile(const std::string& newFilePath);
 		void Start();
 		void Stop();
-		heph_float GetPosition() const;
-		void SetPosition(heph_float position);
+		double GetPosition() const;
+		void SetPosition(double position);
 		void Release();
 	private:
 		void Release(bool destroyAO);

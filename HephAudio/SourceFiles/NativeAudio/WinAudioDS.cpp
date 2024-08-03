@@ -52,7 +52,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("WinAudioDS destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void WinAudioDS::SetMasterVolume(heph_float volume)
+		void WinAudioDS::SetMasterVolume(double volume)
 		{
 			if (this->isRenderInitialized)
 			{
@@ -69,7 +69,7 @@ namespace HephAudio
 				}
 			}
 		}
-		heph_float WinAudioDS::GetMasterVolume() const
+		double WinAudioDS::GetMasterVolume() const
 		{
 			if (this->isRenderInitialized)
 			{
@@ -85,7 +85,7 @@ namespace HephAudio
 					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, "WinAudioDS::GetMasterVolume", "An error occurred while getting the master volume", "MMEAPI", errorMessage));
 					return -1.0;
 				}
-				return (heph_float)(dv & 0x0000FFFF) / (heph_float)UINT16_MAX;
+				return (double)(dv & 0x0000FFFF) / (double)UINT16_MAX;
 			}
 			return -1.0;
 		}

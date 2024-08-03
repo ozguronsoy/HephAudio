@@ -106,7 +106,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator+(heph_float rhs) const
+	AudioBuffer AudioBuffer::operator+(double rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -171,7 +171,7 @@ namespace HephAudio
 
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator+=(heph_float rhs)
+	AudioBuffer& AudioBuffer::operator+=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -211,7 +211,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator-(heph_float rhs) const
+	AudioBuffer AudioBuffer::operator-(double rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -276,7 +276,7 @@ namespace HephAudio
 
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator-=(heph_float rhs)
+	AudioBuffer& AudioBuffer::operator-=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -316,7 +316,7 @@ namespace HephAudio
 		}
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator*(heph_float rhs) const
+	AudioBuffer AudioBuffer::operator*(double rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -359,7 +359,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator*=(heph_float rhs)
+	AudioBuffer& AudioBuffer::operator*=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -435,7 +435,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	AudioBuffer AudioBuffer::operator/(heph_float rhs) const
+	AudioBuffer AudioBuffer::operator/(double rhs) const
 	{
 		AudioBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -478,7 +478,7 @@ namespace HephAudio
 		}
 		return resultBuffer;
 	}
-	AudioBuffer& AudioBuffer::operator/=(heph_float rhs)
+	AudioBuffer& AudioBuffer::operator/=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -930,9 +930,9 @@ namespace HephAudio
 		}
 		return maxSample;
 	}
-	heph_float AudioBuffer::Rms() const
+	double AudioBuffer::Rms() const
 	{
-		heph_float sumOfSamplesSquared = 0.0;
+		double sumOfSamplesSquared = 0.0;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
 			for (size_t j = 0; j < this->formatInfo.channelLayout.count; j++)
@@ -1058,7 +1058,7 @@ namespace HephAudio
 		return (uint8_t*)this->pData + this->Size();
 	}
 }
-HephAudio::AudioBuffer operator+(heph_float lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator+(double lhs, const HephAudio::AudioBuffer& rhs)
 {
 	return rhs + lhs;
 }
@@ -1066,7 +1066,7 @@ HephAudio::AudioBuffer operator+(const FloatBuffer& lhs, const HephAudio::AudioB
 {
 	return rhs + lhs;
 }
-HephAudio::AudioBuffer operator-(heph_float lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator-(double lhs, const HephAudio::AudioBuffer& rhs)
 {
 	HephAudio::AudioBuffer resultBuffer(rhs);
 	for (size_t i = 0; i < rhs.FrameCount(); i++)
@@ -1102,7 +1102,7 @@ HephAudio::AudioBuffer operator-(const FloatBuffer& lhs, const HephAudio::AudioB
 
 	return resultBuffer;
 }
-HephAudio::AudioBuffer operator*(heph_float lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator*(double lhs, const HephAudio::AudioBuffer& rhs)
 {
 	return rhs * lhs;
 }
@@ -1110,7 +1110,7 @@ HephAudio::AudioBuffer operator*(const FloatBuffer& lhs, const HephAudio::AudioB
 {
 	return rhs * lhs;
 }
-HephAudio::AudioBuffer operator/(heph_float lhs, const HephAudio::AudioBuffer& rhs)
+HephAudio::AudioBuffer operator/(double lhs, const HephAudio::AudioBuffer& rhs)
 {
 	HephAudio::AudioBuffer resultBuffer(rhs);
 	for (size_t i = 0; i < rhs.FrameCount(); i++)

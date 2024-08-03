@@ -118,35 +118,35 @@ typedef float heph_audio_sample_t;
 #pragma region Helper Methods
 namespace HephAudio
 {
-	inline heph_float DecibelToGain(heph_float decibel)
+	inline double DecibelToGain(double decibel)
 	{
 		return pow(10.0, decibel * 0.05);
 	}
-	inline heph_float GainToDecibel(heph_float gain)
+	inline double GainToDecibel(double gain)
 	{
 		return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
 	}
-	inline constexpr heph_float SemitoneToCent(heph_float semitone)
+	inline constexpr double SemitoneToCent(double semitone)
 	{
 		return semitone * 100.0;
 	}
-	inline constexpr heph_float SemitoneToOctave(heph_float semitone)
+	inline constexpr double SemitoneToOctave(double semitone)
 	{
 		return semitone / 12.0;
 	}
-	inline constexpr heph_float CentToSemitone(heph_float cent)
+	inline constexpr double CentToSemitone(double cent)
 	{
 		return cent / 100.0;
 	}
-	inline constexpr heph_float CentToOctave(heph_float cent)
+	inline constexpr double CentToOctave(double cent)
 	{
 		return cent / 1200.0;
 	}
-	inline constexpr heph_float OctaveToSemitone(heph_float octave)
+	inline constexpr double OctaveToSemitone(double octave)
 	{
 		return octave * 12.0;
 	}
-	inline constexpr heph_float OctaveToCent(heph_float octave)
+	inline constexpr double OctaveToCent(double octave)
 	{
 		return octave * 1200.0;
 	}

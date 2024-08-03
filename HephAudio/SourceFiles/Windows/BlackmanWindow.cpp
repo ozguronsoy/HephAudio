@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	BlackmanWindow::BlackmanWindow() : BlackmanWindow(0) {}
 	BlackmanWindow::BlackmanWindow(size_t size) : Window(size) { this->SetSize(size); }
-	heph_float BlackmanWindow::operator[](size_t n) const 
+	double BlackmanWindow::operator[](size_t n) const 
 	{
 		return 0.42 - 0.5 * cos(2.0 * HEPH_MATH_PI * n / this->N) + 0.08 * cos(4.0 * HEPH_MATH_PI * n / this->N);
 	}

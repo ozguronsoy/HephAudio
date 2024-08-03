@@ -56,7 +56,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("AppleAudio destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void AppleAudio::SetMasterVolume(heph_float volume)
+		void AppleAudio::SetMasterVolume(double volume)
 		{
 			if (isRenderInitialized)
 			{
@@ -76,7 +76,7 @@ namespace HephAudio
 				} while (AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, sizeof(Float32), &v32) == kAudioHardwareNoError);
 			}
 		}
-		heph_float AppleAudio::GetMasterVolume() const
+		double AppleAudio::GetMasterVolume() const
 		{
 			if (isRenderInitialized)
 			{

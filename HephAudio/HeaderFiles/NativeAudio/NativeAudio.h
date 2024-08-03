@@ -71,8 +71,8 @@ namespace HephAudio
 			bool IsCapturePaused() const;
 			uint32_t GetDeviceEnumerationPeriod() const;
 			void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
-			virtual void SetMasterVolume(heph_float volume) = 0;
-			virtual heph_float GetMasterVolume() const = 0;
+			virtual void SetMasterVolume(double volume) = 0;
+			virtual double GetMasterVolume() const = 0;
 			const AudioFormatInfo& GetRenderFormat() const;
 			const AudioFormatInfo& GetCaptureFormat() const;
 			void InitializeRender();
@@ -101,7 +101,7 @@ namespace HephAudio
 			void JoinDeviceThread();
 			void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
 			size_t GetAOCountToMix() const;
-			virtual heph_float GetFinalAOVolume(AudioObject* pAudioObject) const;
+			virtual double GetFinalAOVolume(AudioObject* pAudioObject) const;
 		};
 	}
 }

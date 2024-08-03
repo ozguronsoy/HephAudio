@@ -18,7 +18,7 @@ namespace HephCommon
 			this->Reset();
 		}
 	}
-	ComplexBuffer::ComplexBuffer(const std::initializer_list<heph_float>& rhs) : frameCount(rhs.size()), pData(nullptr)
+	ComplexBuffer::ComplexBuffer(const std::initializer_list<double>& rhs) : frameCount(rhs.size()), pData(nullptr)
 	{
 		if (this->frameCount > 0)
 		{
@@ -97,7 +97,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator=(const std::initializer_list<heph_float>& rhs)
+	ComplexBuffer& ComplexBuffer::operator=(const std::initializer_list<double>& rhs)
 	{
 		this->Release();
 
@@ -198,7 +198,7 @@ namespace HephCommon
 
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator+(heph_float rhs) const
+	ComplexBuffer ComplexBuffer::operator+(double rhs) const
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -253,7 +253,7 @@ namespace HephCommon
 
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator+=(heph_float rhs)
+	ComplexBuffer& ComplexBuffer::operator+=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -287,7 +287,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator-(heph_float rhs) const
+	ComplexBuffer ComplexBuffer::operator-(double rhs) const
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -342,7 +342,7 @@ namespace HephCommon
 
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator-=(heph_float rhs)
+	ComplexBuffer& ComplexBuffer::operator-=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -376,7 +376,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator*(heph_float rhs) const
+	ComplexBuffer ComplexBuffer::operator*(double rhs) const
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -414,7 +414,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator*=(heph_float rhs)
+	ComplexBuffer& ComplexBuffer::operator*=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -478,7 +478,7 @@ namespace HephCommon
 
 		return *this;
 	}
-	ComplexBuffer ComplexBuffer::operator/(heph_float rhs) const
+	ComplexBuffer ComplexBuffer::operator/(double rhs) const
 	{
 		ComplexBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -516,7 +516,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	ComplexBuffer& ComplexBuffer::operator/=(heph_float rhs)
+	ComplexBuffer& ComplexBuffer::operator/=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -913,7 +913,7 @@ namespace HephCommon
 		return this->pData + this->frameCount;
 	}
 }
-HephCommon::ComplexBuffer operator+(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
+HephCommon::ComplexBuffer operator+(double lhs, const HephCommon::ComplexBuffer& rhs)
 {
 	return rhs + lhs;
 }
@@ -925,7 +925,7 @@ HephCommon::ComplexBuffer operator+(const HephCommon::FloatBuffer& lhs, const He
 {
 	return rhs + lhs;
 }
-HephCommon::ComplexBuffer operator-(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
+HephCommon::ComplexBuffer operator-(double lhs, const HephCommon::ComplexBuffer& rhs)
 {
 	HephCommon::ComplexBuffer resultBuffer(rhs.FrameCount());
 	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
@@ -952,7 +952,7 @@ HephCommon::ComplexBuffer operator-(const HephCommon::FloatBuffer& lhs, const He
 	}
 	return resultBuffer;
 }
-HephCommon::ComplexBuffer operator*(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
+HephCommon::ComplexBuffer operator*(double lhs, const HephCommon::ComplexBuffer& rhs)
 {
 	return rhs * lhs;
 }
@@ -964,7 +964,7 @@ HephCommon::ComplexBuffer operator*(const HephCommon::FloatBuffer& lhs, const He
 {
 	return rhs * lhs;
 }
-HephCommon::ComplexBuffer operator/(heph_float lhs, const HephCommon::ComplexBuffer& rhs)
+HephCommon::ComplexBuffer operator/(double lhs, const HephCommon::ComplexBuffer& rhs)
 {
 	HephCommon::ComplexBuffer resultBuffer(rhs.FrameCount());
 	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)

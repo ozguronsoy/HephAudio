@@ -9,16 +9,16 @@ namespace HephAudio
 	class Oscillator
 	{
 	public:
-		heph_float peakAmplitude;
-		heph_float frequency;
-		heph_float phase_rad;
+		double peakAmplitude;
+		double frequency;
+		double phase_rad;
 		uint32_t sampleRate;
 	protected:
 		Oscillator();
-		Oscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad);
+		Oscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);
 	public:
 		virtual ~Oscillator() = default;
-		virtual heph_float operator[](size_t n) const = 0;
+		virtual double operator[](size_t n) const = 0;
 		HephCommon::FloatBuffer GenerateBuffer() const;
 		HephCommon::FloatBuffer GenerateBuffer(size_t frameCount) const;
 		HephCommon::FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const;

@@ -35,7 +35,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("WinAudioMME destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void WinAudioMME::SetMasterVolume(heph_float volume)
+		void WinAudioMME::SetMasterVolume(double volume)
 		{
 			if (this->isRenderInitialized)
 			{
@@ -44,14 +44,14 @@ namespace HephAudio
 				WINAUDIOMME_EXCPT(waveOutSetVolume(this->hwo, (usv << 16) | usv), this, "WinAudioMME::GetMasterVolume", "An error occurred while setting the master volume");
 			}
 		}
-		heph_float WinAudioMME::GetMasterVolume() const
+		double WinAudioMME::GetMasterVolume() const
 		{
 			if (this->isRenderInitialized)
 			{
 				DWORD dv;
 				MMRESULT mmres;
 				WINAUDIOMME_EXCPT(waveOutGetVolume(this->hwo, &dv), this, "WinAudioMME::GetMasterVolume", "An error occurred while getting the master volume");
-				return (heph_float)(dv & 0x0000FFFF) / (heph_float)UINT16_MAX;
+				return (double)(dv & 0x0000FFFF) / (double)UINT16_MAX;
 			}
 			return -1.0;
 		}

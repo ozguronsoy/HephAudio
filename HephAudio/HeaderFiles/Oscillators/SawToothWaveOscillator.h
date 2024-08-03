@@ -9,7 +9,7 @@ namespace HephAudio
 	public:
 		SawToothWaveOscillator();
 		SawToothWaveOscillator(uint32_t sampleRate);
-		SawToothWaveOscillator(heph_float peakAmplitude, heph_float frequency, uint32_t sampleRate, heph_float phase_rad);
-		heph_float operator[](size_t n) const override;
+		SawToothWaveOscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);
+		double operator[](size_t n) const override;
 	};
 }

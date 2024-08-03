@@ -39,12 +39,12 @@ namespace HephAudio
 
 		return *this;
 	}
-	heph_float AudioObject::GetPosition() const
+	double AudioObject::GetPosition() const
 	{
-		const heph_float position = ((heph_float)this->frameIndex) / this->buffer.FrameCount();
+		const double position = ((double)this->frameIndex) / this->buffer.FrameCount();
 		return HEPH_MATH_MIN(position, 1.0);
 	}
-	void AudioObject::SetPosition(heph_float position)
+	void AudioObject::SetPosition(double position)
 	{
 		if (position > 1.0)
 		{
@@ -76,7 +76,7 @@ namespace HephAudio
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
 		AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
-		const size_t readFrameCount = ceil((heph_float)pRenderArgs->renderFrameCount * (heph_float)pAudioObject->buffer.FormatInfo().sampleRate / (heph_float)renderFormat.sampleRate);
+		const size_t readFrameCount = ceil((double)pRenderArgs->renderFrameCount * (double)pAudioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
 
 		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount + 1);
 

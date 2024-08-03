@@ -27,8 +27,8 @@ namespace HephAudio
 			WinAudioMME(const WinAudioMME&) = delete;
 			WinAudioMME& operator=(const WinAudioMME&) = delete;
 			~WinAudioMME();
-			void SetMasterVolume(heph_float volume) override;
-			heph_float GetMasterVolume() const override;
+			void SetMasterVolume(double volume) override;
+			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;

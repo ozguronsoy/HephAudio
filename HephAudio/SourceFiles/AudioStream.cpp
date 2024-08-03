@@ -133,12 +133,12 @@ namespace HephAudio
 			this->pAudioObject->isPaused = true;
 		}
 	}
-	heph_float AudioStream::GetPosition() const
+	double AudioStream::GetPosition() const
 	{
-		const heph_float position = ((heph_float)this->pAudioObject->frameIndex) / this->frameCount;
-		return this->pAudioObject != nullptr ? HEPH_MATH_MIN(position, (heph_float)1.0) : 0;
+		const double position = ((double)this->pAudioObject->frameIndex) / this->frameCount;
+		return this->pAudioObject != nullptr ? HEPH_MATH_MIN(position, (double)1.0) : 0;
 	}
-	void AudioStream::SetPosition(heph_float position)
+	void AudioStream::SetPosition(double position)
 	{
 		if (this->pAudioObject != nullptr)
 		{

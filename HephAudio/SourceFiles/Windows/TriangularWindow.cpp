@@ -4,7 +4,7 @@ namespace HephAudio
 {
 	TriangularWindow::TriangularWindow() : TriangularWindow(0) {}
 	TriangularWindow::TriangularWindow(size_t size) : Window(size) { this->SetSize(size); }
-	heph_float TriangularWindow::operator[](size_t n) const 
+	double TriangularWindow::operator[](size_t n) const 
 	{
 		return 1.0 - fabs((n - this->hN) / this->hL);
 	}

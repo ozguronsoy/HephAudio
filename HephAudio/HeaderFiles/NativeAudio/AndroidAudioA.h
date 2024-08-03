@@ -25,15 +25,15 @@ namespace HephAudio
 			AAudioStream* pCaptureStream;
 			size_t renderBufferFrameCount;
 			size_t captureBufferFrameCount;
-			heph_float masterVolume;
+			double masterVolume;
 #endif
 		public:
 			AndroidAudioA();
 			AndroidAudioA(const AndroidAudioA&) = delete;
 			AndroidAudioA& operator=(const AndroidAudioA&) = delete;
 			~AndroidAudioA();
-			void SetMasterVolume(heph_float volume) override;
-			heph_float GetMasterVolume() const override;
+			void SetMasterVolume(double volume) override;
+			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
@@ -42,7 +42,7 @@ namespace HephAudio
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 		private:
-			heph_float GetFinalAOVolume(AudioObject* pAudioObject) const override;
+			double GetFinalAOVolume(AudioObject* pAudioObject) const override;
 			static aaudio_data_callback_result_t RenderCallback(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames);
 			static aaudio_data_callback_result_t CaptureCallback(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames);
 			static void ErrorCallback(AAudioStream* stream, void* userData, aaudio_result_t error);

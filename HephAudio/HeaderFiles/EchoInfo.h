@@ -8,12 +8,12 @@ namespace HephAudio
 	struct EchoInfo
 	{
 		uint32_t reflectionCount;
-		heph_float reflectionDelay_s;
-		heph_float decayFactor;
-		heph_float echoStartPosition;
-		heph_float echoEndPosition;
+		double reflectionDelay_s;
+		double decayFactor;
+		double echoStartPosition;
+		double echoEndPosition;
 		EchoInfo();
-		EchoInfo(uint32_t reflectionCount, heph_float reflectionDelay_s, heph_float decayFactor, heph_float echoStartPosition, heph_float echoEndPosition);
+		EchoInfo(uint32_t reflectionCount, double reflectionDelay_s, double decayFactor, double echoStartPosition, double echoEndPosition);
 		size_t CalculateAudioBufferFrameCount(const AudioBuffer& buffer) const;
 	};
 }

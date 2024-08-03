@@ -9,7 +9,7 @@ namespace HephCommon
 	{
 		if (this->frameCount > 0)
 		{
-			this->pData = (heph_float*)malloc(this->Size());
+			this->pData = (double*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::FloatBuffer", "Insufficient memory."));
@@ -17,11 +17,11 @@ namespace HephCommon
 			this->Reset();
 		}
 	}
-	FloatBuffer::FloatBuffer(const std::initializer_list<heph_float>& rhs) : frameCount(rhs.size()), pData(nullptr)
+	FloatBuffer::FloatBuffer(const std::initializer_list<double>& rhs) : frameCount(rhs.size()), pData(nullptr)
 	{
 		if (this->frameCount > 0)
 		{
-			this->pData = (heph_float*)malloc(this->Size());
+			this->pData = (double*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::FloatBuffer", "Insufficient memory."));
@@ -34,7 +34,7 @@ namespace HephCommon
 	{
 		if (this->frameCount > 0)
 		{
-			this->pData = (heph_float*)malloc(this->Size());
+			this->pData = (double*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::FloatBuffer", "Insufficient memory."));
@@ -51,7 +51,7 @@ namespace HephCommon
 	{
 		this->Release();
 	}
-	heph_float& FloatBuffer::operator[](size_t frameIndex) const
+	double& FloatBuffer::operator[](size_t frameIndex) const
 	{
 		return *(this->pData + frameIndex);
 	}
@@ -64,14 +64,14 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator=(const std::initializer_list<heph_float>& rhs)
+	FloatBuffer& FloatBuffer::operator=(const std::initializer_list<double>& rhs)
 	{
 		this->Release();
 
 		this->frameCount = rhs.size();
 		if (this->frameCount > 0)
 		{
-			this->pData = (heph_float*)malloc(this->Size());
+			this->pData = (double*)malloc(this->Size());
 			if (this->pData == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::operator=", "Insufficient memory."));
@@ -95,7 +95,7 @@ namespace HephCommon
 			this->frameCount = rhs.frameCount;
 			if (this->frameCount > 0)
 			{
-				this->pData = (heph_float*)malloc(this->Size());
+				this->pData = (double*)malloc(this->Size());
 				if (this->pData == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::operator=", "Insufficient memory."));
@@ -120,7 +120,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator+(heph_float rhs) const
+	FloatBuffer FloatBuffer::operator+(double rhs) const
 	{
 		FloatBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -147,7 +147,7 @@ namespace HephCommon
 
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator+=(heph_float rhs)
+	FloatBuffer& FloatBuffer::operator+=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -164,7 +164,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator-(heph_float rhs) const
+	FloatBuffer FloatBuffer::operator-(double rhs) const
 	{
 		FloatBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -191,7 +191,7 @@ namespace HephCommon
 
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator-=(heph_float rhs)
+	FloatBuffer& FloatBuffer::operator-=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -208,7 +208,7 @@ namespace HephCommon
 		}
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator*(heph_float rhs) const
+	FloatBuffer FloatBuffer::operator*(double rhs) const
 	{
 		FloatBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -227,7 +227,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator*=(heph_float rhs)
+	FloatBuffer& FloatBuffer::operator*=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -245,7 +245,7 @@ namespace HephCommon
 			}
 			if (this->frameCount > rhs.frameCount)
 			{
-				memset(this->pData + rhs.frameCount, 0, (this->frameCount - rhs.frameCount) * sizeof(heph_float));
+				memset(this->pData + rhs.frameCount, 0, (this->frameCount - rhs.frameCount) * sizeof(double));
 			}
 		}
 		else
@@ -259,7 +259,7 @@ namespace HephCommon
 
 		return *this;
 	}
-	FloatBuffer FloatBuffer::operator/(heph_float rhs) const
+	FloatBuffer FloatBuffer::operator/(double rhs) const
 	{
 		FloatBuffer resultBuffer(*this);
 		for (size_t i = 0; i < this->frameCount; i++)
@@ -278,7 +278,7 @@ namespace HephCommon
 		}
 		return resultBuffer;
 	}
-	FloatBuffer& FloatBuffer::operator/=(heph_float rhs)
+	FloatBuffer& FloatBuffer::operator/=(double rhs)
 	{
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
@@ -296,7 +296,7 @@ namespace HephCommon
 			}
 			if (this->frameCount > rhs.frameCount)
 			{
-				memset(this->pData + rhs.frameCount, 0, (this->frameCount - rhs.frameCount) * sizeof(heph_float));
+				memset(this->pData + rhs.frameCount, 0, (this->frameCount - rhs.frameCount) * sizeof(double));
 			}
 		}
 		else
@@ -315,7 +315,7 @@ namespace HephCommon
 		FloatBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
 		{
-			memcpy(resultBuffer.pData, this->pData + rhs, (this->frameCount - rhs) * sizeof(heph_float));
+			memcpy(resultBuffer.pData, this->pData + rhs, (this->frameCount - rhs) * sizeof(double));
 		}
 		return resultBuffer;
 	}
@@ -323,8 +323,8 @@ namespace HephCommon
 	{
 		if (this->frameCount > rhs)
 		{
-			memcpy(this->pData, this->pData + rhs, (this->frameCount - rhs) * sizeof(heph_float));
-			memset(this->pData + this->frameCount - rhs, 0, rhs * sizeof(heph_float));
+			memcpy(this->pData, this->pData + rhs, (this->frameCount - rhs) * sizeof(double));
+			memset(this->pData + this->frameCount - rhs, 0, rhs * sizeof(double));
 		}
 		else
 		{
@@ -337,7 +337,7 @@ namespace HephCommon
 		FloatBuffer resultBuffer(this->frameCount);
 		if (this->frameCount > rhs)
 		{
-			memcpy(resultBuffer.pData + rhs, this->pData, (this->frameCount - rhs) * sizeof(heph_float));
+			memcpy(resultBuffer.pData + rhs, this->pData, (this->frameCount - rhs) * sizeof(double));
 		}
 		return resultBuffer;
 	}
@@ -345,8 +345,8 @@ namespace HephCommon
 	{
 		if (this->frameCount > rhs)
 		{
-			memcpy(this->pData + rhs, this->pData, (this->frameCount - rhs) * sizeof(heph_float));
-			memset(this->pData, 0, rhs * sizeof(heph_float));
+			memcpy(this->pData + rhs, this->pData, (this->frameCount - rhs) * sizeof(double));
+			memset(this->pData, 0, rhs * sizeof(double));
 		}
 		else
 		{
@@ -372,13 +372,13 @@ namespace HephCommon
 	}
 	size_t FloatBuffer::Size() const
 	{
-		return this->frameCount * sizeof(heph_float);
+		return this->frameCount * sizeof(double);
 	}
 	size_t FloatBuffer::FrameCount() const
 	{
 		return this->frameCount;
 	}
-	heph_float& FloatBuffer::At(size_t frameIndex) const
+	double& FloatBuffer::At(size_t frameIndex) const
 	{
 		if (this->pData == nullptr)
 		{
@@ -399,7 +399,7 @@ namespace HephCommon
 			{
 				frameCount = this->frameCount - frameIndex;
 			}
-			memcpy(subBuffer.pData, this->pData + frameIndex, frameCount * sizeof(heph_float));
+			memcpy(subBuffer.pData, this->pData + frameIndex, frameCount * sizeof(double));
 		}
 		return subBuffer;
 	}
@@ -413,7 +413,7 @@ namespace HephCommon
 				return;
 			}
 
-			heph_float* pTemp = (heph_float*)malloc(this->Size() + rhs.Size());
+			double* pTemp = (double*)malloc(this->Size() + rhs.Size());
 			if (pTemp == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Append", "Insufficient memory."));
@@ -433,16 +433,16 @@ namespace HephCommon
 		{
 			const size_t oldSize = this->Size();
 			const size_t newFrameCount = frameIndex > this->frameCount ? (rhs.frameCount + frameIndex) : (this->frameCount + rhs.frameCount);
-			const size_t newSize = newFrameCount * sizeof(heph_float);
+			const size_t newSize = newFrameCount * sizeof(double);
 
-			heph_float* pTemp = (heph_float*)malloc(newSize);
+			double* pTemp = (double*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Insert", "Insufficient memory."));
 			}
 			memset(pTemp, 0, newSize);
 
-			const size_t frameIndex_byte = frameIndex * sizeof(heph_float);
+			const size_t frameIndex_byte = frameIndex * sizeof(double);
 			if (frameIndex_byte > 0 && oldSize > 0)
 			{
 				memcpy(pTemp, this->pData, oldSize > frameIndex_byte ? frameIndex_byte : oldSize);
@@ -478,13 +478,13 @@ namespace HephCommon
 			this->frameCount -= frameCount;
 			const size_t newSize = this->Size();
 
-			heph_float* pTemp = (heph_float*)malloc(newSize);
+			double* pTemp = (double*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Cut", "Insufficient memory."));
 			}
 
-			const size_t frameIndex_byte = frameIndex * sizeof(heph_float);
+			const size_t frameIndex_byte = frameIndex * sizeof(double);
 			if (frameIndex_byte > 0)
 			{
 				memcpy(pTemp, this->pData, frameIndex_byte);
@@ -508,22 +508,22 @@ namespace HephCommon
 		if (frameCount > 0)
 		{
 			const size_t newFrameCount = HEPH_MATH_MAX(frameIndex + frameCount, this->frameCount);
-			const size_t newSize = newFrameCount * sizeof(heph_float);
+			const size_t newSize = newFrameCount * sizeof(double);
 
-			heph_float* pTemp = (heph_float*)malloc(newSize);
+			double* pTemp = (double*)malloc(newSize);
 			if (pTemp == nullptr)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Replace", "Insufficient memory."));
 			}
 			memset(pTemp, 0, newSize);
 
-			const size_t frameIndex_byte = frameIndex * sizeof(heph_float);
+			const size_t frameIndex_byte = frameIndex * sizeof(double);
 			if (frameIndex > 0)
 			{
 				memcpy(pTemp, this->pData, frameIndex_byte > this->Size() ? this->Size() : frameIndex_byte);
 			}
 
-			const size_t replacedSize = frameIndex_byte + frameCount * sizeof(heph_float) >= newSize ? newSize - frameIndex_byte : frameCount * sizeof(heph_float);
+			const size_t replacedSize = frameIndex_byte + frameCount * sizeof(double) >= newSize ? newSize - frameIndex_byte : frameCount * sizeof(double);
 			if (replacedSize > 0)
 			{
 				memcpy(pTemp + frameIndex, rhs.pData, replacedSize);
@@ -531,7 +531,7 @@ namespace HephCommon
 
 			if (frameIndex + frameCount < this->frameCount)
 			{
-				const size_t padding = frameIndex_byte + frameCount * sizeof(heph_float);
+				const size_t padding = frameIndex_byte + frameCount * sizeof(double);
 				memcpy((uint8_t*)pTemp + frameIndex_byte + replacedSize, (uint8_t*)this->pData + padding, this->Size() - padding);
 			}
 
@@ -557,14 +557,14 @@ namespace HephCommon
 			}
 			else
 			{
-				heph_float* pTemp = (heph_float*)realloc(this->pData, newFrameCount * sizeof(heph_float));
+				double* pTemp = (double*)realloc(this->pData, newFrameCount * sizeof(double));
 				if (pTemp == nullptr)
 				{
 					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FloatBuffer::Resize", "Insufficient memory."));
 				}
 				if (newFrameCount > this->frameCount)
 				{
-					memset(pTemp + this->frameCount, 0, (newFrameCount - this->frameCount) * sizeof(heph_float));
+					memset(pTemp + this->frameCount, 0, (newFrameCount - this->frameCount) * sizeof(double));
 				}
 				this->pData = pTemp;
 				this->frameCount = newFrameCount;
@@ -580,12 +580,12 @@ namespace HephCommon
 			this->pData = nullptr;
 		}
 	}
-	heph_float FloatBuffer::Min() const
+	double FloatBuffer::Min() const
 	{
-		heph_float minSample = INT32_MAX;
+		double minSample = INT32_MAX;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			const heph_float& currentSample = (*this)[i];
+			const double& currentSample = (*this)[i];
 			if (currentSample < minSample)
 			{
 				minSample = currentSample;
@@ -593,12 +593,12 @@ namespace HephCommon
 		}
 		return minSample;
 	}
-	heph_float FloatBuffer::Max() const
+	double FloatBuffer::Max() const
 	{
-		heph_float maxSample = INT32_MIN;
+		double maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			const heph_float& currentSample = (*this)[i];
+			const double& currentSample = (*this)[i];
 			if (currentSample > maxSample)
 			{
 				maxSample = currentSample;
@@ -606,12 +606,12 @@ namespace HephCommon
 		}
 		return maxSample;
 	}
-	heph_float FloatBuffer::AbsMax() const
+	double FloatBuffer::AbsMax() const
 	{
-		heph_float maxSample = INT32_MIN;
+		double maxSample = INT32_MIN;
 		for (size_t i = 0; i < this->frameCount; i++)
 		{
-			const heph_float& currentSample = abs((*this)[i]);
+			const double& currentSample = abs((*this)[i]);
 			if (currentSample > maxSample)
 			{
 				maxSample = currentSample;
@@ -619,11 +619,11 @@ namespace HephCommon
 		}
 		return maxSample;
 	}
-	heph_float FloatBuffer::Rms() const
+	double FloatBuffer::Rms() const
 	{
 		if (this->frameCount != 0)
 		{
-			heph_float sumOfSamplesSquared = 0.0;
+			double sumOfSamplesSquared = 0.0;
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
 				sumOfSamplesSquared += (*this)[i] * (*this)[i];
@@ -682,20 +682,20 @@ namespace HephCommon
 		}
 		return y;
 	}
-	heph_float* FloatBuffer::Begin() const
+	double* FloatBuffer::Begin() const
 	{
 		return this->pData;
 	}
-	heph_float* FloatBuffer::End() const
+	double* FloatBuffer::End() const
 	{
 		return this->pData + this->frameCount;
 	}
 }
-HephCommon::FloatBuffer operator+(heph_float lhs, const HephCommon::FloatBuffer& rhs)
+HephCommon::FloatBuffer operator+(double lhs, const HephCommon::FloatBuffer& rhs)
 {
 	return rhs + lhs;
 }
-HephCommon::FloatBuffer operator-(heph_float lhs, const HephCommon::FloatBuffer& rhs)
+HephCommon::FloatBuffer operator-(double lhs, const HephCommon::FloatBuffer& rhs)
 {
 	HephCommon::FloatBuffer resultBuffer(rhs.FrameCount());
 	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)
@@ -704,11 +704,11 @@ HephCommon::FloatBuffer operator-(heph_float lhs, const HephCommon::FloatBuffer&
 	}
 	return resultBuffer;
 }
-HephCommon::FloatBuffer operator*(heph_float lhs, const HephCommon::FloatBuffer& rhs)
+HephCommon::FloatBuffer operator*(double lhs, const HephCommon::FloatBuffer& rhs)
 {
 	return rhs * lhs;
 }
-HephCommon::FloatBuffer operator/(heph_float lhs, const HephCommon::FloatBuffer& rhs)
+HephCommon::FloatBuffer operator/(double lhs, const HephCommon::FloatBuffer& rhs)
 {
 	HephCommon::FloatBuffer resultBuffer(rhs.FrameCount());
 	for (size_t i = 0; i < resultBuffer.FrameCount(); i++)

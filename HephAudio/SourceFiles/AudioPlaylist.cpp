@@ -14,12 +14,12 @@ namespace HephAudio
 
 	AudioPlaylist::AudioPlaylist(Audio& audio, const std::vector<std::string>& files) : AudioPlaylist(audio.GetNativeAudio(), files) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s)
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s)
 		: stream(pNativeAudio), isPaused(true), applyFadeInOrDelay(false), transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s) {}
 
-	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s) : AudioPlaylist(audio.GetNativeAudio()) {}
+	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s) : AudioPlaylist(audio.GetNativeAudio()) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files)
+	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files)
 		: stream(pNativeAudio), files(files), isPaused(true), applyFadeInOrDelay(false)
 		, transitionEffect(transitionEffect), transitionDuration_s(transitionDuration_s)
 	{
@@ -29,7 +29,7 @@ namespace HephAudio
 		}
 	}
 
-	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files)
+	AudioPlaylist::AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files)
 		: AudioPlaylist(audio.GetNativeAudio(), transitionEffect, transitionDuration_s, files) {}
 
 	AudioPlaylist::AudioPlaylist(AudioPlaylist&& rhs) noexcept :
@@ -79,11 +79,11 @@ namespace HephAudio
 	{
 		this->transitionEffect = transitionEffect;
 	}
-	heph_float AudioPlaylist::GetTransitionDuration() const
+	double AudioPlaylist::GetTransitionDuration() const
 	{
 		return this->transitionDuration_s;
 	}
-	void AudioPlaylist::SetTransitionDuration(heph_float transitionDuration_s)
+	void AudioPlaylist::SetTransitionDuration(double transitionDuration_s)
 	{
 		this->transitionDuration_s = transitionDuration_s;
 	}
@@ -317,7 +317,7 @@ namespace HephAudio
 
 		if (pPlaylist->applyFadeInOrDelay)
 		{
-			const heph_float duration_sample = pPlaylist->transitionDuration_s * pNativeAudio->GetRenderFormat().sampleRate;
+			const double duration_sample = pPlaylist->transitionDuration_s * pNativeAudio->GetRenderFormat().sampleRate;
 			if (pAudioObject->frameIndex >= duration_sample)
 			{
 				pPlaylist->applyFadeInOrDelay = false;
@@ -335,14 +335,14 @@ namespace HephAudio
 		if (pPlaylist->applyFadeInOrDelay)
 		{
 			const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
-			const heph_float duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
+			const double duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
 			if (pAudioObject->frameIndex >= duration_sample)
 			{
 				pPlaylist->applyFadeInOrDelay = false;
 			}
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
 			{
-				const heph_float factor = (i + pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
+				const double factor = (i + pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
 				for (size_t j = 0; j < renderFormatInfo.channelLayout.count; j++)
 				{
 					pRenderResult->renderBuffer[i][j] *= factor;
@@ -356,13 +356,13 @@ namespace HephAudio
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
 		const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
-		const heph_float duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
+		const double duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
 		const size_t fileFrameCount = pPlaylist->stream.GetFrameCount();
 		if (pAudioObject->frameIndex + duration_sample >= fileFrameCount + pRenderArgs->renderFrameCount)
 		{
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
 			{
-				const heph_float factor = (fileFrameCount - i - pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
+				const double factor = (fileFrameCount - i - pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
 				for (size_t j = 0; j < renderFormatInfo.channelLayout.count; j++)
 				{
 					pRenderResult->renderBuffer[i][j] *= factor;

@@ -22,8 +22,8 @@ namespace HephAudio
 			AppleAudio(const AppleAudio&) = delete;
 			AppleAudio& operator=(const AppleAudio&) = delete;
 			~AppleAudio();
-			void SetMasterVolume(heph_float volume) override;
-			heph_float GetMasterVolume() const override;
+			void SetMasterVolume(double volume) override;
+			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;

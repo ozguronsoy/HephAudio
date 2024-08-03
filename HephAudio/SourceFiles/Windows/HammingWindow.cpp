@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	HammingWindow::HammingWindow() : HammingWindow(0) {}
 	HammingWindow::HammingWindow(size_t size) : Window(size) { this->SetSize(size); }
-	heph_float HammingWindow::operator[](size_t n) const 
+	double HammingWindow::operator[](size_t n) const 
 	{
 		return 0.54 - 0.46 * cos(2.0 * HEPH_MATH_PI * n / this->N);
 	}

@@ -9,8 +9,8 @@ namespace HephAudio
     {
         struct AlsaParams final : public NativeAudioParams
         {
-            heph_float renderBufferDuration_ms;
-            heph_float captureBufferDuration_ms;
+            double renderBufferDuration_ms;
+            double captureBufferDuration_ms;
             AlsaParams()
                 : renderBufferDuration_ms(10), captureBufferDuration_ms(10) {}
         };

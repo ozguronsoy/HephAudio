@@ -15,8 +15,8 @@ namespace HephCommon
 		static void FFT(ComplexBuffer& complexBuffer, size_t fftSize);
 		static void IFFT(FloatBuffer& floatBuffer, ComplexBuffer& complexBuffer);
 		static void IFFT(ComplexBuffer& complexBuffer, bool scale);
-		static heph_float BinFrequencyToIndex(size_t sampleRate, size_t fftSize, heph_float frequency);
-		static heph_float IndexToBinFrequency(size_t sampleRate, size_t fftSize, size_t index);
+		static double BinFrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency);
+		static double IndexToBinFrequency(size_t sampleRate, size_t fftSize, size_t index);
 		static size_t CalculateFFTSize(size_t bufferSize);
 		static FloatBuffer Convolve(const FloatBuffer& source, const FloatBuffer& kernel);
 		static FloatBuffer Convolve(const FloatBuffer& source, const FloatBuffer& kernel, ConvolutionMode convolutionMode);

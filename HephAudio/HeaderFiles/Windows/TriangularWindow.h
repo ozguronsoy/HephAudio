@@ -7,12 +7,12 @@ namespace HephAudio
 	class TriangularWindow final : public Window
 	{
 	private:
-		heph_float hN;
-		heph_float hL;
+		double hN;
+		double hL;
 	public:
 		TriangularWindow();
 		TriangularWindow(size_t size);
-		heph_float operator[](size_t n) const override;
+		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;
 	};
 }

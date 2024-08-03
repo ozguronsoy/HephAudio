@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	NuttallWindow::NuttallWindow() : NuttallWindow(0) {}
 	NuttallWindow::NuttallWindow(size_t size) : Window(size) { this->SetSize(size); }
-	heph_float NuttallWindow::operator[](size_t n) const 
+	double NuttallWindow::operator[](size_t n) const 
 	{
 		return 0.355768 - 0.487396 * cos(2.0 * HEPH_MATH_PI * n / this->N) + 0.144232 * cos(4.0 * HEPH_MATH_PI * n / this->N) - 0.012604 * cos(6.0 * HEPH_MATH_PI * n / this->N);
 	}

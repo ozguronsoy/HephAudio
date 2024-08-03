@@ -62,8 +62,8 @@ namespace HephAudio
 		bool IsCapturePaused() const;
 		uint32_t GetDeviceEnumerationPeriod() const;
 		void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms);
-		void SetMasterVolume(heph_float volume);
-		heph_float GetMasterVolume() const;
+		void SetMasterVolume(double volume);
+		double GetMasterVolume() const;
 		const AudioFormatInfo& GetRenderFormat() const;
 		const AudioFormatInfo& GetCaptureFormat() const;
 		void InitializeRender();

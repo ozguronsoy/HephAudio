@@ -214,11 +214,11 @@ namespace HephAudio
 	{
 		this->pNativeAudio->SetDeviceEnumerationPeriod(deviceEnumerationPeriod_ms);
 	}
-	void Audio::SetMasterVolume(heph_float volume)
+	void Audio::SetMasterVolume(double volume)
 	{
 		this->pNativeAudio->SetMasterVolume(volume);
 	}
-	heph_float Audio::GetMasterVolume() const
+	double Audio::GetMasterVolume() const
 	{
 		return this->pNativeAudio->GetMasterVolume();
 	}

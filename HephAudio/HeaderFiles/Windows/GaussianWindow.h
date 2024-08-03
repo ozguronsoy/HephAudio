@@ -7,16 +7,16 @@ namespace HephAudio
 	class GaussianWindow final : public Window
 	{
 	private:
-		heph_float sigma;
-		heph_float hN;
-		heph_float shN;
+		double sigma;
+		double hN;
+		double shN;
 	public:
 		GaussianWindow();
 		GaussianWindow(size_t size);
-		GaussianWindow(size_t size, heph_float sigma);
-		heph_float operator[](size_t n) const override;
+		GaussianWindow(size_t size, double sigma);
+		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;
-		heph_float GetSigma() const;
-		void SetSigma(heph_float sigma);
+		double GetSigma() const;
+		void SetSigma(double sigma);
 	};
 }

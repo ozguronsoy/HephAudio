@@ -29,16 +29,16 @@ namespace HephAudio
 		bool isPaused;
 		bool applyFadeInOrDelay;
 		TransitionEffect transitionEffect;
-		heph_float transitionDuration_s;
+		double transitionDuration_s;
 	public:
 		AudioPlaylist(Native::NativeAudio* pNativeAudio);
 		AudioPlaylist(Audio& audio);
 		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::string>& files);
 		AudioPlaylist(Audio& audio, const std::vector<std::string>& files);
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s);
-		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s);
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files);
-		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, heph_float transitionDuration_s, const std::vector<std::string>& files);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s);
+		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files);
+		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files);
 		AudioPlaylist(const AudioPlaylist&) = delete;
 		AudioPlaylist(AudioPlaylist&& rhs) noexcept;
 		AudioPlaylist& operator=(const AudioPlaylist&) = delete;
@@ -49,8 +49,8 @@ namespace HephAudio
 		Native::NativeAudio* GetNativeAudio() const;
 		TransitionEffect GetTransitionEffect() const;
 		void SetTransitionEffect(TransitionEffect transitionEffect);
-		heph_float GetTransitionDuration() const;
-		void SetTransitionDuration(heph_float transitionDuration_s);
+		double GetTransitionDuration() const;
+		void SetTransitionDuration(double transitionDuration_s);
 		void Start();
 		void Stop();
 		bool IsPaused() const;

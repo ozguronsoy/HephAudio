@@ -42,8 +42,8 @@ namespace HephAudio
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
 			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
 			~AndroidAudioSLES();
-			void SetMasterVolume(heph_float volume);
-			heph_float GetMasterVolume() const;
+			void SetMasterVolume(double volume);
+			double GetMasterVolume() const;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format);
 			void StopRendering();
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);

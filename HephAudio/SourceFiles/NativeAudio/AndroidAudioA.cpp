@@ -38,7 +38,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void AndroidAudioA::SetMasterVolume(heph_float volume)
+		void AndroidAudioA::SetMasterVolume(double volume)
 		{
 			if (volume < 0)
 			{
@@ -46,7 +46,7 @@ namespace HephAudio
 			}
 			masterVolume = HEPH_MATH_MIN(volume, 1);
 		}
-		heph_float AndroidAudioA::GetMasterVolume() const
+		double AndroidAudioA::GetMasterVolume() const
 		{
 			return masterVolume;
 		}
@@ -289,7 +289,7 @@ namespace HephAudio
 			}
 			this->params = *pAAudioParams;
 		}
-		heph_float AndroidAudioA::GetFinalAOVolume(AudioObject* pAudioObject) const
+		double AndroidAudioA::GetFinalAOVolume(AudioObject* pAudioObject) const
 		{
 			return NativeAudio::GetFinalAOVolume(pAudioObject) * masterVolume;
 		}
@@ -360,11 +360,11 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void AndroidAudioA::SetMasterVolume(heph_float volume)
+		void AndroidAudioA::SetMasterVolume(double volume)
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::SetMasterVolume", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}
-		heph_float AndroidAudioA::GetMasterVolume() const
+		double AndroidAudioA::GetMasterVolume() const
 		{
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AndroidAudioA::GetMasterVolume", "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 		}

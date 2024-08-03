@@ -7,11 +7,11 @@ namespace HephAudio
 	class WelchWindow final : public Window
 	{
 	private:
-		heph_float hN;
+		double hN;
 	public:
 		WelchWindow();
 		WelchWindow(size_t size);
-		heph_float operator[](size_t n) const override;
+		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;
 	};
 }

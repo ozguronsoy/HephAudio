@@ -62,7 +62,7 @@ namespace HephAudio
 
 			HEPHAUDIO_LOG("LinuxAudio destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
 		}
-		void LinuxAudio::SetMasterVolume(heph_float volume)
+		void LinuxAudio::SetMasterVolume(double volume)
 		{
 			if (isRenderInitialized && renderDeviceId != "")
 			{
@@ -91,7 +91,7 @@ namespace HephAudio
 				LINUX_EXCPT(snd_mixer_close(mixer), this, "LinuxAudio::SetMasterVolume", "An error occurred while closing the mixer.");
 			}
 		}
-		heph_float LinuxAudio::GetMasterVolume() const
+		double LinuxAudio::GetMasterVolume() const
 		{
 			if (isRenderInitialized && renderDeviceId != "")
 			{
@@ -120,7 +120,7 @@ namespace HephAudio
 				LINUX_EXCPT(snd_mixer_selem_get_playback_volume(mixerElem, SND_MIXER_SCHN_MONO, &value), this, "LinuxAudio::GetMasterVolume", "An error occurred while getting the volume.");
 				LINUX_EXCPT(snd_mixer_close(mixer), this, "LinuxAudio::GetMasterVolume", "An error occurred while closing the mixer.");
 
-				return ((heph_float)value + LinuxAudio::volume_max) / (LinuxAudio::volume_max * 2.0);
+				return ((double)value + LinuxAudio::volume_max) / (LinuxAudio::volume_max * 2.0);
 			}
 			return 1.0;
 		}

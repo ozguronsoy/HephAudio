@@ -26,8 +26,8 @@ namespace HephAudio
 			LinuxAudio(const LinuxAudio&) = delete;
 			LinuxAudio& operator=(const LinuxAudio&) = delete;
 			~LinuxAudio();
-			void SetMasterVolume(heph_float volume) override;
-			heph_float GetMasterVolume() const override;
+			void SetMasterVolume(double volume) override;
+			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
 			void StopRendering() override;
 			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;

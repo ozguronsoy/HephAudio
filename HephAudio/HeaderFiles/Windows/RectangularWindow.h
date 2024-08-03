@@ -9,6 +9,6 @@ namespace HephAudio
 	public:
 		RectangularWindow();
 		RectangularWindow(size_t size);
-		heph_float operator[](size_t n) const override;
+		double operator[](size_t n) const override;
 	};
 }
