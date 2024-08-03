@@ -5,49 +5,92 @@
 
 namespace HephCommon
 {
-	struct Complex final : public std::complex<double>
+	class Complex final : public std::complex<double>
 	{
-		Complex();
-		Complex(double real, double imag);
-		Complex operator+() const;
-		Complex operator-() const;
-		Complex operator+(double rhs) const;
-		Complex operator+(const Complex& rhs) const;
+	public:
+		constexpr Complex() : Complex(0, 0) {}
+		
+		constexpr Complex(double real, double imag) : std::complex<double>(real, imag) {}
+		
+		constexpr Complex operator-() const 
+		{ 
+			return Complex(-this->real(), -this->imag());
+		}
+		constexpr Complex operator+(double rhs) const
+		{
+			return Complex(this->real() + rhs, this->imag());
+		}
+		constexpr Complex operator+(const Complex& rhs) const
+		{
+			return Complex(this->real() + rhs.real(), this->imag() + rhs.imag());
+		}
+		constexpr Complex operator-(double rhs) const
+		{
+			return Complex(this->real() - rhs, this->imag());
+		}
+		constexpr Complex operator-(const Complex& rhs) const
+		{
+			return Complex(this->real() - rhs.real(), this->imag() - rhs.imag());
+		}
+		constexpr Complex operator*(double rhs) const
+		{
+			return Complex(this->real() * rhs, this->imag() * rhs);
+		}
+		constexpr Complex operator*(const Complex& rhs) const
+		{
+			return Complex(this->real() * rhs.real() - this->imag() * rhs.imag(), this->imag() * rhs.real() + this->real() * rhs.imag());
+		}
+		constexpr Complex operator/(double rhs) const
+		{
+			return Complex(this->real() / rhs, this->imag() / rhs);
+		}
+		constexpr Complex operator/(const Complex& rhs) const
+		{
+			const double denomiter = rhs.real() * rhs.real() + rhs.imag() * rhs.imag();
+			return Complex((this->real() * rhs.real() + this->imag() * rhs.imag()) / denomiter,
+							(this->imag() * rhs.real() - this->real() * rhs.imag()) / denomiter);
+		}
+		constexpr bool operator==(const Complex& rhs) const
+		{
+			return this->real() == rhs.real() && this->imag() == rhs.imag();
+		}
+		constexpr bool operator!=(const Complex& rhs) const
+		{
+			return this->real() != rhs.real() || this->imag() != rhs.imag();
+		}
+		constexpr Complex Conjugate() const
+		{
+			return Complex(this->real(), -this->imag());
+		}
+		constexpr double MagnitudeSquared() const
+		{
+			return this->real() * this->real() + this->imag() * this->imag();
+		}
 		Complex& operator+=(double rhs);
 		Complex& operator+=(const Complex& rhs);
-		Complex operator-(double rhs) const;
-		Complex operator-(const Complex& rhs) const;
 		Complex& operator-=(double rhs);
 		Complex& operator-=(const Complex& rhs);
-		Complex operator*(double rhs) const;
-		Complex operator*(const Complex& rhs) const;
 		Complex& operator*=(double rhs);
 		Complex& operator*=(const Complex& rhs);
-		Complex operator/(double rhs) const;
-		Complex operator/(const Complex& rhs) const;
 		Complex& operator/=(double rhs);
 		Complex& operator/=(const Complex& rhs);
-		bool operator==(const Complex& rhs) const;
-		bool operator!=(const Complex& rhs) const;
-		Complex Conjugate() const;
-		double MagnitudeSquared() const;
 		double Magnitude() const;
 		double Phase() const;
 	};
 }
-inline HephCommon::Complex operator+(double lhs, const HephCommon::Complex& rhs)
+inline constexpr HephCommon::Complex operator+(double lhs, const HephCommon::Complex& rhs)
 {
 	return rhs + lhs;
 }
-inline HephCommon::Complex operator-(double lhs, const HephCommon::Complex& rhs)
+inline constexpr HephCommon::Complex operator-(double lhs, const HephCommon::Complex& rhs)
 {
 	return HephCommon::Complex(lhs - rhs.real(), -rhs.imag());
 }
-inline HephCommon::Complex operator*(double lhs, const HephCommon::Complex& rhs)
+inline constexpr HephCommon::Complex operator*(double lhs, const HephCommon::Complex& rhs)
 {
 	return rhs * lhs;
 }
-inline HephCommon::Complex operator/(double lhs, const HephCommon::Complex& rhs)
+inline constexpr HephCommon::Complex operator/(double lhs, const HephCommon::Complex& rhs)
 {
 	return HephCommon::Complex(lhs, 0) / rhs;
 }
