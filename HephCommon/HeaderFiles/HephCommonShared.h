@@ -107,7 +107,7 @@ namespace HephCommon
 	};
 	extern Endian systemEndian;
 	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
-	constexpr inline Endian operator!(const Endian& lhs) { return lhs == Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
+	constexpr inline Endian operator!(const Endian& lhs) { return lhs & Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
 
 #define HEPH_ENDIAN HephCommon::Endian
 #define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian

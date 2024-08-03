@@ -63,7 +63,7 @@ namespace HephAudio
 					const uint8_t encodedSample = ((int8_t*)encodedBufferInfo.pBuffer)[i * encodedBufferInfo.formatInfo.channelLayout.count + j];
 					const int16_t pcmSample = encodedSample < 128 ? decodeTable[encodedSample] : -decodeTable[encodedSample - 128];
 
-					resultBuffer[i][j] = (double)pcmSample * scaleFactor;
+					resultBuffer[i][j] = (heph_audio_sample_t)((double)pcmSample * scaleFactor);
 				}
 			}
 
@@ -86,7 +86,7 @@ namespace HephAudio
 			{
 				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelLayout.count; j++)
 				{
-					int16_t pcmSample = bufferToEncode[i][j] * scaleFactor;
+					int16_t pcmSample = (int16_t)(bufferToEncode[i][j] * scaleFactor);
 					uint8_t mask;
 					if (pcmSample >= 0)
 					{

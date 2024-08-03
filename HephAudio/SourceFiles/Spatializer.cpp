@@ -74,12 +74,16 @@ namespace HephAudio
 	{
 		return this->sampleRate;
 	}
+	size_t Spatializer::GetFrameCount() const
+	{
+		return this->frameCount;
+	}
 	void Spatializer::OpenSofaFile(const std::string& sofaFilePath, uint32_t sampleRate)
 	{
 		int filter_length;
 		int errorCode;
 
-		this->pEasy = mysofa_open(sofaFilePath.c_str(), sampleRate, &filter_length, &errorCode);
+		this->pEasy = mysofa_open(sofaFilePath.c_str(), (float)sampleRate, &filter_length, &errorCode);
 		if (this->pEasy == nullptr || errorCode != MYSOFA_OK)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Spatializer::OpenSofaFile", "An error occurred while opening the sofa file.", "libmysofa", Spatializer::GetErrorString(errorCode)));
