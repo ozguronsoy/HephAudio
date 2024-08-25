@@ -105,16 +105,11 @@ namespace HephCommon
 
 		ArithmeticBuffer& operator+=(const Tself& rhs)
 		{
-			if (this->size != rhs.size)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator+=", "Both operands must have the same size"));
-			}
-
-			for (size_t i = 0; i < this->size; ++i)
+			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
+			for (size_t i = 0; i < minSize; ++i)
 			{
 				(*this)[i] += rhs[i];
 			}
-
 			return *this;
 		}
 
@@ -164,16 +159,11 @@ namespace HephCommon
 
 		ArithmeticBuffer& operator-=(const Tself& rhs)
 		{
-			if (this->size != rhs.size)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator-=", "Both operands must have the same size"));
-			}
-
-			for (size_t i = 0; i < this->size; ++i)
+			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
+			for (size_t i = 0; i < minSize; ++i)
 			{
 				(*this)[i] -= rhs[i];
 			}
-
 			return *this;
 		}
 
@@ -223,16 +213,11 @@ namespace HephCommon
 
 		ArithmeticBuffer& operator*=(const Tself& rhs)
 		{
-			if (this->size != rhs.size)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator*=", "Both operands must have the same size"));
-			}
-
-			for (size_t i = 0; i < this->size; ++i)
+			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
+			for (size_t i = 0; i < minSize; ++i)
 			{
 				(*this)[i] *= rhs[i];
 			}
-
 			return *this;
 		}
 
@@ -282,16 +267,11 @@ namespace HephCommon
 
 		ArithmeticBuffer& operator/=(const Tself& rhs)
 		{
-			if (this->size != rhs.size)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator/=", "Both operands must have the same size"));
-			}
-
-			for (size_t i = 0; i < this->size; ++i)
+			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
+			for (size_t i = 0; i < minSize; ++i)
 			{
 				(*this)[i] /= rhs[i];
 			}
-
 			return *this;
 		}
 
@@ -535,7 +515,7 @@ namespace HephCommon
 			{
 				result[i] = -(*this)[i];
 			}
-			
+
 			return result;
 		}
 
