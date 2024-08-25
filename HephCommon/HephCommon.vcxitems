@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ArithmeticBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\DoubleBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ComplexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventArgs.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\DoubleBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Simd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />

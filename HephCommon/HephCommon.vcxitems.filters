@@ -54,6 +54,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ArithmeticBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\DoubleBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">
@@ -93,6 +94,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Simd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\DoubleBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeaderFiles">

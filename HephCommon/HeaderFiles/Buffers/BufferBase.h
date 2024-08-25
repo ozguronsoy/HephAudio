@@ -5,6 +5,14 @@
 
 namespace HephCommon
 {
+	enum BufferFlags
+	{
+		None = 0,
+		// do not initialize the elements after allocating memory.
+		// used in constructors.
+		AllocUninitialized = 1
+	};
+
 	template <typename Tdata>
 	class BufferBase
 	{
@@ -32,7 +40,7 @@ namespace HephCommon
 			return this->pData == nullptr || this->Size() == 0;
 		}
 
-		void Reset()
+		virtual void Reset()
 		{
 			if (!this->IsEmpty())
 			{
@@ -49,12 +57,12 @@ namespace HephCommon
 			}
 		}
 
-		Tdata* Begin() const
+		virtual Tdata* Begin() const
 		{
 			return this->pData;
 		}
 
-		Tdata* End() const
+		virtual Tdata* End() const
 		{
 			return this->pData != nullptr
 				? ((Tdata*)(((uint8_t*)this->pData) + this->SizeAsByte()))
