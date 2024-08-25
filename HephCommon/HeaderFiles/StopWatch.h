@@ -14,19 +14,12 @@ namespace HephCommon
 	{
 	private:
 		std::chrono::steady_clock::time_point tp;
-	private:
-		static std::map<std::thread::id, std::chrono::steady_clock::time_point> timePoints;
+	public:
+		static thread_local StopWatch Instance;
 	public:
 		StopWatch();
-		void Start();
 		void Reset();
 		double DeltaTime() const;
 		double DeltaTime(double prefix) const;
-		void Stop();
-		static void StaticStart();
-		static void StaticReset();
-		static double StaticDeltaTime();
-		static double StaticDeltaTime(double prefix);
-		static void StaticStop();
 	};
 }

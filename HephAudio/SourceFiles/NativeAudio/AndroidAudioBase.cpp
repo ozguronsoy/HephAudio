@@ -13,8 +13,6 @@ namespace HephAudio
 
 		AndroidAudioBase::AndroidAudioBase() : NativeAudio()
 		{
-			HEPHAUDIO_STOPWATCH_START;
-
 			deviceApiLevel = android_get_device_api_level();
 			if (deviceApiLevel == -1)
 			{
