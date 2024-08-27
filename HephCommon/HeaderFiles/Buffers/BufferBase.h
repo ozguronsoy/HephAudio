@@ -199,6 +199,12 @@ namespace HephCommon
 			return result;
 		}
 
+		virtual void Prepend(const Tself& rhs)
+		{
+			this->pData = BufferBase::Prepend(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte());
+			this->size += rhs.size;
+		}
+
 		virtual void Append(const Tself& rhs)
 		{
 			this->pData = BufferBase::Append(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte());
@@ -329,6 +335,37 @@ namespace HephCommon
 				return pSubBufferData;
 			}
 			return nullptr;
+		}
+
+		static Tdata* Prepend(Tdata* pThisData, size_t thisSize_byte, Tdata* pRhsData, size_t rhsSize_byte)
+		{
+			if (rhsSize_byte > 0)
+			{
+				if (pRhsData == nullptr)
+				{
+					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, "BufferBase::Prepend", "pRhsData cannot be nullptr"));
+				}
+
+				Tdata* pResultData = (Tdata*)std::realloc(pThisData, thisSize_byte + rhsSize_byte);
+				if (pResultData == nullptr)
+				{
+					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "BufferBase::Prepend", "Insufficient memory"));
+				}
+
+				if (pThisData == pRhsData)
+				{
+					(void)std::memcpy(((uint8_t*)pResultData) + rhsSize_byte, pResultData, thisSize_byte);
+					(void)std::memcpy(pResultData, ((uint8_t*)pResultData) + rhsSize_byte, rhsSize_byte);
+				}
+				else
+				{
+					(void)std::memcpy(((uint8_t*)pResultData) + rhsSize_byte, pThisData, thisSize_byte);
+					(void)std::memcpy(pResultData, pRhsData, rhsSize_byte);
+				}
+
+				return pResultData;
+			}
+			return pThisData;
 		}
 
 		static Tdata* Append(Tdata* pThisData, size_t thisSize_byte, Tdata* pRhsData, size_t rhsSize_byte)
