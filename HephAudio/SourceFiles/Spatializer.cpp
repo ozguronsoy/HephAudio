@@ -1,7 +1,6 @@
 #include "Spatializer.h"
 #include "HephException.h"
 #include "File.h"
-#include "FloatBuffer.h"
 #include "Fourier.h"
 #include "AudioProcessor.h"
 #include "Windows/HannWindow.h"
@@ -105,7 +104,7 @@ namespace HephAudio
 		HannWindow hannWindow(this->frameCount);
 		this->Process(buffer, azimuth_deg, elevation_deg, hannWindow.GenerateBuffer());
 	}
-	void Spatializer::Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const FloatBuffer& windowBuffer)
+	void Spatializer::Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const DoubleBuffer& windowBuffer)
 	{
 		if (this->pEasy == nullptr)
 		{
@@ -113,7 +112,7 @@ namespace HephAudio
 			return;
 		}
 
-		if (windowBuffer.FrameCount() != this->frameCount)
+		if (windowBuffer.Size() != this->frameCount)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Spatializer::Process", "Size of the window buffer must be the same as the IR size. Call \"Spatializer::GetFrameCount()\" method to get the IR size."));
 			return;
@@ -143,18 +142,18 @@ namespace HephAudio
 		const size_t hopSize = this->frameCount / 4;
 
 		AudioProcessor::ChangeChannelLayout(buffer, HEPHAUDIO_CH_LAYOUT_STEREO);
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
 		buffer.Reset();
 
 		for (size_t i = 0; i < buffer.FrameCount(); i += hopSize)
 		{
-			ComplexBuffer left = leftTF * Fourier::FFT(channels[0].GetSubBuffer(i, this->frameCount) * windowBuffer, this->frameCount);
-			ComplexBuffer right = rightTF * Fourier::FFT(channels[1].GetSubBuffer(i, this->frameCount) * windowBuffer, this->frameCount);
+			ComplexBuffer left = leftTF * Fourier::FFT(channels[0].SubBuffer(i, this->frameCount) * windowBuffer, this->frameCount);
+			ComplexBuffer right = rightTF * Fourier::FFT(channels[1].SubBuffer(i, this->frameCount) * windowBuffer, this->frameCount);
 
 			Fourier::IFFT(left, false);
 			Fourier::IFFT(right, false);
 
-			for (size_t j = 0, k = i; j < this->frameCount && k < buffer.FrameCount(); j++, k++)
+			for (size_t j = 0, k = i; j < this->frameCount && k < buffer.FrameCount(); ++j, ++k)
 			{
 				buffer[k][0] += left[j].real() * windowBuffer[j] / this->frameCount;
 				buffer[k][1] += right[j].real() * windowBuffer[j] / this->frameCount;

@@ -141,9 +141,9 @@ namespace HephAudio
 			buffer = std::move(resultBuffer);
 		}
 	}
-	std::vector<FloatBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
+	std::vector<DoubleBuffer> AudioProcessor::SplitChannels(const AudioBuffer& buffer)
 	{
-		std::vector<FloatBuffer> channels(buffer.formatInfo.channelLayout.count, FloatBuffer(buffer.frameCount));
+		std::vector<DoubleBuffer> channels(buffer.formatInfo.channelLayout.count, DoubleBuffer(buffer.frameCount, BufferFlags::AllocUninitialized));
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
@@ -153,7 +153,7 @@ namespace HephAudio
 		}
 		return channels;
 	}
-	AudioBuffer AudioProcessor::MergeChannels(const std::vector<FloatBuffer>& channels, uint32_t sampleRate)
+	AudioBuffer AudioProcessor::MergeChannels(const std::vector<DoubleBuffer>& channels, uint32_t sampleRate)
 	{
 		if (channels.size() == 0)
 		{
@@ -161,7 +161,7 @@ namespace HephAudio
 			return AudioBuffer();
 		}
 
-		AudioBuffer resultBuffer(channels[0].FrameCount(), HEPHAUDIO_INTERNAL_FORMAT(AudioChannelLayout::DefaultChannelLayout(channels.size()), sampleRate));
+		AudioBuffer resultBuffer(channels[0].Size(), HEPHAUDIO_INTERNAL_FORMAT(AudioChannelLayout::DefaultChannelLayout(channels.size()), sampleRate));
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < resultBuffer.formatInfo.channelLayout.count; j++)
@@ -239,7 +239,7 @@ namespace HephAudio
 	{
 		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay_s;
 		const size_t echoStartFrame = buffer.frameCount * info.echoStartPosition;
-		const AudioBuffer echoBuffer = buffer.GetSubBuffer(echoStartFrame, buffer.frameCount * info.echoEndPosition - echoStartFrame);
+		const AudioBuffer echoBuffer = buffer.SubBuffer(echoStartFrame, buffer.frameCount * info.echoEndPosition - echoStartFrame);
 		double factor = info.decayFactor;
 		size_t startFrameIndex = echoStartFrame + delayFrameCount;
 
@@ -309,11 +309,11 @@ namespace HephAudio
 	{
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
-		const FloatBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
+		const DoubleBuffer lfoPeriodBuffer = lfo.GenerateBuffer();
 
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			const double& lfoSample = lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()];
+			const double& lfoSample = lfoPeriodBuffer[i % lfoPeriodBuffer.Size()];
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
 				buffer[i][j] *= wetFactor * lfoSample + dryFactor;
@@ -326,8 +326,8 @@ namespace HephAudio
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
 
-		FloatBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
-		for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
+		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		for (size_t i = 0; i < lfoPeriodBuffer.Size(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
@@ -336,7 +336,7 @@ namespace HephAudio
 
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
-			const double resampleIndex = i + lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * resampleDelta;
+			const double resampleIndex = i + lfoPeriodBuffer[i % lfoPeriodBuffer.Size()] * resampleDelta;
 			const double rho = resampleIndex - floor(resampleIndex);
 
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
@@ -360,9 +360,9 @@ namespace HephAudio
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
 
-		FloatBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
-		FloatBuffer feedbackBuffer(buffer.formatInfo.channelLayout.count);
-		for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
+		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		DoubleBuffer feedbackBuffer(buffer.formatInfo.channelLayout.count);
+		for (size_t i = 0; i < lfoPeriodBuffer.Size(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
@@ -372,8 +372,8 @@ namespace HephAudio
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
-			const double resampleIndex = (i - currentDelay_sample) + lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * resampleDelta;
+			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.Size()] * delay_sample + baseDelay_sample);
+			const double resampleIndex = (i - currentDelay_sample) + lfoPeriodBuffer[i % lfoPeriodBuffer.Size()] * resampleDelta;
 			const double rho = resampleIndex - floor(resampleIndex);
 
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
@@ -401,9 +401,9 @@ namespace HephAudio
 		const double delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
-		FloatBuffer feedbackBuffer(buffer.formatInfo.channelLayout.count);
-		FloatBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
-		for (size_t i = 0; i < lfoPeriodBuffer.FrameCount(); i++)
+		DoubleBuffer feedbackBuffer(buffer.formatInfo.channelLayout.count);
+		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		for (size_t i = 0; i < lfoPeriodBuffer.Size(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
@@ -413,7 +413,7 @@ namespace HephAudio
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
 		{
-			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.FrameCount()] * delay_sample + baseDelay_sample);
+			const size_t currentDelay_sample = round(lfoPeriodBuffer[i % lfoPeriodBuffer.Size()] * delay_sample + baseDelay_sample);
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
 				const heph_audio_sample_t wetSample = (buffer[i - currentDelay_sample][j] * 0.5) + (feedbackBuffer[j] * 0.5);
@@ -581,8 +581,8 @@ namespace HephAudio
 		window.SetSize(fftSize);
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
 
 		buffer.Reset();
 
@@ -590,7 +590,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].GetSubBuffer(i, fftSize) * windowBuffer, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 
 				for (size_t k = 0; k < infos.size(); k++)
 				{
@@ -637,21 +637,21 @@ namespace HephAudio
 	}
 	void AudioProcessor::EqualizerMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, size_t threadCountPerChannel, Window& window, const std::vector<EqualizerInfo>& infos)
 	{
-		auto applyEqualizer = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, uint16_t channelIndex
+		auto applyEqualizer = [](AudioBuffer* buffer, const DoubleBuffer* pWindowBuffer, uint16_t channelIndex
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t nyquistFrequency, const std::vector<EqualizerInfo>* const infos
 			, double overflowFactor)
 			{
-				FloatBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount);
 				for (size_t i = 0; i < frameCount && (i + frameIndex) < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
 					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
-					ComplexBuffer complexBuffer = Fourier::FFT(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
+					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 
 					for (size_t j = 0; j < infos->size(); j++)
 					{
@@ -694,7 +694,7 @@ namespace HephAudio
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
 		const size_t frameCountPerThread = ceil((double)buffer.frameCount / (double)threadCountPerChannel);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads(buffer.formatInfo.channelLayout.count * threadCountPerChannel);
 
 		for (size_t i = 0; i < threadCountPerChannel; i++)
@@ -750,7 +750,7 @@ namespace HephAudio
 
 		window.SetSize(windowSize);
 		const double frameCountRatio = 1.0 / speed;
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		AudioBuffer resultBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo);
 
 		if (speed <= 1.0)
@@ -803,12 +803,12 @@ namespace HephAudio
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const double shiftFactor = pow(2.0, pitchChange_semitone / 12.0);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
-		std::vector<FloatBuffer> lastAnalysisPhases(buffer.formatInfo.channelLayout.count, FloatBuffer(nyquistFrequency));
-		std::vector<FloatBuffer> lastSynthesisPhases(buffer.formatInfo.channelLayout.count, FloatBuffer(nyquistFrequency));
-		std::vector<FloatBuffer> synthesisMagnitudes(buffer.formatInfo.channelLayout.count, FloatBuffer(nyquistFrequency));
-		std::vector<FloatBuffer> synthesisFrequencies(buffer.formatInfo.channelLayout.count, FloatBuffer(nyquistFrequency));
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		std::vector<DoubleBuffer> lastAnalysisPhases(buffer.formatInfo.channelLayout.count, DoubleBuffer(nyquistFrequency));
+		std::vector<DoubleBuffer> lastSynthesisPhases(buffer.formatInfo.channelLayout.count, DoubleBuffer(nyquistFrequency));
+		std::vector<DoubleBuffer> synthesisMagnitudes(buffer.formatInfo.channelLayout.count, DoubleBuffer(nyquistFrequency));
+		std::vector<DoubleBuffer> synthesisFrequencies(buffer.formatInfo.channelLayout.count, DoubleBuffer(nyquistFrequency));
 
 		buffer.Reset();
 
@@ -818,7 +818,7 @@ namespace HephAudio
 			{
 				synthesisMagnitudes[j].Reset();
 				synthesisFrequencies[j].Reset();
-				ComplexBuffer complexBuffer(channels[j].GetSubBuffer(i, fftSize) * windowBuffer);
+				ComplexBuffer complexBuffer(channels[j].SubBuffer(i, fftSize) * windowBuffer);
 				Fourier::FFT(complexBuffer, fftSize);
 
 				for (size_t k = 0; k < nyquistFrequency; k++)
@@ -870,31 +870,31 @@ namespace HephAudio
 	}
 	void AudioProcessor::PitchShiftMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double pitchChange_semitone, size_t threadCountPerChannel, Window& window)
 	{
-		auto applyPitchShift = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, size_t channelIndex
+		auto applyPitchShift = [](AudioBuffer* buffer, const DoubleBuffer* pWindowBuffer, size_t channelIndex
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t nyquistFrequency, double shiftFactor
 			, double overflowFactor)
 			{
 				constexpr double twopi = 2.0 * HEPH_MATH_PI;
 
-				FloatBuffer lastAnalysisPhases(nyquistFrequency);
-				FloatBuffer lastSynthesisPhases(nyquistFrequency);
-				FloatBuffer synthesisMagnitudes(nyquistFrequency);
-				FloatBuffer synthesisFrequencies(nyquistFrequency);
+				DoubleBuffer lastAnalysisPhases(nyquistFrequency);
+				DoubleBuffer lastSynthesisPhases(nyquistFrequency);
+				DoubleBuffer synthesisMagnitudes(nyquistFrequency);
+				DoubleBuffer synthesisFrequencies(nyquistFrequency);
 
-				FloatBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount);
 				for (size_t i = 0; i < frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
 					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
 					synthesisMagnitudes.Reset();
 					synthesisFrequencies.Reset();
 
-					ComplexBuffer complexBuffer(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer));
+					ComplexBuffer complexBuffer(channel.SubBuffer(i, fftSize) * (*pWindowBuffer));
 					Fourier::FFT(complexBuffer, fftSize);
 
 					for (size_t k = 0; k < nyquistFrequency; k++)
@@ -943,7 +943,7 @@ namespace HephAudio
 		const double shiftFactor = pow(2.0, pitchChange_semitone / 12.0);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
 		const size_t frameCountPerThread = ceil((double)buffer.frameCount / (double)threadCountPerChannel);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads(buffer.formatInfo.channelLayout.count * threadCountPerChannel);
 
 		for (size_t i = 0; i < threadCountPerChannel; i++)
@@ -978,8 +978,8 @@ namespace HephAudio
 		const size_t nyquistFrequency = fftSize * 0.5;
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
 
 		buffer.Reset();
 
@@ -987,7 +987,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].GetSubBuffer(i, fftSize) * windowBuffer, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 
 				for (size_t k = startIndex; k < nyquistFrequency; k++)
 				{
@@ -1017,21 +1017,21 @@ namespace HephAudio
 	}
 	void AudioProcessor::LowPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, size_t threadCountPerChannel, Window& window)
 	{
-		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, size_t channelIndex
+		auto applyFilter = [](AudioBuffer* buffer, const DoubleBuffer* pWindowBuffer, size_t channelIndex
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t nyquistFrequency, size_t startIndex
 			, double overflowFactor)
 			{
-				FloatBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
 					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
-					ComplexBuffer complexBuffer = Fourier::FFT(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
+					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 
 					for (int64_t j = startIndex; j < nyquistFrequency; j++)
 					{
@@ -1058,7 +1058,7 @@ namespace HephAudio
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
 		const size_t frameCountPerThread = ceil((double)buffer.frameCount / (double)threadCountPerChannel);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads(buffer.formatInfo.channelLayout.count * threadCountPerChannel);
 
 		for (size_t i = 0; i < threadCountPerChannel; i++)
@@ -1090,8 +1090,8 @@ namespace HephAudio
 		window.SetSize(fftSize);
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
 
 		buffer.Reset();
 
@@ -1099,7 +1099,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].GetSubBuffer(i, fftSize) * windowBuffer, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 
 				for (int64_t k = stopIndex; k >= 0; k--)
 				{
@@ -1129,20 +1129,20 @@ namespace HephAudio
 	}
 	void AudioProcessor::HighPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double cutoffFreq, size_t threadCountPerChannel, Window& window)
 	{
-		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, uint16_t channelIndex
+		auto applyFilter = [](AudioBuffer* buffer, const DoubleBuffer* pWindowBuffer, uint16_t channelIndex
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t stopIndex, double overflowFactor)
 			{
-				FloatBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
 					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
-					ComplexBuffer complexBuffer = Fourier::FFT(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
+					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 					for (int64_t j = stopIndex; j >= 0; j--)
 					{
 						complexBuffer[j] = Complex();
@@ -1167,7 +1167,7 @@ namespace HephAudio
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, cutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
 		const size_t frameCountPerThread = ceil(((double)buffer.frameCount) / ((double)threadCountPerChannel));
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads(buffer.formatInfo.channelLayout.count * threadCountPerChannel);
 
 		for (size_t i = 0; i < threadCountPerChannel; i++)
@@ -1201,8 +1201,8 @@ namespace HephAudio
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
 
 		buffer.Reset();
 
@@ -1210,7 +1210,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 			{
-				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].GetSubBuffer(i, fftSize) * windowBuffer, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 
 				for (int64_t k = startIndex; k >= 0; k--)
 				{
@@ -1246,21 +1246,21 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandPassFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, size_t threadCountPerChannel, Window& window)
 	{
-		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, uint16_t channelIndex
+		auto applyFilter = [](AudioBuffer* buffer, const DoubleBuffer* pWindowBuffer, uint16_t channelIndex
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t nyquistFrequency, size_t startIndex
 			, size_t stopIndex, double overflowFactor)
 			{
-				FloatBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
 					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
-					ComplexBuffer complexBuffer = Fourier::FFT(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
+					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 
 					for (int64_t j = startIndex; j >= 0; j--)
 					{
@@ -1294,7 +1294,7 @@ namespace HephAudio
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
 		const size_t frameCountPerThread = ceil((double)buffer.frameCount / (double)threadCountPerChannel);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads(buffer.formatInfo.channelLayout.count * threadCountPerChannel);
 
 		for (size_t i = 0; i < threadCountPerChannel; i++)
@@ -1327,8 +1327,8 @@ namespace HephAudio
 		const uint64_t startIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, lowCutoffFreq);
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
-		std::vector<FloatBuffer> channels = AudioProcessor::SplitChannels(buffer);
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
+		std::vector<DoubleBuffer> channels = AudioProcessor::SplitChannels(buffer);
 
 		buffer.Reset();
 
@@ -1336,7 +1336,7 @@ namespace HephAudio
 		{
 			for (size_t j = 0; j < channels.size(); j++)
 			{
-				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].GetSubBuffer(i, fftSize) * windowBuffer, fftSize);
+				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 				for (size_t k = startIndex; k <= stopIndex; k++)
 				{
 					complexBuffer[k] = Complex();
@@ -1364,21 +1364,21 @@ namespace HephAudio
 	}
 	void AudioProcessor::BandCutFilterMT(AudioBuffer& buffer, size_t hopSize, size_t fftSize, double lowCutoffFreq, double highCutoffFreq, size_t threadCountPerChannel, Window& window)
 	{
-		auto applyFilter = [](AudioBuffer* buffer, const FloatBuffer* pWindowBuffer, uint16_t channelIndex
+		auto applyFilter = [](AudioBuffer* buffer, const DoubleBuffer* pWindowBuffer, uint16_t channelIndex
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t nyquistFrequency, size_t startIndex
 			, size_t stopIndex, double overflowFactor)
 			{
-				FloatBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
 					(*buffer)[i + frameIndex][channelIndex] = 0;
 				}
 
-				for (size_t i = 0; i < channel.FrameCount(); i += hopSize)
+				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
-					ComplexBuffer complexBuffer = Fourier::FFT(channel.GetSubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
+					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 
 					for (size_t j = startIndex; j <= stopIndex; j++)
 					{
@@ -1406,7 +1406,7 @@ namespace HephAudio
 		const uint64_t stopIndex = Fourier::BinFrequencyToIndex(buffer.formatInfo.sampleRate, fftSize, highCutoffFreq);
 		const double overflowFactor = ((double)hopSize) / ((double)fftSize);
 		const size_t frameCountPerThread = ceil((double)buffer.frameCount / (double)threadCountPerChannel);
-		const FloatBuffer windowBuffer = window.GenerateBuffer();
+		const DoubleBuffer windowBuffer = window.GenerateBuffer();
 		std::vector<std::thread> threads(buffer.formatInfo.channelLayout.count * threadCountPerChannel);
 
 		for (size_t i = 0; i < threadCountPerChannel; i++)

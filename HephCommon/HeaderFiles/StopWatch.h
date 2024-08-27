@@ -1,8 +1,6 @@
 #pragma once
 #include "HephCommonShared.h"
 #include <chrono>
-#include <map>
-#include <thread>
 
 #define HEPH_SW_NANO (1e-9)
 #define HEPH_SW_MICRO (1e-6)

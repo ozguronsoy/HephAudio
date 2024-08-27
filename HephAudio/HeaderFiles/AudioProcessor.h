@@ -5,7 +5,7 @@
 #include "EqualizerInfo.h"
 #include "Oscillators/Oscillator.h"
 #include "Windows/Window.h"
-#include "FloatBuffer.h"
+#include "Buffers/DoubleBuffer.h"
 #include <vector>
 
 namespace HephAudio
@@ -24,8 +24,8 @@ namespace HephAudio
 		static void ChangeBitsPerSample(AudioBuffer& buffer, uint16_t outputBitsPerSample);
 		static void ChangeChannelLayout(AudioBuffer& buffer, const AudioChannelLayout& outputChannelLayout);
 		static void ChangeSampleRate(AudioBuffer& buffer, uint32_t outputSampleRate);
-		static std::vector<HephCommon::FloatBuffer> SplitChannels(const AudioBuffer& buffer);
-		static AudioBuffer MergeChannels(const std::vector<HephCommon::FloatBuffer>& channels, uint32_t sampleRate);
+		static std::vector<HephCommon::DoubleBuffer> SplitChannels(const AudioBuffer& buffer);
+		static AudioBuffer MergeChannels(const std::vector<HephCommon::DoubleBuffer>& channels, uint32_t sampleRate);
 		static void ConvertToInnerFormat(AudioBuffer& buffer);
 		static void ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat);
 		static void ChangeEndian(AudioBuffer& buffer);

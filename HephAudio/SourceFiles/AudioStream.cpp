@@ -199,7 +199,7 @@ namespace HephAudio
 
 			if (renderSampleRate != pStream->formatInfo.sampleRate)
 			{
-				pRenderResult->renderBuffer = pStream->decodedBuffer.GetSubBuffer(0, readFrameCount + 1);
+				pRenderResult->renderBuffer = pStream->decodedBuffer.SubBuffer(0, readFrameCount + 1);
 
 				AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
 				if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
@@ -211,7 +211,7 @@ namespace HephAudio
 			}
 			else
 			{
-				pRenderResult->renderBuffer = pStream->decodedBuffer.GetSubBuffer(0, pRenderArgs->renderFrameCount);
+				pRenderResult->renderBuffer = pStream->decodedBuffer.SubBuffer(0, pRenderArgs->renderFrameCount);
 				pStream->decodedBuffer.Cut(0, pRenderArgs->renderFrameCount);
 			}
 

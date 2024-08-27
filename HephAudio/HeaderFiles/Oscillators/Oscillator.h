@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "FloatBuffer.h"
+#include "Buffers/DoubleBuffer.h"
 #include <cmath>
 #include <cinttypes>
 
@@ -19,8 +19,8 @@ namespace HephAudio
 	public:
 		virtual ~Oscillator() = default;
 		virtual double operator[](size_t n) const = 0;
-		HephCommon::FloatBuffer GenerateBuffer() const;
-		HephCommon::FloatBuffer GenerateBuffer(size_t frameCount) const;
-		HephCommon::FloatBuffer GenerateBuffer(size_t frameIndex, size_t frameCount) const;
+		HephCommon::DoubleBuffer GenerateBuffer() const;
+		HephCommon::DoubleBuffer GenerateBuffer(size_t size) const;
+		HephCommon::DoubleBuffer GenerateBuffer(size_t index, size_t size) const;
 	};
 }

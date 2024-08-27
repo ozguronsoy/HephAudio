@@ -68,190 +68,229 @@ namespace HephCommon
 		}
 
 	public:
-		virtual ~ArithmeticBuffer() = default;
-
-		Tself operator+(Tdata rhs) const
+		virtual ~ArithmeticBuffer()
 		{
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			this->size = 0;
+		}
+
+		virtual Tself operator+(Tdata rhs) const
+		{
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] + rhs;
+				result.pData[i] = this->pData[i] + rhs;
 			}
+
 			return result;
 		}
 
-		Tself operator+(const Tself& rhs) const
+		virtual Tself operator+(const Tself& rhs) const
 		{
 			if (this->size != rhs.size)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator+", "Both operands must have the same size"));
 			}
 
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] + rhs[i];
+				result.pData[i] = this->pData[i] + rhs.pData[i];
 			}
+
 			return result;
 		}
 
-		ArithmeticBuffer& operator+=(Tdata rhs)
+		virtual ArithmeticBuffer& operator+=(Tdata rhs)
 		{
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i] += rhs;
+				this->pData[i] += rhs;
 			}
 			return *this;
 		}
 
-		ArithmeticBuffer& operator+=(const Tself& rhs)
+		virtual ArithmeticBuffer& operator+=(const Tself& rhs)
 		{
 			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				(*this)[i] += rhs[i];
+				this->pData[i] += rhs.pData[i];
 			}
 			return *this;
 		}
 
-		Tself operator-(Tdata rhs) const
+		virtual Tself operator-(Tdata rhs) const
 		{
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] - rhs;
+				result.pData[i] = this->pData[i] - rhs;
 			}
+
 			return result;
 		}
 
-		Tself operator-(const Tself& rhs) const
+		virtual Tself operator-(const Tself& rhs) const
 		{
 			if (this->size != rhs.size)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator-", "Both operands must have the same size"));
 			}
 
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] - rhs[i];
+				result.pData[i] = this->pData[i] - rhs.pData[i];
 			}
+
 			return result;
 		}
 
-		ArithmeticBuffer& operator-=(Tdata rhs)
+		virtual ArithmeticBuffer& operator-=(Tdata rhs)
 		{
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i] -= rhs;
+				this->pData[i] -= rhs;
 			}
 			return *this;
 		}
 
-		ArithmeticBuffer& operator-=(const Tself& rhs)
+		virtual ArithmeticBuffer& operator-=(const Tself& rhs)
 		{
 			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				(*this)[i] -= rhs[i];
+				this->pData[i] -= rhs.pData[i];
 			}
 			return *this;
 		}
 
-		Tself operator*(Tdata rhs) const
+		virtual Tself operator*(Tdata rhs) const
 		{
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] * rhs;
+				result.pData[i] = this->pData[i] * rhs;
 			}
+
 			return result;
 		}
 
-		Tself operator*(const Tself& rhs) const
+		virtual Tself operator*(const Tself& rhs) const
 		{
 			if (this->size != rhs.size)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator*", "Both operands must have the same size"));
 			}
 
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] * rhs[i];
+				result.pData[i] = this->pData[i] * rhs.pData[i];
 			}
+
 			return result;
 		}
 
-		ArithmeticBuffer& operator*=(Tdata rhs)
+		virtual ArithmeticBuffer& operator*=(Tdata rhs)
 		{
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i] *= rhs;
+				this->pData[i] *= rhs;
 			}
 			return *this;
 		}
 
-		ArithmeticBuffer& operator*=(const Tself& rhs)
+		virtual ArithmeticBuffer& operator*=(const Tself& rhs)
 		{
 			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				(*this)[i] *= rhs[i];
+				this->pData[i] *= rhs.pData[i];
 			}
 			return *this;
 		}
 
-		Tself operator/(Tdata rhs) const
+		virtual Tself operator/(Tdata rhs) const
 		{
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] / rhs;
+				result.pData[i] = this->pData[i] / rhs;
 			}
+
 			return result;
 		}
 
-		Tself operator/(const Tself& rhs) const
+		virtual Tself operator/(const Tself& rhs) const
 		{
 			if (this->size != rhs.size)
 			{
 				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "ArithmeticBuffer::operator/", "Both operands must have the same size"));
 			}
 
-			Tself result(this->size, BufferFlags::AllocUninitialized);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
+			result.size = this->size;
+
 			for (size_t i = 0; i < result.size; ++i)
 			{
-				result[i] = (*this)[i] / rhs[i];
+				result.pData[i] = this->pData[i] / rhs.pData[i];
 			}
+
 			return result;
 		}
 
-		ArithmeticBuffer& operator/=(Tdata rhs)
+		virtual ArithmeticBuffer& operator/=(Tdata rhs)
 		{
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i] /= rhs;
+				this->pData[i] /= rhs;
 			}
 			return *this;
 		}
 
-		ArithmeticBuffer& operator/=(const Tself& rhs)
+		virtual ArithmeticBuffer& operator/=(const Tself& rhs)
 		{
 			const size_t minSize = HEPH_MATH_MIN(this->size, rhs.size);
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				(*this)[i] /= rhs[i];
+				this->pData[i] /= rhs.pData[i];
 			}
 			return *this;
 		}
 
-		Tself operator<<(size_t rhs) const
+		virtual Tself operator<<(size_t rhs) const
 		{
+			const size_t thisSize_byte = this->SizeAsByte();
 			const size_t rhsSize_byte = ArithmeticBuffer::SizeAsByte(rhs);
-			Tself result(this->size, BufferFlags::AllocUninitialized);
 
-			(void)std::memcpy(result.pData, this->pData + rhs, this->SizeAsByte() - rhsSize_byte);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(thisSize_byte);
+			result.size = this->size;
+
+			(void)std::memcpy(result.pData, this->pData + rhs, thisSize_byte - rhsSize_byte);
 			if (rhs > 0)
 			{
 				(void)std::memset(result.pData + this->size - rhs, 0, rhsSize_byte);
@@ -260,7 +299,7 @@ namespace HephCommon
 			return result;
 		}
 
-		ArithmeticBuffer& operator<<=(size_t rhs)
+		virtual ArithmeticBuffer& operator<<=(size_t rhs)
 		{
 			if (rhs > 0)
 			{
@@ -271,12 +310,16 @@ namespace HephCommon
 			return *this;
 		}
 
-		Tself operator>>(size_t rhs) const
+		virtual Tself operator>>(size_t rhs) const
 		{
+			const size_t thisSize_byte = this->SizeAsByte();
 			const size_t rhsSize_byte = ArithmeticBuffer::SizeAsByte(rhs);
-			Tself result(this->size, BufferFlags::AllocUninitialized);
 
-			(void)std::memcpy(result.pData + rhs, this->pData, this->SizeAsByte() - rhsSize_byte);
+			Tself result{};
+			result.pData = BufferBase<Tdata>::AllocateUninitialized(thisSize_byte);
+			result.size = this->size;
+
+			(void)std::memcpy(result.pData + rhs, this->pData, thisSize_byte - rhsSize_byte);
 			if (rhs > 0)
 			{
 				(void)std::memset(result.pData, 0, rhsSize_byte);
@@ -285,7 +328,7 @@ namespace HephCommon
 			return result;
 		}
 
-		ArithmeticBuffer& operator>>=(size_t rhs)
+		virtual ArithmeticBuffer& operator>>=(size_t rhs)
 		{
 			if (rhs > 0)
 			{
@@ -296,12 +339,12 @@ namespace HephCommon
 			return *this;
 		}
 
-		bool operator==(const Tself& rhs) const
+		virtual bool operator==(const Tself& rhs) const
 		{
 			return (this->IsEmpty() && rhs.IsEmpty()) || (this->size == rhs.size && std::memcmp(this->pData, rhs.pData, this->SizeAsByte()) == 0);
 		}
 
-		bool operator!=(const Tself& rhs) const
+		virtual bool operator!=(const Tself& rhs) const
 		{
 			return !((*this) == rhs);
 		}
@@ -321,12 +364,12 @@ namespace HephCommon
 			return this->size * sizeof(Tdata);
 		}
 
-		bool IsEmpty() const override
+		virtual bool IsEmpty() const override
 		{
 			return this->pData == nullptr || this->size == 0;
 		}
 
-		void Release() override
+		virtual void Release() override
 		{
 			BufferBase<Tdata>::Release();
 			this->size = 0;
@@ -341,7 +384,7 @@ namespace HephCommon
 			return this->pData[index];
 		}
 
-		Tself SubBuffer(size_t index, size_t size) const
+		virtual Tself SubBuffer(size_t index, size_t size) const
 		{
 			Tself result{};
 
@@ -351,36 +394,36 @@ namespace HephCommon
 			return result;
 		}
 
-		void Append(const Tself& rhs)
+		virtual void Append(const Tself& rhs)
 		{
 			this->pData = BufferBase<Tdata>::Append(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte());
 			this->size += rhs.size;
 		}
 
-		void Insert(const Tself& rhs, size_t index)
+		virtual void Insert(const Tself& rhs, size_t index)
 		{
 			this->pData = BufferBase<Tdata>::Insert(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte(), ArithmeticBuffer::SizeAsByte(index));
 			this->size += rhs.size;
 		}
 
-		void Cut(size_t index, size_t size)
+		virtual void Cut(size_t index, size_t size)
 		{
 			size_t cutSize_byte = ArithmeticBuffer::SizeAsByte(size);
 			this->pData = BufferBase<Tdata>::Cut(this->pData, this->SizeAsByte(), ArithmeticBuffer::SizeAsByte(index), cutSize_byte);
 			this->size -= cutSize_byte / sizeof(Tdata);
 		}
 
-		void Replace(const Tself& rhs, size_t index)
+		virtual void Replace(const Tself& rhs, size_t index)
 		{
 			this->Replace(rhs, index, rhs.size);
 		}
 
-		void Replace(const Tself& rhs, size_t index, size_t size)
+		virtual void Replace(const Tself& rhs, size_t index, size_t size)
 		{
 			BufferBase<Tdata>::Replace(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte(), ArithmeticBuffer::SizeAsByte(index));
 		}
 
-		void Resize(size_t newSize)
+		virtual void Resize(size_t newSize)
 		{
 			if (this->size != newSize)
 			{
@@ -406,12 +449,12 @@ namespace HephCommon
 			}
 		}
 
-		void Reverse()
+		virtual void Reverse()
 		{
 			const size_t halfSize = this->size / 2;
 			for (size_t i = 0; i < halfSize; ++i)
 			{
-				std::swap(this->operator[](i), this->operator[](this->size - i - 1));
+				std::swap(this->pData[i], this->pData[this->size - i - 1]);
 			}
 		}
 
@@ -420,9 +463,9 @@ namespace HephCommon
 			Tdata result = ArithmeticBuffer::MAX_ELEMENT;
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				if ((*this)[i] < result)
+				if (this->pData[i] < result)
 				{
-					result = (*this)[i];
+					result = this->pData[i];
 				}
 			}
 			return result;
@@ -433,9 +476,9 @@ namespace HephCommon
 			Tdata result = ArithmeticBuffer::MIN_ELEMENT;
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				if ((*this)[i] > result)
+				if (this->pData[i] > result)
 				{
-					result = (*this)[i];
+					result = this->pData[i];
 				}
 			}
 			return result;
@@ -448,7 +491,7 @@ namespace HephCommon
 				double sumSquared = 0;
 				for (size_t i = 0; i < this->size; ++i)
 				{
-					sumSquared += (*this)[i] * (*this)[i];
+					sumSquared += this->pData[i] * this->pData[i];
 				}
 				return std::sqrt(sumSquared / this->size);
 			}
@@ -467,14 +510,18 @@ namespace HephCommon
 	{
 		static_assert(std::is_signed<Tdata>::value, "Tdata must be a signed type");
 	public:
+		using ArithmeticBuffer<Tdata, Tself>::operator-;
+
+	public:
 		SignedArithmeticBuffer() : ArithmeticBuffer<Tdata, Tself>() {}
 		SignedArithmeticBuffer(size_t size) : ArithmeticBuffer<Tdata, Tself>(size) {}
 		SignedArithmeticBuffer(size_t size, BufferFlags flags) : ArithmeticBuffer<Tdata, Tself>(size, flags) {}
 		SignedArithmeticBuffer(const std::initializer_list<double>& rhs) : ArithmeticBuffer<Tdata, Tself>(rhs) {}
 		SignedArithmeticBuffer(const SignedArithmeticBuffer& rhs) : ArithmeticBuffer<Tdata, Tself>(rhs) {}
 		SignedArithmeticBuffer(SignedArithmeticBuffer&& rhs) noexcept : ArithmeticBuffer<Tdata, Tself>(std::move(rhs)) {}
+		virtual ~SignedArithmeticBuffer() = default;
 
-		Tself operator-() const
+		virtual Tself operator-() const
 		{
 			Tself result{};
 			result.pData = BufferBase<Tdata>::AllocateUninitialized(this->SizeAsByte());
@@ -482,7 +529,7 @@ namespace HephCommon
 
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				result[i] = -(*this)[i];
+				result.pData[i] = -this->pData[i];
 			}
 
 			return result;
@@ -492,7 +539,7 @@ namespace HephCommon
 		{
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i] = -(*this)[i];
+				this->pData[i] = -this->pData[i];
 			}
 		}
 
@@ -501,7 +548,7 @@ namespace HephCommon
 			Tdata result = 0;
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				const Tdata abs_current = std::abs((*this)[i]);
+				const Tdata abs_current = std::abs(this->pData[i]);
 				if (abs_current > result)
 				{
 					result = abs_current;

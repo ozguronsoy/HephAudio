@@ -152,7 +152,7 @@ namespace HephAudio
 			return;
 		}
 
-		if (bufferToEncode == nullptr || bufferToEncode.FrameCount() == 0)
+		if (bufferToEncode.IsEmpty())
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "Trying to encode empty buffer."));
 			return;
@@ -646,7 +646,7 @@ namespace HephAudio
 
 			if (inputSampleRate != encoder.outputFormatInfo.sampleRate)
 			{
-				AudioBuffer convertedBuffer = decodedBuffer.GetSubBuffer(0, readSize + 1);
+				AudioBuffer convertedBuffer = decodedBuffer.SubBuffer(0, readSize + 1);
 				AudioProcessor::ChangeSampleRate(convertedBuffer, encoder.outputFormatInfo.sampleRate);
 
 				if (convertedBuffer.FrameCount() != encoder.avFrame->nb_samples)
@@ -661,7 +661,7 @@ namespace HephAudio
 			}
 			else
 			{
-				encoder.Encode(decodedBuffer.GetSubBuffer(0, encoder.avFrame->nb_samples));
+				encoder.Encode(decodedBuffer.SubBuffer(0, encoder.avFrame->nb_samples));
 				decodedBuffer.Cut(0, encoder.avFrame->nb_samples);
 				i += encoder.avFrame->nb_samples;
 			}

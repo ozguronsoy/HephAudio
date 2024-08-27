@@ -1,7 +1,7 @@
 #pragma once
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
-#include "FloatBuffer.h"
+#include "Buffers/DoubleBuffer.h"
 #include <../../dependencies/libmysofa/include/mysofa.h>
 #include <string>
 #include <vector>
@@ -32,7 +32,7 @@ namespace HephAudio
 		void OpenSofaFile(const std::string& sofaFilePath, uint32_t sampleRate);
 		void CloseSofaFile();
 		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg);
-		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const HephCommon::FloatBuffer& windowBuffer);
+		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const HephCommon::DoubleBuffer& windowBuffer);
 	private:
 		static std::string GetErrorString(int errorCode);
 	};

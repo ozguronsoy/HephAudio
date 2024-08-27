@@ -4,11 +4,11 @@
 
 namespace HephCommon
 {
-	ComplexBuffer Fourier::FFT(const FloatBuffer& floatBuffer)
+	ComplexBuffer Fourier::FFT(const DoubleBuffer& doubleBuffer)
 	{
-		return Fourier::FFT(floatBuffer, floatBuffer.FrameCount());
+		return Fourier::FFT(doubleBuffer, doubleBuffer.Size());
 	}
-	ComplexBuffer Fourier::FFT(const FloatBuffer& floatBuffer, size_t fftSize)
+	ComplexBuffer Fourier::FFT(const DoubleBuffer& doubleBuffer, size_t fftSize)
 	{
 		static pocketfft::stride_t stride_in{ sizeof(double) };
 		static pocketfft::stride_t stride_out{ sizeof(Complex) };
@@ -19,16 +19,16 @@ namespace HephCommon
 		pocketfft::shape_t shape_in{ fftSize };
 		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
 
-		if (floatBuffer.FrameCount() != fftSize)
+		if (doubleBuffer.Size() != fftSize)
 		{
-			FloatBuffer tempBuffer = floatBuffer;
+			DoubleBuffer tempBuffer = doubleBuffer;
 			tempBuffer.Resize(fftSize);
 			const double* pRealBuffer = (const double*)tempBuffer.Begin();
 			pocketfft::r2c(shape_in, stride_in, stride_out, axes, true, pRealBuffer, pComplexBuffer, (double)1.0);
 		}
 		else
 		{
-			const double* pRealBuffer = (const double*)floatBuffer.Begin();
+			const double* pRealBuffer = (const double*)doubleBuffer.Begin();
 			pocketfft::r2c(shape_in, stride_in, stride_out, axes, true, pRealBuffer, pComplexBuffer, (double)1.0);
 		}
 
@@ -51,7 +51,7 @@ namespace HephCommon
 		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
 		pocketfft::c2c(shape_in, stride_in, stride_out, axes, true, (const std::complex<double>*)pComplexBuffer, pComplexBuffer, (double)1.0);
 	}
-	void Fourier::IFFT(FloatBuffer& floatBuffer, ComplexBuffer& complexBuffer)
+	void Fourier::IFFT(DoubleBuffer& doubleBuffer, ComplexBuffer& complexBuffer)
 	{
 		static pocketfft::stride_t stride_in{ sizeof(Complex) };
 		static pocketfft::stride_t stride_out{ sizeof(double) };
@@ -59,7 +59,7 @@ namespace HephCommon
 
 		const size_t fftSize = complexBuffer.FrameCount();
 		pocketfft::shape_t shape_in{ fftSize };
-		double* pRealBuffer = (double*)floatBuffer.Begin();
+		double* pRealBuffer = (double*)doubleBuffer.Begin();
 		const std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
 
 		pocketfft::c2r(shape_in, stride_in, stride_out, axes, false, pComplexBuffer, pRealBuffer, (double)1.0 / (double)fftSize);
@@ -93,35 +93,35 @@ namespace HephCommon
 		}
 		return bufferSize;
 	}
-	FloatBuffer Fourier::Convolve(const FloatBuffer& source, const FloatBuffer& kernel)
+	DoubleBuffer Fourier::Convolve(const DoubleBuffer& source, const DoubleBuffer& kernel)
 	{
 		return Fourier::Convolve(source, kernel, ConvolutionMode::Full);
 	}
-	FloatBuffer Fourier::Convolve(const FloatBuffer& source, const FloatBuffer& kernel, ConvolutionMode convolutionMode)
+	DoubleBuffer Fourier::Convolve(const DoubleBuffer& source, const DoubleBuffer& kernel, ConvolutionMode convolutionMode)
 	{
-		if (convolutionMode == ConvolutionMode::ValidPadding && kernel.FrameCount() > source.FrameCount())
+		if (convolutionMode == ConvolutionMode::ValidPadding && kernel.Size() > source.Size())
 		{
-			return FloatBuffer();
+			return DoubleBuffer();
 		}
 
-		if (source.FrameCount() == 0 || kernel.FrameCount() == 0)
+		if (source.Size() == 0 || kernel.Size() == 0)
 		{
-			return FloatBuffer();
+			return DoubleBuffer();
 		}
 
-		size_t yFrameCount = source.FrameCount() + kernel.FrameCount() - 1;
-		const size_t fftSize = Fourier::CalculateFFTSize(yFrameCount);
+		size_t ySize = source.Size() + kernel.Size() - 1;
+		const size_t fftSize = Fourier::CalculateFFTSize(ySize);
 
 		ComplexBuffer tf(fftSize);
 		{
 			ComplexBuffer tfKernel(fftSize);
 
-			for (size_t i = 0; i < source.FrameCount(); i++)
+			for (size_t i = 0; i < source.Size(); i++)
 			{
 				tf[i].real(source[i]);
 			}
 
-			for (size_t i = 0; i < kernel.FrameCount(); i++)
+			for (size_t i = 0; i < kernel.Size(); i++)
 			{
 				tfKernel[i].real(kernel[i]);
 			}
@@ -139,24 +139,24 @@ namespace HephCommon
 		switch (convolutionMode)
 		{
 		case ConvolutionMode::Central:
-			iStart = kernel.FrameCount() / 2;
-			yFrameCount = source.FrameCount();
-			iEnd = yFrameCount + iStart;
+			iStart = kernel.Size() / 2;
+			ySize = source.Size();
+			iEnd = ySize + iStart;
 			break;
 		case ConvolutionMode::ValidPadding:
-			iStart = kernel.FrameCount() - 1;
-			yFrameCount = source.FrameCount() - kernel.FrameCount() + 1;
-			iEnd = yFrameCount + iStart;
+			iStart = kernel.Size() - 1;
+			ySize = source.Size() - kernel.Size() + 1;
+			iEnd = ySize + iStart;
 			break;
 		case ConvolutionMode::Full:
 		default:
 			iStart = 0;
-			yFrameCount = source.FrameCount() + kernel.FrameCount() - 1;
-			iEnd = yFrameCount;
+			ySize = source.Size() + kernel.Size() - 1;
+			iEnd = ySize;
 			break;
 		}
 
-		FloatBuffer result(yFrameCount);
+		DoubleBuffer result(ySize);
 		for (size_t i = iStart; i < iEnd; i++)
 		{
 			result[i - iStart] = tf[i].real() / fftSize;

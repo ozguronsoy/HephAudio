@@ -22,7 +22,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventResult.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FloatBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\File.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Complex.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h" />
@@ -46,7 +45,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FloatBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\File.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephCommonFramework.cpp" />

@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "FloatBuffer.h"
+#include "Buffers/DoubleBuffer.h"
 
 namespace HephAudio
 {
@@ -14,7 +14,7 @@ namespace HephAudio
 	public:
 		virtual ~Window() = default;
 		virtual double operator[](size_t n) const = 0;
-		HephCommon::FloatBuffer GenerateBuffer() const;
+		HephCommon::DoubleBuffer GenerateBuffer() const;
 		size_t GetSize() const;
 		virtual void SetSize(size_t newSize);
 	};

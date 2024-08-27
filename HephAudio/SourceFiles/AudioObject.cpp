@@ -64,7 +64,7 @@ namespace HephAudio
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
 		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
+		pRenderResult->renderBuffer = pAudioObject->buffer.SubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
 		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
 		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
 	}
@@ -78,7 +78,7 @@ namespace HephAudio
 		AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
 		const size_t readFrameCount = ceil((double)pRenderArgs->renderFrameCount * (double)pAudioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
 
-		pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(pAudioObject->frameIndex, readFrameCount + 1);
+		pRenderResult->renderBuffer = pAudioObject->buffer.SubBuffer(pAudioObject->frameIndex, readFrameCount + 1);
 
 		AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
 		if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
