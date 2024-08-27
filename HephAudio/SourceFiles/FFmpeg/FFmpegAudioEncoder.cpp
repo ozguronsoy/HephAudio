@@ -175,7 +175,7 @@ namespace HephAudio
 		size_t i = 0;
 		while (i < bufferToEncode.FrameCount())
 		{
-			uint8_t* pCurrentInputFrame = (uint8_t*)bufferToEncode.Begin() + i * inputFormatInfo.FrameSize();
+			uint8_t* pCurrentInputFrame = (uint8_t*)bufferToEncode.begin() + i * inputFormatInfo.FrameSize();
 
 			size_t inputFrameCountToRead = av_rescale(this->avFrame->nb_samples, inputFormatInfo.sampleRate, this->outputFormatInfo.sampleRate);
 			if (i + inputFrameCountToRead > bufferToEncode.FrameCount())

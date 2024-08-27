@@ -23,12 +23,12 @@ namespace HephCommon
 		{
 			DoubleBuffer tempBuffer = doubleBuffer;
 			tempBuffer.Resize(fftSize);
-			const double* pRealBuffer = (const double*)tempBuffer.Begin();
+			const double* pRealBuffer = (const double*)tempBuffer.begin();
 			pocketfft::r2c(shape_in, stride_in, stride_out, axes, true, pRealBuffer, pComplexBuffer, (double)1.0);
 		}
 		else
 		{
-			const double* pRealBuffer = (const double*)doubleBuffer.Begin();
+			const double* pRealBuffer = (const double*)doubleBuffer.begin();
 			pocketfft::r2c(shape_in, stride_in, stride_out, axes, true, pRealBuffer, pComplexBuffer, (double)1.0);
 		}
 
@@ -59,7 +59,7 @@ namespace HephCommon
 
 		const size_t fftSize = complexBuffer.FrameCount();
 		pocketfft::shape_t shape_in{ fftSize };
-		double* pRealBuffer = (double*)doubleBuffer.Begin();
+		double* pRealBuffer = (double*)doubleBuffer.begin();
 		const std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
 
 		pocketfft::c2r(shape_in, stride_in, stride_out, axes, false, pComplexBuffer, pRealBuffer, (double)1.0 / (double)fftSize);

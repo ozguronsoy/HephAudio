@@ -109,7 +109,7 @@ namespace HephAudio
 						compressedByte = pcmSample >> 4;
 					}
 
-					((uint8_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelLayout.count + j] = compressedByte ^ mask;
+					((uint8_t*)tempBuffer.begin())[i * encodedBufferInfo.formatInfo.channelLayout.count + j] = compressedByte ^ mask;
 				}
 			}
 

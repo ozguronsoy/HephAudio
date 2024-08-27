@@ -263,12 +263,12 @@ namespace HephCommon
 			}
 		}
 
-		virtual Tdata* Begin() const
+		Tdata* begin() const
 		{
 			return this->pData;
 		}
 
-		virtual Tdata* End() const
+		Tdata* end() const
 		{
 			return this->pData != nullptr
 				? (this->pData + this->size)

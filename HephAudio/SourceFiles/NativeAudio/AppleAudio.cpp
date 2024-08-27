@@ -460,7 +460,7 @@ namespace HephAudio
 				{
 					AudioBuffer buffer(outdata->mBuffers[i].mDataByteSize / appleAudio->renderFormat.FrameSize(), appleAudio->renderFormat);
 					appleAudio->Mix(buffer, buffer.FrameCount());
-					memcpy(outdata->mBuffers[i].mData, buffer.Begin(), outdata->mBuffers[i].mDataByteSize);
+					memcpy(outdata->mBuffers[i].mData, buffer.begin(), outdata->mBuffers[i].mDataByteSize);
 				}
 			}
 			return kAudioHardwareNoError;
@@ -481,7 +481,7 @@ namespace HephAudio
 				AudioBuffer buffer(frameCount, appleAudio->captureFormat);
 				for (size_t i = 0; i < indata->mNumberBuffers; i++)
 				{
-					memcpy((uint8_t*)buffer.Begin() + offset, indata->mBuffers[i].mData, indata->mBuffers[i].mDataByteSize);
+					memcpy((uint8_t*)buffer.begin() + offset, indata->mBuffers[i].mData, indata->mBuffers[i].mDataByteSize);
 					offset += indata->mBuffers[i].mDataByteSize;
 				}
 

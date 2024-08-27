@@ -50,7 +50,7 @@ namespace HephAudio
 					const int8_t sign = (pcmSample & 0x8000) >> 8;
 					pcmSample = HEPH_MATH_MIN(abs(pcmSample), 32767) + 132;
 					const int16_t segment = MuLawCodec::FindSegment((pcmSample & 0x7F80) >> 7);
-					((uint8_t*)tempBuffer.Begin())[i * encodedBufferInfo.formatInfo.channelLayout.count + j] = ~(sign | (segment << 4) | ((pcmSample >> (segment + 3)) & 0x0F));
+					((uint8_t*)tempBuffer.begin())[i * encodedBufferInfo.formatInfo.channelLayout.count + j] = ~(sign | (segment << 4) | ((pcmSample >> (segment + 3)) & 0x0F));
 				}
 			}
 

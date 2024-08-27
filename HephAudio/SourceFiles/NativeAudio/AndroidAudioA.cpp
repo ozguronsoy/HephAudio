@@ -302,7 +302,7 @@ namespace HephAudio
 				{
 					AudioBuffer buffer(numFrames, pAudio->renderFormat);
 					pAudio->Mix(buffer, numFrames);
-					memcpy(audioData, buffer.Begin(), numFrames * pAudio->renderFormat.FrameSize());
+					memcpy(audioData, buffer.begin(), numFrames * pAudio->renderFormat.FrameSize());
 					return AAUDIO_CALLBACK_RESULT_CONTINUE;
 				}
 			}
@@ -318,7 +318,7 @@ namespace HephAudio
 					if (!pAudio->isCapturePaused && pAudio->OnCapture)
 					{
 						AudioBuffer buffer(numFrames, pAudio->captureFormat);
-						memcpy(buffer.Begin(), audioData, buffer.Size());
+						memcpy(buffer.begin(), audioData, buffer.Size());
 						AudioCaptureEventArgs captureEventArgs(pAudio, buffer);
 						pAudio->OnCapture(&captureEventArgs, nullptr);
 					}

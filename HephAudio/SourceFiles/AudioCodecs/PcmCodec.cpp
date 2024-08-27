@@ -43,7 +43,7 @@ namespace HephAudio
 			{
 				for (size_t j = 0; j < encodedBufferInfo.formatInfo.channelLayout.count; j++)
 				{
-					uint8_t* pSample = ((uint8_t*)tempBuffer.Begin()) + i * frameSize + j * bytesPerSample;
+					uint8_t* pSample = ((uint8_t*)tempBuffer.begin()) + i * frameSize + j * bytesPerSample;
 					WriteSample(pSample, bufferToEncode[i][j] * scaleFactor, bytesPerSample, encodedBufferInfo.formatInfo.endian);
 				}
 			}

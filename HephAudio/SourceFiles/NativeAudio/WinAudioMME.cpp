@@ -445,7 +445,7 @@ namespace HephAudio
 					AudioBuffer buffer(pwhd->dwBufferLength / pAudio->renderFormat.FrameSize(), pAudio->renderFormat);
 
 					pAudio->Mix(buffer, buffer.FrameCount());
-					memcpy(pwhd->lpData, buffer.Begin(), pwhd->dwBufferLength);
+					memcpy(pwhd->lpData, buffer.begin(), pwhd->dwBufferLength);
 
 					pwhd->dwFlags = WHDR_PREPARED;
 					const MMRESULT mmres = waveOutWrite(hwo, pwhd, sizeof(WAVEHDR));
@@ -468,7 +468,7 @@ namespace HephAudio
 					if (!pAudio->isCapturePaused && pAudio->OnCapture)
 					{
 						AudioBuffer buffer(pwhd->dwBufferLength / pAudio->captureFormat.FrameSize(), pAudio->captureFormat);
-						memcpy(buffer.Begin(), pwhd->lpData, pwhd->dwBufferLength);
+						memcpy(buffer.begin(), pwhd->lpData, pwhd->dwBufferLength);
 						AudioCaptureEventArgs captureEventArgs(pAudio, buffer);
 						pAudio->OnCapture(&captureEventArgs, nullptr);
 					}

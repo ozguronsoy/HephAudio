@@ -382,7 +382,7 @@ namespace HephAudio
 					Mix(dataBuffer, nFramesAvailable);
 
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, (BYTE**)&renderBuffer), "WinAudio", "An error occurred while rendering the samples.");
-					memcpy(renderBuffer, dataBuffer.Begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
+					memcpy(renderBuffer, dataBuffer.begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(nFramesAvailable, 0), "WinAudio", "An error occurred while rendering the samples.");
 
 					dataBuffer.Reset();
@@ -480,7 +480,7 @@ namespace HephAudio
 						if (nFramesAvailable > 0)
 						{
 							AudioBuffer buffer(nFramesAvailable, this->captureFormat);
-							memcpy(buffer.Begin(), captureBuffer, buffer.Size());
+							memcpy(buffer.begin(), captureBuffer, buffer.Size());
 							AudioCaptureEventArgs captureEventArgs(this, buffer);
 							this->OnCapture(&captureEventArgs, nullptr);
 						}

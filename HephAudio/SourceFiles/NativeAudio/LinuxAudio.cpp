@@ -312,7 +312,7 @@ namespace HephAudio
 				if (availableFrameCount >= buffer.FrameCount())
 				{
 					Mix(buffer, buffer.FrameCount());
-					writtenFrameCount = snd_pcm_writei(renderPcm, buffer.Begin(), buffer.FrameCount());
+					writtenFrameCount = snd_pcm_writei(renderPcm, buffer.begin(), buffer.FrameCount());
 					if (writtenFrameCount < 0)
 					{
 						HEPHAUDIO_LOG("An error occurred while rendering, attempting to recover.", HEPH_CL_WARNING);
@@ -343,7 +343,7 @@ namespace HephAudio
 					if (availableFrameCount >= bufferDuration_frame)
 					{
 						AudioBuffer buffer(bufferDuration_frame, captureFormat);
-						readFrameCount = snd_pcm_readi(capturePcm, buffer.Begin(), buffer.FrameCount());
+						readFrameCount = snd_pcm_readi(capturePcm, buffer.begin(), buffer.FrameCount());
 						if (readFrameCount < 0)
 						{
 							HEPHAUDIO_LOG("An error occurred while capturing, attempting to recover.", HEPH_CL_WARNING);
