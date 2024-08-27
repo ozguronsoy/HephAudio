@@ -86,7 +86,8 @@ namespace HephAudio
 			AudioBuffer resultBuffer(
 				buffer.frameCount,
 				AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, outputChannelLayout,
-					buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian)
+					buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian), 
+				BufferFlags::AllocUninitialized
 			);
 
 			for (size_t i = 0; i < outputMapping.size(); i++)
@@ -125,7 +126,10 @@ namespace HephAudio
 		if (srRatio != 1.0)
 		{
 			const size_t targetFrameCount = ceil((double)buffer.frameCount * srRatio);
-			AudioBuffer resultBuffer(targetFrameCount, AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, buffer.formatInfo.channelLayout, outputSampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian));
+			AudioBuffer resultBuffer(targetFrameCount, 
+				AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, buffer.formatInfo.channelLayout, 
+					outputSampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian),
+				BufferFlags::AllocUninitialized);
 
 			for (size_t i = 0; i < targetFrameCount; i++)
 			{
@@ -222,19 +226,6 @@ namespace HephAudio
 	}
 #pragma endregion
 #pragma region Sound Effects
-	void AudioProcessor::Reverse(AudioBuffer& buffer)
-	{
-		const size_t hfc = buffer.frameCount * 0.5;
-		for (size_t i = 0; i < hfc; i++)
-		{
-			for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
-			{
-				const heph_audio_sample_t temp = buffer[i][j];
-				buffer[i][j] = buffer[buffer.frameCount - i - 1][j];
-				buffer[buffer.frameCount - i - 1][j] = temp;
-			}
-		}
-	}
 	void AudioProcessor::Echo(AudioBuffer& buffer, EchoInfo info)
 	{
 		const size_t delayFrameCount = buffer.formatInfo.sampleRate * info.reflectionDelay_s;
@@ -326,13 +317,13 @@ namespace HephAudio
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
 
-		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency), BufferFlags::AllocUninitialized);
 		for (size_t i = 0; i < lfoPeriodBuffer.Size(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo, BufferFlags::AllocUninitialized);
 
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
@@ -360,14 +351,14 @@ namespace HephAudio
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
 
-		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
 		DoubleBuffer feedbackBuffer(buffer.formatInfo.channelLayout.count);
+		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency), BufferFlags::AllocUninitialized);
 		for (size_t i = 0; i < lfoPeriodBuffer.Size(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo, BufferFlags::AllocUninitialized);
 		memcpy(resultBuffer.pData, buffer.pData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
@@ -401,14 +392,15 @@ namespace HephAudio
 		const double delay_sample = delay_ms * 1e-3 * buffer.formatInfo.sampleRate;
 		const double wetFactor = depth * 0.5;
 		const double dryFactor = 1.0 - wetFactor;
+
 		DoubleBuffer feedbackBuffer(buffer.formatInfo.channelLayout.count);
-		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency));
+		DoubleBuffer lfoPeriodBuffer(ceil(lfo.sampleRate / lfo.frequency), BufferFlags::AllocUninitialized);
 		for (size_t i = 0; i < lfoPeriodBuffer.Size(); i++)
 		{
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo, BufferFlags::AllocUninitialized);
 		memcpy(resultBuffer.pData, buffer.pData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
@@ -642,7 +634,7 @@ namespace HephAudio
 			, size_t fftSize, size_t nyquistFrequency, const std::vector<EqualizerInfo>* const infos
 			, double overflowFactor)
 			{
-				DoubleBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount, BufferFlags::AllocUninitialized);
 				for (size_t i = 0; i < frameCount && (i + frameIndex) < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
@@ -751,7 +743,7 @@ namespace HephAudio
 		window.SetSize(windowSize);
 		const double frameCountRatio = 1.0 / speed;
 		const DoubleBuffer windowBuffer = window.GenerateBuffer();
-		AudioBuffer resultBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo);
+		AudioBuffer resultBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo, BufferFlags::AllocUninitialized);
 
 		if (speed <= 1.0)
 		{
@@ -882,7 +874,7 @@ namespace HephAudio
 				DoubleBuffer synthesisMagnitudes(nyquistFrequency);
 				DoubleBuffer synthesisFrequencies(nyquistFrequency);
 
-				DoubleBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount, BufferFlags::AllocUninitialized);
 				for (size_t i = 0; i < frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
@@ -1022,7 +1014,7 @@ namespace HephAudio
 			, size_t fftSize, size_t nyquistFrequency, size_t startIndex
 			, double overflowFactor)
 			{
-				DoubleBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount, BufferFlags::AllocUninitialized);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
@@ -1133,7 +1125,7 @@ namespace HephAudio
 			, size_t frameIndex, size_t frameCount, size_t hopSize
 			, size_t fftSize, size_t stopIndex, double overflowFactor)
 			{
-				DoubleBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount, BufferFlags::AllocUninitialized);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
@@ -1251,7 +1243,7 @@ namespace HephAudio
 			, size_t fftSize, size_t nyquistFrequency, size_t startIndex
 			, size_t stopIndex, double overflowFactor)
 			{
-				DoubleBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount, BufferFlags::AllocUninitialized);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
@@ -1369,7 +1361,7 @@ namespace HephAudio
 			, size_t fftSize, size_t nyquistFrequency, size_t startIndex
 			, size_t stopIndex, double overflowFactor)
 			{
-				DoubleBuffer channel(frameCount);
+				DoubleBuffer channel(frameCount, BufferFlags::AllocUninitialized);
 				for (size_t i = 0; i < frameCount && i + frameIndex < buffer->frameCount; i++)
 				{
 					channel[i] = (*buffer)[i + frameIndex][channelIndex];
