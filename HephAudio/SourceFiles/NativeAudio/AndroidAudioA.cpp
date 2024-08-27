@@ -318,7 +318,7 @@ namespace HephAudio
 					if (!pAudio->isCapturePaused && pAudio->OnCapture)
 					{
 						AudioBuffer buffer(numFrames, pAudio->captureFormat);
-						memcpy(buffer.begin(), audioData, buffer.Size());
+						memcpy(buffer.begin(), audioData, buffer.SizeAsByte());
 						AudioCaptureEventArgs captureEventArgs(pAudio, buffer);
 						pAudio->OnCapture(&captureEventArgs, nullptr);
 					}

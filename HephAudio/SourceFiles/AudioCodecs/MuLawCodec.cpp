@@ -34,7 +34,7 @@ namespace HephAudio
 			constexpr double scaleFactor = INT16_MAX / ((double)HEPH_AUDIO_SAMPLE_MAX);
 
 			AudioProcessor::ChangeSampleRate(bufferToEncode, 8000);
-			encodedBufferInfo.size_byte = bufferToEncode.Size();
+			encodedBufferInfo.size_byte = bufferToEncode.SizeAsByte();
 			encodedBufferInfo.size_frame = bufferToEncode.FrameCount();
 			encodedBufferInfo.formatInfo.formatTag = HEPHAUDIO_FORMAT_TAG_MULAW;
 			encodedBufferInfo.formatInfo.channelLayout = bufferToEncode.FormatInfo().channelLayout;

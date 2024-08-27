@@ -267,7 +267,7 @@ namespace HephAudio
 			{
 				const size_t frameCount = pCallbackContext->bufferSize_frame / 2;
 				AudioBuffer dataBuffer(frameCount, pCallbackContext->pAndroidAudio->renderFormat);
-				const size_t bufferSize = dataBuffer.Size();
+				const size_t bufferSize = dataBuffer.SizeAsByte();
 
 				pCallbackContext->pAndroidAudio->Mix(dataBuffer, frameCount);
 				(void)memcpy(pCallbackContext->pData + pCallbackContext->index, dataBuffer.begin(), bufferSize);
@@ -288,7 +288,7 @@ namespace HephAudio
 			{
 				const size_t frameCount = pCallbackContext->bufferSize_frame / 2;
 				AudioBuffer captureBuffer(frameCount, pCallbackContext->pAndroidAudio->captureFormat);
-				const size_t bufferSize = captureBuffer.Size();
+				const size_t bufferSize = captureBuffer.SizeAsByte();
 
 				(void)memcpy(captureBuffer.begin(), pCallbackContext->pData + pCallbackContext->index, bufferSize);
 

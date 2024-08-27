@@ -223,7 +223,7 @@ namespace HephAudio
 			wfx = WinAudioBase::AFI2WFX(this->renderFormat);
 			bufferDesc.dwSize = sizeof(DSBUFFERDESC);
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
-			bufferDesc.dwBufferBytes = dataBuffer.Size() * (notificationCount - 1);
+			bufferDesc.dwBufferBytes = dataBuffer.SizeAsByte() * (notificationCount - 1);
 			bufferDesc.dwReserved = 0;
 			bufferDesc.lpwfxFormat = (WAVEFORMATEX*)&wfx;
 			bufferDesc.guid3DAlgorithm = GUID_NULL;
@@ -237,7 +237,7 @@ namespace HephAudio
 					WINAUDIODS_RENDER_THREAD_EXCPT(E_FAIL, "WinAudioDS::InitializeRender", "An error occurred while setting the render event handles.");
 				}
 
-				notifyInfos[i].dwOffset = (i + 1) * dataBuffer.Size() - 1;
+				notifyInfos[i].dwOffset = (i + 1) * dataBuffer.SizeAsByte() - 1;
 				notifyInfos[i].hEventNotify = hEvents[i];
 			}
 			notifyInfos[notificationCount - 1].dwOffset = DSBPN_OFFSETSTOP;
@@ -267,7 +267,7 @@ namespace HephAudio
 
 				Mix(dataBuffer, nFramesToRead);
 
-				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, dataBuffer.Size(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), "WinAudioDS", "An error occurred while rendering the samples.");
+				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, dataBuffer.SizeAsByte(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), "WinAudioDS", "An error occurred while rendering the samples.");
 				memcpy(audioPtr1, dataBuffer.begin(), audioBytes1);
 				if (audioPtr2 != nullptr)
 				{

@@ -480,7 +480,7 @@ namespace HephAudio
 						if (nFramesAvailable > 0)
 						{
 							AudioBuffer buffer(nFramesAvailable, this->captureFormat);
-							memcpy(buffer.begin(), captureBuffer, buffer.Size());
+							memcpy(buffer.begin(), captureBuffer, buffer.SizeAsByte());
 							AudioCaptureEventArgs captureEventArgs(this, buffer);
 							this->OnCapture(&captureEventArgs, nullptr);
 						}

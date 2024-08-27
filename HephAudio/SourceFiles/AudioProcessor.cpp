@@ -22,12 +22,12 @@ namespace HephAudio
 			EncodedBufferInfo encodedBufferInfo;
 			encodedBufferInfo.formatInfo = buffer.formatInfo;
 			encodedBufferInfo.pBuffer = buffer.pData;
-			encodedBufferInfo.size_byte = buffer.Size();
+			encodedBufferInfo.size_byte = buffer.SizeAsByte();
 			encodedBufferInfo.size_frame = buffer.frameCount;
 			buffer = pCodec->Decode(encodedBufferInfo);
 
 			encodedBufferInfo.formatInfo.bitsPerSample = outputBitsPerSample;
-			encodedBufferInfo.size_byte = buffer.Size();
+			encodedBufferInfo.size_byte = buffer.SizeAsByte();
 			pCodec->Encode(buffer, encodedBufferInfo);
 
 			buffer.formatInfo.bitRate = AudioFormatInfo::CalculateBitrate(buffer.formatInfo);
@@ -186,7 +186,7 @@ namespace HephAudio
 
 		EncodedBufferInfo encodedBufferInfo;
 		encodedBufferInfo.pBuffer = buffer.pData;
-		encodedBufferInfo.size_byte = buffer.Size();
+		encodedBufferInfo.size_byte = buffer.SizeAsByte();
 		encodedBufferInfo.size_frame = buffer.frameCount;
 		encodedBufferInfo.formatInfo = buffer.formatInfo;
 
