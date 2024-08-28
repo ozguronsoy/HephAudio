@@ -16,6 +16,8 @@ namespace HephCommon
 	template <typename Tdata, class Tself>
 	class BufferBase
 	{
+		static_assert(std::is_default_constructible<Tdata>::value, "Tdata must have a default constructor");
+
 	protected:
 		Tdata* pData;
 		size_t size;
@@ -86,7 +88,7 @@ namespace HephCommon
 			(void)std::memcpy(result.pData, this->pData + rhs, thisSize_byte - rhsSize_byte);
 			if (rhs > 0)
 			{
-				(void)std::memset(result.pData + this->size - rhs, 0, rhsSize_byte);
+				BufferBase::Initialize(result.pData + this->size - rhs, result.pData + this->size);
 			}
 
 			return result;
@@ -96,9 +98,8 @@ namespace HephCommon
 		{
 			if (rhs > 0)
 			{
-				const size_t rhsSize_byte = BufferBase::SizeAsByte(rhs);
-				(void)std::memcpy(this->pData, this->pData + rhs, this->SizeAsByte() - rhsSize_byte);
-				(void)std::memset(this->pData + this->size - rhs, 0, rhsSize_byte);
+				(void)std::memcpy(this->pData, this->pData + rhs, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
+				BufferBase::Initialize(this->pData + this->size - rhs, this->pData + this->size);
 			}
 			return *this;
 		}
@@ -106,16 +107,15 @@ namespace HephCommon
 		virtual Tself operator>>(size_t rhs) const
 		{
 			const size_t thisSize_byte = this->SizeAsByte();
-			const size_t rhsSize_byte = BufferBase::SizeAsByte(rhs);
 
 			Tself result{};
 			result.pData = BufferBase::AllocateUninitialized(thisSize_byte);
 			result.size = this->size;
 
-			(void)std::memcpy(result.pData + rhs, this->pData, thisSize_byte - rhsSize_byte);
+			(void)std::memcpy(result.pData + rhs, this->pData, thisSize_byte - BufferBase::SizeAsByte(rhs));
 			if (rhs > 0)
 			{
-				(void)std::memset(result.pData, 0, rhsSize_byte);
+				BufferBase::Initialize(result.pData, result.pData + rhs);
 			}
 
 			return result;
@@ -125,9 +125,8 @@ namespace HephCommon
 		{
 			if (rhs > 0)
 			{
-				const size_t rhsSize_byte = BufferBase::SizeAsByte(rhs);
-				(void)std::memcpy(this->pData + rhs, this->pData, this->SizeAsByte() - rhsSize_byte);
-				(void)std::memset(this->pData, 0, rhsSize_byte);
+				(void)std::memcpy(this->pData + rhs, this->pData, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
+				BufferBase::Initialize(this->pData, this->pData + rhs);
 			}
 			return *this;
 		}
@@ -175,7 +174,7 @@ namespace HephCommon
 		{
 			if (!this->IsEmpty())
 			{
-				(void)std::memset(this->pData, 0, this->SizeAsByte());
+				BufferBase::Initialize(this->pData, this->pData + this->size);
 			}
 		}
 
@@ -251,7 +250,7 @@ namespace HephCommon
 					}
 					if (newSize > this->size)
 					{
-						(void)std::memset(pTemp + this->size, 0, BufferBase::SizeAsByte(newSize - this->size));
+						BufferBase::Initialize(pTemp + this->size, pTemp + newSize);
 					}
 
 					this->pData = pTemp;
@@ -287,10 +286,25 @@ namespace HephCommon
 			return size * sizeof(Tdata);
 		}
 
+		template<typename U = Tdata>
+		static typename std::enable_if<std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
+		{
+			for (; pData < pDataEnd; ++pData)
+			{
+				(*pData) = U();
+			}
+		}
+
+		template<typename U = Tdata>
+		static typename std::enable_if<!std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
+		{
+			(void)std::memset(pData, 0, (pDataEnd - pData) * sizeof(U));
+		}
+
 		static Tdata* Allocate(size_t size_byte)
 		{
 			Tdata* pData = BufferBase::AllocateUninitialized(size_byte);
-			(void)std::memset(pData, 0, size_byte);
+			BufferBase::Initialize(pData, (Tdata*)(((uint8_t*)pData) + size_byte));
 			return pData;
 		}
 
@@ -326,10 +340,9 @@ namespace HephCommon
 				Tdata* pSubBufferData = BufferBase::AllocateUninitialized(subBufferSize_byte);
 				(void)std::memcpy(pSubBufferData, ((uint8_t*)pThisData) + index_byte, copySize_byte);
 
-				// initialize the remaining of the sub buffer
 				if (subBufferSize_byte > copySize_byte)
 				{
-					(void)std::memset(((uint8_t*)pSubBufferData) + copySize_byte, 0, subBufferSize_byte - copySize_byte);
+					BufferBase::Initialize((Tdata*)(((uint8_t*)pSubBufferData) + copySize_byte), (Tdata*)(((uint8_t*)pSubBufferData) + subBufferSize_byte));
 				}
 
 				return pSubBufferData;
