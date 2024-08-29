@@ -7,13 +7,13 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
-	AudioBuffer::AudioBuffer() : SignedArithmeticBuffer<heph_audio_sample_t, AudioBuffer>(), frameCount(0) { }
+	AudioBuffer::AudioBuffer() : SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(), frameCount(0) { }
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo)
-		: SignedArithmeticBuffer<heph_audio_sample_t, AudioBuffer>(frameCount* formatInfo.channelLayout.count), frameCount(frameCount), formatInfo(formatInfo) {}
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count), frameCount(frameCount), formatInfo(formatInfo) {}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo, BufferFlags flags)
-		: SignedArithmeticBuffer<heph_audio_sample_t, AudioBuffer>(frameCount* formatInfo.channelLayout.count, flags), frameCount(frameCount), formatInfo(formatInfo) 
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count, flags), frameCount(frameCount), formatInfo(formatInfo) 
 	{}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
@@ -23,10 +23,10 @@ namespace HephAudio
 		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate), flags) {}
 
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) 
-		: SignedArithmeticBuffer<heph_audio_sample_t, AudioBuffer>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo) {}
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo) {}
 
 	AudioBuffer::AudioBuffer(AudioBuffer&& rhs) noexcept 
-		: SignedArithmeticBuffer<heph_audio_sample_t, AudioBuffer>(std::move(rhs)), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo)
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(std::move(rhs)), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo)
 	{
 		rhs.frameCount = 0;
 		rhs.formatInfo = AudioFormatInfo();

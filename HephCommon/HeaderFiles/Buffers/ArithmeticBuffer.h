@@ -8,8 +8,8 @@
 
 namespace HephCommon
 {
-	template <typename Tdata, class Tself>
-	class ArithmeticBuffer : public BufferBase<Tdata, Tself>
+	template <class Tself, typename Tdata>
+	class ArithmeticBuffer : public BufferBase<Tself, Tdata>
 	{
 		static_assert(std::is_arithmetic<Tdata>::value, "Tdata must be an arithmetic type");
 
@@ -18,12 +18,12 @@ namespace HephCommon
 		static constexpr Tdata MAX_ELEMENT = std::numeric_limits<Tdata>::max();
 
 	protected:
-		ArithmeticBuffer() : BufferBase<Tdata, Tself>() {}
-		explicit ArithmeticBuffer(size_t size) : BufferBase<Tdata, Tself>(size) {}
-		ArithmeticBuffer(size_t size, BufferFlags flags) : BufferBase<Tdata, Tself>(size, flags) {}
-		ArithmeticBuffer(const std::initializer_list<Tdata>& rhs) : BufferBase<Tdata, Tself>(rhs) {}
-		ArithmeticBuffer(const ArithmeticBuffer& rhs) : BufferBase<Tdata, Tself>(rhs) {}
-		ArithmeticBuffer(ArithmeticBuffer&& rhs) noexcept : BufferBase<Tdata, Tself>(std::move(rhs)) {}
+		ArithmeticBuffer() : BufferBase<Tself, Tdata>() {}
+		explicit ArithmeticBuffer(size_t size) : BufferBase<Tself, Tdata>(size) {}
+		ArithmeticBuffer(size_t size, BufferFlags flags) : BufferBase<Tself, Tdata>(size, flags) {}
+		ArithmeticBuffer(const std::initializer_list<Tdata>& rhs) : BufferBase<Tself, Tdata>(rhs) {}
+		ArithmeticBuffer(const ArithmeticBuffer& rhs) : BufferBase<Tself, Tdata>(rhs) {}
+		ArithmeticBuffer(ArithmeticBuffer&& rhs) noexcept : BufferBase<Tself, Tdata>(std::move(rhs)) {}
 
 	public:
 		virtual ~ArithmeticBuffer() = default;
@@ -31,7 +31,7 @@ namespace HephCommon
 		virtual Tself operator+(Tdata rhs) const
 		{
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -50,7 +50,7 @@ namespace HephCommon
 			}
 
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -83,7 +83,7 @@ namespace HephCommon
 		virtual Tself operator-(Tdata rhs) const
 		{
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -102,7 +102,7 @@ namespace HephCommon
 			}
 
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -135,7 +135,7 @@ namespace HephCommon
 		virtual Tself operator*(Tdata rhs) const
 		{
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -154,7 +154,7 @@ namespace HephCommon
 			}
 
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -187,7 +187,7 @@ namespace HephCommon
 		virtual Tself operator/(Tdata rhs) const
 		{
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -206,7 +206,7 @@ namespace HephCommon
 			}
 
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < result.size; ++i)
@@ -277,20 +277,20 @@ namespace HephCommon
 		}
 	};
 
-	template <typename Tdata, class Tself>
-	class SignedArithmeticBuffer : public ArithmeticBuffer<Tdata, Tself>
+	template <class Tself, typename Tdata>
+	class SignedArithmeticBuffer : public ArithmeticBuffer<Tself, Tdata>
 	{
 		static_assert(std::is_signed<Tdata>::value, "Tdata must be a signed type");
 	public:
-		using ArithmeticBuffer<Tdata, Tself>::operator-;
+		using ArithmeticBuffer<Tself, Tdata>::operator-;
 
 	protected:
-		SignedArithmeticBuffer() : ArithmeticBuffer<Tdata, Tself>() {}
-		explicit SignedArithmeticBuffer(size_t size) : ArithmeticBuffer<Tdata, Tself>(size) {}
-		SignedArithmeticBuffer(size_t size, BufferFlags flags) : ArithmeticBuffer<Tdata, Tself>(size, flags) {}
-		SignedArithmeticBuffer(const std::initializer_list<double>& rhs) : ArithmeticBuffer<Tdata, Tself>(rhs) {}
-		SignedArithmeticBuffer(const SignedArithmeticBuffer& rhs) : ArithmeticBuffer<Tdata, Tself>(rhs) {}
-		SignedArithmeticBuffer(SignedArithmeticBuffer&& rhs) noexcept : ArithmeticBuffer<Tdata, Tself>(std::move(rhs)) {}
+		SignedArithmeticBuffer() : ArithmeticBuffer<Tself, Tdata>() {}
+		explicit SignedArithmeticBuffer(size_t size) : ArithmeticBuffer<Tself, Tdata>(size) {}
+		SignedArithmeticBuffer(size_t size, BufferFlags flags) : ArithmeticBuffer<Tself, Tdata>(size, flags) {}
+		SignedArithmeticBuffer(const std::initializer_list<double>& rhs) : ArithmeticBuffer<Tself, Tdata>(rhs) {}
+		SignedArithmeticBuffer(const SignedArithmeticBuffer& rhs) : ArithmeticBuffer<Tself, Tdata>(rhs) {}
+		SignedArithmeticBuffer(SignedArithmeticBuffer&& rhs) noexcept : ArithmeticBuffer<Tself, Tdata>(std::move(rhs)) {}
 		
 	public:
 		virtual ~SignedArithmeticBuffer() = default;
@@ -298,7 +298,7 @@ namespace HephCommon
 		virtual Tself operator-() const
 		{
 			Tself result{};
-			result.pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+			result.pData = BufferBase<Tself, Tdata>::AllocateUninitialized(this->SizeAsByte());
 			result.size = this->size;
 
 			for (size_t i = 0; i < this->size; ++i)

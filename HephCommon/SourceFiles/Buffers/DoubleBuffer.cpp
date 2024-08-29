@@ -2,12 +2,12 @@
 
 namespace HephCommon
 {
-	DoubleBuffer::DoubleBuffer() : SignedArithmeticBuffer<double, DoubleBuffer>() {}
-	DoubleBuffer::DoubleBuffer(size_t size) : SignedArithmeticBuffer<double, DoubleBuffer>(size) {}
-	DoubleBuffer::DoubleBuffer(size_t size, BufferFlags flags) : SignedArithmeticBuffer<double, DoubleBuffer>(size, flags) {}
-	DoubleBuffer::DoubleBuffer(const std::initializer_list<double>& rhs) : SignedArithmeticBuffer<double, DoubleBuffer>(rhs) {}
-	DoubleBuffer::DoubleBuffer(const DoubleBuffer& rhs) : SignedArithmeticBuffer<double, DoubleBuffer>(rhs) {}
-	DoubleBuffer::DoubleBuffer(DoubleBuffer&& rhs) noexcept : SignedArithmeticBuffer<double, DoubleBuffer>(std::move(rhs)) {}
+	DoubleBuffer::DoubleBuffer() : SignedArithmeticBuffer<DoubleBuffer, double>() {}
+	DoubleBuffer::DoubleBuffer(size_t size) : SignedArithmeticBuffer<DoubleBuffer, double>(size) {}
+	DoubleBuffer::DoubleBuffer(size_t size, BufferFlags flags) : SignedArithmeticBuffer<DoubleBuffer, double>(size, flags) {}
+	DoubleBuffer::DoubleBuffer(const std::initializer_list<double>& rhs) : SignedArithmeticBuffer<DoubleBuffer, double>(rhs) {}
+	DoubleBuffer::DoubleBuffer(const DoubleBuffer& rhs) : SignedArithmeticBuffer<DoubleBuffer, double>(rhs) {}
+	DoubleBuffer::DoubleBuffer(DoubleBuffer&& rhs) noexcept : SignedArithmeticBuffer<DoubleBuffer, double>(std::move(rhs)) {}
 
 	DoubleBuffer& DoubleBuffer::operator=(const std::initializer_list<double>& rhs)
 	{

@@ -1,10 +1,11 @@
 #pragma once
 #include "HephCommonShared.h"
 #include "ArithmeticBuffer.h"
+#include "BufferOperator.h"
 
 namespace HephCommon
 {
-	class DoubleBuffer final : public SignedArithmeticBuffer<double, DoubleBuffer>
+	class DoubleBuffer final : public SignedArithmeticBuffer<DoubleBuffer, double>
 	{
 	public:
 		DoubleBuffer();

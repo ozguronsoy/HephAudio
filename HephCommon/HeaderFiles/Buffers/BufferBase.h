@@ -13,10 +13,14 @@ namespace HephCommon
 		AllocUninitialized = 1
 	};
 
-	template <typename Tdata, class Tself>
+	template<typename Lhs, typename LhsData>
+	class BufferOperatorBase; // forward decleration
+
+	template <class Tself, typename Tdata>
 	class BufferBase
 	{
 		static_assert(std::is_default_constructible<Tdata>::value, "Tdata must have a default constructor");
+		friend class BufferOperatorBase<Tself, Tdata>;
 
 	protected:
 		Tdata* pData;
@@ -29,7 +33,7 @@ namespace HephCommon
 		{
 			if (this->size > 0)
 			{
-				this->pData = BufferBase<Tdata, Tself>::Allocate(this->SizeAsByte());
+				this->pData = BufferBase::Allocate(this->SizeAsByte());
 			}
 		}
 
@@ -38,9 +42,9 @@ namespace HephCommon
 			if (this->size > 0)
 			{
 				if (flags & BufferFlags::AllocUninitialized)
-					this->pData = BufferBase<Tdata, Tself>::AllocateUninitialized(this->SizeAsByte());
+					this->pData = BufferBase::AllocateUninitialized(this->SizeAsByte());
 				else
-					this->pData = BufferBase<Tdata, Tself>::Allocate(this->SizeAsByte());
+					this->pData = BufferBase::Allocate(this->SizeAsByte());
 			}
 		}
 
@@ -49,7 +53,7 @@ namespace HephCommon
 			if (this->size > 0)
 			{
 				const size_t size_byte = this->SizeAsByte();
-				this->pData = BufferBase<Tdata, Tself>::AllocateUninitialized(size_byte);
+				this->pData = BufferBase::AllocateUninitialized(size_byte);
 				(void)std::memcpy(this->pData, rhs.begin(), size_byte);
 			}
 		}
@@ -59,7 +63,7 @@ namespace HephCommon
 			if (!rhs.IsEmpty())
 			{
 				const size_t size_byte = rhs.SizeAsByte();
-				this->pData = BufferBase<Tdata, Tself>::AllocateUninitialized(size_byte);
+				this->pData = BufferBase::AllocateUninitialized(size_byte);
 				(void)std::memcpy(this->pData, rhs.pData, size_byte);
 			}
 		}

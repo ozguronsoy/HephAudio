@@ -13,7 +13,7 @@ namespace HephCommon
 		Complex* pData;
 	public:
 		ComplexBuffer();
-		ComplexBuffer(size_t frameCount);
+		explicit ComplexBuffer(size_t frameCount);
 		ComplexBuffer(const std::initializer_list<double>& rhs);
 		ComplexBuffer(const std::initializer_list<Complex>& rhs);
 		ComplexBuffer(std::nullptr_t rhs);

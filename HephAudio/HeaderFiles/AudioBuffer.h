@@ -6,7 +6,7 @@
 
 namespace HephAudio
 {
-	class AudioBuffer final : public HephCommon::SignedArithmeticBuffer<heph_audio_sample_t, AudioBuffer>
+	class AudioBuffer final : public HephCommon::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>
 	{
 		friend class AudioProcessor;
 	private:
