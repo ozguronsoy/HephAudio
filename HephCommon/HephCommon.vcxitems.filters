@@ -52,6 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ArithmeticBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\DoubleBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephTypeTraits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">

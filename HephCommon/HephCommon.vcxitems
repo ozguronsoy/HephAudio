@@ -30,6 +30,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephTypeTraits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />

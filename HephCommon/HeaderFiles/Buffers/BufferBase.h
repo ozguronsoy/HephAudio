@@ -296,7 +296,7 @@ namespace HephCommon
 		}
 
 		template<typename U = Tdata>
-		static typename std::enable_if<!std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
+		static typename std::enable_if<not std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
 		{
 			(void)std::memset(pData, 0, (pDataEnd - pData) * sizeof(U));
 		}
