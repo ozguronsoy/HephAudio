@@ -2,7 +2,7 @@
 #include "NativeAudio/LinuxAudio.h"
 #include "File.h"
 #include "ConsoleLogger.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "StringHelpers.h"
 #include <unistd.h>
 

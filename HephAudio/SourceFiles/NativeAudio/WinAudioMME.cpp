@@ -1,6 +1,6 @@
 #if defined(_WIN32)
 #include "NativeAudio/WinAudioMME.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "ConsoleLogger.h"
 #include <VersionHelpers.h>
 

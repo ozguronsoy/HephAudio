@@ -1,7 +1,7 @@
 #include "NativeAudio/NativeAudio.h"
 #include "AudioProcessor.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "ConsoleLogger.h"
 #include "HephMath.h"
 #include "File.h"

@@ -1,7 +1,7 @@
 #if defined(__ANDROID__) && __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
 #include "NativeAudio/AndroidAudioSLES.h"
 #include "File.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "ConsoleLogger.h"
 
 #define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message, "OpenSL ES", "")); }

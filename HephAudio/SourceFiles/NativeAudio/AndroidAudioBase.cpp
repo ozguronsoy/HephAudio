@@ -1,6 +1,6 @@
 #ifdef __ANDROID__
 #include "NativeAudio/AndroidAudioBase.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "ConsoleLogger.h"
 
 using namespace HephCommon;

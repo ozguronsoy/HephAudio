@@ -2,7 +2,7 @@
 #include "NativeAudio/AppleAudio.h"
 #include "File.h"
 #include "ConsoleLogger.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "StringHelpers.h"
 #include <CoreFoundation/CFString.h>
 

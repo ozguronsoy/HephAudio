@@ -26,11 +26,11 @@
 
 #endif
 
-#if !defined(HEPHAUDIO_STOPWATCH_RESET)
+#if !defined(HEPHAUDIO_LOG)
 
 #ifdef HEPHAUDIO_INFO_LOGGING
-#define HEPHAUDIO_STOPWATCH_RESET HephCommon::StopWatch::Instance.Reset()
-#define HEPHAUDIO_STOPWATCH_DT(prefix) HephCommon::StopWatch::Instance.DeltaTime(prefix)
+#define HEPHAUDIO_STOPWATCH_RESET HephCommon::Stopwatch::Instance.Reset()
+#define HEPHAUDIO_STOPWATCH_DT(prefix) HephCommon::Stopwatch::Instance.DeltaTime(prefix)
 #define HEPHAUDIO_LOG(logMessage, logType) HephCommon::ConsoleLogger::Log(logMessage, logType, "HephAudio")
 #else
 #define HEPHAUDIO_STOPWATCH_RESET

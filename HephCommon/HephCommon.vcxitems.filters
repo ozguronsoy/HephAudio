@@ -40,7 +40,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StopWatch.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Stopwatch.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h">
@@ -80,7 +80,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StopWatch.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Stopwatch.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp">

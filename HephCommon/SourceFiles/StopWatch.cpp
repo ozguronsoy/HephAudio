@@ -1,22 +1,22 @@
-#include "StopWatch.h"
+#include "Stopwatch.h"
 
 namespace HephCommon
 {
-	thread_local StopWatch StopWatch::Instance = StopWatch();
+	thread_local Stopwatch Stopwatch::Instance = Stopwatch();
 
-	StopWatch::StopWatch() : tp(std::chrono::steady_clock::now()) {}
+	Stopwatch::Stopwatch() : tp(std::chrono::steady_clock::now()) {}
 	
-	void StopWatch::Reset()
+	void Stopwatch::Reset()
 	{
 		this->tp = std::chrono::steady_clock::now();
 	}
 	
-	double StopWatch::DeltaTime() const
+	double Stopwatch::DeltaTime() const
 	{
 		return (std::chrono::steady_clock::now() - this->tp).count() * 1e-9;
 	}
 	
-	double StopWatch::DeltaTime(double prefix) const
+	double Stopwatch::DeltaTime(double prefix) const
 	{
 		return (std::chrono::steady_clock::now() - this->tp).count() * 1e-9 / prefix;
 	}

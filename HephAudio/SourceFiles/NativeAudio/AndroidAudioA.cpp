@@ -2,7 +2,7 @@
 #include "NativeAudio/AndroidAudioA.h"
 #include "File.h"
 #include "HephMath.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 #include "ConsoleLogger.h"
 
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
