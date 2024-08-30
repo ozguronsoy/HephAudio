@@ -41,7 +41,7 @@ namespace HephAudio
 		}
 		LinuxAudio::~LinuxAudio()
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG("Destructing LinuxAudio...", HEPH_CL_INFO);
 
 			disposing = true;
@@ -60,7 +60,7 @@ namespace HephAudio
 				snd_pcm_close(capturePcm);
 			}
 
-			HEPHAUDIO_LOG("LinuxAudio destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("LinuxAudio destructed in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::SetMasterVolume(double volume)
 		{
@@ -126,7 +126,7 @@ namespace HephAudio
 		}
 		void LinuxAudio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			int result;
@@ -157,7 +157,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			renderThread = std::thread(&LinuxAudio::RenderData, this, bufferDuration);
 
-			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::StopRendering()
 		{
@@ -176,7 +176,7 @@ namespace HephAudio
 		}
 		void LinuxAudio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			int result;
@@ -207,7 +207,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			captureThread = std::thread(&LinuxAudio::CaptureData, this, bufferDuration);
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void LinuxAudio::StopCapturing()
 		{

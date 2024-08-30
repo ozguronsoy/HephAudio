@@ -29,14 +29,14 @@ namespace HephAudio
 		}
 		AndroidAudioA::~AndroidAudioA()
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG("Destructing AndroidAudioA...", HEPH_CL_INFO);
 
 			disposing = true;
 			StopRendering();
 			StopCapturing();
 
-			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::SetMasterVolume(double volume)
 		{
@@ -52,7 +52,7 @@ namespace HephAudio
 		}
 		void AndroidAudioA::InitializeRender(AudioDevice* device, AudioFormatInfo format)
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing render with the default device..." : ("Initializing render (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopRendering();
@@ -145,7 +145,7 @@ namespace HephAudio
 			isRenderInitialized = true;
 			ANDROIDAUDIO_EXCPT(AAudioStream_requestStart(pRenderStream), this, "AndroidAudioA::InitializeRender", "Failed to start the render stream.");
 
-			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Render initialized in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::StopRendering()
 		{
@@ -163,7 +163,7 @@ namespace HephAudio
 		}
 		void AndroidAudioA::InitializeCapture(AudioDevice* device, AudioFormatInfo format)
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG(device == nullptr ? "Initializing capture with the default device..." : ("Initializing capture (" + device->name + ")..."), HEPH_CL_INFO);
 
 			StopCapturing();
@@ -253,7 +253,7 @@ namespace HephAudio
 			isCaptureInitialized = true;
 			ANDROIDAUDIO_EXCPT(AAudioStream_requestStart(pCaptureStream), this, "AndroidAudioA::InitializeCapture", "Failed to start the capture stream.");
 
-			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("Capture initialized in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::StopCapturing()
 		{
@@ -349,7 +349,7 @@ namespace HephAudio
 		}
 		AndroidAudioA::~AndroidAudioA()
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 			HEPHAUDIO_LOG("Destructing AndroidAudioA...", HEPH_CL_INFO);
 
 			disposing = true;
@@ -358,7 +358,7 @@ namespace HephAudio
 			StopRendering();
 			StopCapturing();
 
-			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPHAUDIO_STOPWATCH_DT(HEPH_SW_MILLI), 4) + " ms.", HEPH_CL_INFO);
+			HEPHAUDIO_LOG("AndroidAudioA destructed in " + StringHelpers::ToString(HEPH_SW_DT_MS, 4) + " ms.", HEPH_CL_INFO);
 		}
 		void AndroidAudioA::SetMasterVolume(double volume)
 		{

@@ -17,7 +17,7 @@ namespace HephAudio
 			, renderFormat(AudioFormatInfo(1, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000)), captureFormat(AudioFormatInfo(1, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000)), disposing(false)
 			, isRenderInitialized(false), isCaptureInitialized(false), isCapturePaused(false), deviceEnumerationPeriod_ms(100)
 		{
-			HEPHAUDIO_STOPWATCH_RESET;
+			HEPH_SW_RESET;
 		}
 		void NativeAudio::SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder)
 		{
