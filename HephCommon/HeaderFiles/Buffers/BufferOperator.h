@@ -17,39 +17,44 @@ namespace HephCommon
 		}
 
 	protected:
-		inline size_t& Access_size() const
+		inline size_t& Access_size()
 		{
-			return ((Lhs*)this)->size;
+			return ((BufferBase<Lhs, LhsData>*)this)->size;
+		}
+
+		inline size_t Access_Size() const
+		{
+			return ((BufferBase<Lhs, LhsData>*)this)->size;
 		}
 
 		inline size_t Access_SizeAsByte() const
 		{
-			return ((Lhs*)this)->SizeAsByte();
+			return ((BufferBase<Lhs, LhsData>*)this)->SizeAsByte();
 		}
 
-		inline LhsData*& Access_pData() const
+		inline LhsData*& Access_pData()
 		{
-			return ((Lhs*)this)->pData;
+			return ((BufferBase<Lhs, LhsData>*)this)->pData;
 		}
 
 		inline LhsData* Access_begin() const
 		{
-			return ((Lhs*)this)->begin();
+			return ((BufferBase<Lhs, LhsData>*)this)->begin();
 		}
 
 		inline LhsData* Access_end() const
 		{
-			return ((Lhs*)this)->end();
+			return ((BufferBase<Lhs, LhsData>*)this)->end();
 		}
 
 		inline LhsData* Access_Allocate(size_t size_byte) const
 		{
-			return ((Lhs*)this)->Allocate(size_byte);
+			return ((BufferBase<Lhs, LhsData>*)this)->Allocate(size_byte);
 		}
 
 		inline LhsData* Access_AllocateUninitialized(size_t size_byte) const
 		{
-			return ((Lhs*)this)->AllocateUninitialized(size_byte);
+			return ((BufferBase<Lhs, LhsData>*)this)->AllocateUninitialized(size_byte);
 		}
 	};
 
@@ -59,12 +64,16 @@ namespace HephCommon
 	public:
 		BufferOperator()
 		{
-			static_assert((std::is_base_of<BufferBase<Rhs, RhsData>, Rhs>::value && std::is_base_of<BufferOperatorBase<Rhs, RhsData>, Rhs>::value) || std::is_same<Rhs, RhsData>::value, "Rhs must derive from BufferBase and BufferOperatorBase. Or RhsData must be left as default");
+			static_assert(
+				(std::is_base_of<BufferBase<Rhs, RhsData>, Rhs>::value && std::is_base_of<BufferOperatorBase<Rhs, RhsData>, Rhs>::value) 
+				|| std::is_same<Rhs, RhsData>::value,
+				"Rhs must derive from BufferBase and BufferOperatorBase. Or RhsData must be left as default"
+				);
 		}
 	};
 #pragma endregion
 #pragma region Addition
-	template<class Lhs, typename LhsData, typename Rhs = Lhs, typename RhsData = LhsData>
+	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class BufferAdditionOperator : public BufferOperator<Lhs, LhsData, Rhs, RhsData>
 	{
 	public:
@@ -73,16 +82,30 @@ namespace HephCommon
 			static_assert(has_addition_operator<LhsData, RhsData>::value && has_addition_assignment_operator<LhsData, RhsData>::value, "LhsData must have operator+(RhsData) and operator+=(RhsData)");
 		}
 
+	public:
+		// friend static so no need to do using::operator in derived class 
+		// when inheriting BufferXOperator with multiple overloads
+		friend static Lhs operator+(const Lhs& lhs, const Rhs& rhs)
+		{
+			return Impl<Rhs, RhsData>(lhs, rhs);
+		}
+
+		friend static Lhs& operator+=(Lhs& lhs, const Rhs& rhs)
+		{
+			return ImplAssign<Rhs, RhsData>(lhs, rhs);
+		}
+
+	private:
 		template<typename U = Rhs, typename V = RhsData>
-		typename std::enable_if<not std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type operator+(const U& rhs) const
+		static inline typename std::enable_if<std::is_same<U, V>::value, Lhs>::type Impl(const Lhs& lhs, const U& rhs)
 		{
 			Lhs result{};
-			((BufferAdditionOperator*)&result)->Access_pData() = this->Access_AllocateUninitialized(this->Access_SizeAsByte());
-			((BufferAdditionOperator*)&result)->Access_size() = this->Access_size();
+			reinterpret_cast<BufferAdditionOperator*>(&result)->Access_pData() = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_AllocateUninitialized(reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_SizeAsByte());
+			reinterpret_cast<BufferAdditionOperator*>(&result)->Access_size() = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_Size();
 
-			LhsData* pLhsData = this->Access_begin();
-			LhsData* pLhsDataEnd = this->Access_end();
-			LhsData* pResultData = ((BufferAdditionOperator*)&result)->Access_begin();
+			LhsData* pLhsData = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_begin();
+			LhsData* pLhsDataEnd = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_end();
+			LhsData* pResultData = reinterpret_cast<BufferAdditionOperator*>(&result)->Access_begin();
 			for (; pLhsData < pLhsDataEnd; ++pLhsData, ++pResultData)
 			{
 				(*pResultData) = (*pLhsData) + rhs;
@@ -92,33 +115,33 @@ namespace HephCommon
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		typename std::enable_if<not std::is_base_of<BufferBase<U, V>, U>::value, Lhs&>::type operator+=(const U& rhs)
+		static inline typename std::enable_if<std::is_same<U, V>::value, Lhs&>::type ImplAssign(Lhs& lhs, const U& rhs)
 		{
-			LhsData* pLhsData = this->Access_begin();
-			LhsData* pLhsDataEnd = this->Access_end();
+			LhsData* pLhsData = reinterpret_cast<BufferAdditionOperator*>(&lhs)->Access_begin();
+			LhsData* pLhsDataEnd = reinterpret_cast<BufferAdditionOperator*>(&lhs)->Access_end();
 			for (; pLhsData < pLhsDataEnd; ++pLhsData)
 			{
 				(*pLhsData) += rhs;
 			}
-			return *((Lhs*)this);
+			return lhs;
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		typename std::enable_if<std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type operator+(const U& rhs) const
+		static inline typename std::enable_if<std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type Impl(const Lhs& lhs, const U& rhs)
 		{
-			if (this->Access_size() != ((BufferAdditionOperator*)&rhs)->Access_size())
+			if (reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_Size() != ((BufferAdditionOperator*)(void*)&rhs)->Access_size())
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "BufferAdditionOperator::operator+", "Both operands must have the same size"));
+				RAISE_AND_THROW_HEPH_EXCEPTION(&lhs, HephException(HEPH_EC_INVALID_ARGUMENT, "BufferAdditionOperator::operator+", "Both operands must have the same size"));
 			}
 
 			Lhs result{};
-			((BufferAdditionOperator*)&result)->Access_pData() = this->Access_AllocateUninitialized(this->Access_SizeAsByte());
-			((BufferAdditionOperator*)&result)->Access_size() = this->Access_size();
+			reinterpret_cast<BufferAdditionOperator*>(&result)->Access_pData() = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_AllocateUninitialized(reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_SizeAsByte());
+			reinterpret_cast<BufferAdditionOperator*>(&result)->Access_size() = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_Size();
 
-			LhsData* pLhsData = this->Access_begin();
-			LhsData* pLhsDataEnd = this->Access_end();
-			V* pRhsData = ((BufferAdditionOperator*)&rhs)->Access_begin();
-			LhsData* pResultData = ((BufferAdditionOperator*)&result)->Access_begin();
+			LhsData* pLhsData = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_begin();
+			LhsData* pLhsDataEnd = reinterpret_cast<const BufferAdditionOperator*>(&lhs)->Access_end();
+			V* pRhsData = (V*)((BufferAdditionOperator*)(void*)&rhs)->Access_begin();
+			LhsData* pResultData = reinterpret_cast<BufferAdditionOperator*>(&result)->Access_begin();
 			for (; pLhsData < pLhsDataEnd; ++pLhsData, ++pRhsData, ++pResultData)
 			{
 				(*pResultData) = (*pLhsData) + (*pRhsData);
@@ -128,16 +151,19 @@ namespace HephCommon
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		typename std::enable_if<std::is_base_of<BufferBase<U, V>, U>::value, Lhs&>::type operator+=(const U& rhs)
+		static inline typename std::enable_if<std::is_base_of<BufferBase<U, V>, U>::value, Lhs&>::type ImplAssign(Lhs& lhs, const U& rhs)
 		{
-			const size_t minSize = HEPH_MATH_MIN(this->Access_size(), ((BufferAdditionOperator*)&rhs)->Access_size());
-			LhsData* pLhsData = this->Access_begin();
-			V* pRhsData = ((BufferAdditionOperator*)&rhs)->Access_begin();
+			const size_t lhsSize = reinterpret_cast<BufferAdditionOperator*>(&lhs)->Access_size();
+			const size_t rhsSize = ((BufferAdditionOperator*)(void*)&rhs)->Access_size();
+			const size_t minSize = HEPH_MATH_MIN(lhsSize, rhsSize);
+
+			LhsData* pLhsData = reinterpret_cast<BufferAdditionOperator*>(&lhs)->Access_begin();
+			V* pRhsData = (V*)((BufferAdditionOperator*)(void*)&rhs)->Access_begin();
 			for (size_t i = 0; i < minSize; ++i, ++pLhsData, ++pRhsData)
 			{
 				(*pLhsData) += (*pRhsData);
 			}
-			return *((Lhs*)this);
+			return lhs;
 		}
 	};
 #pragma endregion

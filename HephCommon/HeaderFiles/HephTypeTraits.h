@@ -9,25 +9,25 @@ namespace HephCommon
 	struct has_addition_operator : std::false_type {};
 	template<class Lhs, class Rhs, class Ret>
 	struct has_addition_operator<Lhs, Rhs, Ret,
-		typename std::enable_if<std::is_same<Ret, decltype(std::declval<Lhs>() + std::declval<Rhs>())>::value>::type> : std::true_type {};
+		typename std::enable_if<std::is_convertible<Ret, decltype(std::declval<Lhs>() + std::declval<Rhs>())>::value>::type> : std::true_type {};
 
 	template<class Lhs, class Rhs = Lhs, class Ret = Lhs, typename = void>
 	struct has_subtraction_operator : std::false_type {};
 	template<class Lhs, class Rhs, class Ret>
 	struct has_subtraction_operator<Lhs, Rhs, Ret,
-		typename std::enable_if<std::is_same<Ret, decltype(std::declval<Lhs>() - std::declval<Rhs>())>::value>::type> : std::true_type {};
+		typename std::enable_if<std::is_convertible<Ret, decltype(std::declval<Lhs>() - std::declval<Rhs>())>::value>::type> : std::true_type {};
 
 	template<class Lhs, class Rhs = Lhs, class Ret = Lhs, typename = void>
 	struct has_multiplication_operator : std::false_type {};
 	template<class Lhs, class Rhs, class Ret>
 	struct has_multiplication_operator<Lhs, Rhs, Ret,
-		typename std::enable_if<std::is_same<Ret, decltype(std::declval<Lhs>()* std::declval<Rhs>())>::value>::type> : std::true_type {};
+		typename std::enable_if<std::is_convertible<Ret, decltype(std::declval<Lhs>()* std::declval<Rhs>())>::value>::type> : std::true_type {};
 
 	template<class Lhs, class Rhs = Lhs, class Ret = Lhs, typename = void>
 	struct has_division_operator : std::false_type {};
 	template<class Lhs, class Rhs, class Ret>
 	struct has_division_operator<Lhs, Rhs, Ret,
-		typename std::enable_if<std::is_same<Ret, decltype(std::declval<Lhs>() / std::declval<Rhs>())>::value>::type> : std::true_type {};
+		typename std::enable_if<std::is_convertible<Ret, decltype(std::declval<Lhs>() / std::declval<Rhs>())>::value>::type> : std::true_type {};
 
 	template<class Lhs, class Rhs = Lhs, typename = void>
 	struct has_addition_assignment_operator : std::false_type {};
