@@ -9,6 +9,7 @@ namespace HephCommon
 	class ComplexBuffer final : 
 		public BufferBase<ComplexBuffer, Complex>,
 		public BufferArithmeticOperators<ComplexBuffer, Complex>,
+		public BufferArithmeticOperators<ComplexBuffer, Complex, double>,
 		public BufferArithmeticOperators<ComplexBuffer, Complex, ComplexBuffer, Complex>,
 		public BufferArithmeticOperators<ComplexBuffer, Complex, DoubleBuffer, double>,
 		public BufferUnaryMinusOperator<ComplexBuffer, Complex>
@@ -28,5 +29,11 @@ namespace HephCommon
 		ComplexBuffer& operator=(const ComplexBuffer& rhs);
 		ComplexBuffer& operator=(ComplexBuffer&& rhs) noexcept;
 		void Invert();
+	private:
+		static void AddEventHandlers();
+		static void ResultCreatedEventHandler(const HephCommon::EventParams& params);
+		static void ResultCreatedEventHandlerDouble(const HephCommon::EventParams& params);
+		static void ResultCreatedEventHandlerComplexBuffer(const HephCommon::EventParams& params);
+		static void ResultCreatedEventHandlerDoubleBuffer(const HephCommon::EventParams& params);
 	};
 };

@@ -13,7 +13,6 @@ namespace HephCommon
 		DoubleBuffer(const std::initializer_list<double>& rhs);
 		DoubleBuffer(const DoubleBuffer& rhs);
 		DoubleBuffer(DoubleBuffer&& rhs) noexcept;
-		~DoubleBuffer() = default;
 		DoubleBuffer& operator=(const std::initializer_list<double>& rhs);
 		DoubleBuffer& operator=(const DoubleBuffer& rhs);
 		DoubleBuffer& operator=(DoubleBuffer&& rhs) noexcept;
