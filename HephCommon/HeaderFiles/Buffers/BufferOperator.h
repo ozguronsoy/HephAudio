@@ -172,7 +172,7 @@ namespace HephCommon
 		template<typename Ret = Lhs>
 		friend static typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator-(const Rhs& rhs, const Lhs& lhs)
 		{
-			return Impl<Rhs, RhsData>(rhs, lhs);
+			return ImplRhs<Rhs, RhsData>(rhs, lhs);
 		}
 
 		template<typename Ret>
@@ -199,7 +199,7 @@ namespace HephCommon
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR && std::is_same<U, V>::value, Lhs>::type Impl(const U& rhs, const Lhs& lhs)
+		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_same<U, V>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
 		{
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
@@ -254,7 +254,7 @@ namespace HephCommon
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type Impl(const U& rhs, const Lhs& lhs)
+		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
 		{
 			if (lhs.Size() != rhs.Size())
 			{
@@ -438,7 +438,7 @@ namespace HephCommon
 		template<typename Ret = Lhs>
 		friend static typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator/(const Rhs& rhs, const Lhs& lhs)
 		{
-			return Impl<Rhs, RhsData>(rhs, lhs);
+			return ImplRhs<Rhs, RhsData>(rhs, lhs);
 		}
 
 		template<typename Ret>
@@ -465,7 +465,7 @@ namespace HephCommon
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_same<U, V>::value, Lhs>::type Impl(const U& rhs, const Lhs& lhs)
+		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR and std::is_same<U, V>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
 		{
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
@@ -520,7 +520,7 @@ namespace HephCommon
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type Impl(const U& rhs, const Lhs& lhs)
+		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR and std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
 		{
 			if (lhs.Size() != rhs.Size())
 			{
