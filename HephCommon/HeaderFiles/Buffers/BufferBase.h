@@ -13,14 +13,10 @@ namespace HephCommon
 		AllocUninitialized = 1
 	};
 
-	template<typename Lhs, typename LhsData>
-	class BufferOperatorBase; // forward decleration
-
 	template <class Tself, typename Tdata>
 	class BufferBase
 	{
 		static_assert(std::is_default_constructible<Tdata>::value, "Tdata must have a default constructor");
-		friend class BufferOperatorBase<Tself, Tdata>;
 
 	protected:
 		Tdata* pData;
