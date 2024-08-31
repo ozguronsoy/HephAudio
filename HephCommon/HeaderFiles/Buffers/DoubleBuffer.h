@@ -1,7 +1,6 @@
 #pragma once
 #include "HephCommonShared.h"
 #include "ArithmeticBuffer.h"
-#include "BufferOperator.h"
 
 namespace HephCommon
 {

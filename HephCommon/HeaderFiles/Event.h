@@ -6,7 +6,6 @@
 #include "UserEventArgs.h"
 #include <vector>
 #include <cinttypes>
-#include <unordered_map>
 
 namespace HephCommon
 {
