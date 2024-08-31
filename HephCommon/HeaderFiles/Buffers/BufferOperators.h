@@ -82,7 +82,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] + rhs;
+				result.begin()[i] = lhs.begin()[i] + rhs;
 			}
 			return result;
 		}
@@ -93,7 +93,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				lhs[i] += rhs;
+				lhs.begin()[i] += rhs;
 			}
 			return lhs;
 		}
@@ -118,7 +118,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] + rhs[i];
+				result.begin()[i] = lhs.begin()[i] + rhs.begin()[i];
 			}
 			return result;
 		}
@@ -129,7 +129,7 @@ namespace HephCommon
 			const size_t minSize = HEPH_MATH_MIN(lhs.Size(), rhs.Size());
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				lhs[i] += rhs[i];
+				lhs.begin()[i] += rhs.begin()[i];
 			}
 			return lhs;
 		}
@@ -193,7 +193,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] - rhs;
+				result.begin()[i] = lhs.begin()[i] - rhs;
 			}
 			return result;
 		}
@@ -212,7 +212,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = rhs - lhs[i];
+				result.begin()[i] = rhs - lhs.begin()[i];
 			}
 			return result;
 		}
@@ -223,7 +223,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				lhs[i] -= rhs;
+				lhs.begin()[i] -= rhs;
 			}
 			return lhs;
 		}
@@ -248,7 +248,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] - rhs[i];
+				result.begin()[i] = lhs.begin()[i] - rhs.begin()[i];
 			}
 			return result;
 		}
@@ -273,7 +273,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = rhs[i] - lhs[i];
+				result.begin()[i] = rhs.begin()[i] - lhs.begin()[i];
 			}
 			return result;
 		}
@@ -284,7 +284,7 @@ namespace HephCommon
 			const size_t minSize = HEPH_MATH_MIN(lhs.Size(), rhs.Size());
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				lhs[i] -= rhs[i];
+				lhs.begin()[i] -= rhs.begin()[i];
 			}
 			return lhs;
 		}
@@ -348,7 +348,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] * rhs;
+				result.begin()[i] = lhs.begin()[i] * rhs;
 			}
 			return result;
 		}
@@ -359,7 +359,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				lhs[i] *= rhs;
+				lhs.begin()[i] *= rhs;
 			}
 			return lhs;
 		}
@@ -384,7 +384,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] * rhs[i];
+				result.begin()[i] = lhs.begin()[i] * rhs.begin()[i];
 			}
 			return result;
 		}
@@ -395,7 +395,7 @@ namespace HephCommon
 			const size_t minSize = HEPH_MATH_MIN(lhs.Size(), rhs.Size());
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				lhs[i] *= rhs[i];
+				lhs.begin()[i] *= rhs.begin()[i];
 			}
 			return lhs;
 		}
@@ -459,7 +459,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] / rhs;
+				result.begin()[i] = lhs.begin()[i] / rhs;
 			}
 			return result;
 		}
@@ -478,7 +478,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = rhs / lhs[i];
+				result.begin()[i] = rhs / lhs.begin()[i];
 			}
 			return result;
 		}
@@ -489,7 +489,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				lhs[i] /= rhs;
+				lhs.begin()[i] /= rhs;
 			}
 			return lhs;
 		}
@@ -514,7 +514,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = lhs[i] / rhs[i];
+				result.begin()[i] = lhs.begin()[i] / rhs.begin()[i];
 			}
 			return result;
 		}
@@ -539,7 +539,7 @@ namespace HephCommon
 			const size_t size = lhs.Size();
 			for (size_t i = 0; i < size; ++i)
 			{
-				result[i] = rhs[i] / lhs[i];
+				result.begin()[i] = rhs.begin()[i] / lhs.begin()[i];
 			}
 			return result;
 		}
@@ -550,7 +550,7 @@ namespace HephCommon
 			const size_t minSize = HEPH_MATH_MIN(lhs.Size(), rhs.Size());
 			for (size_t i = 0; i < minSize; ++i)
 			{
-				lhs[i] /= rhs[i];
+				lhs.begin()[i] /= rhs.begin()[i];
 			}
 			return lhs;
 		}
@@ -568,6 +568,41 @@ namespace HephCommon
 		BufferArithmeticOperators() = default;
 		BufferArithmeticOperators(const BufferArithmeticOperators&) = delete;
 		BufferArithmeticOperators& operator=(const BufferArithmeticOperators&) = delete;
+	};
+#pragma endregion
+#pragma region Unary Minus
+	template<class Lhs, typename LhsData>
+	class BufferUnaryMinusOperator
+	{
+	public:
+		BufferUnaryMinusOperator()
+		{
+			static_assert(std::is_default_constructible<Lhs>::value, "Lhs must have a default constructor");
+			static_assert(std::is_base_of<BufferBase<Lhs, LhsData>, Lhs>::value, "Lhs must derive from BufferBase<Lhs, LhsData>");
+			static_assert(has_unary_minus_operator<LhsData>::value, "LhsData must have operator-()");
+		}
+		BufferUnaryMinusOperator(const BufferUnaryMinusOperator&) = delete;
+		BufferUnaryMinusOperator& operator=(const BufferUnaryMinusOperator&) = delete;
+
+	public:
+		friend static Lhs operator-(const Lhs& lhs)
+		{
+			Lhs result{};
+			BufferOperatorResultCreatedEventArgs<Lhs, Lhs> args(lhs, lhs, result);
+			if (!BufferOperatorEvents<Lhs, Lhs>::OnResultCreated)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(&lhs, HephException(HEPH_EC_INVALID_OPERATION, "BufferUnaryMinusOperator::operator-", "BufferUnaryMinusOperator::OnResultCreated event must be handled"));
+			}
+			BufferOperatorEvents<Lhs, Lhs>::OnResultCreated(&args, nullptr);
+
+			const size_t size = lhs.Size();
+			for (size_t i = 0; i < size; ++i)
+			{
+				result.begin()[i] = -lhs.begin()[i];
+			}
+
+			return result;
+		}
 	};
 #pragma endregion
 }

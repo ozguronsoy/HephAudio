@@ -2,6 +2,7 @@
 #include "HephAudioShared.h"
 #include "HephException.h"
 #include <cstdlib>
+#include <type_traits>
 
 namespace HephCommon
 {

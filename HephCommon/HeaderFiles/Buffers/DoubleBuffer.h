@@ -19,8 +19,3 @@ namespace HephCommon
 		DoubleBuffer& operator=(DoubleBuffer&& rhs) noexcept;
 	};
 }
-
-HephCommon::DoubleBuffer operator+(double lhs, const HephCommon::DoubleBuffer& rhs);
-HephCommon::DoubleBuffer operator-(double lhs, const HephCommon::DoubleBuffer& rhs);
-HephCommon::DoubleBuffer operator*(double lhs, const HephCommon::DoubleBuffer& rhs);
-HephCommon::DoubleBuffer operator/(double lhs, const HephCommon::DoubleBuffer& rhs);

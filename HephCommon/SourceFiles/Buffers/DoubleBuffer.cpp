@@ -59,33 +59,3 @@ namespace HephCommon
 		return *this;
 	}
 }
-
-HephCommon::DoubleBuffer operator+(double lhs, const HephCommon::DoubleBuffer& rhs)
-{
-	return rhs + lhs;
-}
-
-HephCommon::DoubleBuffer operator-(double lhs, const HephCommon::DoubleBuffer& rhs)
-{
-	HephCommon::DoubleBuffer result(rhs.Size(), HephCommon::BufferFlags::AllocUninitialized);
-	for (size_t i = 0; i < result.Size(); ++i)
-	{
-		result[i] = lhs - rhs[i];
-	}
-	return result;
-}
-
-HephCommon::DoubleBuffer operator*(double lhs, const HephCommon::DoubleBuffer& rhs)
-{
-	return rhs * lhs;
-}
-
-HephCommon::DoubleBuffer operator/(double lhs, const HephCommon::DoubleBuffer& rhs)
-{
-	HephCommon::DoubleBuffer result(rhs.Size(), HephCommon::BufferFlags::AllocUninitialized);
-	for (size_t i = 0; i < result.Size(); ++i)
-	{
-		result[i] = lhs / rhs[i];
-	}
-	return result;
-}

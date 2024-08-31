@@ -23,30 +23,6 @@ namespace HephAudio
 		~AudioBuffer();
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		AudioBuffer& operator=(AudioBuffer&& rhs) noexcept;
-		AudioBuffer operator+(double rhs) const;
-		AudioBuffer operator+(const HephCommon::DoubleBuffer& rhs) const;
-		AudioBuffer operator+(const AudioBuffer& rhs) const override;
-		AudioBuffer& operator+=(double rhs);
-		AudioBuffer& operator+=(const HephCommon::DoubleBuffer& rhs);
-		AudioBuffer& operator+=(const AudioBuffer& rhs) override;
-		AudioBuffer operator-(double rhs) const;
-		AudioBuffer operator-(const HephCommon::DoubleBuffer& rhs) const;
-		AudioBuffer operator-(const AudioBuffer& rhs) const override;
-		AudioBuffer& operator-=(double rhs);
-		AudioBuffer& operator-=(const HephCommon::DoubleBuffer& rhs);
-		AudioBuffer& operator-=(const AudioBuffer& rhs) override;
-		AudioBuffer operator*(double rhs) const;
-		AudioBuffer operator*(const HephCommon::DoubleBuffer& rhs) const;
-		AudioBuffer operator*(const AudioBuffer& rhs) const override;
-		AudioBuffer& operator*=(double rhs);
-		AudioBuffer& operator*=(const HephCommon::DoubleBuffer& rhs);
-		AudioBuffer& operator*=(const AudioBuffer& rhs) override;
-		AudioBuffer operator/(double rhs) const;
-		AudioBuffer operator/(const HephCommon::DoubleBuffer& rhs) const;
-		AudioBuffer operator/(const AudioBuffer& rhs) const override;
-		AudioBuffer& operator/=(double rhs);
-		AudioBuffer& operator/=(const HephCommon::DoubleBuffer& rhs);
-		AudioBuffer& operator/=(const AudioBuffer& rhs) override;
 		AudioBuffer operator<<(size_t rhs) const override;
 		AudioBuffer& operator<<=(size_t rhs) override;
 		AudioBuffer operator>>(size_t rhs) const override;
@@ -68,14 +44,9 @@ namespace HephAudio
 		void SetSampleRate(uint32_t sampleRate);
 		void SetBitsPerSample(uint16_t bitsPerSample);
 		void SetBitRate(uint32_t bitRate);
+	private:
+		static void AddEventHandlers();
+		static void ResultCreatedEventHandler(const HephCommon::EventParams& params);
+		static void ResultCreatedEventHandlerBuffer(const HephCommon::EventParams& params);
 	};
 }
-
-HephAudio::AudioBuffer operator+(double lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator+(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator-(double lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator-(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator*(double lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator*(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator/(double lhs, const HephAudio::AudioBuffer& rhs);
-HephAudio::AudioBuffer operator/(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs);

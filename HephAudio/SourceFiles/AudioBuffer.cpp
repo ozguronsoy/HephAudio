@@ -7,29 +7,46 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
-	AudioBuffer::AudioBuffer() : SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(), frameCount(0) { }
+	AudioBuffer::AudioBuffer() : SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(), frameCount(0) { AudioBuffer::AddEventHandlers(); }
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo)
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count), frameCount(frameCount), formatInfo(formatInfo) {}
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count), frameCount(frameCount), formatInfo(formatInfo)
+	{
+		AudioBuffer::AddEventHandlers();
+	}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo, BufferFlags flags)
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count, flags), frameCount(frameCount), formatInfo(formatInfo) 
-	{}
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count, flags),
+		frameCount(frameCount), formatInfo(formatInfo)
+	{
+		AudioBuffer::AddEventHandlers();
+	}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
-		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate)) {}
+		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate)) 
+	{
+		AudioBuffer::AddEventHandlers();
+	}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate, BufferFlags flags)
-		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate), flags) {}
+		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate), flags) 
+	{
+		AudioBuffer::AddEventHandlers();
+	}
 
-	AudioBuffer::AudioBuffer(const AudioBuffer& rhs) 
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo) {}
+	AudioBuffer::AudioBuffer(const AudioBuffer& rhs)
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo) 
+	{
+		AudioBuffer::AddEventHandlers();
+	}
 
-	AudioBuffer::AudioBuffer(AudioBuffer&& rhs) noexcept 
+	AudioBuffer::AudioBuffer(AudioBuffer&& rhs) noexcept
 		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(std::move(rhs)), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo)
 	{
 		rhs.frameCount = 0;
 		rhs.formatInfo = AudioFormatInfo();
+		
+		AudioBuffer::AddEventHandlers();
 	}
 
 	AudioBuffer::~AudioBuffer()
@@ -78,361 +95,22 @@ namespace HephAudio
 		return *this;
 	}
 
-	AudioBuffer AudioBuffer::operator+(double rhs) const
-	{
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] + rhs;
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator+(const DoubleBuffer& rhs) const
-	{
-		if (this->frameCount != rhs.Size())
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator+", "double buffer's size must be equal to audio buffer's frame count"));
-		}
-
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] + rhs[i];
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator+(const AudioBuffer& rhs) const
-	{
-		AudioBuffer result = SignedArithmeticBuffer::operator+(rhs);
-		result.frameCount = this->frameCount;
-		result.formatInfo = rhs.formatInfo;
-		return result;
-	}
-
-	AudioBuffer& AudioBuffer::operator+=(double rhs)
-	{
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] += rhs;
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator+=(const DoubleBuffer& rhs)
-	{
-		const size_t minFrameCount = HEPH_MATH_MIN(this->frameCount, rhs.Size());
-		for (size_t i = 0; i < minFrameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] += rhs[i];
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator+=(const AudioBuffer& rhs)
-	{
-		if (this->formatInfo != rhs.formatInfo)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator+=", "Operands must have the same audio format"));
-		}
-		return (AudioBuffer&)SignedArithmeticBuffer::operator+=(rhs);
-	}
-
-	AudioBuffer AudioBuffer::operator-(double rhs) const
-	{
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] - rhs;
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator-(const DoubleBuffer& rhs) const
-	{
-		if (this->frameCount != rhs.Size())
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator-", "double buffer's size must be equal to audio buffer's frame count"));
-		}
-
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] - rhs[i];
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator-(const AudioBuffer& rhs) const
-	{
-		AudioBuffer result = SignedArithmeticBuffer::operator-(rhs);
-		result.frameCount = this->frameCount;
-		result.formatInfo = rhs.formatInfo;
-		return result;
-	}
-
-	AudioBuffer& AudioBuffer::operator-=(double rhs)
-	{
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] -= rhs;
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator-=(const DoubleBuffer& rhs)
-	{
-		const size_t minFrameCount = HEPH_MATH_MIN(this->frameCount, rhs.Size());
-		for (size_t i = 0; i < minFrameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] -= rhs[i];
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator-=(const AudioBuffer& rhs)
-	{
-		if (this->formatInfo != rhs.formatInfo)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator-=", "Operands must have the same audio format"));
-		}
-		return (AudioBuffer&)SignedArithmeticBuffer::operator-=(rhs);
-	}
-
-	AudioBuffer AudioBuffer::operator*(double rhs) const
-	{
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] * rhs;
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator*(const DoubleBuffer& rhs) const
-	{
-		if (this->frameCount != rhs.Size())
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator*", "double buffer's size must be equal to audio buffer's frame count"));
-		}
-
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] * rhs[i];
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator*(const AudioBuffer& rhs) const
-	{
-		AudioBuffer result = SignedArithmeticBuffer::operator*(rhs);
-		result.frameCount = this->frameCount;
-		result.formatInfo = rhs.formatInfo;
-		return result;
-	}
-
-	AudioBuffer& AudioBuffer::operator*=(double rhs)
-	{
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] *= rhs;
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator*=(const DoubleBuffer& rhs)
-	{
-		const size_t minFrameCount = HEPH_MATH_MIN(this->frameCount, rhs.Size());
-		for (size_t i = 0; i < minFrameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] *= rhs[i];
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator*=(const AudioBuffer& rhs)
-	{
-		if (this->formatInfo != rhs.formatInfo)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator*=", "Operands must have the same audio format"));
-		}
-		return (AudioBuffer&)SignedArithmeticBuffer::operator*=(rhs);
-	}
-
-	AudioBuffer AudioBuffer::operator/(double rhs) const
-	{
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] / rhs;
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator/(const DoubleBuffer& rhs) const
-	{
-		if (this->frameCount != rhs.Size())
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator/", "double buffer's size must be equal to audio buffer's frame count"));
-		}
-
-		AudioBuffer result;
-		result.pData = SignedArithmeticBuffer::AllocateUninitialized(this->SizeAsByte());
-		result.size = this->size;
-		result.frameCount = this->frameCount;
-		result.formatInfo = this->formatInfo;
-
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				result[i][j] = (*this)[i][j] / rhs[i];
-			}
-		}
-
-		return result;
-	}
-
-	AudioBuffer AudioBuffer::operator/(const AudioBuffer& rhs) const
-	{
-		AudioBuffer result = SignedArithmeticBuffer::operator/(rhs);
-		result.frameCount = this->frameCount;
-		result.formatInfo = rhs.formatInfo;
-		return result;
-	}
-
-	AudioBuffer& AudioBuffer::operator/=(double rhs)
-	{
-		for (size_t i = 0; i < this->frameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] /= rhs;
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator/=(const DoubleBuffer& rhs)
-	{
-		const size_t minFrameCount = HEPH_MATH_MIN(this->frameCount, rhs.Size());
-		for (size_t i = 0; i < minFrameCount; ++i)
-		{
-			for (size_t j = 0; j < this->formatInfo.channelLayout.count; ++j)
-			{
-				(*this)[i][j] /= rhs[i];
-			}
-		}
-		return *this;
-	}
-
-	AudioBuffer& AudioBuffer::operator/=(const AudioBuffer& rhs)
-	{
-		if (this->formatInfo != rhs.formatInfo)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator/=", "Operands must have the same audio format"));
-		}
-		return (AudioBuffer&)SignedArithmeticBuffer::operator/=(rhs);
-	}
-
-	AudioBuffer AudioBuffer::operator<<(size_t rhs) const 
+	AudioBuffer AudioBuffer::operator<<(size_t rhs) const
 	{
 		return SignedArithmeticBuffer::operator<<(rhs * this->formatInfo.channelLayout.count);
 	}
 
-	AudioBuffer& AudioBuffer::operator<<=(size_t rhs) 
+	AudioBuffer& AudioBuffer::operator<<=(size_t rhs)
 	{
 		return (AudioBuffer&)SignedArithmeticBuffer::operator<<=(rhs * this->formatInfo.channelLayout.count);
 	}
-	
+
 	AudioBuffer AudioBuffer::operator>>(size_t rhs) const
 	{
 		return SignedArithmeticBuffer::operator>>(rhs * this->formatInfo.channelLayout.count);
 	}
 
-	AudioBuffer& AudioBuffer::operator>>=(size_t rhs) 
+	AudioBuffer& AudioBuffer::operator>>=(size_t rhs)
 	{
 		return (AudioBuffer&)SignedArithmeticBuffer::operator>>=(rhs * this->formatInfo.channelLayout.count);
 	}
@@ -462,22 +140,22 @@ namespace HephAudio
 		return subBuffer;
 	}
 
-	void AudioBuffer::Insert(const AudioBuffer& rhs, size_t frameIndex) 
+	void AudioBuffer::Insert(const AudioBuffer& rhs, size_t frameIndex)
 	{
 		SignedArithmeticBuffer::Insert(rhs, frameIndex * this->formatInfo.channelLayout.count);
 	}
 
-	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount) 
+	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount)
 	{
 		SignedArithmeticBuffer::Cut(frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);
 	}
 
-	void AudioBuffer::Replace(const AudioBuffer& rhs, size_t frameIndex, size_t frameCount) 
+	void AudioBuffer::Replace(const AudioBuffer& rhs, size_t frameIndex, size_t frameCount)
 	{
 		SignedArithmeticBuffer::Replace(rhs, frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);
 	}
 
-	void AudioBuffer::Resize(size_t newFrameCount) 
+	void AudioBuffer::Resize(size_t newFrameCount)
 	{
 		SignedArithmeticBuffer::Resize(newFrameCount * this->formatInfo.channelLayout.count);
 	}
@@ -554,86 +232,38 @@ namespace HephAudio
 	{
 		this->formatInfo.bitRate = bitRate;
 	}
-}
 
-HephAudio::AudioBuffer operator+(double lhs, const HephAudio::AudioBuffer& rhs)
-{
-	return rhs + lhs;
-}
-
-HephAudio::AudioBuffer operator+(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs)
-{
-	return rhs + lhs;
-}
-
-HephAudio::AudioBuffer operator-(double lhs, const HephAudio::AudioBuffer& rhs)
-{
-	HephAudio::AudioBuffer result(rhs.FrameCount(), rhs.FormatInfo(), HephCommon::BufferFlags::AllocUninitialized);
-	for (size_t i = 0; i < result.FrameCount(); ++i)
+	void AudioBuffer::AddEventHandlers()
 	{
-		for (size_t j = 0; j < result.FormatInfo().channelLayout.count; ++j)
+		if (!BufferOperatorEvents<AudioBuffer, heph_audio_sample_t>::OnResultCreated.EventHandlerExists(AudioBuffer::ResultCreatedEventHandler))
 		{
-			result[i][j] = lhs - rhs[i][j];
+			BufferOperatorEvents<AudioBuffer, heph_audio_sample_t>::OnResultCreated += AudioBuffer::ResultCreatedEventHandler;
+			BufferOperatorEvents<AudioBuffer, AudioBuffer>::OnResultCreated += AudioBuffer::ResultCreatedEventHandlerBuffer;
 		}
 	}
-	return result;
-}
 
-HephAudio::AudioBuffer operator-(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs)
-{
-	if (lhs.Size() != rhs.FrameCount())
+	void AudioBuffer::ResultCreatedEventHandler(const EventParams& params)
 	{
-		RAISE_AND_THROW_HEPH_EXCEPTION(&lhs, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator-", "double buffer's size must be equal to audio buffer's frame count"));
+		BufferOperatorResultCreatedEventArgs<AudioBuffer, heph_audio_sample_t>* pArgs = (BufferOperatorResultCreatedEventArgs<AudioBuffer, heph_audio_sample_t>*)params.pArgs;
+
+		pArgs->result.pData = ArithmeticBuffer::AllocateUninitialized(pArgs->lhs.SizeAsByte());
+		pArgs->result.size = pArgs->lhs.size;
+		pArgs->result.frameCount = pArgs->lhs.frameCount;
+		pArgs->result.formatInfo = pArgs->lhs.formatInfo;
 	}
 
-	HephAudio::AudioBuffer result(rhs.FrameCount(), rhs.FormatInfo(), HephCommon::BufferFlags::AllocUninitialized);
-	for (size_t i = 0; i < result.FrameCount(); ++i)
+	void AudioBuffer::ResultCreatedEventHandlerBuffer(const EventParams& params)
 	{
-		for (size_t j = 0; j < result.FormatInfo().channelLayout.count; ++j)
+		BufferOperatorResultCreatedEventArgs<AudioBuffer, AudioBuffer>* pArgs = (BufferOperatorResultCreatedEventArgs<AudioBuffer, AudioBuffer>*)params.pArgs;
+
+		if (pArgs->lhs.formatInfo != pArgs->rhs.formatInfo)
 		{
-			result[i][j] = lhs[i] - rhs[i][j];
+			RAISE_AND_THROW_HEPH_EXCEPTION(&pArgs->lhs, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer", "Operands must have the same audio format"));
 		}
+
+		pArgs->result.pData = ArithmeticBuffer::AllocateUninitialized(pArgs->lhs.SizeAsByte());
+		pArgs->result.size = pArgs->lhs.size;
+		pArgs->result.frameCount = pArgs->lhs.frameCount;
+		pArgs->result.formatInfo = pArgs->lhs.formatInfo;
 	}
-	return result;
-}
-
-HephAudio::AudioBuffer operator*(double lhs, const HephAudio::AudioBuffer& rhs)
-{
-	return rhs * lhs;
-}
-
-HephAudio::AudioBuffer operator*(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs)
-{
-	return rhs * lhs;
-}
-
-HephAudio::AudioBuffer operator/(double lhs, const HephAudio::AudioBuffer& rhs)
-{
-	HephAudio::AudioBuffer result(rhs.FrameCount(), rhs.FormatInfo(), HephCommon::BufferFlags::AllocUninitialized);
-	for (size_t i = 0; i < result.FrameCount(); ++i)
-	{
-		for (size_t j = 0; j < result.FormatInfo().channelLayout.count; ++j)
-		{
-			result[i][j] = lhs / rhs[i][j];
-		}
-	}
-	return result;
-}
-
-HephAudio::AudioBuffer operator/(const HephCommon::DoubleBuffer& lhs, const HephAudio::AudioBuffer& rhs)
-{
-	if (lhs.Size() != rhs.FrameCount())
-	{
-		RAISE_AND_THROW_HEPH_EXCEPTION(&lhs, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::operator/", "double buffer's size must be equal to audio buffer's frame count"));
-	}
-
-	HephAudio::AudioBuffer result(rhs.FrameCount(), rhs.FormatInfo(), HephCommon::BufferFlags::AllocUninitialized);
-	for (size_t i = 0; i < result.FrameCount(); ++i)
-	{
-		for (size_t j = 0; j < result.FormatInfo().channelLayout.count; ++j)
-		{
-			result[i][j] = lhs[i] / rhs[i][j];
-		}
-	}
-	return result;
 }
