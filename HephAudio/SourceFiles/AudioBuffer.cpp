@@ -246,8 +246,6 @@ namespace HephAudio
 	{
 		BufferOperatorResultCreatedEventArgs<AudioBuffer, heph_audio_sample_t>* pArgs = (BufferOperatorResultCreatedEventArgs<AudioBuffer, heph_audio_sample_t>*)params.pArgs;
 
-		pArgs->result.pData = ArithmeticBuffer::AllocateUninitialized(pArgs->lhs.SizeAsByte());
-		pArgs->result.size = pArgs->lhs.size;
 		pArgs->result.frameCount = pArgs->lhs.frameCount;
 		pArgs->result.formatInfo = pArgs->lhs.formatInfo;
 	}
@@ -261,8 +259,6 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(&pArgs->lhs, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer", "Operands must have the same audio format"));
 		}
 
-		pArgs->result.pData = ArithmeticBuffer::AllocateUninitialized(pArgs->lhs.SizeAsByte());
-		pArgs->result.size = pArgs->lhs.size;
 		pArgs->result.frameCount = pArgs->lhs.frameCount;
 		pArgs->result.formatInfo = pArgs->lhs.formatInfo;
 	}
