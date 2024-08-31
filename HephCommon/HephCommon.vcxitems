@@ -18,7 +18,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ArithmeticBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferOperators.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\DoubleBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ComplexBuffer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ComplexBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Event.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventParams.h" />
@@ -45,7 +45,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\ComplexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\File.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp" />

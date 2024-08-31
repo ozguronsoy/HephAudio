@@ -17,7 +17,7 @@ namespace HephCommon
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		ComplexBuffer complexBuffer = ComplexBuffer(fftSize);
 		pocketfft::shape_t shape_in{ fftSize };
-		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
+		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.begin();
 
 		if (doubleBuffer.Size() != fftSize)
 		{
@@ -36,7 +36,7 @@ namespace HephCommon
 	}
 	void Fourier::FFT(ComplexBuffer& complexBuffer)
 	{
-		Fourier::FFT(complexBuffer, complexBuffer.FrameCount());
+		Fourier::FFT(complexBuffer, complexBuffer.Size());
 	}
 	void Fourier::FFT(ComplexBuffer& complexBuffer, size_t fftSize)
 	{
@@ -48,7 +48,7 @@ namespace HephCommon
 		static pocketfft::shape_t axes{ 0 };
 
 		pocketfft::shape_t shape_in{ fftSize };
-		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
+		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.begin();
 		pocketfft::c2c(shape_in, stride_in, stride_out, axes, true, (const std::complex<double>*)pComplexBuffer, pComplexBuffer, (double)1.0);
 	}
 	void Fourier::IFFT(DoubleBuffer& doubleBuffer, ComplexBuffer& complexBuffer)
@@ -57,10 +57,10 @@ namespace HephCommon
 		static pocketfft::stride_t stride_out{ sizeof(double) };
 		static pocketfft::shape_t axes{ 0 };
 
-		const size_t fftSize = complexBuffer.FrameCount();
+		const size_t fftSize = complexBuffer.Size();
 		pocketfft::shape_t shape_in{ fftSize };
 		double* pRealBuffer = (double*)doubleBuffer.begin();
-		const std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
+		const std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.begin();
 
 		pocketfft::c2r(shape_in, stride_in, stride_out, axes, false, pComplexBuffer, pRealBuffer, (double)1.0 / (double)fftSize);
 	}
@@ -70,9 +70,9 @@ namespace HephCommon
 		static pocketfft::stride_t stride_out{ sizeof(Complex) };
 		static pocketfft::shape_t axes{ 0 };
 
-		const size_t fftSize = complexBuffer.FrameCount();
+		const size_t fftSize = complexBuffer.Size();
 		pocketfft::shape_t shape_in{ fftSize };
-		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.Begin();
+		std::complex<double>* pComplexBuffer = (std::complex<double>*)complexBuffer.begin();
 
 		pocketfft::c2c(shape_in, stride_in, stride_out, axes, false, (const std::complex<double>*)pComplexBuffer, pComplexBuffer,
 			scale ? ((double)1.0 / (double)fftSize) : (double)1.0);

@@ -6,6 +6,7 @@
 #include "Oscillators/Oscillator.h"
 #include "Windows/Window.h"
 #include "Buffers/DoubleBuffer.h"
+#include "Buffers/ComplexBuffer.h"
 #include <vector>
 
 namespace HephAudio

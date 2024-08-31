@@ -4,7 +4,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Complex.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ComplexBuffer.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ComplexBuffer.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h">
@@ -56,7 +56,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferOperators.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ComplexBuffer.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\ComplexBuffer.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp">

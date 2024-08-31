@@ -1,7 +1,7 @@
 #pragma once
 #include "HephCommonShared.h"
 #include "Complex.h"
-#include "ComplexBuffer.h"
+#include "Buffers/ComplexBuffer.h"
 #include "Buffers/DoubleBuffer.h"
 
 namespace HephCommon
