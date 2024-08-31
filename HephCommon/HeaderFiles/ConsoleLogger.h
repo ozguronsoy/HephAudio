@@ -13,7 +13,7 @@ namespace HephCommon
 	class ConsoleLogger final
 	{
 	private:
-		static bool coloredOutput;
+		static inline bool coloredOutput = true;
 	public:
 		ConsoleLogger() = delete;
 		ConsoleLogger(const ConsoleLogger&) = delete;

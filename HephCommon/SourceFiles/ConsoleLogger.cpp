@@ -7,8 +7,6 @@
 
 namespace HephCommon
 {
-	bool ConsoleLogger::coloredOutput = true;
-
 	void ConsoleLogger::Log(const std::string& message, const char* logLevel)
 	{
 		ConsoleLogger::Log(message, logLevel, "HephLibs");
