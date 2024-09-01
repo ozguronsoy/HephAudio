@@ -2,6 +2,7 @@
 #include "HephAudioShared.h"
 #include "FFmpegAudioShared.h"
 #include "IAudioDecoder.h"
+#include "FFmpegEncodedAudioBuffer.h"
 
 namespace HephAudio
 {
@@ -35,6 +36,7 @@ namespace HephAudio
 		AudioBuffer Decode();
 		AudioBuffer Decode(size_t frameCount);
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
+		static AudioBuffer Decode(const FFmpegEncodedAudioBuffer& encodedBuffer);
 	private:
 		void OpenFile(const std::string& filePath);
 		int SeekFrame(size_t& frameIndex);

@@ -252,6 +252,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AlsaParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Spatializer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioDecoder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegEncodedAudioBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -408,5 +409,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\IAudioDecoder.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
   </ItemGroup>
 </Project>

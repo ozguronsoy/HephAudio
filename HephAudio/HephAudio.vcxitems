@@ -14,6 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegEncodedAudioBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\ALawCodec.h" />
@@ -86,6 +87,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioDecoder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\IAudioDecoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />

@@ -11,10 +11,12 @@ namespace HephAudio
 		: IAudioDecoder(), fileDuration_frame(0), audioStreamIndex(FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND)
 		, firstPacketPts(0), avFormatContext(nullptr), avCodecContext(nullptr)
 		, swrContext(nullptr), avFrame(nullptr), avPacket(nullptr) {}
+	
 	FFmpegAudioDecoder::FFmpegAudioDecoder(const std::string& filePath) : FFmpegAudioDecoder()
 	{
 		this->OpenFile(filePath);
 	}
+	
 	FFmpegAudioDecoder::FFmpegAudioDecoder(FFmpegAudioDecoder&& rhs) noexcept
 		: fileDuration_frame(rhs.fileDuration_frame), audioStreamIndex(rhs.audioStreamIndex)
 		, firstPacketPts(rhs.firstPacketPts), avFormatContext(rhs.avFormatContext), avCodecContext(rhs.avCodecContext)
@@ -28,10 +30,12 @@ namespace HephAudio
 		rhs.avFrame = nullptr;
 		rhs.avPacket = nullptr;
 	}
+	
 	FFmpegAudioDecoder::~FFmpegAudioDecoder()
 	{
 		this->CloseFile();
 	}
+	
 	FFmpegAudioDecoder& FFmpegAudioDecoder::operator=(FFmpegAudioDecoder&& rhs) noexcept
 	{
 		if (this != &rhs)
@@ -57,6 +61,7 @@ namespace HephAudio
 
 		return *this;
 	}
+	
 	void FFmpegAudioDecoder::ChangeFile(const std::string& newAudioFilePath)
 	{
 		if (this->filePath != newAudioFilePath)
@@ -65,6 +70,7 @@ namespace HephAudio
 			this->OpenFile(newAudioFilePath);
 		}
 	}
+	
 	void FFmpegAudioDecoder::CloseFile()
 	{
 		if (this->avFrame != nullptr)
@@ -102,21 +108,25 @@ namespace HephAudio
 		this->audioStreamIndex = FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND;
 		this->firstPacketPts = 0;
 	}
+	
 	bool FFmpegAudioDecoder::IsFileOpen() const
 	{
 		return this->filePath != "" && this->avFormatContext != nullptr
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
 	}
+	
 	AudioFormatInfo FFmpegAudioDecoder::GetOutputFormatInfo() const
 	{
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
 		return HEPHAUDIO_INTERNAL_FORMAT(HephAudio::FromAVChannelLayout(avStream->codecpar->ch_layout), avStream->codecpar->sample_rate);
 	}
+	
 	size_t FFmpegAudioDecoder::GetFrameCount() const
 	{
 		return this->fileDuration_frame;
 	}
+	
 	bool FFmpegAudioDecoder::Seek(size_t frameIndex)
 	{
 		if (frameIndex >= this->fileDuration_frame)
@@ -133,10 +143,12 @@ namespace HephAudio
 		}
 		return true;
 	}
+	
 	AudioBuffer FFmpegAudioDecoder::Decode()
 	{
 		return this->Decode(0, this->fileDuration_frame);
 	}
+	
 	AudioBuffer FFmpegAudioDecoder::Decode(size_t frameCount)
 	{
 		if (!this->IsFileOpen())
@@ -242,6 +254,7 @@ namespace HephAudio
 
 		return decodedBuffer;
 	}
+	
 	AudioBuffer FFmpegAudioDecoder::Decode(size_t frameIndex, size_t frameCount)
 	{
 		if (!this->IsFileOpen())
@@ -386,6 +399,12 @@ namespace HephAudio
 
 		return decodedBuffer;
 	}
+
+	AudioBuffer FFmpegAudioDecoder::Decode(const FFmpegEncodedAudioBuffer& encodedBuffer)
+	{
+		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioDecoder::Decode", "Not implemented"));
+	}
+	
 	void FFmpegAudioDecoder::OpenFile(const std::string& filePath)
 	{
 		if (!File::FileExists(filePath))
@@ -495,6 +514,7 @@ namespace HephAudio
 		this->firstPacketPts = this->avPacket->pts;
 		av_packet_unref(this->avPacket);
 	}
+	
 	int FFmpegAudioDecoder::SeekFrame(size_t& frameIndex)
 	{
 		constexpr int seekFlags = AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME;

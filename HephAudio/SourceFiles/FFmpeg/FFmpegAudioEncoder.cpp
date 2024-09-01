@@ -14,11 +14,13 @@ namespace HephAudio
 		: audioFilePath(""), avFormatContext(nullptr), avIoContext(nullptr)
 		, avStream(nullptr), avCodecContext(nullptr), swrContext(nullptr)
 		, avPacket(nullptr), avFrame(nullptr) {}
+	
 	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::string& audioFilePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
 	{
 		this->outputFormatInfo = outputFormatInfo;
 		this->ChangeFile(audioFilePath, overwrite);
 	}
+	
 	FFmpegAudioEncoder::FFmpegAudioEncoder(FFmpegAudioEncoder&& rhs) noexcept
 		: audioFilePath(std::move(rhs.audioFilePath)), outputFormatInfo(rhs.outputFormatInfo), avFormatContext(rhs.avFormatContext)
 		, avIoContext(rhs.avIoContext), avStream(rhs.avStream), avCodecContext(rhs.avCodecContext)
@@ -32,10 +34,12 @@ namespace HephAudio
 		rhs.avPacket = nullptr;
 		rhs.avFrame = nullptr;
 	}
+	
 	FFmpegAudioEncoder::~FFmpegAudioEncoder()
 	{
 		this->CloseFile();
 	}
+	
 	FFmpegAudioEncoder& FFmpegAudioEncoder::operator=(FFmpegAudioEncoder&& rhs) noexcept
 	{
 		if (this != &rhs)
@@ -63,6 +67,7 @@ namespace HephAudio
 
 		return *this;
 	}
+	
 	void FFmpegAudioEncoder::ChangeFile(const std::string& newAudioFilePath, bool overwrite)
 	{
 		if (this->audioFilePath != newAudioFilePath)
@@ -71,6 +76,7 @@ namespace HephAudio
 			this->OpenFile(newAudioFilePath, overwrite);
 		}
 	}
+	
 	void FFmpegAudioEncoder::CloseFile()
 	{
 		if (this->IsFileOpen())
@@ -137,6 +143,7 @@ namespace HephAudio
 
 		this->audioFilePath = "";
 	}
+	
 	bool FFmpegAudioEncoder::IsFileOpen() const
 	{
 		return this->audioFilePath != "" && this->avFormatContext != nullptr
@@ -144,6 +151,7 @@ namespace HephAudio
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
 	}
+	
 	void FFmpegAudioEncoder::Encode(const AudioBuffer& bufferToEncode)
 	{
 		if (!this->IsFileOpen())
@@ -232,6 +240,17 @@ namespace HephAudio
 			av_packet_unref(this->avPacket);
 		}
 	}
+
+	FFmpegEncodedAudioBuffer FFmpegAudioEncoder::Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat)
+	{
+		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Encode", "Not implemented"));
+	}
+
+	FFmpegEncodedAudioBuffer FFmpegAudioEncoder::Transcode(const FFmpegEncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat)
+	{
+		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Transcode", "Not implemented"));
+	}
+
 	void FFmpegAudioEncoder::Transcode(const std::string& inputFilePath, const std::string& outputFilePath, bool overwrite)
 	{
 		FFmpegAudioDecoder decoder(inputFilePath);
@@ -241,6 +260,7 @@ namespace HephAudio
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
+	
 	void FFmpegAudioEncoder::Transcode(const std::string& inputFilePath, const std::string& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite)
 	{
 		FFmpegAudioDecoder decoder(inputFilePath);
@@ -250,6 +270,7 @@ namespace HephAudio
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
+	
 	void FFmpegAudioEncoder::OpenFile(const std::string& audioFilePath, bool overwrite)
 	{
 		if (!overwrite && File::FileExists(audioFilePath))
@@ -410,6 +431,7 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to allocate AVPacket."));
 		}
 	}
+
 	AVSampleFormat FFmpegAudioEncoder::AFI2AVSF(FFmpegAudioEncoder* pEncoder, const AudioFormatInfo& afi)
 	{
 		switch (afi.formatTag)
@@ -442,6 +464,7 @@ namespace HephAudio
 		RAISE_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
 		return AV_SAMPLE_FMT_NONE;
 	}
+
 	uint32_t FFmpegAudioEncoder::GetClosestSupportedSampleRate(const AVCodec* avCodec, uint32_t targetSampleRate)
 	{
 		if (avCodec->supported_samplerates != nullptr)
@@ -471,6 +494,7 @@ namespace HephAudio
 
 		return targetSampleRate;
 	}
+	
 	AVSampleFormat FFmpegAudioEncoder::GetClosestSupportedSampleFormat(FFmpegAudioEncoder* pEncoder, const AVCodec* avCodec, uint32_t targetFormatTag, uint16_t targetBitsPerSample)
 	{
 		if (avCodec->sample_fmts == nullptr)
@@ -619,6 +643,7 @@ namespace HephAudio
 		RAISE_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
 		return AV_SAMPLE_FMT_NONE;
 	}
+	
 	void FFmpegAudioEncoder::Transcode(void* pDecoder, FFmpegAudioEncoder& encoder)
 	{
 		FFmpegAudioDecoder& decoder = *(FFmpegAudioDecoder*)pDecoder;

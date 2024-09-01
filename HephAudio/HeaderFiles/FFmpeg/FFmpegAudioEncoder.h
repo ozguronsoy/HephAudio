@@ -2,6 +2,7 @@
 #include "HephAudioShared.h"
 #include "FFmpegAudioShared.h"
 #include "AudioBuffer.h"
+#include "FFmpegEncodedAudioBuffer.h"
 #include <string>
 
 namespace HephAudio
@@ -30,6 +31,8 @@ namespace HephAudio
 		void CloseFile();
 		bool IsFileOpen() const;
 		void Encode(const AudioBuffer& bufferToEncode);
+		static FFmpegEncodedAudioBuffer Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat);
+		static FFmpegEncodedAudioBuffer Transcode(const FFmpegEncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat);
 		static void Transcode(const std::string& inputFilePath, const std::string& outputFilePath, bool overwrite);
 		static void Transcode(const std::string& inputFilePath, const std::string& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite);
 	private:
