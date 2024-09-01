@@ -8,6 +8,9 @@ namespace HephCommon
 {
 	class Fourier final
 	{
+	private:
+		static constexpr bool DIRECTION_FORWARD = true;
+		static constexpr bool DIRECTION_BACKWARD = false;
 	public:
 		static ComplexBuffer FFT(const DoubleBuffer& doubleBuffer);
 		static ComplexBuffer FFT(const DoubleBuffer& doubleBuffer, size_t fftSize);
@@ -20,5 +23,8 @@ namespace HephCommon
 		static size_t CalculateFFTSize(size_t bufferSize);
 		static DoubleBuffer Convolve(const DoubleBuffer& source, const DoubleBuffer& kernel);
 		static DoubleBuffer Convolve(const DoubleBuffer& source, const DoubleBuffer& kernel, ConvolutionMode convolutionMode);
+	private:
+		static void ReverseBits(ComplexBuffer& complexBuffer, size_t fftSize);
+		static void FFT_Internal(ComplexBuffer& complexBuffer, size_t fftSize, bool direction);
 	};
 }

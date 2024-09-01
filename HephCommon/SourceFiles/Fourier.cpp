@@ -1,6 +1,5 @@
 #include "Fourier.h"
-#include <../../dependencies/pocketfft/pocketfft_hdronly.h>
-#include <complex>
+#include "HephMath.h"
 
 namespace HephCommon
 {
@@ -8,80 +7,71 @@ namespace HephCommon
 	{
 		return Fourier::FFT(doubleBuffer, doubleBuffer.Size());
 	}
+
 	ComplexBuffer Fourier::FFT(const DoubleBuffer& doubleBuffer, size_t fftSize)
 	{
-		static pocketfft::stride_t stride_in{ sizeof(double) };
-		static pocketfft::stride_t stride_out{ sizeof(Complex) };
-		static pocketfft::shape_t axes{ 0 };
-
 		fftSize = Fourier::CalculateFFTSize(fftSize);
-		ComplexBuffer complexBuffer(fftSize);
-		pocketfft::shape_t shape_in{ fftSize };
+		ComplexBuffer complexBuffer(fftSize, BufferFlags::AllocUninitialized);
 
-		if (doubleBuffer.Size() != fftSize)
+		const size_t minSize = HEPH_MATH_MIN(doubleBuffer.Size(), fftSize);
+		const size_t maxSize = HEPH_MATH_MAX(doubleBuffer.Size(), fftSize);
+		size_t i;
+
+		for (i = 0; i < minSize; ++i)
 		{
-			DoubleBuffer tempBuffer = doubleBuffer;
-			tempBuffer.Resize(fftSize);
-			const double* pRealBuffer = (const double*)tempBuffer.begin();
-			pocketfft::r2c(shape_in, stride_in, stride_out, axes, true, pRealBuffer, complexBuffer.begin(), (double)1.0);
+			complexBuffer[i] = Complex(doubleBuffer[i], 0);
 		}
-		else
+		for (; i < maxSize; ++i)
 		{
-			const double* pRealBuffer = (const double*)doubleBuffer.begin();
-			pocketfft::r2c(shape_in, stride_in, stride_out, axes, true, pRealBuffer, complexBuffer.begin(), (double)1.0);
+			complexBuffer[i] = Complex();
 		}
+
+		Fourier::FFT_Internal(complexBuffer, fftSize, Fourier::DIRECTION_FORWARD);
 
 		return complexBuffer;
 	}
+
 	void Fourier::FFT(ComplexBuffer& complexBuffer)
 	{
 		Fourier::FFT(complexBuffer, complexBuffer.Size());
 	}
+
 	void Fourier::FFT(ComplexBuffer& complexBuffer, size_t fftSize)
 	{
 		fftSize = Fourier::CalculateFFTSize(fftSize);
 		complexBuffer.Resize(fftSize);
-
-		static pocketfft::stride_t stride_in{ sizeof(Complex) };
-		static pocketfft::stride_t stride_out{ sizeof(Complex) };
-		static pocketfft::shape_t axes{ 0 };
-
-		pocketfft::shape_t shape_in{ fftSize };
-		Complex* pComplexBuffer = (Complex*)complexBuffer.begin();
-		pocketfft::c2c(shape_in, stride_in, stride_out, axes, true, pComplexBuffer, pComplexBuffer, (double)1.0);
+		Fourier::FFT_Internal(complexBuffer, fftSize, Fourier::DIRECTION_FORWARD);
 	}
+
 	void Fourier::IFFT(DoubleBuffer& doubleBuffer, ComplexBuffer& complexBuffer)
 	{
-		static pocketfft::stride_t stride_in{ sizeof(Complex) };
-		static pocketfft::stride_t stride_out{ sizeof(double) };
-		static pocketfft::shape_t axes{ 0 };
-
-		const size_t fftSize = complexBuffer.Size();
-		pocketfft::shape_t shape_in{ fftSize };
-		double* pRealBuffer = (double*)doubleBuffer.begin();
-
-		pocketfft::c2r(shape_in, stride_in, stride_out, axes, false, complexBuffer.begin(), pRealBuffer, (double)1.0 / (double)fftSize);
+		Fourier::FFT_Internal(complexBuffer, complexBuffer.Size(), Fourier::DIRECTION_BACKWARD);
+		complexBuffer /= complexBuffer.Size();
+		for (size_t i = 0; i < doubleBuffer.Size(); ++i)
+		{
+			doubleBuffer[i] = complexBuffer[i].real;
+		}
 	}
+
 	void Fourier::IFFT(ComplexBuffer& complexBuffer, bool scale)
 	{
-		static pocketfft::stride_t stride_in{ sizeof(Complex) };
-		static pocketfft::stride_t stride_out{ sizeof(Complex) };
-		static pocketfft::shape_t axes{ 0 };
-
-		const size_t fftSize = complexBuffer.Size();
-		pocketfft::shape_t shape_in{ fftSize };
-
-		pocketfft::c2c(shape_in, stride_in, stride_out, axes, false, complexBuffer.begin(), complexBuffer.begin(),
-			scale ? ((double)1.0 / (double)fftSize) : (double)1.0);
+		Fourier::FFT_Internal(complexBuffer, complexBuffer.Size(), Fourier::DIRECTION_BACKWARD);
+		if (scale)
+		{
+			complexBuffer /= complexBuffer.Size();
+		}
 	}
+
 	double Fourier::BinFrequencyToIndex(size_t sampleRate, size_t fftSize, double frequency)
 	{
 		return round(frequency * fftSize / sampleRate);
 	}
+
 	double Fourier::IndexToBinFrequency(size_t sampleRate, size_t fftSize, size_t index)
 	{
 		return (double)index * sampleRate / fftSize;
 	}
+
 	size_t Fourier::CalculateFFTSize(size_t bufferSize)
 	{
 		if (!(bufferSize > 0 && !(bufferSize & (bufferSize - 1)))) // if not power of 2
@@ -90,10 +80,12 @@ namespace HephCommon
 		}
 		return bufferSize;
 	}
+
 	DoubleBuffer Fourier::Convolve(const DoubleBuffer& source, const DoubleBuffer& kernel)
 	{
 		return Fourier::Convolve(source, kernel, ConvolutionMode::Full);
 	}
+
 	DoubleBuffer Fourier::Convolve(const DoubleBuffer& source, const DoubleBuffer& kernel, ConvolutionMode convolutionMode)
 	{
 		if (convolutionMode == ConvolutionMode::ValidPadding && kernel.Size() > source.Size())
@@ -159,5 +151,50 @@ namespace HephCommon
 			result[i - iStart] = tf[i].real / fftSize;
 		}
 		return result;
+	}
+
+	void Fourier::ReverseBits(ComplexBuffer& complexBuffer, size_t fftSize)
+	{
+		size_t j = 0;
+		for (size_t i = 0; i < fftSize; ++i)
+		{
+			if (i < j)
+			{
+				std::swap(complexBuffer[i], complexBuffer[j]);
+			}
+			j ^= fftSize - fftSize / ((i ^ (i + 1)) + 1);
+		}
+	}
+
+	void Fourier::FFT_Internal(ComplexBuffer& complexBuffer, size_t fftSize, bool direction)
+	{
+		Fourier::ReverseBits(complexBuffer, fftSize);
+
+		Complex a, b, temp;
+		size_t p, s1, s2, i, j;
+		int sign = (direction == Fourier::DIRECTION_FORWARD) ? (1) : (-1);
+
+		a.real = -1;
+
+		for (p = fftSize, s1 = 1, s2 = 2; 
+			p > 1; 
+			p >>= 1, s1 <<= 1, s2 <<= 1)
+		{
+			b.real = 1;
+
+			for (i = 0; i < s1; ++i)
+			{
+				for (j = i; j < fftSize; j += s2)
+				{
+					temp = b * complexBuffer[j + s1];
+					complexBuffer[j + s1] = complexBuffer[j] - temp;
+					complexBuffer[j] += temp;
+				}
+				b *= a;
+			}
+
+			a.imag = sign * sqrt((1.0 - a.real) * 0.5);
+			a.real = sqrt((1.0 + a.real) * 0.5);
+		}
 	}
 }
