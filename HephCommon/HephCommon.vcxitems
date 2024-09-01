@@ -35,13 +35,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Stopwatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Simd.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Matrix.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\DoubleBuffer.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Matrix.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Simd.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Fourier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp" />

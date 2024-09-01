@@ -27,6 +27,7 @@ include_directories(
 
 file(GLOB HEPH_AUDIO
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/*.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Buffers/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioCodecs/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioFormats/*.cpp
@@ -67,7 +68,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     endif()
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
-
+    
      set(
         HEPHAUDIO_LINK_LIBS 
         m

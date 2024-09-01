@@ -22,7 +22,7 @@ namespace HephCommon
 	struct HephException final
 	{
 	public:
-		static inline thread_local std::vector<HephException> Exceptions = std::vector<HephException>();
+		static thread_local std::vector<HephException> Exceptions;
 		static inline Event OnException = Event();
 	public:
 		int64_t errorCode;
