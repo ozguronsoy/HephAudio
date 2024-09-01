@@ -32,8 +32,8 @@ cmake_minimum_required(VERSION 3.22.1)
 # your project name
 project("myapplication")
 
-# if not set, HephAudio/CMakeLists.txt will set the CMAKE_CXX_STANDARD to 14
-set (CMAKE_CXX_STANDARD 14)
+# if not set, HephAudio/CMakeLists.txt will set the CMAKE_CXX_STANDARD to 17
+set (CMAKE_CXX_STANDARD 17)
 
 # execute the HephAudio/CMakeLists.txt file
 include(${CMAKE_CURRENT_SOURCE_DIR}/HephAudio/CMakeLists.txt)
