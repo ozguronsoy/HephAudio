@@ -48,24 +48,24 @@ namespace HephCommon
 		BufferAdditionOperator& operator=(const BufferAdditionOperator&) = delete;
 
 	public:
-		friend static Lhs operator+(const Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs operator+(const Lhs& lhs, const Rhs& rhs)
 		{
 			return Impl<Rhs, RhsData>(lhs, rhs);
 		}
 
-		friend static Lhs& operator+=(Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs& operator+=(Lhs& lhs, const Rhs& rhs)
 		{
 			return ImplAssign<Rhs, RhsData>(lhs, rhs);
 		}
 
 		template<typename Ret = Lhs>
-		friend static typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator+(const Rhs& rhs, const Lhs& lhs)
+		friend inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator+(const Rhs& rhs, const Lhs& lhs)
 		{
 			return lhs + rhs;
 		}
 
 		template<typename Ret>
-		friend static typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator+(const Rhs& rhs, const Lhs& lhs);
+		friend inline typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator+(const Rhs& rhs, const Lhs& lhs);
 
 	private:
 		template<typename U = Rhs, typename V = RhsData>
@@ -159,24 +159,24 @@ namespace HephCommon
 		BufferSubtractionOperator& operator=(const BufferSubtractionOperator&) = delete;
 
 	public:
-		friend static Lhs operator-(const Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs operator-(const Lhs& lhs, const Rhs& rhs)
 		{
 			return Impl<Rhs, RhsData>(lhs, rhs);
 		}
 
-		friend static Lhs& operator-=(Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs& operator-=(Lhs& lhs, const Rhs& rhs)
 		{
 			return ImplAssign<Rhs, RhsData>(lhs, rhs);
 		}
 
 		template<typename Ret = Lhs>
-		friend static typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator-(const Rhs& rhs, const Lhs& lhs)
+		friend inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator-(const Rhs& rhs, const Lhs& lhs)
 		{
 			return ImplRhs<Rhs, RhsData>(rhs, lhs);
 		}
 
 		template<typename Ret>
-		friend static typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator-(const Rhs& rhs, const Lhs& lhs);
+		friend inline typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator-(const Rhs& rhs, const Lhs& lhs);
 
 	private:
 		template<typename U = Rhs, typename V = RhsData>
@@ -314,24 +314,24 @@ namespace HephCommon
 		BufferMultiplicationOperator& operator=(const BufferMultiplicationOperator&) = delete;
 
 	public:
-		friend static Lhs operator*(const Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs operator*(const Lhs& lhs, const Rhs& rhs)
 		{
 			return Impl<Rhs, RhsData>(lhs, rhs);
 		}
 
-		friend static Lhs& operator*=(Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs& operator*=(Lhs& lhs, const Rhs& rhs)
 		{
 			return ImplAssign<Rhs, RhsData>(lhs, rhs);
 		}
 
 		template<typename Ret = Lhs>
-		friend static typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator*(const Rhs& rhs, const Lhs& lhs)
+		friend inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator*(const Rhs& rhs, const Lhs& lhs)
 		{
 			return lhs * rhs;
 		}
 
 		template<typename Ret>
-		friend static typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator*(const Rhs& rhs, const Lhs& lhs);
+		friend inline typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator*(const Rhs& rhs, const Lhs& lhs);
 
 	private:
 		template<typename U = Rhs, typename V = RhsData>
@@ -425,24 +425,24 @@ namespace HephCommon
 		BufferDivisionOperator& operator=(const BufferDivisionOperator&) = delete;
 
 	public:
-		friend static Lhs operator/(const Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs operator/(const Lhs& lhs, const Rhs& rhs)
 		{
 			return Impl<Rhs, RhsData>(lhs, rhs);
 		}
 
-		friend static Lhs& operator/=(Lhs& lhs, const Rhs& rhs)
+		friend inline Lhs& operator/=(Lhs& lhs, const Rhs& rhs)
 		{
 			return ImplAssign<Rhs, RhsData>(lhs, rhs);
 		}
 
 		template<typename Ret = Lhs>
-		friend static typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator/(const Rhs& rhs, const Lhs& lhs)
+		friend inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR, Ret>::type operator/(const Rhs& rhs, const Lhs& lhs)
 		{
 			return ImplRhs<Rhs, RhsData>(rhs, lhs);
 		}
 
 		template<typename Ret>
-		friend static typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator/(const Rhs& rhs, const Lhs& lhs);
+		friend inline typename std::enable_if<!DEFINE_RHS_LHS_OPERATOR, Ret>::type operator/(const Rhs& rhs, const Lhs& lhs);
 
 	private:
 		template<typename U = Rhs, typename V = RhsData>
@@ -585,7 +585,7 @@ namespace HephCommon
 		BufferUnaryMinusOperator& operator=(const BufferUnaryMinusOperator&) = delete;
 
 	public:
-		friend static Lhs operator-(const Lhs& lhs)
+		friend inline Lhs operator-(const Lhs& lhs)
 		{
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Lhs> args(lhs, lhs, result);
