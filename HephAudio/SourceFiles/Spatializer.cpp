@@ -131,8 +131,8 @@ namespace HephAudio
 
 			for (size_t i = 0; i < this->frameCount; i++)
 			{
-				leftTF[i].real(leftIR[i]);
-				rightTF[i].real(rightIR[i]);
+				leftTF[i].real = leftIR[i];
+				rightTF[i].real = rightIR[i];
 			}
 
 			Fourier::FFT(leftTF, this->frameCount);
@@ -155,8 +155,8 @@ namespace HephAudio
 
 			for (size_t j = 0, k = i; j < this->frameCount && k < buffer.FrameCount(); ++j, ++k)
 			{
-				buffer[k][0] += left[j].real() * windowBuffer[j] / this->frameCount;
-				buffer[k][1] += right[j].real() * windowBuffer[j] / this->frameCount;
+				buffer[k][0] += left[j].real * windowBuffer[j] / this->frameCount;
+				buffer[k][1] += right[j].real * windowBuffer[j] / this->frameCount;
 			}
 		}
 	}

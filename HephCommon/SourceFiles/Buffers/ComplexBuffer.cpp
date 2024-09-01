@@ -15,8 +15,8 @@ namespace HephCommon
 
 		for (size_t i = 0; i < this->size; ++i)
 		{
-			(*this)[i].real(rhs.begin()[i]);
-			(*this)[i].imag(0);
+			(*this)[i].real = rhs.begin()[i];
+			(*this)[i].imag = 0;
 		}
 	}
 	
@@ -28,8 +28,8 @@ namespace HephCommon
 
 		for (size_t i = 0; i < this->size; ++i)
 		{
-			(*this)[i].real(rhs[i]);
-			(*this)[i].imag(0);
+			(*this)[i].real = rhs[i];
+			(*this)[i].imag = 0;
 		}
 	}
 	
@@ -47,8 +47,8 @@ namespace HephCommon
 			this->pData = ComplexBuffer::AllocateUninitialized(this->SizeAsByte());
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i].real(rhs.begin()[i]);
-				(*this)[i].imag(0);
+				(*this)[i].real = rhs.begin()[i];
+				(*this)[i].imag = 0;
 			}
 		}
 
@@ -81,8 +81,8 @@ namespace HephCommon
 			this->pData = ComplexBuffer::AllocateUninitialized(size_byte);
 			for (size_t i = 0; i < this->size; ++i)
 			{
-				(*this)[i].real(rhs[i]);
-				(*this)[i].imag(0);
+				(*this)[i].real = rhs[i];
+				(*this)[i].imag = 0;
 			}
 		}
 

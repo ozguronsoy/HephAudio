@@ -610,7 +610,7 @@ namespace HephAudio
 				Fourier::IFFT(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
 				{
-					buffer[l][j] += complexBuffer[k].real() * overflowFactor * windowBuffer[k] / fftSize;
+					buffer[l][j] += complexBuffer[k].real * overflowFactor * windowBuffer[k] / fftSize;
 				}
 			}
 		}
@@ -671,7 +671,7 @@ namespace HephAudio
 					Fourier::IFFT(complexBuffer, false);
 					for (size_t j = 0, k = i + frameIndex; j < fftSize && k < buffer->frameCount; j++, k++)
 					{
-						(*buffer)[k][channelIndex] += complexBuffer[j].real() * overflowFactor * (*pWindowBuffer)[j] / fftSize;
+						(*buffer)[k][channelIndex] += complexBuffer[j].real * overflowFactor * (*pWindowBuffer)[j] / fftSize;
 					}
 				}
 			};
@@ -843,7 +843,7 @@ namespace HephAudio
 				Fourier::IFFT(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
 				{
-					buffer[l][j] += complexBuffer[k].real() * overflowFactor * windowBuffer[k] / fftSize;
+					buffer[l][j] += complexBuffer[k].real * overflowFactor * windowBuffer[k] / fftSize;
 				}
 			}
 		}
@@ -919,7 +919,7 @@ namespace HephAudio
 					Fourier::IFFT(complexBuffer, false);
 					for (size_t k = 0, l = i + frameIndex; k < fftSize && l < buffer->frameCount; k++, l++)
 					{
-						(*buffer)[l][channelIndex] += complexBuffer[k].real() * overflowFactor * (*pWindowBuffer)[k] / fftSize;
+						(*buffer)[l][channelIndex] += complexBuffer[k].real * overflowFactor * (*pWindowBuffer)[k] / fftSize;
 					}
 				}
 			};
@@ -990,7 +990,7 @@ namespace HephAudio
 				Fourier::IFFT(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
 				{
-					buffer[l][j] += complexBuffer[k].real() * overflowFactor * windowBuffer[k] / fftSize;
+					buffer[l][j] += complexBuffer[k].real * overflowFactor * windowBuffer[k] / fftSize;
 				}
 			}
 		}
@@ -1034,7 +1034,7 @@ namespace HephAudio
 					Fourier::IFFT(complexBuffer, false);
 					for (size_t j = 0, k = i + frameIndex; j < fftSize && k < buffer->frameCount; j++, k++)
 					{
-						(*buffer)[k][channelIndex] += complexBuffer[j].real() * overflowFactor * (*pWindowBuffer)[j] / (double)fftSize;
+						(*buffer)[k][channelIndex] += complexBuffer[j].real * overflowFactor * (*pWindowBuffer)[j] / (double)fftSize;
 					}
 				}
 			};
@@ -1102,7 +1102,7 @@ namespace HephAudio
 				Fourier::IFFT(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
 				{
-					buffer[l][j] += complexBuffer[k].real() * overflowFactor * windowBuffer[k] / fftSize;
+					buffer[l][j] += complexBuffer[k].real * overflowFactor * windowBuffer[k] / fftSize;
 				}
 			}
 		}
@@ -1144,7 +1144,7 @@ namespace HephAudio
 					Fourier::IFFT(complexBuffer, false);
 					for (size_t j = 0, k = i + frameIndex; j < fftSize && k < buffer->frameCount; j++, k++)
 					{
-						(*buffer)[k][channelIndex] += complexBuffer[j].real() * overflowFactor * (*pWindowBuffer)[j] / fftSize;
+						(*buffer)[k][channelIndex] += complexBuffer[j].real * overflowFactor * (*pWindowBuffer)[j] / fftSize;
 					}
 				}
 			};
@@ -1219,7 +1219,7 @@ namespace HephAudio
 				Fourier::IFFT(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
 				{
-					buffer[l][j] += complexBuffer[k].real() * overflowFactor * windowBuffer[k] / fftSize;
+					buffer[l][j] += complexBuffer[k].real * overflowFactor * windowBuffer[k] / fftSize;
 				}
 			}
 		}
@@ -1269,7 +1269,7 @@ namespace HephAudio
 					Fourier::IFFT(complexBuffer, false);
 					for (size_t j = 0, k = i + frameIndex; j < fftSize && k < buffer->frameCount; j++, k++)
 					{
-						(*buffer)[k][channelIndex] += complexBuffer[j].real() * overflowFactor * (*pWindowBuffer)[j] / (double)fftSize;
+						(*buffer)[k][channelIndex] += complexBuffer[j].real * overflowFactor * (*pWindowBuffer)[j] / (double)fftSize;
 					}
 				}
 			};
@@ -1337,7 +1337,7 @@ namespace HephAudio
 				Fourier::IFFT(complexBuffer, false);
 				for (size_t k = 0, l = i; k < fftSize && l < buffer.frameCount; k++, l++)
 				{
-					buffer[l][j] += complexBuffer[k].real() * overflowFactor * windowBuffer[k] / fftSize;
+					buffer[l][j] += complexBuffer[k].real * overflowFactor * windowBuffer[k] / fftSize;
 				}
 			}
 		}
@@ -1381,7 +1381,7 @@ namespace HephAudio
 					Fourier::IFFT(complexBuffer, false);
 					for (size_t j = 0, k = i + frameIndex; j < fftSize && k < buffer->frameCount; j++, k++)
 					{
-						(*buffer)[k][channelIndex] += complexBuffer[j].real() * overflowFactor * (*pWindowBuffer)[j] / (double)fftSize;
+						(*buffer)[k][channelIndex] += complexBuffer[j].real * overflowFactor * (*pWindowBuffer)[j] / (double)fftSize;
 					}
 				}
 			};
