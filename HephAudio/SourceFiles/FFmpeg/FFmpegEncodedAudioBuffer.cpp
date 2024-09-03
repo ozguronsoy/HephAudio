@@ -6,6 +6,8 @@ namespace HephAudio
 {
 	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer() : EncodedAudioBuffer() {}
 
+	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(const AudioFormatInfo& formatInfo) : EncodedAudioBuffer(formatInfo) {}
+
 	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(FFmpegEncodedAudioBuffer&& rhs) noexcept : EncodedAudioBuffer(std::move(rhs)) {}
 
 	FFmpegEncodedAudioBuffer::~FFmpegEncodedAudioBuffer()
@@ -31,16 +33,6 @@ namespace HephAudio
 	AVPacket*& FFmpegEncodedAudioBuffer::operator[](size_t index) const
 	{
 		return ((AVPacket**)this->pData)[index];
-	}
-
-	size_t FFmpegEncodedAudioBuffer::Size() const
-	{
-		return this->size;
-	}
-
-	size_t FFmpegEncodedAudioBuffer::SizeAsByte() const
-	{
-		return this->size * sizeof(AVPacket*);
 	}
 
 	void FFmpegEncodedAudioBuffer::Release()
