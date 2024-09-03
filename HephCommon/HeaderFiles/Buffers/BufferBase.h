@@ -83,13 +83,13 @@ namespace HephCommon
 			const size_t rhsSize_byte = BufferBase::SizeAsByte(rhs);
 
 			Tself result{};
-			result.pData = BufferBase::AllocateUninitialized(thisSize_byte);
-			result.size = this->size;
+			dynamic_cast<BufferBase*>(&result)->pData = BufferBase::AllocateUninitialized(thisSize_byte);
+			dynamic_cast<BufferBase*>(&result)->size = this->size;
 
-			(void)std::memcpy(result.pData, this->pData + rhs, thisSize_byte - rhsSize_byte);
+			(void)std::memcpy(dynamic_cast<BufferBase*>(&result)->pData, this->pData + rhs, thisSize_byte - rhsSize_byte);
 			if (rhs > 0)
 			{
-				BufferBase::Initialize(result.pData + this->size - rhs, result.pData + this->size);
+				BufferBase::Initialize(dynamic_cast<BufferBase*>(&result)->pData + this->size - rhs, dynamic_cast<BufferBase*>(&result)->pData + this->size);
 			}
 
 			return result;
@@ -110,13 +110,13 @@ namespace HephCommon
 			const size_t thisSize_byte = this->SizeAsByte();
 
 			Tself result{};
-			result.pData = BufferBase::AllocateUninitialized(thisSize_byte);
-			result.size = this->size;
+			dynamic_cast<BufferBase*>(&result)->pData = BufferBase::AllocateUninitialized(thisSize_byte);
+			dynamic_cast<BufferBase*>(&result)->size = this->size;
 
-			(void)std::memcpy(result.pData + rhs, this->pData, thisSize_byte - BufferBase::SizeAsByte(rhs));
+			(void)std::memcpy(dynamic_cast<BufferBase*>(&result)->pData + rhs, this->pData, thisSize_byte - BufferBase::SizeAsByte(rhs));
 			if (rhs > 0)
 			{
-				BufferBase::Initialize(result.pData, result.pData + rhs);
+				BufferBase::Initialize(dynamic_cast<BufferBase*>(&result)->pData, dynamic_cast<BufferBase*>(&result)->pData + rhs);
 			}
 
 			return result;
@@ -134,7 +134,9 @@ namespace HephCommon
 
 		virtual bool operator==(const Tself& rhs) const
 		{
-			return (this->IsEmpty() && rhs.IsEmpty()) || (this->size == rhs.size && std::memcmp(this->pData, rhs.pData, this->SizeAsByte()) == 0);
+			return (this->IsEmpty() && dynamic_cast<const BufferBase*>(&rhs)->IsEmpty()) ||
+				(this->size == dynamic_cast<const BufferBase*>(&rhs)->size && 
+					std::memcmp(this->pData, dynamic_cast<const BufferBase*>(&rhs)->pData, this->SizeAsByte()) == 0);
 		}
 
 		virtual bool operator!=(const Tself& rhs) const
@@ -193,28 +195,31 @@ namespace HephCommon
 		{
 			Tself result{};
 
-			result.pData = BufferBase::SubBuffer(this->pData, this->SizeAsByte(), BufferBase::SizeAsByte(index), BufferBase::SizeAsByte(size));
-			result.size = size;
+			dynamic_cast<BufferBase*>(&result)->pData = BufferBase::SubBuffer(this->pData, this->SizeAsByte(), BufferBase::SizeAsByte(index), BufferBase::SizeAsByte(size));
+			dynamic_cast<BufferBase*>(&result)->size = size;
 
 			return result;
 		}
 
 		virtual void Prepend(const Tself& rhs)
 		{
-			this->pData = BufferBase::Prepend(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte());
-			this->size += rhs.size;
+			this->pData = BufferBase::Prepend(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
+				dynamic_cast<const BufferBase*>(&rhs)->SizeAsByte());
+			this->size += dynamic_cast<const BufferBase*>(&rhs)->size;
 		}
 
 		virtual void Append(const Tself& rhs)
 		{
-			this->pData = BufferBase::Append(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte());
-			this->size += rhs.size;
+			this->pData = BufferBase::Append(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
+				dynamic_cast<const BufferBase*>(&rhs)->SizeAsByte());
+			this->size += dynamic_cast<const BufferBase*>(&rhs)->size;
 		}
 
 		virtual void Insert(const Tself& rhs, size_t index)
 		{
-			this->pData = BufferBase::Insert(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte(), BufferBase::SizeAsByte(index));
-			this->size += rhs.size;
+			this->pData = BufferBase::Insert(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
+				dynamic_cast<const BufferBase*>(&rhs)->SizeAsByte(), BufferBase::SizeAsByte(index));
+			this->size += dynamic_cast<const BufferBase*>(&rhs)->size;
 		}
 
 		virtual void Cut(size_t index, size_t size)
@@ -226,12 +231,13 @@ namespace HephCommon
 
 		virtual void Replace(const Tself& rhs, size_t index)
 		{
-			this->Replace(rhs, index, rhs.size);
+			this->Replace(rhs, index, dynamic_cast<const BufferBase*>(&rhs)->size);
 		}
 
 		virtual void Replace(const Tself& rhs, size_t index, size_t size)
 		{
-			BufferBase::Replace(this->pData, this->SizeAsByte(), rhs.pData, rhs.SizeAsByte(), BufferBase::SizeAsByte(index));
+			BufferBase::Replace(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
+				dynamic_cast<const BufferBase*>(&rhs)->SizeAsByte(), BufferBase::SizeAsByte(index));
 		}
 
 		virtual void Resize(size_t newSize)

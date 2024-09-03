@@ -7,8 +7,6 @@ namespace HephAudio
 {
 	class FFmpegEncodedAudioBuffer final : private HephCommon::BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>
 	{
-		// this is so stupid
-		friend class HephCommon::BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>;
 	public:
 		FFmpegEncodedAudioBuffer();
 		explicit FFmpegEncodedAudioBuffer(size_t size);
