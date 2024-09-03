@@ -1,9 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
 #include "NativeAudio/NativeAudio.h"
-#ifdef __ANDROID__
-#include <jni.h>
-#endif
 
 namespace HephAudio
 {
@@ -42,8 +39,10 @@ namespace HephAudio
 		Audio& operator=(const Audio&) = delete;
 		~Audio();
 		Native::NativeAudio* GetNativeAudio() const;
-		void SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder);
 		std::shared_ptr<IAudioDecoder> GetAudioDecoder() const;
+		void SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder);
+		std::shared_ptr<IAudioEncoder> GetAudioEncoder() const;
+		void SetAudioEncoder(std::shared_ptr<IAudioEncoder> pNewEncoder);
 		AudioObject* Play(const std::string& filePath);
 		AudioObject* Play(const std::string& filePath, uint32_t playCount);
 		AudioObject* Play(const std::string& filePath, uint32_t playCount, bool isPaused);
