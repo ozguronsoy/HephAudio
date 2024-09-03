@@ -1,22 +1,25 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "Buffers/BufferBase.h"
+#include "EncodedAudioBuffer.h"
 #include "FFmpegAudioShared.h"
 
 namespace HephAudio
 {
-	class FFmpegEncodedAudioBuffer final : private HephCommon::BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>
+	class FFmpegEncodedAudioBuffer final : EncodedAudioBuffer
 	{
 	public:
 		FFmpegEncodedAudioBuffer();
-		explicit FFmpegEncodedAudioBuffer(size_t size);
-		FFmpegEncodedAudioBuffer(size_t size, HephCommon::BufferFlags flags);
 		FFmpegEncodedAudioBuffer(const FFmpegEncodedAudioBuffer&) = delete;
 		FFmpegEncodedAudioBuffer(FFmpegEncodedAudioBuffer&& rhs) noexcept;
 		~FFmpegEncodedAudioBuffer();
 		FFmpegEncodedAudioBuffer& operator=(const FFmpegEncodedAudioBuffer&) = delete;
 		FFmpegEncodedAudioBuffer& operator=(FFmpegEncodedAudioBuffer&& rhs) noexcept;
+		AVPacket*& operator[](size_t index) const;
+		size_t Size() const;
+		size_t SizeAsByte() const;
 		void Release() override;
 		void Add(AVPacket* packet);
+		AVPacket** begin() const;
+		AVPacket** end() const;
 	};
 }

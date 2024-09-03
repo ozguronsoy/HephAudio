@@ -4,13 +4,9 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer() : BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>() {}
+	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer() : EncodedAudioBuffer() {}
 
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(size_t size) : BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>(size) {}
-
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(size_t size, BufferFlags flags) : BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>(size, flags) {}
-
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(FFmpegEncodedAudioBuffer&& rhs) noexcept : BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>(std::move(rhs)) {}
+	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(FFmpegEncodedAudioBuffer&& rhs) noexcept : EncodedAudioBuffer(std::move(rhs)) {}
 
 	FFmpegEncodedAudioBuffer::~FFmpegEncodedAudioBuffer()
 	{
@@ -32,11 +28,26 @@ namespace HephAudio
 		return *this;
 	}
 
+	AVPacket*& FFmpegEncodedAudioBuffer::operator[](size_t index) const
+	{
+		return ((AVPacket**)this->pData)[index];
+	}
+
+	size_t FFmpegEncodedAudioBuffer::Size() const
+	{
+		return this->size;
+	}
+
+	size_t FFmpegEncodedAudioBuffer::SizeAsByte() const
+	{
+		return this->size * sizeof(AVPacket*);
+	}
+
 	void FFmpegEncodedAudioBuffer::Release()
 	{
 		if (!this->IsEmpty())
 		{
-			for (AVPacket* packet : (*this))
+			for (AVPacket*& packet : (*this))
 			{
 				if (packet != nullptr)
 				{
@@ -44,12 +55,22 @@ namespace HephAudio
 				}
 			}
 		}
-		BufferBase<FFmpegEncodedAudioBuffer, AVPacket*>::Release();
+		EncodedAudioBuffer::Release();
 	}
 
 	void FFmpegEncodedAudioBuffer::Add(AVPacket* packet)
 	{
 		this->Resize(this->size + 1);
 		(*this)[this->size - 1] = packet;
+	}
+
+	AVPacket** FFmpegEncodedAudioBuffer::begin() const
+	{
+		return ((AVPacket**)this->pData);
+	}
+
+	AVPacket** FFmpegEncodedAudioBuffer::end() const
+	{
+		return ((AVPacket**)this->pData) + this->size;
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
+#include "EncodedAudioBuffer.h"
 #include <string>
 
 namespace HephAudio
@@ -9,9 +10,6 @@ namespace HephAudio
 	{
 	protected:
 		std::string filePath;
-	protected:
-		IAudioDecoder();
-		IAudioDecoder(const std::string& filePath);
 	public:
 		virtual ~IAudioDecoder() = default;
 		virtual void ChangeFile(const std::string& newFilePath) = 0;
@@ -23,5 +21,6 @@ namespace HephAudio
 		virtual AudioBuffer Decode() = 0;
 		virtual AudioBuffer Decode(size_t frameCount) = 0;
 		virtual AudioBuffer Decode(size_t frameIndex, size_t frameCount) = 0;
+		virtual AudioBuffer Decode(const EncodedAudioBuffer& encodedBuffer) = 0;
 	};
 }

@@ -27,16 +27,16 @@ namespace HephAudio
 		~FFmpegAudioDecoder();
 		FFmpegAudioDecoder& operator=(const FFmpegAudioDecoder&) = delete;
 		FFmpegAudioDecoder& operator=(FFmpegAudioDecoder&& rhs) noexcept;
-		void ChangeFile(const std::string& newFilePath);
-		void CloseFile();
-		bool IsFileOpen() const;
-		AudioFormatInfo GetOutputFormatInfo() const;
-		size_t GetFrameCount() const;
-		bool Seek(size_t frameIndex);
-		AudioBuffer Decode();
-		AudioBuffer Decode(size_t frameCount);
-		AudioBuffer Decode(size_t frameIndex, size_t frameCount);
-		static AudioBuffer Decode(const FFmpegEncodedAudioBuffer& encodedBuffer);
+		void ChangeFile(const std::string& newFilePath) override;
+		void CloseFile() override;
+		bool IsFileOpen() const override;
+		AudioFormatInfo GetOutputFormatInfo() const override;
+		size_t GetFrameCount() const override;
+		bool Seek(size_t frameIndex) override;
+		AudioBuffer Decode() override;
+		AudioBuffer Decode(size_t frameCount) override;
+		AudioBuffer Decode(size_t frameIndex, size_t frameCount) override;
+		AudioBuffer Decode(const EncodedAudioBuffer& encodedBuffer) override;
 	private:
 		void OpenFile(const std::string& filePath);
 		int SeekFrame(size_t& frameIndex);

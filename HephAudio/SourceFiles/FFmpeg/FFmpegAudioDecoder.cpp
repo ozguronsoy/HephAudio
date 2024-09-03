@@ -8,7 +8,7 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	FFmpegAudioDecoder::FFmpegAudioDecoder()
-		: IAudioDecoder(), fileDuration_frame(0), audioStreamIndex(FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND)
+		: fileDuration_frame(0), audioStreamIndex(FFmpegAudioDecoder::AUDIO_STREAM_INDEX_NOT_FOUND)
 		, firstPacketPts(0), avFormatContext(nullptr), avCodecContext(nullptr)
 		, swrContext(nullptr), avFrame(nullptr), avPacket(nullptr) {}
 	
@@ -400,11 +400,11 @@ namespace HephAudio
 		return decodedBuffer;
 	}
 
-	AudioBuffer FFmpegAudioDecoder::Decode(const FFmpegEncodedAudioBuffer& encodedBuffer)
+	AudioBuffer FFmpegAudioDecoder::Decode(const EncodedAudioBuffer& encodedBuffer)
 	{
-		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioDecoder::Decode", "Not implemented"));
+		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioDecoder::Decode", "Not implemented"));
 	}
-	
+
 	void FFmpegAudioDecoder::OpenFile(const std::string& filePath)
 	{
 		if (!File::FileExists(filePath))

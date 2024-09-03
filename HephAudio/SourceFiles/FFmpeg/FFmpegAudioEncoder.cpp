@@ -11,21 +11,23 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	FFmpegAudioEncoder::FFmpegAudioEncoder()
-		: audioFilePath(""), avFormatContext(nullptr), avIoContext(nullptr)
+		: avFormatContext(nullptr), avIoContext(nullptr)
 		, avStream(nullptr), avCodecContext(nullptr), swrContext(nullptr)
 		, avPacket(nullptr), avFrame(nullptr) {}
 	
-	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::string& audioFilePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
+	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::string& filePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
 	{
 		this->outputFormatInfo = outputFormatInfo;
-		this->ChangeFile(audioFilePath, overwrite);
+		this->ChangeFile(filePath, overwrite);
 	}
 	
 	FFmpegAudioEncoder::FFmpegAudioEncoder(FFmpegAudioEncoder&& rhs) noexcept
-		: audioFilePath(std::move(rhs.audioFilePath)), outputFormatInfo(rhs.outputFormatInfo), avFormatContext(rhs.avFormatContext)
+		: outputFormatInfo(rhs.outputFormatInfo), avFormatContext(rhs.avFormatContext)
 		, avIoContext(rhs.avIoContext), avStream(rhs.avStream), avCodecContext(rhs.avCodecContext)
 		, swrContext(rhs.swrContext), avPacket(rhs.avPacket), avFrame(rhs.avFrame)
 	{
+		this->filePath = std::move(rhs.filePath);
+
 		rhs.avFormatContext = nullptr;
 		rhs.avIoContext = nullptr;
 		rhs.avStream = nullptr;
@@ -46,7 +48,7 @@ namespace HephAudio
 		{
 			this->CloseFile();
 
-			this->audioFilePath = std::move(rhs.audioFilePath);
+			this->filePath = std::move(rhs.filePath);
 			this->outputFormatInfo = rhs.outputFormatInfo;
 			this->avFormatContext = rhs.avFormatContext;
 			this->avIoContext = rhs.avIoContext;
@@ -70,7 +72,7 @@ namespace HephAudio
 	
 	void FFmpegAudioEncoder::ChangeFile(const std::string& newAudioFilePath, bool overwrite)
 	{
-		if (this->audioFilePath != newAudioFilePath)
+		if (this->filePath != newAudioFilePath)
 		{
 			this->CloseFile();
 			this->OpenFile(newAudioFilePath, overwrite);
@@ -141,12 +143,12 @@ namespace HephAudio
 			this->avFormatContext = nullptr;
 		}
 
-		this->audioFilePath = "";
+		this->filePath = "";
 	}
 	
 	bool FFmpegAudioEncoder::IsFileOpen() const
 	{
-		return this->audioFilePath != "" && this->avFormatContext != nullptr
+		return this->filePath != "" && this->avFormatContext != nullptr
 			&& this->avIoContext != nullptr && this->avStream != nullptr
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
@@ -241,12 +243,12 @@ namespace HephAudio
 		}
 	}
 
-	FFmpegEncodedAudioBuffer FFmpegAudioEncoder::Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat)
+	EncodedAudioBuffer FFmpegAudioEncoder::Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat)
 	{
 		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Encode", "Not implemented"));
 	}
 
-	FFmpegEncodedAudioBuffer FFmpegAudioEncoder::Transcode(const FFmpegEncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat)
+	EncodedAudioBuffer FFmpegAudioEncoder::Transcode(const EncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat)
 	{
 		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Transcode", "Not implemented"));
 	}
@@ -271,24 +273,24 @@ namespace HephAudio
 		}
 	}
 	
-	void FFmpegAudioEncoder::OpenFile(const std::string& audioFilePath, bool overwrite)
+	void FFmpegAudioEncoder::OpenFile(const std::string& filePath, bool overwrite)
 	{
-		if (!overwrite && File::FileExists(audioFilePath))
+		if (!overwrite && File::FileExists(filePath))
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "File already exists."));
 			return;
 		}
 
-		this->audioFilePath = audioFilePath;
+		this->filePath = filePath;
 
-		int ret = avformat_alloc_output_context2(&this->avFormatContext, nullptr, nullptr, this->audioFilePath.c_str());
+		int ret = avformat_alloc_output_context2(&this->avFormatContext, nullptr, nullptr, this->filePath.c_str());
 		if (ret < 0)
 		{
 			this->CloseFile();
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder", "Failed to allocate output format context.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
 		}
 
-		ret = avio_open(&this->avIoContext, this->audioFilePath.c_str(), AVIO_FLAG_WRITE);
+		ret = avio_open(&this->avIoContext, this->filePath.c_str(), AVIO_FLAG_WRITE);
 		if (ret < 0)
 		{
 			this->CloseFile();
