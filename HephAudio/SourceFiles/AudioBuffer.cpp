@@ -235,10 +235,11 @@ namespace HephAudio
 
 	void AudioBuffer::AddEventHandlers()
 	{
-		if (!BufferOperatorEvents<AudioBuffer, heph_audio_sample_t>::OnResultCreated.EventHandlerExists(AudioBuffer::ResultCreatedEventHandler))
+		if (!AudioBuffer::ADD_EVENT_HANDLERS)
 		{
 			BufferOperatorEvents<AudioBuffer, heph_audio_sample_t>::OnResultCreated += AudioBuffer::ResultCreatedEventHandler;
 			BufferOperatorEvents<AudioBuffer, AudioBuffer>::OnResultCreated += AudioBuffer::ResultCreatedEventHandlerBuffer;
+			AudioBuffer::ADD_EVENT_HANDLERS = true;
 		}
 	}
 

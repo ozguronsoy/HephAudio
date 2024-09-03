@@ -45,6 +45,7 @@ namespace HephAudio
 		void SetBitsPerSample(uint16_t bitsPerSample);
 		void SetBitRate(uint32_t bitRate);
 	private:
+		static inline bool ADD_EVENT_HANDLERS = false;
 		static void AddEventHandlers();
 		static void ResultCreatedEventHandler(const HephCommon::EventParams& params);
 		static void ResultCreatedEventHandlerBuffer(const HephCommon::EventParams& params);

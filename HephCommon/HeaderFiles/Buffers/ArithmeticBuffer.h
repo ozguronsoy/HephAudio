@@ -67,12 +67,14 @@ namespace HephCommon
 		}
 
 	private:
+		static inline bool ADD_EVENT_HANDLERS = false;
 		static void AddEventHandlers()
 		{
-			if (!BufferOperatorEvents<Tself, Tdata>::OnResultCreated.EventHandlerExists(ArithmeticBuffer::ResultCreatedEventHandler<Tdata>))
+			if (!ArithmeticBuffer::ADD_EVENT_HANDLERS)
 			{
-				BufferOperatorEvents<Tself, Tdata>::OnResultCreated += ArithmeticBuffer::ResultCreatedEventHandler<Tdata>;
-				BufferOperatorEvents<Tself, Tself>::OnResultCreated += ArithmeticBuffer::ResultCreatedEventHandler<Tself>;
+				BufferOperatorEvents<Tself, Tdata>::OnResultCreated = ArithmeticBuffer::ResultCreatedEventHandler<Tdata>;
+				BufferOperatorEvents<Tself, Tself>::OnResultCreated = ArithmeticBuffer::ResultCreatedEventHandler<Tself>;
+				ArithmeticBuffer::ADD_EVENT_HANDLERS = true;
 			}
 		}
 
