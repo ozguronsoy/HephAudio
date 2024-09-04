@@ -243,12 +243,12 @@ namespace HephAudio
 		}
 	}
 
-	EncodedAudioBuffer FFmpegAudioEncoder::Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat)
+	void FFmpegAudioEncoder::Encode(const AudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer)
 	{
 		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Encode", "Not implemented"));
 	}
 
-	EncodedAudioBuffer FFmpegAudioEncoder::Transcode(const EncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat)
+	void FFmpegAudioEncoder::Transcode(const EncodedAudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer)
 	{
 		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Transcode", "Not implemented"));
 	}

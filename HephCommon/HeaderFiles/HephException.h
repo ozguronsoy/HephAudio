@@ -6,34 +6,44 @@
 #include <vector>
 #include <thread>
 
-#define HEPH_EC_NONE (0)
-#define HEPH_EC_FAIL (-1)
-#define HEPH_EC_INVALID_ARGUMENT (-2)
-#define HEPH_EC_NOT_IMPLEMENTED (-3)
-#define HEPH_EC_INSUFFICIENT_MEMORY (-4)
-#define HEPH_EC_NOT_FOUND (-5)
-#define HEPH_EC_INVALID_OPERATION (-6)
+#define HEPH_EC_OK						((int64_t)0)
+#define HEPH_EC_FAIL					((int64_t)-1)
+#define HEPH_EC_INVALID_ARGUMENT		((int64_t)-2)
+#define HEPH_EC_NOT_IMPLEMENTED			((int64_t)-3)
+#define HEPH_EC_INSUFFICIENT_MEMORY		((int64_t)-4)
+#define HEPH_EC_NOT_FOUND				((int64_t)-5)
+#define HEPH_EC_INVALID_OPERATION		((int64_t)-6)
+#define HEPH_EC_TIMEOUT					((int64_t)-7)
+#define HEPH_EC_EXTERNAL				((int64_t)INT64_MIN)
 
-#define RAISE_HEPH_EXCEPTION(sender, ex) ex.Raise(sender)
-#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex) RAISE_HEPH_EXCEPTION(sender, ex); throw ex
+#define RAISE_HEPH_EXCEPTION(sender, ex) (ex).Raise((const void*)(sender))
+#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex)	{																	\
+														const HephCommon::HephException __temp_ex__ = (ex);				\
+														__temp_ex__.Raise((const void*)(sender));						\
+														throw __temp_ex__;												\
+													}
 
 namespace HephCommon
 {
 	struct HephException final
 	{
-	public:
 		static thread_local std::vector<HephException> Exceptions;
 		static inline Event OnException = Event();
-	public:
+
 		int64_t errorCode;
+		int64_t externalErrorCode;
 		std::string method;
 		std::string message;
 		std::string externalSource;
 		std::string externalMessage;
+
 		HephException();
 		HephException(int64_t errorCode, const std::string& method, const std::string& message);
-		HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
+		HephException(int64_t externalErrorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
+
 		void Raise(const void* pSender) const;
+
+		static std::string ErrorCodeToString(int64_t errorCode);
 	};
 
 	struct HephExceptionEventArgs : public EventArgs

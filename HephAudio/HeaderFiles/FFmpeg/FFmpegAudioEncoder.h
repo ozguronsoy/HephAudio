@@ -31,8 +31,8 @@ namespace HephAudio
 		void CloseFile() override;
 		bool IsFileOpen() const override;
 		void Encode(const AudioBuffer& bufferToEncode) override;
-		EncodedAudioBuffer Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat) override;
-		EncodedAudioBuffer Transcode(const EncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat) override;
+		void Encode(const AudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer) override;
+		void Transcode(const EncodedAudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer) override;
 		static void Transcode(const std::string& inputFilePath, const std::string& outputFilePath, bool overwrite);
 		static void Transcode(const std::string& inputFilePath, const std::string& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite);
 	private:

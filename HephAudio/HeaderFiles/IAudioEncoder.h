@@ -16,7 +16,7 @@ namespace HephAudio
 		virtual void CloseFile() = 0;
 		virtual bool IsFileOpen() const = 0;
 		virtual void Encode(const AudioBuffer& bufferToEncode) = 0;
-		virtual EncodedAudioBuffer Encode(const AudioBuffer& bufferToEncode, const AudioFormatInfo& targetFormat) = 0;
-		virtual EncodedAudioBuffer Transcode(const EncodedAudioBuffer& bufferToTranscode, const AudioFormatInfo& targetFormat) = 0;
+		virtual void Encode(const AudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer) = 0;
+		virtual void Transcode(const EncodedAudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer) = 0;
 	};
 }
