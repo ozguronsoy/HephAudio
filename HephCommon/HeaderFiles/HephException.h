@@ -4,7 +4,6 @@
 #include <string>
 #include <cinttypes>
 #include <vector>
-#include <thread>
 
 #define HEPH_EC_OK						((int64_t)0)
 #define HEPH_EC_FAIL					((int64_t)-1)
@@ -14,7 +13,10 @@
 #define HEPH_EC_NOT_FOUND				((int64_t)-5)
 #define HEPH_EC_INVALID_OPERATION		((int64_t)-6)
 #define HEPH_EC_TIMEOUT					((int64_t)-7)
+#define HEPH_EC_NOT_SUPPORTED			((int64_t)-8)
 #define HEPH_EC_EXTERNAL				((int64_t)INT64_MIN)
+
+#define HEPH_EXCEPTION_DEFAULT_HANDLER	&HephCommon::HephException::DefaultHandler
 
 #define RAISE_HEPH_EXCEPTION(sender, ex) (ex).Raise((const void*)(sender))
 #define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex)	{																	\
@@ -44,6 +46,7 @@ namespace HephCommon
 		void Raise(const void* pSender) const;
 
 		static std::string ErrorCodeToString(int64_t errorCode);
+		static void DefaultHandler(const EventParams& params);
 	};
 
 	struct HephExceptionEventArgs : public EventArgs
