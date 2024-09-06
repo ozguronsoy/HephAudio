@@ -204,7 +204,8 @@ namespace HephAudio
 			void* audioPtr1 = nullptr;
 			void* audioPtr2 = nullptr;
 			DWORD audioBytes1 = 0, audioBytes2 = 0;
-			AudioBuffer dataBuffer;
+			EncodedAudioBuffer mixedBuffer;
+			size_t mixedBufferSize_byte = 0;
 			size_t nFramesToRead;
 			HANDLE hEvents[notificationCount]{ nullptr };
 			DSBPOSITIONNOTIFY notifyInfos[notificationCount]{ 0 };
@@ -218,12 +219,12 @@ namespace HephAudio
 			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSound->GetCaps(&dsCaps), "WinAudioDS::InitializeRender", "An error occurred while reading the direct sound capacity.");
 			WinAudioDS::RestrictAudioFormatInfo(this->renderFormat, dsCaps);
 			nFramesToRead = this->renderFormat.ByteRate() / 100; // 10ms
-			dataBuffer = AudioBuffer(nFramesToRead, this->renderFormat);
+			mixedBufferSize_byte = nFramesToRead * this->renderFormat.FrameSize();
 
 			wfx = WinAudioBase::AFI2WFX(this->renderFormat);
 			bufferDesc.dwSize = sizeof(DSBUFFERDESC);
 			bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GLOBALFOCUS;
-			bufferDesc.dwBufferBytes = dataBuffer.SizeAsByte() * (notificationCount - 1);
+			bufferDesc.dwBufferBytes = mixedBufferSize_byte * (notificationCount - 1);
 			bufferDesc.dwReserved = 0;
 			bufferDesc.lpwfxFormat = (WAVEFORMATEX*)&wfx;
 			bufferDesc.guid3DAlgorithm = GUID_NULL;
@@ -237,7 +238,7 @@ namespace HephAudio
 					WINAUDIODS_RENDER_THREAD_EXCPT(E_FAIL, "WinAudioDS::InitializeRender", "An error occurred while setting the render event handles.");
 				}
 
-				notifyInfos[i].dwOffset = (i + 1) * dataBuffer.SizeAsByte() - 1;
+				notifyInfos[i].dwOffset = (i + 1) * mixedBufferSize_byte - 1;
 				notifyInfos[i].hEventNotify = hEvents[i];
 			}
 			notifyInfos[notificationCount - 1].dwOffset = DSBPN_OFFSETSTOP;
@@ -265,17 +266,15 @@ namespace HephAudio
 					WINAUDIODS_RENDER_THREAD_EXCPT(E_FAIL, "WinAudioDS", "Render time-out.");
 				}
 
-				Mix(dataBuffer, nFramesToRead);
+				mixedBuffer = this->Mix(nFramesToRead);
 
-				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, dataBuffer.SizeAsByte(), &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), "WinAudioDS", "An error occurred while rendering the samples.");
-				memcpy(audioPtr1, dataBuffer.begin(), audioBytes1);
+				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, mixedBufferSize_byte, &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), "WinAudioDS", "An error occurred while rendering the samples.");
+				memcpy(audioPtr1, mixedBuffer.begin(), audioBytes1);
 				if (audioPtr2 != nullptr)
 				{
-					memcpy(audioPtr2, (uint8_t*)dataBuffer.begin() + audioBytes1, audioBytes2);
+					memcpy(audioPtr2, mixedBuffer.begin() + audioBytes1, audioBytes2);
 				}
 				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred while rendering the samples.");
-
-				dataBuffer.Reset();
 			}
 
 			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Stop(), "WinAudioDS", "An error occurred while rendering the samples.");
@@ -376,14 +375,14 @@ namespace HephAudio
 
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->GetCurrentPosition(&captureCursor, &readCursor), "WinAudioDS", "An error occurred while capturing the samples.");
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Lock(readCursor, nBytesToRead, &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, 0), "WinAudioDS", "An error occurred while capturing the samples.");
-					AudioBuffer buffer(nFramesToRead, this->captureFormat);
-					memcpy(buffer.begin(), audioPtr1, audioBytes1);
+					EncodedAudioBuffer encodedBuffer((const uint8_t*)audioPtr1, nFramesToRead * this->captureFormat.FrameSize(), this->captureFormat);
 					if (audioPtr2 != nullptr)
 					{
-						memcpy((uint8_t*)buffer.begin() + audioBytes1, audioPtr2, audioBytes2);
+						memcpy(encodedBuffer.begin() + audioBytes1, audioPtr2, audioBytes2);
 					}
 					WINAUDIODS_CAPTURE_THREAD_EXCPT(pDirectSoundCaptureBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), "WinAudioDS", "An error occurred while capturing the samples.");
 
+					AudioBuffer buffer = this->pAudioDecoder->Decode(encodedBuffer);
 					AudioCaptureEventArgs captureEventArgs(this, buffer);
 					this->OnCapture(&captureEventArgs, nullptr);
 				}

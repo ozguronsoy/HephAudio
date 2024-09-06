@@ -1,5 +1,4 @@
 #include "AudioProcessor.h"
-#include "AudioCodecs/AudioCodecManager.h"
 #include "HephException.h"
 #include "Fourier.h"
 #include "File.h"
@@ -8,35 +7,10 @@
 #include <thread>
 
 using namespace HephCommon;
-using namespace HephAudio::Codecs;
 
 namespace HephAudio
 {
 #pragma region Converts, Mix, Split/Merge Channels
-	void AudioProcessor::ChangeBitsPerSample(AudioBuffer& buffer, uint16_t outputBitsPerSample)
-	{
-		if (buffer.formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM ||
-			buffer.formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
-		{
-			IAudioCodec* pCodec = AudioCodecManager::FindCodec(buffer.formatInfo.formatTag);
-			EncodedBufferInfo encodedBufferInfo;
-			encodedBufferInfo.formatInfo = buffer.formatInfo;
-			encodedBufferInfo.pBuffer = buffer.pData;
-			encodedBufferInfo.size_byte = buffer.SizeAsByte();
-			encodedBufferInfo.size_frame = buffer.frameCount;
-			buffer = pCodec->Decode(encodedBufferInfo);
-
-			encodedBufferInfo.formatInfo.bitsPerSample = outputBitsPerSample;
-			encodedBufferInfo.size_byte = buffer.SizeAsByte();
-			pCodec->Encode(buffer, encodedBufferInfo);
-
-			buffer.formatInfo.bitRate = AudioFormatInfo::CalculateBitrate(buffer.formatInfo);
-		}
-		else
-		{
-			RAISE_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioProcessor::ChangeBitsPerSample", "Audio buffer is not raw PCM."));
-		}
-	}
 	void AudioProcessor::ChangeChannelLayout(AudioBuffer& buffer, const AudioChannelLayout& outputChannelLayout)
 	{
 		if (buffer.formatInfo.channelLayout != outputChannelLayout)
@@ -175,38 +149,6 @@ namespace HephAudio
 		}
 
 		return resultBuffer;
-	}
-	void AudioProcessor::ConvertToInnerFormat(AudioBuffer& buffer)
-	{
-		IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(buffer.formatInfo.formatTag);
-		if (pAudioCodec == nullptr)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_FAIL, "AudioProcessor::ConvertToInnerFormat", "Unsupported audio codec."));
-		}
-
-		EncodedBufferInfo encodedBufferInfo;
-		encodedBufferInfo.pBuffer = buffer.pData;
-		encodedBufferInfo.size_byte = buffer.SizeAsByte();
-		encodedBufferInfo.size_frame = buffer.frameCount;
-		encodedBufferInfo.formatInfo = buffer.formatInfo;
-
-		buffer = pAudioCodec->Decode(encodedBufferInfo);
-	}
-	void AudioProcessor::ConvertToTargetFormat(AudioBuffer& buffer, AudioFormatInfo targetFormat)
-	{
-		AudioProcessor::ConvertToInnerFormat(buffer);
-
-		IAudioCodec* pAudioCodec = AudioCodecManager::FindCodec(targetFormat.formatTag);
-		if (pAudioCodec == nullptr)
-		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_FAIL, "AudioProcessor::ConvertToTargetFormat", "Unsupported audio codec."));
-		}
-
-		EncodedBufferInfo encodedBufferInfo;
-		encodedBufferInfo.size_frame = buffer.frameCount;
-		encodedBufferInfo.formatInfo = targetFormat;
-
-		pAudioCodec->Encode(buffer, encodedBufferInfo);
 	}
 	void AudioProcessor::ChangeEndian(AudioBuffer& buffer)
 	{

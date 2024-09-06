@@ -146,6 +146,114 @@ namespace HephAudio
 		}
 	}
 
+	inline AVSampleFormat ToAVSampleFormat(const AVCodec* avCodec, const AudioFormatInfo& formatInfo)
+	{
+		if (avCodec == nullptr || avCodec->sample_fmts == nullptr)
+		{
+			return AV_SAMPLE_FMT_NONE;
+		}
+
+		auto getFirstSupportedSampleFormat = [avCodec](std::vector<AVSampleFormat> possibleFormats) -> AVSampleFormat
+			{
+				for (size_t i = 0; i < possibleFormats.size(); ++i)
+				{
+					for (size_t j = 0; avCodec->sample_fmts[j] != AV_SAMPLE_FMT_NONE; ++j)
+					{
+						if (possibleFormats[i] == avCodec->sample_fmts[j])
+						{
+							return possibleFormats[i];
+						}
+					}
+				}
+				return AV_SAMPLE_FMT_NONE;
+			};
+
+		if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
+		{
+			if (formatInfo.bitsPerSample == sizeof(double))
+			{
+				return getFirstSupportedSampleFormat(
+					{
+						AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
+						AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+						AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+						AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+						AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P
+					});
+			}
+			return getFirstSupportedSampleFormat(
+				{
+					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
+					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P
+				});
+		}
+
+		switch (formatInfo.bitsPerSample)
+		{
+		case 8:
+			return getFirstSupportedSampleFormat(
+				{
+					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P,
+					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
+					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP
+				});
+		case 16:
+			return getFirstSupportedSampleFormat(
+				{
+					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
+					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
+					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
+				});
+		case 24:
+		case 32:
+			return getFirstSupportedSampleFormat(
+				{
+					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
+					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
+					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
+				});
+		case 64:
+			return getFirstSupportedSampleFormat(
+				{
+					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
+					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
+					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
+				});
+		default:
+			return getFirstSupportedSampleFormat(
+				{
+					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
+					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
+					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
+					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
+					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
+					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
+				});
+		}
+	}
+
+	inline AVSampleFormat ToAVSampleFormat(const AudioFormatInfo& formatInfo)
+	{
+		AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(formatInfo);
+		const AVCodec* avCodec = avcodec_find_encoder(codecID);
+		return HephAudio::ToAVSampleFormat(avCodec, formatInfo);
+	}
+
 	inline AVChannelLayout ToAVChannelLayout(const AudioChannelLayout& audioChannelLayout)
 	{
 		AVChannelLayout avChannelLayout{};
@@ -181,6 +289,43 @@ namespace HephAudio
 		}
 
 		return audioChannelLayout;
+	}
+
+	inline uint32_t GetClosestSupportedSampleRate(const AVCodec* avCodec, uint32_t targetSampleRate)
+	{
+		if (avCodec->supported_samplerates != nullptr)
+		{
+			int32_t closestSampleRate = avCodec->supported_samplerates[0];
+			int32_t closestAbsDeltaSampleRate = abs((int)targetSampleRate - avCodec->supported_samplerates[0]);
+			for (size_t i = 1; avCodec->supported_samplerates[i] != 0; i++)
+			{
+				if (avCodec->supported_samplerates[i] == targetSampleRate)
+				{
+					return targetSampleRate;
+				}
+
+				const int32_t currentAbsDeltaSampleRate = abs((int)targetSampleRate - avCodec->supported_samplerates[i]);
+				if (currentAbsDeltaSampleRate < closestAbsDeltaSampleRate)
+				{
+					closestAbsDeltaSampleRate = currentAbsDeltaSampleRate;
+					closestSampleRate = avCodec->supported_samplerates[i];
+				}
+				else if (currentAbsDeltaSampleRate == closestAbsDeltaSampleRate && avCodec->supported_samplerates[i] > closestSampleRate) // choose the greater sample rate
+				{
+					closestSampleRate = avCodec->supported_samplerates[i];
+				}
+			}
+			return closestSampleRate;
+		}
+
+		return targetSampleRate;
+	}
+
+	inline uint32_t GetClosestSupportedSampleRate(const AudioFormatInfo& formatInfo)
+	{
+		AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(formatInfo);
+		const AVCodec* avCodec = avcodec_find_encoder(codecID);
+		return HephAudio::GetClosestSupportedSampleRate(avCodec, formatInfo.sampleRate);
 	}
 }
 

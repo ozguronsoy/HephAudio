@@ -106,7 +106,7 @@ namespace HephAudio
 			void JoinRenderThread();
 			void JoinCaptureThread();
 			void JoinDeviceThread();
-			void Mix(AudioBuffer& outputBuffer, uint32_t frameCount);
+			EncodedAudioBuffer Mix(uint32_t frameCount);
 			size_t GetAOCountToMix() const;
 			virtual double GetFinalAOVolume(AudioObject* pAudioObject) const;
 		};

@@ -447,7 +447,7 @@ namespace HephAudio
 			}
 		}
 		
-		void NativeAudio::Mix(AudioBuffer& outputBuffer, uint32_t frameCount)
+		EncodedAudioBuffer NativeAudio::Mix(uint32_t frameCount)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
@@ -508,8 +508,9 @@ namespace HephAudio
 				}
 			}
 
-			AudioProcessor::ConvertToTargetFormat(mixBuffer, renderFormat);
-			outputBuffer = std::move(mixBuffer);
+			EncodedAudioBuffer encodedBuffer(this->renderFormat);
+			this->pAudioEncoder->Encode(mixBuffer, encodedBuffer);
+			return encodedBuffer;
 		}
 		
 		size_t NativeAudio::GetAOCountToMix() const

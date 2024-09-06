@@ -14,13 +14,13 @@ namespace HephAudio
 		: avFormatContext(nullptr), avIoContext(nullptr)
 		, avStream(nullptr), avCodecContext(nullptr), swrContext(nullptr)
 		, avPacket(nullptr), avFrame(nullptr) {}
-	
+
 	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::string& filePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
 	{
 		this->outputFormatInfo = outputFormatInfo;
 		this->ChangeFile(filePath, overwrite);
 	}
-	
+
 	FFmpegAudioEncoder::FFmpegAudioEncoder(FFmpegAudioEncoder&& rhs) noexcept
 		: outputFormatInfo(rhs.outputFormatInfo), avFormatContext(rhs.avFormatContext)
 		, avIoContext(rhs.avIoContext), avStream(rhs.avStream), avCodecContext(rhs.avCodecContext)
@@ -36,12 +36,12 @@ namespace HephAudio
 		rhs.avPacket = nullptr;
 		rhs.avFrame = nullptr;
 	}
-	
+
 	FFmpegAudioEncoder::~FFmpegAudioEncoder()
 	{
 		this->CloseFile();
 	}
-	
+
 	FFmpegAudioEncoder& FFmpegAudioEncoder::operator=(FFmpegAudioEncoder&& rhs) noexcept
 	{
 		if (this != &rhs)
@@ -69,7 +69,7 @@ namespace HephAudio
 
 		return *this;
 	}
-	
+
 	void FFmpegAudioEncoder::ChangeFile(const std::string& newAudioFilePath, bool overwrite)
 	{
 		if (this->filePath != newAudioFilePath)
@@ -78,7 +78,7 @@ namespace HephAudio
 			this->OpenFile(newAudioFilePath, overwrite);
 		}
 	}
-	
+
 	void FFmpegAudioEncoder::CloseFile()
 	{
 		if (this->IsFileOpen())
@@ -145,7 +145,7 @@ namespace HephAudio
 
 		this->filePath = "";
 	}
-	
+
 	bool FFmpegAudioEncoder::IsFileOpen() const
 	{
 		return this->filePath != "" && this->avFormatContext != nullptr
@@ -153,7 +153,7 @@ namespace HephAudio
 			&& this->avCodecContext != nullptr && this->swrContext != nullptr
 			&& this->avFrame != nullptr && this->avPacket != nullptr;
 	}
-	
+
 	void FFmpegAudioEncoder::Encode(const AudioBuffer& bufferToEncode)
 	{
 		if (!this->IsFileOpen())
@@ -169,11 +169,17 @@ namespace HephAudio
 		}
 
 		const AudioFormatInfo inputFormatInfo = bufferToEncode.FormatInfo();
-		AVChannelLayout inputChannelLayout = ToAVChannelLayout(inputFormatInfo.channelLayout);
+		const AVChannelLayout inputChannelLayout = ToAVChannelLayout(inputFormatInfo.channelLayout);
+		const AVSampleFormat inputSampleFormat = HephAudio::ToAVSampleFormat(this->avCodecContext->codec, inputFormatInfo);
+
+		if (inputSampleFormat == AV_SAMPLE_FMT_NONE)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Unsupported format"));
+		}
 
 		av_opt_set_chlayout(this->swrContext, "in_chlayout", &inputChannelLayout, 0);
 		av_opt_set_int(this->swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", FFmpegAudioEncoder::AFI2AVSF(this, inputFormatInfo), 0);
+		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", inputSampleFormat, 0);
 
 		int ret = swr_init(this->swrContext);
 		if (ret < 0)
@@ -245,6 +251,81 @@ namespace HephAudio
 
 	void FFmpegAudioEncoder::Encode(const AudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer)
 	{
+		int ret;
+		const AudioFormatInfo& inputFormatInfo = inputBuffer.FormatInfo();
+		const AudioFormatInfo& outputFormatInfo = outputBuffer.GetAudioFormatInfo();
+
+		FFmpegEncodedAudioBuffer* pFFmpegBuffer = dynamic_cast<FFmpegEncodedAudioBuffer*>(&outputBuffer);
+		if (pFFmpegBuffer == nullptr)
+		{
+			if (inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_PCM &&
+				inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT &&
+				inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_ALAW &&
+				inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_MULAW)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "EncodedAudioBuffer must contain raw PCM or a-law or mu-law data"));
+			}
+
+			SwrContext* swrContext = swr_alloc();
+			if (swrContext == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Failed to create SwrContext."));
+			}
+
+			{
+				const AVChannelLayout inputAVChLayout = HephAudio::ToAVChannelLayout(inputFormatInfo.channelLayout);
+				const AVChannelLayout outputAVChLayout = HephAudio::ToAVChannelLayout(outputFormatInfo.channelLayout);
+				const AVSampleFormat outputSampleFormat = HephAudio::ToAVSampleFormat(outputFormatInfo);
+
+				if (outputSampleFormat == AV_SAMPLE_FMT_NONE)
+				{
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "Unsupported format"));
+				}
+
+				av_opt_set_chlayout(swrContext, "in_chlayout", &inputAVChLayout, 0);
+				av_opt_set_int(swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
+				av_opt_set_sample_fmt(swrContext, "in_sample_fmt", HephAudio::ToAVSampleFormat(inputFormatInfo), 0);
+
+				av_opt_set_chlayout(swrContext, "out_chlayout", &outputAVChLayout, 0);
+				av_opt_set_int(swrContext, "out_sample_rate", HephAudio::GetClosestSupportedSampleRate(outputFormatInfo), 0);
+				av_opt_set_sample_fmt(swrContext, "out_sample_fmt", outputSampleFormat, 0);
+
+				ret = swr_init(swrContext);
+				if (ret < 0)
+				{
+					swr_free(&swrContext);
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to initialize SwrContext.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+				}
+			}
+
+			const size_t frameCount = inputBuffer.FrameCount();
+
+			outputBuffer.Resize(frameCount * outputFormatInfo.FrameSize());
+
+			const uint8_t* const inputBegin = (const uint8_t* const)inputBuffer.begin();
+			uint8_t* const outputBegin = (uint8_t* const)outputBuffer.begin();
+
+			ret = swr_convert(swrContext, &outputBegin, frameCount, &inputBegin, frameCount);
+			if (ret < 0)
+			{
+				swr_free(&swrContext);
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to encode samples.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+			}
+			else if (ret < frameCount)
+			{
+				ret = swr_convert(swrContext, &outputBegin, frameCount, nullptr, 0);
+				if (ret < 0)
+				{
+					swr_free(&swrContext);
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to encode samples.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+				}
+			}
+
+			swr_free(&swrContext);
+			return;
+		}
+
+		// TODO
 		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Encode", "Not implemented"));
 	}
 
@@ -262,7 +343,7 @@ namespace HephAudio
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
-	
+
 	void FFmpegAudioEncoder::Transcode(const std::string& inputFilePath, const std::string& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite)
 	{
 		FFmpegAudioDecoder decoder(inputFilePath);
@@ -272,7 +353,7 @@ namespace HephAudio
 			FFmpegAudioEncoder::Transcode(&decoder, encoder);
 		}
 	}
-	
+
 	void FFmpegAudioEncoder::OpenFile(const std::string& filePath, bool overwrite)
 	{
 		if (!overwrite && File::FileExists(filePath))
@@ -321,9 +402,13 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to create AVCodecContext."));
 		}
 
-		this->avCodecContext->sample_fmt = FFmpegAudioEncoder::GetClosestSupportedSampleFormat(this, avCodec, this->outputFormatInfo.formatTag, this->outputFormatInfo.bitsPerSample);
+		this->avCodecContext->sample_fmt = HephAudio::ToAVSampleFormat(avCodec, this->outputFormatInfo);
+		if (this->avCodecContext->sample_fmt == AV_SAMPLE_FMT_NONE)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Unsupported format"));
+		}
 
-		this->outputFormatInfo.sampleRate = FFmpegAudioEncoder::GetClosestSupportedSampleRate(avCodec, this->outputFormatInfo.sampleRate);
+		this->outputFormatInfo.sampleRate = HephAudio::GetClosestSupportedSampleRate(avCodec, this->outputFormatInfo.sampleRate);
 		this->avCodecContext->sample_rate = this->outputFormatInfo.sampleRate;
 		this->avCodecContext->ch_layout = ToAVChannelLayout(this->outputFormatInfo.channelLayout);
 
@@ -434,218 +519,6 @@ namespace HephAudio
 		}
 	}
 
-	AVSampleFormat FFmpegAudioEncoder::AFI2AVSF(FFmpegAudioEncoder* pEncoder, const AudioFormatInfo& afi)
-	{
-		switch (afi.formatTag)
-		{
-		case HEPHAUDIO_FORMAT_TAG_ALAW:
-		case HEPHAUDIO_FORMAT_TAG_MULAW:
-			return AV_SAMPLE_FMT_U8;
-		case HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT:
-			return afi.bitsPerSample == sizeof(double) ? AV_SAMPLE_FMT_DBL : AV_SAMPLE_FMT_FLT;
-		case HEPHAUDIO_FORMAT_TAG_PCM:
-		{
-			switch (afi.bitsPerSample)
-			{
-			case 8:
-				return AV_SAMPLE_FMT_U8;
-			case 16:
-				return AV_SAMPLE_FMT_S16;
-			case 24:
-			case 32:
-				return AV_SAMPLE_FMT_S32;
-			default:
-				goto ERROR;
-			}
-		}
-		default:
-			goto ERROR;
-		}
-
-	ERROR:
-		RAISE_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
-		return AV_SAMPLE_FMT_NONE;
-	}
-
-	uint32_t FFmpegAudioEncoder::GetClosestSupportedSampleRate(const AVCodec* avCodec, uint32_t targetSampleRate)
-	{
-		if (avCodec->supported_samplerates != nullptr)
-		{
-			int32_t closestSampleRate = avCodec->supported_samplerates[0];
-			int32_t closestAbsDeltaSampleRate = abs((int)targetSampleRate - avCodec->supported_samplerates[0]);
-			for (size_t i = 1; avCodec->supported_samplerates[i] != 0; i++)
-			{
-				if (avCodec->supported_samplerates[i] == targetSampleRate)
-				{
-					return targetSampleRate;
-				}
-
-				const int32_t currentAbsDeltaSampleRate = abs((int)targetSampleRate - avCodec->supported_samplerates[i]);
-				if (currentAbsDeltaSampleRate < closestAbsDeltaSampleRate)
-				{
-					closestAbsDeltaSampleRate = currentAbsDeltaSampleRate;
-					closestSampleRate = avCodec->supported_samplerates[i];
-				}
-				else if (currentAbsDeltaSampleRate == closestAbsDeltaSampleRate && avCodec->supported_samplerates[i] > closestSampleRate) // choose the greater sample rate
-				{
-					closestSampleRate = avCodec->supported_samplerates[i];
-				}
-			}
-			return closestSampleRate;
-		}
-
-		return targetSampleRate;
-	}
-	
-	AVSampleFormat FFmpegAudioEncoder::GetClosestSupportedSampleFormat(FFmpegAudioEncoder* pEncoder, const AVCodec* avCodec, uint32_t targetFormatTag, uint16_t targetBitsPerSample)
-	{
-		if (avCodec->sample_fmts == nullptr)
-		{
-			return AV_SAMPLE_FMT_FLTP;
-		}
-
-		auto getFirstSupportedSampleFormat = [avCodec](std::vector<AVSampleFormat> possibleFormats) -> AVSampleFormat
-			{
-				for (size_t i = 0; i < possibleFormats.size(); i++)
-				{
-					for (size_t j = 0; avCodec->sample_fmts[j] != AV_SAMPLE_FMT_NONE; j++)
-					{
-						if (possibleFormats[i] == avCodec->sample_fmts[j])
-						{
-							return possibleFormats[i];
-						}
-					}
-				}
-				return AV_SAMPLE_FMT_NONE;
-			};
-
-		if (targetFormatTag == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT)
-		{
-			AVSampleFormat closestFormat;
-			if (targetBitsPerSample == sizeof(double))
-			{
-				closestFormat = getFirstSupportedSampleFormat(
-					{
-						AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
-						AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-						AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-						AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-						AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P
-					});
-			}
-			else
-			{
-				closestFormat = getFirstSupportedSampleFormat(
-					{
-						AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-						AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
-						AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-						AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-						AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P
-					});
-			}
-			if (closestFormat == AV_SAMPLE_FMT_NONE)
-			{
-				goto ERROR;
-			}
-			return closestFormat;
-		}
-
-		switch (targetBitsPerSample)
-		{
-		case 8:
-		{
-			const AVSampleFormat closestFormat = getFirstSupportedSampleFormat(
-				{
-					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P,
-					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
-					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP
-				});
-			if (closestFormat == AV_SAMPLE_FMT_NONE)
-			{
-				goto ERROR;
-			}
-			return closestFormat;
-		}
-		case 16:
-		{
-			const AVSampleFormat closestFormat = getFirstSupportedSampleFormat(
-				{
-					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
-					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
-					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
-				});
-			if (closestFormat == AV_SAMPLE_FMT_NONE)
-			{
-				goto ERROR;
-			}
-			return closestFormat;
-		}
-		case 24:
-		case 32:
-		{
-			const AVSampleFormat closestFormat = getFirstSupportedSampleFormat(
-				{
-					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
-					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
-					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
-				});
-			if (closestFormat == AV_SAMPLE_FMT_NONE)
-			{
-				goto ERROR;
-			}
-			return closestFormat;
-		}
-		case 64:
-		{
-			const AVSampleFormat closestFormat = getFirstSupportedSampleFormat(
-				{
-					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
-					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
-					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
-				});
-			if (closestFormat == AV_SAMPLE_FMT_NONE)
-			{
-				goto ERROR;
-			}
-			return closestFormat;
-		}
-		default:
-		{
-			const AVSampleFormat closestFormat = getFirstSupportedSampleFormat(
-				{
-					AV_SAMPLE_FMT_DBL, AV_SAMPLE_FMT_DBLP,
-					AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP,
-					AV_SAMPLE_FMT_S64, AV_SAMPLE_FMT_S64P,
-					AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P,
-					AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P,
-					AV_SAMPLE_FMT_U8, AV_SAMPLE_FMT_U8P
-				});
-			if (closestFormat == AV_SAMPLE_FMT_NONE)
-			{
-				goto ERROR;
-			}
-			return closestFormat;
-		}
-		}
-
-	ERROR:
-		RAISE_HEPH_EXCEPTION(pEncoder, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder", "Unsupported format."));
-		return AV_SAMPLE_FMT_NONE;
-	}
-	
 	void FFmpegAudioEncoder::Transcode(void* pDecoder, FFmpegAudioEncoder& encoder)
 	{
 		FFmpegAudioDecoder& decoder = *(FFmpegAudioDecoder*)pDecoder;

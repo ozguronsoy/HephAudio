@@ -8,8 +8,11 @@ namespace HephAudio
 
 	EncodedAudioBuffer::EncodedAudioBuffer(const AudioFormatInfo& formatInfo) : BufferBase<EncodedAudioBuffer, uint8_t>(), formatInfo(formatInfo) {}
 
+	EncodedAudioBuffer::EncodedAudioBuffer(size_t size, const AudioFormatInfo& formatInfo)
+		: BufferBase<EncodedAudioBuffer, uint8_t>(size, BufferFlags::AllocUninitialized), formatInfo(formatInfo) {}
+
 	EncodedAudioBuffer::EncodedAudioBuffer(const uint8_t* pData, size_t size, const AudioFormatInfo& formatInfo)
-		: BufferBase<EncodedAudioBuffer, uint8_t>(size, BufferFlags::AllocUninitialized), formatInfo(formatInfo)
+		: EncodedAudioBuffer(size, formatInfo)
 	{
 		if (pData == nullptr)
 		{
@@ -32,7 +35,7 @@ namespace HephAudio
 		if (this != &rhs)
 		{
 			this->Release();
-			
+
 			this->pData = rhs.pData;
 			this->size = rhs.size;
 			this->formatInfo = rhs.formatInfo;

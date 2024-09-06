@@ -9,6 +9,7 @@ namespace HephAudio
 	{
 	public:
 		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::Size;
+		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::Resize;
 		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::begin;
 		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::end;
 
@@ -18,6 +19,7 @@ namespace HephAudio
 	public:
 		EncodedAudioBuffer();
 		explicit EncodedAudioBuffer(const AudioFormatInfo& formatInfo);
+		EncodedAudioBuffer(size_t size, const AudioFormatInfo& formatInfo);
 		EncodedAudioBuffer(const uint8_t* pData, size_t size, const AudioFormatInfo& formatInfo);
 		EncodedAudioBuffer(const EncodedAudioBuffer&) = delete;
 		EncodedAudioBuffer(EncodedAudioBuffer&& rhs) noexcept;

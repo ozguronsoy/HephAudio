@@ -299,7 +299,7 @@ namespace HephAudio
 		}
 		void LinuxAudio::RenderData(useconds_t bufferDuration_us)
 		{
-			AudioBuffer buffer(renderFormat.sampleRate * (bufferDuration_us / 1e6f), renderFormat);
+			const snd_pcm_sframes_t bufferDuration_frame = renderFormat.sampleRate * (bufferDuration_us / 1e6f);
 			snd_pcm_sframes_t availableFrameCount;
 			snd_pcm_sframes_t writtenFrameCount;
 			int result;
@@ -309,10 +309,10 @@ namespace HephAudio
 			while (!disposing && isRenderInitialized)
 			{
 				availableFrameCount = snd_pcm_avail_update(renderPcm);
-				if (availableFrameCount >= buffer.FrameCount())
+				if (availableFrameCount >= bufferDuration_frame)
 				{
-					Mix(buffer, buffer.FrameCount());
-					writtenFrameCount = snd_pcm_writei(renderPcm, buffer.begin(), buffer.FrameCount());
+					const EncodedAudioBuffer mixedBuffer = Mix(bufferDuration_frame);
+					writtenFrameCount = snd_pcm_writei(renderPcm, mixedBuffer.begin(), bufferDuration_frame);
 					if (writtenFrameCount < 0)
 					{
 						HEPHAUDIO_LOG("An error occurred while rendering, attempting to recover.", HEPH_CL_WARNING);
@@ -342,8 +342,8 @@ namespace HephAudio
 					availableFrameCount = snd_pcm_avail_update(capturePcm);
 					if (availableFrameCount >= bufferDuration_frame)
 					{
-						AudioBuffer buffer(bufferDuration_frame, captureFormat);
-						readFrameCount = snd_pcm_readi(capturePcm, buffer.begin(), buffer.FrameCount());
+						EncodedAudioBuffer encodedBuffer(bufferDuration_frame * this->captureFormat.FrameSize(), this->captureFormat);
+						readFrameCount = snd_pcm_readi(capturePcm, encodedBuffer.begin(), bufferDuration_frame);
 						if (readFrameCount < 0)
 						{
 							HEPHAUDIO_LOG("An error occurred while capturing, attempting to recover.", HEPH_CL_WARNING);
@@ -357,6 +357,7 @@ namespace HephAudio
 						{
 							if (OnCapture)
 							{
+								AudioBuffer buffer = this->pAudioDecoder->Decode(encodedBuffer);
 								AudioCaptureEventArgs captureEventArgs(this, buffer);
 								OnCapture(&captureEventArgs, nullptr);
 							}

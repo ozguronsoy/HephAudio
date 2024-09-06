@@ -458,9 +458,8 @@ namespace HephAudio
 			{
 				for (size_t i = 0; i < outdata->mNumberBuffers; i++)
 				{
-					AudioBuffer buffer(outdata->mBuffers[i].mDataByteSize / appleAudio->renderFormat.FrameSize(), appleAudio->renderFormat);
-					appleAudio->Mix(buffer, buffer.FrameCount());
-					memcpy(outdata->mBuffers[i].mData, buffer.begin(), outdata->mBuffers[i].mDataByteSize);
+					EncodedAudioBuffer mixedBuffer = appleAudio->Mix(outdata->mBuffers[i].mDataByteSize / appleAudio->renderFormat.FrameSize());
+					memcpy(outdata->mBuffers[i].mData, mixedBuffer.begin(), outdata->mBuffers[i].mDataByteSize);
 				}
 			}
 			return kAudioHardwareNoError;
@@ -478,13 +477,14 @@ namespace HephAudio
 				}
 
 				size_t offset = 0;
-				AudioBuffer buffer(frameCount, appleAudio->captureFormat);
+				EncodedAudioBuffer encodedBuffer(frameCount * appleAudio->captureFormat.FrameSize(), appleAudio->captureFormat);
 				for (size_t i = 0; i < indata->mNumberBuffers; i++)
 				{
-					memcpy((uint8_t*)buffer.begin() + offset, indata->mBuffers[i].mData, indata->mBuffers[i].mDataByteSize);
+					memcpy(encodedBuffer.begin() + offset, indata->mBuffers[i].mData, indata->mBuffers[i].mDataByteSize);
 					offset += indata->mBuffers[i].mDataByteSize;
 				}
 
+				AudioBuffer buffer = appleAudio->pAudioDecoder->Decode(encodedBuffer);
 				AudioCaptureEventArgs captureEventArgs(appleAudio, buffer);
 				appleAudio->OnCapture(&captureEventArgs, nullptr);
 			}

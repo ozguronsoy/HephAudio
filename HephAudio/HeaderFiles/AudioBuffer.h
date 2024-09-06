@@ -31,6 +31,8 @@ namespace HephAudio
 		heph_audio_sample_t* operator[](size_t frameIndex) const;
 		void Release() override;
 		AudioBuffer SubBuffer(size_t frameIndex, size_t frameCount) const override;
+		void Prepend(const AudioBuffer& rhs) override;
+		void Append(const AudioBuffer& rhs) override;
 		void Insert(const AudioBuffer& rhs, size_t frameIndex) override;
 		void Cut(size_t frameIndex, size_t frameCount) override;
 		void Replace(const AudioBuffer& rhs, size_t frameIndex, size_t frameCount) override;

@@ -23,19 +23,19 @@ namespace HephAudio
 	}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
-		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate)) 
+		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate))
 	{
 		AudioBuffer::AddEventHandlers();
 	}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate, BufferFlags flags)
-		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate), flags) 
+		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate), flags)
 	{
 		AudioBuffer::AddEventHandlers();
 	}
 
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs)
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo) 
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo)
 	{
 		AudioBuffer::AddEventHandlers();
 	}
@@ -45,7 +45,7 @@ namespace HephAudio
 	{
 		rhs.frameCount = 0;
 		rhs.formatInfo = AudioFormatInfo();
-		
+
 		AudioBuffer::AddEventHandlers();
 	}
 
@@ -140,24 +140,78 @@ namespace HephAudio
 		return subBuffer;
 	}
 
+	void AudioBuffer::Prepend(const AudioBuffer& rhs)
+	{
+		if (this->formatInfo != rhs.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Prepend", "Both buffers must have the same audio format"));
+		}
+
+		SignedArithmeticBuffer::Prepend(rhs);
+
+		if (this->formatInfo.channelLayout.count > 0)
+		{
+			this->frameCount = this->size / this->formatInfo.channelLayout.count;
+		}
+	}
+
+	void AudioBuffer::Append(const AudioBuffer& rhs)
+	{
+		if (this->formatInfo != rhs.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Append", "Both buffers must have the same audio format"));
+		}
+
+		SignedArithmeticBuffer::Append(rhs);
+		
+		if (this->formatInfo.channelLayout.count > 0)
+		{
+			this->frameCount = this->size / this->formatInfo.channelLayout.count;
+		}
+	}
+
 	void AudioBuffer::Insert(const AudioBuffer& rhs, size_t frameIndex)
 	{
+		if (this->formatInfo != rhs.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Insert", "Both buffers must have the same audio format"));
+		}
+
 		SignedArithmeticBuffer::Insert(rhs, frameIndex * this->formatInfo.channelLayout.count);
+		
+		if (this->formatInfo.channelLayout.count > 0)
+		{
+			this->frameCount = this->size / this->formatInfo.channelLayout.count;
+		}
 	}
 
 	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount)
 	{
 		SignedArithmeticBuffer::Cut(frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);
+		
+		if (this->formatInfo.channelLayout.count > 0)
+		{
+			this->frameCount = this->size / this->formatInfo.channelLayout.count;
+		}
 	}
 
 	void AudioBuffer::Replace(const AudioBuffer& rhs, size_t frameIndex, size_t frameCount)
 	{
+		if (this->formatInfo != rhs.formatInfo)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Replace", "Both buffers must have the same audio format"));
+		}
+
 		SignedArithmeticBuffer::Replace(rhs, frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);
 	}
 
 	void AudioBuffer::Resize(size_t newFrameCount)
 	{
 		SignedArithmeticBuffer::Resize(newFrameCount * this->formatInfo.channelLayout.count);
+		if (this->formatInfo.channelLayout.count > 0)
+		{
+			this->frameCount = this->size / this->formatInfo.channelLayout.count;
+		}
 	}
 
 	void AudioBuffer::Reverse()

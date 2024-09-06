@@ -296,7 +296,7 @@ namespace HephAudio
 			WAVEFORMATEXTENSIBLE wfx = WinAudioBase::AFI2WFX(format);
 			HANDLE hEvent = nullptr;
 			UINT32 padding, nFramesAvailable, bufferSize;
-			AudioBuffer dataBuffer;
+			EncodedAudioBuffer mixedBuffer;
 			void* renderBuffer = nullptr;
 			HRESULT hres;
 
@@ -348,7 +348,6 @@ namespace HephAudio
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->SetEventHandle(hEvent), "WinAudio::InitializeRender", "An error occurred while setting the render event handle.");
 
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetBufferSize(&bufferSize), "WinAudio", "An error occurred while rendering the samples.");
-			dataBuffer = AudioBuffer(bufferSize, this->renderFormat);
 
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)pRenderClient.GetAddressOf()), "WinAudio", "An error occurred while rendering the samples.");
 			WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(bufferSize, (BYTE**)&renderBuffer), "WinAudio", "An error occurred while rendering the samples.");
@@ -379,13 +378,11 @@ namespace HephAudio
 
 				if (nFramesAvailable > 0)
 				{
-					Mix(dataBuffer, nFramesAvailable);
+					mixedBuffer = this->Mix(nFramesAvailable);
 
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, (BYTE**)&renderBuffer), "WinAudio", "An error occurred while rendering the samples.");
-					memcpy(renderBuffer, dataBuffer.begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
+					memcpy(renderBuffer, mixedBuffer.begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(nFramesAvailable, 0), "WinAudio", "An error occurred while rendering the samples.");
-
-					dataBuffer.Reset();
 				}
 			}
 
@@ -479,8 +476,9 @@ namespace HephAudio
 
 						if (nFramesAvailable > 0)
 						{
-							AudioBuffer buffer(nFramesAvailable, this->captureFormat);
-							memcpy(buffer.begin(), captureBuffer, buffer.SizeAsByte());
+							EncodedAudioBuffer encodedBuffer((const uint8_t*)captureBuffer, nFramesAvailable * this->captureFormat.FrameSize(), this->captureFormat);
+							AudioBuffer buffer = this->pAudioDecoder->Decode(encodedBuffer); 
+							
 							AudioCaptureEventArgs captureEventArgs(this, buffer);
 							this->OnCapture(&captureEventArgs, nullptr);
 						}

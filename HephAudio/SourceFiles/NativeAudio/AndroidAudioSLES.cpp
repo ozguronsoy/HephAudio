@@ -266,11 +266,10 @@ namespace HephAudio
 			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->isRenderInitialized)
 			{
 				const size_t frameCount = pCallbackContext->bufferSize_frame / 2;
-				AudioBuffer dataBuffer(frameCount, pCallbackContext->pAndroidAudio->renderFormat);
-				const size_t bufferSize = dataBuffer.SizeAsByte();
+				const size_t bufferSize = frameCount * pCallbackContext->pAndroidAudio->renderFormat.FrameSize();
 
-				pCallbackContext->pAndroidAudio->Mix(dataBuffer, frameCount);
-				(void)memcpy(pCallbackContext->pData + pCallbackContext->index, dataBuffer.begin(), bufferSize);
+				EncodedAudioBuffer mixedBuffer = pCallbackContext->pAndroidAudio->Mix(frameCount);
+				(void)memcpy(pCallbackContext->pData + pCallbackContext->index, mixedBuffer.begin(), bufferSize);
 				pCallbackContext->index = (pCallbackContext->index + bufferSize) % pCallbackContext->bufferSize_byte;
 
 				SLresult slres = (*bufferQueue)->Enqueue(bufferQueue, pCallbackContext->pData + pCallbackContext->index, bufferSize);
@@ -287,12 +286,15 @@ namespace HephAudio
 			if (pCallbackContext != nullptr && pCallbackContext->pAndroidAudio->isCaptureInitialized && pCallbackContext->pAndroidAudio->OnCapture)
 			{
 				const size_t frameCount = pCallbackContext->bufferSize_frame / 2;
-				AudioBuffer captureBuffer(frameCount, pCallbackContext->pAndroidAudio->captureFormat);
-				const size_t bufferSize = captureBuffer.SizeAsByte();
+				const size_t bufferSize = frameCount * pCallbackContext->pAndroidAudio->captureFormat.FrameSize();
+				EncodedAudioBuffer encodedBuffer(
+					(const uint8_t*)pCallbackContext->pData + pCallbackContext->index, 
+					bufferSize, 
+					pCallbackContext->pAndroidAudio->captureFormat
+				);
 
-				(void)memcpy(captureBuffer.begin(), pCallbackContext->pData + pCallbackContext->index, bufferSize);
-
-				AudioCaptureEventArgs captureEventArgs(pCallbackContext->pAndroidAudio, captureBuffer);
+				AudioBuffer buffer = pCallbackContext->pAndroidAudio->pAudioDecoder->Decode(encodedBuffer);
+				AudioCaptureEventArgs captureEventArgs(pCallbackContext->pAndroidAudio, buffer);
 				pCallbackContext->pAndroidAudio->OnCapture(&captureEventArgs, nullptr);
 
 				pCallbackContext->index = (pCallbackContext->index + bufferSize) % pCallbackContext->bufferSize_byte;

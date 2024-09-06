@@ -132,27 +132,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Oscillators\SawToothWaveOscillator.h">
       <Filter>HeaderFiles\Oscillators</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\IAudioCodec.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\EncodedBufferInfo.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\PcmCodec.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\AudioCodecManager.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\IEEE_FloatCodec.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\MuLawCodec.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioCodecs\ALawCodec.h">
-      <Filter>HeaderFiles\AudioCodecs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioEventArgs.h">
       <Filter>HeaderFiles\Events\Args</Filter>
     </ClInclude>
@@ -307,21 +286,6 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Oscillators\SawToothWaveOscillator.cpp">
       <Filter>SourceFiles\Oscillators</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\PcmCodec.cpp">
-      <Filter>SourceFiles\AudioCodecs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\AudioCodecManager.cpp">
-      <Filter>SourceFiles\AudioCodecs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\IEEE_FloatCodec.cpp">
-      <Filter>SourceFiles\AudioCodecs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\MuLawCodec.cpp">
-      <Filter>SourceFiles\AudioCodecs</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioCodecs\ALawCodec.cpp">
-      <Filter>SourceFiles\AudioCodecs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\LinuxAudio.cpp">
       <Filter>SourceFiles\NativeAudio</Filter>

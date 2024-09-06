@@ -14,14 +14,13 @@
 #define HEPH_EC_INVALID_OPERATION		((int64_t)-6)
 #define HEPH_EC_TIMEOUT					((int64_t)-7)
 #define HEPH_EC_NOT_SUPPORTED			((int64_t)-8)
-#define HEPH_EC_EXTERNAL				((int64_t)INT64_MIN)
 
 #define HEPH_EXCEPTION_DEFAULT_HANDLER	&HephCommon::HephException::DefaultHandler
 
-#define RAISE_HEPH_EXCEPTION(sender, ex) (ex).Raise((const void*)(sender))
-#define RAISE_AND_THROW_HEPH_EXCEPTION(sender, ex)	{																	\
+#define RAISE_HEPH_EXCEPTION(pSender, ex) (ex).Raise((const void*)(pSender))
+#define RAISE_AND_THROW_HEPH_EXCEPTION(pSender, ex)	{																	\
 														const HephCommon::HephException __temp_ex__ = (ex);				\
-														__temp_ex__.Raise((const void*)(sender));						\
+														__temp_ex__.Raise((const void*)(pSender));						\
 														throw __temp_ex__;												\
 													}
 
@@ -33,7 +32,6 @@ namespace HephCommon
 		static inline Event OnException = Event();
 
 		int64_t errorCode;
-		int64_t externalErrorCode;
 		std::string method;
 		std::string message;
 		std::string externalSource;
@@ -41,7 +39,7 @@ namespace HephCommon
 
 		HephException();
 		HephException(int64_t errorCode, const std::string& method, const std::string& message);
-		HephException(int64_t externalErrorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
+		HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
 
 		void Raise(const void* pSender) const;
 
