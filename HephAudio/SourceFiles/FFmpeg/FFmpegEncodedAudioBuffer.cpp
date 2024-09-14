@@ -4,11 +4,23 @@ using namespace HephCommon;
 
 namespace HephAudio
 {
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer() : EncodedAudioBuffer() {}
+	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer()
+		: EncodedAudioBuffer(), frameCount(0), blockAlign(0),
+		extraDataSize(0), extraData(nullptr) {}
 
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(const AudioFormatInfo& formatInfo) : EncodedAudioBuffer(formatInfo) {}
+	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(const AudioFormatInfo& formatInfo)
+		: EncodedAudioBuffer(formatInfo), frameCount(0), blockAlign(0),
+		extraDataSize(0), extraData(nullptr) {}
 
-	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(FFmpegEncodedAudioBuffer&& rhs) noexcept : EncodedAudioBuffer(std::move(rhs)) {}
+	FFmpegEncodedAudioBuffer::FFmpegEncodedAudioBuffer(FFmpegEncodedAudioBuffer&& rhs) noexcept
+		: EncodedAudioBuffer(std::move(rhs)), frameCount(rhs.frameCount), blockAlign(rhs.blockAlign),
+		extraDataSize(rhs.extraDataSize), extraData(rhs.extraData)
+	{
+		rhs.frameCount = 0;
+		rhs.extraDataSize = 0;
+		rhs.extraData = nullptr;
+		rhs.blockAlign = 0;
+	}
 
 	FFmpegEncodedAudioBuffer::~FFmpegEncodedAudioBuffer()
 	{
@@ -23,9 +35,17 @@ namespace HephAudio
 
 			this->pData = rhs.pData;
 			this->size = rhs.size;
+			this->frameCount = rhs.frameCount;
+			this->extraDataSize = rhs.extraDataSize;
+			this->extraData = rhs.extraData;
+			this->blockAlign = rhs.blockAlign;
 
 			rhs.pData = nullptr;
 			rhs.size = 0;
+			rhs.frameCount = 0;
+			rhs.extraDataSize = 0;
+			rhs.extraData = nullptr;
+			rhs.blockAlign = 0;
 		}
 		return *this;
 	}
@@ -37,6 +57,16 @@ namespace HephAudio
 
 	void FFmpegEncodedAudioBuffer::Release()
 	{
+		if (this->extraData != nullptr)
+		{
+			av_free(this->extraData);
+			this->extraData = nullptr;
+		}
+
+		this->frameCount = 0;
+		this->extraDataSize = 0;
+		this->blockAlign = 0;
+
 		if (!this->IsEmpty())
 		{
 			for (AVPacket*& packet : (*this))
@@ -47,13 +77,73 @@ namespace HephAudio
 				}
 			}
 		}
+
 		EncodedAudioBuffer::Release();
 	}
 
-	void FFmpegEncodedAudioBuffer::Add(AVPacket* packet)
+	size_t FFmpegEncodedAudioBuffer::GetFrameCount() const
 	{
-		this->Resize(this->size + 1);
-		(*this)[this->size - 1] = packet;
+		return this->frameCount;
+	}
+
+	size_t FFmpegEncodedAudioBuffer::GetBlockAlign() const
+	{
+		return this->blockAlign;
+	}
+
+	void FFmpegEncodedAudioBuffer::SetBlockAlign(size_t blockAlign)
+	{
+		this->blockAlign = blockAlign;
+	}
+
+	size_t FFmpegEncodedAudioBuffer::GetExtraDataSize() const
+	{
+		return this->extraDataSize;
+	}
+
+	void* FFmpegEncodedAudioBuffer::GetExtraData() const
+	{
+		return this->extraData;
+	}
+
+	void FFmpegEncodedAudioBuffer::SetExtraData(void* pExtraData, size_t extraDataSize)
+	{
+		if (this->extraData != nullptr)
+		{
+			av_free(this->extraData);
+			this->extraData = nullptr;
+		}
+		this->extraDataSize = 0;
+
+		if (pExtraData != nullptr && extraDataSize != 0)
+		{
+			this->extraData = av_malloc(extraDataSize + AV_INPUT_BUFFER_PADDING_SIZE);
+			if (this->extraData == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FFmpegEncodedAudioBuffer::SetExtraData", "Insufficient memory"));
+			}
+			(void)std::memcpy(this->extraData, pExtraData, extraDataSize);
+
+			this->extraDataSize = extraDataSize;
+		}
+
+	}
+
+	void FFmpegEncodedAudioBuffer::Add(AVPacket* packet, size_t frameCount)
+	{
+		const size_t oldSize = this->size;
+
+		uint8_t* pTemp = (uint8_t*)std::realloc(this->pData, (oldSize + 1) * sizeof(AVPacket*));
+		if (pTemp == nullptr)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "FFmpegEncodedAudioBuffer::Add", "Insufficient memory"));
+		}
+
+		this->pData = pTemp;
+		this->size = oldSize + 1;
+		this->frameCount += frameCount;
+
+		(*this)[oldSize] = packet;
 	}
 
 	AVPacket** FFmpegEncodedAudioBuffer::begin() const

@@ -177,9 +177,9 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Unsupported format"));
 		}
 
-		av_opt_set_chlayout(this->swrContext, "in_chlayout", &inputChannelLayout, 0);
-		av_opt_set_int(this->swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", inputSampleFormat, 0);
+		(void)av_opt_set_chlayout(this->swrContext, "in_chlayout", &inputChannelLayout, 0);
+		(void)av_opt_set_int(this->swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
+		(void)av_opt_set_sample_fmt(this->swrContext, "in_sample_fmt", inputSampleFormat, 0);
 
 		int ret = swr_init(this->swrContext);
 		if (ret < 0)
@@ -255,47 +255,46 @@ namespace HephAudio
 		const AudioFormatInfo& inputFormatInfo = inputBuffer.FormatInfo();
 		const AudioFormatInfo& outputFormatInfo = outputBuffer.GetAudioFormatInfo();
 
+		SwrContext* swrContext = swr_alloc();
+		if (swrContext == nullptr)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Failed to create SwrContext."));
+		}
+
+		const AVChannelLayout inputAVChLayout = HephAudio::ToAVChannelLayout(inputFormatInfo.channelLayout);
+		const AVChannelLayout outputAVChLayout = HephAudio::ToAVChannelLayout(outputFormatInfo.channelLayout);
+		const AVSampleFormat outputSampleFormat = HephAudio::ToAVSampleFormat(outputFormatInfo);
+		const uint32_t outputSampleRate = HephAudio::GetClosestSupportedSampleRate(outputFormatInfo);
+
+		if (outputSampleFormat == AV_SAMPLE_FMT_NONE)
+		{
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "Unsupported format"));
+		}
+
+		(void)av_opt_set_chlayout(swrContext, "in_chlayout", &inputAVChLayout, 0);
+		(void)av_opt_set_int(swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
+		(void)av_opt_set_sample_fmt(swrContext, "in_sample_fmt", HephAudio::ToAVSampleFormat(inputFormatInfo), 0);
+
+		(void)av_opt_set_chlayout(swrContext, "out_chlayout", &outputAVChLayout, 0);
+		(void)av_opt_set_int(swrContext, "out_sample_rate", outputSampleRate, 0);
+		(void)av_opt_set_sample_fmt(swrContext, "out_sample_fmt", outputSampleFormat, 0);
+
+		ret = swr_init(swrContext);
+		if (ret < 0)
+		{
+			swr_free(&swrContext);
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to initialize SwrContext.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+		}
+
 		FFmpegEncodedAudioBuffer* pFFmpegBuffer = dynamic_cast<FFmpegEncodedAudioBuffer*>(&outputBuffer);
 		if (pFFmpegBuffer == nullptr)
 		{
-			if (inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_PCM &&
-				inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT &&
-				inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_ALAW &&
-				inputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_MULAW)
+			if (outputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_PCM &&
+				outputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT &&
+				outputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_ALAW &&
+				outputFormatInfo.formatTag != HEPHAUDIO_FORMAT_TAG_MULAW)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "EncodedAudioBuffer must contain raw PCM or a-law or mu-law data"));
-			}
-
-			SwrContext* swrContext = swr_alloc();
-			if (swrContext == nullptr)
-			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Failed to create SwrContext."));
-			}
-
-			{
-				const AVChannelLayout inputAVChLayout = HephAudio::ToAVChannelLayout(inputFormatInfo.channelLayout);
-				const AVChannelLayout outputAVChLayout = HephAudio::ToAVChannelLayout(outputFormatInfo.channelLayout);
-				const AVSampleFormat outputSampleFormat = HephAudio::ToAVSampleFormat(outputFormatInfo);
-
-				if (outputSampleFormat == AV_SAMPLE_FMT_NONE)
-				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "Unsupported format"));
-				}
-
-				av_opt_set_chlayout(swrContext, "in_chlayout", &inputAVChLayout, 0);
-				av_opt_set_int(swrContext, "in_sample_rate", inputFormatInfo.sampleRate, 0);
-				av_opt_set_sample_fmt(swrContext, "in_sample_fmt", HephAudio::ToAVSampleFormat(inputFormatInfo), 0);
-
-				av_opt_set_chlayout(swrContext, "out_chlayout", &outputAVChLayout, 0);
-				av_opt_set_int(swrContext, "out_sample_rate", HephAudio::GetClosestSupportedSampleRate(outputFormatInfo), 0);
-				av_opt_set_sample_fmt(swrContext, "out_sample_fmt", outputSampleFormat, 0);
-
-				ret = swr_init(swrContext);
-				if (ret < 0)
-				{
-					swr_free(&swrContext);
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to initialize SwrContext.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
-				}
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioEncoder::Encode", "output format must be raw PCM or a-law or mu-law"));
 			}
 
 			const size_t frameCount = inputBuffer.FrameCount();
@@ -325,13 +324,134 @@ namespace HephAudio
 			return;
 		}
 
-		// TODO
-		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Encode", "Not implemented"));
+		const AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(outputFormatInfo);
+		const AVCodec* avCodec = avcodec_find_encoder(codecID);
+
+		AVCodecContext* avCodecContext = avcodec_alloc_context3(avCodec);
+		if (avCodecContext == nullptr)
+		{
+			swr_free(&swrContext);
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Failed to allocate AVCodecContext"));
+		}
+		avCodecContext->sample_fmt = outputSampleFormat;
+		avCodecContext->sample_rate = outputSampleRate;
+		avCodecContext->ch_layout = outputAVChLayout;
+
+		if (avCodecContext->codec_id == AV_CODEC_ID_MP3 && outputFormatInfo.bitRate == 0) // otherwise encoder calculates the duration wrong
+		{
+			AudioFormatInfo tempFormatInfo = outputFormatInfo;
+			tempFormatInfo.bitRate = 128000;
+			outputBuffer.SetAudioFormatInfo(tempFormatInfo);
+		}
+		avCodecContext->bit_rate = outputFormatInfo.bitRate;
+
+		ret = avcodec_open2(avCodecContext, avCodec, nullptr);
+		if (ret < 0)
+		{
+			avcodec_free_context(&avCodecContext);
+			swr_free(&swrContext);
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to allocate output format context.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+		}
+
+		pFFmpegBuffer->SetBlockAlign(avCodecContext->block_align);
+		pFFmpegBuffer->SetExtraData(avCodecContext->extradata, avCodecContext->extradata_size);
+
+		if (avCodecContext->frame_size == 0)
+		{
+			avCodecContext->frame_size = avCodecContext->sample_rate / 100; // 10 ms
+		}
+
+		AVFrame* avFrame = av_frame_alloc();
+		if (avFrame == nullptr)
+		{
+			avcodec_free_context(&avCodecContext);
+			swr_free(&swrContext);
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Failed to allocate AVFrame"));
+		}
+		avFrame->nb_samples = avCodecContext->frame_size;
+		avFrame->ch_layout = avCodecContext->ch_layout;
+		avFrame->format = (int)avCodecContext->sample_fmt;
+		avFrame->sample_rate = avCodecContext->sample_rate;
+		avFrame->pts = avCodecContext->initial_padding;
+		avFrame->duration = avCodecContext->frame_size;
+
+		ret = av_frame_get_buffer(avFrame, 0);
+		if (ret < 0)
+		{
+			avcodec_free_context(&avCodecContext);
+			av_frame_free(&avFrame);
+			swr_free(&swrContext);
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to allocate buffer(s) for AVFrame.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+		}
+
+		const size_t inputBufferFrameCount = inputBuffer.FrameCount();
+		size_t inputFrameCountToRead = av_rescale(avFrame->nb_samples, inputFormatInfo.sampleRate, outputFormatInfo.sampleRate);
+		size_t packetFrameCount = 0;
+		for (size_t i = 0; i < inputBufferFrameCount; i += inputFrameCountToRead)
+		{
+			const uint8_t* pInputFrame = (const uint8_t*)inputBuffer[i];
+			if (i + inputFrameCountToRead > inputBufferFrameCount)
+			{
+				inputFrameCountToRead = inputBufferFrameCount - i;
+			}
+
+			packetFrameCount += avFrame->nb_samples;
+			avFrame->pts += avFrame->duration;
+
+			ret = swr_convert(swrContext, avFrame->data, avFrame->nb_samples, &pInputFrame, inputFrameCountToRead);
+			if (ret < 0)
+			{
+				avcodec_free_context(&avCodecContext);
+				av_frame_free(&avFrame);
+				swr_free(&swrContext);
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to swr convert.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+			}
+			else if (ret < avFrame->nb_samples)
+			{
+				(void)swr_convert(swrContext, avFrame->data, avFrame->nb_samples, nullptr, 0); // flush the buffered samples
+			}
+
+			ret = avcodec_send_frame(avCodecContext, avFrame);
+			if (ret < 0)
+			{
+				HEPHAUDIO_LOG("Failed to send frame, skipping the packet...", HEPH_CL_WARNING);
+				continue;
+			}
+
+			AVPacket* avPacket = av_packet_alloc();
+			if (avPacket == nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder::Encode", "Failed to allocate AVPacket"));
+			}
+
+			ret = avcodec_receive_packet(avCodecContext, avPacket);
+			if (ret == AVERROR(EAGAIN))
+			{
+				// not enough samples to encode, send more frames to the encoder
+				continue;
+			}
+			else if (ret < 0)
+			{
+				avcodec_free_context(&avCodecContext);
+				av_frame_free(&avFrame);
+				swr_free(&swrContext);
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioEncoder::Encode", "Failed to recieve AVPacket", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
+			}
+
+			pFFmpegBuffer->Add(avPacket, packetFrameCount);
+			packetFrameCount = 0;
+		}
+
+		avcodec_free_context(&avCodecContext);
+		av_frame_free(&avFrame);
+		swr_free(&swrContext);
 	}
 
 	void FFmpegAudioEncoder::Transcode(const EncodedAudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer)
 	{
-		RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_NOT_IMPLEMENTED, "FFmpegAudioEncoder::Transcode", "Not implemented"));
+		FFmpegAudioDecoder decoder;
+		const AudioBuffer decodedBuffer = decoder.Decode(inputBuffer);
+		this->Encode(decodedBuffer, outputBuffer);
 	}
 
 	void FFmpegAudioEncoder::Transcode(const std::string& inputFilePath, const std::string& outputFilePath, bool overwrite)
@@ -468,7 +588,7 @@ namespace HephAudio
 			this->avFrame->nb_samples = this->avCodecContext->frame_size;
 		}
 
-		this->avFrame->format = this->avCodecContext->sample_fmt;
+		this->avFrame->format = (int)this->avCodecContext->sample_fmt;
 		ret = av_channel_layout_copy(&this->avFrame->ch_layout, &this->avCodecContext->ch_layout);
 		if (ret < 0)
 		{
@@ -493,9 +613,9 @@ namespace HephAudio
 			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioEncoder", "Failed to create SwrContext."));
 		}
 
-		av_opt_set_chlayout(this->swrContext, "out_chlayout", &this->avStream->codecpar->ch_layout, 0);
-		av_opt_set_int(this->swrContext, "out_sample_rate", this->avStream->codecpar->sample_rate, 0);
-		av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", (AVSampleFormat)this->avStream->codecpar->format, 0);
+		(void)av_opt_set_chlayout(this->swrContext, "out_chlayout", &this->avStream->codecpar->ch_layout, 0);
+		(void)av_opt_set_int(this->swrContext, "out_sample_rate", this->avStream->codecpar->sample_rate, 0);
+		(void)av_opt_set_sample_fmt(this->swrContext, "out_sample_fmt", (AVSampleFormat)this->avStream->codecpar->format, 0);
 
 		ret = avformat_init_output(this->avFormatContext, nullptr);
 		if (ret < 0)

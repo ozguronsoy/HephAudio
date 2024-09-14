@@ -249,7 +249,7 @@ namespace HephAudio
 
 	inline AVSampleFormat ToAVSampleFormat(const AudioFormatInfo& formatInfo)
 	{
-		AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(formatInfo);
+		const AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(formatInfo);
 		const AVCodec* avCodec = avcodec_find_encoder(codecID);
 		return HephAudio::ToAVSampleFormat(avCodec, formatInfo);
 	}
@@ -323,7 +323,7 @@ namespace HephAudio
 
 	inline uint32_t GetClosestSupportedSampleRate(const AudioFormatInfo& formatInfo)
 	{
-		AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(formatInfo);
+		const AVCodecID codecID = HephAudio::CodecIdFromAudioFormatInfo(formatInfo);
 		const AVCodec* avCodec = avcodec_find_encoder(codecID);
 		return HephAudio::GetClosestSupportedSampleRate(avCodec, formatInfo.sampleRate);
 	}

@@ -5,13 +5,16 @@
 
 namespace HephAudio
 {
-	class FFmpegEncodedAudioBuffer final : private EncodedAudioBuffer
+	class FFmpegEncodedAudioBuffer final : public EncodedAudioBuffer
 	{
-	public:
-		using EncodedAudioBuffer::Size;
-		using EncodedAudioBuffer::SizeAsByte;
-		using EncodedAudioBuffer::GetAudioFormatInfo;
-		using EncodedAudioBuffer::SetAudioFormatInfo;
+	private:
+		using EncodedAudioBuffer::Resize;
+
+	private:
+		size_t frameCount;
+		size_t extraDataSize;
+		void* extraData;
+		size_t blockAlign;
 
 	public:
 		FFmpegEncodedAudioBuffer();
@@ -23,7 +26,13 @@ namespace HephAudio
 		FFmpegEncodedAudioBuffer& operator=(FFmpegEncodedAudioBuffer&& rhs) noexcept;
 		AVPacket*& operator[](size_t index) const;
 		void Release() override;
-		void Add(AVPacket* packet);
+		size_t GetFrameCount() const;
+		size_t GetBlockAlign() const;
+		void SetBlockAlign(size_t blockAlign);
+		size_t GetExtraDataSize() const;
+		void* GetExtraData() const;
+		void SetExtraData(void* pExtraData, size_t extraDataSize);
+		void Add(AVPacket* packet, size_t frameCount);
 		AVPacket** begin() const;
 		AVPacket** end() const;
 	};
