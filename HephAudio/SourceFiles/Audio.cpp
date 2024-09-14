@@ -194,9 +194,9 @@ namespace HephAudio
 		return this->pNativeAudio->Load(filePath, playCount, isPaused);
 	}
 
-	AudioObject* Audio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo)
+	AudioObject* Audio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint16_t sampleRate)
 	{
-		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount, bufferFormatInfo);
+		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount, channelLayout, sampleRate);
 	}
 
 	bool Audio::DestroyAudioObject(AudioObject* pAudioObject)

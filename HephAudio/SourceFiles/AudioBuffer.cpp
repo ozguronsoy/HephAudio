@@ -9,27 +9,16 @@ namespace HephAudio
 {
 	AudioBuffer::AudioBuffer() : SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(), frameCount(0) { AudioBuffer::AddEventHandlers(); }
 
-	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo)
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count), frameCount(frameCount), formatInfo(formatInfo)
-	{
-		AudioBuffer::AddEventHandlers();
-	}
-
-	AudioBuffer::AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo, BufferFlags flags)
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* formatInfo.channelLayout.count, flags),
-		frameCount(frameCount), formatInfo(formatInfo)
-	{
-		AudioBuffer::AddEventHandlers();
-	}
-
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
-		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate))
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* channelLayout.count),
+		frameCount(frameCount), formatInfo(HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate))
 	{
 		AudioBuffer::AddEventHandlers();
 	}
 
 	AudioBuffer::AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate, BufferFlags flags)
-		: AudioBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate), flags)
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(frameCount* channelLayout.count, flags),
+		frameCount(frameCount), formatInfo(HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate))
 	{
 		AudioBuffer::AddEventHandlers();
 	}
@@ -129,6 +118,7 @@ namespace HephAudio
 	void AudioBuffer::Release()
 	{
 		SignedArithmeticBuffer::Release();
+		this->frameCount = 0;
 		this->formatInfo = AudioFormatInfo();
 	}
 
@@ -163,7 +153,7 @@ namespace HephAudio
 		}
 
 		SignedArithmeticBuffer::Append(rhs);
-		
+
 		if (this->formatInfo.channelLayout.count > 0)
 		{
 			this->frameCount = this->size / this->formatInfo.channelLayout.count;
@@ -178,7 +168,7 @@ namespace HephAudio
 		}
 
 		SignedArithmeticBuffer::Insert(rhs, frameIndex * this->formatInfo.channelLayout.count);
-		
+
 		if (this->formatInfo.channelLayout.count > 0)
 		{
 			this->frameCount = this->size / this->formatInfo.channelLayout.count;
@@ -188,7 +178,7 @@ namespace HephAudio
 	void AudioBuffer::Cut(size_t frameIndex, size_t frameCount)
 	{
 		SignedArithmeticBuffer::Cut(frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);
-		
+
 		if (this->formatInfo.channelLayout.count > 0)
 		{
 			this->frameCount = this->size / this->formatInfo.channelLayout.count;
@@ -236,55 +226,23 @@ namespace HephAudio
 		return this->formatInfo;
 	}
 
-	void AudioBuffer::SetFormatInfo(const AudioChannelLayout& channelLayout, uint32_t sampleRate)
-	{
-		this->SetFormatInfo(
-			AudioFormatInfo(
-				this->formatInfo.formatTag,
-				this->formatInfo.bitsPerSample,
-				channelLayout,
-				sampleRate,
-				this->formatInfo.bitRate,
-				this->formatInfo.endian)
-		);
-	}
-
-	void AudioBuffer::SetFormatInfo(const AudioFormatInfo& audioFormatInfo)
-	{
-		if (audioFormatInfo != this->formatInfo)
-		{
-			this->Release();
-			this->formatInfo = audioFormatInfo;
-			this->pData = SignedArithmeticBuffer::Allocate(this->SizeAsByte());
-		}
-	}
-
 	void AudioBuffer::SetChannelLayout(const AudioChannelLayout& channelLayout)
 	{
-		this->SetFormatInfo(channelLayout, this->formatInfo.sampleRate);
+		const size_t size = this->size;
+		const size_t frameCount = this->frameCount;
+		const uint16_t sampleRate = this->formatInfo.sampleRate;
+
+		this->Release();
+
+		this->size = size;
+		this->frameCount = frameCount;
+		this->formatInfo = HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate);
+		this->pData = SignedArithmeticBuffer::Allocate(this->SizeAsByte());
 	}
 
 	void AudioBuffer::SetSampleRate(uint32_t sampleRate)
 	{
 		this->formatInfo.sampleRate = sampleRate;
-	}
-
-	void AudioBuffer::SetBitsPerSample(uint16_t bitsPerSample)
-	{
-		this->SetFormatInfo(
-			AudioFormatInfo(
-				this->formatInfo.formatTag,
-				bitsPerSample,
-				this->formatInfo.channelLayout,
-				this->formatInfo.sampleRate,
-				this->formatInfo.bitRate,
-				this->formatInfo.endian)
-		);
-	}
-
-	void AudioBuffer::SetBitRate(uint32_t bitRate)
-	{
-		this->formatInfo.bitRate = bitRate;
 	}
 
 	void AudioBuffer::AddEventHandlers()

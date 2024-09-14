@@ -57,12 +57,7 @@ namespace HephAudio
 				return;
 			}
 
-			AudioBuffer resultBuffer(
-				buffer.frameCount,
-				AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, outputChannelLayout,
-					buffer.formatInfo.sampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian), 
-				BufferFlags::AllocUninitialized
-			);
+			AudioBuffer resultBuffer(buffer.frameCount, outputChannelLayout, buffer.formatInfo.sampleRate, BufferFlags::AllocUninitialized);
 
 			for (size_t i = 0; i < outputMapping.size(); i++)
 			{
@@ -100,10 +95,7 @@ namespace HephAudio
 		if (srRatio != 1.0)
 		{
 			const size_t targetFrameCount = ceil((double)buffer.frameCount * srRatio);
-			AudioBuffer resultBuffer(targetFrameCount, 
-				AudioFormatInfo(buffer.formatInfo.formatTag, buffer.formatInfo.bitsPerSample, buffer.formatInfo.channelLayout, 
-					outputSampleRate, buffer.formatInfo.bitRate, buffer.formatInfo.endian),
-				BufferFlags::AllocUninitialized);
+			AudioBuffer resultBuffer(targetFrameCount, buffer.formatInfo.channelLayout, outputSampleRate, BufferFlags::AllocUninitialized);
 
 			for (size_t i = 0; i < targetFrameCount; i++)
 			{
@@ -139,7 +131,7 @@ namespace HephAudio
 			return AudioBuffer();
 		}
 
-		AudioBuffer resultBuffer(channels[0].Size(), HEPHAUDIO_INTERNAL_FORMAT(AudioChannelLayout::DefaultChannelLayout(channels.size()), sampleRate));
+		AudioBuffer resultBuffer(channels[0].Size(), AudioChannelLayout::DefaultChannelLayout(channels.size()), sampleRate);
 		for (size_t i = 0; i < resultBuffer.frameCount; i++)
 		{
 			for (size_t j = 0; j < resultBuffer.formatInfo.channelLayout.count; j++)
@@ -265,7 +257,7 @@ namespace HephAudio
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo, BufferFlags::AllocUninitialized);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo.channelLayout, buffer.formatInfo.sampleRate, BufferFlags::AllocUninitialized);
 
 		for (size_t i = 0; i < buffer.frameCount; i++)
 		{
@@ -300,7 +292,7 @@ namespace HephAudio
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo, BufferFlags::AllocUninitialized);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo.channelLayout, buffer.formatInfo.sampleRate, BufferFlags::AllocUninitialized);
 		memcpy(resultBuffer.pData, buffer.pData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
@@ -342,7 +334,7 @@ namespace HephAudio
 			lfoPeriodBuffer[i] = lfo[i] * 0.5 + 0.5;
 		}
 
-		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo, BufferFlags::AllocUninitialized);
+		AudioBuffer resultBuffer(buffer.frameCount, buffer.formatInfo.channelLayout, buffer.formatInfo.sampleRate, BufferFlags::AllocUninitialized);
 		memcpy(resultBuffer.pData, buffer.pData, round(delay_sample + baseDelay_sample) * buffer.formatInfo.FrameSize());
 
 		for (size_t i = baseDelay_sample + delay_sample + 1; i < buffer.frameCount; i++)
@@ -685,7 +677,7 @@ namespace HephAudio
 		window.SetSize(windowSize);
 		const double frameCountRatio = 1.0 / speed;
 		const DoubleBuffer windowBuffer = window.GenerateBuffer();
-		AudioBuffer resultBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo, BufferFlags::AllocUninitialized);
+		AudioBuffer resultBuffer(buffer.frameCount * frameCountRatio, buffer.formatInfo.channelLayout, buffer.formatInfo.sampleRate, BufferFlags::AllocUninitialized);
 
 		if (speed <= 1.0)
 		{

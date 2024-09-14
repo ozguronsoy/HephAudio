@@ -103,7 +103,7 @@ namespace HephAudio
 			else
 			{
 				const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
-				this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + File::GetFileName(newFilePath), 0, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelLayout, renderFormat.sampleRate));
+				this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + File::GetFileName(newFilePath), 0, renderFormat.channelLayout, renderFormat.sampleRate);
 
 				this->pAudioObject->OnRender = &AudioStream::OnRender;
 				this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;

@@ -9,13 +9,13 @@ namespace HephAudio
 	class AudioBuffer final : public HephCommon::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>
 	{
 		friend class AudioProcessor;
+
 	private:
 		size_t frameCount;
 		AudioFormatInfo formatInfo;
+
 	public:
 		AudioBuffer();
-		AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo);
-		AudioBuffer(size_t frameCount, const AudioFormatInfo& formatInfo, HephCommon::BufferFlags flags);
 		AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 		AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate, HephCommon::BufferFlags flags);
 		AudioBuffer(const AudioBuffer& rhs);
@@ -40,12 +40,9 @@ namespace HephAudio
 		void Reverse() override;
 		size_t FrameCount() const;
 		const AudioFormatInfo& FormatInfo() const;
-		void SetFormatInfo(const AudioChannelLayout& channelLayout, uint32_t sampleRate);
-		void SetFormatInfo(const AudioFormatInfo& audioFormatInfo);
 		void SetChannelLayout(const AudioChannelLayout& channelLayout);
 		void SetSampleRate(uint32_t sampleRate);
-		void SetBitsPerSample(uint16_t bitsPerSample);
-		void SetBitRate(uint32_t bitRate);
+
 	private:
 		static inline bool ADD_EVENT_HANDLERS = false;
 		static void AddEventHandlers();

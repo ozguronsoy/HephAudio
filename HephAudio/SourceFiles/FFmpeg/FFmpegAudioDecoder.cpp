@@ -154,13 +154,13 @@ namespace HephAudio
 		if (!this->IsFileOpen())
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "No open file to decode."));
-			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
+			return AudioBuffer(frameCount, this->GetOutputFormatInfo().channelLayout, this->GetOutputFormatInfo().sampleRate);
 		}
 
 		int ret = 0;
 		AudioFormatInfo outputFormatInfo = this->GetOutputFormatInfo();
 		size_t readFrameCount = 0;
-		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
+		AudioBuffer decodedBuffer(frameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate);
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
 
 		// convert the decoded data to inner format
@@ -216,7 +216,7 @@ namespace HephAudio
 							decodedBuffer.Resize(readFrameCount + currentFrameCount);
 						}
 
-						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo, BufferFlags::AllocUninitialized);
+						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate, BufferFlags::AllocUninitialized);
 						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.begin();
 						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, (const uint8_t**)this->avFrame->data, currentFrameCount);
 						if (ret < 0)
@@ -257,16 +257,18 @@ namespace HephAudio
 
 	AudioBuffer FFmpegAudioDecoder::Decode(size_t frameIndex, size_t frameCount)
 	{
+		const AudioFormatInfo outputFormatInfo = this->GetOutputFormatInfo();
+
 		if (!this->IsFileOpen())
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder::Decode", "No open file to decode."));
-			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
+			return AudioBuffer(frameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate);
 		}
 
 		if (frameIndex >= this->fileDuration_frame)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "FFmpegAudioDecoder::Decode", "frameIndex out of bounds."));
-			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
+			return AudioBuffer(frameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate);
 		}
 
 		if (frameIndex + frameCount > this->fileDuration_frame)
@@ -278,12 +280,11 @@ namespace HephAudio
 		if (ret < 0)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(ret, "FFmpegAudioDecoder::Decode", "Failed to seek frame.", "FFmpeg", HEPHAUDIO_FFMPEG_GET_ERROR_MESSAGE(ret)));
-			return AudioBuffer(frameCount, this->GetOutputFormatInfo());
+			return AudioBuffer(frameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate);
 		}
 
-		const AudioFormatInfo outputFormatInfo = this->GetOutputFormatInfo();
 		size_t readFrameCount = 0;
-		AudioBuffer decodedBuffer(frameCount, outputFormatInfo);
+		AudioBuffer decodedBuffer(frameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate);
 		AVStream* avStream = this->avFormatContext->streams[this->audioStreamIndex];
 
 		// convert the decoded data to inner format
@@ -360,7 +361,7 @@ namespace HephAudio
 							currentFramesToRead = frameCount - readFrameCount;
 						}
 
-						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo, BufferFlags::AllocUninitialized);
+						AudioBuffer tempBuffer(currentFrameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate, BufferFlags::AllocUninitialized);
 						uint8_t* targetOutputFrame = (uint8_t*)tempBuffer.begin();
 						ret = swr_convert(this->swrContext, &targetOutputFrame, currentFrameCount, (const uint8_t**)this->avFrame->data, currentFrameCount);
 						if (ret < 0)
@@ -442,7 +443,7 @@ namespace HephAudio
 			}
 
 			const size_t frameCount = encodedBuffer.Size() / inputFormatInfo.FrameSize();
-			AudioBuffer resultBuffer(frameCount, outputFormatInfo, BufferFlags::AllocUninitialized);
+			AudioBuffer resultBuffer(frameCount, outputFormatInfo.channelLayout, outputFormatInfo.sampleRate, BufferFlags::AllocUninitialized);
 			const uint8_t* const inputBegin = (const uint8_t* const)encodedBuffer.begin();
 			uint8_t* const outputBegin = (uint8_t* const)resultBuffer.begin();
 
@@ -521,7 +522,7 @@ namespace HephAudio
 		}
 
 		size_t frameIndex = 0;
-		AudioBuffer resultBuffer(pFFmpegBuffer->GetFrameCount(), outputFormatInfo);
+		AudioBuffer resultBuffer(pFFmpegBuffer->GetFrameCount(), outputFormatInfo.channelLayout, outputFormatInfo.sampleRate);
 
 		for (AVPacket*& packet : (*pFFmpegBuffer))
 		{

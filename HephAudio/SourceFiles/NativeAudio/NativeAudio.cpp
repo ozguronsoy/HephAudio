@@ -111,13 +111,13 @@ namespace HephAudio
 			return pao;
 		}
 		
-		AudioObject* NativeAudio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioFormatInfo bufferFormatInfo)
+		AudioObject* NativeAudio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint16_t sampleRate)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
 			AudioObject& audioObject = audioObjects.emplace_back();
 			audioObject.name = name;
-			audioObject.buffer = AudioBuffer(bufferFrameCount, bufferFormatInfo);
+			audioObject.buffer = AudioBuffer(bufferFrameCount, channelLayout, sampleRate);
 
 			return &audioObject;
 		}
@@ -452,7 +452,7 @@ namespace HephAudio
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
 			const size_t mixedAOCount = GetAOCountToMix();
-			AudioBuffer mixBuffer(frameCount, HEPHAUDIO_INTERNAL_FORMAT(renderFormat.channelLayout, renderFormat.sampleRate));
+			AudioBuffer mixBuffer(frameCount, this->renderFormat.channelLayout, this->renderFormat.sampleRate);
 
 			for (size_t i = 0; i < audioObjects.size(); i++)
 			{
