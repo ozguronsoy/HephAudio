@@ -4,6 +4,7 @@
 #include "HephMath.h"
 #include "BufferOperators.h"
 #include <initializer_list>
+#include <limits>
 
 namespace HephCommon
 {
@@ -14,6 +15,10 @@ namespace HephCommon
 		public BufferArithmeticOperators<Tself, Tdata, Tself, Tdata>
 	{
 		static_assert(std::is_arithmetic<Tdata>::value, "Tdata must be an arithmetic type");
+
+	protected:
+		static constexpr Tdata MIN_ELEMENT = std::numeric_limits<Tdata>::lowest();
+		static constexpr Tdata MAX_ELEMENT = std::numeric_limits<Tdata>::max();
 
 	protected:
 		ArithmeticBuffer() : BufferBase<Tself, Tdata>() { ArithmeticBuffer::AddEventHandlers(); }
