@@ -9,18 +9,36 @@ namespace HephCommon
 	enum BufferFlags
 	{
 		None = 0,
-		// do not initialize the elements after allocating memory.
-		// used in constructors.
+		/**
+		 * @brief do not initialize the elements after allocating memory.<br>
+		 * used in constructors. 
+		 * 
+		 */
 		AllocUninitialized = 1
 	};
 
+	/**
+	 * @brief base class for buffers. Provides basic buffer operations and methods.
+	 * 
+	 * @tparam Tself Type of the final buffer that inherits from this class (CRTP).
+	 * @tparam Tdata Type of the data the buffer stores.
+	 */
 	template <class Tself, typename Tdata>
 	class BufferBase
 	{
 		static_assert(std::is_default_constructible<Tdata>::value, "Tdata must have a default constructor");
 
 	protected:
+		/**
+		 * pointer to the first element of the buffer, or nullptr if the buffer is empty.
+		 * 
+		 */
 		Tdata* pData;
+
+		/**
+		 * number of elements the buffer stores.
+		 * 
+		 */
 		size_t size;
 
 	protected:
@@ -77,6 +95,13 @@ namespace HephCommon
 			this->Release();
 		}
 
+		/**
+		 * creates a copy of the current buffer that is shifted to the left.
+		 * 
+		 * @param rhs number of elements to shift.
+		 * 
+		 * @throws InsufficientMemoryException
+		 */
 		virtual Tself operator<<(size_t rhs) const
 		{
 			const size_t thisSize_byte = this->SizeAsByte();
@@ -95,6 +120,11 @@ namespace HephCommon
 			return result;
 		}
 
+		/**
+		 * shifts the current buffer to the left.
+		 * 
+		 * @param rhs number of elements to shift.
+		 */
 		virtual BufferBase& operator<<=(size_t rhs)
 		{
 			if (rhs > 0)
@@ -105,6 +135,13 @@ namespace HephCommon
 			return *this;
 		}
 
+		/**
+		 * creates a copy of the current buffer that is shifted to the right.
+		 * 
+		 * @param rhs number of elements to shift.
+		 * 
+		 * @throws InsufficientMemoryException
+		 */
 		virtual Tself operator>>(size_t rhs) const
 		{
 			const size_t thisSize_byte = this->SizeAsByte();
@@ -122,6 +159,11 @@ namespace HephCommon
 			return result;
 		}
 
+		/**
+		 * shifts the current buffer to the right.
+		 * 
+		 * @param rhs number of elements to shift.
+		 */
 		virtual BufferBase& operator>>=(size_t rhs)
 		{
 			if (rhs > 0)
@@ -144,21 +186,39 @@ namespace HephCommon
 			return !((*this) == rhs);
 		}
 
+		/**
+		 * gets the element at the provided index.
+		 * @note this method does not check if the index is valid, use \link HephCommon::BufferBase::At At \endlink method for error checking.
+		 * 
+		 */
 		Tdata& operator[](size_t index) const
 		{
 			return this->pData[index];
 		}
 
+		/**
+		 * gets the number of elements stored.
+		 * 
+		 */
 		size_t Size() const
 		{
 			return this->size;
 		}
 
+		/**
+		 * gets the size of the buffer in bytes.
+		 * 
+		 */
 		size_t SizeAsByte() const
 		{
 			return this->size * sizeof(Tdata);
 		}
 
+		/**
+		 * gets the element at the provided index.
+		 * 
+		 * @throws InvalidArgumentException
+		 */
 		Tdata& At(size_t index) const
 		{
 			if (index >= this->size)
@@ -168,11 +228,20 @@ namespace HephCommon
 			return this->pData[index];
 		}
 
+		/**
+		 * checks whether the buffer is empty.
+		 * 
+		 * @return true if the buffer is empty, otherwise false.
+		 */
 		virtual bool IsEmpty() const
 		{
 			return this->pData == nullptr || this->size == 0;
 		}
 
+		/**
+		 * sets all elements to their default value.
+		 * 
+		 */
 		virtual void Reset()
 		{
 			if (!this->IsEmpty())
@@ -181,6 +250,10 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * releases the resources.
+		 * 
+		 */
 		virtual void Release()
 		{
 			if (this->pData != nullptr)
@@ -191,6 +264,15 @@ namespace HephCommon
 			this->size = 0;
 		}
 
+		/**
+		 * gets the desired part of the buffer as a new instance.
+		 * 
+		 * @param index index of the first element of the sub buffer.
+		 * @param size number of elements the sub buffer will store.
+		 * 
+		 * @throws InvalidArgumentException
+		 * @throws InsufficientMemoryException
+		 */
 		virtual Tself SubBuffer(size_t index, size_t size) const
 		{
 			Tself result{};
@@ -201,6 +283,14 @@ namespace HephCommon
 			return result;
 		}
 
+		/**
+		 * adds the elements of the \a rhs to the start of the current buffer.
+		 * 
+		 * @param rhs the buffer whose elements will be added.
+		 * 
+		 * @throws InvalidArgumentException
+		 * @throws InsufficientMemoryException
+		 */
 		virtual void Prepend(const Tself& rhs)
 		{
 			this->pData = BufferBase::Prepend(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
@@ -208,6 +298,14 @@ namespace HephCommon
 			this->size += dynamic_cast<const BufferBase*>(&rhs)->size;
 		}
 
+		/**
+		 * adds the elements of the \a rhs to the end of the current buffer.
+		 * 
+		 * @param rhs the buffer whose elements will be added.
+		 * 
+		 * @throws InvalidArgumentException
+		 * @throws InsufficientMemoryException
+		 */
 		virtual void Append(const Tself& rhs)
 		{
 			this->pData = BufferBase::Append(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
@@ -215,6 +313,14 @@ namespace HephCommon
 			this->size += dynamic_cast<const BufferBase*>(&rhs)->size;
 		}
 
+		/**
+		 * adds the elements of the \a rhs to the provided position of the current buffer.
+		 * 
+		 * @param rhs the buffer whose elements will be added.
+		 * 
+		 * @throws InvalidArgumentException
+		 * @throws InsufficientMemoryException
+		 */
 		virtual void Insert(const Tself& rhs, size_t index)
 		{
 			this->pData = BufferBase::Insert(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
@@ -222,6 +328,14 @@ namespace HephCommon
 			this->size += dynamic_cast<const BufferBase*>(&rhs)->size;
 		}
 
+		/**
+		 * removes the desired portion of the buffer.
+		 * 
+		 * @param index index of the first element that will be removed.
+		 * @param size number of elements to remove.
+		 * 
+		 * @throws InvalidArgumentException
+		 */
 		virtual void Cut(size_t index, size_t size)
 		{
 			size_t cutSize_byte = BufferBase::SizeAsByte(size);
@@ -229,17 +343,40 @@ namespace HephCommon
 			this->size -= cutSize_byte / sizeof(Tdata);
 		}
 
+		/**
+		 * replaces the desired portion of the buffer with the contents of the \a rhs.
+		 * 
+		 * @param rhs the buffer whose elements will be used to replace the current buffer's elements.
+		 * @param index index of the first element that will be replaced.
+		 * 
+		 * @throws InvalidArgumentException
+		 */
 		virtual void Replace(const Tself& rhs, size_t index)
 		{
 			this->Replace(rhs, index, dynamic_cast<const BufferBase*>(&rhs)->size);
 		}
 
+		/**
+		 * replaces the desired portion of the buffer with the contents of the \a rhs.
+		 * 
+		 * @param rhs the buffer whose elements will be used to replace the current buffer's elements.
+		 * @param index index of the first element that will be replaced.
+		 * @param size number of elements to replace.
+		 * 
+		 * @throws InvalidArgumentException
+		 */
 		virtual void Replace(const Tself& rhs, size_t index, size_t size)
 		{
 			BufferBase::Replace(this->pData, this->SizeAsByte(), dynamic_cast<const BufferBase*>(&rhs)->pData, 
 				dynamic_cast<const BufferBase*>(&rhs)->SizeAsByte(), BufferBase::SizeAsByte(index));
 		}
 
+		/**
+		 * changes the size of the buffer.<br>
+		 * if new size is less than the old, excess elements from the end will be removed.
+		 * 
+		 * @throws InsufficientMemoryException
+		 */
 		virtual void Resize(size_t newSize)
 		{
 			if (this->size != newSize)
@@ -266,6 +403,10 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * reverses the buffer (first element to last and vice versa).
+		 * 
+		 */
 		virtual void Reverse()
 		{
 			const size_t halfSize = this->size / 2;
@@ -275,11 +416,19 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * gets the pointer to the first element if buffer is not empty, otherwise nullptr.
+		 * 
+		 */
 		Tdata* begin() const
 		{
 			return this->pData;
 		}
 
+		/**
+		 * gets the pointer to the end of the buffer (not the last element!) if buffer is not empty, otherwise nullptr.
+		 * 
+		 */
 		Tdata* end() const
 		{
 			return this->pData != nullptr

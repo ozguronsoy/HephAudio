@@ -8,6 +8,12 @@
 
 namespace HephCommon
 {
+	/**
+	 * @brief base class for buffers that store arithmetic types. Provides operations and methods for arithmetic data.
+	 * 
+	 * @tparam Tself Type of the final buffer that inherits from this class (CRTP).
+	 * @tparam Tdata Type of the data the buffer stores, must be arithmetic type.
+	 */
 	template <class Tself, typename Tdata>
 	class ArithmeticBuffer : 
 		public BufferBase<Tself, Tdata>,
@@ -17,7 +23,16 @@ namespace HephCommon
 		static_assert(std::is_arithmetic<Tdata>::value, "Tdata must be an arithmetic type");
 
 	protected:
+		/**
+		 * element with the minimum value.
+		 * 
+		 */
 		static constexpr Tdata MIN_ELEMENT = std::numeric_limits<Tdata>::lowest();
+
+		/**
+		 * element with the maximum value.
+		 * 
+		 */
 		static constexpr Tdata MAX_ELEMENT = std::numeric_limits<Tdata>::max();
 
 	protected:
@@ -31,6 +46,10 @@ namespace HephCommon
 	public:
 		virtual ~ArithmeticBuffer() = default;
 
+		/**
+		 * gets the minimum value stored in the buffer.
+		 * 
+		 */
 		Tdata Min() const
 		{
 			Tdata result = ArithmeticBuffer::MAX_ELEMENT;
@@ -44,6 +63,10 @@ namespace HephCommon
 			return result;
 		}
 
+		/**
+		 * gets the maximum value stored in the buffer.
+		 * 
+		 */
 		Tdata Max() const
 		{
 			Tdata result = ArithmeticBuffer::MIN_ELEMENT;
@@ -57,6 +80,10 @@ namespace HephCommon
 			return result;
 		}
 
+		/**
+		 * calculates the root mean square.
+		 * 
+		 */
 		double Rms() const
 		{
 			if (this->size > 0)
@@ -93,6 +120,12 @@ namespace HephCommon
 		}
 	};
 
+	/**
+	 * @brief base class for buffers that store signed arithmetic types. Provides operations and methods for signed arithmetic data.
+	 * 
+	 * @tparam Tself Type of the final buffer that inherits from this class (CRTP).
+	 * @tparam Tdata Type of the data the buffer stores, must be signed arithmetic type.
+	 */
 	template <class Tself, typename Tdata>
 	class SignedArithmeticBuffer :
 		public ArithmeticBuffer<Tself, Tdata>,
@@ -111,6 +144,10 @@ namespace HephCommon
 	public:
 		virtual ~SignedArithmeticBuffer() = default;
 
+		/**
+		 * inverts the elements.
+		 * 
+		 */
 		void Invert()
 		{
 			for (size_t i = 0; i < this->size; ++i)
@@ -119,6 +156,10 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * gets the absolute maximum value stored in the buffer.
+		 * 
+		 */
 		Tdata AbsMax() const
 		{
 			Tdata result = 0;

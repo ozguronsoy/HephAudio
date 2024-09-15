@@ -7,6 +7,10 @@
 namespace HephCommon
 {
 #pragma region Event
+	/**
+	 * @brief contains the results of the \link BufferOperatorEvents::OnResultCreated BufferOperatorEvents::OnResultCreated \endlink event.
+	 * 
+	 */
 	template<typename Lhs, typename Rhs>
 	struct BufferOperatorResultCreatedEventArgs : public EventArgs
 	{
@@ -19,12 +23,18 @@ namespace HephCommon
 	template<typename Lhs, typename Rhs>
 	struct BufferOperatorEvents
 	{
-		// invoked after the result object is created in non-assignment operators.
-		// the result object is created via default constructor, hence the buffer must handle the allocation with this event
+		/**
+		 * invoked after the result object is created in non-assignment operators.
+		 * the result object is created via default constructor, hence the buffer must handle the allocation with this event
+		 */
 		static inline Event OnResultCreated = Event();
 	};
 #pragma endregion
 #pragma region Addition
+	/**
+	 * @brief provides + and += operators to the buffer.
+	 * 
+	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class BufferAdditionOperator
 	{
@@ -136,6 +146,10 @@ namespace HephCommon
 	};
 #pragma endregion
 #pragma region Subtraction
+	/**
+	 * @brief provides - and -= operators to the buffer.
+	 * 
+	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class BufferSubtractionOperator
 	{
@@ -291,6 +305,10 @@ namespace HephCommon
 	};
 #pragma endregion
 #pragma region Multiplication
+	/**
+	 * @brief provides * and *= operators to the buffer.
+	 * 
+	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class BufferMultiplicationOperator
 	{
@@ -402,6 +420,10 @@ namespace HephCommon
 	};
 #pragma endregion
 #pragma region Division
+	/**
+	 * @brief provides / and /= operators to the buffer.
+	 * 
+	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class BufferDivisionOperator
 	{
@@ -557,6 +579,10 @@ namespace HephCommon
 	};
 #pragma endregion
 #pragma region Arithmetic
+	/**
+	 * @brief provides arithmetic operators to the buffer.
+	 * 
+	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class BufferArithmeticOperators :
 		public BufferAdditionOperator<Lhs, LhsData, Rhs, RhsData>,
@@ -571,6 +597,10 @@ namespace HephCommon
 	};
 #pragma endregion
 #pragma region Unary Minus
+	/**
+	 * @brief provides unary minus operator to the buffer.
+	 * 
+	 */
 	template<class Lhs, typename LhsData>
 	class BufferUnaryMinusOperator
 	{

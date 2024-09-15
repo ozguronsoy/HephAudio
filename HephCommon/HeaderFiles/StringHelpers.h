@@ -12,6 +12,7 @@ namespace HephCommon
 		StringHelpers() = delete;
 		StringHelpers(const StringHelpers&) = delete;
 		StringHelpers& operator=(const StringHelpers&) = delete;
+		
 	public:
 		static std::wstring StrToWide(const std::string& str);
 		static std::string WideToStr(const std::wstring& wstr);

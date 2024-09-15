@@ -4,7 +4,7 @@
 namespace HephCommon
 {
 	Event::Event() : eventHandlers(std::vector<EventHandler>(0)) { }
-	Event::Event(const EventHandler& handler) : eventHandlers(std::vector<EventHandler>(1, handler)) {}
+	Event::Event(EventHandler handler) : eventHandlers(std::vector<EventHandler>(1, handler)) {}
 	Event::operator bool() const
 	{
 		return this->eventHandlers.size() > 0;

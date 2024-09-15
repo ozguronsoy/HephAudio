@@ -1,6 +1,12 @@
 #pragma once
 #include <cinttypes>
 
+/** @file */
+
+/** @def CPP_VERSION
+ * targeted C++ version
+ */
+
 #if !defined(CPP_VERSION)
 
 #if defined(_MSVC_LANG)
@@ -91,12 +97,35 @@ namespace HephCommon
 		Big = 0x01,
 		Unknown = 0xFF
 	};
+
+	/**
+	 * endianness of the current system.
+	 * 
+	 */
 	extern Endian systemEndian;
+
+	/**
+	 * changes the endianness of the provided data.
+	 * 
+	 * @param pData pointer to the data.
+	 * @param dataSize size of the data in bytes.
+	 */
 	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
+
 	constexpr inline Endian operator!(const Endian& lhs) { return lhs & Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
 
 #define HEPH_ENDIAN HephCommon::Endian
+
+/**
+ * endianness of the current system.
+ * 
+ */
 #define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian
+
+/**
+ * changes the endianness of the provided data.
+ * 
+ */
 #define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)
 
 #endif

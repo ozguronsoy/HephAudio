@@ -3,9 +3,22 @@
 
 namespace HephCommon
 {
+	/**
+	 * @brief struct for representing complex numbers.
+	 * 
+	 */
 	struct Complex
 	{
+		/**
+		 * real component of the complex number.
+		 * 
+		 */
 		double real;
+
+		/**
+		 * imaginary component of the complex number.
+		 * 
+		 */
 		double imag;
 
 		constexpr Complex() : Complex(0, 0) {}
@@ -126,17 +139,34 @@ namespace HephCommon
 			return this->real != rhs.real || this->imag != rhs.imag;
 		}
 		
+		/**
+		 * calculates the complex conjugate of the current instance and returns it as a new instance.
+		 * 
+		 */
 		constexpr Complex Conjugate() const
 		{
 			return Complex(this->real, -this->imag);
 		}
 		
+		/**
+		 * calculates the squared magnitude of the current instance. 
+		 * 
+		 */
 		constexpr double MagnitudeSquared() const
 		{
 			return this->real * this->real + this->imag * this->imag;
 		}
 
+		/**
+		 * calculates the magnitude of the current instance. 
+		 * 
+		 */
 		double Magnitude() const;
+
+		/**
+		 * calculates the phase of the current instance. 
+		 * 
+		 */
 		double Phase() const;
 	};
 }

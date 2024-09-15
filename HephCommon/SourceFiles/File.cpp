@@ -49,13 +49,18 @@ namespace HephCommon
 	}
 	void File::Open(const std::string& filePath, FileOpenMode openMode)
 	{
-		if (this->pFile == nullptr && filePath != "")
+		if (filePath != "")
 		{
+			if (this->pFile != nullptr)
+			{
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_OPERATION, "File::Open", "A file is already open."));
+			}
+
 			this->filePath = filePath;
 			this->Open(openMode);
 			if (this->pFile == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, "File::File", "An error occurred while opening the file.", "stdlib", strerror(errno)));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(errno, "File::Open", "An error occurred while opening the file.", "stdlib", strerror(errno)));
 			}
 
 			fseek(this->pFile, 0, SEEK_END);
