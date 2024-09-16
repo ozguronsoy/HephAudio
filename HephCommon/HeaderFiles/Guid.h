@@ -2,6 +2,8 @@
 #include "HephCommonShared.h"
 #include <cinttypes>
 
+/** @file */
+
 namespace HephCommon
 {
 	struct Guid

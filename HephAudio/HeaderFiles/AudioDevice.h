@@ -3,6 +3,8 @@
 #include <string>
 #include <cinttypes>
 
+/** @file */
+
 namespace HephAudio
 {
 	enum class AudioDeviceType : uint8_t
@@ -45,12 +47,36 @@ namespace HephAudio
 		return (AudioDeviceType)(~(uint8_t)lhs);
 	}
 
+	/**
+	 * @brief stores information about an audio device.
+	 * 
+	 */
 	struct AudioDevice
 	{
+		/**
+		 * unique identifier of the audio device provided by the native API.
+		 * 
+		 */
 		std::string id;
+
+		/**
+		 * name of the audio device provided by the native API.
+		 * 
+		 */
 		std::string name;
+
+		/**
+		 * auido device type.
+		 * 
+		 */
 		AudioDeviceType type;
+
+		/**
+		 * indicates whether the audio device is the system default.
+		 * 
+		 */
 		bool isDefault;
+
 		AudioDevice() : id(""), name(""), type(AudioDeviceType::Render), isDefault(false) {}
 	};
 }

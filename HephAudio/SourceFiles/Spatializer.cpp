@@ -85,7 +85,7 @@ namespace HephAudio
 		this->pEasy = mysofa_open(sofaFilePath.c_str(), (float)sampleRate, &filter_length, &errorCode);
 		if (this->pEasy == nullptr || errorCode != MYSOFA_OK)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "Spatializer::OpenSofaFile", "An error occurred while opening the sofa file.", "libmysofa", Spatializer::GetErrorString(errorCode)));
+			RAISE_HEPH_EXCEPTION(this, HephException(errorCode, "Spatializer::OpenSofaFile", "An error occurred while opening the sofa file.", "libmysofa", Spatializer::GetErrorString(errorCode)));
 			this->CloseSofaFile();
 			return;
 		}

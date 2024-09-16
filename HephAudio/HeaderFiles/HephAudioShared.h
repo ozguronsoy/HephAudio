@@ -2,6 +2,8 @@
 #include "HephCommonShared.h"
 #include <cmath>
 
+/** @file */
+
 #if !defined(HEPH_ENV_64_BIT)
 #error 32-bit is not supported!
 #endif
@@ -36,8 +38,12 @@
 
 #endif
 
+/**
+ * speed of sound in dry air at 20 deg C in meters per second
+ * 
+ */
 #if !defined(HEPHAUDIO_SPEED_OF_SOUND)
-#define HEPHAUDIO_SPEED_OF_SOUND 343.0 // speed of sound in dry air at 20 deg C in meters per second
+#define HEPHAUDIO_SPEED_OF_SOUND 343.0
 #endif
 
 #if !defined(INT24_MAX)
@@ -47,6 +53,38 @@
 #define INT24_MAX 8388607
 
 #endif
+
+/** @typedef heph_audio_sample_t
+ * type of the audio samples, float by default.
+ * Can be changed by defining one of the following macros:
+ 
+ * - <b>HEPH_AUDIO_SAMPLE_TYPE_S16</b>
+ * - <b>HEPH_AUDIO_SAMPLE_TYPE_S32</b>
+ * - <b>HEPH_AUDIO_SAMPLE_TYPE_S64</b>
+ * - <b>HEPH_AUDIO_SAMPLE_TYPE_FLT</b>
+ * - <b>HEPH_AUDIO_SAMPLE_TYPE_DBL</b>
+ * 
+ */
+
+/** @def HEPH_AUDIO_SAMPLE_MIN
+ * the minimum value an audio sample can have.
+ * 
+ */
+
+/** @def HEPH_AUDIO_SAMPLE_MAX
+ * the maximum value an audio sample can have.
+ * 
+ */
+
+/** @def HEPH_AUDIO_SAMPLE_TO_IEEE_FLT
+ * converts \link heph_audio_sample_t heph_audio_sample_t \endlink to float.
+ * 
+ */
+
+/** @def HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT
+ * converts float to \link heph_audio_sample_t heph_audio_sample_t \endlink.
+ * 
+ */
 
 #if !defined(HEPH_AUDIO_SAMPLE)
 
@@ -82,7 +120,7 @@ typedef float heph_audio_sample_t;
 #define HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
 #endif
 
-#define HEPH_AUDIO_SAMPLE heph_audio_sample_t
+#define HEPH_AUDIO_SAMPLE 	heph_audio_sample_t
 
 #if HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_PCM
 
@@ -91,8 +129,8 @@ typedef float heph_audio_sample_t;
 
 #elif HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL == HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT
 
-#define HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(sample) sample
-#define HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(fltSample) fltSample
+#define HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(sample) 		(sample)
+#define HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(fltSample) 	(fltSample)
 
 #else
 #error heph_audio_sample_t/ieee_float conversions are not implemented for this internal format yet.
@@ -102,7 +140,16 @@ typedef float heph_audio_sample_t;
 
 #if !defined(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 
+/**
+ * the minimum API level required for OPENSL ES.
+ * 
+ */
 #define HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL 21
+
+/**
+ * the minimum API level required for AAudio.
+ * 
+ */
 #define HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL 26
 
 #endif
@@ -110,34 +157,73 @@ typedef float heph_audio_sample_t;
 #pragma region Helper Methods
 namespace HephAudio
 {
+	/**
+	 * converts decibel to gain (between -1 and 1).
+	 * 
+	 */
 	inline double DecibelToGain(double decibel)
 	{
 		return pow(10.0, decibel * 0.05);
 	}
+
+	/**
+	 * converts gain (between -1 and 1) to decibel.
+	 * 
+	 */
 	inline double GainToDecibel(double gain)
 	{
 		return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
 	}
+
+	/**
+	 * converts semitone to cent.
+	 * 
+	 */
 	inline constexpr double SemitoneToCent(double semitone)
 	{
 		return semitone * 100.0;
 	}
+
+	/**
+	 * converts semitone to octave.
+	 * 
+	 */
 	inline constexpr double SemitoneToOctave(double semitone)
 	{
 		return semitone / 12.0;
 	}
+
+	/**
+	 * converts cent to semitone.
+	 * 
+	 */
 	inline constexpr double CentToSemitone(double cent)
 	{
 		return cent / 100.0;
 	}
+
+	/**
+	 * converts cent to octave.
+	 * 
+	 */
 	inline constexpr double CentToOctave(double cent)
 	{
 		return cent / 1200.0;
 	}
+
+	/**
+	 * converts octave to semitone.
+	 * 
+	 */
 	inline constexpr double OctaveToSemitone(double octave)
 	{
 		return octave * 12.0;
 	}
+
+	/**
+	 * converts octave to cent.
+	 * 
+	 */
 	inline constexpr double OctaveToCent(double octave)
 	{
 		return octave * 1200.0;

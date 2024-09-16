@@ -1,6 +1,8 @@
 #pragma once
 #include "HephCommonShared.h"
 
+/** @file */
+
 namespace HephCommon
 {
 	/**

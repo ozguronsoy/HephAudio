@@ -2,6 +2,8 @@
 #include "HephCommonShared.h"
 #include <type_traits>
 
+/** @file */
+
 namespace HephCommon
 {
 #pragma region Arithmetic Operators

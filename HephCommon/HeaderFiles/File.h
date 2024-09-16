@@ -3,6 +3,8 @@
 #include <string>
 #include <memory>
 
+/** @file */
+
 namespace HephCommon
 {
 	/**

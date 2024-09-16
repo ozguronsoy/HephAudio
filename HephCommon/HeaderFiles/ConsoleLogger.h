@@ -2,6 +2,8 @@
 #include "HephCommonShared.h"
 #include <string>
 
+/** @file */
+
 #define HEPH_CL_INFO 	"36"
 #define HEPH_CL_WARNING "33"
 #define HEPH_CL_ERROR 	"31"
@@ -28,14 +30,14 @@ namespace HephCommon
 		/**
 		 * prints the provided message to the console.
 		 * 
-		 * @param logLevel one of the HEPH_CL_* macros. 
+		 * @param logLevel one of the <b>HEPH_CL_*</b> macros. 
 		 */
 		static void Log(const std::string& message, const char* logLevel);
 
 		/**
 		 * prints the provided message to the console.
 		 * 
-		 * @param logLevel one of the HEPH_CL_* macros. 
+		 * @param logLevel one of the <b>HEPH_CL_*</b> macros. 
 		 * @param libName name of the library thats printing. The default value is "HephLibs".
 		 */
 		static void Log(const std::string& message, const char* logLevel, const std::string& libName);

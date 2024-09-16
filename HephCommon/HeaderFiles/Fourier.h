@@ -4,6 +4,8 @@
 #include "Buffers/ComplexBuffer.h"
 #include "Buffers/DoubleBuffer.h"
 
+/** @file */
+
 namespace HephCommon
 {
 	/**

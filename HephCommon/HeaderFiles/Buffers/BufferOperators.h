@@ -4,6 +4,8 @@
 #include "HephTypeTraits.h"
 #include "Event.h"
 
+/** @file */
+
 namespace HephCommon
 {
 #pragma region Event

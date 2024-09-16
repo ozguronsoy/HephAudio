@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <type_traits>
 
+/** @file */
+
 namespace HephCommon
 {
 	enum BufferFlags

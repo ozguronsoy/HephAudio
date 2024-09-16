@@ -4,6 +4,8 @@
 #include "EventResult.h"
 #include "UserEventArgs.h"
 
+/** @file */
+
 namespace HephCommon
 {
 	/**

@@ -6,6 +6,8 @@
 #include <initializer_list>
 #include <limits>
 
+/** @file */
+
 namespace HephCommon
 {
 	/**

@@ -7,8 +7,14 @@
 #include <vector>
 #include <cinttypes>
 
+/** @file */
+
 namespace HephCommon
 {
+	/**
+	 * method for handling events.
+	 * 
+	 */
 	typedef void (*EventHandler)(const EventParams& eventParams);
 
 	/**

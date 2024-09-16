@@ -3,10 +3,16 @@
 #include "AudioChannelLayout.h"
 #include <unordered_map>
 
+/** @file */
+
 namespace HephAudio
 {
 	typedef std::unordered_map<HephAudio::AudioChannelMask, std::unordered_map<HephAudio::AudioChannelMask, float>> hephaudio_channel_mixing_lookup_table_t;
 
+	/**
+	 * provides the lookup tables for channel mixing.
+	 * 
+	 */
 	class AudioChannelMixingLookupTables
 	{
 	public:

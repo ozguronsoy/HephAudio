@@ -4,8 +4,15 @@
 #include <string>
 #include <vector>
 
+/** @file */
+
 namespace HephCommon
 {
+	/**
+	 * provides methods for string processing.
+	 * @note this class cannot be instantiated.
+	 * 
+	 */
 	class StringHelpers final
 	{
 	public:

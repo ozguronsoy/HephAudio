@@ -2,6 +2,8 @@
 #include "HephAudioShared.h"
 #include "Oscillator.h"
 
+/** @file */
+
 namespace HephAudio
 {
 	class TriangleWaveOscillator final : public Oscillator

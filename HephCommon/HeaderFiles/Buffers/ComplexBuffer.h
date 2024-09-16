@@ -4,6 +4,8 @@
 #include "Buffers/DoubleBuffer.h"
 #include <initializer_list>
 
+/** @file */
+
 namespace HephCommon
 {
 	class ComplexBuffer final : 

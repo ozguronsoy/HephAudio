@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+/** @file */
+
 namespace HephCommon
 {
 	/**

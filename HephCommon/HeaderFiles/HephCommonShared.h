@@ -44,6 +44,7 @@
 #endif
 
 #elif defined(__clang__) || defined(__INTEL_COMPILER) || defined(__GNUC__)
+
 #if defined(__x86_64__) || defined(__ppc64__) || defined(__aarch64__)
 #define HEPH_ENV_64_BIT
 #else

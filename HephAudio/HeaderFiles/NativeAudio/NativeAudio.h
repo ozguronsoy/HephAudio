@@ -17,15 +17,22 @@
 #include <thread>
 #include <mutex>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
+		/**
+		 * @brief base class for the classes that interact with the native audio APIs.
+		 * 
+		 */
 		class NativeAudio
 		{
 		protected:
 			static constexpr bool DEVICE_ENUMERATION_FAIL = false;
 			static constexpr bool DEVICE_ENUMERATION_SUCCESS = true;
+
 		protected:
 			std::shared_ptr<IAudioDecoder> pAudioDecoder;
 			std::shared_ptr<IAudioEncoder> pAudioEncoder;
@@ -46,10 +53,12 @@ namespace HephAudio
 			uint32_t deviceEnumerationPeriod_ms;
 			mutable std::mutex audioDevicesMutex;
 			mutable std::recursive_mutex audioObjectsMutex;
+
 		public:
 			HephCommon::Event OnAudioDeviceAdded;
 			HephCommon::Event OnAudioDeviceRemoved;
 			HephCommon::Event OnCapture;
+
 		public:
 			NativeAudio();
 			NativeAudio(const NativeAudio&) = delete;
@@ -100,6 +109,7 @@ namespace HephAudio
 			AudioDevice GetCaptureDevice() const;
 			AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const;
 			std::vector<AudioDevice> GetAudioDevices(AudioDeviceType deviceType) const;
+
 		protected:
 			virtual bool EnumerateAudioDevices() = 0;
 			virtual void CheckAudioDevices();

@@ -2,8 +2,10 @@
 #include "HephAudioShared.h"
 #include "AudioChannelLayout.h"
 
+/** @file */
+
 /**
- * @brief creates an AudioFormatInfo instance with internal format.
+ * creates an AudioFormatInfo instance with internal format.
  * 
  */
 #define HEPHAUDIO_INTERNAL_FORMAT(chLayout, sampleRate) HephAudio::AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_HEPHAUDIO_INTERNAL, sizeof(heph_audio_sample_t) * 8, chLayout, sampleRate, HEPH_SYSTEM_ENDIAN)

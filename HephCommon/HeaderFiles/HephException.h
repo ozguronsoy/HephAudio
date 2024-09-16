@@ -60,7 +60,7 @@ namespace HephCommon
 		static inline Event OnException = Event();
 
 		/**
-		 * either one of the HEPH_EC_* codes or an error code from an external source.
+		 * either one of the <b>HEPH_EC_*</b> codes or an error code from an external source.
 		 * 
 		 */
 		int64_t errorCode;
@@ -101,7 +101,7 @@ namespace HephCommon
 		void Raise(const void* pSender) const;
 
 		/**
-		 * converts HEPH_EC_* codes to string.
+		 * converts <b>HEPH_EC_*</b> codes to string.
 		 * 
 		 */
 		static std::string ErrorCodeToString(int64_t errorCode);

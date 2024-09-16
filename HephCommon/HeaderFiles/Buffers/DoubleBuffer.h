@@ -2,6 +2,8 @@
 #include "HephCommonShared.h"
 #include "ArithmeticBuffer.h"
 
+/** @file */
+
 namespace HephCommon
 {
 	class DoubleBuffer final : public SignedArithmeticBuffer<DoubleBuffer, double>
