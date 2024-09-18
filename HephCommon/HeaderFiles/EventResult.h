@@ -1,4 +1,5 @@
 #pragma once
+#include "HephCommonShared.h"
 
 /** @file */
 
@@ -17,7 +18,7 @@ namespace HephCommon
 		bool isHandled;
 
 		/** @copydoc default_constructor */
-		EventResult() : isHandled(false) {}
+		EventResult();
 
 		/** @copydoc destructor */
 		virtual ~EventResult() = default;

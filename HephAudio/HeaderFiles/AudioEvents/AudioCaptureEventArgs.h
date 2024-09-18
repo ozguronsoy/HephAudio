@@ -25,6 +25,6 @@ namespace HephAudio
 		 * @param pNativeAudio @copydetails AudioEventArgs::pNativeAudio
 		 * @param captureBuffer @copydetails captureBuffer
 		 */
-		AudioCaptureEventArgs(Native::NativeAudio* pNativeAudio, AudioBuffer& captureBuffer) : AudioEventArgs(pNativeAudio), captureBuffer(std::move(captureBuffer)) {}
+		AudioCaptureEventArgs(Native::NativeAudio* pNativeAudio, AudioBuffer& captureBuffer);
 	};
 }

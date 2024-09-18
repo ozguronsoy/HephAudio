@@ -33,7 +33,6 @@ namespace HephAudio
 		 * @param pAudioObject @copydetails pAudioObject
 		 * @param remainingLoopCount @copydetails remainingLoopCount
 		 */
-		AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, uint32_t remainingLoopCount)
-			: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), remainingLoopCount(remainingLoopCount) {}
+		AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, uint32_t remainingLoopCount);
 	};
 }

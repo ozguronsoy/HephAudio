@@ -82,6 +82,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioEncoder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioCaptureEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioDeviceEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioFinishedPlayingEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioRenderEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioRenderEventResult.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Spatializer.cpp" />

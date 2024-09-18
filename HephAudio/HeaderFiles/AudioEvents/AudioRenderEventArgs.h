@@ -33,7 +33,6 @@ namespace HephAudio
 		 * @param pAudioObject @copydetails pAudioObject
 		 * @param renderFrameCount @copydetails renderFrameCount
 		 */
-		AudioRenderEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, size_t renderFrameCount)
-			: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), renderFrameCount(renderFrameCount) {}
+		AudioRenderEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, size_t renderFrameCount);
 	};
 }

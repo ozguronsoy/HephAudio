@@ -29,8 +29,7 @@ file(GLOB HEPH_AUDIO
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Buffers/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/*.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioCodecs/*.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioFormats/*.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioEvents/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/FFmpeg/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/NativeAudio/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/Oscillators/*.cpp

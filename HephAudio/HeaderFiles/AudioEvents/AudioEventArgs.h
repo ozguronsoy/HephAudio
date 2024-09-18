@@ -24,7 +24,7 @@ namespace HephAudio
 		 * 
 		 * @param pNativeAudio @copydetails pNativeAudio
 		 */
-		AudioEventArgs(Native::NativeAudio* pNativeAudio) : pNativeAudio(pNativeAudio) {}
+		AudioEventArgs(Native::NativeAudio* pNativeAudio);
 
 		/** @copydoc destructor */
 		virtual ~AudioEventArgs() = default;

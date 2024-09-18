@@ -87,6 +87,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\DoubleBuffer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EventResult.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeaderFiles">

@@ -26,6 +26,6 @@ namespace HephAudio
 		bool isFinishedPlaying;
 
 		/** @copydoc default_constructor */
-		AudioRenderEventResult() : isFinishedPlaying(false) {}
+		AudioRenderEventResult();
 	};
 }
