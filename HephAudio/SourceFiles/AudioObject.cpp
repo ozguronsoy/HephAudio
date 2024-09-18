@@ -9,11 +9,15 @@ using namespace HephCommon;
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: id(Guid::GenerateNew()), filePath(""), name(""), isPaused(true), playCount(1), volume(1.0), frameIndex(0), OnRender(&AudioObject::DefaultRenderHandler) {}
+		: id(Guid::GenerateNew()), filePath(""), name(""), isPaused(true), playCount(1), volume(1.0), frameIndex(0) 
+	{
+		this->OnRender = HEPHAUDIO_RENDER_HANDLER_DEFAULT;
+	}
+
 	AudioObject::AudioObject(AudioObject&& rhs) noexcept
-		: id(rhs.id), filePath(std::move(rhs.filePath)), name(std::move(rhs.name)), isPaused(rhs.isPaused)
-		, playCount(rhs.playCount), volume(rhs.volume), buffer(std::move(rhs.buffer)), frameIndex(rhs.frameIndex)
-		, OnRender(rhs.OnRender), OnFinishedPlaying(rhs.OnFinishedPlaying)
+		: id(rhs.id), filePath(std::move(rhs.filePath)), name(std::move(rhs.name)), isPaused(rhs.isPaused),
+		playCount(rhs.playCount), volume(rhs.volume), buffer(std::move(rhs.buffer)), frameIndex(rhs.frameIndex),
+		OnRender(rhs.OnRender), OnFinishedPlaying(rhs.OnFinishedPlaying)
 	{
 		rhs.OnRender.ClearAll();
 		rhs.OnFinishedPlaying.ClearAll();
