@@ -10,8 +10,23 @@ namespace HephAudio
 	enum class AudioDeviceType : uint8_t
 	{
 		Null = 0,
+
+		/**
+		 * indicates the audio device is capable of rendering (playing) audio data.
+		 * 
+		 */
 		Render = 1,
+
+		/**
+		 * indicates the device is capable of capturing (recording) audio data.
+		 * 
+		 */
 		Capture = 2,
+
+		/**
+		 * indicates the device is capable of both rendering and capturing audio data.
+		 * 
+		 */
 		All = Render | Capture
 	};
 

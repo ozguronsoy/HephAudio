@@ -5,27 +5,46 @@
 #include "Params/AlsaParams.h"
 #include <alsa/asoundlib.h>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses ALSA
+		/**
+		 * @brief uses ALSA
+		 * 
+		 */
 		class LinuxAudio final : public NativeAudio
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
+
 		private:
 			static constexpr long volume_max = INT32_MAX;
+
 		private:
 			AlsaParams params;
 			snd_pcm_t* renderPcm;
 			snd_pcm_t* capturePcm;
+
 		public:
+			/**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
 			LinuxAudio();
+
 			LinuxAudio(const LinuxAudio&) = delete;
 			LinuxAudio& operator=(const LinuxAudio&) = delete;
+
+			/**
+			 * releases the resources and destroys the instance.
+			 * 
+			 */
 			~LinuxAudio();
+
 			void SetMasterVolume(double volume) override;
 			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
@@ -34,6 +53,7 @@ namespace HephAudio
 			void StopCapturing() override;
 			void GetNativeParams(NativeAudioParams& nativeParams) const override;
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
+
 		private:
 			bool EnumerateAudioDevices() override;
 			void RenderData(useconds_t bufferDuration_us);

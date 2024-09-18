@@ -8,26 +8,44 @@
 #include <Mmdeviceapi.h>
 #include <audiopolicy.h>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses WASAPI
+		/**
+		 * @brief uses WASAPI.
+		 * 
+		 */
 		class WinAudio final : public WinAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
+
 		private:
 			WasapiParams params;
 			Microsoft::WRL::ComPtr<IMMDeviceEnumerator> pEnumerator;
 			Microsoft::WRL::ComPtr<IAudioSessionManager> pRenderSessionManager;
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pRenderSessionControl;
+
 		public:
+			/**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
 			WinAudio();
+
 			WinAudio(const WinAudio&) = delete;
 			WinAudio& operator=(const WinAudio&) = delete;
+
+			/**
+			 * releases the resources and destroys the instance.
+			 * 
+			 */
 			~WinAudio();
+
 			void SetMasterVolume(double volume) override;
 			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
@@ -36,8 +54,19 @@ namespace HephAudio
 			void StopCapturing() override;
 			void GetNativeParams(NativeAudioParams& nativeParams) const override;
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
+
+			/**
+			 * sets the display name in the volume mixer.
+			 * 
+			 */
 			void SetDisplayName(std::string displayName);
+
+			/**
+			 * sets the icon displayed in the volume mixer.
+			 * 
+			 */
 			void SetIconPath(std::string iconPath);
+
 		private:
 			bool EnumerateAudioDevices() override;
 			void CheckAudioDevices() override;

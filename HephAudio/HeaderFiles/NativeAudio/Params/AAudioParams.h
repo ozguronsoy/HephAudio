@@ -4,25 +4,84 @@
 #include "NativeAudioParams.h"
 #include <aaudio/AAudio.h>
 
+/** @file */
+
 namespace HephAudio
 {
     namespace Native
     {
+        /**
+         * @brief struct for storing the AAudio specific parameters.
+         * 
+         */
         struct AAudioParams final : public NativeAudioParams
         {
+            /**
+             * render share mode, <b>AAUDIO_SHARING_MODE_SHARED</b> or <b>AAUDIO_SHARING_MODE_EXCLUSIVE</b>.
+             * 
+             */
             aaudio_sharing_mode_t renderShareMode;
+
+            /**
+             * capture share mode, <b>AAUDIO_SHARING_MODE_SHARED</b> or <b>AAUDIO_SHARING_MODE_EXCLUSIVE</b>.
+             * 
+             */
             aaudio_sharing_mode_t captureShareMode;
+
+            /**
+             * render performance mode.
+             * 
+             */
             aaudio_performance_mode_t renderPerformanceMode;
+
+            /**
+             * capture performance mode.
+             * 
+             */
             aaudio_performance_mode_t capturePerformanceMode;
+
+            /**
+             * duration of the render buffer in milliseconds.
+             * 
+             */
             double renderBufferDuration_ms;
+
+            /**
+             * duration of the capture buffer in milliseconds.
+             * 
+             */
             double captureBufferDuration_ms;
 
 #if __ANDROID_API__ >= 28
+            /**
+             * render content type, available for API level 28 and above.
+             * 
+             */
             aaudio_content_type_t renderContentType;
+
+            /**
+             * capture content type, available for API level 28 and above.
+             * 
+             */
             aaudio_content_type_t captureContentType;
+
+            /**
+             * render usage type, available for API level 28 and above.
+             * 
+             */
             aaudio_usage_t renderUsage;
+
+            /**
+             * capture usage type, available for API level 28 and above.
+             * 
+             */
             aaudio_usage_t captureUsage;
 #endif
+
+            /**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
             AAudioParams()
                 : renderShareMode(AAUDIO_SHARING_MODE_SHARED), captureShareMode(AAUDIO_SHARING_MODE_SHARED)
                 , renderPerformanceMode(AAUDIO_PERFORMANCE_MODE_NONE), capturePerformanceMode(AAUDIO_PERFORMANCE_MODE_NONE)

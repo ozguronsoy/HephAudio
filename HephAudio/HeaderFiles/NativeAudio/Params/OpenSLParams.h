@@ -4,14 +4,34 @@
 #include "NativeAudioParams.h"
 #include <SLES/OpenSLES_Android.h>
 
+/** @file */
+
 namespace HephAudio
 {
     namespace Native
     {
+        /**
+         * @brief struct for storing the OpenSL ES specific parameters.
+         * 
+         */
         struct OpenSLParams final : public NativeAudioParams
         {
+            /**
+             * duration of the render buffer in milliseconds.
+             * 
+             */
             double renderBufferDuration_ms;
+
+            /**
+             * duration of the capture buffer in milliseconds.
+             * 
+             */
             double captureBufferDuration_ms;
+
+            /**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
             OpenSLParams()
                 : renderBufferDuration_ms(10), captureBufferDuration_ms(10) {}
         };

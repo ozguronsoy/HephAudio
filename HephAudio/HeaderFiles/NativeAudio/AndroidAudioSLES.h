@@ -6,16 +6,22 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses OpenSL ES
+		/**
+		 * @brief uses OpenSL ES
+		 * 
+		 */
 		class AndroidAudioSLES final : public AndroidAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
+
 		private:
 			struct CallbackContext
 			{
@@ -25,6 +31,7 @@ namespace HephAudio
 				SLuint32 bufferSize_byte;
 				SLuint32 bufferSize_frame;
 			};
+
 		private:
 			OpenSLParams params;
 			SLObjectItf audioEngineObject;
@@ -37,11 +44,23 @@ namespace HephAudio
 			SLRecordItf audioRecorder;
 			CallbackContext renderCallbackContext;
 			CallbackContext captureCallbackContext;
+
 		public:
+			/**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
 			AndroidAudioSLES();
+
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
 			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
+			
+			/**
+			 * releases the resources and destroys the instance.
+			 * 
+			 */
 			~AndroidAudioSLES();
+
 			void SetMasterVolume(double volume);
 			double GetMasterVolume() const;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format);
@@ -50,6 +69,7 @@ namespace HephAudio
 			void StopCapturing();
 			void GetNativeParams(NativeAudioParams& nativeParams) const override;
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
+
 		private:
 			SLAndroidDataFormat_PCM_EX ToSLFormat(AudioFormatInfo& formatInfo);
 			static void BufferQueueCallback(SLBufferQueueItf bufferQueue, void* pContext);

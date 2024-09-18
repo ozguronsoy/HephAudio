@@ -5,28 +5,47 @@
 #include "WinAudioBase.h"
 #include <mmeapi.h>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses MMEAPI (waveIn and waveOut)
+		/**
+		 * @brief uses MMEAPI (waveIn and waveOut)
+		 * 
+		 */
 		class WinAudioMME final : public WinAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
+
 		private:
 			static constexpr uint32_t HDR_COUNT = 2;
+
 		private:
 			HWAVEOUT hwo;
 			HWAVEIN hwi;
 			WAVEHDR renderHdrs[HDR_COUNT];
 			WAVEHDR captureHdrs[HDR_COUNT];
+
 		public:
+			/**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
 			WinAudioMME();
+
 			WinAudioMME(const WinAudioMME&) = delete;
 			WinAudioMME& operator=(const WinAudioMME&) = delete;
+
+			/**
+			 * releases the resources and destroys the instance.
+			 * 
+			 */
 			~WinAudioMME();
+			
 			void SetMasterVolume(double volume) override;
 			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format);

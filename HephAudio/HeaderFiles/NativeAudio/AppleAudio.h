@@ -4,24 +4,42 @@
 #include "NativeAudio.h"
 #include <CoreAudio/CoreAudio.h>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses CoreAudio
+		/**
+		 * @brief uses CoreAudio
+		 * 
+		 */
 		class AppleAudio final : public NativeAudio
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
+
 		private:
 			AudioDeviceIOProcID renderProcID;
 			AudioDeviceIOProcID captureProcID;
+
 		public:
+			/**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
 			AppleAudio();
+
 			AppleAudio(const AppleAudio&) = delete;
 			AppleAudio& operator=(const AppleAudio&) = delete;
+
+			/**
+			 * releases the resources and destroys the instance.
+			 * 
+			 */
 			~AppleAudio();
+
 			void SetMasterVolume(double volume) override;
 			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
@@ -30,6 +48,7 @@ namespace HephAudio
 			void StopCapturing() override;
 			void GetNativeParams(NativeAudioParams& nativeParams) const override;
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
+			
 		private:
 			bool EnumerateAudioDevices() override;
 			void ToStreamDesc(const AudioFormatInfo& format, AudioStreamBasicDescription& streamDesc) const;

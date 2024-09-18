@@ -3,8 +3,14 @@
 #include "EncodedAudioBuffer.h"
 #include "FFmpegAudioShared.h"
 
+/** @file */
+
 namespace HephAudio
 {
+	/**
+	 * @brief stores the audio data that's encoded via [FFmpeg](https://www.ffmpeg.org/).
+	 * 
+	 */
 	class FFmpegEncodedAudioBuffer final : public EncodedAudioBuffer
 	{
 	private:

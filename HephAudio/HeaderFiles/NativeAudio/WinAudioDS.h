@@ -5,23 +5,41 @@
 #include "WinAudioBase.h"
 #include <dsound.h>
 
+/** @file */
+
 namespace HephAudio
 {
 	namespace Native
 	{
-		// Uses DirectSound
+		/**
+		 * @brief uses DirectSound
+		 * 
+		 */
 		class WinAudioDS final : public WinAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;
 			using NativeAudio::InitializeCapture;
+
 		private:
 			HWND hwnd;
+
 		public:
+			/**
+			 * creates a new instance and initializes it with default values.
+			 * 
+			 */
 			WinAudioDS();
+
 			WinAudioDS(const WinAudioDS&) = delete;
 			WinAudioDS& operator=(const WinAudioDS&) = delete;
+
+			/**
+			 * releases the resources and destroys the instance.
+			 * 
+			 */
 			~WinAudioDS();
+			
 			void SetMasterVolume(double volume) override;
 			double GetMasterVolume() const override;
 			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
