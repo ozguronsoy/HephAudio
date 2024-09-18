@@ -10,7 +10,7 @@
 
 - Create a new pull request with the patch.
 - The PR should clearly describe the problems and the solutions.
-- Patch must support C++ 14 and above.
+- Patch must support C++ 17 and above.
 - Ensure the patch works with all internal sample types if applicable.
 - Ensure the patch works for all of the supported platforms.
 - Ensure the patch works with both FFmpeg enabled and disabled if applicable.
