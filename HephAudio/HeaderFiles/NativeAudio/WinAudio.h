@@ -53,7 +53,7 @@ namespace HephAudio
 			 * sets the display name in the volume mixer.
 			 * 
 			 */
-			void SetDisplayName(const std::filesystem::path& displayName);
+			void SetDisplayName(const std::string& displayName);
 
 			/**
 			 * sets the icon displayed in the volume mixer.

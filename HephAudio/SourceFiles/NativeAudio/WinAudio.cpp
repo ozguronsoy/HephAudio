@@ -162,12 +162,12 @@ namespace HephAudio
 			}
 			this->params = *pWasapiParams;
 		}
-		void WinAudio::SetDisplayName(const std::filesystem::path& displayName)
+		void WinAudio::SetDisplayName(const std::string& displayName)
 		{
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(displayName.wstring().c_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred while setting the display name.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(StringHelpers::StrToWide(displayName.c_str()).c_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred while setting the display name.");
 			}
 		}
 		void WinAudio::SetIconPath(const std::filesystem::path& iconPath)
