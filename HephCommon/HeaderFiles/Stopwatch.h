@@ -48,7 +48,7 @@
 namespace HephCommon
 {
 	/**
-	 * class for measuring time.
+	 * @brief class for measuring time.
 	 * 
 	 */
 	class Stopwatch final

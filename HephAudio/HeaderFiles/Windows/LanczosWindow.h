@@ -7,7 +7,7 @@
 namespace HephAudio
 {
 	/**
-	 * @brief generates LanczosWindow window.
+	 * @brief generates Lanczos window.
 	 * 
 	 */
 	class LanczosWindow final : public Window

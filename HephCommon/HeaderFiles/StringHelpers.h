@@ -9,7 +9,7 @@
 namespace HephCommon
 {
 	/**
-	 * provides methods for string processing.
+	 * @brief provides methods for string processing.
 	 * @note this class cannot be instantiated.
 	 * 
 	 */
