@@ -6,12 +6,26 @@
 
 namespace HephAudio
 {
+	/**
+	 * @brief generates square wave signals.
+	 * 
+	 */
 	class SquareWaveOscillator final : public Oscillator
 	{
 	public:
+		/** @copydoc default_constructor */
 		SquareWaveOscillator();
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param sampleRate @copydetails sampleRate
+		 */
 		SquareWaveOscillator(uint32_t sampleRate);
+
+		/** @copydoc Oscillator(double,double,uint32_t,double) */
 		SquareWaveOscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);
+
 		double operator[](size_t n) const override;
 	};
 }

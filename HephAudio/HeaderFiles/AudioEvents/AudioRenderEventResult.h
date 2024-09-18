@@ -25,10 +25,7 @@ namespace HephAudio
 		 */
 		bool isFinishedPlaying;
 
-		/**
-		 * creates a new instance and initializes it with default values.
-		 * 
-		 */
+		/** @copydoc default_constructor */
 		AudioRenderEventResult() : isFinishedPlaying(false) {}
 	};
 }

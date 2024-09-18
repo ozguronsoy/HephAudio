@@ -101,8 +101,12 @@ namespace HephAudio
 		 */
 		HephCommon::Event OnFinishedPlaying;
 		
+		/** @copydoc default_constructor */
 		AudioObject();
+
+		/** @copydoc move_constructor */
 		AudioObject(AudioObject&& rhs) noexcept;
+		
 		AudioObject& operator=(AudioObject&& rhs) noexcept;
 
 		/**

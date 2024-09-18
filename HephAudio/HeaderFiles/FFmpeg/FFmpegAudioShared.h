@@ -3,6 +3,8 @@
 #include "AudioFormatInfo.h"
 #include <string>
 
+/** @file */
+
 extern "C"
 {
 #include <libavcodec/avcodec.h>

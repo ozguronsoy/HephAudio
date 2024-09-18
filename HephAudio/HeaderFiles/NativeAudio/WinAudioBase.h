@@ -21,19 +21,13 @@ namespace HephAudio
 		class WinAudioBase : public NativeAudio
 		{
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			WinAudioBase();
 
 			WinAudioBase(const WinAudioBase&) = delete;
 			WinAudioBase& operator=(const WinAudioBase&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			virtual ~WinAudioBase() = default;
 
 		protected:

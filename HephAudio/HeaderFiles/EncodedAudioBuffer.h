@@ -27,13 +27,42 @@ namespace HephAudio
 		AudioFormatInfo formatInfo;
 
 	public:
+		/** @copydoc default_constructor */
 		EncodedAudioBuffer();
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param formatInfo audio format info of the encoded data.
+		 */
 		explicit EncodedAudioBuffer(const AudioFormatInfo& formatInfo);
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param size number of bytes the buffer will store.
+		 * @param formatInfo audio format info of the encoded data.
+		 */
 		EncodedAudioBuffer(size_t size, const AudioFormatInfo& formatInfo);
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param pData pointer to the data that the buffer will store (copies the data).
+		 * @param size number of bytes the buffer will store.
+		 * @param formatInfo audio format info of the encoded data.
+		 */
 		EncodedAudioBuffer(const uint8_t* pData, size_t size, const AudioFormatInfo& formatInfo);
+		
+		/** @copydoc copy_constructor */
 		EncodedAudioBuffer(const EncodedAudioBuffer&) = delete;
+		
+		/** @copydoc move_constructor */
 		EncodedAudioBuffer(EncodedAudioBuffer&& rhs) noexcept;
+		
+		/** @copydoc destructor */
 		virtual ~EncodedAudioBuffer() = default;
+		
 		EncodedAudioBuffer& operator=(const EncodedAudioBuffer&) = delete;
 		EncodedAudioBuffer& operator=(EncodedAudioBuffer&& rhs) noexcept;
 		virtual void Release() override;

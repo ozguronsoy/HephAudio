@@ -13,10 +13,7 @@ namespace HephAudio
 		 */
 		struct NativeAudioParams
 		{
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			virtual ~NativeAudioParams() = default;
 		};
 	}

@@ -47,7 +47,18 @@ namespace HephAudio
 		 */
 		double echoEndPosition;
 		
+		/** @copydoc default_constructor */
 		EchoInfo();
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param reflectionCount @copydetails reflectionCount
+		 * @param reflectionDelay_s @copydetails reflectionDelay_s
+		 * @param decayFactor @copydetails decayFactor
+		 * @param echoStartPosition @copydetails echoStartPosition
+		 * @param echoEndPosition @copydetails echoEndPosition
+		 */
 		EchoInfo(uint32_t reflectionCount, double reflectionDelay_s, double decayFactor, double echoStartPosition, double echoEndPosition);
 
 		/**

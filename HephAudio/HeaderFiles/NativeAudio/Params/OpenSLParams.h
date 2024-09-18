@@ -28,10 +28,7 @@ namespace HephAudio
              */
             double captureBufferDuration_ms;
 
-            /**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
             OpenSLParams()
                 : renderBufferDuration_ms(10), captureBufferDuration_ms(10) {}
         };

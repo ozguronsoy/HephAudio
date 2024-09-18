@@ -80,10 +80,7 @@ namespace HephAudio
 			 */
 			double capturePeriodicity_ms;
 
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			WasapiParams()
 				: renderClsCtx(CLSCTX_INPROC_SERVER), captureClsCtx(CLSCTX_INPROC_SERVER)
 				, renderShareMode(AUDCLNT_SHAREMODE_SHARED), captureShareMode(AUDCLNT_SHAREMODE_SHARED)

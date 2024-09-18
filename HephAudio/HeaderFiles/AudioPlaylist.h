@@ -48,16 +48,78 @@ namespace HephAudio
 		double transitionDuration_s;
 
 	public:
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 */
 		AudioPlaylist(Native::NativeAudio* pNativeAudio);
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param audio the audio instance that will be used for playing the files.
+		 */
 		AudioPlaylist(Audio& audio);
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param files file paths.
+		 */
 		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::string>& files);
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param audio the audio instance that will be used for playing the files.
+		 * @param files file paths.
+		 */
 		AudioPlaylist(Audio& audio, const std::vector<std::string>& files);
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param transitionEffect the effect that will be applied while switching files.
+		 * @param transitionDuration_s duration of the transition effect in seconds.
+		 */
 		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s);
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param audio the audio instance that will be used for playing the files.
+		 * @param transitionEffect the effect that will be applied while switching files.
+		 * @param transitionDuration_s duration of the transition effect in seconds.
+		 */
 		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s);
+	
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param transitionEffect the effect that will be applied while switching files.
+		 * @param transitionDuration_s duration of the transition effect in seconds.
+		 * @param files file paths.
+		 */
 		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files);
+	
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param audio the audio instance that will be used for playing the files.
+		 * @param transitionEffect the effect that will be applied while switching files.
+		 * @param transitionDuration_s duration of the transition effect in seconds.
+		 * @param files file paths.
+		 */
 		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files);
+		
 		AudioPlaylist(const AudioPlaylist&) = delete;
+		
+		/** @copydoc move_constructor */
 		AudioPlaylist(AudioPlaylist&& rhs) noexcept;
+		
 		AudioPlaylist& operator=(const AudioPlaylist&) = delete;
 		AudioPlaylist& operator=(const std::string& rhs);
 		AudioPlaylist& operator=(const std::vector<std::string>& rhs);

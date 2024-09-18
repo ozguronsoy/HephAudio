@@ -31,19 +31,13 @@ namespace HephAudio
 			Microsoft::WRL::ComPtr<IAudioSessionControl> pRenderSessionControl;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			WinAudio();
 
 			WinAudio(const WinAudio&) = delete;
 			WinAudio& operator=(const WinAudio&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~WinAudio();
 
 			void SetMasterVolume(double volume) override;

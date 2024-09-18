@@ -32,19 +32,13 @@ namespace HephAudio
 			static JavaVM* jvm;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			AndroidAudioBase();
 
 			AndroidAudioBase(const AndroidAudioBase&) = delete;
 			AndroidAudioBase& operator=(const AndroidAudioBase&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			virtual ~AndroidAudioBase();
 
 		protected:

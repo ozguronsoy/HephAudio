@@ -25,6 +25,7 @@ namespace HephAudio
 	{
 	private:
 		Native::NativeAudio* pNativeAudio;
+
 	public:
 		void SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
 		void AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
@@ -32,6 +33,7 @@ namespace HephAudio
 		void AddOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
 		void SetOnCaptureHandler(HephCommon::EventHandler handler);
 		void AddOnCaptureHandler(HephCommon::EventHandler handler);
+		
 	public:
 		Audio();
 		Audio(AudioAPI api);

@@ -46,19 +46,13 @@ namespace HephAudio
 			CallbackContext captureCallbackContext;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			AndroidAudioSLES();
 
 			AndroidAudioSLES(const AndroidAudioSLES&) = delete;
 			AndroidAudioSLES& operator=(const AndroidAudioSLES&) = delete;
 			
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~AndroidAudioSLES();
 
 			void SetMasterVolume(double volume);

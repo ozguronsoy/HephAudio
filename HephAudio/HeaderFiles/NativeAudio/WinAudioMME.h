@@ -31,19 +31,13 @@ namespace HephAudio
 			WAVEHDR captureHdrs[HDR_COUNT];
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			WinAudioMME();
 
 			WinAudioMME(const WinAudioMME&) = delete;
 			WinAudioMME& operator=(const WinAudioMME&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~WinAudioMME();
 			
 			void SetMasterVolume(double volume) override;

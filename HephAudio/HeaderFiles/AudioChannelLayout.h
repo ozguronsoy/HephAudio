@@ -146,8 +146,15 @@ namespace HephAudio
 		 */
 		AudioChannelMask mask;
 
+		/** @copydoc default_constructor */
 		constexpr AudioChannelLayout() : AudioChannelLayout(0, AudioChannelMask::Unknown) {}
 		
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param count @copydetails count
+		 * @param mask @copydetails mask
+		 */
 		constexpr AudioChannelLayout(uint16_t count, AudioChannelMask mask) : count(count), mask(mask) {}
 		
 		constexpr bool operator==(const AudioChannelLayout& rhs) const

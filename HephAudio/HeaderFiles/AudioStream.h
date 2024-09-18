@@ -29,13 +29,44 @@ namespace HephAudio
 		AudioBuffer decodedBuffer;
 
 	public:
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 */
 		AudioStream(Native::NativeAudio* pNativeAudio);
+		
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param audio the audio instance that will be used for playing the files.
+		 */
 		AudioStream(Audio& audio);
+		
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param filePath file that will be played.
+		 */
 		AudioStream(Native::NativeAudio* pNativeAudio, const std::string& filePath);
+		
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param audio the audio instance that will be used for playing the files.
+		 * @param filePath file that will be played.
+		 */
 		AudioStream(Audio& audio, const std::string& filePath);
+		
 		AudioStream(const AudioStream&) = delete;
+
+		/** @copydoc move_constructor */
 		AudioStream(AudioStream&& rhs) noexcept;
+		
+		/** @copydoc destructor */
 		~AudioStream();
+		
 		AudioStream& operator=(const AudioStream&) = delete;
 		AudioStream& operator=(AudioStream&& rhs) noexcept;
 

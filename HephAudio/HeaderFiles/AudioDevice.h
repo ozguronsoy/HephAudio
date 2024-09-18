@@ -92,6 +92,7 @@ namespace HephAudio
 		 */
 		bool isDefault;
 
+		/** @copydoc default_constructor */
 		AudioDevice() : id(""), name(""), type(AudioDeviceType::Render), isDefault(false) {}
 	};
 }

@@ -27,10 +27,7 @@ namespace HephAudio
              */
             double captureBufferDuration_ms;
 
-             /**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+            /** @copydoc default_constructor */
             AlsaParams()
                 : renderBufferDuration_ms(10), captureBufferDuration_ms(10) {}
         };

@@ -30,19 +30,13 @@ namespace HephAudio
 			snd_pcm_t* capturePcm;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			LinuxAudio();
 
 			LinuxAudio(const LinuxAudio&) = delete;
 			LinuxAudio& operator=(const LinuxAudio&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~LinuxAudio();
 
 			void SetMasterVolume(double volume) override;

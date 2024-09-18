@@ -25,19 +25,13 @@ namespace HephAudio
 			HWND hwnd;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			WinAudioDS();
 
 			WinAudioDS(const WinAudioDS&) = delete;
 			WinAudioDS& operator=(const WinAudioDS&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~WinAudioDS();
 			
 			void SetMasterVolume(double volume) override;

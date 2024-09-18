@@ -30,10 +30,7 @@ namespace HephAudio
 		 */
 		uint16_t bitsPerSample;
 
-		/**
-		 * channel layout
-		 * 
-		 */
+		/** @copydoc AudioChannelLayout */
 		AudioChannelLayout channelLayout;
 
 		/**
@@ -54,11 +51,53 @@ namespace HephAudio
 		 */
 		HephCommon::Endian endian;
 
+		/** @copydoc default_constructor */
 		AudioFormatInfo();
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param formatTag @copydetails formatTag
+		 * @param bitsPerSample @copydetails bitsPerSample
+		 * @param chLayout @copybrief channelLayout
+		 * @param sampleRate @copydetails sampleRate
+		 */
 		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate);
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param formatTag @copydetails formatTag
+		 * @param bitsPerSample @copydetails bitsPerSample
+		 * @param chLayout @copybrief channelLayout
+		 * @param sampleRate @copydetails sampleRate
+		 * @param bitRate @copydetails bitRate
+		 */
 		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate);
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param formatTag @copydetails formatTag
+		 * @param bitsPerSample @copydetails bitsPerSample
+		 * @param chLayout @copybrief channelLayout
+		 * @param sampleRate @copydetails sampleRate
+		 * @param endian @copydetails endian
+		 */
 		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, HephCommon::Endian endian);
+		
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param formatTag @copydetails formatTag
+		 * @param bitsPerSample @copydetails bitsPerSample
+		 * @param chLayout @copybrief channelLayout
+		 * @param sampleRate @copydetails sampleRate
+		 * @param bitRate @copydetails bitRate
+		 * @param endian @copydetails endian
+		 */
 		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate, HephCommon::Endian endian);
+		
 		bool operator==(const AudioFormatInfo& rhs) const;
 		bool operator!=(const AudioFormatInfo& rhs) const;
 		

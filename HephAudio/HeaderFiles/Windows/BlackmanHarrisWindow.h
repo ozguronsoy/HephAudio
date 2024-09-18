@@ -2,15 +2,25 @@
 #include "HephAudioShared.h"
 #include "Window.h"
 
+/** @file */
+
 namespace HephAudio
 {
+	/**
+	 * @brief generates Blackman-Harris window.
+	 * 
+	 */
 	class BlackmanHarrisWindow final : public Window
 	{
 	private:
 		double N;
 	public:
+		/** @copydoc default_constructor */
 		BlackmanHarrisWindow();
+		
+		/** @copydoc Window(size_t) */
 		BlackmanHarrisWindow(size_t size);
+
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;
 	};

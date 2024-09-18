@@ -25,19 +25,13 @@ namespace HephAudio
 			AudioDeviceIOProcID captureProcID;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			AppleAudio();
 
 			AppleAudio(const AppleAudio&) = delete;
 			AppleAudio& operator=(const AppleAudio&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~AppleAudio();
 
 			void SetMasterVolume(double volume) override;

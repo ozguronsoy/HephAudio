@@ -19,6 +19,7 @@ namespace HephAudio
 		AudioChannelMixingLookupTables() = delete;
 		AudioChannelMixingLookupTables(const AudioChannelMixingLookupTables&) = delete;
 		AudioChannelMixingLookupTables& operator=(const AudioChannelMixingLookupTables&) = delete;
+		
 	public:
 		static hephaudio_channel_mixing_lookup_table_t _mono_table;
 		static hephaudio_channel_mixing_lookup_table_t _stereo_table;

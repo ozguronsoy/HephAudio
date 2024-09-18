@@ -6,8 +6,14 @@
 #include "FFmpegEncodedAudioBuffer.h"
 #include <string>
 
+/** @file */
+
 namespace HephAudio
 {
+	/**
+	 * @brief implements audio encoding via [FFmpeg](https://www.ffmpeg.org/).
+	 * 
+	 */
 	class FFmpegAudioEncoder final : public IAudioEncoder
 	{
 	private:
@@ -19,12 +25,28 @@ namespace HephAudio
 		SwrContext* swrContext;
 		AVFrame* avFrame;
 		AVPacket* avPacket;
+
 	public:
+		/** @copydoc default_constructor */
 		FFmpegAudioEncoder();
+		
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param filePath path of the file that will be decoded.
+		 * @param outputFormatInfo describes the output format.
+		 * @param overwrite indicates whether to write over the file if already exists.
+		 */
 		FFmpegAudioEncoder(const std::string& filePath, AudioFormatInfo outputFormatInfo, bool overwrite);
+
+		/** @copydoc move_constructor */
 		FFmpegAudioEncoder(FFmpegAudioEncoder&& rhs) noexcept;
+
 		FFmpegAudioEncoder(const FFmpegAudioEncoder&) = delete;
+
+		/** @copydoc destructor */
 		~FFmpegAudioEncoder();
+
 		FFmpegAudioEncoder& operator=(const FFmpegAudioEncoder&) = delete;
 		FFmpegAudioEncoder& operator=(FFmpegAudioEncoder&& rhs) noexcept;
 		void ChangeFile(const std::string& newAudioFilePath, bool overwrite) override;
@@ -35,6 +57,7 @@ namespace HephAudio
 		void Transcode(const EncodedAudioBuffer& inputBuffer, EncodedAudioBuffer& outputBuffer) override;
 		static void Transcode(const std::string& inputFilePath, const std::string& outputFilePath, bool overwrite);
 		static void Transcode(const std::string& inputFilePath, const std::string& outputFilePath, AudioFormatInfo outputFormatInfo, bool overwrite);
+
 	private:
 		void OpenFile(const std::string& filePath, bool overwrite);
 		static void Transcode(void* pDecoder, FFmpegAudioEncoder& encoder);

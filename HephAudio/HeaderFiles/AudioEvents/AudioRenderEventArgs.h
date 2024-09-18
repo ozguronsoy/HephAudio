@@ -25,9 +25,12 @@ namespace HephAudio
 		 */
 		size_t renderFrameCount;
 
-		/**
-		 * creates a new instance and initializes it with the provided values.
+		/** 
+		 * @copydoc constructor
 		 * 
+		 * @param pNativeAudio @copydetails AudioEventArgs::pNativeAudio
+		 * @param pAudioObject @copydetails pAudioObject
+		 * @param renderFrameCount @copydetails renderFrameCount
 		 */
 		AudioRenderEventArgs(void* pAudioObject, void* pNativeAudio, size_t renderFrameCount) 
 			: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), renderFrameCount(renderFrameCount) {}

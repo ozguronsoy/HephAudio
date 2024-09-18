@@ -4,8 +4,14 @@
 #include "IAudioDecoder.h"
 #include "FFmpegEncodedAudioBuffer.h"
 
+/** @file */
+
 namespace HephAudio
 {
+	/**
+	 * @brief implements audio decoding via [FFmpeg](https://www.ffmpeg.org/).
+	 * 
+	 */
 	class FFmpegAudioDecoder final : public IAudioDecoder
 	{
 	private:
@@ -19,12 +25,26 @@ namespace HephAudio
 		SwrContext* swrContext;
 		AVFrame* avFrame;
 		AVPacket* avPacket;
+
 	public:
+		/** @copydoc default_constructor */
 		FFmpegAudioDecoder();
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param filePath path of the file that will be decoded.
+		 */
 		FFmpegAudioDecoder(const std::string& filePath);
+
+		/** @copydoc move_constructor */
 		FFmpegAudioDecoder(FFmpegAudioDecoder&& rhs) noexcept;
+
 		FFmpegAudioDecoder(const FFmpegAudioDecoder&) = delete;
+
+		/** @copydoc destructor */
 		~FFmpegAudioDecoder();
+		
 		FFmpegAudioDecoder& operator=(const FFmpegAudioDecoder&) = delete;
 		FFmpegAudioDecoder& operator=(FFmpegAudioDecoder&& rhs) noexcept;
 		void ChangeFile(const std::string& newFilePath) override;
@@ -37,6 +57,7 @@ namespace HephAudio
 		AudioBuffer Decode(size_t frameCount) override;
 		AudioBuffer Decode(size_t frameIndex, size_t frameCount) override;
 		AudioBuffer Decode(const EncodedAudioBuffer& encodedBuffer) override;
+
 	private:
 		void OpenFile(const std::string& filePath);
 		int SeekFrame(size_t& frameIndex);

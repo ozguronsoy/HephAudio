@@ -177,19 +177,13 @@ namespace HephAudio
 			HephCommon::Event OnCapture;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			NativeAudio();
 
 			NativeAudio(const NativeAudio&) = delete;
 			NativeAudio& operator=(const NativeAudio&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			virtual ~NativeAudio() = default;
 
 			/**

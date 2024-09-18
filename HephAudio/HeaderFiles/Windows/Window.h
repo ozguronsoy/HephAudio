@@ -20,10 +20,18 @@ namespace HephAudio
 		size_t size;
 
 	protected:
+		/** @copydoc default_constructor */
 		Window();
+
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param size @copydetails size
+		 */
 		Window(size_t size);
 
 	public:
+		/** @copydoc destructor */
 		virtual ~Window() = default;
 
 		/**

@@ -25,9 +25,12 @@ namespace HephAudio
 		 */
 		uint32_t remainingLoopCount;
 
-		/**
-		 * creates a new instance and initializes it with the provided values.
+		/** 
+		 * @copydoc constructor
 		 * 
+		 * @param pNativeAudio @copydetails AudioEventArgs::pNativeAudio
+		 * @param pAudioObject @copydetails pAudioObject
+		 * @param remainingLoopCount @copydetails remainingLoopCount
 		 */
 		AudioFinishedPlayingEventArgs(void* pAudioObject, void* pNativeAudio, uint32_t remainingLoopCount)
 			: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), remainingLoopCount(remainingLoopCount) {}

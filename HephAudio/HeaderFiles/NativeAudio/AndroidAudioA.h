@@ -30,19 +30,13 @@ namespace HephAudio
 			double masterVolume;
 
 		public:
-			/**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */
 			AndroidAudioA();
 
 			AndroidAudioA(const AndroidAudioA&) = delete;
 			AndroidAudioA& operator=(const AndroidAudioA&) = delete;
 
-			/**
-			 * releases the resources and destroys the instance.
-			 * 
-			 */
+			/** @copydoc destructor */
 			~AndroidAudioA();
 
 			void SetMasterVolume(double volume) override;

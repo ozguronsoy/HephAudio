@@ -21,12 +21,34 @@ namespace HephAudio
 		AudioFormatInfo formatInfo;
 
 	public:
+		/** @copydoc default_constructor */
 		AudioBuffer();
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param frameCount number of frames the buffer stores.
+		 * @param channelLayout channel layout of the buffer.
+		 * @param sampleRate sample rate of the buffer.
+		 */
 		AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
+
+		/**
+		 * @copydoc AudioBuffer(size_t,const AudioChannelLayout&,uint32_t)
+		 * 
+		 * @param flags flags.
+		 */
 		AudioBuffer(size_t frameCount, const AudioChannelLayout& channelLayout, uint32_t sampleRate, HephCommon::BufferFlags flags);
+		
+		/** @copydoc copy_constructor */
 		AudioBuffer(const AudioBuffer& rhs);
+		
+		/** @copydoc move_constructor */
 		AudioBuffer(AudioBuffer&& rhs) noexcept;
+		
+		/** @copydoc destructor */
 		~AudioBuffer();
+		
 		AudioBuffer& operator=(const AudioBuffer& rhs);
 		AudioBuffer& operator=(AudioBuffer&& rhs) noexcept;
 		AudioBuffer operator<<(size_t rhs) const override;
@@ -36,7 +58,7 @@ namespace HephAudio
 		bool operator==(const AudioBuffer& rhs) const override;
 
 		/**
-		 * gets the audio frame at the provided index.
+		 * gets the pointer to the first sample of the audio frame at the provided index.
 		 * 
 		 */
 		heph_audio_sample_t* operator[](size_t frameIndex) const;

@@ -18,16 +18,14 @@ namespace HephAudio
 		 */
 		void* pNativeAudio;
 
-		/**
-		 * creates a new instance and initializes it with the provided values.
+		/** 
+		 * @copydoc constructor
 		 * 
+		 * @param pNativeAudio @copydetails pNativeAudio
 		 */
 		AudioEventArgs(void* pNativeAudio) : pNativeAudio(pNativeAudio) {}
 
-		/**
-		 * releases the resources and destroys the instance.
-		 * 
-		 */
+		/** @copydoc destructor */
 		virtual ~AudioEventArgs() = default;
 	};
 }

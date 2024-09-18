@@ -29,7 +29,16 @@ namespace HephAudio
 		 */
 		double amplitude;
 		
+		/** @copydoc default_constructor */
 		EqualizerInfo();
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param f1 @copydetails f1
+		 * @param f2 @copydetails f2
+		 * @param amplitude @copydetails amplitude
+		 */
 		EqualizerInfo(double f1, double f2, double amplitude);
 	};
 }

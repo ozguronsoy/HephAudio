@@ -40,10 +40,21 @@ namespace HephAudio
 		uint32_t sampleRate;
 
 	protected:
+		/** @copydoc default_constructor */
 		Oscillator();
+		
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param peakAmplitude @copydetails peakAmplitude
+		 * @param frequency @copydetails frequency
+		 * @param sampleRate @copydetails sampleRate
+		 * @param phase_rad @copydetails phase_rad
+		 */
 		Oscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);
 
 	public:
+		/** @copydoc destructor */
 		virtual ~Oscillator() = default;
 
 		/**

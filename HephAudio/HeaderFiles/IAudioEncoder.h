@@ -22,6 +22,7 @@ namespace HephAudio
 		std::string filePath;
 
 	public:
+		/** @copydoc destructor */
 		virtual ~IAudioEncoder() = default;
 
 		/**

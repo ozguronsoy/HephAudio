@@ -19,9 +19,11 @@ namespace HephAudio
 		 */
 		AudioDevice audioDevice;
 
-		/**
-		 * creates a new instance and initializes it with the provided values.
+		/** 
+		 * @copydoc constructor
 		 * 
+		 * @param pNativeAudio @copydetails AudioEventArgs::pNativeAudio
+		 * @param audioDevice @copydetails audioDevice
 		 */
 		AudioDeviceEventArgs(void* pNativeAudio, AudioDevice audioDevice) : AudioEventArgs(pNativeAudio), audioDevice(audioDevice) {}
 	};

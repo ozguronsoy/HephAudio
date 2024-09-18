@@ -19,9 +19,11 @@ namespace HephAudio
 		 */
 		AudioBuffer captureBuffer;
 
-		/**
-		 * creates a new instance and initializes it with the provided values.
+		/** 
+		 * @copydoc constructor
 		 * 
+		 * @param pNativeAudio @copydetails AudioEventArgs::pNativeAudio
+		 * @param captureBuffer @copydetails captureBuffer
 		 */
 		AudioCaptureEventArgs(void* pNativeAudio, AudioBuffer& captureBuffer) : AudioEventArgs(pNativeAudio), captureBuffer(std::move(captureBuffer)) {}
 	};

@@ -78,10 +78,7 @@ namespace HephAudio
             aaudio_usage_t captureUsage;
 #endif
 
-            /**
-			 * creates a new instance and initializes it with default values.
-			 * 
-			 */
+			/** @copydoc default_constructor */            
             AAudioParams()
                 : renderShareMode(AAUDIO_SHARING_MODE_SHARED), captureShareMode(AAUDIO_SHARING_MODE_SHARED)
                 , renderPerformanceMode(AAUDIO_PERFORMANCE_MODE_NONE), capturePerformanceMode(AAUDIO_PERFORMANCE_MODE_NONE)
