@@ -7,6 +7,33 @@
  * targeted C++ version
  */
 
+/** @defgroup default_constructor
+ * creates a new instance and initializes it with default values.
+ * 
+*/
+
+/** @defgroup constructor
+ * creates a new instance and initializes it with the provided values.
+ * 
+*/
+
+/** @defgroup copy_constructor
+ * creates a new instance and copies the rhs's data to it.
+ * 
+ * @param rhs instance whose data will be copied.
+*/
+
+/** @defgroup move_constructor
+ * creates a new instance and moves the rhs's data to it.
+ * 
+ * @param rhs instance whose data will be moved.
+*/
+
+/** @defgroup destructor
+ * releases the resources and destroys the instance.
+ * 
+*/
+
 #if !defined(CPP_VERSION)
 
 #if defined(_MSVC_LANG)

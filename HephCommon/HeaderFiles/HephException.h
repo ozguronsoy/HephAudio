@@ -89,8 +89,27 @@ namespace HephCommon
 		 */
 		std::string externalMessage;
 
+		/** @copydoc default_constructor */
 		HephException();
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param errorCode @copydetails errorCode
+		 * @param method @copydetails method
+		 * @param message @copydetails message
+		 */
 		HephException(int64_t errorCode, const std::string& method, const std::string& message);
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param errorCode @copydetails errorCode
+		 * @param method @copydetails method
+		 * @param message @copydetails message
+		 * @param externalSource @copydetails externalSource
+		 * @param externalMessage @copydetails externalMessage
+		 */
 		HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
 
 		/**
@@ -114,11 +133,33 @@ namespace HephCommon
 		static void DefaultHandler(const EventParams& params);
 	};
 
+	/**
+	 * @brief struct for storing the arguments for the audio exception events.
+	 * 
+	 */
 	struct HephExceptionEventArgs : public EventArgs
 	{
+		/**
+		 * pointer to the object that caused the exception.
+		 * 
+		 */
 		const void* pSender;
+
+		/**
+		 * the exception that's being raised.
+		 * 
+		 */
 		HephException exception;
+
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param pSender @copydetails pSender
+		 * @param ex @copydetails exception
+		 */
 		HephExceptionEventArgs(const void* pSender, HephException ex) : pSender(pSender), exception(ex) {}
+
+		/** @copydoc destructor */
 		virtual ~HephExceptionEventArgs() = default;
 	};
 }

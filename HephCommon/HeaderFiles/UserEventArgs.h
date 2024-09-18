@@ -39,7 +39,17 @@ namespace HephCommon
 		 */
 		bool Exists(const std::string& key) const;
 
+		/**
+		 * adds a new argument with the provided key.
+		 * If an argument with the key already exists, modifies it.
+		 * 
+		 */
 		void Add(const std::string& key, void* pUserArg);
+
+		/**
+		 * removes the user argument that corresponds to the provided key.
+		 * 
+		 */
 		void Remove(const std::string& key);
 
 		/**

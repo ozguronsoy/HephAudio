@@ -64,6 +64,7 @@ namespace HephCommon
 		static thread_local Stopwatch Instance;
 		
 	public:
+		/** @copydoc default_constructor */
 		Stopwatch();
 
 		/**

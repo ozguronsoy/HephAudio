@@ -38,14 +38,26 @@ namespace HephCommon
 		static constexpr Tdata MAX_ELEMENT = std::numeric_limits<Tdata>::max();
 
 	protected:
+		/** @copydoc BufferBase() */
 		ArithmeticBuffer() : BufferBase<Tself, Tdata>() { ArithmeticBuffer::AddEventHandlers(); }
+		
+		/** @copydoc BufferBase(size_t) */
 		explicit ArithmeticBuffer(size_t size) : BufferBase<Tself, Tdata>(size) { ArithmeticBuffer::AddEventHandlers(); }
+		
+		/** @copydoc BufferBase(size_t,BufferFlags) */
 		ArithmeticBuffer(size_t size, BufferFlags flags) : BufferBase<Tself, Tdata>(size, flags) { ArithmeticBuffer::AddEventHandlers(); }
+		
+		/** @copydoc BufferBase(const std::initializer_list<Tdata>& rhs) */
 		ArithmeticBuffer(const std::initializer_list<Tdata>& rhs) : BufferBase<Tself, Tdata>(rhs) { ArithmeticBuffer::AddEventHandlers(); }
+		
+		/** @copydoc BufferBase(const BufferBase& rhs) */
 		ArithmeticBuffer(const ArithmeticBuffer& rhs) : BufferBase<Tself, Tdata>(rhs) { ArithmeticBuffer::AddEventHandlers(); }
+		
+		/** @copydoc BufferBase(BufferBase&& rhs) */
 		ArithmeticBuffer(ArithmeticBuffer&& rhs) noexcept : BufferBase<Tself, Tdata>(std::move(rhs)) { ArithmeticBuffer::AddEventHandlers(); }
 
 	public:
+		/** @copydoc ~BufferBase */
 		virtual ~ArithmeticBuffer() = default;
 
 		/**
@@ -136,14 +148,26 @@ namespace HephCommon
 		static_assert(std::is_signed<Tdata>::value, "Tdata must be a signed type");
 
 	protected:
+		/** @copydoc BufferBase() */
 		SignedArithmeticBuffer() : ArithmeticBuffer<Tself, Tdata>() {}
+		
+		/** @copydoc BufferBase(size_t) */
 		explicit SignedArithmeticBuffer(size_t size) : ArithmeticBuffer<Tself, Tdata>(size) {}
+		
+		/** @copydoc BufferBase(size_t,BufferFlags) */
 		SignedArithmeticBuffer(size_t size, BufferFlags flags) : ArithmeticBuffer<Tself, Tdata>(size, flags) {}
+		
+		/** @copydoc BufferBase(const std::initializer_list<Tdata>& rhs) */
 		SignedArithmeticBuffer(const std::initializer_list<Tdata>& rhs) : ArithmeticBuffer<Tself, Tdata>(rhs) {}
+		
+		/** @copydoc BufferBase(const BufferBase& rhs) */
 		SignedArithmeticBuffer(const SignedArithmeticBuffer& rhs) : ArithmeticBuffer<Tself, Tdata>(rhs) {}
+		
+		/** @copydoc BufferBase(BufferBase&& rhs) */
 		SignedArithmeticBuffer(SignedArithmeticBuffer&& rhs) noexcept : ArithmeticBuffer<Tself, Tdata>(std::move(rhs)) {}
 
 	public:
+		/** @copydoc ~BufferBase */
 		virtual ~SignedArithmeticBuffer() = default;
 
 		/**

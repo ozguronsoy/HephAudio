@@ -32,6 +32,11 @@ namespace HephCommon
 		 */
 		const UserEventArgs& userEventArgs;
 		
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param userEventArgs @copydetails userEventArgs 
+		 */
 		EventParams(const UserEventArgs& userEventArgs) : pArgs(nullptr), pResult(nullptr), userEventArgs(userEventArgs) {}
 	};
 }

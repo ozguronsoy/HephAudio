@@ -27,11 +27,16 @@ namespace HephCommon
 		std::vector<EventHandler> eventHandlers;
 
 	public:
+		/** @copydoc UserEventArgs */
 		UserEventArgs userEventArgs;
 
 	public:
+		/**
+		 * creates a new instance and initializes it with default values.
+		 * 
+		 */
 		Event();
-		Event(EventHandler handler);
+		
 		operator bool() const;
 
 		/**

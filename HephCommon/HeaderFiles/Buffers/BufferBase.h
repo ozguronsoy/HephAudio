@@ -44,8 +44,14 @@ namespace HephCommon
 		size_t size;
 
 	protected:
+		/** @copydoc default_constructor */
 		BufferBase() : pData(nullptr), size(0) {}
 
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param size number of elements the buffer will store.
+		 */
 		explicit BufferBase(size_t size) : pData(nullptr), size(size)
 		{
 			if (this->size > 0)
@@ -54,6 +60,12 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param size number of elements the buffer will store.
+		 * @param flags flags.
+		 */
 		BufferBase(size_t size, BufferFlags flags) : pData(nullptr), size(size)
 		{
 			if (this->size > 0)
@@ -65,6 +77,11 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * @copydoc constructor
+		 * 
+		 * @param rhs a list of elements the buffer will store.
+		 */
 		BufferBase(const std::initializer_list<Tdata>& rhs) : pData(nullptr), size(rhs.size())
 		{
 			if (this->size > 0)
@@ -75,6 +92,7 @@ namespace HephCommon
 			}
 		}
 
+		/** @copydoc copy_constructor */
 		BufferBase(const BufferBase& rhs) : pData(nullptr), size(rhs.size)
 		{
 			if (!rhs.IsEmpty())
@@ -85,6 +103,7 @@ namespace HephCommon
 			}
 		}
 
+		/** @copydoc move_constructor */
 		BufferBase(BufferBase&& rhs) noexcept : pData(rhs.pData), size(rhs.size)
 		{
 			rhs.pData = nullptr;
@@ -92,6 +111,7 @@ namespace HephCommon
 		}
 
 	public:
+		/** @copydoc destructor */
 		virtual ~BufferBase()
 		{
 			this->Release();
@@ -439,11 +459,23 @@ namespace HephCommon
 		}
 
 	protected:
+		/**
+		 * calculates the size in bytes.
+		 * 
+		 * @param size number of elements.
+		 */
 		static size_t SizeAsByte(size_t size)
 		{
 			return size * sizeof(Tdata);
 		}
 
+		/**
+		 * initializes the provided memory region.
+		 * @note this will be used for the classes and structs.
+		 * 
+		 * @param pData start of the memory region.
+		 * @param pDataEnd end of the memory region.
+		 */
 		template<typename U = Tdata>
 		static typename std::enable_if<std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
 		{
@@ -453,12 +485,27 @@ namespace HephCommon
 			}
 		}
 
+		/**
+		 * initializes the provided memory region.
+		 * @note this will be used for the primitive types (int, float, enum...).
+		 * 
+		 * @param pData start of the memory region.
+		 * @param pDataEnd end of the memory region.
+		 */
 		template<typename U = Tdata>
 		static typename std::enable_if<not std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
 		{
 			(void)std::memset(pData, 0, (pDataEnd - pData) * sizeof(U));
 		}
 
+		/**
+		 * allocates memory and initializes it.
+		 * 
+		 * @param size_byte number of bytes to allocate.
+		 * @return pointer to the allocated memory.
+		 * 
+		 * @throws InsufficientMemoryException
+		 */
 		static Tdata* Allocate(size_t size_byte)
 		{
 			Tdata* pData = BufferBase::AllocateUninitialized(size_byte);
@@ -466,6 +513,14 @@ namespace HephCommon
 			return pData;
 		}
 
+		/**
+		 * allocates memory but does not initialize it.
+		 * 
+		 * @param size_byte number of bytes to allocate.
+		 * @return pointer to the allocated memory.
+		 * 
+		 * @throws InsufficientMemoryException
+		 */
 		static Tdata* AllocateUninitialized(size_t size_byte)
 		{
 			Tdata* pData = (Tdata*)std::malloc(size_byte);

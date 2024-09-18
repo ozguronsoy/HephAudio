@@ -15,7 +15,11 @@ namespace HephCommon
 		 * set by the user.
 		 */
 		bool isHandled;
+
+		/** @copydoc default_constructor */
 		EventResult() : isHandled(false) {}
+
+		/** @copydoc destructor */
 		virtual ~EventResult() = default;
 	};
 }

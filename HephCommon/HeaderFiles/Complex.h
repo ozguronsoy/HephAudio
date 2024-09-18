@@ -23,8 +23,15 @@ namespace HephCommon
 		 */
 		double imag;
 
+		/** @copydoc default_constructor */
 		constexpr Complex() : Complex(0, 0) {}
 		
+		/** 
+		 * @copydoc constructor 
+		 * 
+		 * @param real @copydetails real
+		 * @param imag @copydetails imag
+		 */
 		constexpr Complex(double real, double imag) : real(real), imag(imag) {}
 		
 		constexpr Complex operator-() const 

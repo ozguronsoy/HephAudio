@@ -6,13 +6,25 @@
 
 namespace HephCommon
 {
+	/**
+	 * @brief struct for storing globally unique identifiers.
+	 * 
+	 */
 	struct Guid
 	{
+		/** first part of the GUID. */
 		uint32_t data1;
+
+		/** second part of the GUID. */
 		uint16_t data2;
+
+		/** third part of the GUID. */
 		uint16_t data3;
+
+		/** fourth part of the GUID. */
 		uint8_t data4[8];
 
+		/** @copydoc default_constructor */
 		constexpr Guid() : data1(0), data2(0), data3(0), data4{ 0, 0, 0, 0, 0, 0, 0, 0 } {}
 		
 		constexpr bool operator==(const Guid& rhs) const
@@ -36,6 +48,10 @@ namespace HephCommon
 			return !(this->operator==(rhs));
 		}
 		
+		/**
+		 * generates a new random GUID.
+		 * 
+		 */
 		static Guid GenerateNew();
 	};
 }

@@ -10,6 +10,7 @@ namespace HephCommon
 	 */
 	struct EventArgs
 	{
+		/** @copydoc destructor */
 		virtual ~EventArgs() = default;
 	};
 }
