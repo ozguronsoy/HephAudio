@@ -5,6 +5,7 @@
 #include <../../dependencies/libmysofa/include/mysofa.h>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 /** @file */
 
@@ -47,7 +48,7 @@ namespace HephAudio
 
 	public:
 		Spatializer();
-		Spatializer(const std::string& sofaFilePath, uint32_t sampleRate);
+		Spatializer(const std::filesystem::path& sofaFilePath, uint32_t sampleRate);
 		Spatializer(const Spatializer&) = delete;
 		Spatializer(Spatializer&& rhs) noexcept;
 		~Spatializer();
@@ -71,7 +72,7 @@ namespace HephAudio
 		 * 
 		 * @throws FailException
 		 */
-		void OpenSofaFile(const std::string& sofaFilePath, uint32_t sampleRate);
+		void OpenSofaFile(const std::filesystem::path& sofaFilePath, uint32_t sampleRate);
 
 		/**
 		 * closes the SOFA file and releases the resources.

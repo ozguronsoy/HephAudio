@@ -4,6 +4,7 @@
 #include "Event.h"
 #include "Guid.h"
 #include <vector>
+#include <filesystem>
 
 /** @file */
 
@@ -45,7 +46,7 @@ namespace HephAudio
 		 * path of the file the object is created with, or empty if created via \link HephAudio::Native::NativeAudio::CreateAudioObject NativeAudio::CreateAudioObject.
 		 * 
 		 */
-		std::string filePath;
+		std::filesystem::path filePath;
 
 		/**
 		 * name of the object.

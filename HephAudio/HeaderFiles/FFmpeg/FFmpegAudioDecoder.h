@@ -35,7 +35,7 @@ namespace HephAudio
 		 * 
 		 * @param filePath path of the file that will be decoded.
 		 */
-		FFmpegAudioDecoder(const std::string& filePath);
+		FFmpegAudioDecoder(const std::filesystem::path& filePath);
 
 		/** @copydoc move_constructor */
 		FFmpegAudioDecoder(FFmpegAudioDecoder&& rhs) noexcept;
@@ -47,7 +47,7 @@ namespace HephAudio
 		
 		FFmpegAudioDecoder& operator=(const FFmpegAudioDecoder&) = delete;
 		FFmpegAudioDecoder& operator=(FFmpegAudioDecoder&& rhs) noexcept;
-		void ChangeFile(const std::string& newFilePath) override;
+		void ChangeFile(const std::filesystem::path& newFilePath) override;
 		void CloseFile() override;
 		bool IsFileOpen() const override;
 		AudioFormatInfo GetOutputFormatInfo() const override;
@@ -59,7 +59,7 @@ namespace HephAudio
 		AudioBuffer Decode(const EncodedAudioBuffer& encodedBuffer) override;
 
 	private:
-		void OpenFile(const std::string& filePath);
+		void OpenFile(const std::filesystem::path& filePath);
 		int SeekFrame(size_t& frameIndex);
 	};
 }

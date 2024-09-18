@@ -2,7 +2,7 @@
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
 #include "EncodedAudioBuffer.h"
-#include <string>
+#include <filesystem>
 
 /** @file */
 
@@ -19,7 +19,7 @@ namespace HephAudio
 		 * path of the file that will store the encoded audio data.
 		 * 
 		 */
-		std::string filePath;
+		std::filesystem::path filePath;
 
 	public:
 		/** @copydoc destructor */
@@ -30,7 +30,7 @@ namespace HephAudio
 		 * 
 		 * @param overwrite indicates whether to write over the file if it already exists.
 		 */
-		virtual void ChangeFile(const std::string& newAudioFilePath, bool overwrite) = 0;
+		virtual void ChangeFile(const std::filesystem::path& newAudioFilePath, bool overwrite) = 0;
 
 		/**
 		 * closes the file and releases the resources allocated for encoding.

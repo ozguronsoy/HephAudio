@@ -1,6 +1,5 @@
 #if defined(__APPLE__)
 #include "NativeAudio/AppleAudio.h"
-#include "File.h"
 #include "ConsoleLogger.h"
 #include "Stopwatch.h"
 #include "StringHelpers.h"

@@ -164,32 +164,32 @@ namespace HephAudio
 		this->pNativeAudio->SetAudioEncoder(pNewEncoder);
 	}
 
-	AudioObject* Audio::Play(const std::string& filePath)
+	AudioObject* Audio::Play(const std::filesystem::path& filePath)
 	{
 		return this->pNativeAudio->Play(filePath);
 	}
 
-	AudioObject* Audio::Play(const std::string& filePath, uint32_t playCount)
+	AudioObject* Audio::Play(const std::filesystem::path& filePath, uint32_t playCount)
 	{
 		return this->pNativeAudio->Play(filePath, playCount);
 	}
 
-	AudioObject* Audio::Play(const std::string& filePath, uint32_t playCount, bool isPaused)
+	AudioObject* Audio::Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
 	{
 		return this->pNativeAudio->Play(filePath, playCount, isPaused);
 	}
 
-	AudioObject* Audio::Load(const std::string& filePath)
+	AudioObject* Audio::Load(const std::filesystem::path& filePath)
 	{
 		return this->pNativeAudio->Load(filePath);
 	}
 
-	AudioObject* Audio::Load(const std::string& filePath, uint32_t playCount)
+	AudioObject* Audio::Load(const std::filesystem::path& filePath, uint32_t playCount)
 	{
 		return this->pNativeAudio->Load(filePath, playCount);
 	}
 
-	AudioObject* Audio::Load(const std::string& filePath, uint32_t playCount, bool isPaused)
+	AudioObject* Audio::Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
 	{
 		return this->pNativeAudio->Load(filePath, playCount, isPaused);
 	}

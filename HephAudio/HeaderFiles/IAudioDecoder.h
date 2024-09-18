@@ -2,7 +2,7 @@
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
 #include "EncodedAudioBuffer.h"
-#include <string>
+#include <filesystem>
 
 /** @file */
 
@@ -19,7 +19,7 @@ namespace HephAudio
 		 * path of the file that's being decoded.
 		 * 
 		 */
-		std::string filePath;
+		std::filesystem::path filePath;
 
 	public:
 		/** @copydoc destructor */
@@ -29,7 +29,7 @@ namespace HephAudio
 		 * changes the decoded file.
 		 * 
 		 */
-		virtual void ChangeFile(const std::string& newFilePath) = 0;
+		virtual void ChangeFile(const std::filesystem::path& newFilePath) = 0;
 
 		/**
 		 * closes the file that's being decoded and releases the resources allocated for decoding.

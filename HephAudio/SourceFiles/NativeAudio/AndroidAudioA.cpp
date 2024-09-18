@@ -1,6 +1,5 @@
 #if defined(__ANDROID__) && (__ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
 #include "NativeAudio/AndroidAudioA.h"
-#include "File.h"
 #include "HephMath.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"

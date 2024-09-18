@@ -42,7 +42,7 @@ namespace HephAudio
 
 	private:
 		AudioStream stream;
-		std::vector<std::string> files;
+		std::vector<std::filesystem::path> files;
 		bool isPaused;
 		bool applyFadeInOrDelay;
 		TransitionEffect transitionEffect;
@@ -68,7 +68,7 @@ namespace HephAudio
 		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
 		 * @param files file paths.
 		 */
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::string>& files);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::filesystem::path>& files);
 
 		/** 
 		 * @copydoc constructor 
@@ -76,7 +76,7 @@ namespace HephAudio
 		 * @param audio the audio instance that will be used for playing the files.
 		 * @param files file paths.
 		 */
-		AudioPlaylist(Audio& audio, const std::vector<std::string>& files);
+		AudioPlaylist(Audio& audio, const std::vector<std::filesystem::path>& files);
 
 		/** 
 		 * @copydoc constructor 
@@ -104,7 +104,7 @@ namespace HephAudio
 		 * @param transitionDuration_s duration of the transition effect in seconds.
 		 * @param files file paths.
 		 */
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files);
+		AudioPlaylist(Native::NativeAudio* pNativeAudio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::filesystem::path>& files);
 	
 		/** 
 		 * @copydoc constructor 
@@ -114,7 +114,7 @@ namespace HephAudio
 		 * @param transitionDuration_s duration of the transition effect in seconds.
 		 * @param files file paths.
 		 */
-		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::string>& files);
+		AudioPlaylist(Audio& audio, TransitionEffect transitionEffect, double transitionDuration_s, const std::vector<std::filesystem::path>& files);
 		
 		AudioPlaylist(const AudioPlaylist&) = delete;
 		
@@ -122,8 +122,8 @@ namespace HephAudio
 		AudioPlaylist(AudioPlaylist&& rhs) noexcept;
 		
 		AudioPlaylist& operator=(const AudioPlaylist&) = delete;
-		AudioPlaylist& operator=(const std::string& rhs);
-		AudioPlaylist& operator=(const std::vector<std::string>& rhs);
+		AudioPlaylist& operator=(const std::filesystem::path& rhs);
+		AudioPlaylist& operator=(const std::vector<std::filesystem::path>& rhs);
 		AudioPlaylist& operator=(AudioPlaylist&& rhs) noexcept;
 
 		/**
@@ -186,14 +186,14 @@ namespace HephAudio
 		 * 
 		 * @param filePath path of the file that will be added to the playlist.
 		 */
-		void Add(const std::string& filePath);
+		void Add(const std::filesystem::path& filePath);
 
 		/**
 		 * adds multiple files to the end of the playlist.
 		 * 
 		 * @param files file paths.
 		 */
-		void Add(const std::vector<std::string>& files);
+		void Add(const std::vector<std::filesystem::path>& files);
 
 		/**
 		 * inserts the provided file to the playlist.
@@ -201,7 +201,7 @@ namespace HephAudio
 		 * @param filePath path of the file that will be added to the playlist.
 		 * @param index position of the new file within the playlist.
 		 */
-		void Insert(const std::string& filePath, size_t index);
+		void Insert(const std::filesystem::path& filePath, size_t index);
 
 		/**
 		 * inserts the provided files to the playlist.
@@ -209,7 +209,7 @@ namespace HephAudio
 		 * @param files file paths.
 		 * @param index position of the new files within the playlist.
 		 */
-		void Insert(const std::vector<std::string>& files, size_t index);
+		void Insert(const std::vector<std::filesystem::path>& files, size_t index);
 
 		/**
 		 * removes the file at the provided index.
@@ -230,7 +230,7 @@ namespace HephAudio
 		 * removes the file with the provided path.
 		 * 
 		 */
-		void Remove(const std::string& filePath);
+		void Remove(const std::filesystem::path& filePath);
 
 		/**
 		 * skips to the next file.

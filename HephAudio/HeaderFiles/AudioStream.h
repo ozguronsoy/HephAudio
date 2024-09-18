@@ -2,7 +2,7 @@
 #include "HephAudioShared.h"
 #include "Audio.h"
 #include "AudioBuffer.h"
-#include "File.h"
+#include <filesystem>
 
 /** @file */
 
@@ -49,7 +49,7 @@ namespace HephAudio
 		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
 		 * @param filePath file that will be played.
 		 */
-		AudioStream(Native::NativeAudio* pNativeAudio, const std::string& filePath);
+		AudioStream(Native::NativeAudio* pNativeAudio, const std::filesystem::path& filePath);
 		
 		/** 
 		 * @copydoc constructor 
@@ -57,7 +57,7 @@ namespace HephAudio
 		 * @param audio the audio instance that will be used for playing the files.
 		 * @param filePath file that will be played.
 		 */
-		AudioStream(Audio& audio, const std::string& filePath);
+		AudioStream(Audio& audio, const std::filesystem::path& filePath);
 		
 		AudioStream(const AudioStream&) = delete;
 
@@ -98,7 +98,7 @@ namespace HephAudio
 		 * changes the file that's currently playing with the provided one.
 		 * 
 		 */
-		void ChangeFile(const std::string& newFilePath);
+		void ChangeFile(const std::filesystem::path& newFilePath);
 
 		/**
 		 * starts (resumes) playing the file.

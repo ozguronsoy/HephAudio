@@ -1,6 +1,5 @@
 #ifdef _WIN32
 #include "NativeAudio/WinAudioDS.h"
-#include "File.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
 #include <VersionHelpers.h>

@@ -10,7 +10,6 @@
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
 #include "HephMath.h"
-#include "File.h"
 
 using namespace HephCommon;
 
@@ -57,28 +56,28 @@ namespace HephAudio
 			this->pAudioEncoder = pNewEncoder;
 		}
 
-		AudioObject* NativeAudio::Play(const std::string& filePath)
+		AudioObject* NativeAudio::Play(const std::filesystem::path& filePath)
 		{
 			return this->Play(filePath, 1u, false);
 		}
 
-		AudioObject* NativeAudio::Play(const std::string& filePath, uint32_t playCount)
+		AudioObject* NativeAudio::Play(const std::filesystem::path& filePath, uint32_t playCount)
 		{
 			return this->Play(filePath, playCount, false);
 		}
 
-		AudioObject* NativeAudio::Play(const std::string& filePath, uint32_t playCount, bool isPaused)
+		AudioObject* NativeAudio::Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
 		{
 			try
 			{
-				HEPHAUDIO_LOG("Playing \"" + File::GetFileName(filePath) + "\"", HEPH_CL_INFO);
+				HEPHAUDIO_LOG("Playing \"" + filePath.filename().string() + "\"", HEPH_CL_INFO);
 
 				std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
 				AudioObject& audioObject = this->audioObjects.emplace_back();
 
 				audioObject.filePath = filePath;
-				audioObject.name = File::GetFileName(filePath);
+				audioObject.name = filePath.filename().string();
 
 				this->pAudioDecoder->ChangeFile(filePath);
 				audioObject.buffer = this->pAudioDecoder->Decode();
@@ -94,17 +93,17 @@ namespace HephAudio
 			}
 		}
 		
-		AudioObject* NativeAudio::Load(const std::string& filePath)
+		AudioObject* NativeAudio::Load(const std::filesystem::path& filePath)
 		{
 			return this->Load(filePath, 1, true);
 		}
 		
-		AudioObject* NativeAudio::Load(const std::string& filePath, uint32_t playCount)
+		AudioObject* NativeAudio::Load(const std::filesystem::path& filePath, uint32_t playCount)
 		{
 			return this->Load(filePath, playCount, true);
 		}
 		
-		AudioObject* NativeAudio::Load(const std::string& filePath, uint32_t playCount, bool isPaused)
+		AudioObject* NativeAudio::Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			AudioObject* pao = this->Play(filePath, playCount, isPaused);

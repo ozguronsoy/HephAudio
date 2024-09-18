@@ -1,6 +1,5 @@
 #if defined(__linux__) && !defined(__ANDROID__)
 #include "NativeAudio/LinuxAudio.h"
-#include "File.h"
 #include "ConsoleLogger.h"
 #include "Stopwatch.h"
 #include "StringHelpers.h"

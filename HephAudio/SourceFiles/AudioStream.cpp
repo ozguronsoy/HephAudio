@@ -15,7 +15,7 @@ namespace HephAudio
 
 	AudioStream::AudioStream(Audio& audio) : AudioStream(audio.GetNativeAudio()) {}
 
-	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const std::string& filePath)
+	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const std::filesystem::path& filePath)
 		: pNativeAudio(pNativeAudio), frameCount(0), pAudioObject(nullptr)
 	{
 		if (this->pNativeAudio == nullptr)
@@ -30,7 +30,7 @@ namespace HephAudio
 		}
 	}
 
-	AudioStream::AudioStream(Audio& audio, const std::string& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
+	AudioStream::AudioStream(Audio& audio, const std::filesystem::path& filePath) : AudioStream(audio.GetNativeAudio(), filePath) {}
 
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
 		: pNativeAudio(rhs.pNativeAudio), formatInfo(rhs.formatInfo), frameCount(rhs.frameCount)
@@ -91,22 +91,22 @@ namespace HephAudio
 	{
 		return this->frameCount;
 	}
-	void AudioStream::ChangeFile(const std::string& newFilePath)
+	void AudioStream::ChangeFile(const std::filesystem::path& newFilePath)
 	{
 		this->Stop();
 
-		if (File::FileExists(newFilePath))
+		if (std::filesystem::exists(newFilePath))
 		{
 			if (this->pAudioObject != nullptr)
 			{
-				this->pAudioObject->name = "(stream)" + File::GetFileName(newFilePath);
+				this->pAudioObject->name = "(stream)" + newFilePath.filename().string();
 				this->pAudioObject->frameIndex = 0;
 				this->pAudioObject->playCount = 1;
 			}
 			else
 			{
 				const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
-				this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + File::GetFileName(newFilePath), 0, renderFormat.channelLayout, renderFormat.sampleRate);
+				this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + newFilePath.filename().string(), 0, renderFormat.channelLayout, renderFormat.sampleRate);
 
 				this->pAudioObject->OnRender = &AudioStream::OnRender;
 				this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;

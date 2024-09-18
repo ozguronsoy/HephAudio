@@ -22,9 +22,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EventResult.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\File.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Fourier.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
@@ -61,9 +58,6 @@
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\File.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Fourier.cpp">

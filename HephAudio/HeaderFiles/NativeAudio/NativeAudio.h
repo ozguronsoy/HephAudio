@@ -216,7 +216,7 @@ namespace HephAudio
 			 * @param filePath path of the file which will be played.
 			 * @return pointer to the audio object instance.
 			 */
-			AudioObject* Play(const std::string& filePath);
+			AudioObject* Play(const std::filesystem::path& filePath);
 
 			/**
 			 * reads the file, then starts playing it.
@@ -225,7 +225,7 @@ namespace HephAudio
 			 * @param playCount number of times the file will be played.
 			 * @return pointer to the audio object instance.
 			 */
-			AudioObject* Play(const std::string& filePath, uint32_t playCount);
+			AudioObject* Play(const std::filesystem::path& filePath, uint32_t playCount);
 
 			/**
 			 * reads the file, then starts playing it.
@@ -235,7 +235,7 @@ namespace HephAudio
 			 * @param isPaused indicates whether to start playing the audio data after reading it to memory.
 			 * @return pointer to the audio object instance.
 			 */
-			AudioObject* Play(const std::string& filePath, uint32_t playCount, bool isPaused);
+			AudioObject* Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused);
 
 			/**
 			 * reads the file and converts the audio data to the render format but does not start playing it.
@@ -243,7 +243,7 @@ namespace HephAudio
 			 * @param filePath path of the file which will be loaded.
 			 * @return pointer to the audio object instance.
 			 */
-			AudioObject* Load(const std::string& filePath);
+			AudioObject* Load(const std::filesystem::path& filePath);
 
 			/**
 			 * reads the file and converts the audio data to the render format but does not start playing it.
@@ -252,7 +252,7 @@ namespace HephAudio
 			 * @param playCount number of times the file will be played.
 			 * @return pointer to the audio object instance.
 			 */			
-			AudioObject* Load(const std::string& filePath, uint32_t playCount);
+			AudioObject* Load(const std::filesystem::path& filePath, uint32_t playCount);
 
 			/**
 			 * reads the file and converts the audio data to the render format but does not start playing it.
@@ -262,7 +262,7 @@ namespace HephAudio
 			 * @param isPaused indicates whether to start playing the audio data after loading it.
 			 * @return pointer to the audio object instance.
 			 */
-			AudioObject* Load(const std::string& filePath, uint32_t playCount, bool isPaused);
+			AudioObject* Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused);
 
 			/**
 			 * creates an audio object with the provided buffer info.

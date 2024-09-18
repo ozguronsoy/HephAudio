@@ -1,7 +1,6 @@
 #include "AudioProcessor.h"
 #include "HephException.h"
 #include "Fourier.h"
-#include "File.h"
 #include "ConsoleLogger.h"
 #include "AudioChannelMixingLookupTables.h"
 #include <thread>

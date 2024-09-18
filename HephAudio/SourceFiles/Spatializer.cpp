@@ -1,6 +1,5 @@
 #include "Spatializer.h"
 #include "HephException.h"
-#include "File.h"
 #include "Fourier.h"
 #include "AudioProcessor.h"
 #include "Windows/HannWindow.h"
@@ -21,19 +20,19 @@ namespace HephAudio
 	{
 		// check the possible paths to find the default sofa file
 		// if found, initialize with it.
-		if (HephCommon::File::FileExists("dependencies/libmysofa/default.sofa"))
+		if (std::filesystem::exists("dependencies/libmysofa/default.sofa"))
 		{
 			this->OpenSofaFile("HephAudio/dependencies/libmysofa/default.sofa", this->sampleRate);
 		}
-		else if (HephCommon::File::FileExists("../dependencies/libmysofa/default.sofa"))
+		else if (std::filesystem::exists("../dependencies/libmysofa/default.sofa"))
 		{
 			this->OpenSofaFile("../dependencies/libmysofa/default.sofa", this->sampleRate);
 		}
-		else if (HephCommon::File::FileExists("../../dependencies/libmysofa/default.sofa"))
+		else if (std::filesystem::exists("../../dependencies/libmysofa/default.sofa"))
 		{
 			this->OpenSofaFile("../../dependencies/libmysofa/default.sofa", this->sampleRate);
 		}
-		else if (HephCommon::File::FileExists("HephAudio/dependencies/libmysofa/default.sofa"))
+		else if (std::filesystem::exists("HephAudio/dependencies/libmysofa/default.sofa"))
 		{
 			this->OpenSofaFile("HephAudio/dependencies/libmysofa/default.sofa", this->sampleRate);
 		}
@@ -42,7 +41,7 @@ namespace HephAudio
 			HEPHAUDIO_LOG("Could not find the default sofa file. Provide one before proceeding.", HEPH_CL_WARNING);
 		}
 	}
-	Spatializer::Spatializer(const std::string& sofaFilePath, uint32_t sampleRate) : pEasy(nullptr), frameCount(0), sampleRate(sampleRate)
+	Spatializer::Spatializer(const std::filesystem::path& sofaFilePath, uint32_t sampleRate) : pEasy(nullptr), frameCount(0), sampleRate(sampleRate)
 	{
 		this->OpenSofaFile(sofaFilePath, sampleRate);
 	}
@@ -77,12 +76,12 @@ namespace HephAudio
 	{
 		return this->frameCount;
 	}
-	void Spatializer::OpenSofaFile(const std::string& sofaFilePath, uint32_t sampleRate)
+	void Spatializer::OpenSofaFile(const std::filesystem::path& sofaFilePath, uint32_t sampleRate)
 	{
 		int filter_length;
 		int errorCode;
 
-		this->pEasy = mysofa_open(sofaFilePath.c_str(), (float)sampleRate, &filter_length, &errorCode);
+		this->pEasy = mysofa_open(sofaFilePath.string().c_str(), (float)sampleRate, &filter_length, &errorCode);
 		if (this->pEasy == nullptr || errorCode != MYSOFA_OK)
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(errorCode, "Spatializer::OpenSofaFile", "An error occurred while opening the sofa file.", "libmysofa", Spatializer::GetErrorString(errorCode)));

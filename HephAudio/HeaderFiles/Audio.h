@@ -81,23 +81,23 @@ namespace HephAudio
 		/** @copydoc HephAudio::Native::NativeAudio::SetAudioEncoder */
 		void SetAudioEncoder(std::shared_ptr<IAudioEncoder> pNewEncoder);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::Play(const std::string&) */
-		AudioObject* Play(const std::string& filePath);
+		/** @copydoc HephAudio::Native::NativeAudio::Play(const std::filesystem::path&) */
+		AudioObject* Play(const std::filesystem::path& filePath);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::Play(const std::string&,uint32_t) */
-		AudioObject* Play(const std::string& filePath, uint32_t playCount);
+		/** @copydoc HephAudio::Native::NativeAudio::Play(const std::filesystem::path&,uint32_t) */
+		AudioObject* Play(const std::filesystem::path& filePath, uint32_t playCount);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::Play(const std::string&,uint32_t,bool) */
-		AudioObject* Play(const std::string& filePath, uint32_t playCount, bool isPaused);
+		/** @copydoc HephAudio::Native::NativeAudio::Play(const std::filesystem::path&,uint32_t,bool) */
+		AudioObject* Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::Load(const std::string&) */
-		AudioObject* Load(const std::string& filePath);
+		/** @copydoc HephAudio::Native::NativeAudio::Load(const std::filesystem::path&) */
+		AudioObject* Load(const std::filesystem::path& filePath);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::Load(const std::string&,uint32_t) */
-		AudioObject* Load(const std::string& filePath, uint32_t playCount);
+		/** @copydoc HephAudio::Native::NativeAudio::Load(const std::filesystem::path&,uint32_t) */
+		AudioObject* Load(const std::filesystem::path& filePath, uint32_t playCount);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::Load(const std::string&,uint32_t,bool) */
-		AudioObject* Load(const std::string& filePath, uint32_t playCount, bool isPaused);
+		/** @copydoc HephAudio::Native::NativeAudio::Load(const std::filesystem::path&,uint32_t,bool) */
+		AudioObject* Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused);
 		
 		/** @copydoc HephAudio::Native::NativeAudio::CreateAudioObject */
 		AudioObject* CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint16_t sampleRate);

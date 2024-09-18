@@ -1,6 +1,5 @@
 #ifdef _WIN32
 #include "NativeAudio/WinAudio.h"
-#include "File.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
 #include <VersionHelpers.h>
@@ -163,20 +162,20 @@ namespace HephAudio
 			}
 			this->params = *pWasapiParams;
 		}
-		void WinAudio::SetDisplayName(std::string displayName)
+		void WinAudio::SetDisplayName(const std::filesystem::path& displayName)
 		{
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(StringHelpers::StrToWide(displayName.c_str()).c_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred while setting the display name.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetDisplayName(displayName.wstring().c_str(), nullptr), "WinAudio::SetDisplayName", "An error occurred while setting the display name.");
 			}
 		}
-		void WinAudio::SetIconPath(std::string iconPath)
+		void WinAudio::SetIconPath(const std::filesystem::path& iconPath)
 		{
 			if (this->pRenderSessionControl != nullptr)
 			{
 				HRESULT hres;
-				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetIconPath(StringHelpers::StrToWide(iconPath.c_str()).c_str(), nullptr), "WinAudio::SetIconPath", "An error occurred while setting the icon path.");
+				WINAUDIO_EXCPT_RET_VOID(this->pRenderSessionControl->SetIconPath(iconPath.wstring().c_str(), nullptr), "WinAudio::SetIconPath", "An error occurred while setting the icon path.");
 			}
 		}
 		bool WinAudio::EnumerateAudioDevices()

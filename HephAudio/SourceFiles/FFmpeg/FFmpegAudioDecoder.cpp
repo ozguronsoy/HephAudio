@@ -1,6 +1,5 @@
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "HephException.h"
-#include "File.h"
 #include "ConsoleLogger.h"
 
 using namespace HephCommon;
@@ -12,7 +11,7 @@ namespace HephAudio
 		, firstPacketPts(0), avFormatContext(nullptr), avCodecContext(nullptr)
 		, swrContext(nullptr), avFrame(nullptr), avPacket(nullptr) {}
 
-	FFmpegAudioDecoder::FFmpegAudioDecoder(const std::string& filePath) : FFmpegAudioDecoder()
+	FFmpegAudioDecoder::FFmpegAudioDecoder(const std::filesystem::path& filePath) : FFmpegAudioDecoder()
 	{
 		this->OpenFile(filePath);
 	}
@@ -62,7 +61,7 @@ namespace HephAudio
 		return *this;
 	}
 
-	void FFmpegAudioDecoder::ChangeFile(const std::string& newAudioFilePath)
+	void FFmpegAudioDecoder::ChangeFile(const std::filesystem::path& newAudioFilePath)
 	{
 		if (this->filePath != newAudioFilePath)
 		{
@@ -574,9 +573,9 @@ namespace HephAudio
 		return resultBuffer;
 	}
 
-	void FFmpegAudioDecoder::OpenFile(const std::string& filePath)
+	void FFmpegAudioDecoder::OpenFile(const std::filesystem::path& filePath)
 	{
-		if (!File::FileExists(filePath))
+		if (!std::filesystem::exists(filePath))
 		{
 			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "FFmpegAudioDecoder", "File not found."));
 			return;
@@ -584,7 +583,7 @@ namespace HephAudio
 
 		this->filePath = filePath;
 
-		int ret = avformat_open_input(&this->avFormatContext, this->filePath.c_str(), nullptr, nullptr);
+		int ret = avformat_open_input(&this->avFormatContext, this->filePath.string().c_str(), nullptr, nullptr);
 		if (ret < 0)
 		{
 			this->CloseFile();

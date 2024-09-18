@@ -1,6 +1,5 @@
 #if defined(__ANDROID__) && __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
 #include "NativeAudio/AndroidAudioSLES.h"
-#include "File.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
 
