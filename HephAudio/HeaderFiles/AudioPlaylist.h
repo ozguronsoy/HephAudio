@@ -3,6 +3,7 @@
 #include "AudioStream.h"
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
+#include "AudioEvents/AudioFinishedPlayingEventArgs.h"
 #include "EventArgs.h"
 #include "EventResult.h"
 #include <string>

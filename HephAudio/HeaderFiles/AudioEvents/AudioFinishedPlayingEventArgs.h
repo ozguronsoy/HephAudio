@@ -1,6 +1,7 @@
 #pragma once
 #include "HephAudioShared.h"
 #include "AudioEventArgs.h"
+#include "AudioObject.h"
 
 /** @file */
 
@@ -16,7 +17,7 @@ namespace HephAudio
 		 * pointer to the audio object instance that's being rendered.
 		 * 
 		 */
-		void* pAudioObject;
+		AudioObject* pAudioObject;
 
 		/**
 		 * number of loops remaining.
@@ -32,7 +33,7 @@ namespace HephAudio
 		 * @param pAudioObject @copydetails pAudioObject
 		 * @param remainingLoopCount @copydetails remainingLoopCount
 		 */
-		AudioFinishedPlayingEventArgs(void* pAudioObject, void* pNativeAudio, uint32_t remainingLoopCount)
+		AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, uint32_t remainingLoopCount)
 			: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), remainingLoopCount(remainingLoopCount) {}
 	};
 }

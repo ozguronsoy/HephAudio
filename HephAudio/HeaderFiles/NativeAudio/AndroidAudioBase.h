@@ -1,6 +1,8 @@
 #pragma once
 #ifdef __ANDROID__
 #include "NativeAudio.h"
+#include "AudioEvents/AudioDeviceEventArgs.h"
+#include "AudioEvents/AudioCaptureEventArgs.h"
 #include "StringHelpers.h"
 #include <jni.h>
 #include <android/api-level.h>

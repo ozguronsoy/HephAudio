@@ -2,6 +2,8 @@
 #if defined(__linux__) && !defined(__ANDROID__)
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
+#include "AudioEvents/AudioDeviceEventArgs.h"
+#include "AudioEvents/AudioCaptureEventArgs.h"
 #include "Params/AlsaParams.h"
 #include <alsa/asoundlib.h>
 

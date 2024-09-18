@@ -1,6 +1,9 @@
 #include "AudioStream.h"
 #include "AudioProcessor.h"
 #include "FFmpeg/FFmpegAudioShared.h"
+#include "AudioEvents/AudioRenderEventArgs.h"
+#include "AudioEvents/AudioRenderEventResult.h"
+#include "AudioEvents/AudioFinishedPlayingEventArgs.h"
 #include "HephException.h"
 #include "HephMath.h"
 
@@ -170,13 +173,11 @@ namespace HephAudio
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
-		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
 		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY];
 		if (pStream != nullptr)
 		{
-			const AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
+			const AudioFormatInfo renderFormat = pRenderArgs->pNativeAudio->GetRenderFormat();
 			const uint32_t renderSampleRate = renderFormat.sampleRate;
 			const size_t decodedBufferFrameCount = pStream->decodedBuffer.FrameCount();
 			const size_t readFrameCount = av_rescale(pRenderArgs->renderFrameCount, pStream->formatInfo.sampleRate, renderSampleRate);
@@ -217,8 +218,8 @@ namespace HephAudio
 
 			AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, renderFormat.channelLayout);
 
-			pAudioObject->frameIndex += readFrameCount;
-			pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pStream->frameCount;
+			pRenderArgs->pAudioObject->frameIndex += readFrameCount;
+			pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pStream->frameCount;
 		}
 	}
 	void AudioStream::OnFinishedPlaying(const EventParams& eventParams)

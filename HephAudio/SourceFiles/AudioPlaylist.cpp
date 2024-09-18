@@ -268,7 +268,6 @@ namespace HephAudio
 	void AudioPlaylist::OnFinishedPlaying(const EventParams& eventParams)
 	{
 		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
-		AudioObject* pAudioObject = (AudioObject*)pFinishedPlayingEventArgs->pAudioObject;
 		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY];
 
 		if (pPlaylist != nullptr)
@@ -284,8 +283,6 @@ namespace HephAudio
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
-		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
 		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY];
 		if (pPlaylist != nullptr)
@@ -312,16 +309,13 @@ namespace HephAudio
 	}
 	void AudioPlaylist::Transition_Delay(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult)
 	{
-		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
-
 		if (pPlaylist->applyFadeInOrDelay)
 		{
-			const double duration_sample = pPlaylist->transitionDuration_s * pNativeAudio->GetRenderFormat().sampleRate;
-			if (pAudioObject->frameIndex >= duration_sample)
+			const double duration_sample = pPlaylist->transitionDuration_s * pRenderArgs->pNativeAudio->GetRenderFormat().sampleRate;
+			if (pRenderArgs->pAudioObject->frameIndex >= duration_sample)
 			{
 				pPlaylist->applyFadeInOrDelay = false;
-				pAudioObject->frameIndex = 0;
+				pRenderArgs->pAudioObject->frameIndex = 0;
 			}
 			pRenderResult->renderBuffer.Reset();
 			pRenderResult->isFinishedPlaying = false;
@@ -329,20 +323,17 @@ namespace HephAudio
 	}
 	void AudioPlaylist::Transition_FadeIn(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult)
 	{
-		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
-
 		if (pPlaylist->applyFadeInOrDelay)
 		{
-			const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
+			const AudioFormatInfo renderFormatInfo = pRenderArgs->pNativeAudio->GetRenderFormat();
 			const double duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
-			if (pAudioObject->frameIndex >= duration_sample)
+			if (pRenderArgs->pAudioObject->frameIndex >= duration_sample)
 			{
 				pPlaylist->applyFadeInOrDelay = false;
 			}
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
 			{
-				const double factor = (i + pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
+				const double factor = (i + pRenderArgs->pAudioObject->frameIndex - pRenderArgs->renderFrameCount) / duration_sample;
 				for (size_t j = 0; j < renderFormatInfo.channelLayout.count; j++)
 				{
 					pRenderResult->renderBuffer[i][j] *= factor;
@@ -352,17 +343,14 @@ namespace HephAudio
 	}
 	void AudioPlaylist::Transition_FadeOut(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult)
 	{
-		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
-
-		const AudioFormatInfo renderFormatInfo = pNativeAudio->GetRenderFormat();
+		const AudioFormatInfo renderFormatInfo = pRenderArgs->pNativeAudio->GetRenderFormat();
 		const double duration_sample = pPlaylist->transitionDuration_s * renderFormatInfo.sampleRate;
 		const size_t fileFrameCount = pPlaylist->stream.GetFrameCount();
-		if (pAudioObject->frameIndex + duration_sample >= fileFrameCount + pRenderArgs->renderFrameCount)
+		if (pRenderArgs->pAudioObject->frameIndex + duration_sample >= fileFrameCount + pRenderArgs->renderFrameCount)
 		{
 			for (size_t i = 0; i < pRenderResult->renderBuffer.FrameCount(); i++)
 			{
-				const double factor = (fileFrameCount - i - pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
+				const double factor = (fileFrameCount - i - pRenderArgs->pAudioObject->frameIndex + pRenderArgs->renderFrameCount) / duration_sample;
 				for (size_t j = 0; j < renderFormatInfo.channelLayout.count; j++)
 				{
 					pRenderResult->renderBuffer[i][j] *= factor;

@@ -1,6 +1,8 @@
 #pragma once
 #include "HephAudioShared.h"
 #include "NativeAudio/NativeAudio.h"
+#include "AudioEvents/AudioDeviceEventArgs.h"
+#include "AudioEvents/AudioCaptureEventArgs.h"
 
 /** @file */
 

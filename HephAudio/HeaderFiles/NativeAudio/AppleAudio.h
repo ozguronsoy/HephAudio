@@ -2,6 +2,8 @@
 #if defined(__APPLE__)
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
+#include "AudioEvents/AudioDeviceEventArgs.h"
+#include "AudioEvents/AudioCaptureEventArgs.h"
 #include <CoreAudio/CoreAudio.h>
 
 /** @file */

@@ -2,6 +2,11 @@
 #include "AudioProcessor.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "FFmpeg/FFmpegAudioEncoder.h"
+#include "AudioEvents/AudioDeviceEventArgs.h"
+#include "AudioEvents/AudioCaptureEventArgs.h"
+#include "AudioEvents/AudioRenderEventArgs.h"
+#include "AudioEvents/AudioRenderEventResult.h"
+#include "AudioEvents/AudioFinishedPlayingEventArgs.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
 #include "HephMath.h"
@@ -463,7 +468,7 @@ namespace HephAudio
 					const double volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
 					const Guid audioObjectId = pAudioObject->id;
 
-					AudioRenderEventArgs rArgs(pAudioObject, this, frameCount);
+					AudioRenderEventArgs rArgs(this, pAudioObject, frameCount);
 					AudioRenderEventResult rResult;
 					pAudioObject->OnRender(&rArgs, &rResult);
 
@@ -481,7 +486,7 @@ namespace HephAudio
 						{
 							const std::string audioObjectName = pAudioObject->name;
 
-							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, 0);
+							AudioFinishedPlayingEventArgs ofpArgs(this, pAudioObject, 0);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
 							HEPHAUDIO_LOG("Finished playing the file \"" + audioObjectName + "\"", HEPH_CL_INFO);
@@ -496,7 +501,7 @@ namespace HephAudio
 						{
 							pAudioObject->playCount--;
 
-							AudioFinishedPlayingEventArgs ofpArgs(pAudioObject, this, pAudioObject->playCount);
+							AudioFinishedPlayingEventArgs ofpArgs(this, pAudioObject, pAudioObject->playCount);
 							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
 
 							if (AudioObjectExists(audioObjectId))

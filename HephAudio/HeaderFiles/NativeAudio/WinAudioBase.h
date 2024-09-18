@@ -2,6 +2,8 @@
 #if defined(_WIN32)
 #include "HephAudioShared.h"
 #include "NativeAudio.h"
+#include "AudioEvents/AudioDeviceEventArgs.h"
+#include "AudioEvents/AudioCaptureEventArgs.h"
 #include "StringHelpers.h"
 #include <wrl.h>
 #include <mmeapi.h>

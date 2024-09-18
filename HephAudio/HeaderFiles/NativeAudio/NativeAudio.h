@@ -5,8 +5,6 @@
 #include "AudioFormatInfo.h"
 #include "IAudioDecoder.h"
 #include "IAudioEncoder.h"
-#include "AudioEvents/AudioDeviceEventArgs.h"
-#include "AudioEvents/AudioCaptureEventArgs.h"
 #include "Params/NativeAudioParams.h"
 #include "HephException.h"
 #include "Event.h"

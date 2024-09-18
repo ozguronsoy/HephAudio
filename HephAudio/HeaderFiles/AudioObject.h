@@ -1,9 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
-#include "AudioEvents/AudioRenderEventArgs.h"
-#include "AudioEvents/AudioRenderEventResult.h"
-#include "AudioEvents/AudioFinishedPlayingEventArgs.h"
 #include "Event.h"
 #include "Guid.h"
 #include <vector>

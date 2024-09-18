@@ -1,6 +1,9 @@
 #include "AudioObject.h"
 #include "AudioProcessor.h"
 #include "NativeAudio/NativeAudio.h"
+#include "AudioEvents/AudioRenderEventArgs.h"
+#include "AudioEvents/AudioRenderEventResult.h"
+#include "AudioEvents/AudioFinishedPlayingEventArgs.h"
 #include "HephMath.h"
 #include "HephException.h"
 
@@ -66,23 +69,20 @@ namespace HephAudio
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		pRenderResult->renderBuffer = pAudioObject->buffer.SubBuffer(pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
-		pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
-		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+		pRenderResult->renderBuffer = pRenderArgs->pAudioObject->buffer.SubBuffer(pRenderArgs->pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
+		pRenderArgs->pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
+		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
 	}
 	void AudioObject::MatchFormatRenderHandler(const HephCommon::EventParams& eventParams)
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
-		Native::NativeAudio* pNativeAudio = (Native::NativeAudio*)pRenderArgs->pNativeAudio;
-		AudioObject* pAudioObject = (AudioObject*)pRenderArgs->pAudioObject;
 
-		AudioFormatInfo renderFormat = pNativeAudio->GetRenderFormat();
-		const size_t readFrameCount = ceil((double)pRenderArgs->renderFrameCount * (double)pAudioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
+		AudioFormatInfo renderFormat = pRenderArgs->pNativeAudio->GetRenderFormat();
+		const size_t readFrameCount = ceil((double)pRenderArgs->renderFrameCount * (double)pRenderArgs->pAudioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
 
-		pRenderResult->renderBuffer = pAudioObject->buffer.SubBuffer(pAudioObject->frameIndex, readFrameCount + 1);
+		pRenderResult->renderBuffer = pRenderArgs->pAudioObject->buffer.SubBuffer(pRenderArgs->pAudioObject->frameIndex, readFrameCount + 1);
 
 		AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
 		if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
@@ -92,7 +92,7 @@ namespace HephAudio
 
 		AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, renderFormat.channelLayout);
 
-		pAudioObject->frameIndex += readFrameCount;
-		pRenderResult->isFinishedPlaying = pAudioObject->frameIndex >= pAudioObject->buffer.FrameCount();
+		pRenderArgs->pAudioObject->frameIndex += readFrameCount;
+		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
 	}
 }

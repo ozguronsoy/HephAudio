@@ -2,6 +2,7 @@
 #include "HephAudioShared.h"
 #include "AudioEventArgs.h"
 #include "AudioBuffer.h"
+#include "AudioObject.h"
 
 /** @file */
 
@@ -17,7 +18,7 @@ namespace HephAudio
 		 * pointer to the audio object instance that's being rendered.
 		 * 
 		 */
-		void* pAudioObject;
+		AudioObject* pAudioObject;
 
 		/**
 		 * number of audio frames to  render.
@@ -32,7 +33,7 @@ namespace HephAudio
 		 * @param pAudioObject @copydetails pAudioObject
 		 * @param renderFrameCount @copydetails renderFrameCount
 		 */
-		AudioRenderEventArgs(void* pAudioObject, void* pNativeAudio, size_t renderFrameCount) 
+		AudioRenderEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, size_t renderFrameCount)
 			: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), renderFrameCount(renderFrameCount) {}
 	};
 }
