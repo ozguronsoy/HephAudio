@@ -93,21 +93,13 @@
 #endif
 
 /**
- * exports the method/class with C linkage.
+ * exports the methods/classes.
  *
 */
-#if defined(HEPH_SHARED_LIB)
-
-#if defined(_WIN32)
-#define HEPH_API extern "C" __declspec(dllexport)
+#if defined(HEPH_SHARED_LIB) && defined(_WIN32)
+#define HEPH_API __declspec(dllexport)
 #else
-#define HEPH_API extern "C"
-#endif
-
-#else
-
 #define HEPH_API 
-
 #endif
 
 /**
@@ -145,7 +137,7 @@ namespace HephCommon
 	 */
 	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
 
-	constexpr inline Endian operator!(const Endian& lhs) { return lhs & Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
+	constexpr inline Endian operator!(const Endian& lhs) { return (lhs & Endian::Big) ? Endian::Little : ((lhs == Endian::Little) ? Endian::Big : Endian::Unknown); }
 
 /**
  * endianness of the current system.

@@ -66,7 +66,7 @@ namespace HephAudio
 	 * bit field that indicates which channels are used.
 	 * 
 	 */
-	enum class AudioChannelMask : uint32_t
+	enum AudioChannelMask
 	{
 		Unknown = 0,
 		FrontLeft = 0x1,
@@ -90,40 +90,40 @@ namespace HephAudio
 	};
 
 
-	constexpr AudioChannelMask operator|(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
+	inline constexpr AudioChannelMask operator|(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		return (AudioChannelMask)(((int)lhs) | ((int)rhs));
 	}
 	
-	constexpr AudioChannelMask& operator|=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
+	inline constexpr AudioChannelMask& operator|=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		lhs = lhs | rhs;
 		return lhs;
 	}
 	
-	constexpr AudioChannelMask operator&(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
+	inline constexpr AudioChannelMask operator&(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		return (AudioChannelMask)(((int)lhs) & ((int)rhs));
 	}
 	
-	constexpr AudioChannelMask& operator&=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
+	inline constexpr AudioChannelMask& operator&=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		lhs = lhs & rhs;
 		return lhs;
 	}
 	
-	constexpr AudioChannelMask operator^(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
+	inline constexpr AudioChannelMask operator^(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		return (AudioChannelMask)(((int)lhs) ^ ((int)rhs));
 	}
 	
-	constexpr AudioChannelMask& operator^=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
+	inline constexpr AudioChannelMask& operator^=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		lhs = lhs ^ rhs;
 		return lhs;
 	}
 	
-	constexpr AudioChannelMask operator~(const AudioChannelMask& lhs)
+	inline constexpr AudioChannelMask operator~(const AudioChannelMask& lhs)
 	{
 		return (AudioChannelMask)(~((int)lhs));
 	}
