@@ -134,7 +134,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Prepend", "Both buffers must have the same audio format"));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Prepend(rhs);
@@ -149,7 +149,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Append", "Both buffers must have the same audio format"));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Append(rhs);
@@ -164,7 +164,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Insert", "Both buffers must have the same audio format"));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Insert(rhs, frameIndex * this->formatInfo.channelLayout.count);
@@ -189,7 +189,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer::Replace", "Both buffers must have the same audio format"));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Replace(rhs, frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);

@@ -74,4 +74,6 @@ namespace HephCommon
 			);
 		}
 	}
+
+	HephExceptionEventArgs::HephExceptionEventArgs(const void* pSender, const HephException& ex) : pSender(pSender), exception(ex) {}
 }

@@ -20,7 +20,7 @@ namespace HephAudio
 	{
 		if (this->pNativeAudio == nullptr)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioStream::AudioStream", "pNativeAudio must not be nullptr."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pNativeAudio must not be nullptr."));
 			this->Release(false);
 		}
 

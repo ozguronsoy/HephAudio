@@ -16,13 +16,13 @@ namespace HephAudio
 			deviceApiLevel = android_get_device_api_level();
 			if (deviceApiLevel == -1)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AndroidAudioBase::AndroidAudioBase", "An error occurred while getting the current device's API level."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "An error occurred while getting the current device's API level."));
 			}
 			else if (deviceApiLevel >= 23)
 			{
 				if (AndroidAudioBase::jvm == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AndroidAudioBase::AndroidAudioBase", "jvm cannot be nullptr. Set the AndroidAudioBase::jvm static field first."));
+					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "jvm cannot be nullptr. Set the AndroidAudioBase::jvm static field first."));
 				}
 			}
 		}
@@ -93,12 +93,12 @@ namespace HephAudio
 				jniResult = AndroidAudioBase::jvm->AttachCurrentThread(pEnv, nullptr);
 				if (jniResult != JNI_OK)
 				{
-					RAISE_HEPH_EXCEPTION(this, HephException(jniResult, "AndroidAudioBase::GetAudioDevices", "Failed to attach to the current thread."));
+					RAISE_HEPH_EXCEPTION(this, HephException(jniResult, HEPH_FUNC, "Failed to attach to the current thread."));
 				}
 			}
 			else if (jniResult != JNI_OK)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(jniResult, "AndroidAudioBase::GetAudioDevices", "Could not get the current jni environment."));
+				RAISE_HEPH_EXCEPTION(this, HephException(jniResult, HEPH_FUNC, "Could not get the current jni environment."));
 			}
 		}
 		std::string AndroidAudioBase::JStringToString(JNIEnv* env, jstring jStr) const
@@ -113,7 +113,7 @@ namespace HephAudio
 	}
 }
 
-extern "C" __attribute__((weak)) jint JNI_OnLoad(JavaVM * vm, void* reserved)
+extern "C" __attribute__((weak)) jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
 	HephAudio::Native::AndroidAudioBase::jvm = vm;
 	return JNI_VERSION_1_6;

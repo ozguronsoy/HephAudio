@@ -35,7 +35,7 @@ namespace HephAudio
 		{
 			if (pNewDecoder == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "NativeAudio::SetAudioDecoder", "Decoder cannot be null"));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Decoder cannot be null"));
 				return;
 			}
 			this->pAudioDecoder = pNewDecoder;
@@ -50,7 +50,7 @@ namespace HephAudio
 		{
 			if (pNewEncoder == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "NativeAudio::SetAudioEncoder", "Encoder cannot be null"));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Encoder cannot be null"));
 				return;
 			}
 			this->pAudioEncoder = pNewEncoder;
@@ -188,7 +188,7 @@ namespace HephAudio
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			if (index >= audioObjects.size())
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "NativeAudio::GetAudioObject", "Index out of range."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 				return nullptr;
 			}
 			return &audioObjects[index];
@@ -330,7 +330,7 @@ namespace HephAudio
 		{
 			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudioDS::GetDefaultAudioDevice", "DeviceType must be either Render or Capture."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "DeviceType must be either Render or Capture."));
 				return AudioDevice();
 			}
 
@@ -352,7 +352,7 @@ namespace HephAudio
 
 			if (deviceType == AudioDeviceType::Null)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "WinAudioDS::GetAudioDevices", "DeviceType must not be Null."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "DeviceType must not be Null."));
 				return result;
 			}
 

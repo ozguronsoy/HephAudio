@@ -117,7 +117,7 @@
 #if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
 #define HEPH_FUNC __PRETTY_FUNCTION__
 #elif defined(_MSVC_LANG)
-#define HEPH_FUNC __FUNCTION__
+#define HEPH_FUNC __FUNCSIG__
 #else
 #define HEPH_FUNC __func__
 #endif

@@ -55,12 +55,12 @@ namespace HephAudio
 	{
 		if (position > 1.0)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioObject::SetPosition", "position must be between 0 and 1"));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "position must be between 0 and 1"));
 			position = 1.0;
 		}
 		else if (position < 0.0)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioObject::SetPosition", "position must be between 0 and 1"));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "position must be between 0 and 1"));
 			position = 0.0;
 		}
 		this->frameIndex = position * this->buffer.FrameCount();

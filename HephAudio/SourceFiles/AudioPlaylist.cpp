@@ -130,7 +130,7 @@ namespace HephAudio
 	{
 		if (index > this->files.size())
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioPlaylist::Insert", "Index out of range."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 			index = this->files.size();
 		}
 
@@ -146,7 +146,7 @@ namespace HephAudio
 		{
 			if (index > this->files.size())
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioPlaylist::Insert", "Index out of range."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 				index = this->files.size();
 			}
 
@@ -161,7 +161,7 @@ namespace HephAudio
 	{
 		if (index >= this->files.size())
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioPlaylist::Remove", "Index out of range."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 		}
 
 		this->files.erase(this->files.begin() + index);
@@ -176,7 +176,7 @@ namespace HephAudio
 		{
 			if (index >= this->files.size())
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "AudioPlaylist::Remove", "Index out of range."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 			}
 
 			if (index + count >= this->files.size())

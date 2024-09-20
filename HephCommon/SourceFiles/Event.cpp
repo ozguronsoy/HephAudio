@@ -47,7 +47,7 @@ namespace HephCommon
 	{
 		if (index >= this->eventHandlers.size())
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::GetEventHandler", "Index out of range."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 		}
 		return this->eventHandlers[index];
 	}
@@ -67,7 +67,7 @@ namespace HephCommon
 	{
 		if (index > this->eventHandlers.size())
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::GetEventHandler", "Index out of range."));
+			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
 			index = this->eventHandlers.size();
 		}
 		this->eventHandlers.insert(this->eventHandlers.begin() + index, handler);
@@ -87,7 +87,7 @@ namespace HephCommon
 	{
 		if (index >= this->eventHandlers.size())
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "Event::RemoveEventHandler", "Index out of bounds."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds."));
 		}
 
 		this->eventHandlers.erase(this->eventHandlers.begin() + index);

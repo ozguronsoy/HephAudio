@@ -16,7 +16,7 @@ namespace HephAudio
 	{
 		if (pData == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "EncodedAudioBuffer::EncodedAudioBuffer", "pData cannot be null"));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pData cannot be null"));
 		}
 		else if (this->size > 0)
 		{
@@ -67,8 +67,7 @@ namespace HephAudio
 	{
 		if (pData == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, "EncodedAudioBuffer::Add", "pData cannot be null"));
-			return;
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pData cannot be null"));
 		}
 		else if (size > 0)
 		{

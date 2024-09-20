@@ -89,7 +89,7 @@ namespace HephAudio
 				propertyList.mScope = kAudioObjectPropertyScopeOutput;
 				propertyList.mElement = 1;
 
-				APPLE_EXCPT(AudioObjectGetPropertyData(deviceID, &propertyList, 0, nullptr, &size, &volume), this, "AppleAudio::GetMasterVolume", "An error occurred while getting the master volume.");
+				APPLE_EXCPT(AudioObjectGetPropertyData(deviceID, &propertyList, 0, nullptr, &size, &volume), this, HEPH_FUNC, "An error occurred while getting the master volume.");
 
 				return volume;
 			}
@@ -118,20 +118,20 @@ namespace HephAudio
 			{
 				propertyList.mSelector = kAudioDevicePropertyDataSource;
 				const AudioObjectID sourceID = StringHelpers::StringToU32(renderDeviceSourceIDs[1]);
-				APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, sizeof(AudioObjectID), &sourceID), this, "AppleAudio::InitializeRender", "An error occurred while setting the audio device source.");
+				APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, sizeof(AudioObjectID), &sourceID), this, HEPH_FUNC, "An error occurred while setting the audio device source.");
 			}
 
 			AudioStreamBasicDescription streamDesc;
 			ToStreamDesc(format, streamDesc);
 			size = sizeof(streamDesc);
 			propertyList.mSelector = kAudioDevicePropertyStreamFormatMatch;
-			APPLE_EXCPT(AudioObjectGetPropertyData(deviceID, &propertyList, 0, nullptr, &size, &streamDesc), this, "AppleAudio::InitializeRender", "An error occurred while getting the stream description.");
+			APPLE_EXCPT(AudioObjectGetPropertyData(deviceID, &propertyList, 0, nullptr, &size, &streamDesc), this, HEPH_FUNC, "An error occurred while getting the stream description.");
 			FromStreamDesc(renderFormat, streamDesc);
 			propertyList.mSelector = kAudioDevicePropertyStreamFormat;
-			APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, size, &streamDesc), this, "AppleAudio::InitializeRender", "An error occurred while setting the stream description.");
+			APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, size, &streamDesc), this, HEPH_FUNC, "An error occurred while setting the stream description.");
 
-			APPLE_EXCPT(AudioDeviceCreateIOProcID(deviceID, &AppleAudio::RenderCallback, this, &renderProcID), this, "AppleAudio::InitializeRender", "An error occurred while creating the IO proc.");
-			APPLE_EXCPT(AudioDeviceStart(deviceID, renderProcID), this, "AppleAudio::InitializeRender", "An error occurred while starting the audio device.");
+			APPLE_EXCPT(AudioDeviceCreateIOProcID(deviceID, &AppleAudio::RenderCallback, this, &renderProcID), this, HEPH_FUNC, "An error occurred while creating the IO proc.");
+			APPLE_EXCPT(AudioDeviceStart(deviceID, renderProcID), this, HEPH_FUNC, "An error occurred while starting the audio device.");
 
 			isRenderInitialized = true;
 
@@ -145,8 +145,8 @@ namespace HephAudio
 				OSStatus result;
 				isRenderInitialized = false;
 				renderDeviceId = "";
-				APPLE_EXCPT(AudioDeviceStop(deviceID, renderProcID), this, "AppleAudio::StopRendering", "An error occurred while stopping the render.");
-				APPLE_EXCPT(AudioDeviceDestroyIOProcID(deviceID, renderProcID), this, "AppleAudio::StopRendering", "An error occurred while destroying the IO proc.");
+				APPLE_EXCPT(AudioDeviceStop(deviceID, renderProcID), this, HEPH_FUNC, "An error occurred while stopping the render.");
+				APPLE_EXCPT(AudioDeviceDestroyIOProcID(deviceID, renderProcID), this, HEPH_FUNC, "An error occurred while destroying the IO proc.");
 				renderProcID = nullptr;
 				HEPHAUDIO_LOG("Stopped rendering.", HEPH_CL_INFO);
 			}
@@ -174,20 +174,20 @@ namespace HephAudio
 			{
 				propertyList.mSelector = kAudioDevicePropertyDataSource;
 				const AudioObjectID sourceID = StringHelpers::StringToU32(captureDeviceSourceIDs[1]);
-				APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, sizeof(AudioObjectID), &sourceID), this, "AppleAudio::InitializeCapture", "An error occurred while setting the audio device source.");
+				APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, sizeof(AudioObjectID), &sourceID), this, HEPH_FUNC, "An error occurred while setting the audio device source.");
 			}
 
 			AudioStreamBasicDescription streamDesc;
 			ToStreamDesc(format, streamDesc);
 			size = sizeof(streamDesc);
 			propertyList.mSelector = kAudioDevicePropertyStreamFormatMatch;
-			APPLE_EXCPT(AudioObjectGetPropertyData(deviceID, &propertyList, 0, nullptr, &size, &streamDesc), this, "AppleAudio::InitializeCapture", "An error occurred while getting the stream description.");
+			APPLE_EXCPT(AudioObjectGetPropertyData(deviceID, &propertyList, 0, nullptr, &size, &streamDesc), this, HEPH_FUNC, "An error occurred while getting the stream description.");
 			FromStreamDesc(captureFormat, streamDesc);
 			propertyList.mSelector = kAudioDevicePropertyStreamFormat;
-			APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, size, &streamDesc), this, "AppleAudio::InitializeCapture", "An error occurred while setting the stream description.");
+			APPLE_EXCPT(AudioObjectSetPropertyData(deviceID, &propertyList, 0, nullptr, size, &streamDesc), this, HEPH_FUNC, "An error occurred while setting the stream description.");
 
-			APPLE_EXCPT(AudioDeviceCreateIOProcID(deviceID, &AppleAudio::CaptureCallback, this, &captureProcID), this, "AppleAudio::InitializeCapture", "An error occurred while creating the IO proc.");
-			APPLE_EXCPT(AudioDeviceStart(deviceID, captureProcID), this, "AppleAudio::InitializeCapture", "An error occurred while starting the audio device.");
+			APPLE_EXCPT(AudioDeviceCreateIOProcID(deviceID, &AppleAudio::CaptureCallback, this, &captureProcID), this, HEPH_FUNC, "An error occurred while creating the IO proc.");
+			APPLE_EXCPT(AudioDeviceStart(deviceID, captureProcID), this, HEPH_FUNC, "An error occurred while starting the audio device.");
 
 			isCaptureInitialized = true;
 
@@ -201,19 +201,19 @@ namespace HephAudio
 				OSStatus result;
 				isCaptureInitialized = false;
 				captureDeviceId = "";
-				APPLE_EXCPT(AudioDeviceStop(deviceID, captureProcID), this, "AppleAudio::StopCapturing", "An error occurred while stopping the capture.");
-				APPLE_EXCPT(AudioDeviceDestroyIOProcID(deviceID, captureProcID), this, "AppleAudio::StopCapturing", "An error occurred while destroying the IO proc.");
+				APPLE_EXCPT(AudioDeviceStop(deviceID, captureProcID), this, HEPH_FUNC, "An error occurred while stopping the capture.");
+				APPLE_EXCPT(AudioDeviceDestroyIOProcID(deviceID, captureProcID), this, HEPH_FUNC, "An error occurred while destroying the IO proc.");
 				captureProcID = nullptr;
 				HEPHAUDIO_LOG("Stopped capturing.", HEPH_CL_INFO);
 			}
 		}
 		void AppleAudio::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AppleAudio::GetNativeParams", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, HEPH_FUNC, "Not implemented."));
 		}
 		void AppleAudio::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, "AppleAudio::SetNativeParams", "Not implemented."));
+			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_NOT_IMPLEMENTED, HEPH_FUNC, "Not implemented."));
 		}
 		bool AppleAudio::EnumerateAudioDevices()
 		{
@@ -231,22 +231,22 @@ namespace HephAudio
 
 			size = sizeof(AudioObjectID);
 			propertyList.mSelector = kAudioHardwarePropertyDefaultOutputDevice;
-			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size, &defaultRenderID), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the default audio render devices.");
+			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size, &defaultRenderID), this, HEPH_FUNC, "An error occurred while getting the default audio render devices.");
 
 			propertyList.mSelector = kAudioHardwarePropertyDefaultInputDevice;
-			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size, &defaultCaptureID), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the default audio capture devices.");
+			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size, &defaultCaptureID), this, HEPH_FUNC, "An error occurred while getting the default audio capture devices.");
 
 
 			propertyList.mSelector = kAudioHardwarePropertyDevices;
-			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while enumerating the audio devices.");
+			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size), this, HEPH_FUNC, "An error occurred while enumerating the audio devices.");
 			deviceIDs = (AudioObjectID*)malloc(size);
 			if (deviceIDs == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "Insufficient memory."));
+				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
 				return AppleAudio::DEVICE_ENUMERATION_FAIL;
 			}
 
-			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size, deviceIDs), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while enumerating the audio devices.");
+			APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyList, 0, nullptr, &size, deviceIDs), this, HEPH_FUNC, "An error occurred while enumerating the audio devices.");
 			const size_t deviceCount = size / sizeof(AudioObjectID);
 
 			CFStringRef cfs;
@@ -256,7 +256,7 @@ namespace HephAudio
 				auto addSources = [this, &propertyList, &size, &deviceIDs, &cfs, &cfsLength, &result, &i, &defaultRenderID, &defaultCaptureID](AudioDeviceType deviceType) -> bool
 					{
 						propertyList.mSelector = kAudioDevicePropertyDataSources;
-						APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyDataSize(deviceIDs[i], &propertyList, 0, nullptr, &size), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the device sources.");
+						APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyDataSize(deviceIDs[i], &propertyList, 0, nullptr, &size), this, HEPH_FUNC, "An error occurred while getting the device sources.");
 						const size_t deviceSourceCount = size / sizeof(UInt32);
 
 						if (deviceSourceCount == 0)
@@ -265,10 +265,10 @@ namespace HephAudio
 						UInt32* deviceSources = (UInt32*)malloc(size);
 						if (deviceSources == nullptr)
 						{
-							RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "Insufficient memory."));
+							RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
 							return AppleAudio::DEVICE_ENUMERATION_FAIL;
 						}
-						APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, deviceSources), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the device sources.");
+						APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, deviceSources), this, HEPH_FUNC, "An error occurred while getting the device sources.");
 
 						for (size_t j = 0; j < deviceSourceCount; j++)
 						{
@@ -283,14 +283,14 @@ namespace HephAudio
 
 							propertyList.mSelector = kAudioDevicePropertyDataSourceNameForIDCFString;
 							size = sizeof(AudioValueTranslation);
-							APPLE_ENUMERATE_DEVICE_SOURCES_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, &avt), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the device source id.");
+							APPLE_ENUMERATE_DEVICE_SOURCES_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, &avt), this, HEPH_FUNC, "An error occurred while getting the device source id.");
 							cfsLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfs), kCFStringEncodingUTF8);
 							const std::string sourceName('\0', cfsLength);
 							if (!CFStringGetCString(cfs, sourceName.c_str(), cfsLength + 1, kCFStringEncodingUTF8))
 							{
 								free(deviceSources);
 								CFRelease(cfs);
-								RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the device source id."));
+								RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "An error occurred while getting the device source id."));
 								return AppleAudio::DEVICE_ENUMERATION_FAIL;
 							}
 							CFRelease(cfs);
@@ -337,14 +337,14 @@ namespace HephAudio
 						propertyList.mSelector = kAudioObjectPropertyName;
 						propertyList.mScope = kAudioObjectPropertyScopeGlobal;
 						size = sizeof(CFStringRef);
-						APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, &cfs), this, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the device name.");
+						APPLE_ENUMERATE_DEVICE_EXCPT(AudioObjectGetPropertyData(deviceIDs[i], &propertyList, 0, nullptr, &size, &cfs), this, HEPH_FUNC, "An error occurred while getting the device name.");
 						cfsLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfs), kCFStringEncodingUTF8);
 						device.name = '\0'_b * cfsLength;
 						if (!CFStringGetCString(cfs, device.name.c_str(), cfsLength + 1, kCFStringEncodingUTF8))
 						{
 							free(deviceIDs);
 							CFRelease(cfs);
-							RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "AppleAudio::EnumerateAudioDevices", "An error occurred while getting the device name."));
+							RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "An error occurred while getting the device name."));
 							return AppleAudio::DEVICE_ENUMERATION_FAIL;
 						}
 						CFRelease(cfs);
@@ -408,7 +408,7 @@ namespace HephAudio
 				streamDesc.mFormatID = kAudioFormatOpus;
 				break;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "Invalid audio format."));
 			}
 		}
 		void AppleAudio::FromStreamDesc(AudioFormatInfo& format, const AudioStreamBasicDescription& streamDesc) const
@@ -444,7 +444,7 @@ namespace HephAudio
 				format.formatTag = HEPHAUDIO_FORMAT_TAG_OPUS;
 				break;
 			default:
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, "AppleAudio", "Invalid audio format."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "Invalid audio format."));
 			}
 
 			format.bitRate = AudioFormatInfo::CalculateBitrate(format);

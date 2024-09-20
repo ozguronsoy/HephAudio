@@ -14,7 +14,7 @@ namespace HephCommon
 			wchar_t* pTemp = (wchar_t*)malloc(strSize_byte);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringHelpers::StrToWide", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
 			}
 			(void)memset(pTemp, 0, strSize_byte);
 
@@ -35,7 +35,7 @@ namespace HephCommon
 			char* pTemp = (char*)malloc(strSize_byte);
 			if (pTemp == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, "StringHelpers::WideToStr", "Insufficient memory."));
+				RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
 			}
 			(void)memset(pTemp, 0, strSize_byte);
 

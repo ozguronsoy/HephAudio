@@ -149,7 +149,7 @@ namespace HephCommon
 		 * the exception that's being raised.
 		 * 
 		 */
-		HephException exception;
+		const HephException& exception;
 
 		/**
 		 * @copydoc constructor
@@ -157,7 +157,7 @@ namespace HephCommon
 		 * @param pSender @copydetails pSender
 		 * @param ex @copydetails exception
 		 */
-		HephExceptionEventArgs(const void* pSender, HephException ex) : pSender(pSender), exception(ex) {}
+		HephExceptionEventArgs(const void* pSender, const HephException& ex);
 
 		/** @copydoc destructor */
 		virtual ~HephExceptionEventArgs() = default;
