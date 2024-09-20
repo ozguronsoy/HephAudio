@@ -92,7 +92,11 @@
 
 #endif
 
-#if defined(HEPH_DYNAMIC_LIB)
+/**
+ * exports the method/class with C linkage.
+ *
+*/
+#if defined(HEPH_SHARED_LIB)
 
 #if defined(_WIN32)
 #define HEPH_API extern "C" __declspec(dllexport)
@@ -104,6 +108,18 @@
 
 #define HEPH_API 
 
+#endif
+
+/**
+ * name of the current function.
+ *
+*/
+#if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
+#define HEPH_FUNC __PRETTY_FUNCTION__
+#elif defined(_MSVC_LANG)
+#define HEPH_FUNC __FUNCTION__
+#else
+#define HEPH_FUNC __func__
 #endif
 
 namespace HephCommon
