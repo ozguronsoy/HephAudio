@@ -13,6 +13,8 @@ namespace HephAudio
 	 */
 	class EncodedAudioBuffer : protected HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>
 	{
+		friend class HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>; // BufferBase cannot access its own members from inherited methods for some reason.
+
 	public:
 		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::Size;
 		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::Resize;
