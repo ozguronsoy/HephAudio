@@ -12,7 +12,7 @@ namespace HephAudio
 	 * @brief base class for oscillators. 
 	 * 
 	 */
-	class Oscillator
+	class HEPH_API Oscillator
 	{
 	public:
 		/**

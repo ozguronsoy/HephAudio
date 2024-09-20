@@ -9,7 +9,7 @@ namespace HephAudio
 	 * @brief container for equalizer effect parameters.
 	 * 
 	 */
-	struct EqualizerInfo
+	struct HEPH_API EqualizerInfo
 	{
 		/**
 		 * first frequency in Hz.

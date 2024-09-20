@@ -13,7 +13,7 @@ namespace HephAudio
          * @brief struct for storing the ALSA specific parameters.
          * 
          */
-        struct AlsaParams final : public NativeAudioParams
+        struct HEPH_API AlsaParams final : public NativeAudioParams
         {
             /**
              * duration of the render buffer in milliseconds.

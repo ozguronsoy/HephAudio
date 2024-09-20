@@ -14,7 +14,7 @@ namespace HephAudio
          * @brief struct for storing the AAudio specific parameters.
          * 
          */
-        struct AAudioParams final : public NativeAudioParams
+        struct HEPH_API AAudioParams final : public NativeAudioParams
         {
             /**
              * render share mode, <b>AAUDIO_SHARING_MODE_SHARED</b> or <b>AAUDIO_SHARING_MODE_EXCLUSIVE</b>.

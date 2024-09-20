@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief struct for storing the arguments for the audio device events.
 	 * 
 	 */
-	struct AudioDeviceEventArgs : public AudioEventArgs
+	struct HEPH_API AudioDeviceEventArgs : public AudioEventArgs
 	{
 		/**
 		 * the device that caused the event to be raised.

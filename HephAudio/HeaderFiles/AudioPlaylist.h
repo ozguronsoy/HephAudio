@@ -24,7 +24,7 @@ namespace HephAudio
 	 * Uses \link HephAudio::AudioStream AudioStream \endlink internally to play the files.
 	 * 
 	 */
-	class AudioPlaylist final
+	class HEPH_API AudioPlaylist final
 	{
 	public:
 		/**

@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates square wave signals.
 	 * 
 	 */
-	class SquareWaveOscillator final : public Oscillator
+	class HEPH_API SquareWaveOscillator final : public Oscillator
 	{
 	public:
 		/** @copydoc default_constructor */

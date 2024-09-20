@@ -33,7 +33,7 @@ namespace HephAudio
 	 * @brief manages the \link HephAudio::Native::NativeAudio native audio \endlink classes.
 	 * 
 	 */
-	class Audio final
+	class HEPH_API Audio final
 	{
 	private:
 		Native::NativeAudio* pNativeAudio;

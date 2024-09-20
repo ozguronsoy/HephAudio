@@ -21,7 +21,7 @@ namespace HephCommon
 	 * @brief class for managing callback functions.
 	 * 
 	 */
-	class Event final
+	class HEPH_API Event final
 	{
 	private:
 		std::vector<EventHandler> eventHandlers;

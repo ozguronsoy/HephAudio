@@ -15,7 +15,7 @@ namespace HephAudio
 		 * @brief uses DirectSound
 		 * 
 		 */
-		class WinAudioDS final : public WinAudioBase
+		class HEPH_API WinAudioDS final : public WinAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;

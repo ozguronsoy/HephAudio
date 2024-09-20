@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates flat top window.
 	 * 
 	 */
-	class FlatTopWindow final : public Window
+	class HEPH_API FlatTopWindow final : public Window
 	{
 	private:
 		double N;

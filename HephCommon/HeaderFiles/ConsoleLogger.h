@@ -16,7 +16,7 @@ namespace HephCommon
 	 * @brief class for printing formatted messages to the console.
 	 * @note this class cannot be instantiated.
 	 */
-	class ConsoleLogger final
+	class HEPH_API ConsoleLogger final
 	{
 	private:
 		static inline bool coloredOutput = true;

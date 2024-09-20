@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief container for echo effect parameters.
 	 * 
 	 */
-	struct EchoInfo
+	struct HEPH_API EchoInfo
 	{
 		/**
 		 * number of times the audio data will be reflected (repeated).

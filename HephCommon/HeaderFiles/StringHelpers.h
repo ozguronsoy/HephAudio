@@ -13,7 +13,7 @@ namespace HephCommon
 	 * @note this class cannot be instantiated.
 	 * 
 	 */
-	class StringHelpers final
+	class HEPH_API StringHelpers final
 	{
 	public:
 		StringHelpers() = delete;

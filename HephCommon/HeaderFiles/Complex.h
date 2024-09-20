@@ -9,7 +9,7 @@ namespace HephCommon
 	 * @brief struct for representing complex numbers.
 	 * 
 	 */
-	HEPH_API struct Complex
+	struct HEPH_API Complex
 	{
 		/**
 		 * real component of the complex number.

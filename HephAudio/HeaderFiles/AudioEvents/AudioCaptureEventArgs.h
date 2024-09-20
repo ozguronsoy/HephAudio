@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief struct for storing the arguments for the audio capture events.
 	 * 
 	 */
-	struct AudioCaptureEventArgs : public AudioEventArgs
+	struct HEPH_API AudioCaptureEventArgs : public AudioEventArgs
 	{
 		/**
 		 * captured audio data.

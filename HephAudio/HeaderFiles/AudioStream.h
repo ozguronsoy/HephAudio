@@ -19,7 +19,7 @@ namespace HephAudio
 	 * Reads the portion of audio data from the file just before rendering.
 	 * 
 	 */
-	class AudioStream final
+	class HEPH_API AudioStream final
 	{
 	private:
 		Native::NativeAudio* pNativeAudio;

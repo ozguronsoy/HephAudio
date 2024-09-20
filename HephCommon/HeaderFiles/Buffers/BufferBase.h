@@ -26,7 +26,7 @@ namespace HephCommon
 	 * @tparam Tdata Type of the data the buffer stores.
 	 */
 	template <class Tself, typename Tdata>
-	class BufferBase
+	class HEPH_API BufferBase
 	{
 		static_assert(std::is_default_constructible<Tdata>::value, "Tdata must have a default constructor");
 

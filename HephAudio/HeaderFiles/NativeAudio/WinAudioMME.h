@@ -15,7 +15,7 @@ namespace HephAudio
 		 * @brief uses MMEAPI (waveIn and waveOut)
 		 * 
 		 */
-		class WinAudioMME final : public WinAudioBase
+		class HEPH_API WinAudioMME final : public WinAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;

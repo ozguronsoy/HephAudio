@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief stores encoded audio data.
 	 * 
 	 */
-	class EncodedAudioBuffer : protected HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>
+	class HEPH_API EncodedAudioBuffer : protected HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>
 	{
 		friend class HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>; // BufferBase cannot access its own members from inherited methods for some reason.
 
@@ -89,4 +89,6 @@ namespace HephAudio
 		 */
 		void Add(const uint8_t* pData, size_t size);
 	};
+
+	template class HEPH_API HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>;
 }

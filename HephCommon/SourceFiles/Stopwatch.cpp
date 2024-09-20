@@ -2,8 +2,6 @@
 
 namespace HephCommon
 {
-	thread_local Stopwatch Stopwatch::Instance = Stopwatch();
-
 	Stopwatch::Stopwatch() : tp(std::chrono::steady_clock::now()) {}
 	
 	void Stopwatch::Reset()
@@ -19,5 +17,12 @@ namespace HephCommon
 	double Stopwatch::DeltaTime(double prefix) const
 	{
 		return (std::chrono::steady_clock::now() - this->tp).count() * 1e-9 / prefix;
+	}
+
+	Stopwatch& Stopwatch::GetInstance() noexcept
+	{
+		// had to use singleton to dllexport the thread_local instance.
+		static thread_local Stopwatch instance;
+		return instance;
 	}
 }

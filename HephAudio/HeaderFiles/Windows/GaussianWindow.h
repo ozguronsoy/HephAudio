@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Gaussian window.
 	 * 
 	 */
-	class GaussianWindow final : public Window
+	class HEPH_API GaussianWindow final : public Window
 	{
 	private:
 		double sigma;

@@ -9,7 +9,7 @@ namespace HephCommon
 	 * @brief base class for storing arguments for an \link HephCommon::Event event \endlink.
 	 * 
 	 */
-	struct EventArgs
+	struct HEPH_API EventArgs
 	{
 		/** @copydoc destructor */
 		virtual ~EventArgs() = default;

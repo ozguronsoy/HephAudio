@@ -11,7 +11,7 @@ namespace HephAudio
 		 * @brief base class for storing the native audio API specific parameters.
 		 * 
 		 */
-		struct NativeAudioParams
+		struct HEPH_API NativeAudioParams
 		{
 			/** @copydoc destructor */
 			virtual ~NativeAudioParams() = default;

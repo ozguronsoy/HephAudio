@@ -12,10 +12,11 @@ namespace HephAudio
 	 * @brief implements audio decoding via [FFmpeg](https://www.ffmpeg.org/).
 	 * 
 	 */
-	class FFmpegAudioDecoder final : public IAudioDecoder
+	class HEPH_API FFmpegAudioDecoder final : public IAudioDecoder
 	{
 	private:
 		static constexpr size_t AUDIO_STREAM_INDEX_NOT_FOUND = -1;
+
 	private:
 		size_t fileDuration_frame;
 		size_t audioStreamIndex;

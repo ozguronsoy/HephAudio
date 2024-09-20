@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Hann window.
 	 * 
 	 */
-	class HannWindow final : public Window
+	class HEPH_API HannWindow final : public Window
 	{
 	private:
 		double N;

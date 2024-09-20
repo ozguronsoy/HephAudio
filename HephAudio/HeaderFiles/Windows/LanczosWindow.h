@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Lanczos window.
 	 * 
 	 */
-	class LanczosWindow final : public Window
+	class HEPH_API LanczosWindow final : public Window
 	{
 	private:
 		double N;

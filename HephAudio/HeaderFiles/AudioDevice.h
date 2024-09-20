@@ -72,7 +72,7 @@ namespace HephAudio
 	 * @brief stores information about an audio device.
 	 * 
 	 */
-	struct AudioDevice
+	struct HEPH_API AudioDevice
 	{
 		/**
 		 * unique identifier of the audio device provided by the native API.

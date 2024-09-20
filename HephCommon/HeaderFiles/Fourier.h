@@ -12,7 +12,7 @@ namespace HephCommon
 	 * @brief class for calculating FFT and Convolution.
 	 * @note this class cannot be instantiated.
 	 */
-	class Fourier final
+	class HEPH_API Fourier final
 	{
 	private:
 		static constexpr bool DIRECTION_FORWARD = true;

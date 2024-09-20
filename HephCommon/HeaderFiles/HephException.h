@@ -45,14 +45,8 @@ namespace HephCommon
 	 * @brief stores information about an exception.
 	 * 
 	 */
-	struct HephException final
+	struct HEPH_API HephException final
 	{
-		/**
-		 * a vector of exceptions local to the current thread.
-		 * 
-		 */
-		static thread_local std::vector<HephException> Exceptions;
-
 		/**
 		 * raised when an exception occurs.
 		 * 
@@ -131,13 +125,19 @@ namespace HephCommon
 		 *
 		 */
 		static void DefaultHandler(const EventParams& params);
+
+		/**
+		 * @brief gets the exceptions that occurred in the current thread.
+		 * 
+		 */
+		static std::vector<HephException>& GetExceptions() noexcept;
 	};
 
 	/**
 	 * @brief struct for storing the arguments for the audio exception events.
 	 * 
 	 */
-	struct HephExceptionEventArgs : public EventArgs
+	struct HEPH_API HephExceptionEventArgs : public EventArgs
 	{
 		/**
 		 * pointer to the object that caused the exception.

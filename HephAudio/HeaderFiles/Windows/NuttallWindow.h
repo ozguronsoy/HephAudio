@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Nuttall window.
 	 * 
 	 */
-	class NuttallWindow final : public Window
+	class HEPH_API NuttallWindow final : public Window
 	{
 	private:
 		double N;

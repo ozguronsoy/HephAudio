@@ -12,7 +12,7 @@ namespace HephCommon
 	 * @brief buffer for storing \link HephCommon::Complex complex numbers.
 	 * 
 	 */
-	class ComplexBuffer final : 
+	class HEPH_API ComplexBuffer final :
 		public BufferBase<ComplexBuffer, Complex>,
 		public BufferArithmeticOperators<ComplexBuffer, Complex>,
 		public BufferArithmeticOperators<ComplexBuffer, Complex, double>,
@@ -61,4 +61,7 @@ namespace HephCommon
 		static void ResultCreatedEventHandlerComplexBuffer(const HephCommon::EventParams& params);
 		static void ResultCreatedEventHandlerDoubleBuffer(const HephCommon::EventParams& params);
 	};
+
+	// explicit instantiate for DLLs.
+	template class HEPH_API BufferBase<ComplexBuffer, Complex>;
 };

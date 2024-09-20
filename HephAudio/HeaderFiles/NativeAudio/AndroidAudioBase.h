@@ -17,7 +17,7 @@ namespace HephAudio
 		 * @brief base class for classes that interact with the Android audio APIs.
 		 * 
 		 */
-		class AndroidAudioBase : public NativeAudio
+		class HEPH_API AndroidAudioBase : public NativeAudio
 		{
 		protected:
 			/**

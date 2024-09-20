@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Tukey window.
 	 * 
 	 */
-	class TukeyWindow final : public Window
+	class HEPH_API TukeyWindow final : public Window
 	{
 	private:
 		double alpha;

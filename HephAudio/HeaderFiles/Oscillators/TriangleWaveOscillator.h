@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates triangle wave signals.
 	 * 
 	 */
-	class TriangleWaveOscillator final : public Oscillator
+	class HEPH_API TriangleWaveOscillator final : public Oscillator
 	{
 	public:
 		/** @copydoc default_constructor */

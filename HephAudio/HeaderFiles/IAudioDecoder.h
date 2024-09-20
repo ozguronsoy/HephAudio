@@ -12,7 +12,7 @@ namespace HephAudio
 	 * @brief interface for the audio decoders.
 	 * 
 	 */
-	class IAudioDecoder
+	class HEPH_API IAudioDecoder
 	{
 	protected:
 		/**

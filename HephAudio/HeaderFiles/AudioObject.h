@@ -34,7 +34,7 @@ namespace HephAudio
 	 * @brief stores information that's necessary to play audio.
 	 * 
 	 */
-	struct AudioObject
+	struct HEPH_API AudioObject
 	{
 		/**
 		 * unique identifier of the object.

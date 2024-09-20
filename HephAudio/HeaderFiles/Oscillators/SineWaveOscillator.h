@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates sine wave signals.
 	 * 
 	 */
-	class SineWaveOscillator final : public Oscillator
+	class HEPH_API SineWaveOscillator final : public Oscillator
 	{
 	public:
 		/** @copydoc default_constructor */

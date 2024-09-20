@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates welch window.
 	 * 
 	 */
-	class WelchWindow final : public Window
+	class HEPH_API WelchWindow final : public Window
 	{
 	private:
 		double hN;

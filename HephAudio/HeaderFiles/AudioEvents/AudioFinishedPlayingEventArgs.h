@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief struct for storing the arguments for the audio finished playing events.
 	 * 
 	 */
-	struct AudioFinishedPlayingEventArgs : public AudioEventArgs
+	struct HEPH_API AudioFinishedPlayingEventArgs : public AudioEventArgs
 	{
 		/**
 		 * pointer to the audio object instance that's being rendered.

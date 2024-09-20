@@ -17,7 +17,7 @@ namespace HephAudio
 		 * @brief uses ALSA
 		 * 
 		 */
-		class LinuxAudio final : public NativeAudio
+		class HEPH_API LinuxAudio final : public NativeAudio
 		{
 		public:
 			using NativeAudio::InitializeRender;

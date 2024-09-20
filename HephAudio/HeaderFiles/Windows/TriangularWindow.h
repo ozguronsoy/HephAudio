@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates triangular window.
 	 * 
 	 */
-	class TriangularWindow final : public Window
+	class HEPH_API TriangularWindow final : public Window
 	{
 	private:
 		double hN;

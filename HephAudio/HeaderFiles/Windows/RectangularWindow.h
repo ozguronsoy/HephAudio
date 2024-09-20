@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates rectangular window
 	 * 
 	 */
-	class RectangularWindow final : public Window
+	class HEPH_API RectangularWindow final : public Window
 	{
 	public:
 		/** @copydoc default_constructor */

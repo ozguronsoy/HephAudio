@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Blackman-Nuttall window.
 	 * 
 	 */
-	class BlackmanNuttallWindow final : public Window
+	class HEPH_API BlackmanNuttallWindow final : public Window
 	{
 	private:
 		double N;

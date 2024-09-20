@@ -12,7 +12,7 @@ namespace HephAudio
 	 * @brief class for storing the audio samples in internal format.
 	 * 
 	 */
-	class AudioBuffer final : public HephCommon::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>
+	class HEPH_API AudioBuffer final : public HephCommon::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>
 	{
 		friend class AudioProcessor;
 
@@ -103,4 +103,9 @@ namespace HephAudio
 		static void ResultCreatedEventHandler(const HephCommon::EventParams& params);
 		static void ResultCreatedEventHandlerBuffer(const HephCommon::EventParams& params);
 	};
+
+	// explicit instantiate for DLLs.
+	template class HEPH_API HephCommon::BufferBase<AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API HephCommon::ArithmeticBuffer<AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API HephCommon::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>;
 }

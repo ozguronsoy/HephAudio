@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates sawtooth wave signals.
 	 * 
 	 */
-	class SawToothWaveOscillator final : public Oscillator
+	class HEPH_API SawToothWaveOscillator final : public Oscillator
 	{
 	public:
 		/** @copydoc default_constructor */

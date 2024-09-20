@@ -14,7 +14,7 @@ namespace HephAudio
 	 * @brief implements audio encoding via [FFmpeg](https://www.ffmpeg.org/).
 	 * 
 	 */
-	class FFmpegAudioEncoder final : public IAudioEncoder
+	class HEPH_API FFmpegAudioEncoder final : public IAudioEncoder
 	{
 	private:
 		AudioFormatInfo outputFormatInfo;

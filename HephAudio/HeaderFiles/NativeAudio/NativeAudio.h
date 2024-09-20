@@ -25,7 +25,7 @@ namespace HephAudio
 		 * @brief base class for the classes that interact with the native audio APIs.
 		 * 
 		 */
-		class NativeAudio
+		class HEPH_API NativeAudio
 		{
 		protected:
 			/**

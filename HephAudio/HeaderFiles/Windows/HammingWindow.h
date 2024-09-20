@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Hamming window.
 	 * 
 	 */
-	class HammingWindow final : public Window
+	class HEPH_API HammingWindow final : public Window
 	{
 	private:
 		double N;

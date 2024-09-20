@@ -20,7 +20,7 @@ namespace HephAudio
 		 * @brief base class for classes that interact with the Windows audio APIs.
 		 * 
 		 */
-		class WinAudioBase : public NativeAudio
+		class HEPH_API WinAudioBase : public NativeAudio
 		{
 		public:
 			/** @copydoc default_constructor */

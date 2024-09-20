@@ -16,7 +16,7 @@ namespace HephAudio
 		 * @brief uses CoreAudio
 		 * 
 		 */
-		class AppleAudio final : public NativeAudio
+		class HEPH_API AppleAudio final : public NativeAudio
 		{
 		public:
 			using NativeAudio::InitializeRender;

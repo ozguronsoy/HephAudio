@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief base class for windows.
 	 * 
 	 */
-	class Window
+	class HEPH_API Window
 	{
 	protected:
 		/**

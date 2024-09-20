@@ -17,7 +17,7 @@ namespace HephAudio
 	 * @brief provides sound effects and filters.
 	 * 
 	 */
-	class AudioProcessor final
+	class HEPH_API AudioProcessor final
 	{
 	private:
 		static constexpr size_t DEFAULT_HOP_SIZE = 1024u;

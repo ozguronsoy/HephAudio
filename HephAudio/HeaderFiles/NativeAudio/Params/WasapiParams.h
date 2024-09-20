@@ -14,7 +14,7 @@ namespace HephAudio
 		 * @brief struct for storing the WASAPI specific parameters.
 		 * 
 		 */
-		struct WasapiParams final : public NativeAudioParams
+		struct HEPH_API WasapiParams final : public NativeAudioParams
 		{
 			/**
 			 * [render context](https://learn.microsoft.com/en-us/windows/win32/api/wtypesbase/ne-wtypesbase-clsctx).

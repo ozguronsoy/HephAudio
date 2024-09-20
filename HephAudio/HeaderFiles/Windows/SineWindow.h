@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates sine window.
 	 * 
 	 */
-	class SineWindow final : public Window
+	class HEPH_API SineWindow final : public Window
 	{
 	private:
 		double N;

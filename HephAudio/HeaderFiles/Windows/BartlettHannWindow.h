@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Bartlett-Hann window.
 	 * 
 	 */
-	class BartlettHannWindow final : public Window
+	class HEPH_API BartlettHannWindow final : public Window
 	{
 	private:
 		double N;

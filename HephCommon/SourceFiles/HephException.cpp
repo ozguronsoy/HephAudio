@@ -4,8 +4,6 @@
 
 namespace HephCommon
 {
-	thread_local std::vector<HephException> HephException::Exceptions = std::vector<HephException>();
-
 	HephException::HephException() : errorCode(HEPH_EC_OK) { }
 
 	HephException::HephException(int64_t errorCode, const std::string& method, const std::string& message)
@@ -19,7 +17,7 @@ namespace HephCommon
 	{
 		HephExceptionEventArgs args(pSender, *this);
 		HephException::OnException.Invoke(&args, nullptr);
-		HephException::Exceptions.push_back(*this);
+		HephException::GetExceptions().push_back(*this);
 	}
 
 	std::string HephException::ErrorCodeToString(int64_t errorCode)
@@ -73,6 +71,13 @@ namespace HephCommon
 				"\nmethod:\t\t" + ex.method + "\nmessage:\t" + ex.message + "\n"
 			);
 		}
+	}
+
+	std::vector<HephException>& HephException::GetExceptions() noexcept
+	{
+		// had to use singleton to dllexport the thread_local instance.
+		static thread_local std::vector<HephException> instance;
+		return instance;
 	}
 
 	HephExceptionEventArgs::HephExceptionEventArgs(const void* pSender, const HephException& ex) : pSender(pSender), exception(ex) {}

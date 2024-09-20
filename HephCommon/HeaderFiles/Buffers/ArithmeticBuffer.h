@@ -17,7 +17,7 @@ namespace HephCommon
 	 * @tparam Tdata Type of the data the buffer stores, must be arithmetic type.
 	 */
 	template <class Tself, typename Tdata>
-	class ArithmeticBuffer : 
+	class HEPH_API ArithmeticBuffer :
 		public BufferBase<Tself, Tdata>,
 		public BufferArithmeticOperators<Tself, Tdata>,
 		public BufferArithmeticOperators<Tself, Tdata, Tself, Tdata>
@@ -141,7 +141,7 @@ namespace HephCommon
 	 * @tparam Tdata Type of the data the buffer stores, must be signed arithmetic type.
 	 */
 	template <class Tself, typename Tdata>
-	class SignedArithmeticBuffer :
+	class HEPH_API SignedArithmeticBuffer :
 		public ArithmeticBuffer<Tself, Tdata>,
 		public BufferUnaryMinusOperator<Tself, Tdata>
 	{

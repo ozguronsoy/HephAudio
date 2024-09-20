@@ -15,7 +15,7 @@ namespace HephAudio
 		 * @brief uses AAudio.
 		 * 
 		 */
-		class AndroidAudioA final : public AndroidAudioBase
+		class HEPH_API AndroidAudioA final : public AndroidAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;

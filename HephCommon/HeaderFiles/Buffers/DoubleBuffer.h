@@ -10,7 +10,7 @@ namespace HephCommon
 	 * @brief buffer for storing doubles.
 	 * 
 	 */
-	class DoubleBuffer final : public SignedArithmeticBuffer<DoubleBuffer, double>
+	class HEPH_API DoubleBuffer final : public SignedArithmeticBuffer<DoubleBuffer, double>
 	{
 	public:
 		/** @copydoc BufferBase() */
@@ -35,4 +35,9 @@ namespace HephCommon
 		DoubleBuffer& operator=(const DoubleBuffer& rhs);
 		DoubleBuffer& operator=(DoubleBuffer&& rhs) noexcept;
 	};
+
+	// explicit instantiate for DLLs.
+	template class HEPH_API BufferBase<DoubleBuffer, double>;
+	template class HEPH_API ArithmeticBuffer<DoubleBuffer, double>;
+	template class HEPH_API SignedArithmeticBuffer<DoubleBuffer, double>;
 }

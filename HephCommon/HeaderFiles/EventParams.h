@@ -12,7 +12,7 @@ namespace HephCommon
 	 * @brief stores the information required to handle an event.
 	 * 
 	 */
-	struct EventParams final
+	struct HEPH_API EventParams final
 	{
 		/**
 		 * pointer to the arguments, can be null.

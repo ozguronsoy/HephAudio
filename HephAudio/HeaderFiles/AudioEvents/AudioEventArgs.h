@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief base class for audio event arguments.
 	 * 
 	 */
-	struct AudioEventArgs : public HephCommon::EventArgs
+	struct HEPH_API AudioEventArgs : public HephCommon::EventArgs
 	{
 		/**
 		 * pointer to the native audio instance that raised the event.

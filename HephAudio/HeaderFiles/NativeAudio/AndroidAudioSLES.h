@@ -16,7 +16,7 @@ namespace HephAudio
 		 * @brief uses OpenSL ES
 		 * 
 		 */
-		class AndroidAudioSLES final : public AndroidAudioBase
+		class HEPH_API AndroidAudioSLES final : public AndroidAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;

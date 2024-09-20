@@ -10,7 +10,7 @@ namespace HephCommon
 	 * @brief struct for storing globally unique identifiers.
 	 * 
 	 */
-	struct Guid
+	struct HEPH_API Guid
 	{
 		/** first part of the GUID. */
 		uint32_t data1;

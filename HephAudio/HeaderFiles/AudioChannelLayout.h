@@ -132,7 +132,7 @@ namespace HephAudio
 	 * @brief stores information about the channel layout.
 	 * 
 	 */
-	struct AudioChannelLayout
+	struct HEPH_API AudioChannelLayout
 	{
 		/**
 		 * number of channels present.

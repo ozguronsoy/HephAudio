@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief generates Parzen window.
 	 * 
 	 */
-	class ParzenWindow final : public Window
+	class HEPH_API ParzenWindow final : public Window
 	{
 	private:
 		double hN;

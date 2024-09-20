@@ -14,7 +14,7 @@ namespace HephAudio
          * @brief struct for storing the OpenSL ES specific parameters.
          * 
          */
-        struct OpenSLParams final : public NativeAudioParams
+        struct HEPH_API OpenSLParams final : public NativeAudioParams
         {
             /**
              * duration of the render buffer in milliseconds.

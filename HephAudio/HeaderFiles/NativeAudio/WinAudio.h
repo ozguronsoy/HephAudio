@@ -18,7 +18,7 @@ namespace HephAudio
 		 * @brief uses WASAPI.
 		 * 
 		 */
-		class WinAudio final : public WinAudioBase
+		class HEPH_API WinAudio final : public WinAudioBase
 		{
 		public:
 			using NativeAudio::InitializeRender;

@@ -39,7 +39,7 @@ namespace HephAudio
 	 * @brief implements reading the SOFA files and HRTF interpolation for spatialization.
 	 * 
 	 */
-	class Spatializer final
+	class HEPH_API Spatializer final
 	{
 	private:
 		MYSOFA_EASY* pEasy;

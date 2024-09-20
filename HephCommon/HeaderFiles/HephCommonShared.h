@@ -93,11 +93,15 @@
 #endif
 
 /**
- * exports the methods/classes.
+ * exports/imports the members, methods, and classes for DLLs.
  *
 */
 #if defined(HEPH_SHARED_LIB) && defined(_WIN32)
+#if defined(HEPH_EXPORTS)
 #define HEPH_API __declspec(dllexport)
+#else
+#define HEPH_API __declspec(dllimport)
+#endif
 #else
 #define HEPH_API 
 #endif
@@ -127,7 +131,7 @@ namespace HephCommon
 	 * endianness of the current system.
 	 * 
 	 */
-	extern Endian systemEndian;
+	HEPH_API extern Endian systemEndian;
 
 	/**
 	 * changes the endianness of the provided data.
@@ -135,9 +139,9 @@ namespace HephCommon
 	 * @param pData pointer to the data.
 	 * @param dataSize size of the data in bytes.
 	 */
-	void ChangeEndian(uint8_t* pData, uint8_t dataSize);
+	HEPH_API void ChangeEndian(uint8_t* pData, uint8_t dataSize);
 
-	constexpr inline Endian operator!(const Endian& lhs) { return (lhs & Endian::Big) ? Endian::Little : ((lhs == Endian::Little) ? Endian::Big : Endian::Unknown); }
+	inline constexpr Endian operator!(const Endian& lhs) { return (lhs & Endian::Big) ? Endian::Little : ((lhs == Endian::Little) ? Endian::Big : Endian::Unknown); }
 
 /**
  * endianness of the current system.

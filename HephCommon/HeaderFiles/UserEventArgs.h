@@ -13,7 +13,7 @@ namespace HephCommon
 	 * @important This class only stores the pointers to the arguments. So it's your responsibility to ensure that the arguments still exist when handling the events.
 	 * 
 	 */
-	class UserEventArgs final
+	class HEPH_API UserEventArgs final
 	{
 	private:
 		std::unordered_map<std::string, void*> argsMap;

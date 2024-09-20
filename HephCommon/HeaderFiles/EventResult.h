@@ -9,7 +9,7 @@ namespace HephCommon
 	 * @brief base class for storing the results of an \link HephCommon::Event event \endlink.
 	 * 
 	 */
-	struct EventResult
+	struct HEPH_API EventResult
 	{
 		/**
 		 * indicates the event is handled and no further handlers will be invoked.<br>

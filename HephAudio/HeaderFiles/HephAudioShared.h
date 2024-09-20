@@ -36,9 +36,9 @@
  */
 #define HEPHAUDIO_SPEED_OF_SOUND 343.0
 
-#define UINT24_MAX 16777215
-#define INT24_MIN (-8388608)
-#define INT24_MAX 8388607
+#define UINT24_MAX	16777215
+#define INT24_MIN	(-8388608)
+#define INT24_MAX	8388607
 
 /** @typedef heph_audio_sample_t
  * type of the audio samples, float by default.

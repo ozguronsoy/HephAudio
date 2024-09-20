@@ -16,7 +16,7 @@ namespace HephAudio
 	 * @brief stores the properties of the audio signals
 	 * 
 	 */
-	struct AudioFormatInfo
+	struct HEPH_API AudioFormatInfo
 	{
 		/**
 		 * tag of the format that audio data is encoded with.
