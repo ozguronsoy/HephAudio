@@ -34,8 +34,6 @@
  * 
 */
 
-#if !defined(CPP_VERSION)
-
 #if defined(_MSVC_LANG)
 
 #define CPP_VERSION _MSVC_LANG
@@ -46,21 +44,17 @@
 
 #endif
 
-#define CPP_VERSION_PRE_98 1L
-#define CPP_VERSION_98 199711L
-#define CPP_VERSION_11 201103L
-#define CPP_VERSION_14 201402L
-#define CPP_VERSION_17 201703L
-#define CPP_VERSION_20 202002L
-#define CPP_VERSION_23 202101L
+#define CPP_VERSION_PRE_98	(1L)
+#define CPP_VERSION_98		(199711L)
+#define CPP_VERSION_11		(201103L)
+#define CPP_VERSION_14		(201402L)
+#define CPP_VERSION_17		(201703L)
+#define CPP_VERSION_20		(202002L)
+#define CPP_VERSION_23		(202101L)
 
 #if CPP_VERSION < CPP_VERSION_17
 #error C++ 17 or above is required
 #endif
-
-#endif
-
-#if !defined(HEPH_ENV_64_BIT) && !defined(HEPH_ENV_32_BIT)
 
 #if defined(_MSC_VER) || (defined(__INTEL_COMPILER) && defined(_WIN32))
 
@@ -84,20 +78,6 @@
 
 #endif
 
-#endif
-
-#if !defined(HEPH_CONSTEVAL)
-
-#if CPP_VERSION >= CPP_VERSION_20
-#define HEPH_CONSTEVAL consteval
-#else
-#define HEPH_CONSTEVAL constexpr
-#endif
-
-#endif
-
-#if !defined(heph_aligned_malloc)
-
 #if defined(_MSVC_LANG) || defined(__INTEL_COMPILER) || defined(__MINGW64__) || defined(__MINGW32__)
 #define heph_aligned_malloc(size, alignment) _aligned_malloc(size, alignment)
 #define heph_aligned_free _aligned_free
@@ -106,19 +86,28 @@
 #define heph_aligned_free free
 #endif
 
-#endif
-
 #if (!defined(_MSC_VER) || defined(__INTEL_COMPILER))
 
 #include <cstring>
 
 #endif
 
+#if defined(HEPH_DYNAMIC_LIB)
+
+#if defined(_WIN32)
+#define HEPH_API extern "C" __declspec(dllexport)
+#else
+#define HEPH_API extern "C"
+#endif
+
+#else
+
+#define HEPH_API 
+
+#endif
 
 namespace HephCommon
 {
-#if !defined(HEPH_ENDIAN)
-
 	enum Endian : uint8_t
 	{
 		Little = 0x00,
@@ -142,8 +131,6 @@ namespace HephCommon
 
 	constexpr inline Endian operator!(const Endian& lhs) { return lhs & Endian::Big ? Endian::Little : (lhs == Endian::Little ? Endian::Big : Endian::Unknown); }
 
-#define HEPH_ENDIAN HephCommon::Endian
-
 /**
  * endianness of the current system.
  * 
@@ -156,17 +143,10 @@ namespace HephCommon
  */
 #define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)
 
-#endif
-
-#if !defined(HEPH_CONVOLUTION_MODE)
-
 	enum ConvolutionMode
 	{
 		Full = 0,
 		Central = 1,
 		ValidPadding = 2
 	};
-#define HEPH_CONVOLUTION_MODE HephCommon::ConvolutionMode
-
-#endif
 }
