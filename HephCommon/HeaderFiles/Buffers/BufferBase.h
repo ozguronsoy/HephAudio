@@ -13,15 +13,15 @@ namespace HephCommon
 		None = 0,
 		/**
 		 * @brief do not initialize the elements after allocating memory.<br>
-		 * used in constructors. 
-		 * 
+		 * used in constructors.
+		 *
 		 */
 		AllocUninitialized = 1
 	};
 
 	/**
 	 * @brief base class for buffers. Provides basic buffer operations and methods.
-	 * 
+	 *
 	 * @tparam Tself Type of the final buffer that inherits from this class (CRTP).
 	 * @tparam Tdata Type of the data the buffer stores.
 	 */
@@ -33,13 +33,13 @@ namespace HephCommon
 	protected:
 		/**
 		 * pointer to the first element of the buffer, or nullptr if the buffer is empty.
-		 * 
+		 *
 		 */
 		Tdata* pData;
 
 		/**
 		 * number of elements the buffer stores.
-		 * 
+		 *
 		 */
 		size_t size;
 
@@ -49,7 +49,7 @@ namespace HephCommon
 
 		/**
 		 * @copydoc constructor
-		 * 
+		 *
 		 * @param size number of elements the buffer will store.
 		 */
 		explicit BufferBase(size_t size) : pData(nullptr), size(size)
@@ -62,7 +62,7 @@ namespace HephCommon
 
 		/**
 		 * @copydoc constructor
-		 * 
+		 *
 		 * @param size number of elements the buffer will store.
 		 * @param flags flags.
 		 */
@@ -79,7 +79,7 @@ namespace HephCommon
 
 		/**
 		 * @copydoc constructor
-		 * 
+		 *
 		 * @param rhs a list of elements the buffer will store.
 		 */
 		BufferBase(const std::initializer_list<Tdata>& rhs) : pData(nullptr), size(rhs.size())
@@ -119,9 +119,9 @@ namespace HephCommon
 
 		/**
 		 * creates a copy of the current buffer that is shifted to the left.
-		 * 
+		 *
 		 * @param rhs number of elements to shift.
-		 * 
+		 *
 		 * @throws InsufficientMemoryException
 		 */
 		virtual Tself operator<<(size_t rhs) const
@@ -144,7 +144,7 @@ namespace HephCommon
 
 		/**
 		 * shifts the current buffer to the left.
-		 * 
+		 *
 		 * @param rhs number of elements to shift.
 		 */
 		virtual BufferBase& operator<<=(size_t rhs)
@@ -159,9 +159,9 @@ namespace HephCommon
 
 		/**
 		 * creates a copy of the current buffer that is shifted to the right.
-		 * 
+		 *
 		 * @param rhs number of elements to shift.
-		 * 
+		 *
 		 * @throws InsufficientMemoryException
 		 */
 		virtual Tself operator>>(size_t rhs) const
@@ -183,7 +183,7 @@ namespace HephCommon
 
 		/**
 		 * shifts the current buffer to the right.
-		 * 
+		 *
 		 * @param rhs number of elements to shift.
 		 */
 		virtual BufferBase& operator>>=(size_t rhs)
@@ -199,7 +199,7 @@ namespace HephCommon
 		virtual bool operator==(const Tself& rhs) const
 		{
 			return (this->IsEmpty() && rhs.IsEmpty()) ||
-				(this->size == rhs.size && 
+				(this->size == rhs.size &&
 					std::memcmp(this->pData, rhs.pData, this->SizeAsByte()) == 0);
 		}
 
@@ -211,7 +211,7 @@ namespace HephCommon
 		/**
 		 * gets the element at the provided index.
 		 * @note this method does not check if the index is valid, use \link HephCommon::BufferBase::At At \endlink method for error checking.
-		 * 
+		 *
 		 */
 		Tdata& operator[](size_t index) const
 		{
@@ -220,7 +220,7 @@ namespace HephCommon
 
 		/**
 		 * gets the number of elements stored.
-		 * 
+		 *
 		 */
 		size_t Size() const
 		{
@@ -229,7 +229,7 @@ namespace HephCommon
 
 		/**
 		 * gets the size of the buffer in bytes.
-		 * 
+		 *
 		 */
 		size_t SizeAsByte() const
 		{
@@ -238,7 +238,7 @@ namespace HephCommon
 
 		/**
 		 * gets the element at the provided index.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 */
 		Tdata& At(size_t index) const
@@ -252,7 +252,7 @@ namespace HephCommon
 
 		/**
 		 * checks whether the buffer is empty.
-		 * 
+		 *
 		 * @return true if the buffer is empty, otherwise false.
 		 */
 		virtual bool IsEmpty() const
@@ -262,7 +262,7 @@ namespace HephCommon
 
 		/**
 		 * sets all elements to their default value.
-		 * 
+		 *
 		 */
 		virtual void Reset()
 		{
@@ -274,24 +274,20 @@ namespace HephCommon
 
 		/**
 		 * releases the resources.
-		 * 
+		 *
 		 */
 		virtual void Release()
 		{
-			if (this->pData != nullptr)
-			{
-				std::free(this->pData);
-				this->pData = nullptr;
-			}
+			BufferBase::Destroy(&this->pData, this->pData + this->size);
 			this->size = 0;
 		}
 
 		/**
 		 * gets the desired part of the buffer as a new instance.
-		 * 
+		 *
 		 * @param index index of the first element of the sub buffer.
 		 * @param size number of elements the sub buffer will store.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 * @throws InsufficientMemoryException
 		 */
@@ -307,55 +303,55 @@ namespace HephCommon
 
 		/**
 		 * adds the elements of the \a rhs to the start of the current buffer.
-		 * 
+		 *
 		 * @param rhs the buffer whose elements will be added.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 * @throws InsufficientMemoryException
 		 */
 		virtual void Prepend(const Tself& rhs)
 		{
-			this->pData = BufferBase::Prepend(this->pData, this->SizeAsByte(), rhs.pData, 
+			this->pData = BufferBase::Prepend(this->pData, this->SizeAsByte(), rhs.pData,
 				rhs.SizeAsByte());
 			this->size += rhs.size;
 		}
 
 		/**
 		 * adds the elements of the \a rhs to the end of the current buffer.
-		 * 
+		 *
 		 * @param rhs the buffer whose elements will be added.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 * @throws InsufficientMemoryException
 		 */
 		virtual void Append(const Tself& rhs)
 		{
-			this->pData = BufferBase::Append(this->pData, this->SizeAsByte(), rhs.pData, 
+			this->pData = BufferBase::Append(this->pData, this->SizeAsByte(), rhs.pData,
 				rhs.SizeAsByte());
 			this->size += rhs.size;
 		}
 
 		/**
 		 * adds the elements of the \a rhs to the provided position of the current buffer.
-		 * 
+		 *
 		 * @param rhs the buffer whose elements will be added.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 * @throws InsufficientMemoryException
 		 */
 		virtual void Insert(const Tself& rhs, size_t index)
 		{
-			this->pData = BufferBase::Insert(this->pData, this->SizeAsByte(), rhs.pData, 
+			this->pData = BufferBase::Insert(this->pData, this->SizeAsByte(), rhs.pData,
 				rhs.SizeAsByte(), BufferBase::SizeAsByte(index));
 			this->size += rhs.size;
 		}
 
 		/**
 		 * removes the desired portion of the buffer.
-		 * 
+		 *
 		 * @param index index of the first element that will be removed.
 		 * @param size number of elements to remove.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 */
 		virtual void Cut(size_t index, size_t size)
@@ -367,10 +363,10 @@ namespace HephCommon
 
 		/**
 		 * replaces the desired portion of the buffer with the contents of the \a rhs.
-		 * 
+		 *
 		 * @param rhs the buffer whose elements will be used to replace the current buffer's elements.
 		 * @param index index of the first element that will be replaced.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 */
 		virtual void Replace(const Tself& rhs, size_t index)
@@ -380,23 +376,23 @@ namespace HephCommon
 
 		/**
 		 * replaces the desired portion of the buffer with the contents of the \a rhs.
-		 * 
+		 *
 		 * @param rhs the buffer whose elements will be used to replace the current buffer's elements.
 		 * @param index index of the first element that will be replaced.
 		 * @param size number of elements to replace.
-		 * 
+		 *
 		 * @throws InvalidArgumentException
 		 */
 		virtual void Replace(const Tself& rhs, size_t index, size_t size)
 		{
-			BufferBase::Replace(this->pData, this->SizeAsByte(), rhs.pData, 
+			BufferBase::Replace(this->pData, this->SizeAsByte(), rhs.pData,
 				rhs.SizeAsByte(), BufferBase::SizeAsByte(index));
 		}
 
 		/**
 		 * changes the size of the buffer.<br>
 		 * if new size is less than the old, excess elements from the end will be removed.
-		 * 
+		 *
 		 * @throws InsufficientMemoryException
 		 */
 		virtual void Resize(size_t newSize)
@@ -427,7 +423,7 @@ namespace HephCommon
 
 		/**
 		 * reverses the buffer (first element to last and vice versa).
-		 * 
+		 *
 		 */
 		virtual void Reverse()
 		{
@@ -440,7 +436,7 @@ namespace HephCommon
 
 		/**
 		 * gets the pointer to the first element if buffer is not empty, otherwise nullptr.
-		 * 
+		 *
 		 */
 		Tdata* begin() const
 		{
@@ -449,7 +445,7 @@ namespace HephCommon
 
 		/**
 		 * gets the pointer to the end of the buffer (not the last element!) if buffer is not empty, otherwise nullptr.
-		 * 
+		 *
 		 */
 		Tdata* end() const
 		{
@@ -461,7 +457,7 @@ namespace HephCommon
 	protected:
 		/**
 		 * calculates the size in bytes.
-		 * 
+		 *
 		 * @param size number of elements.
 		 */
 		static size_t SizeAsByte(size_t size)
@@ -472,7 +468,7 @@ namespace HephCommon
 		/**
 		 * initializes the provided memory region.
 		 * @note this will be used for the classes and structs.
-		 * 
+		 *
 		 * @param pData start of the memory region.
 		 * @param pDataEnd end of the memory region.
 		 */
@@ -481,29 +477,64 @@ namespace HephCommon
 		{
 			for (; pData < pDataEnd; ++pData)
 			{
-				(*pData) = U();
+				new (pData) U();
 			}
 		}
 
 		/**
 		 * initializes the provided memory region.
 		 * @note this will be used for the primitive types (int, float, enum...).
-		 * 
+		 *
 		 * @param pData start of the memory region.
 		 * @param pDataEnd end of the memory region.
 		 */
 		template<typename U = Tdata>
 		static typename std::enable_if<not std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
 		{
-			(void)std::memset(pData, 0, (pDataEnd - pData) * sizeof(U));
+			(void)std::memset(pData, 0, ((uint8_t*)pDataEnd) - ((uint8_t*)pData));
+		}
+
+		/**
+		 * calls the destructor of each element then frees the memory and sets the pData to nullptr.
+		 * @note this will be used for the classes and structs.
+		 *
+		 * @param ppData pointer to the \a <b>BufferBase::pData</b>.
+		 */
+		template<typename U = Tdata>
+		static typename std::enable_if<std::is_class<U>::value>::type Destroy(U** ppData, U* pDataEnd)
+		{
+			if ((*ppData) != nullptr)
+			{
+				for (U* pData = *ppData; pData < pDataEnd; ++pData)
+					pData->~U();
+
+				std::free(*ppData);
+				(*ppData) = nullptr;
+			}
+		}
+
+		/**
+		 * frees the memory and sets the pData to nullptr.
+		 * @note this will be used for the primitive types (int, float, enum...).
+		 *
+		 * @param ppData pointer to the \a <b>BufferBase::pData</b>.
+		 */
+		template<typename U = Tdata>
+		static typename std::enable_if<not std::is_class<U>::value>::type Destroy(U** ppData, U* pDataEnd)
+		{
+			if ((*ppData) != nullptr)
+			{
+				std::free(*ppData);
+				(*ppData) = nullptr;
+			}
 		}
 
 		/**
 		 * allocates memory and initializes it.
-		 * 
+		 *
 		 * @param size_byte number of bytes to allocate.
 		 * @return pointer to the allocated memory.
-		 * 
+		 *
 		 * @throws InsufficientMemoryException
 		 */
 		static Tdata* Allocate(size_t size_byte)
@@ -515,10 +546,10 @@ namespace HephCommon
 
 		/**
 		 * allocates memory but does not initialize it.
-		 * 
+		 *
 		 * @param size_byte number of bytes to allocate.
 		 * @return pointer to the allocated memory.
-		 * 
+		 *
 		 * @throws InsufficientMemoryException
 		 */
 		static Tdata* AllocateUninitialized(size_t size_byte)
@@ -684,7 +715,7 @@ namespace HephCommon
 				}
 				else if (index_byte == 0 && cutSize_byte >= thisSize_byte)
 				{
-					std::free(pThisData);
+					BufferBase::Destroy(&pThisData, (Tdata*)(((uint8_t*)pThisData) + thisSize_byte));
 					cutSize_byte = thisSize_byte;
 					return nullptr;
 				}
@@ -704,7 +735,7 @@ namespace HephCommon
 					(void)std::memcpy(((uint8_t*)pResultData) + index_byte, ((uint8_t*)pThisData) + index_byte + cutSize_byte, thisSize_byte - index_byte - cutSize_byte);
 				}
 
-				std::free(pThisData);
+				BufferBase::Destroy(&pThisData, (Tdata*)(((uint8_t*)pThisData) + cutSize_byte));
 				return pResultData;
 			}
 
