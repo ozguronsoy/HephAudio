@@ -38,7 +38,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
-	class BufferAdditionOperator
+	class HEPH_API BufferAdditionOperator
 	{
 		static constexpr bool DEFINE_RHS_LHS_OPERATOR = !has_addition_operator<Rhs, Lhs, Lhs>::value && !has_addition_operator<Rhs, Lhs, Rhs>::value;
 
@@ -153,7 +153,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
-	class BufferSubtractionOperator
+	class HEPH_API BufferSubtractionOperator
 	{
 		static constexpr bool DEFINE_RHS_LHS_OPERATOR = !has_subtraction_operator<Rhs, Lhs, Lhs>::value && !has_subtraction_operator<Rhs, Lhs, Rhs>::value;
 
@@ -312,7 +312,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
-	class BufferMultiplicationOperator
+	class HEPH_API BufferMultiplicationOperator
 	{
 		static constexpr bool DEFINE_RHS_LHS_OPERATOR = !has_multiplication_operator<Rhs, Lhs, Lhs>::value && !has_multiplication_operator<Rhs, Lhs, Rhs>::value;
 
@@ -427,7 +427,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
-	class BufferDivisionOperator
+	class HEPH_API BufferDivisionOperator
 	{
 		static constexpr bool DEFINE_RHS_LHS_OPERATOR = !has_division_operator<Rhs, Lhs, Lhs>::value && !has_division_operator<Rhs, Lhs, Rhs>::value;
 
@@ -586,7 +586,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
-	class BufferArithmeticOperators :
+	class HEPH_API BufferArithmeticOperators :
 		public BufferAdditionOperator<Lhs, LhsData, Rhs, RhsData>,
 		public BufferSubtractionOperator<Lhs, LhsData, Rhs, RhsData>,
 		public BufferMultiplicationOperator<Lhs, LhsData, Rhs, RhsData>,
@@ -604,7 +604,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<class Lhs, typename LhsData>
-	class BufferUnaryMinusOperator
+	class HEPH_API BufferUnaryMinusOperator
 	{
 	public:
 		BufferUnaryMinusOperator()
