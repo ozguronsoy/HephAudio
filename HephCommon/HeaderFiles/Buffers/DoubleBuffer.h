@@ -46,12 +46,16 @@ namespace HephCommon
 	template class HEPH_API BufferDivisionOperator<DoubleBuffer, double>;
 	template class HEPH_API BufferMultiplicationOperator<DoubleBuffer, double>;
 	template class HEPH_API BufferArithmeticOperators<DoubleBuffer, double>;
+	template class HEPH_API BufferOperatorResultCreatedEventArgs<DoubleBuffer, double>;
+	template class HEPH_API BufferOperatorEvents<DoubleBuffer, double>;
 
 	template class HEPH_API BufferAdditionOperator<DoubleBuffer, double, DoubleBuffer, double>;
 	template class HEPH_API BufferSubtractionOperator<DoubleBuffer, double, DoubleBuffer, double>;
 	template class HEPH_API BufferDivisionOperator<DoubleBuffer, double, DoubleBuffer, double>;
 	template class HEPH_API BufferMultiplicationOperator<DoubleBuffer, double, DoubleBuffer, double>;
 	template class HEPH_API BufferArithmeticOperators<DoubleBuffer, double, DoubleBuffer, double>;
+	template class HEPH_API BufferOperatorResultCreatedEventArgs<DoubleBuffer, DoubleBuffer>;
+	template class HEPH_API BufferOperatorEvents<DoubleBuffer, DoubleBuffer>;
 	
 	template class HEPH_API BufferUnaryMinusOperator<DoubleBuffer, double>;
 }

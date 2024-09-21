@@ -14,7 +14,7 @@ namespace HephCommon
 	 * 
 	 */
 	template<typename Lhs, typename Rhs>
-	struct BufferOperatorResultCreatedEventArgs : public EventArgs
+	struct HEPH_API BufferOperatorResultCreatedEventArgs : public EventArgs
 	{
 		const Lhs& lhs;
 		const Rhs& rhs;
@@ -23,7 +23,7 @@ namespace HephCommon
 	};
 
 	template<typename Lhs, typename Rhs>
-	struct BufferOperatorEvents
+	struct HEPH_API BufferOperatorEvents
 	{
 		/**
 		 * invoked after the result object is created in non-assignment operators.

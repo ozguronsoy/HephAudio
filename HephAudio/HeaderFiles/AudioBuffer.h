@@ -114,12 +114,16 @@ namespace HephAudio
 	template class HEPH_API HephCommon::BufferDivisionOperator<AudioBuffer, heph_audio_sample_t>;
 	template class HEPH_API HephCommon::BufferMultiplicationOperator<AudioBuffer, heph_audio_sample_t>;
 	template class HEPH_API HephCommon::BufferArithmeticOperators<AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API HephCommon::BufferOperatorResultCreatedEventArgs<AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API HephCommon::BufferOperatorEvents<AudioBuffer, heph_audio_sample_t>;
 
 	template class HEPH_API HephCommon::BufferAdditionOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
 	template class HEPH_API HephCommon::BufferSubtractionOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
 	template class HEPH_API HephCommon::BufferDivisionOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
 	template class HEPH_API HephCommon::BufferMultiplicationOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
 	template class HEPH_API HephCommon::BufferArithmeticOperators<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API HephCommon::BufferOperatorResultCreatedEventArgs<AudioBuffer, AudioBuffer>;
+	template class HEPH_API HephCommon::BufferOperatorEvents<AudioBuffer, AudioBuffer>;
 
 	template class HEPH_API HephCommon::BufferUnaryMinusOperator<AudioBuffer, heph_audio_sample_t>;
 }
