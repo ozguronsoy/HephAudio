@@ -44,7 +44,7 @@ namespace HephAudio
 		 * generates a buffer.
 		 * 
 		 */
-		HephCommon::DoubleBuffer GenerateBuffer() const;
+		Heph::DoubleBuffer GenerateBuffer() const;
 
 		/**
 		 * gets the size of the window.

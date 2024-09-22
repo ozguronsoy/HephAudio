@@ -1,6 +1,6 @@
 #include "UserEventArgs.h"
 
-namespace HephCommon
+namespace Heph
 {
 	void* UserEventArgs::operator[](const std::string& key) const
 	{

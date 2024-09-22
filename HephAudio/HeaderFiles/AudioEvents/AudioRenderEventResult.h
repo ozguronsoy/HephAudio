@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief struct for storing the results of the audio render events.
 	 * 
 	 */
-	struct HEPH_API AudioRenderEventResult : public HephCommon::EventResult
+	struct HEPH_API AudioRenderEventResult : public Heph::EventResult
 	{
 		/**
 		 * contains the audio data that will be rendered.

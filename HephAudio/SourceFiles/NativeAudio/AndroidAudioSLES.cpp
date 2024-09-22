@@ -5,7 +5,7 @@
 
 #define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message, "OpenSL ES", "")); }
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

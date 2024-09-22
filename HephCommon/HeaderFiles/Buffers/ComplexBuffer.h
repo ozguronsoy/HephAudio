@@ -1,15 +1,15 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "Complex.h"
 #include "Buffers/DoubleBuffer.h"
 #include <initializer_list>
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
-	 * @brief buffer for storing \link HephCommon::Complex complex numbers.
+	 * @brief buffer for storing \link Heph::Complex complex numbers.
 	 * 
 	 */
 	class HEPH_API ComplexBuffer final :
@@ -56,10 +56,10 @@ namespace HephCommon
 
 	private:
 		static void AddEventHandlers();
-		static void ResultCreatedEventHandler(const HephCommon::EventParams& params);
-		static void ResultCreatedEventHandlerDouble(const HephCommon::EventParams& params);
-		static void ResultCreatedEventHandlerComplexBuffer(const HephCommon::EventParams& params);
-		static void ResultCreatedEventHandlerDoubleBuffer(const HephCommon::EventParams& params);
+		static void ResultCreatedEventHandler(const Heph::EventParams& params);
+		static void ResultCreatedEventHandlerDouble(const Heph::EventParams& params);
+		static void ResultCreatedEventHandlerComplexBuffer(const Heph::EventParams& params);
+		static void ResultCreatedEventHandlerDoubleBuffer(const Heph::EventParams& params);
 	};
 
 	// explicit instantiate for DLLs.

@@ -3,7 +3,7 @@
 #include "HephMath.h"
 #include <memory>
 
-namespace HephCommon
+namespace Heph
 {
 	ComplexBuffer::ComplexBuffer() : BufferBase<ComplexBuffer, Complex>() { ComplexBuffer::AddEventHandlers(); }
 	ComplexBuffer::ComplexBuffer(size_t size) : BufferBase<ComplexBuffer, Complex>(size) { ComplexBuffer::AddEventHandlers(); }

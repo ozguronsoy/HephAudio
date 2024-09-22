@@ -19,7 +19,7 @@
 #define APPLE_ENUMERATE_DEVICE_SOURCES_EXCPT(r, appleAudio, method, message) result = r; if (result != kAudioHardwareNoError) { free(deviceSources); RAISE_HEPH_EXCEPTION(appleAudio, HephException(result, method, message)); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 #define APPLE_EXCPT(r, appleAudio, method, message) result = r; if (result != kAudioHardwareNoError) { RAISE_AND_THROW_HEPH_EXCEPTION(appleAudio, HephException(result, method, message)); }
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

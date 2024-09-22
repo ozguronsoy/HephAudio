@@ -1,7 +1,7 @@
 #include "Fourier.h"
 #include "HephMath.h"
 
-namespace HephCommon
+namespace Heph
 {
 	ComplexBuffer Fourier::FFT(const DoubleBuffer& doubleBuffer)
 	{

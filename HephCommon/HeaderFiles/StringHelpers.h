@@ -1,12 +1,12 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "Guid.h"
 #include <string>
 #include <vector>
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief provides methods for string processing.

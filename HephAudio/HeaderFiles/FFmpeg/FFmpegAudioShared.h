@@ -60,7 +60,7 @@ namespace HephAudio
 
 		case HEPHAUDIO_FORMAT_TAG_PCM:
 		{
-			if (audioFormatInfo.endian == HephCommon::Endian::Little)
+			if (audioFormatInfo.endian == Heph::Endian::Little)
 			{
 				switch (audioFormatInfo.bitsPerSample)
 				{
@@ -100,7 +100,7 @@ namespace HephAudio
 
 		case HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT:
 		{
-			if (audioFormatInfo.endian == HephCommon::Endian::Little)
+			if (audioFormatInfo.endian == Heph::Endian::Little)
 			{
 				return audioFormatInfo.bitsPerSample == sizeof(double) ? AV_CODEC_ID_PCM_F64LE : AV_CODEC_ID_PCM_F32LE;
 			}

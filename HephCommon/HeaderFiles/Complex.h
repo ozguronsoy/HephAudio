@@ -1,9 +1,9 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief struct for representing complex numbers.
@@ -180,22 +180,22 @@ namespace HephCommon
 	};
 }
 
-inline constexpr HephCommon::Complex operator+(double lhs, const HephCommon::Complex& rhs)
+inline constexpr Heph::Complex operator+(double lhs, const Heph::Complex& rhs)
 {
 	return rhs + lhs;
 }
 
-inline constexpr HephCommon::Complex operator-(double lhs, const HephCommon::Complex& rhs)
+inline constexpr Heph::Complex operator-(double lhs, const Heph::Complex& rhs)
 {
-	return HephCommon::Complex(lhs - rhs.real, -rhs.imag);
+	return Heph::Complex(lhs - rhs.real, -rhs.imag);
 }
 
-inline constexpr HephCommon::Complex operator*(double lhs, const HephCommon::Complex& rhs)
+inline constexpr Heph::Complex operator*(double lhs, const Heph::Complex& rhs)
 {
 	return rhs * lhs;
 }
 
-inline constexpr HephCommon::Complex operator/(double lhs, const HephCommon::Complex& rhs)
+inline constexpr Heph::Complex operator/(double lhs, const Heph::Complex& rhs)
 {
-	return HephCommon::Complex(lhs, 0) / rhs;
+	return Heph::Complex(lhs, 0) / rhs;
 }

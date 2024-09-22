@@ -13,7 +13,7 @@
 #include <android/api-level.h>
 #endif
 
-using namespace HephCommon;
+using namespace Heph;
 using namespace HephAudio::Native;
 
 namespace HephAudio
@@ -204,7 +204,7 @@ namespace HephAudio
 		return this->pNativeAudio->DestroyAudioObject(pAudioObject);
 	}
 
-	bool Audio::DestroyAudioObject(const HephCommon::Guid& audioObjectId)
+	bool Audio::DestroyAudioObject(const Heph::Guid& audioObjectId)
 	{
 		return this->pNativeAudio->DestroyAudioObject(audioObjectId);
 	}
@@ -214,7 +214,7 @@ namespace HephAudio
 		return this->pNativeAudio->AudioObjectExists(pAudioObject);
 	}
 
-	bool Audio::AudioObjectExists(const HephCommon::Guid& audioObjectId) const
+	bool Audio::AudioObjectExists(const Heph::Guid& audioObjectId) const
 	{
 		return this->pNativeAudio->AudioObjectExists(audioObjectId);
 	}
@@ -224,7 +224,7 @@ namespace HephAudio
 		return this->pNativeAudio->GetAudioObject(index);
 	}
 
-	AudioObject* Audio::GetAudioObject(const HephCommon::Guid& audioObjectId)
+	AudioObject* Audio::GetAudioObject(const Heph::Guid& audioObjectId)
 	{
 		return this->pNativeAudio->GetAudioObject(audioObjectId);
 	}

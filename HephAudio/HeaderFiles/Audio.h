@@ -39,12 +39,12 @@ namespace HephAudio
 		Native::NativeAudio* pNativeAudio;
 
 	public:
-		void SetOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
-		void AddOnAudioDeviceAddedHandler(HephCommon::EventHandler handler);
-		void SetOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
-		void AddOnAudioDeviceRemovedHandler(HephCommon::EventHandler handler);
-		void SetOnCaptureHandler(HephCommon::EventHandler handler);
-		void AddOnCaptureHandler(HephCommon::EventHandler handler);
+		void SetOnAudioDeviceAddedHandler(Heph::EventHandler handler);
+		void AddOnAudioDeviceAddedHandler(Heph::EventHandler handler);
+		void SetOnAudioDeviceRemovedHandler(Heph::EventHandler handler);
+		void AddOnAudioDeviceRemovedHandler(Heph::EventHandler handler);
+		void SetOnCaptureHandler(Heph::EventHandler handler);
+		void AddOnCaptureHandler(Heph::EventHandler handler);
 		
 	public:
 		/** @copydoc default_constructor */
@@ -105,20 +105,20 @@ namespace HephAudio
 		/** @copydoc HephAudio::Native::NativeAudio::DestroyAudioObject(AudioObject*) */
 		bool DestroyAudioObject(AudioObject* pAudioObject);
 		
-		/** @copydoc HephAudio::Native::NativeAudio::DestroyAudioObject(const HephCommon::Guid&) */
-		bool DestroyAudioObject(const HephCommon::Guid& audioObjectId);
+		/** @copydoc HephAudio::Native::NativeAudio::DestroyAudioObject(const Heph::Guid&) */
+		bool DestroyAudioObject(const Heph::Guid& audioObjectId);
 		
 		/** @copydoc HephAudio::Native::NativeAudio::AudioObjectExists(AudioObject*) */
 		bool AudioObjectExists(AudioObject* pAudioObject) const;
 		
-		/** @copydoc HephAudio::Native::NativeAudio::AudioObjectExists(const HephCommon::Guid&) */
-		bool AudioObjectExists(const HephCommon::Guid& audioObjectId) const;
+		/** @copydoc HephAudio::Native::NativeAudio::AudioObjectExists(const Heph::Guid&) */
+		bool AudioObjectExists(const Heph::Guid& audioObjectId) const;
 		
 		/** @copydoc HephAudio::Native::NativeAudio::GetAudioObject(size_t) */
 		AudioObject* GetAudioObject(size_t index) const;
 		
-		/** @copydoc HephAudio::Native::NativeAudio::GetAudioObject(const HephCommon::Guid&) */
-		AudioObject* GetAudioObject(const HephCommon::Guid& audioObjectId);
+		/** @copydoc HephAudio::Native::NativeAudio::GetAudioObject(const Heph::Guid&) */
+		AudioObject* GetAudioObject(const Heph::Guid& audioObjectId);
 		
 		/** @copydoc HephAudio::Native::NativeAudio::GetAudioObject(const std::string&) */
 		AudioObject* GetAudioObject(const std::string& audioObjectName) const;

@@ -1,10 +1,10 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <type_traits>
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 #pragma region Arithmetic Operators
 	template<class Lhs, class Rhs = Lhs, class Ret = Lhs, typename = void>

@@ -27,7 +27,7 @@
 		return;                                                                                                 \
 	}
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

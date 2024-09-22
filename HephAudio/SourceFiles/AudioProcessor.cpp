@@ -5,7 +5,7 @@
 #include "AudioChannelMixingLookupTables.h"
 #include <thread>
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {
@@ -151,7 +151,7 @@ namespace HephAudio
 			{
 				for (size_t j = 0; j < buffer.formatInfo.channelLayout.count; j++)
 				{
-					HephCommon::ChangeEndian((((uint8_t*)buffer.pData) + i * frameSize + j * bytesPerSample), bytesPerSample);
+					Heph::ChangeEndian((((uint8_t*)buffer.pData) + i * frameSize + j * bytesPerSample), bytesPerSample);
 				}
 			}
 			buffer.formatInfo.endian = !buffer.formatInfo.endian;

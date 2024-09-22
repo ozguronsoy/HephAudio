@@ -2,7 +2,7 @@
 #include <random>
 
 
-namespace HephCommon
+namespace Heph
 {
 	Guid Guid::GenerateNew()
 	{

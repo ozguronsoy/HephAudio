@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "BufferBase.h"
 #include "HephMath.h"
 #include "BufferOperators.h"
@@ -8,7 +8,7 @@
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief base class for buffers that store arithmetic types. Provides operations and methods for arithmetic data.

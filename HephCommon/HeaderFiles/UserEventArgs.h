@@ -1,11 +1,11 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <string>
 #include <unordered_map>
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief class for passing custom data to the event handlers as key/value pairs.

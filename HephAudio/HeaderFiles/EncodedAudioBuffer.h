@@ -11,15 +11,15 @@ namespace HephAudio
 	 * @brief stores encoded audio data.
 	 * 
 	 */
-	class HEPH_API EncodedAudioBuffer : protected HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>
+	class HEPH_API EncodedAudioBuffer : protected Heph::BufferBase<EncodedAudioBuffer, uint8_t>
 	{
-		friend class HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>; // BufferBase cannot access its own members from inherited methods for some reason.
+		friend class Heph::BufferBase<EncodedAudioBuffer, uint8_t>; // BufferBase cannot access its own members from inherited methods for some reason.
 
 	public:
-		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::Size;
-		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::Resize;
-		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::begin;
-		using HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>::end;
+		using Heph::BufferBase<EncodedAudioBuffer, uint8_t>::Size;
+		using Heph::BufferBase<EncodedAudioBuffer, uint8_t>::Resize;
+		using Heph::BufferBase<EncodedAudioBuffer, uint8_t>::begin;
+		using Heph::BufferBase<EncodedAudioBuffer, uint8_t>::end;
 
 	protected:
 		/**
@@ -90,5 +90,5 @@ namespace HephAudio
 		void Add(const uint8_t* pData, size_t size);
 	};
 
-	template class HEPH_API HephCommon::BufferBase<EncodedAudioBuffer, uint8_t>;
+	template class HEPH_API Heph::BufferBase<EncodedAudioBuffer, uint8_t>;
 }

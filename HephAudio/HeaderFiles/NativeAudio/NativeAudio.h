@@ -160,19 +160,19 @@ namespace HephAudio
 			 * raised when an audio device is connected to the device or activated.
 			 * 
 			 */
-			HephCommon::Event OnAudioDeviceAdded;
+			Heph::Event OnAudioDeviceAdded;
 
 			/**
 			 * raised when an audio device is disconnected from the device or deactivated.
 			 * 
 			 */
-			HephCommon::Event OnAudioDeviceRemoved;
+			Heph::Event OnAudioDeviceRemoved;
 
 			/**
 			 * raised when sufficient amount (typically 10 ms) audio data is captured.
 			 * 
 			 */
-			HephCommon::Event OnCapture;
+			Heph::Event OnCapture;
 
 		public:
 			/** @copydoc default_constructor */
@@ -289,7 +289,7 @@ namespace HephAudio
 			 * @param audioObjectId unique identifier of the object which will be destroyed.
 			 * @return true if the object is found and destroyed, otherwise false.
 			 */
-			bool DestroyAudioObject(const HephCommon::Guid& audioObjectId);
+			bool DestroyAudioObject(const Heph::Guid& audioObjectId);
 
 			/**
 			 * checks whether an audio object exists.
@@ -305,7 +305,7 @@ namespace HephAudio
 			 * @param audioObjectId unique identifier of the object which will be checked.
 			 * @return true if the object is found, otherwise false.
 			 */
-			bool AudioObjectExists(const HephCommon::Guid& audioObjectId) const;
+			bool AudioObjectExists(const Heph::Guid& audioObjectId) const;
 
 			/**
 			 * gets the audio object.
@@ -321,7 +321,7 @@ namespace HephAudio
 			 * @param audioObjectId unique identifier of the audio object.
 			 * @return pointer to the audio object if found, otherwise nullptr.
 			 */
-			AudioObject* GetAudioObject(const HephCommon::Guid& audioObjectId);
+			AudioObject* GetAudioObject(const Heph::Guid& audioObjectId);
 
 			/**
 			 * gets the first audio object with the provided name.

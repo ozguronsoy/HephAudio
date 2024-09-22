@@ -118,7 +118,7 @@
 #define HEPH_FUNC __func__
 #endif
 
-namespace HephCommon
+namespace Heph
 {
 	enum Endian : uint8_t
 	{
@@ -147,13 +147,13 @@ namespace HephCommon
  * endianness of the current system.
  * 
  */
-#define HEPH_SYSTEM_ENDIAN HephCommon::systemEndian
+#define HEPH_SYSTEM_ENDIAN Heph::systemEndian
 
 /**
  * changes the endianness of the provided data.
  * 
  */
-#define HEPH_CHANGE_ENDIAN(pData, dataSize) HephCommon::ChangeEndian(pData, dataSize)
+#define HEPH_CHANGE_ENDIAN(pData, dataSize) Heph::ChangeEndian(pData, dataSize)
 
 	enum ConvolutionMode
 	{

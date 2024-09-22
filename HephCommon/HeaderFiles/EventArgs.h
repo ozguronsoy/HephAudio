@@ -1,12 +1,12 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
-	 * @brief base class for storing arguments for an \link HephCommon::Event event \endlink.
+	 * @brief base class for storing arguments for an \link Heph::Event event \endlink.
 	 * 
 	 */
 	struct HEPH_API EventArgs

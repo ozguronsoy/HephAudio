@@ -5,7 +5,7 @@
 #include <android/log.h>
 #endif
 
-namespace HephCommon
+namespace Heph
 {
 	void ConsoleLogger::Log(const std::string& message, const char* logLevel)
 	{

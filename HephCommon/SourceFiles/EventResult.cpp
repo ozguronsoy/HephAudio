@@ -1,6 +1,6 @@
 #include "EventResult.h"
 
-namespace HephCommon
+namespace Heph
 {
 	EventResult::EventResult() : isHandled(false) {}
 }

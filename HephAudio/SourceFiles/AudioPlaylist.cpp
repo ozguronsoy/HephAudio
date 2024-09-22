@@ -2,7 +2,7 @@
 #include "HephException.h"
 #include "ConsoleLogger.h"
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

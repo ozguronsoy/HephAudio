@@ -27,7 +27,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\ConsoleLogger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Guid.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephShared.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephException.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephTypeTraits.h" />
@@ -44,7 +44,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\ComplexBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephCommonShared.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephShared.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Stopwatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />

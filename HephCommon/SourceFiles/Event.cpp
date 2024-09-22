@@ -1,7 +1,7 @@
 #include "Event.h"
 #include "HephException.h"
 
-namespace HephCommon
+namespace Heph
 {
 	Event::Event() : eventHandlers(std::vector<EventHandler>(0)) { }
 	Event::operator bool() const

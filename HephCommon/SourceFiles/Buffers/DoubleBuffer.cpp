@@ -1,6 +1,6 @@
 #include "Buffers/DoubleBuffer.h"
 
-namespace HephCommon
+namespace Heph
 {
 	DoubleBuffer::DoubleBuffer() : SignedArithmeticBuffer<DoubleBuffer, double>() {}
 	DoubleBuffer::DoubleBuffer(size_t size) : SignedArithmeticBuffer<DoubleBuffer, double>(size) {}

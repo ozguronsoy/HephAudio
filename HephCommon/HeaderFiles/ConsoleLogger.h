@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <string>
 
 /** @file */
@@ -10,7 +10,7 @@
 #define HEPH_CL_SUCCESS "32"
 #define HEPH_CL_DEBUG 	"35"
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief class for printing formatted messages to the console.

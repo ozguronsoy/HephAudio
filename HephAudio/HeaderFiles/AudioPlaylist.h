@@ -253,8 +253,8 @@ namespace HephAudio
 
 	private:
 		void ChangeFile();
-		static void OnFinishedPlaying(const HephCommon::EventParams& eventParams);
-		static void ApplyTransitionEffect(const HephCommon::EventParams& eventParams);
+		static void OnFinishedPlaying(const Heph::EventParams& eventParams);
+		static void ApplyTransitionEffect(const Heph::EventParams& eventParams);
 		static void Transition_Delay(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult);
 		static void Transition_FadeIn(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult);
 		static void Transition_FadeOut(AudioPlaylist* pPlaylist, AudioRenderEventArgs* pRenderArgs, AudioRenderEventResult* pRenderResult);

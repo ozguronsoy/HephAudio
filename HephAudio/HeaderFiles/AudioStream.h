@@ -132,7 +132,7 @@ namespace HephAudio
 
 	private:
 		void Release(bool destroyAO);
-		static void OnRender(const HephCommon::EventParams& eventParams);
-		static void OnFinishedPlaying(const HephCommon::EventParams& eventParams);
+		static void OnRender(const Heph::EventParams& eventParams);
+		static void OnFinishedPlaying(const Heph::EventParams& eventParams);
 	};
 }

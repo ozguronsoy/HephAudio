@@ -10,10 +10,10 @@ namespace HephAudio
 	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate)
 		: AudioFormatInfo(formatTag, bitsPerSample, chLayout, sampleRate, bitRate, HEPH_SYSTEM_ENDIAN) {}
 
-	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, HephCommon::Endian endian)
+	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, Heph::Endian endian)
 		: AudioFormatInfo(formatTag, bitsPerSample, chLayout, sampleRate, 128000, endian) {}
 
-	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate, HephCommon::Endian endian)
+	AudioFormatInfo::AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate, Heph::Endian endian)
 		: formatTag(formatTag), bitsPerSample(bitsPerSample), channelLayout(chLayout)
 		, sampleRate(sampleRate), bitRate(bitRate), endian(endian)
 	{

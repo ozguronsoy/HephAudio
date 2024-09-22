@@ -105,7 +105,7 @@ namespace HephAudio
 		 * 
 		 * @throws InvalidArgumentException
 		 */
-		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const HephCommon::DoubleBuffer& windowBuffer);
+		void Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const Heph::DoubleBuffer& windowBuffer);
 	
 	private:
 		static std::string GetErrorString(int errorCode);

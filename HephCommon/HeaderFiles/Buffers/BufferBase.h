@@ -6,7 +6,7 @@
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	enum BufferFlags
 	{
@@ -211,7 +211,7 @@ namespace HephCommon
 
 		/**
 		 * gets the element at the provided index.
-		 * @note this method does not check if the index is valid, use \link HephCommon::BufferBase::At At \endlink method for error checking.
+		 * @note this method does not check if the index is valid, use \link Heph::BufferBase::At At \endlink method for error checking.
 		 *
 		 */
 		Tdata& operator[](size_t index) const

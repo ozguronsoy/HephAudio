@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "EventArgs.h"
 #include "EventResult.h"
 #include "EventParams.h"
@@ -9,7 +9,7 @@
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * method for handling events.

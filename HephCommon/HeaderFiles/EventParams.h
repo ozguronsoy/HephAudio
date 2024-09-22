@@ -1,12 +1,12 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "EventArgs.h"
 #include "EventResult.h"
 #include "UserEventArgs.h"
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief stores the information required to handle an event.

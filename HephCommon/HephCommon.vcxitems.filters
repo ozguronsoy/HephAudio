@@ -34,7 +34,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephCommonShared.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephShared.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Stopwatch.h">
@@ -66,7 +66,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Guid.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephCommonShared.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephShared.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephException.cpp">

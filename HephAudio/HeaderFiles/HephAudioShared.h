@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <cmath>
 
 /** @file */
@@ -25,7 +25,7 @@
 #define HEPHAUDIO_FORMAT_TAG_EXTENSIBLE			(0xFFFE)
 
 #if defined(HEPHAUDIO_INFO_LOGGING)
-#define HEPHAUDIO_LOG(logMessage, logType) HephCommon::ConsoleLogger::Log(logMessage, logType, "HephAudio")
+#define HEPHAUDIO_LOG(logMessage, logType) Heph::ConsoleLogger::Log(logMessage, logType, "HephAudio")
 #else
 #define HEPHAUDIO_LOG(logMessage, logType)
 #endif

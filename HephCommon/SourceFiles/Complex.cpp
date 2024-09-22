@@ -1,7 +1,7 @@
 #include "Complex.h"
 #include "HephMath.h"
 
-namespace HephCommon
+namespace Heph
 {
 	double Complex::Magnitude() const
 	{

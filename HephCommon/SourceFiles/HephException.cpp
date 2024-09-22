@@ -2,7 +2,7 @@
 #include "ConsoleLogger.h"
 #include "StringHelpers.h"
 
-namespace HephCommon
+namespace Heph
 {
 	HephException::HephException() : errorCode(HEPH_EC_OK) { }
 

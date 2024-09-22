@@ -49,7 +49,7 @@ namespace HephAudio
 		 * endianness of the audio samples.
 		 * 
 		 */
-		HephCommon::Endian endian;
+		Heph::Endian endian;
 
 		/** @copydoc default_constructor */
 		AudioFormatInfo();
@@ -84,7 +84,7 @@ namespace HephAudio
 		 * @param sampleRate @copydetails sampleRate
 		 * @param endian @copydetails endian
 		 */
-		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, HephCommon::Endian endian);
+		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, Heph::Endian endian);
 		
 		/**
 		 * @copydoc constructor
@@ -96,7 +96,7 @@ namespace HephAudio
 		 * @param bitRate @copydetails bitRate
 		 * @param endian @copydetails endian
 		 */
-		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate, HephCommon::Endian endian);
+		AudioFormatInfo(uint16_t formatTag, uint16_t bitsPerSample, AudioChannelLayout chLayout, uint32_t sampleRate, uint32_t bitRate, Heph::Endian endian);
 		
 		bool operator==(const AudioFormatInfo& rhs) const;
 		bool operator!=(const AudioFormatInfo& rhs) const;

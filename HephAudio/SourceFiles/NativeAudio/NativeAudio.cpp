@@ -11,7 +11,7 @@
 #include "ConsoleLogger.h"
 #include "HephMath.h"
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {
@@ -140,7 +140,7 @@ namespace HephAudio
 			return false;
 		}
 		
-		bool NativeAudio::DestroyAudioObject(const HephCommon::Guid& audioObjectId)
+		bool NativeAudio::DestroyAudioObject(const Heph::Guid& audioObjectId)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)
@@ -194,7 +194,7 @@ namespace HephAudio
 			return &audioObjects[index];
 		}
 		
-		AudioObject* NativeAudio::GetAudioObject(const HephCommon::Guid& audioObjectId)
+		AudioObject* NativeAudio::GetAudioObject(const Heph::Guid& audioObjectId)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			for (size_t i = 0; i < audioObjects.size(); i++)

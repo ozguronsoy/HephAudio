@@ -1,6 +1,6 @@
-#include "HephCommonShared.h"
+#include "HephShared.h"
 
-namespace HephCommon
+namespace Heph
 {
 	Endian GetSystemEndian()
 	{
@@ -17,5 +17,5 @@ namespace HephCommon
 			pData[dataSize - i - 1] = temp;
 		}
 	}
-	Endian systemEndian = HephCommon::GetSystemEndian();
+	Endian systemEndian = Heph::GetSystemEndian();
 }

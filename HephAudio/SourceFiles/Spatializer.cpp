@@ -12,7 +12,7 @@
 #pragma comment(lib, "libmysofa/lib/windows/zlib.lib")
 #endif
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

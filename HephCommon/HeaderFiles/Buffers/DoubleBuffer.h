@@ -1,10 +1,10 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "ArithmeticBuffer.h"
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief buffer for storing doubles.

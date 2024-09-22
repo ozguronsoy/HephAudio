@@ -3,7 +3,7 @@
 #include "HephException.h"
 #include <combaseapi.h>
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

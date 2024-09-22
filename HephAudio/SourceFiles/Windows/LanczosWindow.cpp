@@ -1,7 +1,7 @@
 #include "Windows/LanczosWindow.h"
 #include "HephMath.h"
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

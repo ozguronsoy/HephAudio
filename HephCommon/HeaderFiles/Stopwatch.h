@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <chrono>
 
 /** @file */
@@ -12,40 +12,40 @@
  * resets the thread local Stopwatch instance.
  *
  */
-#define HEPH_SW_RESET	HephCommon::Stopwatch::GetInstance().Reset()
+#define HEPH_SW_RESET	Heph::Stopwatch::GetInstance().Reset()
 
  /**
   * gets the elapsed time since the last reset of the thread local Stopwatch instance in seconds.
   *
   *
   */
-#define HEPH_SW_DT		HephCommon::Stopwatch::GetInstance().DeltaTime()
+#define HEPH_SW_DT		Heph::Stopwatch::GetInstance().DeltaTime()
 
   /**
    * gets the elapsed time since the last reset of the thread local Stopwatch instance in seconds.
    *
    */
-#define HEPH_SW_DT_S	HephCommon::Stopwatch::GetInstance().DeltaTime()
+#define HEPH_SW_DT_S	Heph::Stopwatch::GetInstance().DeltaTime()
 
    /**
 	* gets the elapsed time since the last reset of the thread local Stopwatch instance in milliseconds.
 	*
 	*/
-#define HEPH_SW_DT_MS	HephCommon::Stopwatch::GetInstance().DeltaTime(HEPH_SW_MILLI)
+#define HEPH_SW_DT_MS	Heph::Stopwatch::GetInstance().DeltaTime(HEPH_SW_MILLI)
 
 	/**
 	 * gets the elapsed time since the last reset of the thread local Stopwatch instance in microseconds.
 	 *
 	 */
-#define HEPH_SW_DT_US	HephCommon::Stopwatch::GetInstance().DeltaTime(HEPH_SW_MICRO)
+#define HEPH_SW_DT_US	Heph::Stopwatch::GetInstance().DeltaTime(HEPH_SW_MICRO)
 
 	 /**
 	  * gets the elapsed time since the last reset of the thread local Stopwatch instance in nanoseconds.
 	  *
 	  */
-#define HEPH_SW_DT_NS	HephCommon::Stopwatch::GetInstance().DeltaTime(HEPH_SW_NANO)
+#define HEPH_SW_DT_NS	Heph::Stopwatch::GetInstance().DeltaTime(HEPH_SW_NANO)
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief class for measuring time.

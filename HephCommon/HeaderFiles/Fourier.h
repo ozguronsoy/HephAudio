@@ -1,12 +1,12 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "Complex.h"
 #include "Buffers/ComplexBuffer.h"
 #include "Buffers/DoubleBuffer.h"
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief class for calculating FFT and Convolution.

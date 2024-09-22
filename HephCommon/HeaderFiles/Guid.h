@@ -1,10 +1,10 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <cinttypes>
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 	/**
 	 * @brief struct for storing globally unique identifiers.

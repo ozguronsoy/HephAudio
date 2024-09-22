@@ -6,7 +6,7 @@
 
 #define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); }
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

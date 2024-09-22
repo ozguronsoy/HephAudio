@@ -1,6 +1,6 @@
 #include "Stopwatch.h"
 
-namespace HephCommon
+namespace Heph
 {
 	Stopwatch::Stopwatch() : tp(std::chrono::steady_clock::now()) {}
 	

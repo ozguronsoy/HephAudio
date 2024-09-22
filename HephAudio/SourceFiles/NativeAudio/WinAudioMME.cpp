@@ -10,7 +10,7 @@
 #define WINAUDIOMME_RENDER_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); goto RENDER_EXIT; }
 #define WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { RAISE_HEPH_EXCEPTION(winAudioMME, HephException(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {

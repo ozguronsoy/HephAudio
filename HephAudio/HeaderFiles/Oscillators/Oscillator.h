@@ -67,14 +67,14 @@ namespace HephAudio
 		 * generates a one-period-long buffer.
 		 * 
 		 */
-		HephCommon::DoubleBuffer GenerateBuffer() const;
+		Heph::DoubleBuffer GenerateBuffer() const;
 
 		/**
 		 * generates a buffer with the provided size.
 		 * 
 		 * @param size size of the buffer in samples.
 		 */
-		HephCommon::DoubleBuffer GenerateBuffer(size_t size) const;
+		Heph::DoubleBuffer GenerateBuffer(size_t size) const;
 
 		/**
 		 * generates a buffer with the provided size.
@@ -82,6 +82,6 @@ namespace HephAudio
 		 * @param index index of the first sample.
 		 * @param size size of the buffer in samples.
 		 */
-		HephCommon::DoubleBuffer GenerateBuffer(size_t index, size_t size) const;
+		Heph::DoubleBuffer GenerateBuffer(size_t index, size_t size) const;
 	};
 }

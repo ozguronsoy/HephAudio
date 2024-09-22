@@ -1,12 +1,12 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include "BufferBase.h"
 #include "HephTypeTraits.h"
 #include "Event.h"
 
 /** @file */
 
-namespace HephCommon
+namespace Heph
 {
 #pragma region Event
 	/**

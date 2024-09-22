@@ -4,7 +4,7 @@
 
 #define HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE 512
 
-namespace HephCommon
+namespace Heph
 {
 	std::wstring StringHelpers::StrToWide(const std::string& str)
 	{

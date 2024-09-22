@@ -40,7 +40,7 @@ namespace HephAudio
 		 * unique identifier of the object.
 		 * 
 		 */
-		HephCommon::Guid id;
+		Heph::Guid id;
 
 		/**
 		 * path of the file the object is created with, or empty if created via \link HephAudio::Native::NativeAudio::CreateAudioObject NativeAudio::CreateAudioObject.
@@ -91,13 +91,13 @@ namespace HephAudio
 		 * event that will be invoked each time before rendering (playing) audio data.
 		 * 
 		 */
-		HephCommon::Event OnRender;
+		Heph::Event OnRender;
 
 		/**
 		 * event that will be invoked each time when the object finishes playing.
 		 * 
 		 */
-		HephCommon::Event OnFinishedPlaying;
+		Heph::Event OnFinishedPlaying;
 		
 		/** @copydoc default_constructor */
 		AudioObject();
@@ -120,7 +120,7 @@ namespace HephAudio
 		 */
 		void SetPosition(double position);
 
-		static void DefaultRenderHandler(const HephCommon::EventParams& eventParams);
-		static void MatchFormatRenderHandler(const HephCommon::EventParams& eventParams);
+		static void DefaultRenderHandler(const Heph::EventParams& eventParams);
+		static void MatchFormatRenderHandler(const Heph::EventParams& eventParams);
 	};
 }

@@ -7,7 +7,7 @@
 #include "HephMath.h"
 #include "HephException.h"
 
-using namespace HephCommon;
+using namespace Heph;
 
 namespace HephAudio
 {
@@ -74,7 +74,7 @@ namespace HephAudio
 		pRenderArgs->pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
 		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
 	}
-	void AudioObject::MatchFormatRenderHandler(const HephCommon::EventParams& eventParams)
+	void AudioObject::MatchFormatRenderHandler(const Heph::EventParams& eventParams)
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;

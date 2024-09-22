@@ -45,13 +45,13 @@ namespace HephAudio
 		 * splits the audio channels into separate buffers.
 		 * 
 		 */
-		static std::vector<HephCommon::DoubleBuffer> SplitChannels(const AudioBuffer& buffer);
+		static std::vector<Heph::DoubleBuffer> SplitChannels(const AudioBuffer& buffer);
 
 		/**
 		 * merges the channels.
 		 * 
 		 */
-		static AudioBuffer MergeChannels(const std::vector<HephCommon::DoubleBuffer>& channels, uint32_t sampleRate);
+		static AudioBuffer MergeChannels(const std::vector<Heph::DoubleBuffer>& channels, uint32_t sampleRate);
 
 		/**
 		 * changes the endianness of the audio samples.<br>

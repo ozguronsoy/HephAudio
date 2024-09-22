@@ -1,5 +1,5 @@
 #pragma once
-#include "HephCommonShared.h"
+#include "HephShared.h"
 #include <cmath>
 #include <cinttypes>
 #include <float.h>
