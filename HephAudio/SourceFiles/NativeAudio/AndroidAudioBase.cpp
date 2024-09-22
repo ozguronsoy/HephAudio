@@ -2,6 +2,9 @@
 #include "NativeAudio/AndroidAudioBase.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
+#include "Exceptions/Exception.h"
+#include "Exceptions/ExternalException.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
@@ -16,13 +19,13 @@ namespace HephAudio
 			deviceApiLevel = android_get_device_api_level();
 			if (deviceApiLevel == -1)
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "An error occurred while getting the current device's API level."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_FUNC, "An error occurred while getting the current device's API level."));
 			}
 			else if (deviceApiLevel >= 23)
 			{
 				if (AndroidAudioBase::jvm == nullptr)
 				{
-					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "jvm cannot be nullptr. Set the AndroidAudioBase::jvm static field first."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "jvm cannot be nullptr. Set the AndroidAudioBase::jvm static field first."));
 				}
 			}
 		}
@@ -93,12 +96,12 @@ namespace HephAudio
 				jniResult = AndroidAudioBase::jvm->AttachCurrentThread(pEnv, nullptr);
 				if (jniResult != JNI_OK)
 				{
-					HEPH_RAISE_EXCEPTION(this, Exception(jniResult, HEPH_FUNC, "Failed to attach to the current thread."));
+					HEPH_RAISE_EXCEPTION(this, ExternalException(HEPH_FUNC, "Failed to attach to the current thread.", "JNI", ""));
 				}
 			}
 			else if (jniResult != JNI_OK)
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(jniResult, HEPH_FUNC, "Could not get the current jni environment."));
+				HEPH_RAISE_EXCEPTION(this, ExternalException(HEPH_FUNC, "Could not get the current jni environment.", "JNI", ""));
 			}
 		}
 		std::string AndroidAudioBase::JStringToString(JNIEnv* env, jstring jStr) const

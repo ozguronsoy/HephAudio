@@ -1,5 +1,4 @@
 #include "AudioProcessor.h"
-#include "Exception.h"
 #include "Fourier.h"
 #include "ConsoleLogger.h"
 #include "AudioChannelMixingLookupTables.h"

@@ -1,7 +1,7 @@
 #include "AudioBuffer.h"
 #include "AudioProcessor.h"
-#include "Exception.h"
 #include "HephMath.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
@@ -134,7 +134,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Prepend(rhs);
@@ -149,7 +149,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Append(rhs);
@@ -164,7 +164,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Insert(rhs, frameIndex * this->formatInfo.channelLayout.count);
@@ -189,7 +189,7 @@ namespace HephAudio
 	{
 		if (this->formatInfo != rhs.formatInfo)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both buffers must have the same audio format"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Both buffers must have the same audio format"));
 		}
 
 		SignedArithmeticBuffer::Replace(rhs, frameIndex * this->formatInfo.channelLayout.count, frameCount * this->formatInfo.channelLayout.count);
@@ -269,7 +269,7 @@ namespace HephAudio
 
 		if (pArgs->lhs.formatInfo != pArgs->rhs.formatInfo)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(&pArgs->lhs, Exception(HEPH_EC_INVALID_ARGUMENT, "AudioBuffer", "Operands must have the same audio format"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(&pArgs->lhs, InvalidArgumentException(HEPH_FUNC, "Operands must have the same audio format"));
 		}
 
 		pArgs->result.frameCount = pArgs->lhs.frameCount;

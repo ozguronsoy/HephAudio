@@ -28,7 +28,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Guid.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exception.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\Exception.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h">
@@ -49,6 +49,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\DoubleBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephTypeTraits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferOperators.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\ExceptionEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\InvalidArgumentException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\NotImplementedException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\InsufficientMemoryException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\NotFoundException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\InvalidOperationException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\TimeoutException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\NotSupportedException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\ExternalException.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\ComplexBuffer.cpp">
@@ -69,7 +78,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephShared.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exception.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\Exception.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Stopwatch.cpp">
@@ -82,6 +91,15 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\DoubleBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EventResult.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\ExceptionEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\InvalidArgumentException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\NotImplementedException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\InsufficientMemoryException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\NotFoundException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\InvalidOperationException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\TimeoutException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\NotSupportedException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\ExternalException.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="HeaderFiles">

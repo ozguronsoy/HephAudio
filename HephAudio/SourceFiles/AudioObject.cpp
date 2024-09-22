@@ -5,7 +5,7 @@
 #include "AudioEvents/AudioRenderEventResult.h"
 #include "AudioEvents/AudioFinishedPlayingEventArgs.h"
 #include "HephMath.h"
-#include "Exception.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
@@ -55,12 +55,12 @@ namespace HephAudio
 	{
 		if (position > 1.0)
 		{
-			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "position must be between 0 and 1"));
+			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "position must be between 0 and 1"));
 			position = 1.0;
 		}
 		else if (position < 0.0)
 		{
-			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "position must be between 0 and 1"));
+			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "position must be between 0 and 1"));
 			position = 0.0;
 		}
 		this->frameIndex = position * this->buffer.FrameCount();

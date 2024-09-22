@@ -1,6 +1,6 @@
 #include "AudioPlaylist.h"
-#include "Exception.h"
 #include "ConsoleLogger.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
@@ -130,7 +130,7 @@ namespace HephAudio
 	{
 		if (index > this->files.size())
 		{
-			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
+			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 			index = this->files.size();
 		}
 
@@ -146,7 +146,7 @@ namespace HephAudio
 		{
 			if (index > this->files.size())
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
+				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 				index = this->files.size();
 			}
 
@@ -161,7 +161,7 @@ namespace HephAudio
 	{
 		if (index >= this->files.size())
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 		}
 
 		this->files.erase(this->files.begin() + index);
@@ -176,7 +176,7 @@ namespace HephAudio
 		{
 			if (index >= this->files.size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 			}
 
 			if (index + count >= this->files.size())

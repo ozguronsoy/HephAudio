@@ -1,5 +1,5 @@
 #include "StringHelpers.h"
-#include "Exception.h"
+#include "Exceptions/InsufficientMemoryException.h"
 #include <cstdlib>
 
 #define HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE 512
@@ -14,7 +14,7 @@ namespace Heph
 			wchar_t* pTemp = (wchar_t*)malloc(strSize_byte);
 			if (pTemp == nullptr)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, InsufficientMemoryException(HEPH_FUNC, "Insufficient memory."));
 			}
 			(void)memset(pTemp, 0, strSize_byte);
 
@@ -35,7 +35,7 @@ namespace Heph
 			char* pTemp = (char*)malloc(strSize_byte);
 			if (pTemp == nullptr)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, InsufficientMemoryException(HEPH_FUNC, "Insufficient memory."));
 			}
 			(void)memset(pTemp, 0, strSize_byte);
 

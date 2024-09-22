@@ -1,5 +1,5 @@
 #include "Event.h"
-#include "Exception.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 namespace Heph
 {
@@ -47,7 +47,7 @@ namespace Heph
 	{
 		if (index >= this->eventHandlers.size())
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 		}
 		return this->eventHandlers[index];
 	}
@@ -67,7 +67,7 @@ namespace Heph
 	{
 		if (index > this->eventHandlers.size())
 		{
-			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of range."));
+			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 			index = this->eventHandlers.size();
 		}
 		this->eventHandlers.insert(this->eventHandlers.begin() + index, handler);
@@ -87,7 +87,7 @@ namespace Heph
 	{
 		if (index >= this->eventHandlers.size())
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of bounds."));
 		}
 
 		this->eventHandlers.erase(this->eventHandlers.begin() + index);

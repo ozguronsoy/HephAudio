@@ -2,13 +2,17 @@
 #include "NativeAudio/WinAudioMME.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
+#include "Exceptions/ExternalException.h"
+#include "Exceptions/InsufficientMemoryException.h"
+#include "Exceptions/NotFoundException.h"
+#include "Exceptions/NotSupportedException.h"
 #include <VersionHelpers.h>
 
 #define MAX_STOP_WAIT 200
 #define HAS_FORMAT_TAG(formatTag) ((dwFormats & formatTag) == formatTag)
-#define WINAUDIOMME_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { HEPH_RAISE_AND_THROW_EXCEPTION(winAudioMME, Exception(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); }
-#define WINAUDIOMME_RENDER_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { HEPH_RAISE_EXCEPTION(winAudioMME, Exception(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); goto RENDER_EXIT; }
-#define WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { HEPH_RAISE_EXCEPTION(winAudioMME, Exception(mmres, method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIOMME_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { HEPH_RAISE_AND_THROW_EXCEPTION(winAudioMME, ExternalException(method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); }
+#define WINAUDIOMME_RENDER_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { HEPH_RAISE_EXCEPTION(winAudioMME, ExternalException(method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); goto RENDER_EXIT; }
+#define WINAUDIOMME_ENUMERATION_CALLBACK_EXCPT(mmr, winAudioMME, method, message) mmres = mmr; if(mmres != MMSYSERR_NOERROR) { HEPH_RAISE_EXCEPTION(winAudioMME, ExternalException(method, message, "MMEAPI", WinAudioMME::GetErrorString(mmres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 using namespace Heph;
 
@@ -68,7 +72,7 @@ namespace HephAudio
 			this->renderDeviceId = StringHelpers::ToString(deviceID);
 			if (deviceID >= waveOutGetNumDevs())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Render device not found."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotFoundException(HEPH_FUNC, "Render device not found."));
 			}
 
 			WAVEOUTCAPS deviceCaps{ 0 };
@@ -98,7 +102,7 @@ namespace HephAudio
 						free(this->renderHdrs[j].lpData);
 						this->renderHdrs[j].lpData = nullptr;
 					}
-					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, InsufficientMemoryException(HEPH_FUNC, "Insufficient memory."));
 				}
 				memset(this->renderHdrs[i].lpData, 0, this->renderHdrs[i].dwBufferLength);
 			}
@@ -157,7 +161,7 @@ namespace HephAudio
 			this->captureDeviceId = StringHelpers::ToString(deviceID);
 			if (deviceID >= waveInGetNumDevs())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Capture device not found."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotFoundException(HEPH_FUNC, "Capture device not found."));
 			}
 
 			WAVEINCAPS deviceCaps{ 0 };
@@ -188,7 +192,7 @@ namespace HephAudio
 						free(this->captureHdrs[j].lpData);
 						this->captureHdrs[j].lpData = nullptr;
 					}
-					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, InsufficientMemoryException(HEPH_FUNC, "Insufficient memory."));
 				}
 				memset(this->captureHdrs[i].lpData, 0, this->captureHdrs[i].dwBufferLength);
 			}
@@ -238,11 +242,11 @@ namespace HephAudio
 		}
 		void WinAudioMME::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "Native params not supported."));
+			HEPH_RAISE_EXCEPTION(this, NotSupportedException(HEPH_FUNC, "Native params not supported."));
 		}
 		void WinAudioMME::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "Native params not supported."));
+			HEPH_RAISE_EXCEPTION(this, NotSupportedException(HEPH_FUNC, "Native params not supported."));
 		}
 		bool WinAudioMME::EnumerateAudioDevices()
 		{
@@ -450,7 +454,7 @@ namespace HephAudio
 					const MMRESULT mmres = waveOutWrite(hwo, pwhd, sizeof(WAVEHDR));
 					if (mmres != MMSYSERR_NOERROR)
 					{
-						HEPH_RAISE_EXCEPTION(pAudio, Exception(mmres, HEPH_FUNC, "An error occurred while rendering.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
+						HEPH_RAISE_EXCEPTION(pAudio, ExternalException(HEPH_FUNC, "An error occurred while rendering.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
 			}
@@ -477,7 +481,7 @@ namespace HephAudio
 					const MMRESULT mmres = waveInAddBuffer(hwi, pwhd, sizeof(WAVEHDR));
 					if (mmres != MMSYSERR_NOERROR)
 					{
-						HEPH_RAISE_EXCEPTION(pAudio, Exception(mmres, HEPH_FUNC, "An error occurred while capturing.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
+						HEPH_RAISE_EXCEPTION(pAudio, ExternalException(HEPH_FUNC, "An error occurred while capturing.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
 			}

@@ -6,7 +6,6 @@
 #include "IAudioDecoder.h"
 #include "IAudioEncoder.h"
 #include "Params/NativeAudioParams.h"
-#include "Exception.h"
 #include "Event.h"
 #include "StringHelpers.h"
 #include <memory>

@@ -14,6 +14,8 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\ExternalException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\ExceptionEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\ArithmeticBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Buffers\BufferOperators.h" />
@@ -28,14 +30,29 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Fourier.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Guid.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephShared.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exception.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\Exception.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephTypeTraits.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Stopwatch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\StringHelpers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\UserEventArgs.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\InvalidArgumentException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\NotImplementedException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\InsufficientMemoryException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\NotFoundException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\InvalidOperationException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\TimeoutException.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Exceptions\NotSupportedException.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\ExternalException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\NotSupportedException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\InvalidOperationException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\NotFoundException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\InsufficientMemoryException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\NotImplementedException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\InvalidArgumentException.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\ExceptionEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Buffers\DoubleBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Complex.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EventResult.cpp" />
@@ -45,9 +62,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Event.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\ConsoleLogger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephShared.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exception.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\Exception.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Stopwatch.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\StringHelpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\UserEventArgs.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Exceptions\TimeoutException.cpp" />
   </ItemGroup>
 </Project>

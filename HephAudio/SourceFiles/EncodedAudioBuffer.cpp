@@ -1,4 +1,5 @@
 #include "EncodedAudioBuffer.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
@@ -16,7 +17,7 @@ namespace HephAudio
 	{
 		if (pData == nullptr)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pData cannot be null"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "pData cannot be null"));
 		}
 		else if (this->size > 0)
 		{
@@ -67,7 +68,7 @@ namespace HephAudio
 	{
 		if (pData == nullptr)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pData cannot be null"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "pData cannot be null"));
 		}
 		else if (size > 0)
 		{

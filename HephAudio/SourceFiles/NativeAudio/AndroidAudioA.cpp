@@ -3,8 +3,11 @@
 #include "HephMath.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
+#include "Exceptions/ExternalException.h"
+#include "Exceptions/InvalidArgumentException.h"
+#include "Exceptions/NotSupportedException.h"
 
-#define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { HEPH_RAISE_AND_THROW_EXCEPTION(androidAudio, Exception(ares, method, message, "AAudio", AAudio_convertResultToText(ares))); }
+#define ANDROIDAUDIO_EXCPT(ar, androidAudio, method, message) ares = ar;  if(ares != AAUDIO_OK) { HEPH_RAISE_AND_THROW_EXCEPTION(androidAudio, ExternalException(method, message, "AAudio", AAudio_convertResultToText(ares))); }
 
 using namespace Heph;
 
@@ -18,7 +21,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_NOT_IMPLEMENTED, HEPH_FUNC, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotSupportedException(HEPH_FUNC, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL) + "."));
 			}
 
 			this->EnumerateAudioDevices();
@@ -271,7 +274,7 @@ namespace HephAudio
 			AAudioParams* pAAudioParams = dynamic_cast<AAudioParams*>(&nativeParams);
 			if (pAAudioParams == nullptr)
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a AAudioParams instance."));
+				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "nativeParams must be a AAudioParams instance."));
 				return;
 			}
 			(*pAAudioParams) = this->params;
@@ -281,7 +284,7 @@ namespace HephAudio
 			const AAudioParams* pAAudioParams = dynamic_cast<const AAudioParams*>(&nativeParams);
 			if (pAAudioParams == nullptr)
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a AAudioParams instance."));
+				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "nativeParams must be a AAudioParams instance."));
 				return;
 			}
 			this->params = *pAAudioParams;
@@ -327,7 +330,7 @@ namespace HephAudio
 		void AndroidAudioA::ErrorCallback(AAudioStream* stream, void* userData, aaudio_result_t error)
 		{
 			const std::string direction = AAudioStream_getDirection(stream) == AAUDIO_DIRECTION_OUTPUT ? "rendering" : "capturing";
-			HEPH_RAISE_EXCEPTION(userData, Exception(error, HEPH_FUNC, "An error occurred while " + direction, "AAudio", AAudio_convertResultToText(error)));
+			HEPH_RAISE_EXCEPTION(userData, ExternalException(HEPH_FUNC, "An error occurred while " + direction, "AAudio", AAudio_convertResultToText(error)));
 		}
 	}
 }

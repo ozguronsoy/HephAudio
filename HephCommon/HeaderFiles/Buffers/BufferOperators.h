@@ -3,6 +3,7 @@
 #include "BufferBase.h"
 #include "HephTypeTraits.h"
 #include "Event.h"
+#include "Exceptions/InvalidOperationException.h"
 
 /** @file */
 
@@ -87,7 +88,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
 
@@ -115,14 +116,14 @@ namespace Heph
 		{
 			if (lhs.Size() != rhs.Size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both operands must have the same size"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidArgumentException(HEPH_FUNC, "Both operands must have the same size"));
 			}
 
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC,
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC,
 					"BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
@@ -202,7 +203,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
 
@@ -221,7 +222,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
 
@@ -249,14 +250,14 @@ namespace Heph
 		{
 			if (lhs.Size() != rhs.Size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both operands must have the same size"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidArgumentException(HEPH_FUNC, "Both operands must have the same size"));
 			}
 
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC,
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC,
 					"BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
@@ -274,14 +275,14 @@ namespace Heph
 		{
 			if (lhs.Size() != rhs.Size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both operands must have the same size"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidArgumentException(HEPH_FUNC, "Both operands must have the same size"));
 			}
 
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC,
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC,
 					"BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
@@ -361,7 +362,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
 
@@ -389,14 +390,14 @@ namespace Heph
 		{
 			if (lhs.Size() != rhs.Size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both operands must have the same size"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidArgumentException(HEPH_FUNC, "Both operands must have the same size"));
 			}
 
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC,
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC,
 					"BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
@@ -476,7 +477,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
 
@@ -495,7 +496,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
 
@@ -523,14 +524,14 @@ namespace Heph
 		{
 			if (lhs.Size() != rhs.Size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both operands must have the same size"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidArgumentException(HEPH_FUNC, "Both operands must have the same size"));
 			}
 
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC,
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC,
 					"BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
@@ -548,14 +549,14 @@ namespace Heph
 		{
 			if (lhs.Size() != rhs.Size())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Both operands must have the same size"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidArgumentException(HEPH_FUNC, "Both operands must have the same size"));
 			}
 
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
 			if (!BufferOperatorEvents<Lhs, Rhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC,
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC,
 					"BufferOperatorEvents::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Rhs>::OnResultCreated(&args, nullptr);
@@ -623,7 +624,7 @@ namespace Heph
 			BufferOperatorResultCreatedEventArgs<Lhs, Lhs> args(lhs, lhs, result);
 			if (!BufferOperatorEvents<Lhs, Lhs>::OnResultCreated)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "BufferUnaryMinusOperator::OnResultCreated event must be handled"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(&lhs, InvalidOperationException(HEPH_FUNC, "BufferUnaryMinusOperator::OnResultCreated event must be handled"));
 			}
 			BufferOperatorEvents<Lhs, Lhs>::OnResultCreated(&args, nullptr);
 

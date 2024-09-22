@@ -1,4 +1,5 @@
 #include "FFmpeg/FFmpegEncodedAudioBuffer.h"
+#include "Exceptions/InsufficientMemoryException.h"
 
 using namespace Heph;
 
@@ -120,7 +121,7 @@ namespace HephAudio
 			this->extraData = av_malloc(extraDataSize + AV_INPUT_BUFFER_PADDING_SIZE);
 			if (this->extraData == nullptr)
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InsufficientMemoryException(HEPH_FUNC, "Insufficient memory"));
 			}
 			(void)std::memcpy(this->extraData, pExtraData, extraDataSize);
 
@@ -136,7 +137,7 @@ namespace HephAudio
 		uint8_t* pTemp = (uint8_t*)std::realloc(this->pData, (oldSize + 1) * sizeof(AVPacket*));
 		if (pTemp == nullptr)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InsufficientMemoryException(HEPH_FUNC, "Insufficient memory"));
 		}
 
 		this->pData = pTemp;

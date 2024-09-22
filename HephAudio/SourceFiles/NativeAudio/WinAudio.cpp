@@ -2,6 +2,10 @@
 #include "NativeAudio/WinAudio.h"
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
+#include "Exceptions/ExternalException.h"
+#include "Exceptions/InvalidArgumentException.h"
+#include "Exceptions/NotSupportedException.h"
+#include "Exceptions/TimeoutException.h"
 #include <VersionHelpers.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <audioclient.h>
@@ -11,11 +15,11 @@ using namespace Heph;
 using namespace Microsoft::WRL;
 
 #define PKEY_DEVICE_FRIENDLY_NAME {{ 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0 } }, 14}
-#define WINAUDIO_EXCPT_RET_VOID(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return; }
-#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return retval; }
-#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); goto RENDER_EXIT; }
-#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); goto CAPTURE_EXIT; }
-#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIO_EXCPT_RET_VOID(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, ExternalException(method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return; }
+#define WINAUDIO_EXCPT(hr, method, message, retval) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, ExternalException(method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return retval; }
+#define WINAUDIO_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, ExternalException(method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); goto RENDER_EXIT; }
+#define WINAUDIO_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, ExternalException(method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); goto CAPTURE_EXIT; }
+#define WINAUDIO_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, ExternalException(method, message, "WASAPI", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 #define WINAUDIO_MS_TO_REF_TIME(ms) (ms * 1e4)
 
 namespace HephAudio
@@ -26,7 +30,7 @@ namespace HephAudio
 		{
 			if (!IsWindowsVistaOrGreater())
 			{
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(E_NOINTERFACE, HEPH_FUNC, "OS version must be at least Windows Vista."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotSupportedException(HEPH_FUNC, "OS version must be at least Windows Vista."));
 			}
 
 			this->InitializeCOM();
@@ -39,7 +43,7 @@ namespace HephAudio
 				i++;
 				if (i == 20)
 				{
-					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Time-out while waiting for the creation of the device enumerator."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, TimeoutException(HEPH_FUNC, "Timeout while waiting for the creation of the device enumerator."));
 				}
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(this->deviceEnumerationPeriod_ms + 100)); // wait for the first device enumeration
@@ -147,7 +151,7 @@ namespace HephAudio
 			WasapiParams* pWasapiParams = dynamic_cast<WasapiParams*>(&nativeParams);
 			if (pWasapiParams == nullptr)
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a WasapiParams instance."));
+				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "nativeParams must be a WasapiParams instance."));
 				return;
 			}
 			(*pWasapiParams) = this->params;
@@ -157,7 +161,7 @@ namespace HephAudio
 			const WasapiParams* pWasapiParams = dynamic_cast<const WasapiParams*>(&nativeParams);
 			if (pWasapiParams == nullptr)
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a WasapiParams instance."));
+				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "nativeParams must be a WasapiParams instance."));
 				return;
 			}
 			this->params = *pWasapiParams;
@@ -268,7 +272,7 @@ namespace HephAudio
 			HRESULT hresult = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator), &this->pEnumerator);
 			if (FAILED(hresult))
 			{
-				HEPH_RAISE_EXCEPTION(this, Exception(hresult, HEPH_FUNC, "An error occurred while initializing the audio device enumerator.", "WASAPI", WinAudioBase::GetComErrorMessage(hresult)));
+				HEPH_RAISE_EXCEPTION(this, ExternalException(HEPH_FUNC, "An error occurred while initializing the audio device enumerator.", "WASAPI", WinAudioBase::GetComErrorMessage(hresult)));
 				HEPHAUDIO_LOG("Device enumeration failed, terminating the device thread...", HEPH_CL_ERROR);
 				return;
 			}
@@ -396,7 +400,7 @@ namespace HephAudio
 				const BOOL eventResult = CloseHandle(hEvent);
 				if (eventResult == FALSE)
 				{
-					HEPH_RAISE_EXCEPTION(this, Exception(eventResult, HEPH_FUNC, "An error occurred while closing the render event handle."));
+					HEPH_RAISE_EXCEPTION(this, Exception(HEPH_FUNC, "An error occurred while closing the render event handle."));
 				}
 				hEvent = nullptr;
 			}

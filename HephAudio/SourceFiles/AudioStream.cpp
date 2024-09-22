@@ -4,8 +4,8 @@
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
 #include "AudioEvents/AudioFinishedPlayingEventArgs.h"
-#include "Exception.h"
 #include "HephMath.h"
+#include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
@@ -20,8 +20,8 @@ namespace HephAudio
 	{
 		if (this->pNativeAudio == nullptr)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pNativeAudio must not be nullptr."));
 			this->Release(false);
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "pNativeAudio must not be nullptr."));
 		}
 
 		if (filePath != "")

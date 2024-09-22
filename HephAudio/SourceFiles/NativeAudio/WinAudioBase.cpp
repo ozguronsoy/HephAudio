@@ -1,6 +1,6 @@
 #if defined(_WIN32)
 #include "NativeAudio/WinAudioBase.h"
-#include "Exception.h"
+#include "Exceptions/ExternalException.h"
 #include <combaseapi.h>
 
 using namespace Heph;
@@ -23,7 +23,7 @@ namespace HephAudio
 						return;
 					}
 				}
-				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(hres, HEPH_FUNC, "An error occurred while initializing COM.", "Windows COM", WinAudioBase::GetComErrorMessage(hres)));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, ExternalException(HEPH_FUNC, "An error occurred while initializing COM.", "Windows COM", WinAudioBase::GetComErrorMessage(hres)));
 			}
 		}
 		AudioFormatInfo WinAudioBase::WFX2AFI(const WAVEFORMATEXTENSIBLE& wfx)
