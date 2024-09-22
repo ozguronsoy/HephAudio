@@ -18,23 +18,23 @@
 #define HEPH_EC_NOT_SUPPORTED			((int64_t)-8)
 
 /**
- * default handler for the \link Heph::HephException::OnException OnException \endlink event.
+ * default handler for the \link Heph::Exception::OnException OnException \endlink event.
  * 
  */
-#define HEPH_EXCEPTION_DEFAULT_HANDLER	&Heph::HephException::DefaultHandler
+#define HEPH_EXCEPTION_DEFAULT_HANDLER	&Heph::Exception::DefaultHandler
 
 /**
  * raises the \a ex but does not throw it.
  * 
  */
-#define RAISE_HEPH_EXCEPTION(pSender, ex) (ex).Raise((const void*)(pSender))
+#define HEPH_RAISE_EXCEPTION(pSender, ex) (ex).Raise((const void*)(pSender))
 
 /**
  * raises and throws the \a ex.
  * 
  */
-#define RAISE_AND_THROW_HEPH_EXCEPTION(pSender, ex)	{																	\
-														const Heph::HephException __temp_ex__ = (ex);				\
+#define HEPH_RAISE_AND_THROW_EXCEPTION(pSender, ex)	{																	\
+														const Heph::Exception __temp_ex__ = (ex);						\
 														__temp_ex__.Raise((const void*)(pSender));						\
 														throw __temp_ex__;												\
 													}
@@ -45,7 +45,7 @@ namespace Heph
 	 * @brief stores information about an exception.
 	 * 
 	 */
-	struct HEPH_API HephException final
+	struct HEPH_API Exception final
 	{
 		/**
 		 * raised when an exception occurs.
@@ -84,7 +84,7 @@ namespace Heph
 		std::string externalMessage;
 
 		/** @copydoc default_constructor */
-		HephException();
+		Exception();
 
 		/**
 		 * @copydoc constructor
@@ -93,7 +93,7 @@ namespace Heph
 		 * @param method @copydetails method
 		 * @param message @copydetails message
 		 */
-		HephException(int64_t errorCode, const std::string& method, const std::string& message);
+		Exception(int64_t errorCode, const std::string& method, const std::string& message);
 
 		/**
 		 * @copydoc constructor
@@ -104,10 +104,10 @@ namespace Heph
 		 * @param externalSource @copydetails externalSource
 		 * @param externalMessage @copydetails externalMessage
 		 */
-		HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
+		Exception(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
 
 		/**
-		 * raises the \link Heph::HephException::OnException OnException \endlink event.
+		 * raises the \link Heph::Exception::OnException OnException \endlink event.
 		 * 
 		 * @param pSender pointer to the object instance that caused the exception.
 		 */
@@ -120,7 +120,7 @@ namespace Heph
 		static std::string ErrorCodeToString(int64_t errorCode);
 
 		/**
-		 * the default handler for the \link Heph::HephException::OnException OnException \endlink event.
+		 * the default handler for the \link Heph::Exception::OnException OnException \endlink event.
 		 * 
 		 *
 		 */
@@ -130,14 +130,14 @@ namespace Heph
 		 * @brief gets the exceptions that occurred in the current thread.
 		 * 
 		 */
-		static std::vector<HephException>& GetExceptions() noexcept;
+		static std::vector<Exception>& GetExceptions() noexcept;
 	};
 
 	/**
 	 * @brief struct for storing the arguments for the audio exception events.
 	 * 
 	 */
-	struct HEPH_API HephExceptionEventArgs : public EventArgs
+	struct HEPH_API ExceptionEventArgs : public EventArgs
 	{
 		/**
 		 * pointer to the object that caused the exception.
@@ -149,7 +149,7 @@ namespace Heph
 		 * the exception that's being raised.
 		 * 
 		 */
-		const HephException& exception;
+		const Exception& exception;
 
 		/**
 		 * @copydoc constructor
@@ -157,9 +157,9 @@ namespace Heph
 		 * @param pSender @copydetails pSender
 		 * @param ex @copydetails exception
 		 */
-		HephExceptionEventArgs(const void* pSender, const HephException& ex);
+		ExceptionEventArgs(const void* pSender, const Exception& ex);
 
 		/** @copydoc destructor */
-		virtual ~HephExceptionEventArgs() = default;
+		virtual ~ExceptionEventArgs() = default;
 	};
 }

@@ -10,20 +10,20 @@
 	result = r;                                                                                                 \
 	if (result != SND_OK)                                                                                       \
 	{                                                                                                           \
-		RAISE_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message, "ALSA", snd_strerror(result))); \
+		HEPH_RAISE_EXCEPTION(linuxAudio, Exception(result, method, message, "ALSA", snd_strerror(result))); \
 		return NativeAudio::DEVICE_ENUMERATION_FAIL;                                                            \
 	}
 #define LINUX_EXCPT(r, linuxAudio, method, message)                                                                       \
 	result = r;                                                                                                           \
 	if (result < SND_OK)                                                                                                  \
 	{                                                                                                                     \
-		RAISE_AND_THROW_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message, "ALSA", snd_strerror(result))); \
+		HEPH_RAISE_AND_THROW_EXCEPTION(linuxAudio, Exception(result, method, message, "ALSA", snd_strerror(result))); \
 	}
 #define LINUX_RENDER_CAPTURE_EXCPT(r, linuxAudio, method, message)                                              \
 	result = r;                                                                                                 \
 	if (result < SND_OK)                                                                                        \
 	{                                                                                                           \
-		RAISE_HEPH_EXCEPTION(linuxAudio, HephException(result, method, message, "ALSA", snd_strerror(result))); \
+		HEPH_RAISE_EXCEPTION(linuxAudio, Exception(result, method, message, "ALSA", snd_strerror(result))); \
 		return;                                                                                                 \
 	}
 
@@ -77,12 +77,12 @@ namespace HephAudio
 				snd_mixer_elem_t* mixerElem = snd_mixer_first_elem(mixer);
 				if (mixerElem == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "No mixer element found."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "No mixer element found."));
 				}
 
 				if (!snd_mixer_selem_has_playback_volume(mixerElem))
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "No mixer playback volume element found."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "No mixer playback volume element found."));
 				}
 
 				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, HEPH_FUNC, "An error occurred while setting the volume range.");
@@ -107,12 +107,12 @@ namespace HephAudio
 				snd_mixer_elem_t* mixerElem = snd_mixer_first_elem(mixer);
 				if (mixerElem == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "No mixer element found."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "No mixer element found."));
 				}
 
 				if (!snd_mixer_selem_has_playback_volume(mixerElem))
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "No mixer playback volume element found."));
+					HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "No mixer playback volume element found."));
 				}
 
 				LINUX_EXCPT(snd_mixer_selem_set_playback_volume_range(mixerElem, -LinuxAudio::volume_max, LinuxAudio::volume_max), this, HEPH_FUNC, "An error occurred while getting the volume range.");
@@ -228,7 +228,7 @@ namespace HephAudio
 			AlsaParams* pAlsaParams = dynamic_cast<AlsaParams*>(&nativeParams);
 			if (pAlsaParams == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a AlsaParams instance."));
+				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a AlsaParams instance."));
 				return;
 			}
 			(*pAlsaParams) = this->params;
@@ -238,7 +238,7 @@ namespace HephAudio
 			const AlsaParams* pAlsaParams = dynamic_cast<const AlsaParams*>(&nativeParams);
 			if (pAlsaParams == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a AlsaParams instance."));
+				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a AlsaParams instance."));
 				return;
 			}
 			this->params = *pAlsaParams;

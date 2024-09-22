@@ -3,7 +3,7 @@
 #include "Stopwatch.h"
 #include "ConsoleLogger.h"
 
-#define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { RAISE_AND_THROW_HEPH_EXCEPTION(androidAudio, HephException(slres, method, message, "OpenSL ES", "")); }
+#define ANDROIDAUDIO_EXCPT(sr, androidAudio, method, message) slres = sr; if(slres != 0) { HEPH_RAISE_AND_THROW_EXCEPTION(androidAudio, Exception(slres, method, message, "OpenSL ES", "")); }
 
 using namespace Heph;
 
@@ -17,7 +17,7 @@ namespace HephAudio
 		{
 			if (deviceApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + "."));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "The minimum supported API level is " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + "."));
 			}
 
 			renderCallbackContext.pAndroidAudio = this;
@@ -106,7 +106,7 @@ namespace HephAudio
 
 			if (renderCallbackContext.pData == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "Insufficient memory."));
+				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Insufficient memory."));
 				return;
 			}
 			(void)memset(renderCallbackContext.pData, 0, renderCallbackContext.bufferSize_byte);
@@ -185,7 +185,7 @@ namespace HephAudio
 
 			if (captureCallbackContext.pData == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "Insufficient memory."));
+				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Insufficient memory."));
 				return;
 			}
 			(void)memset(captureCallbackContext.pData, 0, captureCallbackContext.bufferSize_byte);
@@ -220,7 +220,7 @@ namespace HephAudio
 			OpenSLParams* pOpenSLParams = dynamic_cast<OpenSLParams*>(&nativeParams);
 			if (pOpenSLParams == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a OpenSLParams instance."));
+				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a OpenSLParams instance."));
 				return;
 			}
 			(*pOpenSLParams) = this->params;
@@ -230,7 +230,7 @@ namespace HephAudio
 			const OpenSLParams* pOpenSLParams = dynamic_cast<const OpenSLParams*>(&nativeParams);
 			if (pOpenSLParams == nullptr)
 			{
-				RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a OpenSLParams instance."));
+				HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "nativeParams must be a OpenSLParams instance."));
 				return;
 			}
 			this->params = *pOpenSLParams;
@@ -274,7 +274,7 @@ namespace HephAudio
 				SLresult slres = (*bufferQueue)->Enqueue(bufferQueue, pCallbackContext->pData + pCallbackContext->index, bufferSize);
 				if (slres != 0)
 				{
-					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, HEPH_FUNC, "An error occurred while rendering data.", "OpenSL ES", ""));
+					HEPH_RAISE_EXCEPTION(pCallbackContext->pAndroidAudio, Exception(slres, HEPH_FUNC, "An error occurred while rendering data.", "OpenSL ES", ""));
 					(void)(*pCallbackContext->pAndroidAudio->audioPlayer)->SetPlayState(pCallbackContext->pAndroidAudio->audioPlayer, SL_PLAYSTATE_STOPPED);
 				}
 			}
@@ -301,7 +301,7 @@ namespace HephAudio
 				SLresult slres = (*simpleBufferQueue)->Enqueue(simpleBufferQueue, pCallbackContext->pData + pCallbackContext->index, bufferSize);
 				if (slres != 0)
 				{
-					RAISE_HEPH_EXCEPTION(pCallbackContext->pAndroidAudio, HephException(slres, HEPH_FUNC, "An error occurred while capturing data.", "OpenSL ES", ""));
+					HEPH_RAISE_EXCEPTION(pCallbackContext->pAndroidAudio, Exception(slres, HEPH_FUNC, "An error occurred while capturing data.", "OpenSL ES", ""));
 					(void)(*pCallbackContext->pAndroidAudio->audioRecorder)->SetRecordState(pCallbackContext->pAndroidAudio->audioRecorder, SL_RECORDSTATE_STOPPED);
 				}
 			}

@@ -11,10 +11,10 @@
 #endif
 
 #define IID_IDS_NOTIFY {0xB0210783, 0x89CD, 0x11D0, {0xAF, 0x08, 0x00, 0xA0, 0xC9, 0x25, 0xCD, 0x16}}
-#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); goto RENDER_EXIT; }
-#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); goto CAPTURE_EXIT; }
-#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(this, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
-#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { RAISE_HEPH_EXCEPTION(winAudioDS, HephException(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_RENDER_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); goto RENDER_EXIT; }
+#define WINAUDIODS_CAPTURE_THREAD_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); goto CAPTURE_EXIT; }
+#define WINAUDIODS_ENUMERATE_DEVICE_EXCPT(hr, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(this, Exception(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
+#define WINAUDIODS_ENUMERATION_CALLBACK_EXCPT(hr, winAudioDS, method, message) hres = hr; if(FAILED(hres)) { HEPH_RAISE_EXCEPTION(winAudioDS, Exception(hres, method, message, "DirectSound", WinAudioBase::GetComErrorMessage(hres))); return NativeAudio::DEVICE_ENUMERATION_FAIL; }
 
 using namespace Heph;
 using namespace Microsoft::WRL;
@@ -64,7 +64,7 @@ namespace HephAudio
 					{
 						strcpy(errorMessage, "error message not found");
 					}
-					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, HEPH_FUNC, "An error occurred while setting the master volume", "MMEAPI", errorMessage));
+					HEPH_RAISE_EXCEPTION(this, Exception(mmResult, HEPH_FUNC, "An error occurred while setting the master volume", "MMEAPI", errorMessage));
 				}
 			}
 		}
@@ -81,7 +81,7 @@ namespace HephAudio
 					{
 						strcpy(errorMessage, "error message not found");
 					}
-					RAISE_HEPH_EXCEPTION(this, HephException(mmResult, HEPH_FUNC, "An error occurred while getting the master volume", "MMEAPI", errorMessage));
+					HEPH_RAISE_EXCEPTION(this, Exception(mmResult, HEPH_FUNC, "An error occurred while getting the master volume", "MMEAPI", errorMessage));
 					return -1.0;
 				}
 				return (double)(dv & 0x0000FFFF) / (double)UINT16_MAX;
@@ -170,11 +170,11 @@ namespace HephAudio
 		}
 		void WinAudioDS::GetNativeParams(NativeAudioParams& nativeParams) const
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "Native params not supported."));
+			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "Native params not supported."));
 		}
 		void WinAudioDS::SetNativeParams(const NativeAudioParams& nativeParams)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "Native params not supported."));
+			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_OPERATION, HEPH_FUNC, "Native params not supported."));
 		}
 		bool WinAudioDS::EnumerateAudioDevices()
 		{
@@ -286,7 +286,7 @@ namespace HephAudio
 					const BOOL eventResult = CloseHandle(hEvents[i]);
 					if (eventResult == FALSE)
 					{
-						RAISE_HEPH_EXCEPTION(this, HephException(eventResult, HEPH_FUNC, "An error occurred while closing the render event handles."));
+						HEPH_RAISE_EXCEPTION(this, Exception(eventResult, HEPH_FUNC, "An error occurred while closing the render event handles."));
 					}
 					hEvents[i] = nullptr;
 				}
@@ -401,7 +401,7 @@ namespace HephAudio
 					const BOOL eventResult = CloseHandle(hEvents[i]);
 					if (eventResult == FALSE)
 					{
-						RAISE_HEPH_EXCEPTION(this, HephException(eventResult, HEPH_FUNC, "An error occurred while closing the capture event handles."));
+						HEPH_RAISE_EXCEPTION(this, Exception(eventResult, HEPH_FUNC, "An error occurred while closing the capture event handles."));
 					}
 					hEvents[i] = nullptr;
 				}

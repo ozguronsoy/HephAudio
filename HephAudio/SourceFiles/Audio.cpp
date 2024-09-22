@@ -71,14 +71,14 @@ namespace HephAudio
 		}
 		else
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
 		}
 #elif defined(__linux__)
 		this->pNativeAudio = new LinuxAudio();
 #elif defined(__APPLE__)
 		this->pNativeAudio = new AppleAudio();
 #else
-		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "Unsupported platform."));
+		HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Unsupported platform."));
 #endif
 	}
 
@@ -105,7 +105,7 @@ namespace HephAudio
 		const uint32_t androidApiLevel = android_get_device_api_level();
 		if (androidApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
 		{
-			RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
 		}
 
 		switch (api)
@@ -126,7 +126,7 @@ namespace HephAudio
 #elif defined(__APPLE__)
 		this->pNativeAudio = new AppleAudio();
 #else
-		RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_FAIL, HEPH_FUNC, "Unsupported platform."));
+		HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Unsupported platform."));
 #endif
 	}
 

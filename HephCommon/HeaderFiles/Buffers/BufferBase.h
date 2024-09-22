@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "HephException.h"
+#include "Exception.h"
 #include <cstdlib>
 #include <type_traits>
 
@@ -246,7 +246,7 @@ namespace Heph
 		{
 			if (index >= this->size)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
 			}
 			return this->pData[index];
 		}
@@ -413,7 +413,7 @@ namespace Heph
 					Tdata* pTemp = (Tdata*)std::realloc(this->pData, BufferBase::SizeAsByte(newSize));
 					if (pTemp == nullptr)
 					{
-						RAISE_AND_THROW_HEPH_EXCEPTION(this, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+						HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
 					}
 					if (newSize > this->size)
 					{
@@ -527,7 +527,7 @@ namespace Heph
 			Tdata* pData = (Tdata*)std::malloc(size_byte);
 			if (pData == nullptr)
 			{
-				RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+				HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
 			}
 			return pData;
 		}
@@ -538,11 +538,11 @@ namespace Heph
 			{
 				if (pThisData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
 				}
 				else if (index_byte >= thisSize_byte)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
 				}
 
 				size_t copySize_byte = subBufferSize_byte;
@@ -570,13 +570,13 @@ namespace Heph
 			{
 				if (pRhsData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
 				}
 
 				Tdata* pResultData = (Tdata*)std::realloc(pThisData, thisSize_byte + rhsSize_byte);
 				if (pResultData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
 				}
 
 				if (pThisData == pRhsData)
@@ -601,13 +601,13 @@ namespace Heph
 			{
 				if (pRhsData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
 				}
 
 				Tdata* pResultData = (Tdata*)std::realloc(pThisData, thisSize_byte + rhsSize_byte);
 				if (pResultData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
 				}
 
 				if (pThisData == pRhsData)
@@ -630,11 +630,11 @@ namespace Heph
 			{
 				if (pRhsData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
 				}
 				else if (index_byte > thisSize_byte)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
 				}
 				else if (index_byte == thisSize_byte)
 				{
@@ -644,7 +644,7 @@ namespace Heph
 				Tdata* pResultData = (Tdata*)std::realloc(pThisData, thisSize_byte + rhsSize_byte);
 				if (pResultData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INSUFFICIENT_MEMORY, HEPH_FUNC, "Insufficient memory"));
 				}
 
 				if (pThisData == pRhsData)
@@ -677,11 +677,11 @@ namespace Heph
 			{
 				if (pThisData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pThisData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pThisData cannot be nullptr"));
 				}
 				else if (index_byte >= thisSize_byte)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
 				}
 				else if (index_byte == 0 && cutSize_byte >= thisSize_byte)
 				{
@@ -719,15 +719,15 @@ namespace Heph
 			{
 				if (pThisData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pThisData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pThisData cannot be nullptr"));
 				}
 				else if (pRhsData == nullptr)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "pRhsData cannot be nullptr"));
 				}
 				else if (index_byte >= thisSize_byte)
 				{
-					RAISE_AND_THROW_HEPH_EXCEPTION(nullptr, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
+					HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Index out of bounds"));
 				}
 
 				if ((index_byte + rhsSize_byte) > thisSize_byte)

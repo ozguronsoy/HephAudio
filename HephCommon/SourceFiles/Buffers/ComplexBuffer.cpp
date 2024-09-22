@@ -1,5 +1,5 @@
 #include "Buffers/ComplexBuffer.h"
-#include "HephException.h"
+#include "Exception.h"
 #include "HephMath.h"
 #include <memory>
 

@@ -1,5 +1,5 @@
 #include "Spatializer.h"
-#include "HephException.h"
+#include "Exception.h"
 #include "Fourier.h"
 #include "AudioProcessor.h"
 #include "Windows/HannWindow.h"
@@ -84,7 +84,7 @@ namespace HephAudio
 		this->pEasy = mysofa_open(sofaFilePath.string().c_str(), (float)sampleRate, &filter_length, &errorCode);
 		if (this->pEasy == nullptr || errorCode != MYSOFA_OK)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(errorCode, HEPH_FUNC, "An error occurred while opening the sofa file.", "libmysofa", Spatializer::GetErrorString(errorCode)));
+			HEPH_RAISE_EXCEPTION(this, Exception(errorCode, HEPH_FUNC, "An error occurred while opening the sofa file.", "libmysofa", Spatializer::GetErrorString(errorCode)));
 			this->CloseSofaFile();
 			return;
 		}
@@ -107,13 +107,13 @@ namespace HephAudio
 	{
 		if (this->pEasy == nullptr)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Read a sofa file before calling this method."));
+			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Read a sofa file before calling this method."));
 			return;
 		}
 
 		if (windowBuffer.Size() != this->frameCount)
 		{
-			RAISE_HEPH_EXCEPTION(this, HephException(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Size of the window buffer must be the same as the IR size. Call \"Spatializer::GetFrameCount()\" method to get the IR size."));
+			HEPH_RAISE_EXCEPTION(this, Exception(HEPH_EC_INVALID_ARGUMENT, HEPH_FUNC, "Size of the window buffer must be the same as the IR size. Call \"Spatializer::GetFrameCount()\" method to get the IR size."));
 			return;
 		}
 

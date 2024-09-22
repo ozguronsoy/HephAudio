@@ -1,26 +1,26 @@
-#include "HephException.h"
+#include "Exception.h"
 #include "ConsoleLogger.h"
 #include "StringHelpers.h"
 
 namespace Heph
 {
-	HephException::HephException() : errorCode(HEPH_EC_OK) { }
+	Exception::Exception() : errorCode(HEPH_EC_OK) { }
 
-	HephException::HephException(int64_t errorCode, const std::string& method, const std::string& message)
+	Exception::Exception(int64_t errorCode, const std::string& method, const std::string& message)
 		: errorCode(errorCode), method(method), message(message) {}
 
-	HephException::HephException(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage)
+	Exception::Exception(int64_t errorCode, const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage)
 		: errorCode(errorCode), method(method), message(message),
 		externalSource(externalSource), externalMessage(externalMessage) {}
 
-	void HephException::Raise(const void* pSender) const
+	void Exception::Raise(const void* pSender) const
 	{
-		HephExceptionEventArgs args(pSender, *this);
-		HephException::OnException.Invoke(&args, nullptr);
-		HephException::GetExceptions().push_back(*this);
+		ExceptionEventArgs args(pSender, *this);
+		Exception::OnException.Invoke(&args, nullptr);
+		Exception::GetExceptions().push_back(*this);
 	}
 
-	std::string HephException::ErrorCodeToString(int64_t errorCode)
+	std::string Exception::ErrorCodeToString(int64_t errorCode)
 	{
 		switch (errorCode)
 		{
@@ -47,7 +47,7 @@ namespace Heph
 		}
 	}
 
-	void HephException::DefaultHandler(const EventParams& params)
+	void Exception::DefaultHandler(const EventParams& params)
 	{
 #if defined(__ANDROID__)
 		const std::string x = "";
@@ -55,7 +55,7 @@ namespace Heph
 		const std::string x = "\n";
 #endif
 
-		const HephException& ex = ((HephExceptionEventArgs*)params.pArgs)->exception;
+		const Exception& ex = ((ExceptionEventArgs*)params.pArgs)->exception;
 		if (ex.externalSource != "" && ex.externalMessage != "")
 		{
 			ConsoleLogger::LogError(x +
@@ -73,12 +73,12 @@ namespace Heph
 		}
 	}
 
-	std::vector<HephException>& HephException::GetExceptions() noexcept
+	std::vector<Exception>& Exception::GetExceptions() noexcept
 	{
 		// had to use singleton to dllexport the thread_local instance.
-		static thread_local std::vector<HephException> instance;
+		static thread_local std::vector<Exception> instance;
 		return instance;
 	}
 
-	HephExceptionEventArgs::HephExceptionEventArgs(const void* pSender, const HephException& ex) : pSender(pSender), exception(ex) {}
+	ExceptionEventArgs::ExceptionEventArgs(const void* pSender, const Exception& ex) : pSender(pSender), exception(ex) {}
 }
