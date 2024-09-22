@@ -29,6 +29,7 @@ namespace HephCommon
 	class HEPH_API BufferBase
 	{
 		static_assert(std::is_default_constructible<Tdata>::value, "Tdata must have a default constructor");
+		static_assert(std::is_trivially_destructible<Tdata>::value, "Tdata must be trivially destructible");
 
 	protected:
 		/**
@@ -278,7 +279,11 @@ namespace HephCommon
 		 */
 		virtual void Release()
 		{
-			BufferBase::Destroy(&this->pData, this->pData + this->size);
+			if (this->pData != nullptr)
+			{
+				std::free(this->pData);
+				this->pData = nullptr;
+			}
 			this->size = 0;
 		}
 
@@ -495,41 +500,6 @@ namespace HephCommon
 		}
 
 		/**
-		 * calls the destructor of each element then frees the memory and sets the pData to nullptr.
-		 * @note this will be used for the classes and structs.
-		 *
-		 * @param ppData pointer to the \a <b>BufferBase::pData</b>.
-		 */
-		template<typename U = Tdata>
-		static typename std::enable_if<std::is_class<U>::value>::type Destroy(U** ppData, U* pDataEnd)
-		{
-			if ((*ppData) != nullptr)
-			{
-				for (U* pData = *ppData; pData < pDataEnd; ++pData)
-					pData->~U();
-
-				std::free(*ppData);
-				(*ppData) = nullptr;
-			}
-		}
-
-		/**
-		 * frees the memory and sets the pData to nullptr.
-		 * @note this will be used for the primitive types (int, float, enum...).
-		 *
-		 * @param ppData pointer to the \a <b>BufferBase::pData</b>.
-		 */
-		template<typename U = Tdata>
-		static typename std::enable_if<not std::is_class<U>::value>::type Destroy(U** ppData, U* pDataEnd)
-		{
-			if ((*ppData) != nullptr)
-			{
-				std::free(*ppData);
-				(*ppData) = nullptr;
-			}
-		}
-
-		/**
 		 * allocates memory and initializes it.
 		 *
 		 * @param size_byte number of bytes to allocate.
@@ -715,7 +685,7 @@ namespace HephCommon
 				}
 				else if (index_byte == 0 && cutSize_byte >= thisSize_byte)
 				{
-					BufferBase::Destroy(&pThisData, (Tdata*)(((uint8_t*)pThisData) + thisSize_byte));
+					std::free(pThisData);
 					cutSize_byte = thisSize_byte;
 					return nullptr;
 				}
@@ -735,7 +705,7 @@ namespace HephCommon
 					(void)std::memcpy(((uint8_t*)pResultData) + index_byte, ((uint8_t*)pThisData) + index_byte + cutSize_byte, thisSize_byte - index_byte - cutSize_byte);
 				}
 
-				BufferBase::Destroy(&pThisData, (Tdata*)(((uint8_t*)pThisData) + cutSize_byte));
+				std::free(pThisData);
 				return pResultData;
 			}
 
