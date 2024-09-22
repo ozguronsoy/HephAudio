@@ -1,5 +1,5 @@
 if (NOT DEFINED CMAKE_CXX_STANDARD)
-    set (CMAKE_CXX_STANDARD 17)
+    set (CMAKE_CXX_STANDARD 23)
 endif ()
 
 if (CMAKE_CXX_STANDARD LESS 17)
@@ -28,6 +28,7 @@ include_directories(
 file(GLOB HEPH_AUDIO
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Buffers/*.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Exceptions/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioEvents/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/FFmpeg/*.cpp
