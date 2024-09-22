@@ -1,6 +1,7 @@
 #pragma once
 #include "HephShared.h"
 #include "Event.h"
+#include <exception>
 #include <string>
 #include <vector>
 #include <memory>
@@ -36,7 +37,7 @@ namespace Heph
 	 * Base class for exceptions.
 	 *
 	 */
-	class HEPH_API Exception
+	class HEPH_API Exception : public std::exception
 	{
 	public:
 		/**
@@ -45,18 +46,14 @@ namespace Heph
 		 */
 		static inline Event OnException = Event();
 
+	protected:
 		/**
 		 * name of the method where the exception occurred.
 		 *
 		 */
 		std::string method;
 
-		/**
-		 * description of the exception.
-		 *
-		 */
-		std::string message;
-
+	public:
 		/** @copydoc default_constructor */
 		Exception();
 
@@ -64,7 +61,7 @@ namespace Heph
 		 * @copydoc constructor
 		 *
 		 * @param method @copydetails method
-		 * @param message @copydetails message
+		 * @param message description of the exception.
 		 */
 		Exception(const std::string& method, const std::string& message);
 
@@ -76,6 +73,18 @@ namespace Heph
 		 *
 		 */
 		virtual std::string GetName() const;
+
+		/**
+		 * gets the method.
+		 *
+		 */
+		virtual const std::string& GetMethod() const;
+
+		/**
+		 * gets the message. 
+		 * 
+		 */
+		virtual std::string GetMessage() const;
 
 		/**
 		 * raises the \link Heph::Exception::OnException OnException \endlink event.

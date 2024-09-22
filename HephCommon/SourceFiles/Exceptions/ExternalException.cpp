@@ -12,6 +12,16 @@ namespace Heph
 		return "ExternalException";
 	}
 
+	const std::string& ExternalException::GetExternalSource() const
+	{
+		return this->externalSource;
+	}
+
+	const std::string& ExternalException::GetExternalMessage() const
+	{
+		return this->externalMessage;
+	}
+
 	void ExternalException::AddToExceptions() const
 	{
 		Exception::GetExceptions().push_back(std::make_unique<ExternalException>(*this));

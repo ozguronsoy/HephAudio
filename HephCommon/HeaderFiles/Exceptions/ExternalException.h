@@ -10,7 +10,7 @@ namespace Heph
 	 */
 	class HEPH_API ExternalException : public Exception
 	{
-	public:
+	protected:
 		/**
 		 * name of the external source that caused the exception.
 		 *
@@ -36,6 +36,18 @@ namespace Heph
 		ExternalException(const std::string& method, const std::string& message, const std::string& externalSource, const std::string& externalMessage);
 
 		virtual std::string GetName() const override;
+
+		/**
+		 * gets the external source.
+		 * 
+		 */
+		virtual const std::string& GetExternalSource() const;
+
+		/**
+		 * gets the external message.
+		 *
+		 */
+		virtual const std::string& GetExternalMessage() const;
 
 	protected:
 		virtual void AddToExceptions() const override;

@@ -8,11 +8,21 @@ namespace Heph
 {
 	Exception::Exception() { }
 
-	Exception::Exception(const std::string& method, const std::string& message) : method(method), message(message) {}
+	Exception::Exception(const std::string& method, const std::string& message) : std::exception(message.c_str()), method(method) {}
 
 	std::string Exception::GetName() const
 	{
 		return "Exception";
+	}
+
+	const std::string& Exception::GetMethod() const
+	{
+		return this->method;
+	}
+
+	std::string Exception::GetMessage() const
+	{
+		return std::string(this->what());
 	}
 
 	void Exception::Raise(const void* pSender) const
@@ -49,13 +59,13 @@ namespace Heph
 		{
 			ConsoleLogger::LogError(x +
 				externalEx->GetName() +
-				"\nmethod:\t\t\t" + externalEx->method + "\nmessage:\t\t" + externalEx->message +
-				"\nexternal source:\t" + externalEx->externalSource + "\nexternal message:\t" + externalEx->externalMessage + "\n"
+				"\nmethod:\t\t\t" + externalEx->GetMethod() + "\nmessage:\t\t" + externalEx->GetMessage() +
+				"\nexternal source:\t" + externalEx->GetExternalSource() + "\nexternal message:\t" + externalEx->GetExternalMessage() + "\n"
 			);
 		}
 		else
 		{
-			ConsoleLogger::LogError(x + ex.GetName() + "\nmethod:\t\t" + ex.method + "\nmessage:\t" + ex.message + "\n");
+			ConsoleLogger::LogError(x + ex.GetName() + "\nmethod:\t\t" + ex.GetMethod() + "\nmessage:\t" + ex.GetMessage() + "\n");
 		}
 	}
 }
