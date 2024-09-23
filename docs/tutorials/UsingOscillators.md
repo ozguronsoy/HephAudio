@@ -20,7 +20,7 @@ void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo)
 {
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
-        const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
+        const double volume = lfo[i]; // calculate the volume and use it for all channels.
         for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             buffer[i][j] *= volume;
@@ -33,18 +33,18 @@ That will make our effect even more customizable and increase the variety of sou
 We will take another parameter to control the dry/wet ratio and call it *depth*. This parameter will be between 0 and 1.<br>
 For *depth = 0*, the output will only contain the dry signal, and vice versa.
 ```c++
-void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
+void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo)
 {
-    const heph_float wetFactor = depth;
-    const heph_float dryFactor = 1.0 - wetFactor;
+    const double wetFactor = depth;
+    const double dryFactor = 1.0 - wetFactor;
 
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
-        const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
+        const double volume = lfo[i]; // calculate the volume and use it for all channels.
         for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
-            const heph_float drySample = buffer[i][j];
-            const heph_float wetSample = drySample * volume;
+            const double drySample = buffer[i][j];
+            const double wetSample = drySample * volume;
             buffer[i][j] = drySample * dryFactor + wetSample * wetFactor;
         }
     }
@@ -58,19 +58,20 @@ Test it using [SineWaveOscillator](/docs/HephAudio/Oscillators/SineWaveOscillato
 
 using namespace HephAudio;
 
-void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo);
+void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo);
 
 int main()
 {
     Audio audio;
-    audio.InitializeRender(2, 48000);
+    audio.InitializeRender(HEPHAUDIO_CH_LAYOUT_STEREO, 48000);
     AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav");
 
-    heph_float depth = 0.7;
+    double depth = 0.7;
     uint32_t bufferSampleRate = pAudioObject->buffer.FormatInfo().sampleRate;
     SineWaveOscillator lfo(1.0, 8.0, bufferSampleRate, 0); // create low-frequency sine wave oscillator
     MyTremolo(pAudioObject->buffer, depth, lfo);
 
+    pAudioObject->OnRender = HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT;
     pAudioObject->isPaused = false;
 
     // stop from exiting the program.
@@ -80,18 +81,18 @@ int main()
     return 0;
 }
 
-void MyTremolo(AudioBuffer& buffer, heph_float depth, const Oscillator& lfo)
+void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo)
 {
-    const heph_float wetFactor = depth;
-    const heph_float dryFactor = 1.0 - wetFactor;
+    const double wetFactor = depth;
+    const double dryFactor = 1.0 - wetFactor;
 
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
-        const heph_float volume = lfo[i]; // calculate the volume and use it for all channels.
+        const double volume = lfo[i]; // calculate the volume and use it for all channels.
         for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
-            const heph_float drySample = buffer[i][j];
-            const heph_float wetSample = drySample * volume;
+            const double drySample = buffer[i][j];
+            const double wetSample = drySample * volume;
             buffer[i][j] = drySample * dryFactor + wetSample * wetFactor;
         }
     }
