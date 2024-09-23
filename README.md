@@ -104,11 +104,11 @@ Sample code for recording audio for 5 seconds, saving it to a file, then playing
 #include <string.h>
 #include <thread>
 #include <chrono>
+#include <filesystem>
 #include <Audio.h>
+#include <AudioProcessor.h>
 
-#define SAMPLE_RATE 48000
-
-using namespace HephCommon;
+using namespace Heph;
 using namespace HephAudio;
 
 AudioBuffer recordedAudio;
@@ -116,42 +116,33 @@ AudioBuffer recordedAudio;
 void RecordAudio(const EventParams& eventParams) // the event handler method
 {
 	AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)eventParams.pArgs; // cast the args to capture event args
-
-	AudioProcessor::ConvertToInnerFormat(pCaptureArgs->captureBuffer);
-	if (recordedAudio == nullptr)
-	{
-		// first captured data
-		recordedAudio = pCaptureArgs->captureBuffer;
-	}
-	else
-	{
-		// append the captured samples to the end of our buffer
-		recordedAudio.Append(pCaptureArgs->captureBuffer);
-	}
+	recordedAudio.Append(pCaptureArgs->captureBuffer);
 }
 
 int main()
 {
 	Audio audio;
 
+	audio.InitializeCapture();
+	recordedAudio = AudioBuffer(0, audio.GetCaptureFormat().channelLayout, audio.GetCaptureFormat().sampleRate);
+
 	// set an event handler for capturing
 	audio.SetOnCaptureHandler(&RecordAudio);
-
-	// initialize with default device
-	audio.InitializeCapture(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, SAMPLE_RATE));
 
 	// record for 5 seconds, then stop capturing
 	std::this_thread::sleep_for(std::chrono::seconds(5));
 	audio.StopCapturing();
 
-	// Save the recorded audio data to a file if it doesn't exist.
-	audio.SaveToFile(recordedAudio, "file_path\\fila_name.wav", true);
+	// Save the recorded audio data to a file.
+	audio.GetAudioEncoder()->ChangeFile("C:\\Users\\ozgur\\OneDrive\\Desktop\\demo.wav", recordedAudio.FormatInfo(), true);
 
-	recordedAudio.Empty(); // dispose of the unnecessary data
+	audio.GetAudioEncoder()->Encode(recordedAudio);
+
+	recordedAudio.Release(); // dispose of the unnecessary data
 
 	// play the recorded file.
-	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, SAMPLE_RATE));
-	audio.Play("file_path\\fila_name.wav");
+	audio.InitializeRender();
+	audio.Play("C:\\Users\\ozgur\\OneDrive\\Desktop\\demo.wav");
 
 	// prevent from exiting the app
 	std::string s;
