@@ -8,7 +8,7 @@ The handlers are called in the order they are added.
 #include <Event.h>
 #include <ConsoleLogger.h>
 
-using namespace HephCommon;
+using namespace Heph;
 
 void Handler_1(const EventParams& eventParams);
 void Handler_2(const EventParams& eventParams);
@@ -73,7 +73,7 @@ You can also set additional arguments.
 #include <ConsoleLogger.h>
 #include <StringHelpers.h>
 
-using namespace HephCommon;
+using namespace Heph;
 
 #define MY_ARG_1_KEY "MY_ARG_1"
 #define MY_ARG_2_KEY "MY_ARG_2"
