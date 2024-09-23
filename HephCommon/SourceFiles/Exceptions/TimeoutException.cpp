@@ -13,6 +13,6 @@ namespace Heph
 
 	void TimeoutException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<TimeoutException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<TimeoutException>(*this));
 	}
 }

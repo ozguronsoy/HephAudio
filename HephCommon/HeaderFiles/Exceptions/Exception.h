@@ -24,10 +24,9 @@
    * raises and throws the \a ex.
    *
    */
-#define HEPH_RAISE_AND_THROW_EXCEPTION(pSender, ex)	{																	\
-														const Heph::Exception __temp_ex__ = (ex);						\
-														__temp_ex__.Raise((const void*)(pSender));						\
-														throw __temp_ex__;												\
+#define HEPH_RAISE_AND_THROW_EXCEPTION(pSender, ex)	{															\
+														(ex).Raise((const void*)(pSender));						\
+														throw *Heph::Exception::GetLastException().get();		\
 													}
 
 namespace Heph
@@ -110,10 +109,16 @@ namespace Heph
 
 	public:
 		/**
+		* gets the last exception, or nullptr if no exception raised.
+		* 
+		*/
+		static std::shared_ptr<Exception> GetLastException() noexcept;
+
+		/**
 		 * gets the exceptions that occurred in the current thread.
 		 *
 		 */
-		static std::vector<std::unique_ptr<Exception>>& GetExceptions() noexcept;
+		static std::vector<std::shared_ptr<Exception>>& GetExceptions() noexcept;
 
 		/**
 		 * the default handler for the \link Heph::Exception::OnException OnException \endlink event.

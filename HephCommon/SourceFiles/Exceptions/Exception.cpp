@@ -39,13 +39,19 @@ namespace Heph
 
 	void Exception::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<Exception>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<Exception>(*this));
 	}
 
-	std::vector<std::unique_ptr<Exception>>& Exception::GetExceptions() noexcept
+	std::shared_ptr<Exception> Exception::GetLastException() noexcept
+	{
+		const std::vector<std::shared_ptr<Exception>>& exceptions = Exception::GetExceptions();
+		return exceptions.size() > 0 ? exceptions.back() : std::shared_ptr<Exception>(nullptr);
+	}
+
+	std::vector<std::shared_ptr<Exception>>& Exception::GetExceptions() noexcept
 	{
 		// had to use singleton to dllexport the thread_local instance.
-		static thread_local std::vector<std::unique_ptr<Exception>> instance;
+		static thread_local std::vector<std::shared_ptr<Exception>> instance;
 		return instance;
 	}
 

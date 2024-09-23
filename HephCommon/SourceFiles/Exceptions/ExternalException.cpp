@@ -24,6 +24,6 @@ namespace Heph
 
 	void ExternalException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<ExternalException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<ExternalException>(*this));
 	}
 }

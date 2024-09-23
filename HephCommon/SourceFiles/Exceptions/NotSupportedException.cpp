@@ -13,6 +13,6 @@ namespace Heph
 
 	void NotSupportedException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<NotSupportedException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<NotSupportedException>(*this));
 	}
 }

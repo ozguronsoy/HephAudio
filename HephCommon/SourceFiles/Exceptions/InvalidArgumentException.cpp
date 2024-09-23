@@ -13,6 +13,6 @@ namespace Heph
 
 	void InvalidArgumentException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<InvalidArgumentException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<InvalidArgumentException>(*this));
 	}
 }

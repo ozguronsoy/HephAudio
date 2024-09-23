@@ -13,6 +13,6 @@ namespace Heph
 
 	void InsufficientMemoryException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<InsufficientMemoryException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<InsufficientMemoryException>(*this));
 	}
 }

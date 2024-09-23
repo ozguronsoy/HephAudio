@@ -13,6 +13,6 @@ namespace Heph
 
 	void NotImplementedException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<NotImplementedException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<NotImplementedException>(*this));
 	}
 }

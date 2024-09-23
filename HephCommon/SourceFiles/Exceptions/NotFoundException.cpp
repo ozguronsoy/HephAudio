@@ -13,6 +13,6 @@ namespace Heph
 
 	void NotFoundException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<NotFoundException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<NotFoundException>(*this));
 	}
 }

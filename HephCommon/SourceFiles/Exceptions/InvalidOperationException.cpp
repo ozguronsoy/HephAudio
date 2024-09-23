@@ -13,6 +13,6 @@ namespace Heph
 
 	void InvalidOperationException::AddToExceptions() const
 	{
-		Exception::GetExceptions().push_back(std::make_unique<InvalidOperationException>(*this));
+		Exception::GetExceptions().push_back(std::make_shared<InvalidOperationException>(*this));
 	}
 }
