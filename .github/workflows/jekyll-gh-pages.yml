@@ -26,6 +26,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: build-doxygen
+        uses: mattnotmitt/doxygen-action@1.9.8
+        with: 
+          doxyfile-path: './docs/Doxyfile'
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Pages
