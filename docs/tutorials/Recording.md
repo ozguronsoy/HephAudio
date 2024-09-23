@@ -1,56 +1,32 @@
 # Recording (Capturing)
 
-When some amount of data is recorded (typically 10ms) the ``OnCapture`` [event](/docs/HephCommon/Event.md) is raised.<br>
+When some amount of data is recorded (typically 10ms) the ``OnCapture`` [event](/docs/Heph/Event.md) is raised.<br>
 
 Record for 5 seconds, then play it:
 ```c++
 #include <iostream>
 #include <chrono>
 #include <Audio.h>
-#include <ConsoleLogger.h>
-#include <StringHelpers.h>
 #include <AudioProcessor.h>
 
-using namespace HephCommon;
+using namespace Heph;
 using namespace HephAudio;
-
-void HandleExceptions(const EventParams& eventParams)
-{
-    const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
-
-    std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
-    if (ex.externalMessage != "")
-    {
-	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
-    }
-
-    ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
-}
 
 AudioObject* pAudioObject;
 void HandleCapture(const EventParams& eventParams)
 {
     AudioCaptureEventArgs* pCaptureArgs = (AudioCaptureEventArgs*)eventParams.pArgs;
-
-    AudioProcessor::ConvertToInnerFormat(pCaptureArgs->captureBuffer);
-    if (pAudioObject->buffer.FrameCount() == 0)
-    {
-        pAudioObject->buffer = pCaptureArgs->captureBuffer;
-    }
-    else
-    {
-        pAudioObject->buffer.Append(pCaptureArgs->captureBuffer);
-    }
+    pAudioObject->buffer.Append(pCaptureArgs->captureBuffer);
 }
 
 int main()
 {
     // for printing errors
-    HephException::OnException = &HandleExceptions;
+    Exception::OnException = HEPH_EXCEPTION_DEFAULT_HANDLER;
 
     Audio audio;
 
-    pAudioObject = audio.CreateAudioObject("render recorded data", 0, AudioFormatInfo()); 
+    pAudioObject = audio.CreateAudioObject("render recorded data", 0, HEPHAUDIO_CH_LAYOUT_STEREO, 48000); 
     pAudioObject->OnRender = HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT;
 
     audio.InitializeCapture(HEPHAUDIO_CH_LAYOUT_MONO, 48000);
@@ -81,25 +57,12 @@ If you want to play while capturing, you have to use a [mutex](https://en.cppref
 #include <chrono>
 #include <thread>
 #include <Audio.h>
-#include <ConsoleLogger.h>
-#include <StringHelpers.h>
 #include <AudioProcessor.h>
+#include <AudioEvents/AudioRenderEventArgs.h>
+#include <AudioEvents/AudioRenderEventResult.h>
 
-using namespace HephCommon;
+using namespace Heph;
 using namespace HephAudio;
-
-void HandleExceptions(const EventParams &eventParams)
-{
-    const HephException &ex = ((HephExceptionEventArgs *)eventParams.pArgs)->exception; // get the exception data
-
-    std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
-    if (ex.externalMessage != "")
-    {
-        exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
-    }
-
-    ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
-}
 
 std::mutex renderCaptureMutex;
 AudioObject *pAudioObject;
@@ -108,16 +71,7 @@ void HandleCapture(const EventParams &eventParams)
     std::lock_guard<std::mutex> lockGuard(renderCaptureMutex);
 
     AudioCaptureEventArgs *pCaptureArgs = (AudioCaptureEventArgs *)eventParams.pArgs;
-
-    AudioProcessor::ConvertToInnerFormat(pCaptureArgs->captureBuffer);
-    if (pAudioObject->buffer.FrameCount() == 0)
-    {
-        pAudioObject->buffer = pCaptureArgs->captureBuffer;
-    }
-    else
-    {
-        pAudioObject->buffer.Append(pCaptureArgs->captureBuffer);
-    }
+    pAudioObject->buffer.Append(pCaptureArgs->captureBuffer);
 }
 
 void HandleRender(const EventParams &eventParams)
@@ -126,12 +80,11 @@ void HandleRender(const EventParams &eventParams)
 
     AudioRenderEventArgs *pRenderArgs = (AudioRenderEventArgs *)eventParams.pArgs;
     AudioRenderEventResult *pRenderResult = (AudioRenderEventResult *)eventParams.pResult;
-    Native::NativeAudio *pNativeAudio = (Native::NativeAudio *)pRenderArgs->pNativeAudio;
 
     if (pAudioObject->buffer.FrameCount() >= pRenderArgs->renderFrameCount)
     {
-        pRenderResult->renderBuffer = pAudioObject->buffer.GetSubBuffer(0, pRenderArgs->renderFrameCount);
-        AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, pNativeAudio->GetRenderFormat().channelLayout);
+        pRenderResult->renderBuffer = pAudioObject->buffer.SubBuffer(0, pRenderArgs->renderFrameCount);
+        AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, pRenderArgs->pNativeAudio->GetRenderFormat().channelLayout);
 
         pAudioObject->buffer.Cut(0, pRenderArgs->renderFrameCount);
         pAudioObject->frameIndex = 0;
@@ -143,11 +96,11 @@ void HandleRender(const EventParams &eventParams)
 int main()
 {
     // for printing errors
-    HephException::OnException = &HandleExceptions;
+    Exception::OnException = HEPH_EXCEPTION_DEFAULT_HANDLER;
 
     Audio audio;
 
-    pAudioObject = audio.CreateAudioObject("render recorded data", 0, AudioFormatInfo());
+    pAudioObject = audio.CreateAudioObject("render recorded data", 0, HEPHAUDIO_CH_LAYOUT_STEREO, 48000);
     pAudioObject->OnRender = &HandleRender;
     pAudioObject->isPaused = false;
 
