@@ -704,9 +704,9 @@ namespace HephAudio
 
 		// calculate frameIndex relative to the packet pos
 		// and how many packets to skip after seek (seek does not always find the packet we are looking for)
-		int64_t skippedPacketCount = -1;
-		int64_t packetDuration = 0;
-		int64_t deltaFrameIndex = 0;
+		size_t skippedPacketCount = -1;
+		size_t packetDuration = 0;
+		size_t deltaFrameIndex = 0;
 		do
 		{
 			ret = av_read_frame(this->avFormatContext, this->avPacket);
@@ -723,7 +723,7 @@ namespace HephAudio
 
 			skippedPacketCount++;
 
-			const int64_t packetFrameIndex = av_rescale((this->avPacket->pts - this->firstPacketPts) * avStream->codecpar->sample_rate, avStream->time_base.num, avStream->time_base.den);
+			const size_t packetFrameIndex = av_rescale((this->avPacket->pts - this->firstPacketPts) * avStream->codecpar->sample_rate, avStream->time_base.num, avStream->time_base.den);
 			if (frameIndex < packetFrameIndex)
 			{
 				HEPHAUDIO_LOG("Failed to find the exact packet that contains the requested frames, picking the closest one...", HEPH_CL_WARNING);

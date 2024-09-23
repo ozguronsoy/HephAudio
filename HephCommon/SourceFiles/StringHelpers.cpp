@@ -241,11 +241,11 @@ namespace Heph
 		Guid guid;
 		const std::vector<std::string> dataStr = StringHelpers::Split(string, "-");
 		(void)sscanf(dataStr[0].c_str(), "%x", &guid.data1);
-		(void)sscanf(dataStr[1].c_str(), "%04x", &guid.data2);
-		(void)sscanf(dataStr[2].c_str(), "%04x", &guid.data3);
-		(void)sscanf(dataStr[3].c_str(), "%02x", guid.data4);
-		(void)sscanf(dataStr[3].c_str() + 2, "%02x", guid.data4 + 1);
-		(void)sscanf(dataStr[4].c_str(), "%02x%02x%02x%02x%02x%02x", guid.data4 + 2, guid.data4 + 3, guid.data4 + 4, guid.data4 + 5, guid.data4 + 6, guid.data4 + 7);
+		(void)sscanf(dataStr[1].c_str(), "%hx", &guid.data2);
+		(void)sscanf(dataStr[2].c_str(), "%hx", &guid.data3);
+		(void)sscanf(dataStr[3].c_str(), "%hhx", guid.data4);
+		(void)sscanf(dataStr[3].c_str() + 2, "%hhx", guid.data4 + 1);
+		(void)sscanf(dataStr[4].c_str(), "%hhx%hhx%hhx%hhx%hhx%hhx", guid.data4 + 2, guid.data4 + 3, guid.data4 + 4, guid.data4 + 5, guid.data4 + 6, guid.data4 + 7);
 		return guid;
 	}
 	int16_t StringHelpers::HexStringToS16(const std::string& hexString)

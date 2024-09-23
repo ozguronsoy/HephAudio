@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.25)
 
-project("HephAudio")
+set(HEPHAUDIO_VERSION_MAJOR 2)
+set(HEPHAUDIO_VERSION_MINOR 1)
+set(HEPHAUDIO_VERSION_PATCH 7)
+set(HEPHAUDIO_VERSION ${HEPHAUDIO_VERSION_MAJOR}.${HEPHAUDIO_VERSION_MINOR}.${HEPHAUDIO_VERSION_PATCH})
+
+project("HephAudio" VERSION ${HEPHAUDIO_VERSION} LANGUAGES CXX)
 
 option(ENABLE_STATIC "ENABLE_STATIC" Off)
 option(ENABLE_SHARED "ENABLE_SHARED" Off)
@@ -82,6 +87,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     endif()
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
+
+    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
     
      set(
         HEPHAUDIO_LINK_LIBS 
@@ -114,6 +121,8 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    
+    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
 
     set(
         HEPHAUDIO_LINK_LIBS
@@ -130,6 +139,8 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     
+    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
+
     set(
         HEPHAUDIO_LINK_LIBS
         "-framework CoreFoundation"
@@ -145,6 +156,8 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+
+    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
 
     set (
             HEPHAUDIO_LINK_LIBS
@@ -167,23 +180,18 @@ else()
 endif ()
 
 if (ENABLE_STATIC OR ENABLE_SHARED)
-    add_compile_options(-fpermissive) # fix code and remove this later
-
+    
     if (ENABLE_SHARED)
-
         add_definitions(-DHEPH_SHARED_LIB -DHEPH_EXPORTS)
         add_library(
             ${CMAKE_PROJECT_NAME} SHARED
             ${HEPHAUDIO_SRC}
         )
-
     else()
-
         add_library(
             ${CMAKE_PROJECT_NAME} STATIC
             ${HEPHAUDIO_SRC}
         )
-
     endif()
 
     target_link_libraries(
@@ -191,10 +199,34 @@ if (ENABLE_STATIC OR ENABLE_SHARED)
         ${HEPHAUDIO_LINK_LIBS}
     )
     
-    install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/bin)
+    install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/)
+
+    install(FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/default.sofa DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/)
+    install(FILES ${CMAKE_CURRENT_LIST_DIR}/LICENSE.md DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/)
     
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephCommon/HeaderFiles/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/HephCommon/)
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephAudio/HeaderFiles/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/HephAudio/)
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/include/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/ffmpeg/)
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/include/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/libmysofa/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephCommon/HeaderFiles/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/include/HephCommon/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephAudio/HeaderFiles/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/include/HephAudio/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/include/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/include/ffmpeg/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/include/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/include/libmysofa/)
+
+    if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        
+        install(
+            DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/
+            DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/
+            FILES_MATCHING 
+            PATTERN "*.lib"
+            PATTERN "dlls" EXCLUDE
+        )
+        install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/dlls/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/)
+        
+        install(FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/dlls/zlib.dll DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/)
+        install(FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/zlib.lib DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/)
+        if (DEFINED MSVC)
+            install(FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/msvc/mysofa.lib DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/)
+        else()
+            install(FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/mingw/mysofa.lib DESTINATION ${CMAKE_CURRENT_LIST_DIR}/build/lib/)
+        endif()
+
+    endif()
 endif ()

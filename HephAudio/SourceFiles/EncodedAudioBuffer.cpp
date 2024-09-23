@@ -78,3 +78,9 @@ namespace HephAudio
 		}
 	}
 }
+
+namespace Heph
+{
+	// explicit instantiate for building shared libraries.
+	template class HEPH_API BufferBase<HephAudio::EncodedAudioBuffer, uint8_t>;
+}

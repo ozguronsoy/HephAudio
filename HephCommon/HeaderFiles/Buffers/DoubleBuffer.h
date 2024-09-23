@@ -35,27 +35,4 @@ namespace Heph
 		DoubleBuffer& operator=(const DoubleBuffer& rhs);
 		DoubleBuffer& operator=(DoubleBuffer&& rhs) noexcept;
 	};
-
-	// explicit instantiate for DLLs.
-	template class HEPH_API BufferBase<DoubleBuffer, double>;
-	template class HEPH_API ArithmeticBuffer<DoubleBuffer, double>;
-	template class HEPH_API SignedArithmeticBuffer<DoubleBuffer, double>;
-
-	template class HEPH_API BufferAdditionOperator<DoubleBuffer, double>;
-	template class HEPH_API BufferSubtractionOperator<DoubleBuffer, double>;
-	template class HEPH_API BufferDivisionOperator<DoubleBuffer, double>;
-	template class HEPH_API BufferMultiplicationOperator<DoubleBuffer, double>;
-	template class HEPH_API BufferArithmeticOperators<DoubleBuffer, double>;
-	template class HEPH_API BufferOperatorResultCreatedEventArgs<DoubleBuffer, double>;
-	template class HEPH_API BufferOperatorEvents<DoubleBuffer, double>;
-
-	template class HEPH_API BufferAdditionOperator<DoubleBuffer, double, DoubleBuffer, double>;
-	template class HEPH_API BufferSubtractionOperator<DoubleBuffer, double, DoubleBuffer, double>;
-	template class HEPH_API BufferDivisionOperator<DoubleBuffer, double, DoubleBuffer, double>;
-	template class HEPH_API BufferMultiplicationOperator<DoubleBuffer, double, DoubleBuffer, double>;
-	template class HEPH_API BufferArithmeticOperators<DoubleBuffer, double, DoubleBuffer, double>;
-	template class HEPH_API BufferOperatorResultCreatedEventArgs<DoubleBuffer, DoubleBuffer>;
-	template class HEPH_API BufferOperatorEvents<DoubleBuffer, DoubleBuffer>;
-	
-	template class HEPH_API BufferUnaryMinusOperator<DoubleBuffer, double>;
 }

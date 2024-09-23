@@ -303,7 +303,7 @@ namespace HephAudio
 			this->InitializeCOM();
 
 			constexpr size_t notificationCount = 2;
-			constexpr float bufferDuration_s = 0.3; // 300ms
+			constexpr float bufferDuration_s = 0.3f; // 300ms
 
 			ComPtr<IDirectSoundCapture> pDirectSoundCapture = nullptr;
 			ComPtr<IDirectSoundCaptureBuffer> pDirectSoundCaptureBuffer = nullptr;

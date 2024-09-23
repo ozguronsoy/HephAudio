@@ -957,7 +957,7 @@ namespace HephAudio
 				{
 					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 
-					for (int64_t j = startIndex; j < nyquistFrequency; j++)
+					for (size_t j = startIndex; j < nyquistFrequency; j++)
 					{
 						complexBuffer[j] = Complex();
 						complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
@@ -1025,7 +1025,7 @@ namespace HephAudio
 			{
 				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 
-				for (int64_t k = stopIndex; k >= 0; k--)
+				for (size_t k = 0; k <= stopIndex; k++)
 				{
 					complexBuffer[k] = Complex();
 					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
@@ -1067,7 +1067,7 @@ namespace HephAudio
 				for (size_t i = 0; i < channel.Size(); i += hopSize)
 				{
 					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
-					for (int64_t j = stopIndex; j >= 0; j--)
+					for (size_t j = 0; j <= stopIndex; j++)
 					{
 						complexBuffer[j] = Complex();
 						complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();
@@ -1136,7 +1136,7 @@ namespace HephAudio
 			{
 				ComplexBuffer complexBuffer = Fourier::FFT(channels[j].SubBuffer(i, fftSize) * windowBuffer, fftSize);
 
-				for (int64_t k = startIndex; k >= 0; k--)
+				for (size_t k = 0; k <= startIndex; k++)
 				{
 					complexBuffer[k] = Complex();
 					complexBuffer[fftSize - k - 1] = complexBuffer[k].Conjugate();
@@ -1186,7 +1186,7 @@ namespace HephAudio
 				{
 					ComplexBuffer complexBuffer = Fourier::FFT(channel.SubBuffer(i, fftSize) * (*pWindowBuffer), fftSize);
 
-					for (int64_t j = startIndex; j >= 0; j--)
+					for (size_t j = 0; j <= startIndex; j++)
 					{
 						complexBuffer[j] = Complex();
 						complexBuffer[fftSize - j - 1] = complexBuffer[j].Conjugate();

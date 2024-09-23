@@ -103,27 +103,4 @@ namespace HephAudio
 		static void ResultCreatedEventHandler(const Heph::EventParams& params);
 		static void ResultCreatedEventHandlerBuffer(const Heph::EventParams& params);
 	};
-
-	// explicit instantiate for DLLs.
-	template class HEPH_API Heph::BufferBase<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::ArithmeticBuffer<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>;
-
-	template class HEPH_API Heph::BufferAdditionOperator<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferSubtractionOperator<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferDivisionOperator<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferMultiplicationOperator<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferArithmeticOperators<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferOperatorResultCreatedEventArgs<AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferOperatorEvents<AudioBuffer, heph_audio_sample_t>;
-
-	template class HEPH_API Heph::BufferAdditionOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferSubtractionOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferDivisionOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferMultiplicationOperator<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferArithmeticOperators<AudioBuffer, heph_audio_sample_t, AudioBuffer, heph_audio_sample_t>;
-	template class HEPH_API Heph::BufferOperatorResultCreatedEventArgs<AudioBuffer, AudioBuffer>;
-	template class HEPH_API Heph::BufferOperatorEvents<AudioBuffer, AudioBuffer>;
-
-	template class HEPH_API Heph::BufferUnaryMinusOperator<AudioBuffer, heph_audio_sample_t>;
 }

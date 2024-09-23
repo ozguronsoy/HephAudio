@@ -276,3 +276,29 @@ namespace HephAudio
 		pArgs->result.formatInfo = pArgs->lhs.formatInfo;
 	}
 }
+
+namespace Heph
+{
+	// explicit instantiate for building shared libraries.
+	template class HEPH_API BufferBase<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API ArithmeticBuffer<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API SignedArithmeticBuffer<HephAudio::AudioBuffer, heph_audio_sample_t>;
+
+	template class HEPH_API BufferAdditionOperator<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferSubtractionOperator<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferDivisionOperator<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferMultiplicationOperator<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferArithmeticOperators<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template struct HEPH_API BufferOperatorResultCreatedEventArgs<HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template struct HEPH_API BufferOperatorEvents<HephAudio::AudioBuffer, heph_audio_sample_t>;
+
+	template class HEPH_API BufferAdditionOperator<HephAudio::AudioBuffer, heph_audio_sample_t, HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferSubtractionOperator<HephAudio::AudioBuffer, heph_audio_sample_t, HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferDivisionOperator<HephAudio::AudioBuffer, heph_audio_sample_t, HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferMultiplicationOperator<HephAudio::AudioBuffer, heph_audio_sample_t, HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template class HEPH_API BufferArithmeticOperators<HephAudio::AudioBuffer, heph_audio_sample_t, HephAudio::AudioBuffer, heph_audio_sample_t>;
+	template struct HEPH_API BufferOperatorResultCreatedEventArgs<HephAudio::AudioBuffer, HephAudio::AudioBuffer>;
+	template struct HEPH_API BufferOperatorEvents<HephAudio::AudioBuffer, HephAudio::AudioBuffer>;
+
+	template class HEPH_API BufferUnaryMinusOperator<HephAudio::AudioBuffer, heph_audio_sample_t>;
+}

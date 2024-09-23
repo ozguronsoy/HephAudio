@@ -248,7 +248,7 @@ namespace HephAudio
 				pAudioObject->isPaused = this->isPaused;
 			}
 		}
-		catch (Exception& ex)
+		catch (const Exception&)
 		{
 			this->files.erase(this->files.begin());
 			if (this->files.size() > 0)

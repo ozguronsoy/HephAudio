@@ -61,41 +61,4 @@ namespace Heph
 		static void ResultCreatedEventHandlerComplexBuffer(const Heph::EventParams& params);
 		static void ResultCreatedEventHandlerDoubleBuffer(const Heph::EventParams& params);
 	};
-
-	// explicit instantiate for DLLs.
-	template class HEPH_API BufferBase<ComplexBuffer, Complex>;
-
-	template class HEPH_API BufferAdditionOperator<ComplexBuffer, Complex>;
-	template class HEPH_API BufferSubtractionOperator<ComplexBuffer, Complex>;
-	template class HEPH_API BufferDivisionOperator<ComplexBuffer, Complex>;
-	template class HEPH_API BufferMultiplicationOperator<ComplexBuffer, Complex>;
-	template class HEPH_API BufferArithmeticOperators<ComplexBuffer, Complex>;
-	template class HEPH_API BufferOperatorResultCreatedEventArgs<ComplexBuffer, Complex>;
-	template class HEPH_API BufferOperatorEvents<ComplexBuffer, Complex>;
-
-	template class HEPH_API BufferAdditionOperator<ComplexBuffer, Complex, double>;
-	template class HEPH_API BufferSubtractionOperator<ComplexBuffer, Complex, double>;
-	template class HEPH_API BufferDivisionOperator<ComplexBuffer, Complex, double>;
-	template class HEPH_API BufferMultiplicationOperator<ComplexBuffer, Complex, double>;
-	template class HEPH_API BufferArithmeticOperators<ComplexBuffer, Complex, double>;
-	template class HEPH_API BufferOperatorResultCreatedEventArgs<ComplexBuffer, double>;
-	template class HEPH_API BufferOperatorEvents<ComplexBuffer, double>;
-
-	template class HEPH_API BufferAdditionOperator<ComplexBuffer, Complex, ComplexBuffer, Complex>;
-	template class HEPH_API BufferSubtractionOperator<ComplexBuffer, Complex, ComplexBuffer, Complex>;
-	template class HEPH_API BufferDivisionOperator<ComplexBuffer, Complex, ComplexBuffer, Complex>;
-	template class HEPH_API BufferMultiplicationOperator<ComplexBuffer, Complex, ComplexBuffer, Complex>;
-	template class HEPH_API BufferArithmeticOperators<ComplexBuffer, Complex, ComplexBuffer, Complex>;
-	template class HEPH_API BufferOperatorResultCreatedEventArgs<ComplexBuffer, ComplexBuffer>;
-	template class HEPH_API BufferOperatorEvents<ComplexBuffer, ComplexBuffer>;
-
-	template class HEPH_API BufferAdditionOperator<ComplexBuffer, Complex, DoubleBuffer, double>;
-	template class HEPH_API BufferSubtractionOperator<ComplexBuffer, Complex, DoubleBuffer, double>;
-	template class HEPH_API BufferDivisionOperator<ComplexBuffer, Complex, DoubleBuffer, double>;
-	template class HEPH_API BufferMultiplicationOperator<ComplexBuffer, Complex, DoubleBuffer, double>;
-	template class HEPH_API BufferArithmeticOperators<ComplexBuffer, Complex, DoubleBuffer, double>;
-	template class HEPH_API BufferOperatorResultCreatedEventArgs<ComplexBuffer, DoubleBuffer>;
-	template class HEPH_API BufferOperatorEvents<ComplexBuffer, DoubleBuffer>;
-
-	template class HEPH_API BufferUnaryMinusOperator<ComplexBuffer, Complex>;
 };

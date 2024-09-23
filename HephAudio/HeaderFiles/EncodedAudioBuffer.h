@@ -89,6 +89,4 @@ namespace HephAudio
 		 */
 		void Add(const uint8_t* pData, size_t size);
 	};
-
-	template class HEPH_API Heph::BufferBase<EncodedAudioBuffer, uint8_t>;
 }
