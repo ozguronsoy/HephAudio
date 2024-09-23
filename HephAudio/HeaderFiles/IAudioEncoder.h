@@ -28,9 +28,10 @@ namespace HephAudio
 		/**
 		 * changes the file that will store the encoded audio data.
 		 * 
+		 * @param outputFormatInfo target format.
 		 * @param overwrite indicates whether to write over the file if it already exists.
 		 */
-		virtual void ChangeFile(const std::filesystem::path& newAudioFilePath, bool overwrite) = 0;
+		virtual void ChangeFile(const std::filesystem::path& newAudioFilePath, const AudioFormatInfo& outputFormatInfo, bool overwrite) = 0;
 
 		/**
 		 * closes the file and releases the resources allocated for encoding.

@@ -19,10 +19,9 @@ namespace HephAudio
 		, avStream(nullptr), avCodecContext(nullptr), swrContext(nullptr)
 		, avPacket(nullptr), avFrame(nullptr) {}
 
-	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::filesystem::path& filePath, AudioFormatInfo outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
+	FFmpegAudioEncoder::FFmpegAudioEncoder(const std::filesystem::path& filePath, const AudioFormatInfo& outputFormatInfo, bool overwrite) : FFmpegAudioEncoder()
 	{
-		this->outputFormatInfo = outputFormatInfo;
-		this->ChangeFile(filePath, overwrite);
+		this->ChangeFile(filePath, outputFormatInfo, overwrite);
 	}
 
 	FFmpegAudioEncoder::FFmpegAudioEncoder(FFmpegAudioEncoder&& rhs) noexcept
@@ -74,12 +73,12 @@ namespace HephAudio
 		return *this;
 	}
 
-	void FFmpegAudioEncoder::ChangeFile(const std::filesystem::path& newAudioFilePath, bool overwrite)
+	void FFmpegAudioEncoder::ChangeFile(const std::filesystem::path& newAudioFilePath, const AudioFormatInfo& outputFormatInfo, bool overwrite)
 	{
 		if (this->filePath != newAudioFilePath)
 		{
 			this->CloseFile();
-			this->OpenFile(newAudioFilePath, overwrite);
+			this->OpenFile(newAudioFilePath, outputFormatInfo, overwrite);
 		}
 	}
 
@@ -478,7 +477,7 @@ namespace HephAudio
 		}
 	}
 
-	void FFmpegAudioEncoder::OpenFile(const std::filesystem::path& filePath, bool overwrite)
+	void FFmpegAudioEncoder::OpenFile(const std::filesystem::path& filePath, const AudioFormatInfo& outputFormatInfo, bool overwrite)
 	{
 		if (!overwrite && std::filesystem::exists(filePath))
 		{
@@ -487,6 +486,7 @@ namespace HephAudio
 		}
 
 		this->filePath = filePath;
+		this->outputFormatInfo = outputFormatInfo;
 
 		int ret = avformat_alloc_output_context2(&this->avFormatContext, nullptr, nullptr, this->filePath.string().c_str());
 		if (ret < 0)
