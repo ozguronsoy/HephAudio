@@ -19,7 +19,11 @@ namespace Heph
 	class HEPH_API ConsoleLogger final
 	{
 	private:
+#if defined(HEPH_CL_DISABLE_COLORED_OUTPUT)
+		static inline bool coloredOutput = false;
+#else
 		static inline bool coloredOutput = true;
+#endif
 
 	public:
 		ConsoleLogger() = delete;
