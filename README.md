@@ -186,7 +186,7 @@ int main()
 	Audio audio;
 	audio.InitializeRender(nullptr, AudioFormatInfo(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000));
 
-	AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav", true); // pause before applying effects.
+	AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav");
 
 	printf("applying sound effects...\n");
 
@@ -209,29 +209,17 @@ Every error that occurs while using the library raises an ``OnException`` event 
 
 In this example, we will try to open a non-existing file. This is going to throw an exception.
 ```cpp
-#include <HephException.h>
-#include <ConsoleLogger.h>
-#include <StringHelpers.h>
+#include <Exceptions/Exception.h>
+#include <Exceptions/InvalidArgumentException.h>
+#include <Exceptions/InsufficientMemoryException.h>
 
-using namespace HephCommon;
-
-void HandleExceptions(const EventParams& eventParams)
-{
-	const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
-
-	std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
-	if (ex.externalMessage != "")
-	{
-		exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
-	}
-
-	ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
-}
+using namespace Heph;
 
 int main()
 {
-	HephException::OnException = &HandleExceptions;
-	File f("thisFileDoesNotExist.txt", FileOpenMode::Read);
+	Exception::OnException = HEPH_EXCEPTION_DEFAULT_HANDLER;
+	HEPH_RAISE_EXCEPTION(nullptr, InvalidArgumentException(HEPH_FUNC, "invalid argument!"));
+	HEPH_RAISE_AND_THROW_EXCEPTION(nullptr, InsufficientMemoryException(HEPH_FUNC, "insufficient memory!"));
 	return 0;
 }
 ```
