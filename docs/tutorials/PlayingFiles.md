@@ -9,29 +9,14 @@ Playing files via ``Audio::Play`` method.
 ```c++
 #include <iostream>
 #include <Audio.h>
-#include <ConsoleLogger.h>
-#include <StringHelpers.h>
 
-using namespace HephCommon;
+using namespace Heph;
 using namespace HephAudio;
-
-void HandleExceptions(const EventParams& eventParams)
-{
-    const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
-
-    std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
-    if (ex.externalMessage != "")
-    {
-	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
-    }
-
-    ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
-}
 
 int main()
 {
     // for printing errors
-    HephException::OnException = &HandleExceptions;
+    Exception::OnException = HEPH_EXCEPTION_DEFAULT_HANDLER;
 
     Audio audio;
     
@@ -62,29 +47,14 @@ Playing files via ``AudioStream``.
 #include <iostream>
 #include <Audio.h>
 #include <AudioStream.h>
-#include <ConsoleLogger.h>
-#include <StringHelpers.h>
 
-using namespace HephCommon;
+using namespace Heph;
 using namespace HephAudio;
-
-void HandleExceptions(const EventParams& eventParams)
-{
-    const HephException& ex = ((HephExceptionEventArgs*)eventParams.pArgs)->exception; // get the exception data
-
-    std::string exceptionString = "Error!\n" + ex.method + " (" + StringHelpers::ToHexString(ex.errorCode) + ")\n" + ex.message;
-    if (ex.externalMessage != "")
-    {
-	    exceptionString += "\n(" + ex.externalSource + ") \"" + ex.externalMessage + "\"";
-    }
-
-    ConsoleLogger::LogError(exceptionString); // print the exception data as error to the console
-}
 
 int main()
 {
     // for printing errors
-    HephException::OnException = &HandleExceptions;
+    Exception::OnException = HEPH_EXCEPTION_DEFAULT_HANDLER;
 
     Audio audio;
     
