@@ -6,9 +6,14 @@
 
 namespace Heph
 {
-	Exception::Exception() { }
+	Exception::Exception() : std::exception() { }
 
-	Exception::Exception(const std::string& method, const std::string& message) : std::exception(message.c_str()), method(method) {}
+	Exception::Exception(const std::string& method, const std::string& message) : std::exception(), method(method), message(message) {}
+
+	const char* Exception::what() const noexcept
+	{
+		return this->message.c_str();
+	}
 
 	std::string Exception::GetName() const
 	{
@@ -20,9 +25,9 @@ namespace Heph
 		return this->method;
 	}
 
-	std::string Exception::GetMessage() const
+	const std::string& Exception::GetMessage() const
 	{
-		return std::string(this->what());
+		return this->message;
 	}
 
 	void Exception::Raise(const void* pSender) const

@@ -2,7 +2,7 @@
 #include "HephAudioShared.h"
 #include "AudioBuffer.h"
 #include "Buffers/DoubleBuffer.h"
-#include <../../dependencies/libmysofa/include/mysofa.h>
+#include <mysofa.h>
 #include <string>
 #include <vector>
 #include <filesystem>

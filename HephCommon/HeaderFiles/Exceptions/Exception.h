@@ -53,6 +53,12 @@ namespace Heph
 		 */
 		std::string method;
 
+		/**
+		 * description of the exception.
+		 *
+		 */
+		std::string message;
+
 	public:
 		/** @copydoc default_constructor */
 		Exception();
@@ -61,12 +67,14 @@ namespace Heph
 		 * @copydoc constructor
 		 *
 		 * @param method @copydetails method
-		 * @param message description of the exception.
+		 * @param message @copydetails message
 		 */
 		Exception(const std::string& method, const std::string& message);
 
 		/** @copydoc destructor */
 		virtual ~Exception() = default;
+
+		virtual const char* what() const noexcept override;
 
 		/**
 		 * gets the human readable name of the exception.
@@ -84,7 +92,7 @@ namespace Heph
 		 * gets the message. 
 		 * 
 		 */
-		virtual std::string GetMessage() const;
+		virtual const std::string& GetMessage() const;
 
 		/**
 		 * raises the \link Heph::Exception::OnException OnException \endlink event.

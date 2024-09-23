@@ -1,5 +1,12 @@
+cmake_minimum_required(VERSION 3.25)
+
+project("HephAudio")
+
+option(ENABLE_STATIC "ENABLE_STATIC" Off)
+option(ENABLE_SHARED "ENABLE_SHARED" Off)
+
 if (NOT DEFINED CMAKE_CXX_STANDARD)
-    set (CMAKE_CXX_STANDARD 23)
+    set (CMAKE_CXX_STANDARD 26)
 endif ()
 
 if (CMAKE_CXX_STANDARD LESS 17)
@@ -23,9 +30,10 @@ include_directories(
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/HeaderFiles
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/HeaderFiles
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/include
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/include
     )
 
-file(GLOB HEPH_AUDIO
+file(GLOB HEPHAUDIO_SRC
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Buffers/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Exceptions/*.cpp
@@ -42,6 +50,12 @@ if (DEFINED MSVC)
 endif()
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+    set(CMAKE_IMPORT_LIBRARY_PREFIX "")
+    set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
+    set(CMAKE_STATIC_LIBRARY_PREFIX "")
+    set(CMAKE_STATIC_LIBRARY_SUFFIX ".lib")
+    set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
     set(
         HEPHAUDIO_LINK_LIBS 
@@ -146,4 +160,41 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libswresample.so
     )
 
+else()
+
+    message( FATAL_ERROR "Unsupported platform.")
+
+endif ()
+
+if (ENABLE_STATIC OR ENABLE_SHARED)
+    add_compile_options(-fpermissive) # fix code and remove this later
+
+    if (ENABLE_SHARED)
+
+        add_definitions(-DHEPH_SHARED_LIB -DHEPH_EXPORTS)
+        add_library(
+            ${CMAKE_PROJECT_NAME} SHARED
+            ${HEPHAUDIO_SRC}
+        )
+
+    else()
+
+        add_library(
+            ${CMAKE_PROJECT_NAME} STATIC
+            ${HEPHAUDIO_SRC}
+        )
+
+    endif()
+
+    target_link_libraries(
+        ${CMAKE_PROJECT_NAME}
+        ${HEPHAUDIO_LINK_LIBS}
+    )
+    
+    install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/bin)
+    
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephCommon/HeaderFiles/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/HephCommon/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephAudio/HeaderFiles/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/HephAudio/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/include/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/ffmpeg/)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/include/ DESTINATION ${CMAKE_CURRENT_LIST_DIR}/output/include/libmysofa/)
 endif ()
