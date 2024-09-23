@@ -29,7 +29,8 @@ jobs:
       - name: build-doxygen
         uses: mattnotmitt/doxygen-action@1.9.8
         with: 
-          working-directory: '${{github.workspace}}/docs'
+          working-directory: '/HephAudio/docs'
+          doxyfile-path: 'Doxyfile'
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Pages
