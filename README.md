@@ -134,7 +134,7 @@ int main()
 	audio.StopCapturing();
 
 	// Save the recorded audio data to a file.
-	audio.GetAudioEncoder()->ChangeFile("some_path/some_file.wav", recordedAudio.FormatInfo(), true);
+	audio.GetAudioEncoder()->ChangeFile("some_path\\some_file.wav", recordedAudio.FormatInfo(), true);
 
 	audio.GetAudioEncoder()->Encode(recordedAudio);
 
@@ -142,7 +142,7 @@ int main()
 
 	// play the recorded file.
 	audio.InitializeRender();
-	audio.Play("some_path/some_file.wav");
+	audio.Play("some_path\\some_file.wav");
 
 	// prevent from exiting the app
 	std::string s;
