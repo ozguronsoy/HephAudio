@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 
 set(HEPHAUDIO_VERSION_MAJOR 2)
 set(HEPHAUDIO_VERSION_MINOR 2)
-set(HEPHAUDIO_VERSION_PATCH 0)
+set(HEPHAUDIO_VERSION_PATCH 1)
 set(HEPHAUDIO_VERSION ${HEPHAUDIO_VERSION_MAJOR}.${HEPHAUDIO_VERSION_MINOR}.${HEPHAUDIO_VERSION_PATCH})
 
 option(ENABLE_STATIC "ENABLE_STATIC" Off)
@@ -130,8 +130,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
-    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
-    
      set(
         HEPHAUDIO_LINK_LIBS 
         m
@@ -174,8 +172,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     
-    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
-
     set(
         HEPHAUDIO_LINK_LIBS
         asound
@@ -201,8 +197,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     
-    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
-
     set(
         HEPHAUDIO_LINK_LIBS
         "-framework CoreFoundation"
@@ -228,8 +222,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-
-    set_target_properties(${CMAKE_PROJECT_NAME} SOVERSION ${HEPHAUDIO_VERSION_MAJOR})
 
     set (
             HEPHAUDIO_LINK_LIBS
@@ -263,6 +255,8 @@ endif ()
 
 if (ENABLE_STATIC OR ENABLE_SHARED)
     
+    add_compile_options(-Wno-attributes)
+
     if (ENABLE_SHARED)
         add_definitions(-DHEPH_SHARED_LIB -DHEPH_EXPORTS)
         add_library(
@@ -279,6 +273,12 @@ if (ENABLE_STATIC OR ENABLE_SHARED)
     target_link_libraries(
         ${CMAKE_PROJECT_NAME}
         ${HEPHAUDIO_LINK_LIBS}
+    )
+
+    set_target_properties(
+        ${CMAKE_PROJECT_NAME} PROPERTIES 
+        VERSION ${HEPHAUDIO_VERSION}
+        SOVERSION ${HEPHAUDIO_VERSION_MAJOR}
     )
     
     install(
