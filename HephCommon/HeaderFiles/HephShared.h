@@ -93,17 +93,34 @@
 #endif
 
 /**
- * exports/imports the members, methods, and classes for DLLs.
+ * exports/imports the members, methods, and classes for shared libraries.
  *
 */
-#if defined(HEPH_SHARED_LIB) && defined(_WIN32)
+#if defined(HEPH_SHARED_LIB)
+
+#if defined(_WIN32)
+
 #if defined(HEPH_EXPORTS)
 #define HEPH_API __declspec(dllexport)
 #else
 #define HEPH_API __declspec(dllimport)
+
 #endif
+
 #else
+
+#if defined(HEPH_EXPORTS)
+#define HEPH_API __attribute__((visibility("default")))
+#else
+#define HEPH_API
+#endif
+
+#endif
+
+#else
+
 #define HEPH_API 
+
 #endif
 
 /**
