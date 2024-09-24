@@ -24,6 +24,11 @@
 #define HEPHAUDIO_FORMAT_TAG_VORBIS				(0x674F)
 #define HEPHAUDIO_FORMAT_TAG_EXTENSIBLE			(0xFFFE)
 
+/**
+ * logs messages to the console.
+ * Enabled by defining <b>HEPHAUDIO_INFO_LOGGING</b>.
+ * 
+ */
 #if defined(HEPHAUDIO_INFO_LOGGING)
 #define HEPHAUDIO_LOG(logMessage, logType) Heph::ConsoleLogger::Log(logMessage, logType, "HephAudio")
 #else
