@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.11.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HephAudio: Introduction</title>
+<title>HephAudio: HephAudio</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,28 +85,66 @@ $(function(){ initResizable(false); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">Introduction </div></div>
+  <div class="headertitle"><div class="title">HephAudio </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2ozgur_2_one_drive_2_desktop_2_projects_2_heph_audio_2_r_e_a_d_m_e"></a>HephAudio is a cross-platform audio library that provides:</p><ul>
-<li>Playing and recording audio data in Windows, Linux, iOS, macOS, and Android.</li>
-<li>Audio device enumeration and selection.</li>
-<li>Tools for storing and processing audio data with ease.</li>
-<li>Easy to use sound effects and filters.</li>
-<li>Spatialization via HRTF.</li>
-<li>FFT for frequency analysis of the audio signals.</li>
-<li>Encoding, decoding, and transcoding audio files via <a href="https://ffmpeg.org/">FFmpeg</a>.</li>
+<div class="textblock"><p><a class="anchor" id="md__c_1_2_users_2ozgur_2_one_drive_2_desktop_2_projects_2_heph_audio_2_r_e_a_d_m_e"></a> <img src="https://img.shields.io/badge/License-LGPL%20v2.1-blue" alt="Static Badge" class="inline"/> <a href="https://github.com/ozguronsoy/HephAudio/actions/workflows/jekyll-gh-pages.yml"><img src="https://github.com/ozguronsoy/HephAudio/actions/workflows/jekyll-gh-pages.yml/badge.svg" alt="GitHub Pages" style="pointer-events: none;" class="inline"/></a></p>
+<ul>
+<li>Setup<br  />
+</li>
+<li>Playing Files<br  />
+</li>
+<li>Recording<br  />
+</li>
+<li>Device Enumeration<br  />
+</li>
+<li>Applying Effects<br  />
+</li>
+<li>Handling Exceptions<br  />
+</li>
+<li><a href="https://ozguronsoy.github.io/HephAudio/">Documentation</a><br  />
+</li>
+<li><a href="/docs/examples">Examples</a><br  />
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md0"></a>
+Introduction</h1>
+<p>HephAudio is a cross-platform audio library that provides:</p><ul>
+<li>Playing and recording audio in Windows, Linux, Android, iOS, and macOS.<br  />
+</li>
+<li>Audio device enumeration and selection.<br  />
+</li>
+<li>Encoding, decoding, and transcoding audio files via <a href="https://ffmpeg.org/">FFmpeg</a>.<br  />
+</li>
+<li>FFT for frequency analysis of the audio signals.<br  />
+</li>
+<li>Spatialization via HRTF.<br  />
+</li>
+<li>Easy to use sound effects and filters.<br  />
+</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Setup</h1>
 <h3><a class="anchor" id="autotoc_md2"></a>
 Visual Studio</h3>
-<p>1) Create a folder at your project's root and name it <code>HephAudio</code> (/project_root/HephAudio). 2) Copy the repo to the folder you created. 3) Right click to your project, go to <code>Configuration Properties -&gt; C/C++ -&gt; General -&gt; Additional Including Directories</code> and add the locations of the <code>HephCommon/HeaderFiles</code>, <code>HephAudio/HeaderFiles</code>, and <code>dependencies/ffmpeg/include</code>. 4) Now right click the solution and go to <code>Add -&gt; Existing Project</code>, under the HephCommon folder select <code>HephCommon.vcxitems</code> to add to your project. Repeat the same process for HephAudio. 5) Right click to your project, <code>Add -&gt; Reference -&gt; Shared Projects</code> and check both HephAudio and HephCommon. 6) Right click to your project, go to <code>Configuration Properties -&gt; Linker -&gt; General -&gt; Additional Library Directories</code> and add <code>path_to_hephaudio/dependencies</code>. 7) Copy the required dll files from the dependencies to the build output folder. 8) Visual studio marks some of the standard functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to <code>Configuration Properties -&gt; C/C++ -&gt; Preprocessor -&gt; Preprocessor Definitions</code> and add <code>_CRT_SECURE_NO_WARNINGS</code>. <br  />
+<p>1) Create a folder at your project's root and name it <code>HephAudio</code> (/project_root/HephAudio).<br  />
+ 2) Copy the repo to the folder you created.<br  />
+ 3) Right click to your project, go to <code>Configuration Properties -&gt; C/C++ -&gt; General -&gt; Additional Including Directories</code> and add the locations of the <code>HephCommon/HeaderFiles</code>, <code>HephAudio/HeaderFiles</code>, <code>dependencies/ffmpeg/include</code>, and <code>dependencies/libmysofa/include</code>.<br  />
+ 4) Now right click the solution and go to <code>Add -&gt; Existing Project</code>, under the HephCommon folder select <code>HephCommon.vcxitems</code> to add to your project. Repeat the same process for HephAudio.<br  />
+ 5) Right click to your project, <code>Add -&gt; Reference -&gt; Shared Projects</code> and check both HephAudio and HephCommon.<br  />
+ 6) Right click to your project, go to <code>Configuration Properties -&gt; Linker -&gt; General -&gt; Additional Library Directories</code> and add <code>path_to_hephaudio/dependencies</code>.<br  />
+ 7) Copy the required dll files from the dependencies to the build output folder.<br  />
+ 8) Visual studio marks some of the standard C functions as unsafe and prevents from compiling by throwing errors. To fix this, right click to your project and go to <code>Configuration Properties -&gt; C/C++ -&gt; Preprocessor -&gt; Preprocessor Definitions</code> and add <code>_CRT_SECURE_NO_WARNINGS</code>.<br  />
+ 9) If you are creating a DLL, add <code>HEPH_EXPORTS</code> and <code>HEPH_SHARED_LIB</code> preprocessor definitions.</p>
+<dl class="section note"><dt>Note</dt><dd>Don't define <code>HEPH_EXPORTS</code> when using the DLL.</dd></dl>
+<p><br  />
 <br  />
 </p>
 <h3><a class="anchor" id="autotoc_md3"></a>
 VS Code</h3>
-<p>1) Create a folder at your project's root and name it <code>HephAudio</code> (/project_root/HephAudio). 2) Copy the repo to the folder you created. 3) **(WINDOWS ONLY)** Copy the required dll files from the dependencies to the build output folder. 4) Create a <code>CMakeLists.txt</code> file at your project's root folder and build it.<br  />
+<p>1) Create a folder at your project's root and name it <code>HephAudio</code> (/project_root/HephAudio).<br  />
+ 2) Copy the repo to the folder you created.<br  />
+ 3) **(WINDOWS ONLY)** Copy the required dll files from the dependencies to the build output folder. 4) Create a <code>CMakeLists.txt</code> file at your project's root folder and build it.<br  />
  An example cmake file: </p><div class="fragment"><div class="line">cmake_minimum_required(VERSION 3.22.1)</div>
 <div class="line"> </div>
 <div class="line"># your project name</div>
@@ -137,19 +175,21 @@ VS Code</h3>
 Getting Started</h1>
 <h3><a class="anchor" id="autotoc_md5"></a>
 Playing Files</h3>
-<p>Let's start by playing a wav file with the default output device. First we need to initialize the audio class for rendering (playing) by calling the <code>InitializeRender</code> method. Then simply call the <code>Play</code> method with the full path to the wav file. </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<p>Let's start by playing a wav file with the default output device. First we need to initialize the audio class for rendering (playing) by calling the <code>InitializeRender</code> method. Then simply call the <code>Play</code> method with the full path to the wav file.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;string.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="d2/d81/_audio_8h.html">Audio.h</a>&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">using namespace </span>HephAudio; <span class="comment">// so we don&#39;t have to write HephAudio:: every time</span></div>
+<div class="line"><span class="keyword">using namespace </span>HephAudio;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> main()</div>
 <div class="line">{</div>
 <div class="line">    <a class="code hl_class" href="de/d99/class_heph_audio_1_1_audio.html">Audio</a> audio;</div>
-<div class="line"> </div>
-<div class="line">    <span class="comment">// 48000 -&gt; 48 kHz sampling rate.</span></div>
+<div class="line">    </div>
+<div class="line">    <span class="comment">// start rendering</span></div>
 <div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">InitializeRender</a>(HEPHAUDIO_CH_LAYOUT_STEREO, 48000);</div>
 <div class="line"> </div>
+<div class="line">    <span class="comment">// load the audio data into memory and start playing</span></div>
 <div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a3e35e8a57d81238d8b77ea9ffee89a90">Play</a>(<span class="stringliteral">&quot;some_path\\some_file.wav&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// prevent from exiting the app</span></div>
@@ -162,15 +202,18 @@ Playing Files</h3>
 <div class="ttc" id="aclass_heph_audio_1_1_audio_html"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html">HephAudio::Audio</a></div><div class="ttdoc">manages the native audio  classes.</div><div class="ttdef"><b>Definition</b> Audio.h:37</div></div>
 <div class="ttc" id="aclass_heph_audio_1_1_audio_html_a22a5238168b224d8deeaa2091297a225"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">HephAudio::Audio::InitializeRender</a></div><div class="ttdeci">void InitializeRender()</div></div>
 <div class="ttc" id="aclass_heph_audio_1_1_audio_html_a3e35e8a57d81238d8b77ea9ffee89a90"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html#a3e35e8a57d81238d8b77ea9ffee89a90">HephAudio::Audio::Play</a></div><div class="ttdeci">AudioObject * Play(const std::filesystem::path &amp;filePath)</div></div>
-</div><!-- fragment --><p> If the audio data we want to play does not have the same format as the one we specified when initializing render, the sound will come out distorted. To prevent that we can call the <code>Load</code> method instead. This method converts the audio data to our target format before playing. </p><div class="fragment"><div class="line">audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a712f3ee7d3a86ff832b95dc0bb57ade6">Load</a>(<span class="stringliteral">&quot;some_path\\some_file.wav&quot;</span>, <span class="keyword">false</span>); <span class="comment">// false = don&#39;t pause.</span></div>
+</div><!-- fragment --><p>If the audio data we want to play does not have the same format as the one we specified when initializing render, the sound will come out distorted. To prevent that we can call the <code>Load</code> method instead. This method converts the audio data to our target format before playing.</p>
+<div class="fragment"><div class="line">audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a712f3ee7d3a86ff832b95dc0bb57ade6">Load</a>(<span class="stringliteral">&quot;some_path\\some_file.wav&quot;</span>, <span class="keyword">false</span>); <span class="comment">// false = don&#39;t pause.</span></div>
 <div class="ttc" id="aclass_heph_audio_1_1_audio_html_a712f3ee7d3a86ff832b95dc0bb57ade6"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html#a712f3ee7d3a86ff832b95dc0bb57ade6">HephAudio::Audio::Load</a></div><div class="ttdeci">AudioObject * Load(const std::filesystem::path &amp;filePath)</div></div>
-</div><!-- fragment --><p> We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing. You can find more information on this in the documentation files.</p>
+</div><!-- fragment --><p>We can also do these convertions on the samples that are just about to be played so we don't have to wait for converting all the data before start playing.</p>
 <h3><a class="anchor" id="autotoc_md6"></a>
 Recording</h3>
-<p>To record audio, first we need to initialize capturing just like before, this will start the recording process. You can access the recorded data via <code>OnCapture</code> event, which is invoked when some amount of data is captured (typically 10ms of audio data). To add an event handler use either one of the following methods: </p><div class="fragment"><div class="line">audio.SetOnCaptureHandler(&amp;MyCallbackMethod); <span class="comment">// Removes all the other event handlers, then adds the provided one</span></div>
+<p>To record audio, first we need to initialize capturing just like before, this will start the recording process. You can access the recorded data via <code>OnCapture</code> event, which is invoked when some amount of data is captured (typically 10ms of audio data). To add an event handler use either one of the following methods:</p>
+<div class="fragment"><div class="line">audio.SetOnCaptureHandler(&amp;MyCallbackMethod); <span class="comment">// Removes all the other event handlers, then adds the provided one</span></div>
 <div class="line">audio.AddOnCaptureHandler(&amp;MyCallbackMethod); <span class="comment">// Adds the provided event handler</span></div>
-</div><!-- fragment --><p>After setting an event handler for the <code>OnCapture</code> event, we must cast the provided <code>EventArgs</code> pointer to the correct type to access the captured data and append it to an <code>AudioBuffer</code> we created. For more details about the <code>EventArgs</code> and <code>EventResult</code> visit the documentation. When you are done recording you can either call <code>StopCapturing()</code> method to deinitialize capturing or <code>PauseCapture(bool isPaused)</code> method to prevent from raising the <code>OnCapture</code> event.</p>
-<p>Sample code for recording audio for 5 seconds, saving it to a file, then playing the file: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+</div><!-- fragment --><p>After setting an event handler for the <code>OnCapture</code> event, we must cast the provided <code>EventArgs</code> pointer to the correct type to access the captured data and append it to an <code>AudioBuffer</code> we created. For more details about the <code>EventArgs</code> and <code>EventResult</code> visit the documentation. When you are done recording you can either call <code>StopCapturing()</code> method to deinitialize capturing or <code>PauseCapture</code> method to stop raising the <code>OnCapture</code> event.</p>
+<p>Sample code for recording audio for 5 seconds, saving it to a file, then playing the file:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;string.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;thread&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;chrono&gt;</span></div>
@@ -178,14 +221,18 @@ Recording</h3>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="d2/d81/_audio_8h.html">Audio.h</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="da/d04/_audio_processor_8h.html">AudioProcessor.h</a>&gt;</span></div>
 <div class="line"> </div>
+<div class="line"><span class="preprocessor">#define RECORD_AUDIO_FILE_PATH &quot;some_path\\some_file.wav&quot;</span></div>
+<div class="line"> </div>
 <div class="line"><span class="keyword">using namespace </span>Heph;</div>
 <div class="line"><span class="keyword">using namespace </span>HephAudio;</div>
 <div class="line"> </div>
+<div class="line"><span class="comment">// will store the audio we recorded.</span></div>
 <div class="line"><a class="code hl_class" href="d1/d2c/class_heph_audio_1_1_audio_buffer.html">AudioBuffer</a> recordedAudio;</div>
 <div class="line"> </div>
-<div class="line"><span class="keywordtype">void</span> RecordAudio(<span class="keyword">const</span> <a class="code hl_struct" href="d5/df2/struct_heph_1_1_event_params.html">EventParams</a>&amp; eventParams) <span class="comment">// the event handler method</span></div>
+<div class="line"><span class="comment">// the event handler method</span></div>
+<div class="line"><span class="keywordtype">void</span> RecordAudio(<span class="keyword">const</span> <a class="code hl_struct" href="d5/df2/struct_heph_1_1_event_params.html">EventParams</a>&amp; eventParams)</div>
 <div class="line">{</div>
-<div class="line">    <a class="code hl_struct" href="d1/d4e/struct_heph_audio_1_1_audio_capture_event_args.html">AudioCaptureEventArgs</a>* pCaptureArgs = (<a class="code hl_struct" href="d1/d4e/struct_heph_audio_1_1_audio_capture_event_args.html">AudioCaptureEventArgs</a>*)eventParams.<a class="code hl_variable" href="d5/df2/struct_heph_1_1_event_params.html#a57b78455d6e49709eed5fd83da18d41e">pArgs</a>; <span class="comment">// cast the args to capture event args</span></div>
+<div class="line">    <a class="code hl_struct" href="d1/d4e/struct_heph_audio_1_1_audio_capture_event_args.html">AudioCaptureEventArgs</a>* pCaptureArgs = (<a class="code hl_struct" href="d1/d4e/struct_heph_audio_1_1_audio_capture_event_args.html">AudioCaptureEventArgs</a>*)eventParams.<a class="code hl_variable" href="d5/df2/struct_heph_1_1_event_params.html#a57b78455d6e49709eed5fd83da18d41e">pArgs</a>;</div>
 <div class="line">    recordedAudio.Append(pCaptureArgs-&gt;captureBuffer);</div>
 <div class="line">}</div>
 <div class="line"> </div>
@@ -204,15 +251,16 @@ Recording</h3>
 <div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a3d907e7c115309c1e9faeeb46179f6c6">StopCapturing</a>();</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// Save the recorded audio data to a file.</span></div>
-<div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a2b99bc15cbe728554cf278eaf9b64410">GetAudioEncoder</a>()-&gt;ChangeFile(<span class="stringliteral">&quot;some_path\\some_file.wav&quot;</span>, recordedAudio.<a class="code hl_function" href="d1/d2c/class_heph_audio_1_1_audio_buffer.html#aa337dedbe4c73929b388bb172989833e">FormatInfo</a>(), <span class="keyword">true</span>);</div>
-<div class="line"> </div>
-<div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a2b99bc15cbe728554cf278eaf9b64410">GetAudioEncoder</a>()-&gt;Encode(recordedAudio);</div>
+<div class="line">    std::shared_ptr&lt;IAudioEncoder&gt; pEncoder = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a2b99bc15cbe728554cf278eaf9b64410">GetAudioEncoder</a>();</div>
+<div class="line">    pEncoder-&gt;ChangeFile(RECORD_AUDIO_FILE_PATH, recordedAudio.<a class="code hl_function" href="d1/d2c/class_heph_audio_1_1_audio_buffer.html#aa337dedbe4c73929b388bb172989833e">FormatInfo</a>(), <span class="keyword">true</span>);</div>
+<div class="line">    pEncoder-&gt;Encode(recordedAudio);</div>
+<div class="line">    pEncoder-&gt;CloseFile();</div>
 <div class="line"> </div>
 <div class="line">    recordedAudio.<a class="code hl_function" href="d1/d2c/class_heph_audio_1_1_audio_buffer.html#ac47414bb29d9a9089723b2d7df99c5a3">Release</a>(); <span class="comment">// dispose of the unnecessary data</span></div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// play the recorded file.</span></div>
+<div class="line">    <span class="comment">// play the file.</span></div>
 <div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">InitializeRender</a>();</div>
-<div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a3e35e8a57d81238d8b77ea9ffee89a90">Play</a>(<span class="stringliteral">&quot;some_path\\some_file.wav&quot;</span>);</div>
+<div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a3e35e8a57d81238d8b77ea9ffee89a90">Play</a>(RECORD_AUDIO_FILE_PATH);</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// prevent from exiting the app</span></div>
 <div class="line">    std::string s;</div>
@@ -235,19 +283,27 @@ Recording</h3>
 <div class="ttc" id="astruct_heph_audio_1_1_audio_format_info_html_ae0e42253ffff16c88bbfe54d7f993238"><div class="ttname"><a href="d8/d75/struct_heph_audio_1_1_audio_format_info.html#ae0e42253ffff16c88bbfe54d7f993238">HephAudio::AudioFormatInfo::sampleRate</a></div><div class="ttdeci">uint32_t sampleRate</div><div class="ttdef"><b>Definition</b> AudioFormatInfo.h:40</div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md7"></a>
 Device Enumeration</h3>
-<p>To get a list of available audio devices call the <code>GetAudioDevices</code> method. </p><div class="fragment"><div class="line">std::vector&lt;AudioDevice&gt; renderDevices = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">GetAudioDevices</a>(AudioDeviceType::Render);    <span class="comment">// Get only the devices that are capable of rendering</span></div>
-<div class="line">std::vector&lt;AudioDevice&gt; captureDevices = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">GetAudioDevices</a>(AudioDeviceType::Capture);  <span class="comment">// Get only the devices that are capable of capturing</span></div>
-<div class="line">std::vector&lt;AudioDevice&gt; audioDevices = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">GetAudioDevices</a>(AudioDeviceType::All);        <span class="comment">// Get all devices.</span></div>
+<p>Available audio devices are updated periodically.</p>
+<div class="fragment"><div class="line"><span class="comment">// update every 3 seconds</span></div>
+<div class="line">audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#afb892d6bfaa580d05627279af725b1d9">SetDeviceEnumerationPeriod</a>(3000);</div>
+<div class="ttc" id="aclass_heph_audio_1_1_audio_html_afb892d6bfaa580d05627279af725b1d9"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html#afb892d6bfaa580d05627279af725b1d9">HephAudio::Audio::SetDeviceEnumerationPeriod</a></div><div class="ttdeci">void SetDeviceEnumerationPeriod(uint32_t deviceEnumerationPeriod_ms)</div></div>
+</div><!-- fragment --><p>To get a list of available audio devices call the <code>GetAudioDevices</code> method.</p>
+<div class="fragment"><div class="line">std::vector&lt;AudioDevice&gt; renderDevices = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">GetAudioDevices</a>(AudioDeviceType::Render);</div>
+<div class="line">std::vector&lt;AudioDevice&gt; captureDevices = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">GetAudioDevices</a>(AudioDeviceType::Capture);</div>
+<div class="line">std::vector&lt;AudioDevice&gt; allDevices = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">GetAudioDevices</a>(AudioDeviceType::All);</div>
 <div class="ttc" id="aclass_heph_audio_1_1_audio_html_af53feac978a0e89784bf593c9e7376fe"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html#af53feac978a0e89784bf593c9e7376fe">HephAudio::Audio::GetAudioDevices</a></div><div class="ttdeci">std::vector&lt; AudioDevice &gt; GetAudioDevices(AudioDeviceType deviceType) const</div></div>
-</div><!-- fragment --><p> To get the default audio device, call the <code>GetDefaultAudioDevice</code> method. </p><div class="fragment"><div class="line"><a class="code hl_struct" href="d6/d1e/struct_heph_audio_1_1_audio_device.html">AudioDevice</a> defaultRenderDevice = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a04fab1e7fee5f2bb29e68e99ad9121a0">GetDefaultAudioDevice</a>(AudioDeviceType::Render);</div>
+</div><!-- fragment --><p>To get the default audio device, call the <code>GetDefaultAudioDevice</code> method.</p>
+<div class="fragment"><div class="line"><a class="code hl_struct" href="d6/d1e/struct_heph_audio_1_1_audio_device.html">AudioDevice</a> defaultRenderDevice = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a04fab1e7fee5f2bb29e68e99ad9121a0">GetDefaultAudioDevice</a>(AudioDeviceType::Render);</div>
 <div class="line"><a class="code hl_struct" href="d6/d1e/struct_heph_audio_1_1_audio_device.html">AudioDevice</a> defaultCaptureDevice = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a04fab1e7fee5f2bb29e68e99ad9121a0">GetDefaultAudioDevice</a>(AudioDeviceType::Capture);</div>
 <div class="ttc" id="aclass_heph_audio_1_1_audio_html_a04fab1e7fee5f2bb29e68e99ad9121a0"><div class="ttname"><a href="de/d99/class_heph_audio_1_1_audio.html#a04fab1e7fee5f2bb29e68e99ad9121a0">HephAudio::Audio::GetDefaultAudioDevice</a></div><div class="ttdeci">AudioDevice GetDefaultAudioDevice(AudioDeviceType deviceType) const</div></div>
 <div class="ttc" id="astruct_heph_audio_1_1_audio_device_html"><div class="ttname"><a href="d6/d1e/struct_heph_audio_1_1_audio_device.html">HephAudio::AudioDevice</a></div><div class="ttdoc">stores information about an audio device.</div><div class="ttdef"><b>Definition</b> AudioDevice.h:76</div></div>
-</div><!-- fragment --><p> After obtaining the audio devices, simply pass a pointer of the desired audio device to the <code>InitializeRender</code> method. </p><div class="fragment"><div class="line">audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">InitializeRender</a>(&amp;renderDevices[0], <a class="code hl_struct" href="d8/d75/struct_heph_audio_1_1_audio_format_info.html">AudioFormatInfo</a>(HEPHAUDIO_FORMAT_TAG_PCM, 2, 16, 48000));</div>
+</div><!-- fragment --><p>After obtaining the audio devices, simply pass a pointer of the desired audio device to the <code>InitializeRender</code> method.</p>
+<div class="fragment"><div class="line">audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">InitializeRender</a>(&amp;renderDevices[0], <a class="code hl_struct" href="d8/d75/struct_heph_audio_1_1_audio_format_info.html">AudioFormatInfo</a>(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000));</div>
 <div class="ttc" id="astruct_heph_audio_1_1_audio_format_info_html"><div class="ttname"><a href="d8/d75/struct_heph_audio_1_1_audio_format_info.html">HephAudio::AudioFormatInfo</a></div><div class="ttdoc">stores the properties of the audio signals</div><div class="ttdef"><b>Definition</b> AudioFormatInfo.h:20</div></div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md8"></a>
 Applying Effects</h3>
-<p>Most of the signal processing is done by the <code>AudioProcessor</code> class. To apply effects we must obtain the <code>AudioBuffer</code> that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the <code>AudioObject</code> that is returned by the <code>Play</code> and <code>Load</code> methods. Here is a sample code for playing the file in 2x speed without changing the pitch: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<p>Most of the signal processing is done by the <code>AudioProcessor</code> class. To apply effects we must obtain the <code>AudioBuffer</code> that's storing the audio data. We can obtain this and any other data that's necessarry to play audio from the <code>AudioObject</code> that is returned by the <code>Play</code> and <code>Load</code> methods. Here is a sample code for playing the file in 2x speed without changing the pitch:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;string.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="d2/d81/_audio_8h.html">Audio.h</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="da/d04/_audio_processor_8h.html">AudioProcessor.h</a>&gt;</span></div>
@@ -258,18 +314,20 @@ Applying Effects</h3>
 <div class="line"><span class="keywordtype">int</span> main()</div>
 <div class="line">{</div>
 <div class="line">    <a class="code hl_class" href="de/d99/class_heph_audio_1_1_audio.html">Audio</a> audio;</div>
-<div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">InitializeRender</a>(<span class="keyword">nullptr</span>, <a class="code hl_struct" href="d8/d75/struct_heph_audio_1_1_audio_format_info.html">AudioFormatInfo</a>(HEPHAUDIO_FORMAT_TAG_PCM, 16, HEPHAUDIO_CH_LAYOUT_STEREO, 48000));</div>
+<div class="line">    audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a22a5238168b224d8deeaa2091297a225">InitializeRender</a>();</div>
 <div class="line"> </div>
 <div class="line">    <a class="code hl_struct" href="d1/d9b/struct_heph_audio_1_1_audio_object.html">AudioObject</a>* pAudioObject = audio.<a class="code hl_function" href="de/d99/class_heph_audio_1_1_audio.html#a712f3ee7d3a86ff832b95dc0bb57ade6">Load</a>(<span class="stringliteral">&quot;some_path\\some_file.wav&quot;</span>);</div>
 <div class="line"> </div>
-<div class="line">    printf(<span class="stringliteral">&quot;applying sound effects...\n&quot;</span>);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;applying sound effects...&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"> </div>
-<div class="line">    <a class="code hl_class" href="db/d23/class_heph_audio_1_1_hann_window.html">HannWindow</a> window; <span class="comment">// windows will be explained later in the docs, for now select a HannWindow</span></div>
-<div class="line">    AudioProcessor::ChangeSpeed(pAudioObject-&gt;<a class="code hl_variable" href="d1/d9b/struct_heph_audio_1_1_audio_object.html#a34fc572e3f229dd50d29e40b79bb1542">buffer</a>, 2.0, window); <span class="comment">// plays in 2x speed without changing the pitch</span></div>
+<div class="line">    <span class="comment">// plays in 2x speed without changing the pitch</span></div>
+<div class="line">    <a class="code hl_class" href="db/d23/class_heph_audio_1_1_hann_window.html">HannWindow</a> window;</div>
+<div class="line">    AudioProcessor::ChangeSpeed(pAudioObject-&gt;<a class="code hl_variable" href="d1/d9b/struct_heph_audio_1_1_audio_object.html#a34fc572e3f229dd50d29e40b79bb1542">buffer</a>, 2.0, window);</div>
 <div class="line"> </div>
-<div class="line">    printf(<span class="stringliteral">&quot;sound effects applied!\n&quot;</span>);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;sound effects applied!&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"> </div>
-<div class="line">    pAudioObject-&gt;<a class="code hl_variable" href="d1/d9b/struct_heph_audio_1_1_audio_object.html#a07a6b2a48bfe6fdb2a9c060ccc0e17d0">isPaused</a> = <span class="keyword">false</span>; <span class="comment">// unpause</span></div>
+<div class="line">    <span class="comment">// unpause</span></div>
+<div class="line">    pAudioObject-&gt;<a class="code hl_variable" href="d1/d9b/struct_heph_audio_1_1_audio_object.html#a07a6b2a48bfe6fdb2a9c060ccc0e17d0">isPaused</a> = <span class="keyword">false</span>;</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// prevent from exiting the app</span></div>
 <div class="line">    std::string s;</div>
@@ -282,10 +340,11 @@ Applying Effects</h3>
 <div class="ttc" id="astruct_heph_audio_1_1_audio_object_html"><div class="ttname"><a href="d1/d9b/struct_heph_audio_1_1_audio_object.html">HephAudio::AudioObject</a></div><div class="ttdoc">stores information that's necessary to play audio.</div><div class="ttdef"><b>Definition</b> AudioObject.h:38</div></div>
 <div class="ttc" id="astruct_heph_audio_1_1_audio_object_html_a07a6b2a48bfe6fdb2a9c060ccc0e17d0"><div class="ttname"><a href="d1/d9b/struct_heph_audio_1_1_audio_object.html#a07a6b2a48bfe6fdb2a9c060ccc0e17d0">HephAudio::AudioObject::isPaused</a></div><div class="ttdeci">bool isPaused</div><div class="ttdef"><b>Definition</b> AudioObject.h:62</div></div>
 <div class="ttc" id="astruct_heph_audio_1_1_audio_object_html_a34fc572e3f229dd50d29e40b79bb1542"><div class="ttname"><a href="d1/d9b/struct_heph_audio_1_1_audio_object.html#a34fc572e3f229dd50d29e40b79bb1542">HephAudio::AudioObject::buffer</a></div><div class="ttdeci">AudioBuffer buffer</div><div class="ttdef"><b>Definition</b> AudioObject.h:82</div></div>
-</div><!-- fragment --> <h3><a class="anchor" id="autotoc_md9"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md9"></a>
 Handling Exceptions</h3>
 <p>Every error that occurs while using the library raises an <code>OnException</code> event but only some exception will actually throw. Using this event we can log the exception details to a file or for this instance, simply print it to console.</p>
-<p>In this example, we will try to open a non-existing file. This is going to throw an exception. </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="df/d98/_exception_8h.html">Exceptions/Exception.h</a>&gt;</span></div>
+<p>In this example, we will try to open a non-existing file. This is going to throw an exception.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="df/d98/_exception_8h.html">Exceptions/Exception.h</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;Exceptions/InvalidArgumentException.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;Exceptions/InsufficientMemoryException.h&gt;</span></div>
 <div class="line"> </div>
@@ -294,8 +353,11 @@ Handling Exceptions</h3>
 <div class="line"><span class="keywordtype">int</span> main()</div>
 <div class="line">{</div>
 <div class="line">    Exception::OnException = <a class="code hl_define" href="df/d98/_exception_8h.html#a70c4b299427bf632bfbd9b03148f94ed">HEPH_EXCEPTION_DEFAULT_HANDLER</a>;</div>
+<div class="line"> </div>
 <div class="line">    <a class="code hl_define" href="df/d98/_exception_8h.html#a5c6b81edb40c4fcdfa73092369d80960">HEPH_RAISE_EXCEPTION</a>(<span class="keyword">nullptr</span>, <a class="code hl_class" href="db/d92/class_heph_1_1_invalid_argument_exception.html">InvalidArgumentException</a>(<a class="code hl_define" href="dc/d7b/_heph_shared_8h.html#a84c373998224378c6c4ab691ea4915f9">HEPH_FUNC</a>, <span class="stringliteral">&quot;invalid argument!&quot;</span>));</div>
+<div class="line">    </div>
 <div class="line">    <a class="code hl_define" href="df/d98/_exception_8h.html#a1fe8ac65d37c1f9240da5a0425f3d7e8">HEPH_RAISE_AND_THROW_EXCEPTION</a>(<span class="keyword">nullptr</span>, <a class="code hl_class" href="d7/d3d/class_heph_1_1_insufficient_memory_exception.html">InsufficientMemoryException</a>(<a class="code hl_define" href="dc/d7b/_heph_shared_8h.html#a84c373998224378c6c4ab691ea4915f9">HEPH_FUNC</a>, <span class="stringliteral">&quot;insufficient memory!&quot;</span>));</div>
+<div class="line">    </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="a_exception_8h_html"><div class="ttname"><a href="df/d98/_exception_8h.html">Exception.h</a></div></div>
@@ -305,7 +367,7 @@ Handling Exceptions</h3>
 <div class="ttc" id="a_heph_shared_8h_html_a84c373998224378c6c4ab691ea4915f9"><div class="ttname"><a href="dc/d7b/_heph_shared_8h.html#a84c373998224378c6c4ab691ea4915f9">HEPH_FUNC</a></div><div class="ttdeci">#define HEPH_FUNC</div><div class="ttdef"><b>Definition</b> HephShared.h:135</div></div>
 <div class="ttc" id="aclass_heph_1_1_insufficient_memory_exception_html"><div class="ttname"><a href="d7/d3d/class_heph_1_1_insufficient_memory_exception.html">Heph::InsufficientMemoryException</a></div><div class="ttdoc">raised when an allocation fails due to insufficient memory.</div><div class="ttdef"><b>Definition</b> InsufficientMemoryException.h:12</div></div>
 <div class="ttc" id="aclass_heph_1_1_invalid_argument_exception_html"><div class="ttname"><a href="db/d92/class_heph_1_1_invalid_argument_exception.html">Heph::InvalidArgumentException</a></div><div class="ttdoc">raised when an argument passed to a method is invalid.</div><div class="ttdef"><b>Definition</b> InvalidArgumentException.h:12</div></div>
-</div><!-- fragment --><p> With this we conclude our introduction to the HephAudio library. To learn more about the library and audio in general visit the <a href="/docs">docs</a>. </p>
+</div><!-- fragment --><p>With this we conclude our introduction to the HephAudio library. To learn more check <a href="/docs/examples">examples</a> or the <a href="https://ozguronsoy.github.io/HephAudio/">documentation</a>. </p>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"/>
 </div><!-- contents -->

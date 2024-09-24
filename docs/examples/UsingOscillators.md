@@ -9,18 +9,14 @@ To better understand how we can utilize oscillators, let's write a tremolo effec
 ### Custom Tremolo Effect
 
 The tremolo effect is achieved by changing the volume of an audio signal periodically.<br>
-Since we have a parameter that changes periodically, we can use the [oscillator](/docs/HephAudio/Oscillators/) classes to obtain this parameter.<br>
-Our method will take an [AudioBuffer](/docs/HephAudio/AudioBuffer.md) reference and an [Oscillator](/docs/HephAudio/Oscillators/Oscillator.md) reference as input. 
-```c++
-void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo);
-```
-The shape of the oscillator directly affects the resulting sound. Hence we used the base oscillator class to avoid restricting the user to a single shape.
+Since we have a parameter that changes periodically, we can use the oscillator classes to obtain this parameter.<br>
+
 ```c++
 void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo)
 {
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
-        const double volume = lfo[i]; // calculate the volume and use it for all channels.
+        const double volume = lfo[i]; 
         for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             buffer[i][j] *= volume;
@@ -28,10 +24,12 @@ void MyTremolo(AudioBuffer& buffer, const Oscillator& lfo)
     }
 }
 ```
-We created a simple tremolo effect. We can improve it by mixing the original input signal (dry) and the output signal we just calculated (wet). 
+
+We created a simple tremolo effect. We can improve it by mixing the original input signal (dry) and the output signal we just computed (wet). 
 That will make our effect even more customizable and increase the variety of sounds we can achieve.
 We will take another parameter to control the dry/wet ratio and call it *depth*. This parameter will be between 0 and 1.<br>
 For *depth = 0*, the output will only contain the dry signal, and vice versa.
+
 ```c++
 void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo)
 {
@@ -40,7 +38,7 @@ void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo)
 
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
-        const double volume = lfo[i]; // calculate the volume and use it for all channels.
+        const double volume = lfo[i]; 
         for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             const double drySample = buffer[i][j];
@@ -50,7 +48,7 @@ void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo)
     }
 }
 ```
-Test it using [SineWaveOscillator](/docs/HephAudio/Oscillators/SineWaveOscillator.md).
+Test it using ``SineWaveOscillator``
 ```c++
 #include <iostream>
 #include <Audio.h>
@@ -67,8 +65,11 @@ int main()
     AudioObject* pAudioObject = audio.Load("some_path\\some_file.wav");
 
     double depth = 0.7;
+    
     uint32_t bufferSampleRate = pAudioObject->buffer.FormatInfo().sampleRate;
-    SineWaveOscillator lfo(1.0, 8.0, bufferSampleRate, 0); // create low-frequency sine wave oscillator
+    
+    SineWaveOscillator lfo(1.0, 8.0, bufferSampleRate, 0); 
+    
     MyTremolo(pAudioObject->buffer, depth, lfo);
 
     pAudioObject->OnRender = HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT;
@@ -88,7 +89,7 @@ void MyTremolo(AudioBuffer& buffer, double depth, const Oscillator& lfo)
 
     for (size_t i = 0; i < buffer.FrameCount(); i++)
     {
-        const double volume = lfo[i]; // calculate the volume and use it for all channels.
+        const double volume = lfo[i];
         for (size_t j = 0; j < buffer.FormatInfo().channelLayout.count; j++)
         {
             const double drySample = buffer[i][j];

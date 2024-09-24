@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['introduction_0',['Introduction',['../index.html',1,'']]]
+  ['hephaudio_0',['HephAudio',['../index.html',1,'']]]
 ];

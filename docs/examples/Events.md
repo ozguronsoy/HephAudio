@@ -3,6 +3,7 @@
 Events manage the callback methods and arguments for handling specific cases. 
 Events are raised by calling the ``Invoke`` method or the ``()`` operator. 
 The handlers are called in the order they are added.
+
 ```c++
 #include <iostream>
 #include <Event.h>
@@ -44,10 +45,12 @@ void Handler_1(const EventParams& eventParams)
 {
     ConsoleLogger::LogDebug("Handler 1!");
 }
+
 void Handler_2(const EventParams& eventParams)
 {
     ConsoleLogger::LogDebug("Handler 2!");
 }
+
 void Handler_3(const EventParams& eventParams)
 {
     ConsoleLogger::LogDebug("Handler 3!");
@@ -55,10 +58,12 @@ void Handler_3(const EventParams& eventParams)
     // and stop calling the other event handlers
     eventParams.pResult->isHandled = true;
 }
+
 void Handler_4(const EventParams& eventParams)
 {
     ConsoleLogger::LogDebug("Handler 4!");
 }
+
 void Handler_5(const EventParams& eventParams)
 {
     ConsoleLogger::LogDebug("Handler 5!");
@@ -66,7 +71,9 @@ void Handler_5(const EventParams& eventParams)
 ```
 
 <br><br>
+
 You can also set additional arguments.
+
 ```c++
 #include <iostream>
 #include <Event.h>
@@ -113,6 +120,7 @@ void Handler_1(const EventParams& eventParams)
     int myArg1 = *(int*)eventParams.userEventArgs[MY_ARG_1_KEY];
     ConsoleLogger::LogDebug("user arg 1: " + StringHelpers::ToString(myArg1));
 }
+
 void Handler_2(const EventParams& eventParams)
 {
     std::string* pMyArg2 = (std::string*)eventParams.userEventArgs[MY_ARG_2_KEY];

@@ -2,10 +2,11 @@
 
 There are 2 ways you can play a file. 
 First one is by calling the ``Audio::Play`` method, which will read and decode the whole file into a buffer. 
-Other way is by using the [AudioStream](/docs/HephAudio/AudioStream.md), which will decode the data before rendering. Hence will use much less memory.<br><br>
+Other way is by using the ``AudioStream``, which will decode the data before rendering. Hence will use much less memory.<br><br>
 
 
 Playing files via ``Audio::Play`` method.
+
 ```c++
 #include <iostream>
 #include <Audio.h>
@@ -20,18 +21,19 @@ int main()
 
     Audio audio;
     
-    // initialize rendering with the default device
-    // param1: channel layout
-    // param2: sample rate
-    audio.InitializeRender(HEPHAUDIO_CH_LAYOUT_STEREO, 48000);
+    // initialize rendering with the default device and format
+    audio.InitializeRender();
 
-    // play a file
-    AudioObject* pAudioObject = audio.Play("some_path/some_file.wav");
+    // play a file once
+    AudioObject* pAudioObject = audio.Play("some_path/some_file.wav", 1, true);
 
     // convert the audio data to the render format before rendering
     // this will prevent distortion due to sample rate or channel layout mismatch.
     // not necessary when using Load instead of Play
     pAudioObject->OnRender = HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT;
+    
+    // start playing
+    pAudioObject->isPaused = false;
 
     // stop program from exiting
     int x;
@@ -43,6 +45,7 @@ int main()
 <br><br>
 
 Playing files via ``AudioStream``.
+
 ```c++
 #include <iostream>
 #include <Audio.h>

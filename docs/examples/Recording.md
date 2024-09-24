@@ -1,8 +1,9 @@
 # Recording (Capturing)
 
-When some amount of data is recorded (typically 10ms) the ``OnCapture`` [event](/docs/Heph/Event.md) is raised.<br>
+When some amount of data is recorded (typically 10ms) the ``OnCapture`` event is raised.<br>
 
 Record for 5 seconds, then play it:
+
 ```c++
 #include <iostream>
 #include <chrono>
@@ -52,6 +53,7 @@ int main()
 
 <br><br>
 If you want to play while capturing, you have to use a [mutex](https://en.cppreference.com/w/cpp/thread/mutex) to synchronize the render and capture threads.
+
 ```c++
 #include <iostream>
 #include <chrono>
