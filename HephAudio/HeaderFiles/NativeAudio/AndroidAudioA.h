@@ -1,5 +1,5 @@
 #pragma once
-#if  defined(__ANDROID__) && (__ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
+#if defined(__ANDROID__) && (__ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
 #include "HephAudioShared.h"
 #include "AndroidAudioBase.h"
 #include "Params/AAudioParams.h"

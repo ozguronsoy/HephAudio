@@ -51,6 +51,7 @@ namespace HephAudio
 	Audio::Audio()
 	{
 #if defined(_WIN32)
+
 		if (IsWindowsVistaOrGreater())
 		{
 			this->pNativeAudio = new WinAudio();
@@ -59,32 +60,36 @@ namespace HephAudio
 		{
 			this->pNativeAudio = new WinAudioDS();
 		}
+
 #elif defined(__ANDROID__)
-		const uint32_t androidApiLevel = android_get_device_api_level();
-		if (androidApiLevel >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL)
-		{
-			this->pNativeAudio = new AndroidAudioA();
-		}
-		else if (androidApiLevel >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
-		{
-			this->pNativeAudio = new AndroidAudioSLES();
-		}
-		else
-		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
-		}
-#elif defined(__linux__)
-		this->pNativeAudio = new LinuxAudio();
-#elif defined(__APPLE__)
-		this->pNativeAudio = new AppleAudio();
+
+#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
+		this->pNativeAudio = new AndroidAudioA();
+#elif __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
+		this->pNativeAudio = new AndroidAudioSLES();
 #else
-		HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Unsupported platform."));
+#error unsupported API level
+#endif
+
+#elif defined(__linux__)
+
+		this->pNativeAudio = new LinuxAudio();
+
+#elif defined(__APPLE__)
+
+		this->pNativeAudio = new AppleAudio();
+
+#else
+
+#error unsupported platform
+
 #endif
 	}
 
 	Audio::Audio(AudioAPI api)
 	{
 #if defined(_WIN32)
+
 		switch (api)
 		{
 		case AudioAPI::WASAPI:
@@ -101,13 +106,10 @@ namespace HephAudio
 			this->pNativeAudio = IsWindowsVistaOrGreater() ? (NativeAudio*)new WinAudio() : (NativeAudio*)new WinAudioDS();
 			break;
 		}
-#elif defined(__ANDROID__)
-		const uint32_t androidApiLevel = android_get_device_api_level();
-		if (androidApiLevel < HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL)
-		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "API levels under " + StringHelpers::ToString(HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL) + " are not supported."));
-		}
 
+#elif defined(__ANDROID__)
+
+#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 		switch (api)
 		{
 		case AudioAPI::AAudio:
@@ -118,15 +120,27 @@ namespace HephAudio
 			break;
 		case AudioAPI::Default:
 		default:
-			this->pNativeAudio = androidApiLevel >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL ? (NativeAudio*)new AndroidAudioA() : (NativeAudio*)new AndroidAudioSLES();
+			this->pNativeAudio = (NativeAudio*)new AndroidAudioA();
 			break;
 		}
-#elif defined(__linux__)
-		this->pNativeAudio = new LinuxAudio();
-#elif defined(__APPLE__)
-		this->pNativeAudio = new AppleAudio();
+#elif __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
+		this->pNativeAudio = new AndroidAudioSLES();
 #else
-		HEPH_RAISE_AND_THROW_EXCEPTION(this, Exception(HEPH_EC_FAIL, HEPH_FUNC, "Unsupported platform."));
+#error unsupported API level
+#endif
+
+#elif defined(__linux__)
+
+		this->pNativeAudio = new LinuxAudio();
+
+#elif defined(__APPLE__)
+
+		this->pNativeAudio = new AppleAudio();
+
+#else
+
+#error unsupported platform
+
 #endif
 	}
 

@@ -316,7 +316,7 @@ namespace HephAudio
 				{
 					if (!pAudio->isCapturePaused && pAudio->OnCapture)
 					{
-						EncodedAudioBuffer encodedBuffer((const uint8_t*)audioData, numFrames * this->captureFormat.FrameSize(), pAudio->captureFormat);
+						EncodedAudioBuffer encodedBuffer((const uint8_t*)audioData, numFrames * pAudio->captureFormat.FrameSize(), pAudio->captureFormat);
 						AudioBuffer buffer = pAudio->pAudioDecoder->Decode(encodedBuffer);
 						
 						AudioCaptureEventArgs captureEventArgs(pAudio, buffer);
