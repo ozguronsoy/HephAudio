@@ -2,6 +2,7 @@
 [![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg?branch=master)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
 [![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg?branch=master&event=push)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
 [![Build Windows](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml/badge.svg?branch=master&event=push)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml)
+[![Build Android](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml/badge.svg?branch=master&event=push)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml)
 
 - [Setup](#setup)<br>
 	- [CMake](#cmake)<br>
