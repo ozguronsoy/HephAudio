@@ -1,0 +1,65 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: Build Linux
+
+on:
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+    
+env:
+  BUILD_TYPE: Release
+
+concurrency:
+  group: "build_linux"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      
+    - name: Install libasound2-dev
+      run: sudo apt install -y libasound2-dev
+
+    - name: (gcc) Configure CMake
+      run: > 
+        cmake -B ${{github.workspace}}/build 
+        -DCMAKE_C_COMPILER=gcc
+        -DCMAKE_CXX_COMPILER=g++
+        -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        -DENABLE_SHARED=On
+        -DCMAKE_CXX_FLAGS='-w'
+        -S ${{ github.workspace }}
+
+    - name: (gcc) Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: (gcc) Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+    - name: (gcc) Cleanup
+      run: sudo rm -rf build
+
+    - name: (clang) Configure CMake
+      run: > 
+        cmake -B ${{github.workspace}}/build 
+        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_CXX_COMPILER=clang++
+        -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        -DENABLE_SHARED=On
+        -DCMAKE_CXX_FLAGS='-w'
+        -S ${{ github.workspace }}
+
+    - name: (clang) Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: (clang) Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+    - name: (clang) Cleanup
+      run: sudo rm -rf build
