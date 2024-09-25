@@ -1,3 +1,5 @@
+# HephAudio
+
 [![Static Badge](https://img.shields.io/badge/License-LGPL%20v2.1-blue)](https://github.com/ozguronsoy/HephAudio/blob/master/LICENSE.md)
 [![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg?branch=master)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
 [![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg?branch=master&event=push)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
