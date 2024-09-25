@@ -254,8 +254,6 @@ else()
 endif ()
 
 if (ENABLE_STATIC OR ENABLE_SHARED)
-    
-    add_compile_options(-Wno-attributes)
 
     if (ENABLE_SHARED)
         add_definitions(-DHEPH_SHARED_LIB -DHEPH_EXPORTS)
