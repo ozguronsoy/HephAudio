@@ -1,0 +1,42 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+    
+env:
+  BUILD_TYPE: Release
+
+concurrency:
+  group: "build_windows"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: > 
+          cmake -B ${{github.workspace}}/build 
+          -DCMAKE_C_COMPILER=cl
+          -DCMAKE_CXX_COMPILER=cl
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DENABLE_SHARED=On
+          -DCMAKE_CXX_FLAGS='-w'
+          -S ${{ github.workspace }}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{env.BUILD_TYPE}}
+
+      - name: Cleanup
+        run: C:\msys64\usr\bin\bash.exe -lc "rm -rf build"
+        
