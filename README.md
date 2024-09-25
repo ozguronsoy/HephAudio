@@ -18,7 +18,7 @@
 - [Documentation](https://ozguronsoy.github.io/HephAudio/)<br>
 - [Examples](https://github.com/ozguronsoy/HephAudio/tree/master/docs/examples)<br>
 
-# Introduction
+## Introduction
 HephAudio is a cross-platform audio library that provides:<br>
 - Playing and recording audio in Windows, Linux, Android, iOS, and macOS.<br>
 - Audio device enumeration and selection.<br>
@@ -27,11 +27,11 @@ HephAudio is a cross-platform audio library that provides:<br>
 - Spatialization via HRTF.<br>
 - Easy to use sound effects and filters.<br>
 
-# Setup
+## Setup
 
-## CMake
+### CMake
 
-### Create Shared/Static Library
+#### Create Shared/Static Library
 1) Clone the repo.<br>
 2) Run one of the following commands:
 	- to create shared library: ``cmake -DENABLE_SHARED=On -DCMAKE_CXX_FLAGS='-DHEPHAUDIO_INFO_LOGGING' .``<br>
@@ -119,7 +119,7 @@ endif()
 ```
 
 
-### Use Directly
+#### Use Directly
 1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).<br>
 2) Copy the repo to the folder you created.<br>
 3) **(WINDOWS ONLY)** Copy the required dll files from the dependencies to the build output folder.
@@ -155,7 +155,7 @@ add_definitions(-DHEPHAUDIO_INFO_LOGGING)
 
 <br><br>
 
-## Visual Studio
+### Visual Studio
 1) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).<br>
 2) Copy the repo to the folder you created.<br>
 3) Right click to your project, go to ``Configuration Properties -> C/C++ -> General -> Additional Including Directories`` and add the locations of the ``HephCommon/HeaderFiles``, ``HephAudio/HeaderFiles``, ``dependencies/ffmpeg/include``, and ``dependencies/libmysofa/include``.<br>
@@ -169,7 +169,7 @@ add_definitions(-DHEPHAUDIO_INFO_LOGGING)
 > [!NOTE]
 > Don't define ``HEPH_EXPORTS`` when using the DLL.
 
-# Getting Started
+## Getting Started
 
 ### Playing Files
 
