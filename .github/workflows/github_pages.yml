@@ -1,10 +1,8 @@
 name: GitHub Pages
 
 on:
-  workflow_run:
-    workflows: ["Build Windows", "Build Linux", "Build Android"]
-    types:
-      - completed
+  push:
+    branches: ["master"]
 
   workflow_dispatch:
 
