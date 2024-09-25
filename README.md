@@ -1,5 +1,5 @@
 [![Static Badge](https://img.shields.io/badge/License-LGPL%20v2.1-blue)](/LICENSE.md)
-[![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/jekyll-gh-pages.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/jekyll-gh-pages.yml)
+[![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
 
 - [Setup](#setup)<br>
 	- [CMake](#cmake)<br>
