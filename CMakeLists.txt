@@ -255,7 +255,7 @@ endif ()
 
 if (ENABLE_STATIC OR ENABLE_SHARED)
 
-    add_compile_options(-w -O3 -march=native)
+    add_compile_options(-w -O3)
 
     if (ENABLE_SHARED)
         add_definitions(-DHEPH_SHARED_LIB -DHEPH_EXPORTS)
