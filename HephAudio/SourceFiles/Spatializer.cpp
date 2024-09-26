@@ -15,45 +15,46 @@
 
 using namespace Heph;
 
+
 namespace HephAudio
 {
 	Spatializer::Spatializer() : pEasy(nullptr), frameCount(0), sampleRate(48000)
 	{
-		// check the possible paths to find the default sofa file
-		// if found, initialize with it.
-		if (std::filesystem::exists("dependencies/libmysofa/default.sofa"))
+		const std::vector<std::filesystem::path> possiblePaths =
 		{
-			this->OpenSofaFile("HephAudio/dependencies/libmysofa/default.sofa", this->sampleRate);
-		}
-		else if (std::filesystem::exists("../dependencies/libmysofa/default.sofa"))
+			"dependencies/libmysofa/default.sofa",
+			"../dependencies/libmysofa/default.sofa",
+			"../../dependencies/libmysofa/default.sofa",
+			"HephAudio/default.sofa",
+			"HephAudio/dependencies/libmysofa/default.sofa"
+		};
+
+		for (const std::filesystem::path& path : possiblePaths)
 		{
-			this->OpenSofaFile("../dependencies/libmysofa/default.sofa", this->sampleRate);
+			if (std::filesystem::exists(path))
+			{
+				this->OpenSofaFile(path, this->sampleRate);
+				return;
+			}
 		}
-		else if (std::filesystem::exists("../../dependencies/libmysofa/default.sofa"))
-		{
-			this->OpenSofaFile("../../dependencies/libmysofa/default.sofa", this->sampleRate);
-		}
-		else if (std::filesystem::exists("HephAudio/dependencies/libmysofa/default.sofa"))
-		{
-			this->OpenSofaFile("HephAudio/dependencies/libmysofa/default.sofa", this->sampleRate);
-		}
-		else
-		{
-			HEPHAUDIO_LOG("Could not find the default sofa file. Provide one before proceeding.", HEPH_CL_WARNING);
-		}
+		HEPHAUDIO_LOG("Could not find the default sofa file. Provide one before proceeding.", HEPH_CL_WARNING);
 	}
+
 	Spatializer::Spatializer(const std::filesystem::path& sofaFilePath, uint32_t sampleRate) : pEasy(nullptr), frameCount(0), sampleRate(sampleRate)
 	{
 		this->OpenSofaFile(sofaFilePath, sampleRate);
 	}
+
 	Spatializer::Spatializer(Spatializer&& rhs) noexcept : pEasy(rhs.pEasy), frameCount(rhs.frameCount), sampleRate(rhs.sampleRate)
 	{
 		rhs.pEasy = nullptr;
 	}
+
 	Spatializer::~Spatializer()
 	{
 		this->CloseSofaFile();
 	}
+
 	Spatializer& Spatializer::operator=(Spatializer&& rhs) noexcept
 	{
 		if (this != &rhs)
@@ -65,18 +66,23 @@ namespace HephAudio
 			this->sampleRate = rhs.sampleRate;
 
 			rhs.pEasy = nullptr;
+			rhs.frameCount = 0;
+			rhs.sampleRate = 0;
 		}
 
 		return *this;
 	}
+
 	uint32_t Spatializer::GetSampleRate() const
 	{
 		return this->sampleRate;
 	}
+
 	size_t Spatializer::GetFrameCount() const
 	{
 		return this->frameCount;
 	}
+
 	void Spatializer::OpenSofaFile(const std::filesystem::path& sofaFilePath, uint32_t sampleRate)
 	{
 		int filter_length;
@@ -91,6 +97,7 @@ namespace HephAudio
 		}
 		this->frameCount = filter_length;
 	}
+
 	void Spatializer::CloseSofaFile()
 	{
 		if (this->pEasy != nullptr)
@@ -99,11 +106,13 @@ namespace HephAudio
 			this->pEasy = nullptr;
 		}
 	}
+
 	void Spatializer::Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg)
 	{
 		HannWindow hannWindow(this->frameCount);
 		this->Process(buffer, azimuth_deg, elevation_deg, hannWindow.GenerateBuffer());
 	}
+
 	void Spatializer::Process(AudioBuffer& buffer, float azimuth_deg, float elevation_deg, const DoubleBuffer& windowBuffer)
 	{
 		if (this->pEasy == nullptr)
@@ -160,6 +169,7 @@ namespace HephAudio
 			}
 		}
 	}
+
 	std::string Spatializer::GetErrorString(int errorCode)
 	{
 		switch (errorCode)
