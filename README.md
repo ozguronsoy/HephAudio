@@ -1,10 +1,10 @@
 # HephAudio
 
 [![Static Badge](https://img.shields.io/badge/License-LGPL%20v2.1-blue)](https://github.com/ozguronsoy/HephAudio/blob/master/LICENSE.md)
-[![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg?branch=master)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
-[![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg?branch=master)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
-[![Build Windows](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml/badge.svg?branch=master)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml)
-[![Build Android](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml/badge.svg?branch=master)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml)
+[![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
+[![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
+[![Build Windows](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml)
+[![Build Android](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml)
 
 - [Setup](#setup)<br>
 	- [CMake](#cmake)<br>
