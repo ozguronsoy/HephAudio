@@ -55,12 +55,12 @@ namespace HephAudio
 			/** @copydoc destructor */
 			~AndroidAudioSLES();
 
-			void SetMasterVolume(double volume);
-			double GetMasterVolume() const;
-			void InitializeRender(AudioDevice* device, AudioFormatInfo format);
-			void StopRendering();
-			void InitializeCapture(AudioDevice* device, AudioFormatInfo format);
-			void StopCapturing();
+			void SetMasterVolume(double volume) override;
+			double GetMasterVolume() const override;
+			void InitializeRender(AudioDevice* device, AudioFormatInfo format) override;
+			void StopRendering() override;
+			void InitializeCapture(AudioDevice* device, AudioFormatInfo format) override;
+			void StopCapturing() override;
 			void GetNativeParams(NativeAudioParams& nativeParams) const override;
 			void SetNativeParams(const NativeAudioParams& nativeParams) override;
 

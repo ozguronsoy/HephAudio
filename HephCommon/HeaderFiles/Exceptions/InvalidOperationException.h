@@ -2,6 +2,8 @@
 #include "HephShared.h"
 #include "Exception.h"
 
+/** @file */
+
 namespace Heph
 {
 	/**
