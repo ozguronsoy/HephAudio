@@ -28,6 +28,14 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 4)
     message( FATAL_ERROR "CMAKE_SIZEOF_VOID_P is set to 4, 32-bit is not supported.")
 endif()
 
+if ((CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64"))
+    set(TARGET_ARCH "x86_64")
+elseif ((CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
+    set(TARGET_ARCH "arm64-v8a")
+else()
+    message( FATAL_ERROR "unsupported arch.")
+endif()
+
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
 if (POLICY CMP0025)
     cmake_policy(SET CMP0025 NEW)
@@ -178,15 +186,15 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	    
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/libmysofa.so
 
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavcodec.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavformat.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavdevice.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libavutil.so
-        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/libswresample.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavcodec.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavformat.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavdevice.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavutil.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libswresample.so
     )
 
     install(
-        DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/ 
+        DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH} 
         DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/build/lib/ffmpeg/
     )
     
