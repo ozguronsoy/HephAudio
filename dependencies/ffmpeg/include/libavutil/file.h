@@ -22,6 +22,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "version.h"
 #include "attributes.h"
 
 /**

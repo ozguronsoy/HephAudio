@@ -53,6 +53,8 @@
 #include "codec_par.h"
 #endif
 
+
+
 struct AVCodecParameters;
 
 /**
@@ -2071,7 +2073,7 @@ typedef struct AVCodecContext {
      * - encoding: may be set by user before calling avcodec_open2() for
      *             encoder configuration. Afterwards owned and freed by the
      *             encoder.
-     * - decoding: may be set by libavcodec in avcodec_open2().
+     * - decoding: unused
      */
     AVFrameSideData  **decoded_side_data;
     int             nb_decoded_side_data;

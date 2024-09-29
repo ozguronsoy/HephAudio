@@ -26,7 +26,6 @@
 
 #include "pixfmt.h"
 #include "frame.h"
-#include "hwcontext.h"
 
 typedef struct AVVkFrame AVVkFrame;
 
