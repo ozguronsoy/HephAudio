@@ -1,13 +1,12 @@
-# HephAudio
+# HephAudio [![Static Badge](https://img.shields.io/badge/License-LGPL%20v2.1-blue)](https://github.com/ozguronsoy/HephAudio/blob/master/LICENSE.md) [![GitHub Release](https://img.shields.io/github/v/release/ozguronsoy/HephAudio)](https://github.com/ozguronsoy/HephAudio/releases/)
 
-[![Static Badge](https://img.shields.io/badge/License-LGPL%20v2.1-blue)](https://github.com/ozguronsoy/HephAudio/blob/master/LICENSE.md)
-[![GitHub Release](https://img.shields.io/github/v/release/ozguronsoy/HephAudio)](https://github.com/ozguronsoy/HephAudio/releases/)
 [![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
 [![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
 [![Build Windows](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml)
 [![Build Android](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml)
 
 - [Setup](#setup)<br>
+	- [Install Dependencies](#install-dependencies)<br>
 	- [CMake](#cmake)<br>
 	- [Visual Studio](#visual-studio)<br>
 - [Getting Started](#getting-started)<br>
@@ -30,13 +29,20 @@ HephAudio is a cross-platform audio library that provides:<br>
 
 ## Setup
 
+### Install Dependencies
+
+- Install [CMake](https://cmake.org/download/) 25.0.0 or higher.<br>
+- Install ALSA development library for **Linux**.<br>
+- build FFmpeg and libmysofa for **macOS** and **iOS**.<br>
+
+
 ### CMake
 
 #### Create Shared/Static Library
 1) Clone the repo.<br>
 2) Run one of the following commands:
-	- to create shared library: ``cmake -DENABLE_SHARED=On -DCMAKE_CXX_FLAGS='-DHEPHAUDIO_INFO_LOGGING' .``<br>
-	- to create static library: ``cmake -DENABLE_STATIC=On -DCMAKE_CXX_FLAGS='-DHEPHAUDIO_INFO_LOGGING' .``<br>
+	- to create **shared** library: ``cmake -DENABLE_SHARED=On -DCMAKE_CXX_FLAGS='-DHEPHAUDIO_INFO_LOGGING' .``<br>
+	- to create **static** library: ``cmake -DENABLE_STATIC=On -DCMAKE_CXX_FLAGS='-DHEPHAUDIO_INFO_LOGGING' .``<br>
 3) Run ``cmake --build .`` then ``cmake --install .``<br>
 4) Create a folder at your project's root and name it ``HephAudio`` (/project_root/HephAudio).<br>
 5) Copy the contents of the ``build`` folder to ``/project_root/HephAudio``.<br>
