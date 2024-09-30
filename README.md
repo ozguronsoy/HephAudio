@@ -1,8 +1,8 @@
 # HephAudio [![Static Badge](https://img.shields.io/badge/License-LGPL%20v2.1-blue)](https://github.com/ozguronsoy/HephAudio/blob/master/LICENSE.md) [![GitHub Release](https://img.shields.io/github/v/release/ozguronsoy/HephAudio)](https://github.com/ozguronsoy/HephAudio/releases/)
 
 [![GitHub Pages](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/github_pages.yml)
-[![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
 [![Build Windows](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_windows.yml)
+[![Build Linux](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_linux.yml)
 [![Build Android](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml/badge.svg)](https://github.com/ozguronsoy/HephAudio/actions/workflows/build_android.yml)
 
 - [Setup](#setup)<br>
@@ -31,7 +31,7 @@ HephAudio is a cross-platform audio library that provides:<br>
 
 ### Install Dependencies
 
-- Install [CMake](https://cmake.org/download/) 25.0.0 or higher.<br>
+- Install [CMake](https://cmake.org/download/) 3.25.0 or higher.<br>
 - Install ALSA development library for **Linux**.<br>
 - build FFmpeg and libmysofa for **macOS** and **iOS**.<br>
 
