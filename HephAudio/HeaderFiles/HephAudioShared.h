@@ -9,12 +9,6 @@
 #endif
 
 /**
- * full version as string litteral.
- *
-*/
-#define HEPHAUDIO_VERSION		HEPH_TOSTRING(HEPHAUDIO_VERSION_MAJOR ##.## HEPHAUDIO_VERSION_MINOR ##.## HEPHAUDIO_VERSION_PATCH)
-
-/**
  * major part of the version.
  *
 */
@@ -31,6 +25,15 @@
  *
 */
 #define HEPHAUDIO_VERSION_PATCH	3
+
+/**
+ * full version as string litteral.
+ *
+*/
+#define HEPHAUDIO_VERSION 	"v" 										\
+							HEPH_TOSTRING(HEPHAUDIO_VERSION_MAJOR) "." 	\
+							HEPH_TOSTRING(HEPHAUDIO_VERSION_MINOR) "." 	\
+							HEPH_TOSTRING(HEPHAUDIO_VERSION_PATCH)
 
 #define HEPHAUDIO_FORMAT_TAG_PCM				(0x0001)
 #define HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT			(0x0003)
@@ -51,7 +54,7 @@
 /**
  * logs messages to the console.
  * Enabled by defining <b>HEPHAUDIO_INFO_LOGGING</b>.
- * 
+ *
  */
 #if defined(HEPHAUDIO_INFO_LOGGING)
 #define HEPHAUDIO_LOG(logMessage, logType) Heph::ConsoleLogger::Log(logMessage, logType, "HephAudio")
@@ -59,47 +62,47 @@
 #define HEPHAUDIO_LOG(logMessage, logType)
 #endif
 
-/**
- * speed of sound in dry air at 20 deg C in meters per second
- * 
- */
+ /**
+  * speed of sound in dry air at 20 deg C in meters per second
+  *
+  */
 #define HEPHAUDIO_SPEED_OF_SOUND 343.0
 
 #define UINT24_MAX	16777215
 #define INT24_MIN	(-8388608)
 #define INT24_MAX	8388607
 
-/** @typedef heph_audio_sample_t
- * type of the audio samples, float by default.
- * Can be changed by defining one of the following macros:
- 
- * - <b>HEPH_AUDIO_SAMPLE_TYPE_S16</b>
- * - <b>HEPH_AUDIO_SAMPLE_TYPE_S32</b>
- * - <b>HEPH_AUDIO_SAMPLE_TYPE_S64</b>
- * - <b>HEPH_AUDIO_SAMPLE_TYPE_FLT</b>
- * - <b>HEPH_AUDIO_SAMPLE_TYPE_DBL</b>
- * 
- */
+  /** @typedef heph_audio_sample_t
+   * type of the audio samples, float by default.
+   * Can be changed by defining one of the following macros:
 
-/** @def HEPH_AUDIO_SAMPLE_MIN
- * the minimum value an audio sample can have.
- * 
- */
+   * - <b>HEPH_AUDIO_SAMPLE_TYPE_S16</b>
+   * - <b>HEPH_AUDIO_SAMPLE_TYPE_S32</b>
+   * - <b>HEPH_AUDIO_SAMPLE_TYPE_S64</b>
+   * - <b>HEPH_AUDIO_SAMPLE_TYPE_FLT</b>
+   * - <b>HEPH_AUDIO_SAMPLE_TYPE_DBL</b>
+   *
+   */
 
-/** @def HEPH_AUDIO_SAMPLE_MAX
- * the maximum value an audio sample can have.
- * 
- */
+   /** @def HEPH_AUDIO_SAMPLE_MIN
+	* the minimum value an audio sample can have.
+	*
+	*/
 
-/** @def HEPH_AUDIO_SAMPLE_TO_IEEE_FLT
- * converts \link heph_audio_sample_t heph_audio_sample_t \endlink to float.
- * 
- */
+	/** @def HEPH_AUDIO_SAMPLE_MAX
+	 * the maximum value an audio sample can have.
+	 *
+	 */
 
-/** @def HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT
- * converts float to \link heph_audio_sample_t heph_audio_sample_t \endlink.
- * 
- */
+	 /** @def HEPH_AUDIO_SAMPLE_TO_IEEE_FLT
+	  * converts \link heph_audio_sample_t heph_audio_sample_t \endlink to float.
+	  *
+	  */
+
+	  /** @def HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT
+	   * converts float to \link heph_audio_sample_t heph_audio_sample_t \endlink.
+	   *
+	   */
 
 #if defined(HEPH_AUDIO_SAMPLE_TYPE_DBL)
 typedef double heph_audio_sample_t;
@@ -149,14 +152,14 @@ typedef float heph_audio_sample_t;
 
 /**
  * the minimum API level required for OPENSL ES.
- * 
+ *
  */
 #define HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL (21)
 
-/**
- * the minimum API level required for AAudio.
- * 
- */
+ /**
+  * the minimum API level required for AAudio.
+  *
+  */
 #define HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL (26)
 
 namespace HephAudio
@@ -165,10 +168,10 @@ namespace HephAudio
 	HEPH_API unsigned int GetVersionMajor();
 	HEPH_API unsigned int GetVersionMinor();
 	HEPH_API unsigned int GetVersionPatch();
-	
+
 	/**
 	 * converts decibel to gain (between -1 and 1).
-	 * 
+	 *
 	 */
 	inline double DecibelToGain(double decibel)
 	{
@@ -177,7 +180,7 @@ namespace HephAudio
 
 	/**
 	 * converts gain (between -1 and 1) to decibel.
-	 * 
+	 *
 	 */
 	inline double GainToDecibel(double gain)
 	{
@@ -186,7 +189,7 @@ namespace HephAudio
 
 	/**
 	 * converts semitone to cent.
-	 * 
+	 *
 	 */
 	inline constexpr double SemitoneToCent(double semitone)
 	{
@@ -195,7 +198,7 @@ namespace HephAudio
 
 	/**
 	 * converts semitone to octave.
-	 * 
+	 *
 	 */
 	inline constexpr double SemitoneToOctave(double semitone)
 	{
@@ -204,7 +207,7 @@ namespace HephAudio
 
 	/**
 	 * converts cent to semitone.
-	 * 
+	 *
 	 */
 	inline constexpr double CentToSemitone(double cent)
 	{
@@ -213,7 +216,7 @@ namespace HephAudio
 
 	/**
 	 * converts cent to octave.
-	 * 
+	 *
 	 */
 	inline constexpr double CentToOctave(double cent)
 	{
@@ -222,7 +225,7 @@ namespace HephAudio
 
 	/**
 	 * converts octave to semitone.
-	 * 
+	 *
 	 */
 	inline constexpr double OctaveToSemitone(double octave)
 	{
@@ -231,7 +234,7 @@ namespace HephAudio
 
 	/**
 	 * converts octave to cent.
-	 * 
+	 *
 	 */
 	inline constexpr double OctaveToCent(double octave)
 	{

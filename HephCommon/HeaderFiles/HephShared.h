@@ -7,56 +7,69 @@
  * targeted C++ version
  */
 
-/** @defgroup default_constructor
- * creates a new instance and initializes it with default values.
- * 
-*/
+ /** @defgroup default_constructor
+  * creates a new instance and initializes it with default values.
+  *
+ */
 
-/** @defgroup constructor
- * creates a new instance and initializes it with the provided values.
- * 
-*/
+ /** @defgroup constructor
+  * creates a new instance and initializes it with the provided values.
+  *
+ */
 
-/** @defgroup copy_constructor
- * creates a new instance and copies the rhs's data to it.
- * 
- * @param rhs instance whose data will be copied.
-*/
+ /** @defgroup copy_constructor
+  * creates a new instance and copies the rhs's data to it.
+  *
+  * @param rhs instance whose data will be copied.
+ */
 
-/** @defgroup move_constructor
- * creates a new instance and moves the rhs's data to it.
- * 
- * @param rhs instance whose data will be moved.
-*/
+ /** @defgroup move_constructor
+  * creates a new instance and moves the rhs's data to it.
+  *
+  * @param rhs instance whose data will be moved.
+ */
 
-/** @defgroup destructor
- * releases the resources and destroys the instance.
- * 
-*/
+ /** @defgroup destructor
+  * releases the resources and destroys the instance.
+  *
+ */
 
-/**
- * full version as string litteral.
- * 
-*/
-#define HEPH_VERSION		HEPH_TOSTRING(HEPH_VERSION_MAJOR ##.## HEPH_VERSION_MINOR ##.## HEPH_VERSION_PATCH)
+ /**
+  * converts \a x to string litteral without expanding the parameter.
+ */
+#define HEPH_STRINGIFY(x)	#x
 
-/**
- * major part of the version.
- *
-*/
+ /**
+  * converts \a x to string litteral with expanding the parameter.
+ */
+#define HEPH_TOSTRING(x)	HEPH_STRINGIFY(x)
+
+ /**
+  * major part of the version.
+  *
+ */
 #define HEPH_VERSION_MAJOR	2
 
-/**
- * minor part of the version.
- *
-*/
+ /**
+  * minor part of the version.
+  *
+ */
 #define HEPH_VERSION_MINOR	2
 
-/**
- * patch part of the version.
- *
-*/
+ /**
+  * patch part of the version.
+  *
+ */
 #define HEPH_VERSION_PATCH	3
+
+ /**
+   * full version as string litteral.
+   *
+  */
+#define HEPH_VERSION 	"v" 									\
+					 	HEPH_TOSTRING(HEPH_VERSION_MAJOR) "." 	\
+					 	HEPH_TOSTRING(HEPH_VERSION_MINOR) "." 	\
+					 	HEPH_TOSTRING(HEPH_VERSION_PATCH)
 
 #if defined(_MSVC_LANG)
 
@@ -116,10 +129,10 @@
 
 #endif
 
-/**
- * exports/imports the members, methods, and classes for shared libraries.
- *
-*/
+ /**
+  * exports/imports the members, methods, and classes for shared libraries.
+  *
+ */
 #if defined(HEPH_SHARED_LIB)
 
 #if defined(_WIN32)
@@ -147,10 +160,10 @@
 
 #endif
 
-/**
- * name of the current function.
- *
-*/
+ /**
+  * name of the current function.
+  *
+ */
 #if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER)
 #define HEPH_FUNC __PRETTY_FUNCTION__
 #elif defined(_MSVC_LANG)
@@ -158,17 +171,6 @@
 #else
 #define HEPH_FUNC __func__
 #endif
-
-
-/**
- * converts \a x to string litteral without expanding the parameter.
-*/
-#define HEPH_STRINGIFY(x)	#x
-
-/**
- * converts \a x to string litteral with expanding the parameter.
-*/
-#define HEPH_TOSTRING(x)	HEPH_STRINGIFY(x)
 
 namespace Heph
 {
@@ -186,13 +188,13 @@ namespace Heph
 
 	/**
 	 * endianness of the current system.
-	 * 
+	 *
 	 */
 	extern HEPH_API Endian systemEndian;
 
 	/**
 	 * changes the endianness of the provided data.
-	 * 
+	 *
 	 * @param pData pointer to the data.
 	 * @param dataSize size of the data in bytes.
 	 */
@@ -200,16 +202,16 @@ namespace Heph
 
 	inline constexpr Endian operator!(const Endian& lhs) { return (lhs & Endian::Big) ? Endian::Little : ((lhs == Endian::Little) ? Endian::Big : Endian::Unknown); }
 
-/**
- * endianness of the current system.
- * 
- */
+	/**
+	 * endianness of the current system.
+	 *
+	 */
 #define HEPH_SYSTEM_ENDIAN Heph::systemEndian
 
-/**
- * changes the endianness of the provided data.
- * 
- */
+	 /**
+	  * changes the endianness of the provided data.
+	  *
+	  */
 #define HEPH_CHANGE_ENDIAN(pData, dataSize) Heph::ChangeEndian(pData, dataSize)
 
 	enum ConvolutionMode
