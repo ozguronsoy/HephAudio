@@ -383,5 +383,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioDeviceEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioCaptureEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioDevice.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephAudioShared.cpp" />
   </ItemGroup>
 </Project>

@@ -25,6 +25,7 @@ namespace HephAudio
 		rhs.OnRender.ClearAll();
 		rhs.OnFinishedPlaying.ClearAll();
 	}
+
 	AudioObject& AudioObject::operator=(AudioObject&& rhs) noexcept
 	{
 		if (this != &rhs)
@@ -46,11 +47,13 @@ namespace HephAudio
 
 		return *this;
 	}
+
 	double AudioObject::GetPosition() const
 	{
 		const double position = ((double)this->frameIndex) / this->buffer.FrameCount();
 		return HEPH_MATH_MIN(position, 1.0);
 	}
+
 	void AudioObject::SetPosition(double position)
 	{
 		if (position > 1.0)
@@ -65,6 +68,17 @@ namespace HephAudio
 		}
 		this->frameIndex = position * this->buffer.FrameCount();
 	}
+
+	void AudioObject::Pause() 
+	{
+		this->isPaused = true;
+	}
+
+	void AudioObject::Resume()
+	{
+		this->isPaused = false;
+	}
+
 	void AudioObject::DefaultRenderHandler(const EventParams& eventParams)
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
@@ -74,6 +88,7 @@ namespace HephAudio
 		pRenderArgs->pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
 		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
 	}
+
 	void AudioObject::MatchFormatRenderHandler(const Heph::EventParams& eventParams)
 	{
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;

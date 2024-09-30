@@ -34,6 +34,30 @@
  * 
 */
 
+/**
+ * full version as string litteral.
+ * 
+*/
+#define HEPH_VERSION		HEPH_TOSTRING(HEPH_VERSION_MAJOR ##.## HEPH_VERSION_MINOR ##.## HEPH_VERSION_PATCH)
+
+/**
+ * major part of the version.
+ *
+*/
+#define HEPH_VERSION_MAJOR	2
+
+/**
+ * minor part of the version.
+ *
+*/
+#define HEPH_VERSION_MINOR	2
+
+/**
+ * patch part of the version.
+ *
+*/
+#define HEPH_VERSION_PATCH	3
+
 #if defined(_MSVC_LANG)
 
 #define CPP_VERSION _MSVC_LANG
@@ -135,8 +159,24 @@
 #define HEPH_FUNC __func__
 #endif
 
+
+/**
+ * converts \a x to string litteral without expanding the parameter.
+*/
+#define HEPH_STRINGIFY(x)	#x
+
+/**
+ * converts \a x to string litteral with expanding the parameter.
+*/
+#define HEPH_TOSTRING(x)	HEPH_STRINGIFY(x)
+
 namespace Heph
 {
+	HEPH_API const char* GetVersion();
+	HEPH_API unsigned int GetVersionMajor();
+	HEPH_API unsigned int GetVersionMinor();
+	HEPH_API unsigned int GetVersionPatch();
+
 	enum Endian : uint8_t
 	{
 		Little = 0x00,
@@ -148,7 +188,7 @@ namespace Heph
 	 * endianness of the current system.
 	 * 
 	 */
-	HEPH_API extern Endian systemEndian;
+	extern HEPH_API Endian systemEndian;
 
 	/**
 	 * changes the endianness of the provided data.

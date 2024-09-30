@@ -8,6 +8,30 @@
 #error 32-bit is not supported!
 #endif
 
+/**
+ * full version as string litteral.
+ *
+*/
+#define HEPHAUDIO_VERSION		HEPH_TOSTRING(HEPHAUDIO_VERSION_MAJOR ##.## HEPHAUDIO_VERSION_MINOR ##.## HEPHAUDIO_VERSION_PATCH)
+
+/**
+ * major part of the version.
+ *
+*/
+#define HEPHAUDIO_VERSION_MAJOR	2
+
+/**
+ * minor part of the version.
+ *
+*/
+#define HEPHAUDIO_VERSION_MINOR	2
+
+/**
+ * patch part of the version.
+ *
+*/
+#define HEPHAUDIO_VERSION_PATCH	3
+
 #define HEPHAUDIO_FORMAT_TAG_PCM				(0x0001)
 #define HEPHAUDIO_FORMAT_TAG_IEEE_FLOAT			(0x0003)
 #define HEPHAUDIO_FORMAT_TAG_ALAW				(0x0006)
@@ -137,6 +161,11 @@ typedef float heph_audio_sample_t;
 
 namespace HephAudio
 {
+	HEPH_API const char* GetVersion();
+	HEPH_API unsigned int GetVersionMajor();
+	HEPH_API unsigned int GetVersionMinor();
+	HEPH_API unsigned int GetVersionPatch();
+	
 	/**
 	 * converts decibel to gain (between -1 and 1).
 	 * 
