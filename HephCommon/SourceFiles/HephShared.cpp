@@ -2,28 +2,6 @@
 
 namespace Heph
 {
-	static const char* const __version = HEPH_VERSION;
-
-	const char* GetVersion()
-	{
-		return __version;
-	}
-
-	unsigned int GetVersionMajor()
-	{
-		return HEPH_VERSION_MAJOR;
-	}
-
-	unsigned int GetVersionMinor()
-	{
-		return HEPH_VERSION_MINOR;
-	}
-
-	unsigned int GetVersionPatch()
-	{
-		return HEPH_VERSION_PATCH;
-	}
-
 	Endian GetSystemEndian()
 	{
 		uint16_t n = 0x0001;

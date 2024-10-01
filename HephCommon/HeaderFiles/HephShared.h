@@ -44,33 +44,6 @@
  */
 #define HEPH_TOSTRING(x)	HEPH_STRINGIFY(x)
 
- /**
-  * major part of the version.
-  *
- */
-#define HEPH_VERSION_MAJOR	2
-
- /**
-  * minor part of the version.
-  *
- */
-#define HEPH_VERSION_MINOR	2
-
- /**
-  * patch part of the version.
-  *
- */
-#define HEPH_VERSION_PATCH	3
-
- /**
-   * full version as string litteral.
-   *
-  */
-#define HEPH_VERSION 	"v" 									\
-					 	HEPH_TOSTRING(HEPH_VERSION_MAJOR) "." 	\
-					 	HEPH_TOSTRING(HEPH_VERSION_MINOR) "." 	\
-					 	HEPH_TOSTRING(HEPH_VERSION_PATCH)
-
 #if defined(_MSVC_LANG)
 
 #define CPP_VERSION _MSVC_LANG
@@ -174,11 +147,6 @@
 
 namespace Heph
 {
-	HEPH_API const char* GetVersion();
-	HEPH_API unsigned int GetVersionMajor();
-	HEPH_API unsigned int GetVersionMinor();
-	HEPH_API unsigned int GetVersionPatch();
-
 	enum Endian : uint8_t
 	{
 		Little = 0x00,

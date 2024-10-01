@@ -12,19 +12,19 @@
  * major part of the version.
  *
 */
-#define HEPHAUDIO_VERSION_MAJOR	2
+#define HEPHAUDIO_VERSION_MAJOR	3
 
 /**
  * minor part of the version.
  *
 */
-#define HEPHAUDIO_VERSION_MINOR	2
+#define HEPHAUDIO_VERSION_MINOR	0
 
 /**
  * patch part of the version.
  *
 */
-#define HEPHAUDIO_VERSION_PATCH	3
+#define HEPHAUDIO_VERSION_PATCH	0
 
 /**
  * full version as string litteral.
