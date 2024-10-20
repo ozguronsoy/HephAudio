@@ -56,17 +56,7 @@ namespace Heph
 
 	ComplexBuffer& ComplexBuffer::operator=(const std::initializer_list<Complex>& rhs)
 	{
-		this->Release();
-
-		this->size = rhs.size();
-		if (this->size > 0)
-		{
-			const size_t size_byte = this->SizeAsByte();
-			this->pData = ComplexBuffer::AllocateUninitialized(size_byte);
-			memcpy(this->pData, rhs.begin(), size_byte);
-		}
-
-		return *this;
+		return BufferBase::operator=(rhs);
 	}
 
 	ComplexBuffer& ComplexBuffer::operator=(const DoubleBuffer& rhs)
@@ -90,36 +80,12 @@ namespace Heph
 
 	ComplexBuffer& ComplexBuffer::operator=(const ComplexBuffer& rhs)
 	{
-		if (this != &rhs)
-		{
-			this->Release();
-
-			if (rhs.size > 0)
-			{
-				const size_t size_byte = rhs.SizeAsByte();
-				this->pData = ComplexBuffer::AllocateUninitialized(size_byte);
-				(void)std::memcpy(this->pData, rhs.pData, size_byte);
-				this->size = rhs.size;
-			}
-		}
-
-		return *this;
+		return BufferBase::operator=(rhs);
 	}
 
 	ComplexBuffer& ComplexBuffer::operator=(ComplexBuffer&& rhs) noexcept
 	{
-		if (this != &rhs)
-		{
-			this->Release();
-
-			this->pData = rhs.pData;
-			this->size = rhs.size;
-
-			rhs.pData = nullptr;
-			rhs.size = 0;
-		}
-
-		return *this;
+		return BufferBase::operator=(std::move(rhs));
 	}
 
 	void ComplexBuffer::Invert()

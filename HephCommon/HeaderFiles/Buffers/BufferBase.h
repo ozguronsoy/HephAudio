@@ -112,6 +112,56 @@ namespace Heph
 			rhs.size = 0;
 		}
 
+		Tself& operator=(const std::initializer_list<Tdata>& rhs)
+		{
+			this->Release();
+
+			this->size = rhs.size();
+			if (this->size > 0)
+			{
+				const size_t size_byte = this->SizeAsByte();
+				this->pData = BufferBase::AllocateUninitialized(size_byte);
+				(void)std::memcpy(this->pData, rhs.begin(), size_byte);
+			}
+
+			return *(Tself*)this;
+		}
+
+		Tself& operator=(const Tself& rhs)
+		{
+			if (this != &rhs)
+			{
+				this->Release();
+
+				if (rhs.size > 0)
+				{
+					const size_t size_byte = rhs.SizeAsByte();
+					this->pData = BufferBase::AllocateUninitialized(size_byte);
+					(void)std::memcpy(this->pData, rhs.pData, size_byte);
+
+					this->size = rhs.size;
+				}
+			}
+
+			return *(Tself*)this;
+		}
+
+		Tself& operator=(Tself&& rhs) noexcept
+		{
+			if (this != &rhs)
+			{
+				this->Release();
+
+				this->pData = rhs.pData;
+				this->size = rhs.size;
+
+				rhs.pData = nullptr;
+				rhs.size = 0;
+			}
+
+			return *(Tself*)this;
+		}
+
 	public:
 		/** @copydoc destructor */
 		virtual ~BufferBase()
@@ -157,7 +207,7 @@ namespace Heph
 		 *
 		 * @param rhs number of elements to shift.
 		 */
-		virtual BufferBase& operator<<=(size_t rhs)
+		virtual Tself& operator<<=(size_t rhs)
 		{
 			if (rhs >= this->size)
 			{
@@ -169,7 +219,7 @@ namespace Heph
 				BufferBase::Initialize(this->pData + this->size - rhs, this->pData + this->size);
 			}
 
-			return *this;
+			return *(Tself*)this;
 		}
 
 		/**
@@ -209,7 +259,7 @@ namespace Heph
 		 *
 		 * @param rhs number of elements to shift.
 		 */
-		virtual BufferBase& operator>>=(size_t rhs)
+		virtual Tself& operator>>=(size_t rhs)
 		{
 			if (rhs >= this->size)
 			{
@@ -220,7 +270,7 @@ namespace Heph
 				(void)std::memcpy(this->pData + rhs, this->pData, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
 				BufferBase::Initialize(this->pData, this->pData + rhs);
 			}
-			return *this;
+			return *(Tself*)this;
 		}
 
 		virtual bool operator==(const Tself& rhs) const

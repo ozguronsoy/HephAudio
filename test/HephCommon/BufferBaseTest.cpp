@@ -22,51 +22,17 @@ public:
 
 	TestBuffer& operator=(const std::initializer_list<test_data_t>& rhs)
 	{
-		this->Release();
-
-		if (rhs.size() > 0)
-		{
-			this->size = rhs.size();
-			const size_t size_byte = this->SizeAsByte();
-
-			this->pData = BufferBase::AllocateUninitialized(size_byte);
-			(void)std::memcpy(this->pData, rhs.begin(), size_byte);
-		}
-
-		return *this;
+		return BufferBase::operator=(rhs);
 	}
 
 	TestBuffer& operator=(const TestBuffer& rhs)
 	{
-		this->Release();
-
-		if (this != &rhs && !rhs.IsEmpty())
-		{
-			const size_t size_byte = rhs.SizeAsByte();
-
-			this->pData = BufferBase::AllocateUninitialized(size_byte);
-			(void)std::memcpy(this->pData, rhs.pData, size_byte);
-
-			this->size = rhs.size;
-		}
-
-		return *this;
+		return BufferBase::operator=(rhs);
 	}
 
 	TestBuffer& operator=(TestBuffer&& rhs) noexcept
 	{
-		this->Release();
-
-		if (this != &rhs)
-		{
-			this->pData = rhs.pData;
-			this->size = rhs.size;
-
-			rhs.pData = nullptr;
-			rhs.size = 0;
-		}
-
-		return *this;
+		return BufferBase::operator=(std::move(rhs));
 	}
 };
 
@@ -119,28 +85,166 @@ TEST(BufferBaseTest, Constructors)
 
 TEST(BufferBaseTest, Copy)
 {
-	TestBuffer b1 = { 1, 2, 3, 4, 5 };
-	TestBuffer b2(b1);
+	{
+		TestBuffer b1 = { 1, 2, 3, 4, 5 };
+		TestBuffer b2(b1);
 
-	EXPECT_EQ(b1.Size(), b2.Size());
+		EXPECT_EQ(b1.Size(), b2.Size());
 
-	for (size_t i = 0; i < b1.Size(); ++i)
-		EXPECT_EQ(b1[i], b2[i]);
+		for (size_t i = 0; i < b1.Size(); ++i)
+			EXPECT_EQ(b1[i], b2[i]);
+	}
+
+	{
+		TestBuffer b1 = { 1, 2, 3, 4, 5 };
+		TestBuffer b2 = { 6, 7, 8 };
+		test_data_t expected[] = { 6, 7, 8 };
+		size_t expectedSize = b2.Size();
+
+		b1.operator=(b2);
+
+		EXPECT_EQ(b1.Size(), expectedSize);
+
+		for (size_t i = 0; i < expectedSize; ++i)
+			EXPECT_EQ(b1[i], expected[i]);
+	}
+
+	{
+		TestBuffer b1 = { 1, 2, 3, 4, 5 };
+		TestBuffer b2;
+
+		b1.operator=(b2);
+
+		EXPECT_EQ(b1.Size(), 0);
+		EXPECT_TRUE(b1.begin() == nullptr);
+	}
+
+	{
+		TestBuffer b1;
+		TestBuffer b2 = { 1, 2, 3, 4, 5 };
+		test_data_t expected[] = { 1, 2, 3, 4, 5 };
+		size_t expectedSize = b2.Size();
+
+		b1.operator=(b2);
+
+		EXPECT_EQ(b1.Size(), expectedSize);
+
+		for (size_t i = 0; i < expectedSize; ++i)
+			EXPECT_EQ(b1[i], expected[i]);
+	}
+
+	{
+		TestBuffer b = { 1, 2, 3 };
+		test_data_t expected[] = { 1, 2, 3 };
+		size_t expectedSize = b.Size();
+
+		b.operator=(b);
+
+		EXPECT_EQ(b.Size(), expectedSize);
+
+		for (size_t i = 0; i < expectedSize; ++i)
+			EXPECT_EQ(b[i], expected[i]);
+	}
+
+	{
+		TestBuffer b = { 1, 2, 3 };
+		test_data_t expected[] = { 4, 5, 6, 7 };
+		size_t expectedSize = 4;
+
+		b.operator=({ 4, 5, 6, 7 });
+
+		EXPECT_EQ(b.Size(), expectedSize);
+
+		for (size_t i = 0; i < expectedSize; ++i)
+			EXPECT_EQ(b[i], expected[i]);
+	}
+
+	{
+		TestBuffer b = { 1, 2, 3 };
+
+		b.operator=({});
+
+		EXPECT_EQ(b.Size(), 0);
+		EXPECT_TRUE(b.begin() == nullptr);
+	}
 }
 
 TEST(BufferBaseTest, Move)
 {
-	TestBuffer b1 = { 1, 2, 3, 4, 5 };
+	{
+		TestBuffer b1 = { 1, 2, 3, 4, 5 };
 
-	test_data_t* b1_begin = b1.begin();
-	size_t b1_size = b1.Size();
+		test_data_t* expectedBegin = b1.begin();
+		size_t expectedSize = b1.Size();
 
-	TestBuffer b2(std::move(b1));
+		TestBuffer b2(std::move(b1));
 
-	EXPECT_EQ(b1.Size(), 0);
-	EXPECT_TRUE(b1.begin() == nullptr);
-	EXPECT_EQ(b2.Size(), b1_size);
-	EXPECT_EQ(b2.begin(), b1_begin);
+		EXPECT_EQ(b1.Size(), 0);
+		EXPECT_TRUE(b1.begin() == nullptr);
+		EXPECT_EQ(b2.Size(), expectedSize);
+		EXPECT_EQ(b2.begin(), expectedBegin);
+	}
+
+	{
+		TestBuffer b1;
+		TestBuffer b2(std::move(b1));
+
+		EXPECT_EQ(b2.Size(), 0);
+		EXPECT_TRUE(b2.begin() == nullptr);
+	}
+
+	{
+		TestBuffer b1 = { 1, 2, 3, 4, 5 };
+		TestBuffer b2 = { 6, 7 };
+		test_data_t* expectedBegin = b2.begin();
+		size_t expectedSize = b2.Size();
+
+		b1.operator=(std::move(b2));
+
+		EXPECT_EQ(b1.Size(), expectedSize);
+		EXPECT_EQ(b1.begin(), expectedBegin);
+		EXPECT_EQ(b2.Size(), 0);
+		EXPECT_TRUE(b2.begin() == nullptr);
+	}
+
+	{
+		TestBuffer b1;
+		TestBuffer b2 = { 6, 7 };
+		test_data_t* expectedBegin = b2.begin();
+		size_t expectedSize = b2.Size();
+
+		b1.operator=(std::move(b2));
+
+		EXPECT_EQ(b1.Size(), expectedSize);
+		EXPECT_EQ(b1.begin(), expectedBegin);
+		EXPECT_EQ(b2.Size(), 0);
+		EXPECT_TRUE(b2.begin() == nullptr);
+	}
+
+	{
+		TestBuffer b1 = { 1, 2, 3, 4, 5 };
+		TestBuffer b2;
+		test_data_t* expectedBegin = b2.begin();
+		size_t expectedSize = b2.Size();
+
+		b1.operator=(std::move(b2));
+
+		EXPECT_EQ(b1.Size(), 0);
+		EXPECT_TRUE(b1.begin() == nullptr);
+		EXPECT_EQ(b2.Size(), 0);
+		EXPECT_TRUE(b2.begin() == nullptr);
+	}
+
+	{
+		TestBuffer b = { 1, 2, 3 };
+		test_data_t* expectedBegin = b.begin();
+		size_t expectedSize = b.Size();
+
+		b.operator=(std::move(b));
+
+		EXPECT_EQ(b.Size(), expectedSize);
+		EXPECT_EQ(b.begin(), expectedBegin);
+	}
 }
 
 TEST(BufferBaseTest, LeftShift)
@@ -837,7 +941,7 @@ TEST(BufferBaseTest, Resize)
 
 	{
 		TestBuffer b = { 1, 2, 3, 4, 5 };
-		
+
 		b.Resize(0);
 
 		EXPECT_EQ(b.Size(), 0);
@@ -874,7 +978,7 @@ TEST(BufferBaseTest, begin)
 		TestBuffer b;
 		EXPECT_TRUE(b.begin() == nullptr);
 	}
-	
+
 	{
 		TestBuffer b(1);
 		EXPECT_FALSE(b.begin() == nullptr);

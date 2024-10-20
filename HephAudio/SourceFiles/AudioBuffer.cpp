@@ -49,18 +49,12 @@ namespace HephAudio
 		if (this != &rhs)
 		{
 			this->Release();
-			this->size = rhs.size;
+			
+			BufferBase::operator=(rhs);
+
 			this->frameCount = rhs.frameCount;
 			this->formatInfo = rhs.formatInfo;
-
-			if (rhs.size > 0)
-			{
-				const size_t size_byte = rhs.SizeAsByte();
-				this->pData = AudioBuffer::AllocateUninitialized(size_byte);
-				(void)std::memcpy(this->pData, rhs.pData, size_byte);
-			}
 		}
-
 		return *this;
 	}
 
@@ -70,13 +64,11 @@ namespace HephAudio
 		{
 			this->Release();
 
-			this->pData = rhs.pData;
-			this->size = rhs.size;
+			BufferBase::operator=(std::move(rhs));
+
 			this->frameCount = rhs.frameCount;
 			this->formatInfo = rhs.formatInfo;
 
-			rhs.pData = nullptr;
-			rhs.size = 0;
 			rhs.frameCount = 0;
 			rhs.formatInfo = AudioFormatInfo();
 		}
@@ -91,7 +83,7 @@ namespace HephAudio
 
 	AudioBuffer& AudioBuffer::operator<<=(size_t rhs)
 	{
-		return (AudioBuffer&)SignedArithmeticBuffer::operator<<=(rhs * this->formatInfo.channelLayout.count);
+		return SignedArithmeticBuffer::operator<<=(rhs * this->formatInfo.channelLayout.count);
 	}
 
 	AudioBuffer AudioBuffer::operator>>(size_t rhs) const
@@ -101,7 +93,7 @@ namespace HephAudio
 
 	AudioBuffer& AudioBuffer::operator>>=(size_t rhs)
 	{
-		return (AudioBuffer&)SignedArithmeticBuffer::operator>>=(rhs * this->formatInfo.channelLayout.count);
+		return SignedArithmeticBuffer::operator>>=(rhs * this->formatInfo.channelLayout.count);
 	}
 
 	bool AudioBuffer::operator==(const AudioBuffer& rhs) const

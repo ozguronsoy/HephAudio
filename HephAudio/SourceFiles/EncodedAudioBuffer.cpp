@@ -37,12 +37,10 @@ namespace HephAudio
 		{
 			this->Release();
 
-			this->pData = rhs.pData;
-			this->size = rhs.size;
+			BufferBase::operator=(std::move(rhs));
+
 			this->formatInfo = rhs.formatInfo;
 
-			rhs.pData = nullptr;
-			rhs.size = 0;
 			rhs.formatInfo = AudioFormatInfo();
 		}
 		return *this;

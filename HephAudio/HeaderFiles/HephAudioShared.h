@@ -24,7 +24,7 @@
  * patch part of the version.
  *
 */
-#define HEPHAUDIO_VERSION_PATCH	0
+#define HEPHAUDIO_VERSION_PATCH	1
 
 /**
  * full version as string litteral.

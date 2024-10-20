@@ -34,15 +34,13 @@ namespace HephAudio
 		{
 			this->Release();
 
-			this->pData = rhs.pData;
-			this->size = rhs.size;
+			EncodedAudioBuffer::operator=(std::move(rhs));
+			
 			this->frameCount = rhs.frameCount;
 			this->extraDataSize = rhs.extraDataSize;
 			this->extraData = rhs.extraData;
 			this->blockAlign = rhs.blockAlign;
 
-			rhs.pData = nullptr;
-			rhs.size = 0;
 			rhs.frameCount = 0;
 			rhs.extraDataSize = 0;
 			rhs.extraData = nullptr;

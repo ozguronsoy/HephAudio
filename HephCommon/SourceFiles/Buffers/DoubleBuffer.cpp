@@ -11,52 +11,17 @@ namespace Heph
 
 	DoubleBuffer& DoubleBuffer::operator=(const std::initializer_list<double>& rhs)
 	{
-		this->Release();
-
-		this->size = rhs.size();
-		if (this->size > 0)
-		{
-			const size_t size_byte = this->SizeAsByte();
-			this->pData = DoubleBuffer::AllocateUninitialized(size_byte);
-			(void)std::memcpy(this->pData, rhs.begin(), size_byte);
-		}
-
-		return *this;
+		return BufferBase::operator=(rhs);
 	}
 
 	DoubleBuffer& DoubleBuffer::operator=(const DoubleBuffer& rhs)
 	{
-		if (this != &rhs)
-		{
-			this->Release();
-
-			if (rhs.size > 0)
-			{
-				const size_t size_byte = rhs.SizeAsByte();
-				this->pData = DoubleBuffer::AllocateUninitialized(size_byte);
-				(void)std::memcpy(this->pData, rhs.pData, size_byte);
-
-				this->size = rhs.size;
-			}
-		}
-
-		return *this;
+		return BufferBase::operator=(rhs);
 	}
 
 	DoubleBuffer& DoubleBuffer::operator=(DoubleBuffer&& rhs) noexcept
 	{
-		if (this != &rhs)
-		{
-			this->Release();
-
-			this->pData = rhs.pData;
-			this->size = rhs.size;
-
-			rhs.pData = nullptr;
-			rhs.size = 0;
-		}
-
-		return *this;
+		return BufferBase::operator=(std::move(rhs));
 	}
 
 	// explicit instantiate for building shared libraries.
