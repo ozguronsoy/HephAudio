@@ -128,6 +128,14 @@ namespace Heph
 		 */
 		virtual Tself operator<<(size_t rhs) const
 		{
+			if (rhs >= this->size)
+			{
+				Tself result{};
+				result.pData = BufferBase::Allocate(this->SizeAsByte());
+				result.size = this->size;
+				return result;
+			}
+
 			const size_t thisSize_byte = this->SizeAsByte();
 			const size_t rhsSize_byte = BufferBase::SizeAsByte(rhs);
 
@@ -151,11 +159,16 @@ namespace Heph
 		 */
 		virtual BufferBase& operator<<=(size_t rhs)
 		{
-			if (rhs > 0)
+			if (rhs >= this->size)
+			{
+				this->Reset();
+			}
+			else if (rhs > 0)
 			{
 				(void)std::memcpy(this->pData, this->pData + rhs, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
 				BufferBase::Initialize(this->pData + this->size - rhs, this->pData + this->size);
 			}
+
 			return *this;
 		}
 
@@ -168,6 +181,14 @@ namespace Heph
 		 */
 		virtual Tself operator>>(size_t rhs) const
 		{
+			if (rhs >= this->size)
+			{
+				Tself result{};
+				result.pData = BufferBase::Allocate(this->SizeAsByte());
+				result.size = this->size;
+				return result;
+			}
+
 			const size_t thisSize_byte = this->SizeAsByte();
 
 			Tself result{};
@@ -190,7 +211,11 @@ namespace Heph
 		 */
 		virtual BufferBase& operator>>=(size_t rhs)
 		{
-			if (rhs > 0)
+			if (rhs >= this->size)
+			{
+				this->Reset();
+			}
+			else if (rhs > 0)
 			{
 				(void)std::memcpy(this->pData + rhs, this->pData, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
 				BufferBase::Initialize(this->pData, this->pData + rhs);
@@ -391,8 +416,13 @@ namespace Heph
 		 */
 		virtual void Replace(const Tself& rhs, size_t index, size_t size)
 		{
+			if (size > rhs.size)
+			{
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "size cannot be greater than the rhs buffer size"))
+			}
+
 			BufferBase::Replace(this->pData, this->SizeAsByte(), rhs.pData,
-				rhs.SizeAsByte(), BufferBase::SizeAsByte(index));
+				BufferBase::SizeAsByte(size), BufferBase::SizeAsByte(index));
 		}
 
 		/**
@@ -495,7 +525,7 @@ namespace Heph
 		 * @param pDataEnd end of the memory region.
 		 */
 		template<typename U = Tdata>
-		static typename std::enable_if<not std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
+		static typename std::enable_if<!std::is_class<U>::value>::type Initialize(U* pData, U* pDataEnd)
 		{
 			(void)std::memset(pData, 0, ((uint8_t*)pDataEnd) - ((uint8_t*)pData));
 		}
@@ -641,6 +671,10 @@ namespace Heph
 				{
 					return BufferBase::Append(pThisData, thisSize_byte, pRhsData, rhsSize_byte);
 				}
+				else if (index_byte == 0)
+				{
+					return BufferBase::Prepend(pThisData, thisSize_byte, pRhsData, rhsSize_byte);
+				}
 
 				Tdata* pResultData = (Tdata*)std::realloc(pThisData, thisSize_byte + rhsSize_byte);
 				if (pResultData == nullptr)
@@ -716,7 +750,7 @@ namespace Heph
 
 		static void Replace(Tdata* pThisData, size_t thisSize_byte, Tdata* pRhsData, size_t rhsSize_byte, size_t index_byte)
 		{
-			if (rhsSize_byte > 0)
+			if (thisSize_byte > 0 && rhsSize_byte > 0)
 			{
 				if (pThisData == nullptr)
 				{

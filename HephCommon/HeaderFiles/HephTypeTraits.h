@@ -34,27 +34,27 @@ namespace Heph
 	template<class Lhs, class Rhs = Lhs, typename = void>
 	struct has_addition_assignment_operator : std::false_type {};
 	template<class Lhs, class Rhs>
-	struct has_addition_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value and std::is_arithmetic<Rhs>::value>::type> 
+	struct has_addition_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value&& std::is_arithmetic<Rhs>::value>::type>
 		: std::true_type {};
 	template<class Lhs, class Rhs>
-	struct has_addition_assignment_operator<Lhs, Rhs, 
+	struct has_addition_assignment_operator<Lhs, Rhs,
 		typename std::enable_if<std::is_same<Lhs&, decltype(std::declval<Lhs>() += std::declval<Rhs>())>::value>::type>
 		: std::true_type {};
 
 	template<class Lhs, class Rhs = Lhs, typename = void>
 	struct has_subtraction_assignment_operator : std::false_type {};
 	template<class Lhs, class Rhs>
-	struct has_subtraction_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value and std::is_arithmetic<Rhs>::value>::type>
+	struct has_subtraction_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value&& std::is_arithmetic<Rhs>::value>::type>
 		: std::true_type {};
 	template<class Lhs, class Rhs>
-	struct has_subtraction_assignment_operator<Lhs, Rhs, 
+	struct has_subtraction_assignment_operator<Lhs, Rhs,
 		typename std::enable_if<std::is_same<Lhs&, decltype(std::declval<Lhs>() -= std::declval<Rhs>())>::value>::type>
 		: std::true_type {};
 
 	template<class Lhs, class Rhs = Lhs, typename = void>
 	struct has_multiplication_assignment_operator : std::false_type {};
 	template<class Lhs, class Rhs>
-	struct has_multiplication_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value and std::is_arithmetic<Rhs>::value>::type>
+	struct has_multiplication_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value&& std::is_arithmetic<Rhs>::value>::type>
 		: std::true_type {};
 	template<class Lhs, class Rhs>
 	struct has_multiplication_assignment_operator<Lhs, Rhs,
@@ -64,7 +64,7 @@ namespace Heph
 	template<class Lhs, class Rhs = Lhs, typename = void>
 	struct has_division_assignment_operator : std::false_type {};
 	template<class Lhs, class Rhs>
-	struct has_division_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value and std::is_arithmetic<Rhs>::value>::type>
+	struct has_division_assignment_operator<Lhs, Rhs, typename std::enable_if<std::is_arithmetic<Lhs>::value&& std::is_arithmetic<Rhs>::value>::type>
 		: std::true_type {};
 	template<class Lhs, class Rhs>
 	struct has_division_assignment_operator<Lhs, Rhs,
@@ -76,13 +76,13 @@ namespace Heph
 	template<class Lhs, class Rhs, class Ret>
 	struct has_arithmetic_operators<Lhs, Rhs, Ret,
 		typename std::enable_if<
-		has_addition_operator<Lhs, Rhs, Ret>::value and
-		has_subtraction_operator<Lhs, Rhs, Ret>::value and
-		has_multiplication_operator<Lhs, Rhs, Ret>::value and
-		has_division_operator<Lhs, Rhs, Ret>::value and
-		has_addition_assignment_operator<Lhs, Rhs>::value and
-		has_subtraction_assignment_operator<Lhs, Rhs>::value and
-		has_multiplication_assignment_operator<Lhs, Rhs>::value and
+		has_addition_operator<Lhs, Rhs, Ret>::value&&
+		has_subtraction_operator<Lhs, Rhs, Ret>::value&&
+		has_multiplication_operator<Lhs, Rhs, Ret>::value&&
+		has_division_operator<Lhs, Rhs, Ret>::value&&
+		has_addition_assignment_operator<Lhs, Rhs>::value&&
+		has_subtraction_assignment_operator<Lhs, Rhs>::value&&
+		has_multiplication_assignment_operator<Lhs, Rhs>::value&&
 		has_division_assignment_operator<Lhs, Rhs>::value
 		>::type> : std::true_type {};
 #pragma endregion

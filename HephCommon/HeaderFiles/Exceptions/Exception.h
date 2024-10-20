@@ -26,7 +26,7 @@
    */
 #define HEPH_RAISE_AND_THROW_EXCEPTION(pSender, ex)	{															\
 														(ex).Raise((const void*)(pSender));						\
-														throw *Heph::Exception::GetLastException().get();		\
+														throw (ex);												\
 													}
 
 namespace Heph

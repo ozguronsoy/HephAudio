@@ -141,7 +141,7 @@ namespace Heph
 	std::string StringHelpers::ToString(const Guid& guid)
 	{
 		char buffer[HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE]{ 0 };
-		(void)sprintf(buffer, "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x", guid.data1, guid.data2, guid.data3,
+		(void)sprintf(buffer, "%08X-%04hX-%04hX-%02hhX%02hhX-%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", guid.data1, guid.data2, guid.data3,
 			guid.data4[0], guid.data4[1], guid.data4[2], guid.data4[3],
 			guid.data4[4], guid.data4[5], guid.data4[6], guid.data4[7]);
 		return buffer;
@@ -149,25 +149,25 @@ namespace Heph
 	std::string StringHelpers::ToHexString(int8_t value)
 	{
 		char buffer[HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE]{ 0 };
-		(void)sprintf(buffer, "0x%02X", value);
+		(void)sprintf(buffer, "0x%02hhX", value);
 		return buffer;
 	}
 	std::string StringHelpers::ToHexString(uint8_t value)
 	{
 		char buffer[HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE]{ 0 };
-		(void)sprintf(buffer, "0x%02X", value);
+		(void)sprintf(buffer, "0x%02hhX", value);
 		return buffer;
 	}
 	std::string StringHelpers::ToHexString(int16_t value)
 	{
 		char buffer[HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE]{ 0 };
-		(void)sprintf(buffer, "0x%04X", value);
+		(void)sprintf(buffer, "0x%04hX", value);
 		return buffer;
 	}
 	std::string StringHelpers::ToHexString(uint16_t value)
 	{
 		char buffer[HEPH_STRING_HELPERS_TO_STRING_BUFFER_SIZE]{ 0 };
-		(void)sprintf(buffer, "0x%04X", value);
+		(void)sprintf(buffer, "0x%04hX", value);
 		return buffer;
 	}
 	std::string StringHelpers::ToHexString(int32_t value)
@@ -240,48 +240,78 @@ namespace Heph
 	{
 		Guid guid;
 		const std::vector<std::string> dataStr = StringHelpers::Split(string, "-");
-		(void)sscanf(dataStr[0].c_str(), "%x", &guid.data1);
-		(void)sscanf(dataStr[1].c_str(), "%hx", &guid.data2);
-		(void)sscanf(dataStr[2].c_str(), "%hx", &guid.data3);
-		(void)sscanf(dataStr[3].c_str(), "%hhx", guid.data4);
-		(void)sscanf(dataStr[3].c_str() + 2, "%hhx", guid.data4 + 1);
-		(void)sscanf(dataStr[4].c_str(), "%hhx%hhx%hhx%hhx%hhx%hhx", guid.data4 + 2, guid.data4 + 3, guid.data4 + 4, guid.data4 + 5, guid.data4 + 6, guid.data4 + 7);
+		(void)sscanf(dataStr[0].c_str(), "%08X", &guid.data1);
+		(void)sscanf(dataStr[1].c_str(), "%04hX", &guid.data2);
+		(void)sscanf(dataStr[2].c_str(), "%04hX", &guid.data3);
+		(void)sscanf(dataStr[3].c_str(), "%02hhX", guid.data4);
+		(void)sscanf(dataStr[3].c_str() + 2, "%02hhX", guid.data4 + 1);
+		(void)sscanf(dataStr[4].c_str(), "%02hhX%02hhX%02hhX%02hhX%02hhX%02hhX", guid.data4 + 2, guid.data4 + 3, guid.data4 + 4, guid.data4 + 5, guid.data4 + 6, guid.data4 + 7);
 		return guid;
 	}
 	int16_t StringHelpers::HexStringToS16(const std::string& hexString)
 	{
 		int16_t number = 0;
-		(void)sscanf(hexString.c_str(), "%hX", &number);
+
+		if(hexString.find("0x") == 0)
+			(void)sscanf(hexString.c_str(), "0x%04hX", &number);
+		else
+			(void)sscanf(hexString.c_str(), "%04hX", &number);
+
 		return number;
 	}
 	uint16_t StringHelpers::HexStringToU16(const std::string& hexString)
 	{
 		uint16_t number = 0;
-		(void)sscanf(hexString.c_str(), "%hX", &number);
+		
+		if (hexString.find("0x") == 0)
+			(void)sscanf(hexString.c_str(), "0x%04hX", &number);
+		else
+			(void)sscanf(hexString.c_str(), "%04hX", &number);
+
 		return number;
 	}
 	int32_t StringHelpers::HexStringToS32(const std::string& hexString)
 	{
 		int32_t number = 0;
-		(void)sscanf(hexString.c_str(), "%X", &number);
+		
+		if (hexString.find("0x") == 0)
+			(void)sscanf(hexString.c_str(), "0x%08X", &number);
+		else
+			(void)sscanf(hexString.c_str(), "%08X", &number);
+
 		return number;
 	}
 	uint32_t StringHelpers::HexStringToU32(const std::string& hexString)
 	{
 		uint32_t number = 0;
-		(void)sscanf(hexString.c_str(), "%X", &number);
+
+		if (hexString.find("0x") == 0)
+			(void)sscanf(hexString.c_str(), "0x%08X", &number);
+		else
+			(void)sscanf(hexString.c_str(), "%08X", &number);
+
 		return number;
 	}
 	int64_t StringHelpers::HexStringToS64(const std::string& hexString)
 	{
 		int64_t number = 0;
-		(void)sscanf(hexString.c_str(), "%llX", &number);
+		
+		if (hexString.find("0x") == 0)
+			(void)sscanf(hexString.c_str(), "0x%016llX", &number);
+		else
+			(void)sscanf(hexString.c_str(), "%016llX", &number);
+
 		return number;
 	}
 	uint64_t StringHelpers::HexStringToU64(const std::string& hexString)
 	{
 		uint64_t number = 0;
-		(void)sscanf(hexString.c_str(), "%llX", &number);
+
+		if (hexString.find("0x") == 0)
+			(void)sscanf(hexString.c_str(), "0x%016llX", &number);
+		else
+			(void)sscanf(hexString.c_str(), "%016llX", &number);
+
 		return number;
 	}
 }

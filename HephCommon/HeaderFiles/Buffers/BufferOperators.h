@@ -12,7 +12,7 @@ namespace Heph
 #pragma region Event
 	/**
 	 * @brief contains the results of the \link BufferOperatorEvents::OnResultCreated BufferOperatorEvents::OnResultCreated \endlink event.
-	 * 
+	 *
 	 */
 	template<typename Lhs, typename Rhs>
 	struct HEPH_API BufferOperatorResultCreatedEventArgs : public EventArgs
@@ -36,7 +36,7 @@ namespace Heph
 #pragma region Addition
 	/**
 	 * @brief provides + and += operators to the buffer.
-	 * 
+	 *
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class HEPH_API BufferAdditionOperator
@@ -151,7 +151,7 @@ namespace Heph
 #pragma region Subtraction
 	/**
 	 * @brief provides - and -= operators to the buffer.
-	 * 
+	 *
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class HEPH_API BufferSubtractionOperator
@@ -310,7 +310,7 @@ namespace Heph
 #pragma region Multiplication
 	/**
 	 * @brief provides * and *= operators to the buffer.
-	 * 
+	 *
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class HEPH_API BufferMultiplicationOperator
@@ -425,7 +425,7 @@ namespace Heph
 #pragma region Division
 	/**
 	 * @brief provides / and /= operators to the buffer.
-	 * 
+	 *
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class HEPH_API BufferDivisionOperator
@@ -490,7 +490,7 @@ namespace Heph
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR and std::is_same<U, V>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
+		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_same<U, V>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
 		{
 			Lhs result{};
 			BufferOperatorResultCreatedEventArgs<Lhs, Rhs> args(lhs, rhs, result);
@@ -545,7 +545,7 @@ namespace Heph
 		}
 
 		template<typename U = Rhs, typename V = RhsData>
-		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR and std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
+		static inline typename std::enable_if<DEFINE_RHS_LHS_OPERATOR&& std::is_base_of<BufferBase<U, V>, U>::value, Lhs>::type ImplRhs(const U& rhs, const Lhs& lhs)
 		{
 			if (lhs.Size() != rhs.Size())
 			{
@@ -584,7 +584,7 @@ namespace Heph
 #pragma region Arithmetic
 	/**
 	 * @brief provides arithmetic operators to the buffer.
-	 * 
+	 *
 	 */
 	template<class Lhs, typename LhsData, typename Rhs = LhsData, typename RhsData = Rhs>
 	class HEPH_API BufferArithmeticOperators :
@@ -602,7 +602,7 @@ namespace Heph
 #pragma region Unary Minus
 	/**
 	 * @brief provides unary minus operator to the buffer.
-	 * 
+	 *
 	 */
 	template<class Lhs, typename LhsData>
 	class HEPH_API BufferUnaryMinusOperator

@@ -168,7 +168,18 @@ namespace Heph
 	 */
 	HEPH_API void ChangeEndian(uint8_t* pData, uint8_t dataSize);
 
-	inline constexpr Endian operator!(const Endian& lhs) { return (lhs & Endian::Big) ? Endian::Little : ((lhs == Endian::Little) ? Endian::Big : Endian::Unknown); }
+	inline constexpr Endian operator!(const Endian& lhs)
+	{
+		switch (lhs)
+		{
+		case Endian::Little:
+			return Endian::Big;
+		case Endian::Big:
+			return Endian::Little;
+		default:
+			return Endian::Unknown;
+		}
+	}
 
 	/**
 	 * endianness of the current system.
@@ -180,7 +191,7 @@ namespace Heph
 	  * changes the endianness of the provided data.
 	  *
 	  */
-#define HEPH_CHANGE_ENDIAN(pData, dataSize) Heph::ChangeEndian(pData, dataSize)
+#define HEPH_CHANGE_ENDIAN(pData, dataSize) Heph::ChangeEndian((uint8_t*)(pData), dataSize)
 
 	enum ConvolutionMode
 	{
