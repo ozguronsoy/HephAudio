@@ -12,7 +12,7 @@ namespace HephAudio
 	class LinearPanningEffect final : public PanningEffect
 	{
 	public:
-		/** @copydoc default_constuctor */
+		/** @copydoc default_constructor */
 		LinearPanningEffect();
 
 		/**

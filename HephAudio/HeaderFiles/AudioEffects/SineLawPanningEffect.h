@@ -13,7 +13,7 @@ namespace HephAudio
 	class SineLawPanningEffect : public PanningEffect
 	{
 	public:
-		/** @copydoc default_constuctor */
+		/** @copydoc default_constructor */
 		SineLawPanningEffect();
 
 		/**
