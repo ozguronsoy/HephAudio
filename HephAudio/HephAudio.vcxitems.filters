@@ -234,6 +234,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegEncodedAudioBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EncodedAudioBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioEncoder.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\AudioEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearPanningEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SquareLawPanningEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\PanningEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SineLawPanningEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -384,5 +389,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioCaptureEventArgs.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephAudioShared.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\AudioEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\LinearPanningEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SquareLawPanningEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\PanningEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SineLawPanningEffect.cpp" />
   </ItemGroup>
 </Project>
