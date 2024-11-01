@@ -12,6 +12,9 @@ namespace HephAudio
 	 */
 	class PanningEffect : public AudioEffect
 	{
+	public:
+		using AudioEffect::Process;
+
 	protected:
 		/**
 		 * multiplication factor for the left channel.
@@ -30,7 +33,10 @@ namespace HephAudio
 		PanningEffect();
 
 	public:
+		/** @copydoc destructor */
 		virtual ~PanningEffect() = default;
+
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
 		 * gets the panning factor.
@@ -49,6 +55,6 @@ namespace HephAudio
 		virtual void SetFactor(double factor) = 0;
 
 	protected:
-		virtual void ProcessST(AudioBuffer& buffer, size_t startIndex, size_t endIndex) override;
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t endIndex) override;
 	};
 }

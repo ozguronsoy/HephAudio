@@ -59,21 +59,31 @@ namespace HephAudio
 		 */
 		virtual void Process(AudioBuffer& buffer);
 
+		/**
+		 * Applies the effect.
+		 * @param buffer contains the audio data which will be processed.
+		 * @param startIndex index of the first audio frame to process.
+		 * @param frameCount number of frames to process.
+		 */
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount);
+
 	protected:
 		/**
 		 * applies the effect using single thread.
-		 * @param buffer contains the audio data which will be processed.
+		 * @param inputBuffer contains the dry data.
+		 * @param outputBuffer contains the wet data.
 		 * @param startIndex index of the first sample to process.
 		 * @param endIndex index of the last sample to process.
 		 *
 		 */
-		virtual void ProcessST(AudioBuffer& buffer, size_t startIndex, size_t endIndex) = 0;
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) = 0;
 
 		/**
 		 * applies the effect using multiple threads.
-		 * @param buffer contains the audio data which will be processed.
+		 * @param inputBuffer contains the dry data.
+		 * @param outputBuffer contains the wet data.
 		 *
 		 */
-		virtual void ProcessMT(AudioBuffer& buffer);
+		virtual void ProcessMT(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount);
 	};
 }

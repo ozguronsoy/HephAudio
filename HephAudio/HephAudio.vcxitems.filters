@@ -239,6 +239,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SquareLawPanningEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\PanningEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SineLawPanningEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\ModulationEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\TremoloEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\VibratoEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -394,5 +397,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SquareLawPanningEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\PanningEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SineLawPanningEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ModulationEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\TremoloEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\VibratoEffect.cpp" />
   </ItemGroup>
 </Project>

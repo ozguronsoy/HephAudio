@@ -33,29 +33,39 @@ namespace HephAudio
 
 	void AudioEffect::Process(AudioBuffer& buffer)
 	{
-		if (buffer.FormatInfo().channelLayout != HEPHAUDIO_CH_LAYOUT_STEREO)
+		this->Process(buffer, 0, buffer.FrameCount());
+	}
+
+	void AudioEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
+	{
+		if (startIndex + frameCount > buffer.FrameCount())
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "buffer must be stereo."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "(startIndex + frameCount) exceeds the buffer's frame count."));
 		}
 
 		if (this->threadCount == 1)
-			this->ProcessST(buffer, 0, buffer.FrameCount());
+			this->ProcessST(buffer, buffer, startIndex, frameCount);
 		else
-			this->ProcessMT(buffer);
+			this->ProcessMT(buffer, buffer, startIndex, frameCount);
 	}
 
-	void AudioEffect::ProcessMT(AudioBuffer& buffer)
+	void AudioEffect::ProcessMT(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
-		const size_t framesPerThread = buffer.FrameCount() / this->threadCount;
-		const size_t remainingFrameCount = buffer.FrameCount() % this->threadCount;
+		const size_t framesPerThread = frameCount / this->threadCount;
+		const size_t remainingFrameCount = frameCount % this->threadCount;
 		std::vector<std::thread> threads(this->threadCount);
 
-		size_t startIndex = 0;
 		for (size_t i = 0; i < threads.size(); ++i)
 		{
-			const size_t endIndex = startIndex + framesPerThread;
-			threads[i] = std::thread(&AudioEffect::ProcessST, this, std::ref(buffer), startIndex, (i == threads.size() - 1) ? (endIndex + remainingFrameCount) : (endIndex));
-			startIndex = endIndex;
+			threads[i] = std::thread(
+				&AudioEffect::ProcessST, 
+				this, 
+				std::cref(inputBuffer), 
+				std::ref(outputBuffer), 
+				startIndex, 
+				(i == threads.size() - 1) ? (framesPerThread + remainingFrameCount) : (framesPerThread)
+			);
+			startIndex += framesPerThread;
 		}
 
 		for (std::thread& t : threads)
