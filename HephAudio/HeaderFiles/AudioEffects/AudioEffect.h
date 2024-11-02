@@ -56,6 +56,7 @@ namespace HephAudio
 		/**
 		 * Applies the effect.
 		 * @param buffer contains the audio data which will be processed.
+		 * 
 		 */
 		virtual void Process(AudioBuffer& buffer);
 
@@ -63,7 +64,16 @@ namespace HephAudio
 		 * Applies the effect.
 		 * @param buffer contains the audio data which will be processed.
 		 * @param startIndex index of the first audio frame to process.
+		 * 
+		 */
+		virtual void Process(AudioBuffer& buffer, size_t startIndex);
+
+		/**
+		 * Applies the effect.
+		 * @param buffer contains the audio data which will be processed.
+		 * @param startIndex index of the first audio frame to process.
 		 * @param frameCount number of frames to process.
+		 * 
 		 */
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount);
 

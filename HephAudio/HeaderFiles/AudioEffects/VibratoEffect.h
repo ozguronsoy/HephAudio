@@ -9,7 +9,7 @@ namespace HephAudio
 	/**
 	 * @brief changes the pitch of the audio data periodically and mixes the result with the input signal.
 	 * 
-	 * @important this is a non-causal effect.
+	 * @note this is a non-causal effect.
 	 */
 	class VibratoEffect final : public ModulationEffect
 	{

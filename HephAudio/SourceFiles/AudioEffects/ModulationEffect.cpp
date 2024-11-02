@@ -15,7 +15,13 @@ namespace HephAudio
 
 	void ModulationEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
-		if (startIndex + frameCount > buffer.FrameCount())
+		if (startIndex > buffer.FrameCount())
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "startIndex out of bounds."));
+		}
+
+		const size_t endIndex = startIndex + frameCount;
+		if (endIndex > buffer.FrameCount())
 		{
 			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "(startIndex + frameCount) exceeds the buffer's frame count."));
 		}
@@ -26,6 +32,11 @@ namespace HephAudio
 		if (startIndex > 0)
 		{
 			(void)memcpy(resultBuffer.begin(), buffer.begin(), startIndex * formatInfo.FrameSize());
+		}
+
+		if (endIndex < buffer.FrameCount())
+		{
+			(void)memcpy(resultBuffer.begin() + endIndex, buffer.begin() + endIndex, (buffer.FrameCount() - endIndex) * formatInfo.FrameSize());
 		}
 
 		if (this->threadCount == 1)

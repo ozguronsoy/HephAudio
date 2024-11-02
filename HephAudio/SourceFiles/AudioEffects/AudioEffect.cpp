@@ -36,8 +36,23 @@ namespace HephAudio
 		this->Process(buffer, 0, buffer.FrameCount());
 	}
 
+	void AudioEffect::Process(AudioBuffer& buffer, size_t startIndex)
+	{
+		if (startIndex > buffer.FrameCount())
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "startIndex out of bounds."));
+		}
+
+		this->Process(buffer, startIndex, buffer.FrameCount() - startIndex);
+	}
+
 	void AudioEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
+		if (startIndex > buffer.FrameCount())
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "startIndex out of bounds."));
+		}
+
 		if (startIndex + frameCount > buffer.FrameCount())
 		{
 			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "(startIndex + frameCount) exceeds the buffer's frame count."));
