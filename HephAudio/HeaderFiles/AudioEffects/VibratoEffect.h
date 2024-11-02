@@ -31,13 +31,7 @@ namespace HephAudio
 
 		std::string Name() const override;
 
-		/**
-		 * calculates the number of frames required to apply the effect.
-		 * 
-		 * @param outputFrameCount the number of frames the output buffer will contain.
-		 *  
-		 */
-		size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const;
+		size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
 
 	private:
 		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;

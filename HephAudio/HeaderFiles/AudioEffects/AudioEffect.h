@@ -54,6 +54,15 @@ namespace HephAudio
 		virtual void SetThreadCount(size_t threadCount);
 
 		/**
+		 * calculates the number of frames required to obtain the number of frames desired for the output buffer.
+		 * Useful for applying effects that depend on past and/or future samples in real-time.
+		 *
+		 * @param outputFrameCount the number of frames desired for the output buffer.
+		 *
+		 */
+		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const;
+
+		/**
 		 * Applies the effect.
 		 * @param buffer contains the audio data which will be processed.
 		 * 

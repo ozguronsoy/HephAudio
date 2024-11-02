@@ -21,14 +21,16 @@ namespace HephAudio
 
 	void AudioEffect::SetThreadCount(size_t threadCount)
 	{
-		if (threadCount == 0)
+		this->threadCount = (threadCount == 0) ? (std::thread::hardware_concurrency()) : (threadCount);
+		if (this->threadCount == 0)
 		{
-			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "threadCount cannot be 0, using the default value..."));
 			this->threadCount = 1;
-			return;
 		}
+	}
 
-		this->threadCount = threadCount;
+	size_t AudioEffect::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
+	{
+		return outputFrameCount;
 	}
 
 	void AudioEffect::Process(AudioBuffer& buffer)
