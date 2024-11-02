@@ -11,6 +11,9 @@ namespace HephAudio
 	class TremoloEffect final : public ModulationEffect
 	{
 	public:
+		using ModulationEffect::Process;
+
+	public:
 		/** @copydoc default_constructor */
 		TremoloEffect();
 
@@ -18,6 +21,8 @@ namespace HephAudio
 		TremoloEffect(double depth, Oscillator& lfo);
 
 		std::string Name() const override;
+
+		void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 	private:
 		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t endIndex) override;

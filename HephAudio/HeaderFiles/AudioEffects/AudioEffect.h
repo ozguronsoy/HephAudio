@@ -63,6 +63,14 @@ namespace HephAudio
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const;
 
 		/**
+		 * calculates the number of frames the buffer will contain after applying the effect.
+		 * 
+		 * @param buffer contains the audio data which will be processed.
+		 * 
+		 */
+		virtual size_t CalculateOutputFrameCount(const AudioBuffer& buffer) const;
+
+		/**
 		 * Applies the effect.
 		 * @param buffer contains the audio data which will be processed.
 		 * 
@@ -71,6 +79,7 @@ namespace HephAudio
 
 		/**
 		 * Applies the effect.
+		 * 
 		 * @param buffer contains the audio data which will be processed.
 		 * @param startIndex index of the first audio frame to process.
 		 * 
@@ -79,6 +88,7 @@ namespace HephAudio
 
 		/**
 		 * Applies the effect.
+		 * 
 		 * @param buffer contains the audio data which will be processed.
 		 * @param startIndex index of the first audio frame to process.
 		 * @param frameCount number of frames to process.
@@ -89,6 +99,7 @@ namespace HephAudio
 	protected:
 		/**
 		 * applies the effect using single thread.
+		 * 
 		 * @param inputBuffer contains the dry data.
 		 * @param outputBuffer contains the wet data.
 		 * @param startIndex index of the first sample to process.
@@ -99,6 +110,7 @@ namespace HephAudio
 
 		/**
 		 * applies the effect using multiple threads.
+		 * 
 		 * @param inputBuffer contains the dry data.
 		 * @param outputBuffer contains the wet data.
 		 *

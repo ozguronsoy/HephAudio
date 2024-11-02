@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "AudioEffect.h"
+#include "DoubleBufferedAudioEffect.h"
 #include "Buffers/DoubleBuffer.h"
 #include "Oscillators/Oscillator.h"
 
@@ -11,10 +11,10 @@ namespace HephAudio
 	/**
 	 * @brief base class for effects that use LFOs.
 	 */
-	class ModulationEffect : public AudioEffect
+	class ModulationEffect : public DoubleBufferedAudioEffect
 	{
 	public:
-		using AudioEffect::Process;
+		using DoubleBufferedAudioEffect::Process;
 
 	protected:
 		/**
@@ -40,6 +40,7 @@ namespace HephAudio
 
 		/**
 		 * @copydoc constructor
+		 * 
 		 * @param depth @copydetails depth
 		 * @param lfo low-frequency oscillator.
 		 * 
@@ -54,6 +55,7 @@ namespace HephAudio
 
 		/**
 		 * sets the lfo.
+		 * 
 		 * @param lfo low-frequency oscillator.
 		 */
 		virtual void SetOscillator(Oscillator& lfo);
@@ -66,6 +68,7 @@ namespace HephAudio
 
 		/**
 		 * sets the depth.
+		 * 
 		 * @param depth @copydetails depth
 		 */
 		virtual void SetDepth(double depth);

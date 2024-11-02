@@ -11,6 +11,12 @@ namespace HephAudio
 		return "Tremolo";
 	}
 
+	void TremoloEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
+	{
+		AudioEffect::Process(buffer, startIndex, frameCount);
+		this->lfoIndex += frameCount;
+	}
+
 	void TremoloEffect::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
 		const size_t endIndex = startIndex + frameCount;
@@ -20,7 +26,7 @@ namespace HephAudio
 			const double lfoSample = this->lfoBuffer[(i + this->lfoIndex) % this->lfoBuffer.Size()];
 			for (size_t j = 0; j < channelCount; ++j)
 			{
-				outputBuffer[i][j] = inputBuffer[i][j] * this->depth * lfoSample + inputBuffer[i][j] * (1.0 - this->depth);
+				outputBuffer[i][j] *= this->depth * lfoSample + (1.0 - this->depth);
 			}
 		}
 	}

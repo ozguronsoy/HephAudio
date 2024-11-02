@@ -25,6 +25,7 @@ namespace HephAudio
 
 		/**
 		 * @copydoc ModulationEffect(double, Oscillator&) 
+		 * 
 		 * @param extent @copydetails extent
 		 */
 		VibratoEffect(double depth, double extent, Oscillator& lfo);

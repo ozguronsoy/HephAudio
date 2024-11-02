@@ -33,6 +33,11 @@ namespace HephAudio
 		return outputFrameCount;
 	}
 
+	size_t AudioEffect::CalculateOutputFrameCount(const AudioBuffer& buffer) const
+	{
+		return buffer.FrameCount();
+	}
+
 	void AudioEffect::Process(AudioBuffer& buffer)
 	{
 		this->Process(buffer, 0, buffer.FrameCount());
