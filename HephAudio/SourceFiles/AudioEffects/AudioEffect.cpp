@@ -8,6 +8,16 @@ using namespace Heph;
 namespace HephAudio
 {
 	AudioEffect::AudioEffect() : threadCount(1) {}
+
+	bool AudioEffect::HasMTSupport() const
+	{
+		return true;
+	}
+
+	bool AudioEffect::HasRTSupport() const
+	{
+		return true;
+	}
 	
 	size_t AudioEffect::GetThreadCount() const
 	{

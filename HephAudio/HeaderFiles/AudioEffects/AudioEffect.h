@@ -34,6 +34,18 @@ namespace HephAudio
 		virtual std::string Name() const = 0;
 
 		/**
+		 * checks whether the effect can be applied using multiple threads.
+		 * 
+		 */
+		virtual bool HasMTSupport() const;
+
+		/**
+		 * checks whether the effect can be applied in real-time.
+		 * 
+		 */
+		virtual bool HasRTSupport() const;
+
+		/**
 		 * gets the number of threads that will be used.
 		 *
 		 */
