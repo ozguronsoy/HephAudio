@@ -23,13 +23,6 @@ namespace HephAudio
 		/** @copydoc default_constructor */
 		AudioEffect();
 
-		/**
-		 * @copydoc constructor
-		 *
-		 * @param threadCount @copydetails threadCount
-		 */
-		explicit AudioEffect(size_t threadCount);
-
 	public:
 		/** @copydoc destructor */
 		virtual ~AudioEffect() = default;

@@ -1,4 +1,4 @@
-#include "AudioEffects/SquareLawPanningEffect.h"
+#include "AudioEffects/SquareLawPanning.h"
 #include "Exceptions/InvalidArgumentException.h"
 #include <cmath>
 
@@ -6,24 +6,24 @@ using namespace Heph;
 
 namespace HephAudio
 {
-	SquareLawPanningEffect::SquareLawPanningEffect() : PanningEffect() {}
+	SquareLawPanning::SquareLawPanning() : PanningEffect() {}
 	
-	SquareLawPanningEffect::SquareLawPanningEffect(double factor) : PanningEffect() 
+	SquareLawPanning::SquareLawPanning(double factor) : PanningEffect() 
 	{
 		this->SetFactor(factor);
 	}
 
-	std::string SquareLawPanningEffect::Name() const
+	std::string SquareLawPanning::Name() const
 	{
 		return "Square-Law Panning";
 	}
 
-	double SquareLawPanningEffect::GetFactor() const
+	double SquareLawPanning::GetFactor() const
 	{
 		return (this->rightVolume * this->rightVolume - 0.5) * 2;
 	}
 
-	void SquareLawPanningEffect::SetFactor(double factor)
+	void SquareLawPanning::SetFactor(double factor)
 	{
 		if (factor < -1)
 		{

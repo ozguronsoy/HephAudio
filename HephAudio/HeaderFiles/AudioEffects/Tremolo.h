@@ -8,17 +8,17 @@ namespace HephAudio
 	/**
 	 * @brief changes the volume of the audio data periodically and mixes the result with the input signal.
 	 */
-	class TremoloEffect final : public ModulationEffect
+	class Tremolo final : public ModulationEffect
 	{
 	public:
 		using ModulationEffect::Process;
 
 	public:
 		/** @copydoc default_constructor */
-		TremoloEffect();
+		Tremolo();
 
-		/** @copydoc ModulationEffect(double, Oscillator&) */
-		TremoloEffect(double depth, Oscillator& lfo);
+		/** @copydoc ModulationEffect(double, const Oscillator&) */
+		Tremolo(double depth, const Oscillator& lfo);
 
 		std::string Name() const override;
 

@@ -7,7 +7,7 @@ namespace HephAudio
 {
 	ModulationEffect::ModulationEffect() : DoubleBufferedAudioEffect(), lfoIndex(0), depth(1.0) {}
 
-	ModulationEffect::ModulationEffect(double depth, Oscillator& lfo) : ModulationEffect()
+	ModulationEffect::ModulationEffect(double depth, const Oscillator& lfo) : ModulationEffect()
 	{
 		this->SetOscillator(lfo);
 		this->SetDepth(depth);
@@ -19,7 +19,7 @@ namespace HephAudio
 		this->lfoIndex += frameCount;
 	}
 
-	void ModulationEffect::SetOscillator(Oscillator& lfo)
+	void ModulationEffect::SetOscillator(const Oscillator& lfo)
 	{
 		this->lfoBuffer = lfo.GenerateBuffer();
 		for (double& sample : this->lfoBuffer)

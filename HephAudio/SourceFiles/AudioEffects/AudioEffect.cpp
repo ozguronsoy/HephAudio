@@ -9,11 +9,6 @@ namespace HephAudio
 {
 	AudioEffect::AudioEffect() : threadCount(1) {}
 	
-	AudioEffect::AudioEffect(size_t threadCount) : AudioEffect()
-	{
-		this->SetThreadCount(threadCount);
-	}
-
 	size_t AudioEffect::GetThreadCount() const
 	{
 		return this->threadCount;

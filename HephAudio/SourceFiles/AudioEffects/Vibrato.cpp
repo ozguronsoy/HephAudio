@@ -1,27 +1,27 @@
-#include "AudioEffects/VibratoEffect.h"
+#include "AudioEffects/Vibrato.h"
 #include <cmath>
 
 using namespace Heph;
 
 namespace HephAudio
 {
-	VibratoEffect::VibratoEffect() : ModulationEffect(), extent(1.0) {}
+	Vibrato::Vibrato() : ModulationEffect(), extent(1.0) {}
 
-	VibratoEffect::VibratoEffect(double depth, double extent, Oscillator& lfo) : ModulationEffect(depth, lfo), extent(extent) {}
+	Vibrato::Vibrato(double depth, double extent, const Oscillator& lfo) : ModulationEffect(depth, lfo), extent(extent) {}
 
-	std::string VibratoEffect::Name() const
+	std::string Vibrato::Name() const
 	{
 		return "Vibrato";
 	}
 
-	size_t VibratoEffect::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
+	size_t Vibrato::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
 		const double peakAmplitude = this->lfoBuffer.AbsMax();
-		const double extent_sample = formatInfo.sampleRate * (pow(2, this->extent / 12.0) - 1.0);
+		const double extent_sample = fabs(formatInfo.sampleRate * (pow(2, HephAudio::SemitoneToOctave(this->extent)) - 1.0));
 		return outputFrameCount + peakAmplitude * extent_sample + 1;
 	}
 
-	void VibratoEffect::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
+	void Vibrato::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
 		const size_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
@@ -35,7 +35,7 @@ namespace HephAudio
 			for (size_t j = 0; j < formatInfo.channelLayout.count; ++j)
 			{
 				heph_audio_sample_t wetSample = 0;
-				if (resampleIndex + 1 < inputBuffer.FrameCount())
+				if (resampleIndex > 0 && resampleIndex + 1 < inputBuffer.FrameCount())
 				{
 					wetSample = inputBuffer[resampleIndex][j] * (1.0 - resampleFactor) + inputBuffer[resampleIndex + 1.0][j] * resampleFactor;
 				}

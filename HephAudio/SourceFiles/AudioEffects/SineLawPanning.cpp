@@ -1,4 +1,4 @@
-#include "AudioEffects/SineLawPanningEffect.h"
+#include "AudioEffects/SineLawPanning.h"
 #include "Exceptions/InvalidArgumentException.h"
 #include "HephMath.h"
 
@@ -6,24 +6,24 @@ using namespace Heph;
 
 namespace HephAudio
 {
-	SineLawPanningEffect::SineLawPanningEffect() : PanningEffect() {}
+	SineLawPanning::SineLawPanning() : PanningEffect() {}
 
-	SineLawPanningEffect::SineLawPanningEffect(double factor) : PanningEffect()
+	SineLawPanning::SineLawPanning(double factor) : PanningEffect()
 	{
 		this->SetFactor(factor);
 	}
 
-	std::string SineLawPanningEffect::Name() const
+	std::string SineLawPanning::Name() const
 	{
 		return "Sine-Law Panning";
 	}
 
-	double SineLawPanningEffect::GetFactor() const
+	double SineLawPanning::GetFactor() const
 	{
 		return (asin(this->rightVolume) / (HEPH_MATH_PI * 0.5) - 0.5) * 2;
 	}
 
-	void SineLawPanningEffect::SetFactor(double factor)
+	void SineLawPanning::SetFactor(double factor)
 	{
 		if (factor < -1)
 		{

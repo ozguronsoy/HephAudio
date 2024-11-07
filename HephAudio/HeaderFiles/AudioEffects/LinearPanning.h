@@ -7,14 +7,13 @@
 namespace HephAudio
 {
 	/**
-	 * @brief increases the volume of one channel while decreasing the other one (stereo only). 
-	 * Uses sin function to calculate the volumes.
+	 * @brief linearly increases the volume of one channel while decreasing the other one (stereo only).
 	 */
-	class SineLawPanningEffect final : public PanningEffect
+	class LinearPanning final : public PanningEffect
 	{
 	public:
 		/** @copydoc default_constructor */
-		SineLawPanningEffect();
+		LinearPanning();
 
 		/**
 		 * @copydoc constructor
@@ -23,7 +22,7 @@ namespace HephAudio
 		 * -1 means only the left channel will be audible and 1 means only the right channel will be audible.
 		 *
 		 */
-		explicit SineLawPanningEffect(double factor);
+		explicit LinearPanning(double factor);
 
 		std::string Name() const override;
 		double GetFactor() const override;

@@ -7,8 +7,6 @@ namespace HephAudio
 {
 	DoubleBufferedAudioEffect::DoubleBufferedAudioEffect() : AudioEffect() {}
 
-	DoubleBufferedAudioEffect::DoubleBufferedAudioEffect(size_t threadCount) : AudioEffect(threadCount) {}
-
 	void DoubleBufferedAudioEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		if (startIndex > buffer.FrameCount())

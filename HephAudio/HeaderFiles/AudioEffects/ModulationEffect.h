@@ -45,7 +45,7 @@ namespace HephAudio
 		 * @param lfo low-frequency oscillator.
 		 * 
 		 */
-		ModulationEffect(double depth, Oscillator& lfo);
+		ModulationEffect(double depth, const Oscillator& lfo);
 		
 	public:
 		/** @copydoc destructor */
@@ -58,7 +58,7 @@ namespace HephAudio
 		 * 
 		 * @param lfo low-frequency oscillator.
 		 */
-		virtual void SetOscillator(Oscillator& lfo);
+		virtual void SetOscillator(const Oscillator& lfo);
 
 		/**
 		 * gets the depth.

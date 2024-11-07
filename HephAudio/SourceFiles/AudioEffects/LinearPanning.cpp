@@ -1,28 +1,28 @@
-#include "AudioEffects/LinearPanningEffect.h"
+#include "AudioEffects/LinearPanning.h"
 #include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
 namespace HephAudio
 {
-	LinearPanningEffect::LinearPanningEffect() : PanningEffect() {}
+	LinearPanning::LinearPanning() : PanningEffect() {}
 
-	LinearPanningEffect::LinearPanningEffect(double factor) : PanningEffect() 
+	LinearPanning::LinearPanning(double factor) : PanningEffect() 
 	{
 		this->SetFactor(factor);
 	}
 
-	std::string LinearPanningEffect::Name() const
+	std::string LinearPanning::Name() const
 	{
 		return "Linear Panning";
 	}
 
-	double LinearPanningEffect::GetFactor() const
+	double LinearPanning::GetFactor() const
 	{
 		return (this->rightVolume - 0.5) * 2;
 	}
 
-	void LinearPanningEffect::SetFactor(double factor)
+	void LinearPanning::SetFactor(double factor)
 	{
 		if (factor < -1)
 		{

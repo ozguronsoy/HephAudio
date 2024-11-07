@@ -24,7 +24,7 @@ namespace HephAudio
 	}
 
 	AudioBuffer::AudioBuffer(const AudioBuffer& rhs)
-		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs.size), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo)
+		: SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>(rhs), frameCount(rhs.frameCount), formatInfo(rhs.formatInfo)
 	{
 		AudioBuffer::AddEventHandlers();
 	}
@@ -78,7 +78,10 @@ namespace HephAudio
 
 	AudioBuffer AudioBuffer::operator<<(size_t rhs) const
 	{
-		return SignedArithmeticBuffer::operator<<(rhs * this->formatInfo.channelLayout.count);
+		AudioBuffer result = SignedArithmeticBuffer::operator<<(rhs * this->formatInfo.channelLayout.count);
+		result.frameCount = this->frameCount;
+		result.formatInfo = this->formatInfo;
+		return result;
 	}
 
 	AudioBuffer& AudioBuffer::operator<<=(size_t rhs)
@@ -88,7 +91,10 @@ namespace HephAudio
 
 	AudioBuffer AudioBuffer::operator>>(size_t rhs) const
 	{
-		return SignedArithmeticBuffer::operator>>(rhs * this->formatInfo.channelLayout.count);
+		AudioBuffer result = SignedArithmeticBuffer::operator>>(rhs * this->formatInfo.channelLayout.count);
+		result.frameCount = this->frameCount;
+		result.formatInfo = this->formatInfo;
+		return result;
 	}
 
 	AudioBuffer& AudioBuffer::operator>>=(size_t rhs)

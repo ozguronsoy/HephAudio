@@ -1,23 +1,23 @@
-#include "AudioEffects/TremoloEffect.h"
+#include "AudioEffects/Tremolo.h"
 
 namespace HephAudio
 {
-	TremoloEffect::TremoloEffect() : ModulationEffect() {}
+	Tremolo::Tremolo() : ModulationEffect() {}
 
-	TremoloEffect::TremoloEffect(double depth, Oscillator& lfo) : ModulationEffect(depth, lfo) {}
+	Tremolo::Tremolo(double depth, const Oscillator& lfo) : ModulationEffect(depth, lfo) {}
 
-	std::string TremoloEffect::Name() const
+	std::string Tremolo::Name() const
 	{
 		return "Tremolo";
 	}
 
-	void TremoloEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
+	void Tremolo::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		AudioEffect::Process(buffer, startIndex, frameCount);
 		this->lfoIndex += frameCount;
 	}
 
-	void TremoloEffect::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
+	void Tremolo::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
 		const size_t endIndex = startIndex + frameCount;
 		const size_t channelCount = inputBuffer.FormatInfo().channelLayout.count;

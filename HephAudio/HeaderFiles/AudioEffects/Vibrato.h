@@ -11,7 +11,7 @@ namespace HephAudio
 	 * 
 	 * @note this is a non-causal effect.
 	 */
-	class VibratoEffect final : public ModulationEffect
+	class Vibrato final : public ModulationEffect
 	{
 	public:
 		/**
@@ -21,14 +21,14 @@ namespace HephAudio
 
 	public:
 		/** @copydoc default_constructor */
-		VibratoEffect();
+		Vibrato();
 
 		/**
-		 * @copydoc ModulationEffect(double, Oscillator&) 
+		 * @copydoc ModulationEffect(double, const Oscillator&) 
 		 * 
 		 * @param extent @copydetails extent
 		 */
-		VibratoEffect(double depth, double extent, Oscillator& lfo);
+		Vibrato(double depth, double extent, const Oscillator& lfo);
 
 		std::string Name() const override;
 

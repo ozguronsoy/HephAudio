@@ -235,14 +235,15 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EncodedAudioBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\IAudioEncoder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\AudioEffect.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearPanningEffect.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SquareLawPanningEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearPanning.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SquareLawPanning.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\PanningEffect.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SineLawPanningEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\SineLawPanning.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\ModulationEffect.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\TremoloEffect.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\VibratoEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Tremolo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Vibrato.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\DoubleBufferedAudioEffect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Flanger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -394,13 +395,14 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioDevice.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephAudioShared.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\AudioEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\LinearPanningEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SquareLawPanningEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\LinearPanning.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SquareLawPanning.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\PanningEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SineLawPanningEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\SineLawPanning.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ModulationEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\TremoloEffect.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\VibratoEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Tremolo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Vibrato.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\DoubleBufferedAudioEffect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Flanger.cpp" />
   </ItemGroup>
 </Project>

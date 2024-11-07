@@ -18,9 +18,6 @@ namespace HephAudio
 		/** @copydoc default_constructor */
 		DoubleBufferedAudioEffect();
 
-		/** @copydoc AudioEffect(size_t) */
-		explicit DoubleBufferedAudioEffect(size_t threadCount);
-
 	public:
 		/** @copydoc destructor */
 		virtual ~DoubleBufferedAudioEffect() = default;
