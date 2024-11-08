@@ -25,6 +25,19 @@ namespace HephAudio
 		{
 			this->oldSamples = AudioBuffer(maxDelay_sample, formatInfo.channelLayout, formatInfo.sampleRate);
 		}
+		else if (this->oldSamples.FrameCount() != maxDelay_sample)
+		{
+			if (maxDelay_sample > this->oldSamples.FrameCount())
+			{
+				this->oldSamples.Resize(maxDelay_sample);
+				this->oldSamples >>= maxDelay_sample - this->oldSamples.FrameCount();
+			}
+			else
+			{
+				this->oldSamples <<= this->oldSamples.FrameCount() - maxDelay_sample;
+				this->oldSamples.Resize(maxDelay_sample);
+			}
+		}
 
 		AudioBuffer tempBuffer = this->oldSamples;
 		if (buffer.FrameCount() >= maxDelay_sample)
@@ -69,7 +82,6 @@ namespace HephAudio
 		}
 
 		this->constantDelay = constantDelay;
-		this->SetOldSamplesSize();
 	}
 
 	double Flanger::GetVariableDelay() const
@@ -85,7 +97,6 @@ namespace HephAudio
 		}
 
 		this->variableDelay = variableDelay;
-		this->SetOldSamplesSize();
 	}
 
 	void Flanger::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
@@ -109,26 +120,6 @@ namespace HephAudio
 					wetSample = inputBuffer[delaySampleIndex][j];
 
 				outputBuffer[i][j] = wetSample * this->depth + inputBuffer[i][j] * (1.0 - this->depth);
-			}
-		}
-	}
-
-	void Flanger::SetOldSamplesSize()
-	{
-		const size_t maxDelay_sample = ceil((this->constantDelay + this->variableDelay) * 1e-3 * this->oldSamples.FormatInfo().sampleRate);
-		const size_t frameCount = this->oldSamples.FrameCount();
-
-		if (maxDelay_sample != frameCount)
-		{
-			if (maxDelay_sample > frameCount)
-			{
-				this->oldSamples.Resize(maxDelay_sample);
-				this->oldSamples >>= maxDelay_sample - frameCount;
-			}
-			else
-			{
-				this->oldSamples <<= frameCount - maxDelay_sample;
-				this->oldSamples.Resize(maxDelay_sample);
 			}
 		}
 	}

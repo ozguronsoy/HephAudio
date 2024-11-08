@@ -7,7 +7,10 @@ namespace HephAudio
 {
 	Vibrato::Vibrato() : ModulationEffect(), extent(1.0) {}
 
-	Vibrato::Vibrato(double depth, double extent, const Oscillator& lfo) : ModulationEffect(depth, lfo), extent(extent) {}
+	Vibrato::Vibrato(double depth, double extent, const Oscillator& lfo) : ModulationEffect(depth, lfo), extent(1.0)
+	{
+		this->SetExtent(extent);
+	}
 
 	std::string Vibrato::Name() const
 	{
@@ -19,6 +22,21 @@ namespace HephAudio
 		const double peakAmplitude = this->lfoBuffer.AbsMax();
 		const double extent_sample = fabs(formatInfo.sampleRate * (pow(2, HephAudio::SemitoneToOctave(this->extent)) - 1.0));
 		return outputFrameCount + peakAmplitude * extent_sample + 1;
+	}
+
+	double Vibrato::GetExtent() const
+	{
+		return this->extent;
+	}
+
+	void Vibrato::SetExtent(double extent)
+	{
+		if (extent < 0)
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "extent cannot be negative."));
+		}
+
+		this->extent = extent;
 	}
 
 	void Vibrato::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)

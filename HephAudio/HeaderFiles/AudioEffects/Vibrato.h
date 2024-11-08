@@ -13,7 +13,7 @@ namespace HephAudio
 	 */
 	class Vibrato final : public ModulationEffect
 	{
-	public:
+	private:
 		/**
 		 * maximum pitch change in terms of semitones.
 		 */
@@ -33,6 +33,20 @@ namespace HephAudio
 		std::string Name() const override;
 
 		size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
+
+		/**
+		 * gets the @copydetails extent.
+		 * 
+		 */
+		double GetExtent() const;
+		
+		/**
+		 * sets extent.
+		 * 
+		 * @param extent @copydetails extent
+		 * 
+		 */
+		void SetExtent(double extent);
 
 	private:
 		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;

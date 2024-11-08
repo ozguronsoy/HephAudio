@@ -74,6 +74,5 @@ namespace HephAudio
 
 	private:
 		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
-		void SetOldSamplesSize();
 	};
 }

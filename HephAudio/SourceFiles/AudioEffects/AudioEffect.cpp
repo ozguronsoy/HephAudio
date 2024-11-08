@@ -1,5 +1,6 @@
 #include "AudioEffects/AudioEffect.h"
 #include "Exceptions/InvalidArgumentException.h"
+#include "Exceptions/NotSupportedException.h"
 #include <vector>
 #include <thread>
 
@@ -18,7 +19,7 @@ namespace HephAudio
 	{
 		return true;
 	}
-	
+
 	size_t AudioEffect::GetThreadCount() const
 	{
 		return this->threadCount;
@@ -26,6 +27,9 @@ namespace HephAudio
 
 	void AudioEffect::SetThreadCount(size_t threadCount)
 	{
+		if (!this->HasMTSupport())
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, NotSupportedException(HEPH_FUNC, "this effect does not support multithreaded processing."));
+
 		this->threadCount = (threadCount == 0) ? (std::thread::hardware_concurrency()) : (threadCount);
 		if (this->threadCount == 0)
 		{
@@ -85,11 +89,11 @@ namespace HephAudio
 		for (size_t i = 0; i < threads.size(); ++i)
 		{
 			threads[i] = std::thread(
-				&AudioEffect::ProcessST, 
-				this, 
-				std::cref(inputBuffer), 
-				std::ref(outputBuffer), 
-				startIndex, 
+				&AudioEffect::ProcessST,
+				this,
+				std::cref(inputBuffer),
+				std::ref(outputBuffer),
+				startIndex,
 				(i == threads.size() - 1) ? (framesPerThread + remainingFrameCount) : (framesPerThread)
 			);
 			startIndex += framesPerThread;
