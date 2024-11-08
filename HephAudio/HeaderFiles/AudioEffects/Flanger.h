@@ -10,15 +10,17 @@ namespace HephAudio
 	 * @brief delays the audio data and mixes the result with the input signal. 
 	 * The amount of delay applied changes periodically.
 	 */
-	class Flanger final : public ModulationEffect
+	class Flanger : public ModulationEffect
 	{
 	public:
 		using ModulationEffect::Process;
 
-	private:
-		AudioBuffer oldSamples;
+	protected:
+		/**
+		 * past samples required for real-time processing.
+		 */
+		AudioBuffer pastSamples;
 
-	private:
 		/**
 		 * constant delay in milliseconds.
 		 */
@@ -42,37 +44,40 @@ namespace HephAudio
 		 */
 		Flanger(double depth, double constantDelay, double variableDelay, const Oscillator& lfo);
 
-		std::string Name() const override;
+		/** @copydoc destructor */
+		virtual ~Flanger() = default;
 
-		void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
+		virtual std::string Name() const override;
+
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
 		 * gets the constant delay in milliseconds.
 		 *
 		 */
-		double GetConstantDelay() const;
+		virtual double GetConstantDelay() const;
 
 		/**
 		 * sets the constant delay in milliseconds.
 		 * 
 		 * @param constantDelay @copydetails constantDelay
 		 */
-		void SetConstantDelay(double constantDelay);
+		virtual void SetConstantDelay(double constantDelay);
 		
 		/**
 		 * gets the variable delay in milliseconds.
-		 * @return 
+		 * 
 		 */
-		double GetVariableDelay() const;
+		virtual double GetVariableDelay() const;
 
 		/**
 		 * sets the variable delay in milliseconds.
 		 *
 		 * @param variableDelay @copydetails variableDelay
 		 */
-		void SetVariableDelay(double variableDelay);
+		virtual void SetVariableDelay(double variableDelay);
 
-	private:
-		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
+	protected:
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
 	};
 }

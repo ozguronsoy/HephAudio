@@ -8,7 +8,7 @@ namespace HephAudio
 	/**
 	 * @brief changes the volume of the audio data periodically and mixes the result with the input signal.
 	 */
-	class Tremolo final : public ModulationEffect
+	class Tremolo : public ModulationEffect
 	{
 	public:
 		using ModulationEffect::Process;
@@ -19,12 +19,15 @@ namespace HephAudio
 
 		/** @copydoc ModulationEffect(double, const Oscillator&) */
 		Tremolo(double depth, const Oscillator& lfo);
+		
+		/** @copydoc destructor */
+		virtual ~Tremolo() = default;
 
-		std::string Name() const override;
+		virtual std::string Name() const override;
 
-		void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
-	private:
-		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t endIndex) override;
+	protected:
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t endIndex) override;
 	};
 }

@@ -21,25 +21,25 @@ namespace HephAudio
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
 		const size_t maxDelay_sample = ceil((this->constantDelay + this->variableDelay) * 1e-3 * formatInfo.sampleRate);
 
-		if (this->oldSamples.FormatInfo().sampleRate != formatInfo.sampleRate)
+		if (this->pastSamples.FormatInfo().sampleRate != formatInfo.sampleRate)
 		{
-			this->oldSamples = AudioBuffer(maxDelay_sample, formatInfo.channelLayout, formatInfo.sampleRate);
+			this->pastSamples = AudioBuffer(maxDelay_sample, formatInfo.channelLayout, formatInfo.sampleRate);
 		}
-		else if (this->oldSamples.FrameCount() != maxDelay_sample)
+		else if (this->pastSamples.FrameCount() != maxDelay_sample)
 		{
-			if (maxDelay_sample > this->oldSamples.FrameCount())
+			if (maxDelay_sample > this->pastSamples.FrameCount())
 			{
-				this->oldSamples.Resize(maxDelay_sample);
-				this->oldSamples >>= maxDelay_sample - this->oldSamples.FrameCount();
+				this->pastSamples.Resize(maxDelay_sample);
+				this->pastSamples >>= maxDelay_sample - this->pastSamples.FrameCount();
 			}
 			else
 			{
-				this->oldSamples <<= this->oldSamples.FrameCount() - maxDelay_sample;
-				this->oldSamples.Resize(maxDelay_sample);
+				this->pastSamples <<= this->pastSamples.FrameCount() - maxDelay_sample;
+				this->pastSamples.Resize(maxDelay_sample);
 			}
 		}
 
-		AudioBuffer tempBuffer = this->oldSamples;
+		AudioBuffer tempBuffer = this->pastSamples;
 		if (buffer.FrameCount() >= maxDelay_sample)
 		{
 			const size_t startIndex = buffer.FrameCount() - maxDelay_sample;
@@ -66,7 +66,7 @@ namespace HephAudio
 
 		ModulationEffect::Process(buffer, startIndex, frameCount);
 
-		this->oldSamples = std::move(tempBuffer);
+		this->pastSamples = std::move(tempBuffer);
 	}
 
 	double Flanger::GetConstantDelay() const
@@ -115,7 +115,7 @@ namespace HephAudio
 			{
 				heph_audio_sample_t wetSample = 0;
 				if (delaySampleIndex < 0)
-					wetSample = this->oldSamples[this->oldSamples.FrameCount() + delaySampleIndex][j];
+					wetSample = this->pastSamples[this->pastSamples.FrameCount() + delaySampleIndex][j];
 				else
 					wetSample = inputBuffer[delaySampleIndex][j];
 

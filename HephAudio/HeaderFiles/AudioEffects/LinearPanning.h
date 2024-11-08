@@ -9,7 +9,7 @@ namespace HephAudio
 	/**
 	 * @brief linearly increases the volume of one channel while decreasing the other one (stereo only).
 	 */
-	class LinearPanning final : public PanningEffect
+	class LinearPanning : public PanningEffect
 	{
 	public:
 		/** @copydoc default_constructor */
@@ -24,8 +24,11 @@ namespace HephAudio
 		 */
 		explicit LinearPanning(double factor);
 
-		std::string Name() const override;
-		double GetFactor() const override;
-		void SetFactor(double factor) override;
+		/** @copydoc destructor */
+		virtual ~LinearPanning() = default;
+
+		virtual std::string Name() const override;
+		virtual double GetFactor() const override;
+		virtual void SetFactor(double factor) override;
 	};
 }

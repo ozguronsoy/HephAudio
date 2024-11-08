@@ -11,9 +11,9 @@ namespace HephAudio
 	 * 
 	 * @note this is a non-causal effect.
 	 */
-	class Vibrato final : public ModulationEffect
+	class Vibrato : public ModulationEffect
 	{
-	private:
+	protected:
 		/**
 		 * maximum pitch change in terms of semitones.
 		 */
@@ -30,15 +30,18 @@ namespace HephAudio
 		 */
 		Vibrato(double depth, double extent, const Oscillator& lfo);
 
-		std::string Name() const override;
+		/** @copydoc destructor */
+		virtual ~Vibrato() = default;
 
-		size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
+		virtual std::string Name() const override;
+
+		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
 
 		/**
 		 * gets the @copydetails extent.
 		 * 
 		 */
-		double GetExtent() const;
+		virtual double GetExtent() const;
 		
 		/**
 		 * sets extent.
@@ -46,9 +49,9 @@ namespace HephAudio
 		 * @param extent @copydetails extent
 		 * 
 		 */
-		void SetExtent(double extent);
+		virtual void SetExtent(double extent);
 
-	private:
-		void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
+	protected:
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
 	};
 }
