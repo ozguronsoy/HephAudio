@@ -244,6 +244,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Vibrato.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\DoubleBufferedAudioEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Flanger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Chorus.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -404,5 +405,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Vibrato.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\DoubleBufferedAudioEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Flanger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Chorus.cpp" />
   </ItemGroup>
 </Project>

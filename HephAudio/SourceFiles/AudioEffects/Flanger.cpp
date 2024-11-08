@@ -9,7 +9,11 @@ namespace HephAudio
 	Flanger::Flanger() : ModulationEffect(), constantDelay(0), variableDelay(0) {}
 
 	Flanger::Flanger(double depth, double constantDelay, double variableDelay, const Oscillator& lfo)
-		: ModulationEffect(depth, lfo), constantDelay(constantDelay), variableDelay(variableDelay) {}
+		: ModulationEffect(depth, lfo), constantDelay(0), variableDelay(0) 
+	{
+		this->SetConstantDelay(constantDelay);
+		this->SetVariableDelay(variableDelay);
+	}
 
 	std::string Flanger::Name() const
 	{
@@ -40,9 +44,9 @@ namespace HephAudio
 		}
 
 		AudioBuffer tempBuffer = this->pastSamples;
-		if (buffer.FrameCount() >= maxDelay_sample)
+		if (frameCount >= maxDelay_sample)
 		{
-			const size_t startIndex = buffer.FrameCount() - maxDelay_sample;
+			const size_t startIndex = frameCount - maxDelay_sample;
 			for (size_t i = 0; i < maxDelay_sample; ++i)
 			{
 				for (size_t j = 0; j < formatInfo.channelLayout.count; ++j)
@@ -53,8 +57,8 @@ namespace HephAudio
 		}
 		else
 		{
-			const size_t startIndex = maxDelay_sample - buffer.FrameCount();
-			tempBuffer <<= buffer.FrameCount();
+			const size_t startIndex = maxDelay_sample - frameCount;
+			tempBuffer <<= frameCount;
 			for (size_t i = startIndex; i < maxDelay_sample; ++i)
 			{
 				for (size_t j = 0; j < formatInfo.channelLayout.count; ++j)
@@ -103,8 +107,8 @@ namespace HephAudio
 	{
 		const size_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
-		const double constantDelay_sample = ceil(this->constantDelay * 1e-3 * formatInfo.sampleRate);
-		const double variableDelay_sample = ceil(this->variableDelay * 1e-3 * formatInfo.sampleRate);
+		const size_t constantDelay_sample = ceil(this->constantDelay * 1e-3 * formatInfo.sampleRate);
+		const size_t variableDelay_sample = ceil(this->variableDelay * 1e-3 * formatInfo.sampleRate);
 
 		for (size_t i = startIndex; i < endIndex; ++i)
 		{

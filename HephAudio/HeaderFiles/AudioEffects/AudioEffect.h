@@ -15,7 +15,7 @@ namespace HephAudio
 	{
 	protected:
 		/**
-		 * number of threads that will be used, 1 by default.
+		 * number of threads that will be used.
 		 */
 		size_t threadCount;
 

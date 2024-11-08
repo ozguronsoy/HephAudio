@@ -1,17 +1,18 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "ModulationEffect.h"
+#include "Flanger.h"
 
 /** @file */
 
 namespace HephAudio
 {
 	/**
-	 * @brief changes the pitch of the audio data periodically and mixes the result with the input signal.
+	 * @brief delays the audio data and changes its pitch periodically. 
+	 * Then mixes the result with the input signal.
 	 * 
 	 * @note this is a non-causal effect.
 	 */
-	class Vibrato : public ModulationEffect
+	class Chorus : public Flanger
 	{
 	protected:
 		/**
@@ -21,32 +22,32 @@ namespace HephAudio
 
 	public:
 		/** @copydoc default_constructor */
-		Vibrato();
+		Chorus();
 
 		/**
-		 * @copydoc ModulationEffect(double, const Oscillator&) 
-		 * 
+		 * @copydoc Flanger(double, double, double, const Oscillator&)
+		 *
 		 * @param extent @copydetails extent
 		 */
-		Vibrato(double depth, double extent, const Oscillator& lfo);
+		Chorus(double depth, double constantDelay, double variableDelay, double extent, const Oscillator& lfo);
 
 		/** @copydoc destructor */
-		virtual ~Vibrato() = default;
+		virtual ~Chorus() = default;
 
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
 
 		/**
 		 * gets the @copydetails extent.
-		 * 
+		 *
 		 */
 		virtual double GetExtent() const;
-		
+
 		/**
 		 * sets extent.
-		 * 
+		 *
 		 * @param extent @copydetails extent
-		 * 
+		 *
 		 */
 		virtual void SetExtent(double extent);
 
