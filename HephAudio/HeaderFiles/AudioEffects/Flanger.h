@@ -48,7 +48,6 @@ namespace HephAudio
 		virtual ~Flanger() = default;
 
 		virtual std::string Name() const override;
-
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
@@ -79,5 +78,13 @@ namespace HephAudio
 
 	protected:
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
+
+		/**
+		 * calculates the number of past samples required.
+		 *
+		 * @param inputBuffer contains the dry data.
+		 *
+		 */
+		virtual size_t CalculatePastSamplesSize(const AudioBuffer& inputBuffer) const;
 	};
 }

@@ -23,7 +23,7 @@ namespace HephAudio
 	void Flanger::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
-		const size_t maxDelay_sample = ceil((this->constantDelay + this->variableDelay) * 1e-3 * formatInfo.sampleRate);
+		const size_t maxDelay_sample = this->CalculatePastSamplesSize(buffer);
 
 		if (this->pastSamples.FormatInfo().sampleRate != formatInfo.sampleRate)
 		{
@@ -126,5 +126,10 @@ namespace HephAudio
 				outputBuffer[i][j] = wetSample * this->depth + inputBuffer[i][j] * (1.0 - this->depth);
 			}
 		}
+	}
+
+	size_t Flanger::CalculatePastSamplesSize(const AudioBuffer& inputBuffer) const
+	{
+		return ceil((this->constantDelay + this->variableDelay) * 1e-3 * inputBuffer.FormatInfo().sampleRate);
 	}
 }

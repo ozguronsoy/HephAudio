@@ -13,7 +13,15 @@ namespace HephAudio
 	 */
 	class Vibrato : public ModulationEffect
 	{
+	public:
+		using ModulationEffect::Process;
+
 	protected:
+		/**
+		 * past samples required for real-time processing.
+		 */
+		AudioBuffer pastSamples;
+
 		/**
 		 * maximum pitch change in terms of semitones.
 		 */
@@ -35,6 +43,7 @@ namespace HephAudio
 
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
 		 * gets the @copydetails extent.
@@ -52,5 +61,13 @@ namespace HephAudio
 
 	protected:
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
+
+		/**
+		 * calculates the number of past samples required.
+		 *
+		 * @param inputBuffer contains the dry data.
+		 * 
+		 */
+		virtual size_t CalculatePastSamplesSize(const AudioBuffer& inputBuffer) const;
 	};
 }

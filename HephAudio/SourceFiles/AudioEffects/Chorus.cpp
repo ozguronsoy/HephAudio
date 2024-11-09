@@ -1,5 +1,6 @@
 #include "AudioEffects/Chorus.h"
 #include "Exceptions/InvalidArgumentException.h"
+#include "HephMath.h"
 
 using namespace Heph;
 
@@ -20,6 +21,9 @@ namespace HephAudio
 
 	size_t Chorus::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
+		if (this->extent < 0)
+			return outputFrameCount;
+
 		const double peakAmplitude = this->lfoBuffer.AbsMax();
 		const double extent_sample = fabs(formatInfo.sampleRate * (pow(2, HephAudio::SemitoneToOctave(this->extent)) - 1.0));
 		return outputFrameCount + peakAmplitude * extent_sample + 1;
@@ -32,11 +36,6 @@ namespace HephAudio
 
 	void Chorus::SetExtent(double extent)
 	{
-		if (extent < 0)
-		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "extent cannot be negative."));
-		}
-
 		this->extent = extent;
 	}
 
@@ -45,8 +44,8 @@ namespace HephAudio
 		const size_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
 		const double extent_sample = formatInfo.sampleRate * (pow(2, HephAudio::SemitoneToOctave(this->extent)) - 1.0);
-		const size_t constantDelay_sample = ceil(this->constantDelay * 1e-3 * formatInfo.sampleRate);
-		const size_t variableDelay_sample = ceil(this->variableDelay * 1e-3 * formatInfo.sampleRate);
+		const double constantDelay_sample = this->constantDelay * 1e-3 * formatInfo.sampleRate;
+		const double variableDelay_sample = this->variableDelay * 1e-3 * formatInfo.sampleRate;
 
 		for (size_t i = startIndex; i < endIndex; ++i)
 		{
@@ -63,9 +62,7 @@ namespace HephAudio
 				if (resampleIndex >= 0)
 				{
 					if (resampleIndex + 1 < inputBuffer.FrameCount())
-					{
 						wetSample = inputBuffer[resampleIndex][j] * (1.0 - resampleFactor) + inputBuffer[resampleIndex + 1.0][j] * resampleFactor;
-					}
 				}
 				else
 				{
@@ -78,5 +75,13 @@ namespace HephAudio
 				outputBuffer[i][j] = wetSample * this->depth + inputBuffer[i][j] * (1.0 - this->depth);
 			}
 		}
+	}
+	
+	size_t Chorus::CalculatePastSamplesSize(const AudioBuffer& inputBuffer) const
+	{
+		const size_t maxDelay_sample = Flanger::CalculatePastSamplesSize(inputBuffer);
+		const size_t extent_sample = fabs(ceil(inputBuffer.FormatInfo().sampleRate * (pow(2, HephAudio::SemitoneToOctave(this->extent)) - 1.0)));
+
+		return maxDelay_sample + extent_sample + 1;
 	}
 }

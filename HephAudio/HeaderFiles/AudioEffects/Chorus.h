@@ -53,5 +53,6 @@ namespace HephAudio
 
 	protected:
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
+		virtual size_t CalculatePastSamplesSize(const AudioBuffer& inputBuffer) const override;
 	};
 }
