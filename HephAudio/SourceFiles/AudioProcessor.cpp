@@ -93,7 +93,7 @@ namespace HephAudio
 		if (srRatio != 1.0)
 		{
 			const size_t targetFrameCount = ceil((double)buffer.frameCount * srRatio);
-			AudioBuffer resultBuffer(targetFrameCount, buffer.formatInfo.channelLayout, outputSampleRate, BufferFlags::AllocUninitialized);
+			AudioBuffer resultBuffer(targetFrameCount, buffer.formatInfo.channelLayout, outputSampleRate);
 
 			for (size_t i = 0; i < targetFrameCount; i++)
 			{
