@@ -84,20 +84,21 @@ namespace HephAudio
 	{
 		const size_t framesPerThread = frameCount / this->threadCount;
 		const size_t remainingFrameCount = frameCount % this->threadCount;
-		std::vector<std::thread> threads(this->threadCount);
+		std::vector<std::thread> threads(this->threadCount - 1);
 
-		for (size_t i = 0; i < threads.size(); ++i)
+		for (std::thread& t : threads)
 		{
-			threads[i] = std::thread(
+			t = std::thread(
 				&AudioEffect::ProcessST,
 				this,
 				std::cref(inputBuffer),
 				std::ref(outputBuffer),
 				startIndex,
-				(i == threads.size() - 1) ? (framesPerThread + remainingFrameCount) : (framesPerThread)
+				framesPerThread
 			);
 			startIndex += framesPerThread;
 		}
+		this->ProcessST(inputBuffer, outputBuffer, startIndex, framesPerThread + remainingFrameCount);
 
 		for (std::thread& t : threads)
 		{
