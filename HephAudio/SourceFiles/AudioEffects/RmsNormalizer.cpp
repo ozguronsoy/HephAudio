@@ -48,7 +48,7 @@ namespace HephAudio
 	{
 		if (smoothingFactor < 0 || smoothingFactor >= 1)
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "smoothingFactor must be in range of [0, 1)."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "smoothingFactor must be in the range of [0, 1)."));
 		}
 
 		this->smoothingFactor = smoothingFactor;

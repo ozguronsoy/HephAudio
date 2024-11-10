@@ -34,7 +34,7 @@ namespace HephAudio
 
 		/**
 		 * factor for smoothing the gain transition.
-		 * In range of [0, 1) where 0 means no smoothing is applied.
+		 * In the range of [0, 1) where 0 means no smoothing is applied.
 		 *
 		 */
 		double smoothingFactor;
