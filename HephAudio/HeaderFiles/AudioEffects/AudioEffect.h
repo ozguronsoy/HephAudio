@@ -63,6 +63,7 @@ namespace HephAudio
 		 * Useful for applying effects that depend on past and/or future samples in real-time.
 		 *
 		 * @param outputFrameCount the number of frames desired for the output buffer.
+		 * @param formatInfo the format info of the input buffer.
 		 *
 		 */
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const;
@@ -77,6 +78,7 @@ namespace HephAudio
 
 		/**
 		 * Applies the effect.
+		 * 
 		 * @param buffer contains the audio data which will be processed.
 		 * 
 		 */
@@ -108,7 +110,7 @@ namespace HephAudio
 		 * @param inputBuffer contains the dry data.
 		 * @param outputBuffer contains the wet data.
 		 * @param startIndex index of the first sample to process.
-		 * @param endIndex index of the last sample to process.
+		 * @param frameCount number of frames to process.
 		 *
 		 */
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) = 0;
@@ -118,6 +120,8 @@ namespace HephAudio
 		 * 
 		 * @param inputBuffer contains the dry data.
 		 * @param outputBuffer contains the wet data.
+		 * @param startIndex index of the first sample to process.
+		 * @param frameCount number of frames to process.
 		 *
 		 */
 		virtual void ProcessMT(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount);
