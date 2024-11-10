@@ -24,10 +24,9 @@ namespace HephAudio
 		virtual ~Tremolo() = default;
 
 		virtual std::string Name() const override;
-
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 	protected:
-		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t endIndex) override;
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
 	};
 }

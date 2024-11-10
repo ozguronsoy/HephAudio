@@ -55,6 +55,6 @@ namespace HephAudio
 		virtual void SetFactor(double factor) = 0;
 
 	protected:
-		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t endIndex) override;
+		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
 	};
 }

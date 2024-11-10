@@ -18,6 +18,7 @@ namespace HephAudio
 
 		/**
 		 * @copydoc constructor
+		 * 
 		 * @param factor determines how the channels' volume will be changed.
 		 * Ranges between -1 and 1.<br>
 		 * -1 means only the left channel will be audible and 1 means only the right channel will be audible.
