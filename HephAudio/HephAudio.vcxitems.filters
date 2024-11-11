@@ -249,6 +249,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\RmsNormalizer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\HardClipDistortion.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\ArctanDistortion.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\CubicDistortion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -414,5 +415,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\RmsNormalizer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\HardClipDistortion.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ArctanDistortion.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\CubicDistortion.cpp" />
   </ItemGroup>
 </Project>

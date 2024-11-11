@@ -35,18 +35,17 @@ namespace HephAudio
 
 	void ArctanDistortion::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
-		if (this->factor > 1)
-		{
-			const size_t endIndex = startIndex + frameCount;
-			const AudioFormatInfo& formatInfo = outputBuffer.FormatInfo();
+		const size_t endIndex = startIndex + frameCount;
+		const AudioFormatInfo& formatInfo = outputBuffer.FormatInfo();
 
-			for (size_t i = startIndex; i < endIndex; ++i)
+		for (size_t i = startIndex; i < endIndex; ++i)
+		{
+			for (size_t j = 0; j < formatInfo.channelLayout.count; ++j)
 			{
-				for (size_t j = 0; j < formatInfo.channelLayout.count; ++j)
-				{
-					const double fltSample = HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(outputBuffer[i][j]);
-					outputBuffer[i][j] = HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(atan(this->factor * fltSample) * (2.0 / HEPH_MATH_PI));
-				}
+				double fltSample = HEPH_AUDIO_SAMPLE_TO_IEEE_FLT(outputBuffer[i][j]);
+				fltSample = atan(this->factor * fltSample) * (2.0 / HEPH_MATH_PI);
+
+				outputBuffer[i][j] = HEPH_AUDIO_SAMPLE_FROM_IEEE_FLT(HEPH_MATH_MIN(HEPH_MATH_MAX(fltSample, -1.0), 1.0));
 			}
 		}
 	}

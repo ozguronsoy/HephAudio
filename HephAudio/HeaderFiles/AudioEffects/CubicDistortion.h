@@ -7,22 +7,22 @@
 namespace HephAudio
 {
 	/**
-	 * @brief applies soft-clipping distortion via arctan function.
+	 * @brief applies cubic distortion.
 	 * 
 	 */
-	class ArctanDistortion : public AudioEffect
+	class CubicDistortion : public AudioEffect
 	{
 	protected:
 		/**
 		 * controls the amount of distortion.
-		 * Must be non-negative.
-		 * 
+		 * In the range of [0, 10].
+		 *
 		 */
 		double factor;
 
 	public:
 		/** @copydoc default_constructor */
-		ArctanDistortion();
+		CubicDistortion();
 
 		/**
 		 * @copydoc constructor
@@ -30,23 +30,23 @@ namespace HephAudio
 		 * @param factor @copydetails factor
 		 *
 		 */
-		explicit ArctanDistortion(double factor);
+		explicit CubicDistortion(double factor);
 
 		/** @copydoc destructor */
-		virtual ~ArctanDistortion() = default;
+		virtual ~CubicDistortion() = default;
 
 		virtual std::string Name() const override;
 
 		/**
 		 * gets the factor.
-		 * 
+		 *
 		 */
 		virtual double GetFactor() const;
 
 		/**
 		 * sets the facotr.
-		 * 
-		 * @param factor @copydetails factor 
+		 *
+		 * @param factor @copydetails factor
 		 */
 		virtual void SetFactor(double factor);
 
