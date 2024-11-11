@@ -97,8 +97,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Normalizer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\RmsNormalizer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Overdrive.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearFadeIn.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\LinearFadeIn.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Overdrive.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\CubicDistortion.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ArctanDistortion.cpp" />
