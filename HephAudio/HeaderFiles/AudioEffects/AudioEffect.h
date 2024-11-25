@@ -60,7 +60,6 @@ namespace HephAudio
 
 		/**
 		 * calculates the number of frames required to obtain the number of frames desired for the output buffer.
-		 * Useful for applying effects that depend on past and/or future samples in real-time.
 		 *
 		 * @param outputFrameCount the number of frames desired for the output buffer.
 		 * @param formatInfo the format info of the input buffer.
