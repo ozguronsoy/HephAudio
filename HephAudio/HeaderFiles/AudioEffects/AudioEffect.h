@@ -70,10 +70,11 @@ namespace HephAudio
 		/**
 		 * calculates the number of frames the buffer will contain after applying the effect.
 		 * 
-		 * @param buffer contains the audio data which will be processed.
+		 * @param inputFrameCount the number of frames of the input buffer.
+		 * @param formatInfo the format info of the input buffer.
 		 * 
 		 */
-		virtual size_t CalculateOutputFrameCount(const AudioBuffer& buffer) const;
+		virtual size_t CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const;
 
 		/**
 		 * Applies the effect.

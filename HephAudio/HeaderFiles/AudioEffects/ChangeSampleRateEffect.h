@@ -39,7 +39,7 @@ namespace HephAudio
 
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
-		virtual size_t CalculateOutputFrameCount(const AudioBuffer& buffer) const override;
+		virtual size_t CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const override;
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 

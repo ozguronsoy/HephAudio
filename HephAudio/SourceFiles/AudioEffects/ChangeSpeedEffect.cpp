@@ -34,9 +34,9 @@ namespace HephAudio
 		return outputFrameCount * this->speed;
 	}
 
-	size_t ChangeSpeedEffect::CalculateOutputFrameCount(const AudioBuffer& buffer) const
+	size_t ChangeSpeedEffect::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
-		return buffer.FrameCount() / this->speed;
+		return inputFrameCount / this->speed;
 	}
 
 	double ChangeSpeedEffect::GetSpeed() const

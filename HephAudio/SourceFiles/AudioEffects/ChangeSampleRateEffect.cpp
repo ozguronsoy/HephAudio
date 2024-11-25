@@ -19,15 +19,14 @@ namespace HephAudio
 		return ceil(outputFrameCount * ((double)formatInfo.sampleRate / this->outputSampleRate));
 	}
 
-	size_t ChangeSampleRateEffect::CalculateOutputFrameCount(const AudioBuffer& buffer) const
+	size_t ChangeSampleRateEffect::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
-		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
 		if (formatInfo.sampleRate == 0)
 		{
 			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "input sample rate cannot be 0."));
 		}
 
-		return buffer.FrameCount() * ((double)this->outputSampleRate / formatInfo.sampleRate);
+		return inputFrameCount * ((double)this->outputSampleRate / formatInfo.sampleRate);
 	}
 
 	void ChangeSampleRateEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)

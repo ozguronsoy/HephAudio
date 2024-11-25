@@ -21,7 +21,7 @@ namespace HephAudio
 		}
 
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
-		AudioBuffer resultBuffer(this->CalculateOutputFrameCount(buffer), formatInfo.channelLayout, formatInfo.sampleRate);
+		AudioBuffer resultBuffer(this->CalculateOutputFrameCount(buffer.FrameCount(), formatInfo), formatInfo.channelLayout, formatInfo.sampleRate);
 
 		if (startIndex > 0)
 		{
