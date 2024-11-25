@@ -79,5 +79,12 @@ namespace HephAudio
 	public:
 		/** @copydoc destructor */
 		virtual ~OlaEffect() = default;
+
+	protected:
+		/**
+		 * calculates the maximum number of overlaps
+		 * 
+		 */
+		virtual size_t CalculateMaxNumberOfOverlaps() const;
 	};
 }

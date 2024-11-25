@@ -1,6 +1,7 @@
 #include "AudioEffects/OlaEffect.h"
 #include "Windows/HannWindow.h"
 #include "Exceptions/InvalidArgumentException.h"
+#include "HephMath.h"
 
 using namespace Heph;
 
@@ -44,5 +45,10 @@ namespace HephAudio
 		}
 
 		this->wnd = wnd.GenerateBuffer();
+	}
+
+	size_t OlaEffect::CalculateMaxNumberOfOverlaps() const
+	{
+		return ceil(((double)this->GetWindowSize()) / ((double)this->hopSize));
 	}
 }
