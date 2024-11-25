@@ -10,7 +10,7 @@ namespace HephAudio
 {
 	/**
 	 * @brief base class for effects that use overlap-add method.
-	 * 
+	 *
 	 */
 	class OlaEffect : public DoubleBufferedAudioEffect
 	{
@@ -48,6 +48,10 @@ namespace HephAudio
 		 */
 		OlaEffect(size_t hopSize, const Window& wnd);
 
+	public:
+		/** @copydoc destructor */
+		virtual ~OlaEffect() = default;
+
 		/**
 		 * gets the hop size.
 		 *
@@ -76,14 +80,10 @@ namespace HephAudio
 		 */
 		virtual void SetWindow(const Window& wnd);
 
-	public:
-		/** @copydoc destructor */
-		virtual ~OlaEffect() = default;
-
 	protected:
 		/**
 		 * calculates the maximum number of overlaps
-		 * 
+		 *
 		 */
 		virtual size_t CalculateMaxNumberOfOverlaps() const;
 	};
