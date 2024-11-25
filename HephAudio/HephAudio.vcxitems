@@ -102,8 +102,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Overdrive.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearFadeIn.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearFadeOut.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\OlaEffect.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\OlaEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ChangeSpeedEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ChangeSampleRateEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Echo.cpp" />
