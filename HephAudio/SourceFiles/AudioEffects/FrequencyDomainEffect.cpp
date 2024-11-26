@@ -1,5 +1,7 @@
 #include "AudioEffects/FrequencyDomainEffect.h"
 #include "Exceptions/InvalidArgumentException.h"
+#include "Windows/HannWindow.h"
+#include "Fourier.h"
 
 using namespace Heph;
 
@@ -7,9 +9,12 @@ namespace HephAudio
 {
 	FrequencyDomainEffect::FrequencyDomainEffect() : OlaEffect() {}
 
-	FrequencyDomainEffect::FrequencyDomainEffect(size_t hopSize) : OlaEffect(hopSize) {}
+	FrequencyDomainEffect::FrequencyDomainEffect(size_t hopSize) : FrequencyDomainEffect(hopSize, HannWindow(Fourier::CalculateFFTSize(hopSize * 4))) {}
 
-	FrequencyDomainEffect::FrequencyDomainEffect(size_t hopSize, const Window& wnd) : OlaEffect(hopSize, wnd) {}
+	FrequencyDomainEffect::FrequencyDomainEffect(size_t hopSize, const Window& wnd) : OlaEffect(hopSize)
+	{
+		this->SetWindow(wnd);
+	}
 
 	void FrequencyDomainEffect::SetWindow(const Window& wnd)
 	{

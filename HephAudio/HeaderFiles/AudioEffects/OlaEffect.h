@@ -14,6 +14,9 @@ namespace HephAudio
 	 */
 	class OlaEffect : public DoubleBufferedAudioEffect
 	{
+	public:
+		using DoubleBufferedAudioEffect::Process;
+
 	protected:
 		/**
 		 * number of frames to advance each iteration.
@@ -26,6 +29,18 @@ namespace HephAudio
 		 *
 		 */
 		Heph::DoubleBuffer wnd;
+
+		/**
+		 * for real-time processing.
+		 * 
+		 */
+		size_t currentIndex;
+
+		/**
+		 * past samples for real-time processing.
+		 * 
+		 */
+		AudioBuffer pastSamples;
 
 	protected:
 		/** @copydoc default_constructor */
@@ -51,6 +66,9 @@ namespace HephAudio
 	public:
 		/** @copydoc destructor */
 		virtual ~OlaEffect() = default;
+
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
+		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const;
 
 		/**
 		 * gets the hop size.

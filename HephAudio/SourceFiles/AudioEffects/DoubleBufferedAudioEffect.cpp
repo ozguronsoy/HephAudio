@@ -21,16 +21,21 @@ namespace HephAudio
 		}
 
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
-		AudioBuffer resultBuffer(this->CalculateOutputFrameCount(buffer.FrameCount(), formatInfo), formatInfo.channelLayout, formatInfo.sampleRate);
+		AudioBuffer resultBuffer(
+			(buffer.FrameCount() - frameCount) + this->CalculateOutputFrameCount(frameCount, formatInfo),
+			formatInfo.channelLayout,
+			formatInfo.sampleRate);
 
 		if (startIndex > 0)
 		{
-			(void)memcpy(resultBuffer.begin(), buffer.begin(), startIndex * formatInfo.FrameSize());
+			resultBuffer.Replace(buffer, 0, startIndex);
 		}
 
 		if (endIndex < buffer.FrameCount())
 		{
-			(void)memcpy(resultBuffer.begin() + endIndex, buffer.begin() + endIndex, (buffer.FrameCount() - endIndex) * formatInfo.FrameSize());
+			const size_t resultPadding = startIndex + this->CalculateOutputFrameCount(frameCount, formatInfo);
+			const AudioBuffer temp = buffer.SubBuffer(endIndex, buffer.FrameCount() - endIndex);
+			resultBuffer.Replace(temp, resultPadding, temp.FrameCount());
 		}
 
 		if (this->threadCount == 1)

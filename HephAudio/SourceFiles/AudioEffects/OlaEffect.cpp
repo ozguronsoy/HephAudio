@@ -11,10 +11,38 @@ namespace HephAudio
 
 	OlaEffect::OlaEffect(size_t hopSize) : OlaEffect(hopSize, HannWindow(hopSize * 4)) {}
 
-	OlaEffect::OlaEffect(size_t hopSize, const Window& wnd) : DoubleBufferedAudioEffect()
+	OlaEffect::OlaEffect(size_t hopSize, const Window& wnd) : DoubleBufferedAudioEffect(), currentIndex(0)
 	{
 		this->SetHopSize(hopSize);
 		this->SetWindow(wnd);
+	}
+
+	size_t OlaEffect::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
+	{
+		const size_t wndSize = this->GetWindowSize();
+		return outputFrameCount + (wndSize - (outputFrameCount % wndSize));
+	}
+
+	void OlaEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
+	{
+		const size_t pastSamplesSize = (this->GetWindowSize() - (this->GetWindowSize() % this->hopSize)) - this->hopSize;
+		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
+
+		if (this->pastSamples.FrameCount() != pastSamplesSize || formatInfo != this->pastSamples.FormatInfo())
+		{
+			this->pastSamples = AudioBuffer(pastSamplesSize, formatInfo.channelLayout, formatInfo.sampleRate);
+		}
+
+		const AudioBuffer tempBuffer = (frameCount > pastSamplesSize)
+			? (buffer.SubBuffer(frameCount - pastSamplesSize, pastSamplesSize))
+			: (buffer.SubBuffer(0, frameCount));
+
+		DoubleBufferedAudioEffect::Process(buffer, startIndex, frameCount);
+
+		this->pastSamples <<= tempBuffer.FrameCount();
+		this->pastSamples.Replace(tempBuffer, this->pastSamples.FrameCount() - tempBuffer.FrameCount(), tempBuffer.FrameCount());
+
+		this->currentIndex += frameCount;
 	}
 
 	size_t OlaEffect::GetHopSize() const
