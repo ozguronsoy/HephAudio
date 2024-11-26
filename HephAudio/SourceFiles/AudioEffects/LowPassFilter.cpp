@@ -1,6 +1,4 @@
 #include "AudioEffects/LowPassFilter.h"
-#include "Exceptions/InvalidArgumentException.h"
-#include "Fourier.h"
 
 using namespace Heph;
 

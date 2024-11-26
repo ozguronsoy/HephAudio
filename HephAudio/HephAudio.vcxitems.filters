@@ -260,6 +260,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\FrequencyDomainEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LowPassFilter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Equalizer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\HighPassFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -436,5 +437,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\FrequencyDomainEffect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\LowPassFilter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Equalizer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\HighPassFilter.cpp" />
   </ItemGroup>
 </Project>

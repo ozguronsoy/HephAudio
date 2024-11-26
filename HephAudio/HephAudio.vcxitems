@@ -106,8 +106,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LinearFadeOut.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\OlaEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\LowPassFilter.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\HighPassFilter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\HighPassFilter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Equalizer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\LowPassFilter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\FrequencyDomainEffect.cpp" />
