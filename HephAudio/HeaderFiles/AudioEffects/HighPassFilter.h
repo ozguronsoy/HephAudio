@@ -25,7 +25,7 @@ namespace HephAudio
 		/**
 		 * @copydoc constructor
 		 *
-		 * @param f cutoff frequency
+		 * @param f cutoff frequency.
 		 * @param hopSize @copydetails hopSize
 		 * @param wnd @copydetails wnd
 		 *
@@ -46,7 +46,7 @@ namespace HephAudio
 		/**
 		 * sets the cutoff frequency.
 		 *
-		 * @param f cutoff frequency
+		 * @param f cutoff frequency.
 		 *
 		 */
 		virtual void SetCutoffFreq(double f);
