@@ -20,8 +20,7 @@ namespace HephAudio
 
 	void BandCutFilter::SetF1(double f)
 	{
-		this->AddFrequencyRange(f, this->GetF2(), 0);
-		this->RemoveFrequencyRange(0);
+		this->ModifyFrequencyRange(0, Equalizer::FrequencyRange(f, this->GetF2(), 0));
 	}
 
 	double BandCutFilter::GetF2() const
@@ -31,7 +30,6 @@ namespace HephAudio
 
 	void BandCutFilter::SetF2(double f)
 	{
-		this->AddFrequencyRange(this->GetF1(), f, 0);
-		this->RemoveFrequencyRange(0);
+		this->ModifyFrequencyRange(0, Equalizer::FrequencyRange(this->GetF1(), f, 0));
 	}
 }

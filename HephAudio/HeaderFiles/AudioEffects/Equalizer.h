@@ -109,6 +109,15 @@ namespace HephAudio
 		virtual void AddFrequencyRange(const Equalizer::FrequencyRange& range);
 
 		/**
+		 * modifies the frequency range at the provided index.
+		 *
+		 * @param index index of the frequency range that will be modified.
+		 * @param range @copydoc Equalizer::FrequencyRange
+		 *
+		 */
+		virtual void ModifyFrequencyRange(size_t index, const Equalizer::FrequencyRange& range);
+
+		/**
 		 * removes the frequency range at the provided index.
 		 * 
 		 * @param index index of the frequency range that will be removed.

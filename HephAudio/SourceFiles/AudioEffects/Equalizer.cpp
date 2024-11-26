@@ -56,6 +56,16 @@ namespace HephAudio
 		this->frequencyRanges.push_back(range);
 	}
 
+	void Equalizer::ModifyFrequencyRange(size_t index, const Equalizer::FrequencyRange& range)
+	{
+		if (index >= this->frequencyRanges.size())
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "index out of bounds."));
+		}
+
+		this->frequencyRanges[index] = range;
+	}
+
 	void Equalizer::RemoveFrequencyRange(size_t index)
 	{
 		if (index >= this->frequencyRanges.size())

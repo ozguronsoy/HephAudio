@@ -20,7 +20,6 @@ namespace HephAudio
 
 	void LowPassFilter::SetCutoffFreq(double f)
 	{
-		this->RemoveFrequencyRange(0);
-		this->AddFrequencyRange(f, DBL_MAX, 0);
+		this->ModifyFrequencyRange(0, Equalizer::FrequencyRange(f, DBL_MAX, 0));
 	}
 }

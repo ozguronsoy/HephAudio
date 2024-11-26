@@ -16,6 +16,7 @@ namespace HephAudio
 		using Equalizer::FrequencyRange;
 		using Equalizer::GetFrequencyRanges;
 		using Equalizer::AddFrequencyRange;
+		using Equalizer::ModifyFrequencyRange;
 		using Equalizer::RemoveFrequencyRange;
 
 	public:
