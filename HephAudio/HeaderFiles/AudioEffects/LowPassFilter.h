@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "FrequencyDomainEffect.h"
+#include "Equalizer.h"
 
 /** @file */
 
@@ -10,14 +10,13 @@ namespace HephAudio
 	 * @brief removes the frequencies that are greater than the cutoff frequency.
 	 * 
 	 */
-	class LowPassFilter : public FrequencyDomainEffect
+	class LowPassFilter : public Equalizer
 	{
 	protected:
-		/**
-		 * cutoff frequency.
-		 * 
-		 */
-		double f;
+		using Equalizer::FrequencyRange;
+		using Equalizer::GetFrequencyRanges;
+		using Equalizer::AddFrequencyRange;
+		using Equalizer::RemoveFrequencyRange;
 
 	public:
 		/** @copydoc default_constructor */
@@ -51,8 +50,5 @@ namespace HephAudio
 		 * 
 		 */
 		virtual void SetCutoffFreq(double f);
-
-	protected:
-		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
 	};
 }
