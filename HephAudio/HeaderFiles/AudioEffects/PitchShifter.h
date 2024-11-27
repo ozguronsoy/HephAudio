@@ -1,6 +1,6 @@
 #pragma once
 #include "HephAudioShared.h"
-#include "FrequencyDomainEffect.h"
+#include "OlaEffect.h"
 
 /** @file */
 
@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief changes the pitch without changing the playback speed.
 	 * 
 	 */
-	class PitchShifter : public FrequencyDomainEffect
+	class PitchShifter : public OlaEffect
 	{
 	protected:
 		/**
@@ -40,7 +40,6 @@ namespace HephAudio
 		virtual ~PitchShifter() = default;
 
 		virtual std::string Name() const override;
-		virtual bool HasRTSupport() const override;
 
 		/**
 		 * gets the tone change in semitones.

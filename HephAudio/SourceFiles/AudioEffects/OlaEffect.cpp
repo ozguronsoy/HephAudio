@@ -25,7 +25,7 @@ namespace HephAudio
 
 	void OlaEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
-		const size_t pastSamplesSize = (this->GetWindowSize() - (this->GetWindowSize() % this->hopSize)) - this->hopSize;
+		const size_t pastSamplesSize = this->CalculatePastSamplesSize();
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
 
 		if (this->pastSamples.FrameCount() != pastSamplesSize || formatInfo != this->pastSamples.FormatInfo())
@@ -78,5 +78,10 @@ namespace HephAudio
 	size_t OlaEffect::CalculateMaxNumberOfOverlaps() const
 	{
 		return ceil(((double)this->GetWindowSize()) / ((double)this->hopSize));
+	}
+
+	size_t OlaEffect::CalculatePastSamplesSize() const
+	{
+		return this->GetWindowSize();
 	}
 }

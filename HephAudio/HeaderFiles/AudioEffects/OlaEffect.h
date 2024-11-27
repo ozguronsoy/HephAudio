@@ -104,5 +104,11 @@ namespace HephAudio
 		 *
 		 */
 		virtual size_t CalculateMaxNumberOfOverlaps() const;
+
+		/**
+		 * calculates the size of the past samples.
+		 * 
+		 */
+		virtual size_t CalculatePastSamplesSize() const;
 	};
 }

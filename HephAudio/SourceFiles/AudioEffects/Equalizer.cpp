@@ -78,11 +78,16 @@ namespace HephAudio
 
 	void Equalizer::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
-		int64_t firstWindowStartIndex = (this->currentIndex < this->pastSamples.FrameCount())
-			? (((int64_t)startIndex) - ((int64_t)this->currentIndex))
-			: (((int64_t)startIndex) - ((int64_t)this->pastSamples.FrameCount()));
-
-		firstWindowStartIndex = (firstWindowStartIndex - (firstWindowStartIndex % this->hopSize));
+		int64_t firstWindowStartIndex;
+		if (this->currentIndex < this->pastSamples.FrameCount())
+		{
+			firstWindowStartIndex = ((int64_t)startIndex) - ((int64_t)this->currentIndex);
+		}
+		else
+		{
+			firstWindowStartIndex = ((int64_t)startIndex) - ((int64_t)this->pastSamples.FrameCount());
+			firstWindowStartIndex = firstWindowStartIndex - (firstWindowStartIndex % this->hopSize) + this->hopSize;
+		}
 
 		const int64_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
