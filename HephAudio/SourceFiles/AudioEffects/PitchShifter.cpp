@@ -36,13 +36,17 @@ namespace HephAudio
 		const size_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
 		const int64_t wndSize = this->wnd.Size();
-		const int64_t ioFrameCount = outputBuffer.FrameCount();
+		const int64_t ioFrameCount = outputBuffer.FrameCount() + this->currentIndex;
 		const size_t maxNumberOfOverlaps = this->CalculateMaxNumberOfOverlaps();
 		const double overflowFactor = 1.0 / maxNumberOfOverlaps;
 
-		const size_t firstWindowStartIndex = (startIndex >= (this->hopSize * maxNumberOfOverlaps))
-			? (startIndex - (startIndex % this->hopSize) - (this->hopSize * (maxNumberOfOverlaps - 1)))
-			: (0);
+		// in multithreaded use startIndex instead
+		// since it causes distortion at the edge samples between threads.
+		const size_t firstWindowStartIndex = (this->threadCount != 1)
+			? (startIndex)
+			: ((startIndex >= (this->hopSize * maxNumberOfOverlaps))
+				? (startIndex - (startIndex % this->hopSize) - (this->hopSize * (maxNumberOfOverlaps - 1)))
+				: (0));
 
 		for (size_t i = firstWindowStartIndex; i < endIndex; i += this->hopSize)
 		{
@@ -50,11 +54,11 @@ namespace HephAudio
 			{
 				double m = i;
 				for (size_t k = 0, l = i;
-					(k < wndSize) && (l < (ioFrameCount + this->currentIndex)) && (m < (ioFrameCount + this->currentIndex));
+					(k < wndSize) && (l < ioFrameCount) && (m < ioFrameCount);
 					++k, ++l, m += this->pitchFactor
 					)
 				{
-					if (l >= startIndex)
+					if (l >= this->currentIndex)
 					{
 						if (m < this->currentIndex)
 						{
