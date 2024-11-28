@@ -457,6 +457,11 @@ namespace HephAudio
 						HEPH_RAISE_EXCEPTION(pAudio, ExternalException(HEPH_FUNC, "An error occurred while rendering.", "MMEAPI", WinAudioMME::GetErrorString(mmres)));
 					}
 				}
+				else
+				{
+					// wait for last samples to render
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				}
 			}
 		}
 		void CALLBACK WinAudioMME::CaptureCallback(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)

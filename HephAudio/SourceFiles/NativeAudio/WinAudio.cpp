@@ -384,10 +384,13 @@ namespace HephAudio
 					mixedBuffer = this->Mix(nFramesAvailable);
 
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->GetBuffer(nFramesAvailable, (BYTE**)&renderBuffer), HEPH_FUNC, "An error occurred while rendering the samples.");
-					memcpy(renderBuffer, mixedBuffer.begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
+					(void)memcpy(renderBuffer, mixedBuffer.begin(), (size_t)nFramesAvailable * this->renderFormat.FrameSize());
 					WINAUDIO_RENDER_THREAD_EXCPT(pRenderClient->ReleaseBuffer(nFramesAvailable, 0), HEPH_FUNC, "An error occurred while rendering the samples.");
 				}
 			}
+
+			// wait for last samples to render
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 			WINAUDIO_RENDER_THREAD_EXCPT(pAudioClient->Stop(), HEPH_FUNC, "An error occurred while rendering the samples.");
 
@@ -480,8 +483,8 @@ namespace HephAudio
 						if (nFramesAvailable > 0)
 						{
 							EncodedAudioBuffer encodedBuffer((const uint8_t*)captureBuffer, nFramesAvailable * this->captureFormat.FrameSize(), this->captureFormat);
-							AudioBuffer buffer = this->pAudioDecoder->Decode(encodedBuffer); 
-							
+							AudioBuffer buffer = this->pAudioDecoder->Decode(encodedBuffer);
+
 							AudioCaptureEventArgs captureEventArgs(this, buffer);
 							this->OnCapture(&captureEventArgs, nullptr);
 						}

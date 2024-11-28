@@ -270,13 +270,23 @@ namespace HephAudio
 				mixedBuffer = this->Mix(nFramesToRead);
 
 				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, mixedBufferSize_byte, &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_FROMWRITECURSOR), HEPH_FUNC, "An error occurred while rendering the samples.");
-				memcpy(audioPtr1, mixedBuffer.begin(), audioBytes1);
+				(void)memcpy(audioPtr1, mixedBuffer.begin(), audioBytes1);
 				if (audioPtr2 != nullptr)
 				{
-					memcpy(audioPtr2, mixedBuffer.begin() + audioBytes1, audioBytes2);
+					(void)memcpy(audioPtr2, mixedBuffer.begin() + audioBytes1, audioBytes2);
 				}
 				WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), HEPH_FUNC, "An error occurred while rendering the samples.");
 			}
+
+			// wait for last samples to render
+			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Lock(0, bufferDesc.dwBufferBytes, &audioPtr1, &audioBytes1, &audioPtr2, &audioBytes2, DSBLOCK_ENTIREBUFFER), HEPH_FUNC, "An error occurred while rendering the samples.");
+			(void)memset(audioPtr1, 0, audioBytes1);
+			if (audioPtr2 != nullptr)
+			{
+				(void)memset(audioPtr2, 0, audioBytes2);
+			}
+			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Unlock(audioPtr1, audioBytes1, audioPtr2, audioBytes2), HEPH_FUNC, "An error occurred while rendering the samples.");
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 			WINAUDIODS_RENDER_THREAD_EXCPT(pDirectSoundBuffer->Stop(), HEPH_FUNC, "An error occurred while rendering the samples.");
 
