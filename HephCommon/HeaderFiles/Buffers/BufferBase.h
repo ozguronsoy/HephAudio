@@ -174,7 +174,6 @@ namespace Heph
 		 *
 		 * @param rhs number of elements to shift.
 		 *
-		 * @throws InsufficientMemoryException
 		 */
 		virtual Tself operator<<(size_t rhs) const
 		{
@@ -227,7 +226,6 @@ namespace Heph
 		 *
 		 * @param rhs number of elements to shift.
 		 *
-		 * @throws InsufficientMemoryException
 		 */
 		virtual Tself operator>>(size_t rhs) const
 		{
@@ -316,7 +314,6 @@ namespace Heph
 		/**
 		 * gets the element at the provided index.
 		 *
-		 * @throws InvalidArgumentException
 		 */
 		Tdata& At(size_t index) const
 		{
@@ -369,8 +366,6 @@ namespace Heph
 		 * @param index index of the first element of the sub buffer.
 		 * @param size number of elements the sub buffer will store.
 		 *
-		 * @throws InvalidArgumentException
-		 * @throws InsufficientMemoryException
 		 */
 		virtual Tself SubBuffer(size_t index, size_t size) const
 		{
@@ -387,8 +382,6 @@ namespace Heph
 		 *
 		 * @param rhs the buffer whose elements will be added.
 		 *
-		 * @throws InvalidArgumentException
-		 * @throws InsufficientMemoryException
 		 */
 		virtual void Prepend(const Tself& rhs)
 		{
@@ -402,8 +395,6 @@ namespace Heph
 		 *
 		 * @param rhs the buffer whose elements will be added.
 		 *
-		 * @throws InvalidArgumentException
-		 * @throws InsufficientMemoryException
 		 */
 		virtual void Append(const Tself& rhs)
 		{
@@ -417,8 +408,6 @@ namespace Heph
 		 *
 		 * @param rhs the buffer whose elements will be added.
 		 *
-		 * @throws InvalidArgumentException
-		 * @throws InsufficientMemoryException
 		 */
 		virtual void Insert(const Tself& rhs, size_t index)
 		{
@@ -433,7 +422,6 @@ namespace Heph
 		 * @param index index of the first element that will be removed.
 		 * @param size number of elements to remove.
 		 *
-		 * @throws InvalidArgumentException
 		 */
 		virtual void Cut(size_t index, size_t size)
 		{
@@ -448,7 +436,6 @@ namespace Heph
 		 * @param rhs the buffer whose elements will be used to replace the current buffer's elements.
 		 * @param index index of the first element that will be replaced.
 		 *
-		 * @throws InvalidArgumentException
 		 */
 		virtual void Replace(const Tself& rhs, size_t index)
 		{
@@ -462,7 +449,6 @@ namespace Heph
 		 * @param index index of the first element that will be replaced.
 		 * @param size number of elements to replace.
 		 *
-		 * @throws InvalidArgumentException
 		 */
 		virtual void Replace(const Tself& rhs, size_t index, size_t size)
 		{
@@ -479,7 +465,6 @@ namespace Heph
 		 * changes the size of the buffer.<br>
 		 * if new size is less than the old, excess elements from the end will be removed.
 		 *
-		 * @throws InsufficientMemoryException
 		 */
 		virtual void Resize(size_t newSize)
 		{
@@ -586,7 +571,6 @@ namespace Heph
 		 * @param size_byte number of bytes to allocate.
 		 * @return pointer to the allocated memory.
 		 *
-		 * @throws InsufficientMemoryException
 		 */
 		static Tdata* Allocate(size_t size_byte)
 		{
@@ -601,7 +585,6 @@ namespace Heph
 		 * @param size_byte number of bytes to allocate.
 		 * @return pointer to the allocated memory.
 		 *
-		 * @throws InsufficientMemoryException
 		 */
 		static Tdata* AllocateUninitialized(size_t size_byte)
 		{

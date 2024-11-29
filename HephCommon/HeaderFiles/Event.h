@@ -67,7 +67,6 @@ namespace Heph
 		/**
 		 * gets the event handler at the provided index.
 		 * 
-		 * @throws InvalidArgumentException
 		 */
 		EventHandler GetEventHandler(size_t index) const;
 
@@ -86,7 +85,6 @@ namespace Heph
 		/**
 		 * inserts the provided event handler to the provided index.
 		 * 
-		 * @throws InvalidArgumentException
 		 */
 		void InsertEventHandler(EventHandler handler, size_t index);
 
@@ -99,7 +97,6 @@ namespace Heph
 		/**
 		 * removes the event handler at the provided index.
 		 * 
-		 * @throws InvalidArgumentException
 		 */
 		void RemoveEventHandler(size_t index);
 
