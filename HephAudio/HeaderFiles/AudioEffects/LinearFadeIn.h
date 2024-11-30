@@ -23,10 +23,10 @@ namespace HephAudio
 		double duration;
 
 		/**
-		 * index of the first audio frame the effect will be applied to.
+		 * time, in seconds, of the first audio frame the effect will be applied to.
 		 * 
 		 */
-		size_t startIndex;
+		double startTime;
 
 		/**
 		 * for real-time processing.
@@ -50,10 +50,10 @@ namespace HephAudio
 		 * @copydoc constructor
 		 *
 		 * @param duration @copydetails duration
-		 * @param startIndex @copydetails startIndex
+		 * @param startTime @copydetails startTime
 		 *
 		 */
-		LinearFadeIn(double duration, size_t startIndex);
+		LinearFadeIn(double duration, double startTime);
 
 		/** @copydoc destructor */
 		virtual ~LinearFadeIn() = default;
@@ -75,17 +75,17 @@ namespace HephAudio
 		virtual void SetDuration(double duration);
 
 		/**
-		 * gets the start index.
+		 * gets the start time in seconds.
 		 *
 		 */
-		virtual size_t GetStartIndex() const;
+		virtual double GetStartTime() const;
 
 		/**
-		 * sets the start index.
+		 * sets the start time.
 		 *
-		 * @param startIndex @copydetails startIndex
+		 * @param startTime @copydetails startTime
 		 */
-		virtual void SetStartIndex(size_t startIndex);
+		virtual void SetStartTime(double startTime);
 
 	protected:
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;

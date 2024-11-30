@@ -10,10 +10,10 @@ namespace HephAudio
 
 	LinearFadeIn::LinearFadeIn(double duration) : LinearFadeIn(duration, 0) {}
 
-	LinearFadeIn::LinearFadeIn(double duration, size_t startIndex) : AudioEffect(), currentIndex(0)
+	LinearFadeIn::LinearFadeIn(double duration, double startTime) : AudioEffect(), currentIndex(0)
 	{
 		this->SetDuration(duration);
-		this->SetStartIndex(startIndex);
+		this->SetStartTime(startTime);
 	}
 
 	std::string LinearFadeIn::Name() const
@@ -42,14 +42,19 @@ namespace HephAudio
 		this->duration = duration;
 	}
 
-	size_t LinearFadeIn::GetStartIndex() const
+	double LinearFadeIn::GetStartTime() const
 	{
-		return this->startIndex;
+		return this->startTime;
 	}
 
-	void LinearFadeIn::SetStartIndex(size_t startIndex)
+	void LinearFadeIn::SetStartTime(double startTime)
 	{
-		this->startIndex = startIndex;
+		if (startTime < 0)
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "startTime cannot be negative."));
+		}
+
+		this->startTime = startTime;
 	}
 
 	void LinearFadeIn::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
@@ -57,16 +62,17 @@ namespace HephAudio
 		startIndex += this->currentIndex;
 		size_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = outputBuffer.FormatInfo();
-		const double duration_sample = formatInfo.sampleRate * this->duration;
+		const size_t startTime_sample = formatInfo.sampleRate * this->startTime;
+		const size_t duration_sample = formatInfo.sampleRate * this->duration;
 
-		if (endIndex > this->startIndex && startIndex < (this->startIndex + duration_sample))
+		if (endIndex > startTime_sample && startIndex < (startTime_sample + duration_sample))
 		{
-			startIndex = HEPH_MATH_MAX(startIndex, this->startIndex) - this->currentIndex;
-			endIndex = HEPH_MATH_MIN(endIndex, (duration_sample + this->startIndex)) - this->currentIndex;
+			startIndex = HEPH_MATH_MAX(startIndex, startTime_sample) - this->currentIndex;
+			endIndex = HEPH_MATH_MIN(endIndex, (duration_sample + startTime_sample)) - this->currentIndex;
 
 			for (size_t i = startIndex; i < endIndex; ++i)
 			{
-				const double factor = (i + this->currentIndex - this->startIndex) / duration_sample;
+				const double factor = (i + this->currentIndex - startTime_sample) / ((double)duration_sample);
 				for (size_t j = 0; j < formatInfo.channelLayout.count; ++j)
 				{
 					outputBuffer[i][j] *= factor;
