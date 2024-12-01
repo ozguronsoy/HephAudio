@@ -20,6 +20,12 @@ namespace HephAudio
 		return "Flanger";
 	}
 
+	void Flanger::ResetInternalState()
+	{
+		ModulationEffect::ResetInternalState();
+		this->pastSamples.Release();
+	}
+
 	void Flanger::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();

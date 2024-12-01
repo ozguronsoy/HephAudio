@@ -47,6 +47,11 @@ namespace HephAudio
 		return inputFrameCount;
 	}
 
+	void AudioEffect::ResetInternalState()
+	{
+		return;
+	}
+
 	void AudioEffect::Process(AudioBuffer& buffer)
 	{
 		this->Process(buffer, 0, buffer.FrameCount());

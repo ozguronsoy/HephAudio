@@ -21,6 +21,11 @@ namespace HephAudio
 		return "Linear Fade-in";
 	}
 
+	void LinearFadeIn::ResetInternalState()
+	{
+		this->currentIndex = 0;
+	}
+
 	void LinearFadeIn::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		AudioEffect::Process(buffer, startIndex, frameCount);

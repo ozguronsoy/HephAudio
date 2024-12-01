@@ -23,6 +23,12 @@ namespace HephAudio
 		return "Echo";
 	}
 
+	void Echo::ResetInternalState()
+	{
+		this->pastSamples.Release();
+		this->currentIndex = 0;
+	}
+
 	void Echo::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();

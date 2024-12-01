@@ -82,6 +82,7 @@ namespace HephAudio
 		virtual ~Normalizer() = default;
 
 		virtual std::string Name() const override;
+		virtual void ResetInternalState() override;
 
 		/**
 		 * gets the peak amplitude

@@ -17,11 +17,6 @@ namespace HephAudio
 
 	protected:
 		/**
-		 * past samples required for real-time processing.
-		 */
-		AudioBuffer pastSamples;
-
-		/**
 		 * constant delay in milliseconds.
 		 */
 		double constantDelay;
@@ -30,6 +25,11 @@ namespace HephAudio
 		 * maximum value of the variable delay in milliseconds. 
 		 */
 		double variableDelay;
+
+		/**
+		 * past samples required for real-time processing.
+		 */
+		AudioBuffer pastSamples;
 
 	public:
 		/** @copydoc default_constructor */
@@ -48,6 +48,7 @@ namespace HephAudio
 		virtual ~Flanger() = default;
 
 		virtual std::string Name() const override;
+		virtual void ResetInternalState() override;
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**

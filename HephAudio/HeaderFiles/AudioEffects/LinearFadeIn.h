@@ -59,6 +59,7 @@ namespace HephAudio
 		virtual ~LinearFadeIn() = default;
 
 		virtual std::string Name() const override;
+		virtual void ResetInternalState() override;
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**

@@ -23,16 +23,16 @@ namespace HephAudio
 		Heph::DoubleBuffer lfoBuffer;
 
 		/**
-		 * index of the last accessed sample.
-		 */
-		size_t lfoIndex;
-
-		/**
 		 * controls the dry/wet mix ratio.
 		 * Ranges between 0 and 1.
 		 *
 		 */
 		double depth;
+
+		/**
+		 * index of the last accessed sample.
+		 */
+		size_t lfoIndex;
 
 	protected:
 		/** @copydoc default_constructor */
@@ -51,6 +51,7 @@ namespace HephAudio
 		/** @copydoc destructor */
 		virtual ~ModulationEffect() = default;
 
+		virtual void ResetInternalState() override;
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**

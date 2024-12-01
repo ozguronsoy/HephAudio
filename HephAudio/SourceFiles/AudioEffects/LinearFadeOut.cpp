@@ -21,6 +21,11 @@ namespace HephAudio
 		return "Linear Fade-out";
 	}
 
+	void LinearFadeOut::ResetInternalState()
+	{
+		this->currentIndex = 0;
+	}
+
 	void LinearFadeOut::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		AudioEffect::Process(buffer, startIndex, frameCount);

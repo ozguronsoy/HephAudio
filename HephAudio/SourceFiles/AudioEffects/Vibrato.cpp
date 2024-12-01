@@ -27,6 +27,11 @@ namespace HephAudio
 		return outputFrameCount + peakAmplitude * extent_sample + 1;
 	}
 
+	void Vibrato::ResetInternalState()
+	{
+		this->pastSamples.Release();
+	}
+
 	void Vibrato::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();

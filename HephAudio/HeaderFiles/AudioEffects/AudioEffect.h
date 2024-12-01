@@ -77,6 +77,12 @@ namespace HephAudio
 		virtual size_t CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const;
 
 		/**
+		 * resets the variables internally used for processing.
+		 * 
+		 */
+		virtual void ResetInternalState();
+
+		/**
 		 * Applies the effect.
 		 * 
 		 * @param buffer contains the audio data which will be processed.

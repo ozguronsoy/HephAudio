@@ -67,8 +67,9 @@ namespace HephAudio
 		/** @copydoc destructor */
 		virtual ~OlaEffect() = default;
 
-		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const;
+		virtual void ResetInternalState() override;
+		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
 		 * gets the hop size.

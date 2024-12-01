@@ -23,6 +23,12 @@ namespace HephAudio
 		return outputFrameCount + (wndSize - (outputFrameCount % wndSize));
 	}
 
+	void OlaEffect::ResetInternalState()
+	{
+		this->currentIndex = 0;
+		this->pastSamples.Release();
+	}
+
 	void OlaEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		const size_t pastSamplesSize = this->CalculatePastSamplesSize();

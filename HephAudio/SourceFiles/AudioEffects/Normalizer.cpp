@@ -22,6 +22,12 @@ namespace HephAudio
 		return "Normalizer";
 	}
 
+	void Normalizer::ResetInternalState()
+	{
+		this->globalMaxSample = HEPH_AUDIO_SAMPLE_MIN;
+		this->lastGain = 1.0;
+	}
+
 	heph_audio_sample_t Normalizer::GetPeakAmplitude() const
 	{
 		return this->peakAmplitude;

@@ -24,6 +24,12 @@ namespace HephAudio
 		return "RMS Normalizer";
 	}
 
+	void RmsNormalizer::ResetInternalState()
+	{
+		this->currentRms = 0;
+		this->lastGain = 1.0;
+	}
+
 	double RmsNormalizer::GetTargetRms() const
 	{
 		return this->targetRms;

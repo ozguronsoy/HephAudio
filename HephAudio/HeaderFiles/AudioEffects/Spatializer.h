@@ -87,7 +87,7 @@ namespace HephAudio
 		bool updateTransferFunctions;
 
 		/**
-		 * transfer functions where the first element is the left channel, and the second element is the right channel.
+		 * an array of transfer functions where the first element is the left channel, and the second element is the right channel.
 		 * 
 		 */
 		std::array<Heph::ComplexBuffer, 2> transferFunctions;

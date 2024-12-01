@@ -13,6 +13,11 @@ namespace HephAudio
 		this->SetDepth(depth);
 	}
 
+	void ModulationEffect::ResetInternalState()
+	{
+		this->lfoIndex = 0;
+	}
+
 	void ModulationEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
 	{
 		DoubleBufferedAudioEffect::Process(buffer, startIndex, frameCount);

@@ -18,14 +18,14 @@ namespace HephAudio
 
 	protected:
 		/**
-		 * past samples required for real-time processing.
-		 */
-		AudioBuffer pastSamples;
-
-		/**
 		 * maximum pitch change in terms of semitones.
 		 */
 		double extent;
+
+		/**
+		 * past samples required for real-time processing.
+		 */
+		AudioBuffer pastSamples;
 
 	public:
 		/** @copydoc default_constructor */
@@ -43,6 +43,7 @@ namespace HephAudio
 
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
+		virtual void ResetInternalState() override;
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
