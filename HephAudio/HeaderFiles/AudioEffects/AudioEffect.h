@@ -113,8 +113,8 @@ namespace HephAudio
 		/**
 		 * applies the effect using single thread.
 		 * 
-		 * @param inputBuffer contains the dry data.
-		 * @param outputBuffer contains the wet data.
+		 * @param inputBuffer contains the audio data which will be processed.
+		 * @param outputBuffer contains the processed audio data.
 		 * @param startIndex index of the first sample to process.
 		 * @param frameCount number of frames to process.
 		 *
@@ -124,8 +124,8 @@ namespace HephAudio
 		/**
 		 * applies the effect using multiple threads.
 		 * 
-		 * @param inputBuffer contains the dry data.
-		 * @param outputBuffer contains the wet data.
+		 * @param inputBuffer contains the audio data which will be processed.
+		 * @param outputBuffer contains the processed audio data.
 		 * @param startIndex index of the first sample to process.
 		 * @param frameCount number of frames to process.
 		 *

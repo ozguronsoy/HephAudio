@@ -76,7 +76,7 @@ namespace HephAudio
 
 		if (startIndex + frameCount > buffer.FrameCount())
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "(startIndex + frameCount) exceeds the buffer's frame count."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "endIndex exceeds the buffer's frame count."));
 		}
 
 		if (this->threadCount == 1)

@@ -23,5 +23,27 @@ namespace HephAudio
 		virtual ~DoubleBufferedAudioEffect() = default;
 
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
+
+	protected:
+		/**
+		 * creates the output buffer but does not initialize it.
+		 * 
+		 * @param inputBuffer contains the audio data which will be processed.
+		 * @param startIndex index of the first sample to process.
+		 * @param frameCount number of frames to process.
+		 *
+		 */
+		virtual AudioBuffer CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const;
+
+		/**
+		 * initializes the output buffer.
+		 * 
+		 * @param inputBuffer contains the audio data which will be processed.
+		 * @param outputBuffer contains the processed audio data.
+		 * @param startIndex index of the first sample to process.
+		 * @param frameCount number of frames to process.
+		 * 
+		 */
+		virtual void InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const;
 	};
 }

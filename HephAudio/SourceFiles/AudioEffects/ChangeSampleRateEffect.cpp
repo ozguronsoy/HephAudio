@@ -16,7 +16,7 @@ namespace HephAudio
 
 	size_t ChangeSampleRateEffect::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
-		return ceil(outputFrameCount * ((double)formatInfo.sampleRate / this->outputSampleRate));
+		return ceil(outputFrameCount * ((double)formatInfo.sampleRate / this->outputSampleRate)) + 1;
 	}
 
 	size_t ChangeSampleRateEffect::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
@@ -27,12 +27,6 @@ namespace HephAudio
 		}
 
 		return inputFrameCount * ((double)this->outputSampleRate / formatInfo.sampleRate);
-	}
-
-	void ChangeSampleRateEffect::Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount)
-	{
-		DoubleBufferedAudioEffect::Process(buffer, startIndex, frameCount);
-		buffer.SetSampleRate(this->outputSampleRate);
 	}
 
 	size_t ChangeSampleRateEffect::GetOutputSampleRate() const
@@ -59,13 +53,12 @@ namespace HephAudio
 		}
 
 		const double srRatio = (double)this->outputSampleRate / (double)inputFormatInfo.sampleRate;
-
-		startIndex = startIndex * srRatio;
-		frameCount = frameCount * srRatio;
-		const size_t endIndex = startIndex + frameCount;
-
 		if (srRatio != 1)
 		{
+			startIndex = startIndex * srRatio;
+			frameCount = frameCount * srRatio;
+			const size_t endIndex = startIndex + frameCount;
+
 			for (size_t i = startIndex; i < endIndex; ++i)
 			{
 				const double resampleIndex = i / srRatio;
@@ -81,5 +74,24 @@ namespace HephAudio
 				}
 			}
 		}
+	}
+
+	AudioBuffer ChangeSampleRateEffect::CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const
+	{
+		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
+		return AudioBuffer(
+			(inputBuffer.FrameCount() - frameCount) + this->CalculateOutputFrameCount(frameCount, formatInfo),
+			formatInfo.channelLayout,
+			this->outputSampleRate, BufferFlags::AllocUninitialized);
+	}
+
+	void ChangeSampleRateEffect::InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const
+	{
+		if (startIndex != 0 || frameCount != inputBuffer.FrameCount())
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "this effect must be applied to the entire buffer."));
+		}
+
+		outputBuffer.Reset();
 	}
 }

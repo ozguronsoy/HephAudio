@@ -12,9 +12,6 @@ namespace HephAudio
 	 */
 	class ChangeSampleRateEffect : public DoubleBufferedAudioEffect
 	{
-	public:
-		using DoubleBufferedAudioEffect::Process;
-
 	protected:
 		/**
 		 * the sample rate the input will be converted to.
@@ -40,8 +37,6 @@ namespace HephAudio
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
 		virtual size_t CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const override;
-		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
-
 
 		/**
 		 * gets the output sample rate.
@@ -59,5 +54,7 @@ namespace HephAudio
 
 	protected:
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
+		virtual AudioBuffer CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const override;
+		virtual void InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const override;
 	};
 }

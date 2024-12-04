@@ -14,35 +14,50 @@ namespace HephAudio
 			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "startIndex out of bounds."));
 		}
 
-		const size_t endIndex = startIndex + frameCount;
-		if (endIndex > buffer.FrameCount())
+		if ((startIndex + frameCount) > buffer.FrameCount())
 		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "(startIndex + frameCount) exceeds the buffer's frame count."));
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "endIndex exceeds the buffer's frame count."));
 		}
 
 		const AudioFormatInfo& formatInfo = buffer.FormatInfo();
-		AudioBuffer resultBuffer(
-			(buffer.FrameCount() - frameCount) + this->CalculateOutputFrameCount(frameCount, formatInfo),
+		AudioBuffer outputBuffer = this->CreateOutputBuffer(buffer, startIndex, frameCount);
+		this->InitializeOutputBuffer(buffer, outputBuffer, startIndex, frameCount);
+
+		if (this->threadCount == 1)
+			this->ProcessST(buffer, outputBuffer, startIndex, frameCount);
+		else
+			this->ProcessMT(buffer, outputBuffer, startIndex, frameCount);
+
+		buffer = std::move(outputBuffer);
+	}
+
+	AudioBuffer DoubleBufferedAudioEffect::CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const
+	{
+		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
+		return AudioBuffer(
+			(inputBuffer.FrameCount() - frameCount) + this->CalculateOutputFrameCount(frameCount, formatInfo),
 			formatInfo.channelLayout,
-			formatInfo.sampleRate);
+			formatInfo.sampleRate, BufferFlags::AllocUninitialized);
+	}
+
+	void DoubleBufferedAudioEffect::InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const
+	{
+		const size_t iFrameCount = inputBuffer.FrameCount();
+		const size_t endIndex = startIndex + frameCount;
+		const AudioFormatInfo& iFormatInfo = inputBuffer.FormatInfo();
+
+		outputBuffer.Reset();
 
 		if (startIndex > 0)
 		{
-			resultBuffer.Replace(buffer, 0, startIndex);
+			outputBuffer.Replace(inputBuffer, 0, startIndex);
 		}
 
-		if (endIndex < buffer.FrameCount())
+		if (endIndex < iFrameCount)
 		{
-			const size_t resultPadding = startIndex + this->CalculateOutputFrameCount(frameCount, formatInfo);
-			const AudioBuffer temp = buffer.SubBuffer(endIndex, buffer.FrameCount() - endIndex);
-			resultBuffer.Replace(temp, resultPadding, temp.FrameCount());
+			const size_t resultPadding = startIndex + this->CalculateOutputFrameCount(frameCount, iFormatInfo);
+			const AudioBuffer temp = inputBuffer.SubBuffer(endIndex, iFrameCount - endIndex);
+			outputBuffer.Replace(temp, resultPadding, temp.FrameCount());
 		}
-
-		if (this->threadCount == 1)
-			this->ProcessST(buffer, resultBuffer, startIndex, frameCount);
-		else
-			this->ProcessMT(buffer, resultBuffer, startIndex, frameCount);
-
-		buffer = std::move(resultBuffer);
 	}
 }
