@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief changes the playback speed of the audio data without changing the pitch.
 	 * 
 	 */
-	class ChangeSpeedEffect : public OlaEffect
+	class TimeStretcher : public OlaEffect
 	{
 	protected:
 		/**
@@ -21,7 +21,7 @@ namespace HephAudio
 
 	public:
 		/** @copydoc default_constructor */
-		ChangeSpeedEffect();
+		TimeStretcher();
 
 		/**
 		 * @copydoc constructor
@@ -29,7 +29,7 @@ namespace HephAudio
 		 * @param speed @copydetails speed
 		 * 
 		 */
-		explicit ChangeSpeedEffect(double speed);
+		explicit TimeStretcher(double speed);
 
 		/**
 		 * @copydoc constructor
@@ -38,7 +38,7 @@ namespace HephAudio
 		 * @param hopSize @copydetails hopSize
 		 *
 		 */
-		ChangeSpeedEffect(double speed, size_t hopSize);
+		TimeStretcher(double speed, size_t hopSize);
 
 		/**
 		 * @copydoc constructor
@@ -48,10 +48,10 @@ namespace HephAudio
 		 * @param wnd @copydetails wnd
 		 *
 		 */
-		ChangeSpeedEffect(double speed, size_t hopSize, const Window& wnd);
+		TimeStretcher(double speed, size_t hopSize, const Window& wnd);
 
 		/** @copydoc destructor */
-		virtual ~ChangeSpeedEffect() = default;
+		virtual ~TimeStretcher() = default;
 
 		virtual std::string Name() const override;
 		virtual bool HasRTSupport() const override;

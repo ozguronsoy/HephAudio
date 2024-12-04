@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief changes the sample rate.
 	 * 
 	 */
-	class ChangeSampleRateEffect : public DoubleBufferedAudioEffect
+	class Resampler : public DoubleBufferedAudioEffect
 	{
 	protected:
 		/**
@@ -21,7 +21,7 @@ namespace HephAudio
 
 	public:
 		/** @copydoc default_constructor */
-		ChangeSampleRateEffect();
+		Resampler();
 
 		/**
 		 * @copydoc constructor
@@ -29,10 +29,10 @@ namespace HephAudio
 		 * @param outputSampleRate @copydetails outputSampleRate
 		 * 
 		 */
-		explicit ChangeSampleRateEffect(size_t outputSampleRate);
+		explicit Resampler(size_t outputSampleRate);
 
 		/** @copydoc destructor */
-		virtual ~ChangeSampleRateEffect() = default;
+		virtual ~Resampler() = default;
 
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;

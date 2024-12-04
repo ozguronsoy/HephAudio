@@ -1,25 +1,25 @@
-#include "AudioEffects/ChangeSampleRateEffect.h"
+#include "AudioEffects/Resampler.h"
 #include "Exceptions/InvalidArgumentException.h"
 
 using namespace Heph;
 
 namespace HephAudio
 {
-	ChangeSampleRateEffect::ChangeSampleRateEffect() : ChangeSampleRateEffect(48000) {}
+	Resampler::Resampler() : Resampler(48000) {}
 
-	ChangeSampleRateEffect::ChangeSampleRateEffect(size_t outputSampleRate) : DoubleBufferedAudioEffect(), outputSampleRate(outputSampleRate) {}
+	Resampler::Resampler(size_t outputSampleRate) : DoubleBufferedAudioEffect(), outputSampleRate(outputSampleRate) {}
 
-	std::string ChangeSampleRateEffect::Name() const
+	std::string Resampler::Name() const
 	{
 		return "Change Sample Rate";
 	}
 
-	size_t ChangeSampleRateEffect::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
+	size_t Resampler::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
 		return ceil(outputFrameCount * ((double)formatInfo.sampleRate / this->outputSampleRate)) + 1;
 	}
 
-	size_t ChangeSampleRateEffect::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
+	size_t Resampler::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
 		if (formatInfo.sampleRate == 0)
 		{
@@ -29,12 +29,12 @@ namespace HephAudio
 		return inputFrameCount * ((double)this->outputSampleRate / formatInfo.sampleRate);
 	}
 
-	size_t ChangeSampleRateEffect::GetOutputSampleRate() const
+	size_t Resampler::GetOutputSampleRate() const
 	{
 		return this->outputSampleRate;
 	}
 
-	void ChangeSampleRateEffect::SetOutputSampleRate(size_t outputSampleRate)
+	void Resampler::SetOutputSampleRate(size_t outputSampleRate)
 	{
 		if (outputSampleRate == 0)
 		{
@@ -44,7 +44,7 @@ namespace HephAudio
 		this->outputSampleRate = outputSampleRate;
 	}
 
-	void ChangeSampleRateEffect::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
+	void Resampler::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
 		const AudioFormatInfo& inputFormatInfo = inputBuffer.FormatInfo();
 		if (inputFormatInfo.sampleRate == 0)
@@ -76,7 +76,7 @@ namespace HephAudio
 		}
 	}
 
-	AudioBuffer ChangeSampleRateEffect::CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const
+	AudioBuffer Resampler::CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const
 	{
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
 		return AudioBuffer(
@@ -85,7 +85,7 @@ namespace HephAudio
 			this->outputSampleRate, BufferFlags::AllocUninitialized);
 	}
 
-	void ChangeSampleRateEffect::InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const
+	void Resampler::InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const
 	{
 		if (startIndex != 0 || frameCount != inputBuffer.FrameCount())
 		{

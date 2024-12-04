@@ -1,4 +1,4 @@
-#include "AudioEffects/ChangeSpeedEffect.h"
+#include "AudioEffects/TimeStretcher.h"
 #include "Exceptions/InvalidArgumentException.h"
 #include "Windows/HannWindow.h"
 
@@ -6,43 +6,43 @@ using namespace Heph;
 
 namespace HephAudio
 {
-	ChangeSpeedEffect::ChangeSpeedEffect() : ChangeSpeedEffect(1) {}
+	TimeStretcher::TimeStretcher() : TimeStretcher(1) {}
 
-	ChangeSpeedEffect::ChangeSpeedEffect(double speed) : ChangeSpeedEffect(speed, 1024) {}
+	TimeStretcher::TimeStretcher(double speed) : TimeStretcher(speed, 1024) {}
 
-	ChangeSpeedEffect::ChangeSpeedEffect(double speed, size_t hopSize) : ChangeSpeedEffect(speed, hopSize, HannWindow(hopSize * 2)) {}
+	TimeStretcher::TimeStretcher(double speed, size_t hopSize) : TimeStretcher(speed, hopSize, HannWindow(hopSize * 2)) {}
 
-	ChangeSpeedEffect::ChangeSpeedEffect(double speed, size_t hopSize, const Window& wnd) : OlaEffect(hopSize, wnd)
+	TimeStretcher::TimeStretcher(double speed, size_t hopSize, const Window& wnd) : OlaEffect(hopSize, wnd)
 	{
 		this->SetSpeed(speed);
 	}
 
-	std::string ChangeSpeedEffect::Name() const
+	std::string TimeStretcher::Name() const
 	{
 		return "Change Speed";
 	}
 
-	bool ChangeSpeedEffect::HasRTSupport() const
+	bool TimeStretcher::HasRTSupport() const
 	{
 		return false;
 	}
 
-	size_t ChangeSpeedEffect::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
+	size_t TimeStretcher::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
 		return outputFrameCount * this->speed;
 	}
 
-	size_t ChangeSpeedEffect::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
+	size_t TimeStretcher::CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const
 	{
 		return inputFrameCount / this->speed;
 	}
 
-	double ChangeSpeedEffect::GetSpeed() const
+	double TimeStretcher::GetSpeed() const
 	{
 		return this->speed;
 	}
 
-	void ChangeSpeedEffect::SetSpeed(double speed)
+	void TimeStretcher::SetSpeed(double speed)
 	{
 		if (speed <= 0)
 		{
@@ -52,7 +52,7 @@ namespace HephAudio
 		this->speed = speed;
 	}
 
-	void ChangeSpeedEffect::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
+	void TimeStretcher::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)
 	{
 		const size_t endIndex = startIndex + frameCount;
 		const AudioFormatInfo& formatInfo = inputBuffer.FormatInfo();
