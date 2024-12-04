@@ -11,7 +11,7 @@ namespace HephAudio
 
 	std::string Resampler::Name() const
 	{
-		return "Change Sample Rate";
+		return "Resampler";
 	}
 
 	size_t Resampler::CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const

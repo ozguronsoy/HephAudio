@@ -19,7 +19,7 @@ namespace HephAudio
 
 	std::string TimeStretcher::Name() const
 	{
-		return "Change Speed";
+		return "Time Stretcher";
 	}
 
 	bool TimeStretcher::HasRTSupport() const

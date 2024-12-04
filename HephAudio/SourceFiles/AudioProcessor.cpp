@@ -55,7 +55,7 @@ namespace HephAudio
 				return;
 			}
 
-			AudioBuffer resultBuffer(buffer.frameCount, outputChannelLayout, buffer.formatInfo.sampleRate, BufferFlags::AllocUninitialized);
+			AudioBuffer resultBuffer(buffer.frameCount, outputChannelLayout, buffer.formatInfo.sampleRate);
 
 			for (size_t i = 0; i < outputMapping.size(); i++)
 			{

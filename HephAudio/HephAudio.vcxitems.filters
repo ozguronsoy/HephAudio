@@ -264,6 +264,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\BandPassFilter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\PitchShifter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\Spatializer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\ChannelMapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
@@ -444,5 +445,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\BandPassFilter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\PitchShifter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\Spatializer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEffects\ChannelMapper.cpp" />
   </ItemGroup>
 </Project>
