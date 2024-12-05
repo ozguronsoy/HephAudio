@@ -5,31 +5,248 @@
 
 /** @file */
 
+/**
+* 0 -> FC
+*/
 #define HEPHAUDIO_CH_MASK_MONO (HephAudio::AudioChannelMask::FrontCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+*/
 #define HEPHAUDIO_CH_MASK_STEREO (HephAudio::AudioChannelMask::FrontLeft | HephAudio::AudioChannelMask::FrontRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> LFE
+*/
 #define HEPHAUDIO_CH_MASK_2_POINT_1 (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::LowFrequency)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> BC
+*/
 #define HEPHAUDIO_CH_MASK_2_1 (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::BackCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+*/
 #define HEPHAUDIO_CH_MASK_SURROUND (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::FrontCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+*/
 #define HEPHAUDIO_CH_MASK_3_POINT_1 (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::LowFrequency)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> BC
+*/
 #define HEPHAUDIO_CH_MASK_4_POINT_0 (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::BackCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> SL
+* 3 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_2_2 (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::SideLeft | HephAudio::AudioChannelMask::SideRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> BL
+* 3 -> BR
+*/
 #define HEPHAUDIO_CH_MASK_QUAD (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> BC
+*/
 #define HEPHAUDIO_CH_MASK_4_POINT_1 (HEPHAUDIO_CH_MASK_4_POINT_0 | HephAudio::AudioChannelMask::LowFrequency)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> SL
+* 4 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_5_POINT_0 (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::SideLeft | HephAudio::AudioChannelMask::SideRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> BL
+* 4 -> BR
+*/
 #define HEPHAUDIO_CH_MASK_5_POINT_0_BACK (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> SL
+* 5 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_5_POINT_1 (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::LowFrequency)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> BL
+* 5 -> BR
+*/
 #define HEPHAUDIO_CH_MASK_5_POINT_1_BACK (HEPHAUDIO_CH_MASK_5_POINT_0_BACK | HephAudio::AudioChannelMask::LowFrequency)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> BC
+* 4 -> SL
+* 5 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_6_POINT_0 (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::BackCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FLC
+* 3 -> FRC
+* 4 -> SL
+* 5 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_6_POINT_0_FRONT (HEPHAUDIO_CH_MASK_2_2 | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> BL
+* 4 -> BR
+* 5 -> BC
+*/
 #define HEPHAUDIO_CH_MASK_HEXAGONAL (HEPHAUDIO_CH_MASK_5_POINT_0_BACK | HephAudio::AudioChannelMask::BackCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> BC
+* 5 -> SL
+* 6 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_6_POINT_1 (HEPHAUDIO_CH_MASK_5_POINT_1 | HephAudio::AudioChannelMask::BackCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> BL
+* 5 -> BR
+* 6 -> BC
+*/
 #define HEPHAUDIO_CH_MASK_6_POINT_1_BACK (HEPHAUDIO_CH_MASK_5_POINT_1_BACK | HephAudio::AudioChannelMask::BackCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> LFE
+* 3 -> FLC
+* 4 -> FRC
+* 5 -> SL
+* 6 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_6_POINT_1_FRONT (HEPHAUDIO_CH_MASK_6_POINT_0_FRONT | HephAudio::AudioChannelMask::LowFrequency)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> BL
+* 4 -> BR
+* 5 -> SL
+* 6 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_7_POINT_0 (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> FLC
+* 4 -> FRC
+* 5 -> SL
+* 6 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_7_POINT_0_FRONT (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> BL
+* 5 -> BR
+* 6 -> SL
+* 7 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_7_POINT_1 (HEPHAUDIO_CH_MASK_5_POINT_1 | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> FLC
+* 5 -> FRC
+* 6 -> SL
+* 7 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_7_POINT_1_WIDE (HEPHAUDIO_CH_MASK_5_POINT_1 | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> LFE
+* 4 -> BL
+* 5 -> BR
+* 6 -> FLC
+* 7 -> FRC
+*/
 #define HEPHAUDIO_CH_MASK_7_POINT_1_WIDE_BACK (HEPHAUDIO_CH_MASK_5_POINT_1_BACK | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
+
+/**
+* 0 -> FL
+* 1 -> FR
+* 2 -> FC
+* 3 -> BL
+* 4 -> BR
+* 5 -> BC
+* 6 -> SL
+* 7 -> SR
+*/
 #define HEPHAUDIO_CH_MASK_OCTAGONAL (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackCenter | HephAudio::AudioChannelMask::BackRight)
 
 #define HEPHAUDIO_CH_LAYOUT_MONO HephAudio::AudioChannelLayout(1, HEPHAUDIO_CH_MASK_MONO)
