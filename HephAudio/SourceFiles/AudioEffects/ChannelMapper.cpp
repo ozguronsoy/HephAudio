@@ -89,6 +89,11 @@ namespace HephAudio
 		outputBuffer.Reset();
 	}
 
+	void ChannelMapper::SetMapping(const AudioChannelLayout& targetLayout, const AudioChannelLayout& inputLayout, const std::function<void(heph_audio_sample_t*, heph_audio_sample_t*)>& f)
+	{
+		ChannelMapper::map[targetLayout][inputLayout] = f;
+	}
+
 	ChannelMapper::ChannelMapperMap ChannelMapper::CreateMap()
 	{
 		return
@@ -302,6 +307,246 @@ namespace HephAudio
 						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
 						{
 							out[0] = (in[0] * 0.17f) + (in[1] * 0.17f) + (in[2] * 0.35f) + (in[3] * 0.05f) + (in[4] * 0.05f) + (in[5] * 0.11f) + (in[6] * 0.05f) + (in[7] * 0.05f);
+						}
+					},
+				},
+			},
+
+			// STEREO
+			{
+				HEPHAUDIO_CH_LAYOUT_STEREO,
+				{
+					{
+						HEPHAUDIO_CH_LAYOUT_MONO,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = in[0];
+							out[1] = in[0];
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_STEREO,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = in[0];
+							out[1] = in[1];
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_2_POINT_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = in[0];
+							out[1] = in[1];
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_2_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.75) + (in[2] * 0.25);
+							out[1] = (in[1] * 0.75) + (in[2] * 0.25);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_SURROUND,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.66) + (in[2] * 0.33);
+							out[1] = (in[1] * 0.66) + (in[2] * 0.33);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_3_POINT_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.66) + (in[2] * 0.33);
+							out[1] = (in[1] * 0.66) + (in[2] * 0.33);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_4_POINT_0,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.60) + (in[2] * 0.275) + (in[3] * 0.125);
+							out[1] = (in[1] * 0.60) + (in[2] * 0.275) + (in[3] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_2_2,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.875) + (in[2] * 0.125);
+							out[1] = (in[1] * 0.875) + (in[3] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_QUAD,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.875) + (in[2] * 0.125);
+							out[1] = (in[1] * 0.875) + (in[3] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_4_POINT_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_5_POINT_0,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.250) + (in[3] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_5_POINT_0_BACK,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.250) + (in[3] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_5_POINT_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.250) + (in[5] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_5_POINT_1_BACK,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.250) + (in[5] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_6_POINT_0,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.200) + (in[3] * 0.050) + (in[4] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.200) + (in[3] * 0.050) + (in[5] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_6_POINT_0_FRONT,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.250) + (in[4] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[3] * 0.250) + (in[5] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_HEXAGONAL,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.200) + (in[3] * 0.125) + (in[5] * 0.050);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.200) + (in[4] * 0.125) + (in[5] * 0.050);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_6_POINT_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.200) + (in[4] * 0.125) + (in[6] * 0.050);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.200) + (in[5] * 0.125) + (in[6] * 0.050);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_6_POINT_1_BACK,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[2] * 0.200) + (in[4] * 0.125) + (in[6] * 0.050);
+							out[1] = (in[1] * 0.625) + (in[2] * 0.200) + (in[5] * 0.125) + (in[6] * 0.050);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_6_POINT_1_FRONT,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.625) + (in[3] * 0.250) + (in[5] * 0.125);
+							out[1] = (in[1] * 0.625) + (in[4] * 0.250) + (in[6] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_7_POINT_0,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.500) + (in[2] * 0.250) + (in[3] * 0.125) + (in[5] * 0.125);
+							out[1] = (in[1] * 0.500) + (in[2] * 0.250) + (in[4] * 0.125) + (in[6] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_7_POINT_0_FRONT,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.500) + (in[2] * 0.175) + (in[3] * 0.250) + (in[5] * 0.075);
+							out[1] = (in[1] * 0.500) + (in[2] * 0.175) + (in[4] * 0.250) + (in[6] * 0.075);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_7_POINT_1,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.500) + (in[2] * 0.250) + (in[4] * 0.125) + (in[6] * 0.125);
+							out[1] = (in[1] * 0.500) + (in[2] * 0.250) + (in[5] * 0.125) + (in[7] * 0.125);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_7_POINT_1_WIDE,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.500) + (in[2] * 0.175) + (in[4] * 0.250) + (in[6] * 0.075);
+							out[1] = (in[1] * 0.500) + (in[2] * 0.175) + (in[5] * 0.250) + (in[7] * 0.075);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_7_POINT_1_WIDE_BACK,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.500) + (in[2] * 0.175) + (in[4] * 0.075) + (in[6] * 0.250);
+							out[1] = (in[1] * 0.500) + (in[2] * 0.175) + (in[5] * 0.075) + (in[7] * 0.250);
+						}
+					},
+
+					{
+						HEPHAUDIO_CH_LAYOUT_OCTAGONAL,
+						[](heph_audio_sample_t* in, heph_audio_sample_t* out) -> void
+						{
+							out[0] = (in[0] * 0.500) + (in[2] * 0.175) + (in[3] * 0.125) + (in[5] * 0.075) + (in[6] * 0.125);
+							out[1] = (in[1] * 0.500) + (in[2] * 0.175) + (in[4] * 0.125) + (in[5] * 0.075) + (in[7] * 0.125);
 						}
 					},
 				},

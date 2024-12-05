@@ -6,246 +6,246 @@
 /** @file */
 
 /**
-* 0 -> FC
+* 0 -> FC	\n
 */
 #define HEPHAUDIO_CH_MASK_MONO (HephAudio::AudioChannelMask::FrontCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
+* 0 -> FL	\n
+* 1 -> FR	\n
 */
 #define HEPHAUDIO_CH_MASK_STEREO (HephAudio::AudioChannelMask::FrontLeft | HephAudio::AudioChannelMask::FrontRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> LFE
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> LFE	\n
 */
 #define HEPHAUDIO_CH_MASK_2_POINT_1 (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::LowFrequency)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> BC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> BC	\n
 */
 #define HEPHAUDIO_CH_MASK_2_1 (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::BackCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
 */
 #define HEPHAUDIO_CH_MASK_SURROUND (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::FrontCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
 */
 #define HEPHAUDIO_CH_MASK_3_POINT_1 (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::LowFrequency)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> BC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> BC	\n
 */
 #define HEPHAUDIO_CH_MASK_4_POINT_0 (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::BackCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> SL
-* 3 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> SL	\n
+* 3 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_2_2 (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::SideLeft | HephAudio::AudioChannelMask::SideRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> BL
-* 3 -> BR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> BL	\n
+* 3 -> BR	\n
 */
 #define HEPHAUDIO_CH_MASK_QUAD (HEPHAUDIO_CH_MASK_STEREO | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> BC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> BC	\n
 */
 #define HEPHAUDIO_CH_MASK_4_POINT_1 (HEPHAUDIO_CH_MASK_4_POINT_0 | HephAudio::AudioChannelMask::LowFrequency)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> SL
-* 4 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> SL	\n
+* 4 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_5_POINT_0 (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::SideLeft | HephAudio::AudioChannelMask::SideRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> BL
-* 4 -> BR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> BL	\n
+* 4 -> BR	\n
 */
 #define HEPHAUDIO_CH_MASK_5_POINT_0_BACK (HEPHAUDIO_CH_MASK_SURROUND | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> SL
-* 5 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> SL	\n
+* 5 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_5_POINT_1 (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::LowFrequency)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> BL
-* 5 -> BR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> BL	\n
+* 5 -> BR	\n
 */
 #define HEPHAUDIO_CH_MASK_5_POINT_1_BACK (HEPHAUDIO_CH_MASK_5_POINT_0_BACK | HephAudio::AudioChannelMask::LowFrequency)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> BC
-* 4 -> SL
-* 5 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> BC	\n
+* 4 -> SL	\n
+* 5 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_6_POINT_0 (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::BackCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FLC
-* 3 -> FRC
-* 4 -> SL
-* 5 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FLC	\n
+* 3 -> FRC	\n
+* 4 -> SL	\n
+* 5 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_6_POINT_0_FRONT (HEPHAUDIO_CH_MASK_2_2 | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> BL
-* 4 -> BR
-* 5 -> BC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> BL	\n
+* 4 -> BR	\n
+* 5 -> BC	\n
 */
 #define HEPHAUDIO_CH_MASK_HEXAGONAL (HEPHAUDIO_CH_MASK_5_POINT_0_BACK | HephAudio::AudioChannelMask::BackCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> BC
-* 5 -> SL
-* 6 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> BC	\n
+* 5 -> SL	\n
+* 6 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_6_POINT_1 (HEPHAUDIO_CH_MASK_5_POINT_1 | HephAudio::AudioChannelMask::BackCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> BL
-* 5 -> BR
-* 6 -> BC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> BL	\n
+* 5 -> BR	\n
+* 6 -> BC	\n
 */
 #define HEPHAUDIO_CH_MASK_6_POINT_1_BACK (HEPHAUDIO_CH_MASK_5_POINT_1_BACK | HephAudio::AudioChannelMask::BackCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> LFE
-* 3 -> FLC
-* 4 -> FRC
-* 5 -> SL
-* 6 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> LFE	\n
+* 3 -> FLC	\n
+* 4 -> FRC	\n
+* 5 -> SL	\n
+* 6 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_6_POINT_1_FRONT (HEPHAUDIO_CH_MASK_6_POINT_0_FRONT | HephAudio::AudioChannelMask::LowFrequency)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> BL
-* 4 -> BR
-* 5 -> SL
-* 6 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> BL	\n
+* 4 -> BR	\n
+* 5 -> SL	\n
+* 6 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_7_POINT_0 (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> FLC
-* 4 -> FRC
-* 5 -> SL
-* 6 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> FLC	\n
+* 4 -> FRC	\n
+* 5 -> SL	\n
+* 6 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_7_POINT_0_FRONT (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> BL
-* 5 -> BR
-* 6 -> SL
-* 7 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> BL	\n
+* 5 -> BR	\n
+* 6 -> SL	\n
+* 7 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_7_POINT_1 (HEPHAUDIO_CH_MASK_5_POINT_1 | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackRight)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> FLC
-* 5 -> FRC
-* 6 -> SL
-* 7 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> FLC	\n
+* 5 -> FRC	\n
+* 6 -> SL	\n
+* 7 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_7_POINT_1_WIDE (HEPHAUDIO_CH_MASK_5_POINT_1 | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> LFE
-* 4 -> BL
-* 5 -> BR
-* 6 -> FLC
-* 7 -> FRC
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> LFE	\n
+* 4 -> BL	\n
+* 5 -> BR	\n
+* 6 -> FLC	\n
+* 7 -> FRC	\n
 */
 #define HEPHAUDIO_CH_MASK_7_POINT_1_WIDE_BACK (HEPHAUDIO_CH_MASK_5_POINT_1_BACK | HephAudio::AudioChannelMask::FrontLeftOfCenter | HephAudio::AudioChannelMask::FrontRightOfCenter)
 
 /**
-* 0 -> FL
-* 1 -> FR
-* 2 -> FC
-* 3 -> BL
-* 4 -> BR
-* 5 -> BC
-* 6 -> SL
-* 7 -> SR
+* 0 -> FL	\n
+* 1 -> FR	\n
+* 2 -> FC	\n
+* 3 -> BL	\n
+* 4 -> BR	\n
+* 5 -> BC	\n
+* 6 -> SL	\n
+* 7 -> SR	\n
 */
 #define HEPHAUDIO_CH_MASK_OCTAGONAL (HEPHAUDIO_CH_MASK_5_POINT_0 | HephAudio::AudioChannelMask::BackLeft | HephAudio::AudioChannelMask::BackCenter | HephAudio::AudioChannelMask::BackRight)
 
@@ -281,7 +281,7 @@ namespace HephAudio
 {
 	/**
 	 * bit field that indicates which channels are used.
-	 * 
+	 *
 	 */
 	enum AudioChannelMask
 	{
@@ -311,35 +311,35 @@ namespace HephAudio
 	{
 		return (AudioChannelMask)(((int)lhs) | ((int)rhs));
 	}
-	
+
 	inline constexpr AudioChannelMask& operator|=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		lhs = lhs | rhs;
 		return lhs;
 	}
-	
+
 	inline constexpr AudioChannelMask operator&(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		return (AudioChannelMask)(((int)lhs) & ((int)rhs));
 	}
-	
+
 	inline constexpr AudioChannelMask& operator&=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		lhs = lhs & rhs;
 		return lhs;
 	}
-	
+
 	inline constexpr AudioChannelMask operator^(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		return (AudioChannelMask)(((int)lhs) ^ ((int)rhs));
 	}
-	
+
 	inline constexpr AudioChannelMask& operator^=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
 	{
 		lhs = lhs ^ rhs;
 		return lhs;
 	}
-	
+
 	inline constexpr AudioChannelMask operator~(const AudioChannelMask& lhs)
 	{
 		return (AudioChannelMask)(~((int)lhs));
@@ -347,46 +347,46 @@ namespace HephAudio
 
 	/**
 	 * @brief stores information about the channel layout.
-	 * 
+	 *
 	 */
 	struct HEPH_API AudioChannelLayout
 	{
 		/**
 		 * number of channels present.
-		 * 
+		 *
 		 */
 		uint16_t count;
 
 		/**
 		 * indicates which channels are used.
-		 * 
+		 *
 		 */
 		AudioChannelMask mask;
 
 		/** @copydoc default_constructor */
 		constexpr AudioChannelLayout() : AudioChannelLayout(0, AudioChannelMask::Unknown) {}
-		
+
 		/**
 		 * @copydoc constructor
-		 * 
+		 *
 		 * @param count @copydetails count
 		 * @param mask @copydetails mask
 		 */
 		constexpr AudioChannelLayout(uint16_t count, AudioChannelMask mask) : count(count), mask(mask) {}
-		
+
 		constexpr bool operator==(const AudioChannelLayout& rhs) const
 		{
 			return this->count == rhs.count && this->mask == rhs.mask;
 		}
-		
+
 		constexpr bool operator!=(const AudioChannelLayout& rhs) const
 		{
 			return this->count != rhs.count || this->mask != rhs.mask;
 		}
-		
+
 		/**
 		 * gets the default channel mask for the \a channelCount.
-		 * 
+		 *
 		 */
 		static constexpr AudioChannelMask DefaultChannelMask(uint16_t channelCount)
 		{
@@ -412,19 +412,19 @@ namespace HephAudio
 				return AudioChannelMask::Unknown;
 			}
 		}
-	
+
 		/**
 		 * gets the default channel layout for the \a channelCount.
-		 * 
+		 *
 		 */
 		static constexpr AudioChannelLayout DefaultChannelLayout(uint16_t channelCount)
 		{
 			return AudioChannelLayout(channelCount, AudioChannelLayout::DefaultChannelMask(channelCount));
 		}
-		
+
 		/**
 		 * gets the number of channels used.
-		 * 
+		 *
 		 */
 		static constexpr uint16_t GetChannelCount(AudioChannelMask mask)
 		{
@@ -440,25 +440,25 @@ namespace HephAudio
 			}
 			return channelCount;
 		}
-		
+
 		/**
 		 * gets the number of channels used in the layout.
-		 * 
+		 *
 		 */
 		static constexpr uint16_t GetChannelCount(const AudioChannelLayout& layout)
 		{
 			return AudioChannelLayout::GetChannelCount(layout.mask);
 		}
-		
+
 		/**
 		 * gets the channel mapping that corresponds to the channel mask.
-		 * 
+		 *
 		 */
 		static std::vector<AudioChannelMask> GetChannelMapping(AudioChannelMask mask);
 
 		/**
 		 * gets the channel mapping that corresponds to the channel layout.
-		 * 
+		 *
 		 */
 		static std::vector<AudioChannelMask> GetChannelMapping(const AudioChannelLayout& layout);
 	};

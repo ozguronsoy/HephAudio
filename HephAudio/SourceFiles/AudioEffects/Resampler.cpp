@@ -53,24 +53,22 @@ namespace HephAudio
 		}
 
 		const double srRatio = (double)this->outputSampleRate / (double)inputFormatInfo.sampleRate;
-		if (srRatio != 1)
+		
+		startIndex = startIndex * srRatio;
+		frameCount = frameCount * srRatio;
+		const size_t endIndex = startIndex + frameCount;
+
+		for (size_t i = startIndex; i < endIndex; ++i)
 		{
-			startIndex = startIndex * srRatio;
-			frameCount = frameCount * srRatio;
-			const size_t endIndex = startIndex + frameCount;
+			const double resampleIndex = i / srRatio;
+			const double resampleFactor = resampleIndex - floor(resampleIndex);
 
-			for (size_t i = startIndex; i < endIndex; ++i)
+			for (size_t j = 0; j < inputFormatInfo.channelLayout.count; ++j)
 			{
-				const double resampleIndex = i / srRatio;
-				const double resampleFactor = resampleIndex - floor(resampleIndex);
-
-				for (size_t j = 0; j < inputFormatInfo.channelLayout.count; ++j)
+				outputBuffer[i][j] = inputBuffer[resampleIndex][j] * (1.0 - resampleFactor);
+				if ((resampleIndex + 1) < inputBuffer.FrameCount())
 				{
-					outputBuffer[i][j] = inputBuffer[resampleIndex][j] * (1.0 - resampleFactor);
-					if ((resampleIndex + 1) < inputBuffer.FrameCount())
-					{
-						outputBuffer[i][j] += inputBuffer[resampleIndex + 1][j] * resampleFactor;
-					}
+					outputBuffer[i][j] += inputBuffer[resampleIndex + 1][j] * resampleFactor;
 				}
 			}
 		}

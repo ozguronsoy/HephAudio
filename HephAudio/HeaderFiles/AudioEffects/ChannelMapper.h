@@ -81,6 +81,17 @@ namespace HephAudio
 		virtual AudioBuffer CreateOutputBuffer(const AudioBuffer& inputBuffer, size_t startIndex, size_t frameCount) const override;
 		virtual void InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const override;
 
+	public:
+		/**
+		 * sets mapping from targetLayout to inputLayout.
+		 * 
+		 * @param targetLayout target (output) channel layout.
+		 * @param inputLayout input channel layout.
+		 * @param f function that maps the channels.
+		 * 
+		 */
+		static void SetMapping(const AudioChannelLayout& targetLayout, const AudioChannelLayout& inputLayout, const std::function<void(heph_audio_sample_t*, heph_audio_sample_t*)>& f);
+
 	protected:
 		/**
 		 * creates the ChannelMapper::map.
