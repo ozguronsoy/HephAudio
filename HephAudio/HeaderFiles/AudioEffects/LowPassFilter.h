@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief removes the frequencies that are greater than the cutoff frequency.
 	 * 
 	 */
-	class LowPassFilter : public Equalizer
+	class HEPH_API LowPassFilter : public Equalizer
 	{
 	protected:
 		using Equalizer::FrequencyRange;

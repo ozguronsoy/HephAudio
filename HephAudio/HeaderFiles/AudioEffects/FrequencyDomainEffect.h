@@ -12,7 +12,7 @@ namespace HephAudio
 	 * @brief base class for effects that are computed in the frequency domain.
 	 * 
 	 */
-	class FrequencyDomainEffect : public OlaEffect
+	class HEPH_API FrequencyDomainEffect : public OlaEffect
 	{
 	protected:
 		/** @copydoc default_constructor */

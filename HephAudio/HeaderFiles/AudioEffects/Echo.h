@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief adds echo to the audio data.
 	 *
 	 */
-	class Echo : public AudioEffect
+	class HEPH_API Echo : public AudioEffect
 	{
 	public:
 		using AudioEffect::Process;

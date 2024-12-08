@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief adjusts the volumes of multiple frequency ranges.
 	 * 
 	 */
-	class Equalizer : public FrequencyDomainEffect
+	class HEPH_API Equalizer : public FrequencyDomainEffect
 	{
 	public:
 		/**

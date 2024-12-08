@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief increases the volume of one channel while decreasing the other one (stereo only). 
 	 * Uses square root to calculate the volumes.
 	 */
-	class SquareLawPanning : public PanningEffect
+	class HEPH_API SquareLawPanning : public PanningEffect
 	{
 	public:
 		/** @copydoc default_constructor */

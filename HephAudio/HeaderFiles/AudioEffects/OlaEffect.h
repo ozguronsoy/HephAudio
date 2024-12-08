@@ -12,7 +12,7 @@ namespace HephAudio
 	 * @brief base class for effects that use overlap-add method.
 	 *
 	 */
-	class OlaEffect : public DoubleBufferedAudioEffect
+	class HEPH_API OlaEffect : public DoubleBufferedAudioEffect
 	{
 	public:
 		using DoubleBufferedAudioEffect::Process;

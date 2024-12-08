@@ -11,7 +11,7 @@ namespace HephAudio
 	 * 
 	 * @note this is a non-causal effect.
 	 */
-	class Vibrato : public ModulationEffect
+	class HEPH_API Vibrato : public ModulationEffect
 	{
 	public:
 		using ModulationEffect::Process;

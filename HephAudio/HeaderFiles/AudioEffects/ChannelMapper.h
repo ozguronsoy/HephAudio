@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief remaps the audio channels.
 	 *
 	 */
-	class ChannelMapper : public DoubleBufferedAudioEffect
+	class HEPH_API ChannelMapper : public DoubleBufferedAudioEffect
 	{
 	protected:
 		struct AudioChannelLayoutHasher

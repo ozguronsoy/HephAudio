@@ -11,7 +11,7 @@ namespace HephAudio
 	 * @brief base class for the audio effects.
 	 *
 	 */
-	class AudioEffect
+	class HEPH_API AudioEffect
 	{
 	protected:
 		/**

@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief changes the pitch without changing the playback speed.
 	 * 
 	 */
-	class PitchShifter : public OlaEffect
+	class HEPH_API PitchShifter : public OlaEffect
 	{
 	protected:
 		/**

@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief applies cubic distortion.
 	 * 
 	 */
-	class CubicDistortion : public AudioEffect
+	class HEPH_API CubicDistortion : public AudioEffect
 	{
 	protected:
 		/**

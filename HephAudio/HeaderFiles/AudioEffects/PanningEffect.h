@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief base class for panning effects.
 	 * 
 	 */
-	class PanningEffect : public AudioEffect
+	class HEPH_API PanningEffect : public AudioEffect
 	{
 	public:
 		using AudioEffect::Process;

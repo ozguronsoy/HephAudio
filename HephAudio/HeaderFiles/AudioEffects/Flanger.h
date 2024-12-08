@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief delays the audio data and mixes the result with the input signal. 
 	 * The amount of delay applied changes periodically.
 	 */
-	class Flanger : public ModulationEffect
+	class HEPH_API Flanger : public ModulationEffect
 	{
 	public:
 		using ModulationEffect::Process;

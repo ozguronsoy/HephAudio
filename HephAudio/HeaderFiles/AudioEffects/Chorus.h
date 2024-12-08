@@ -12,7 +12,7 @@ namespace HephAudio
 	 * 
 	 * @note this is a non-causal effect.
 	 */
-	class Chorus : public Flanger
+	class HEPH_API Chorus : public Flanger
 	{
 	protected:
 		/**

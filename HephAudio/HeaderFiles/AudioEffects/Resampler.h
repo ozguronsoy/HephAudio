@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief changes the sample rate.
 	 * 
 	 */
-	class Resampler : public DoubleBufferedAudioEffect
+	class HEPH_API Resampler : public DoubleBufferedAudioEffect
 	{
 	protected:
 		/**

@@ -11,7 +11,7 @@ namespace HephAudio
 	/**
 	 * @brief base class for effects that use LFOs.
 	 */
-	class ModulationEffect : public DoubleBufferedAudioEffect
+	class HEPH_API ModulationEffect : public DoubleBufferedAudioEffect
 	{
 	public:
 		using DoubleBufferedAudioEffect::Process;

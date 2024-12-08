@@ -9,7 +9,7 @@ namespace HephAudio
 	/**
 	 * @brief linearly increases the volume of one channel while decreasing the other one (stereo only).
 	 */
-	class LinearPanning : public PanningEffect
+	class HEPH_API LinearPanning : public PanningEffect
 	{
 	public:
 		/** @copydoc default_constructor */

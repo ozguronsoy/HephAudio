@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief increases the volume of one channel while decreasing the other one (stereo only). 
 	 * Uses sin function to calculate the volumes.
 	 */
-	class SineLawPanning : public PanningEffect
+	class HEPH_API SineLawPanning : public PanningEffect
 	{
 	public:
 		/** @copydoc default_constructor */

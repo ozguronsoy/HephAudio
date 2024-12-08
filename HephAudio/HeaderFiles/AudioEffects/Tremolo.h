@@ -8,7 +8,7 @@ namespace HephAudio
 	/**
 	 * @brief changes the volume of the audio data periodically and mixes the result with the input signal.
 	 */
-	class Tremolo : public ModulationEffect
+	class HEPH_API Tremolo : public ModulationEffect
 	{
 	public:
 		using ModulationEffect::Process;

@@ -11,7 +11,7 @@ namespace HephAudio
 	/**
 	 * @brief normalizes the audio data at the provided amplitude.
 	 */
-	class Normalizer : public AudioEffect
+	class HEPH_API Normalizer : public AudioEffect
 	{
 	protected:
 		/**

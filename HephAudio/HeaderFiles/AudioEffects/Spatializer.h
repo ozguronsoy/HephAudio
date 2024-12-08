@@ -38,7 +38,7 @@ namespace HephAudio
 	 * @brief applies 3D audio spatialization using SOFA files.
 	 *
 	 */
-	class Spatializer : public FrequencyDomainEffect
+	class HEPH_API Spatializer : public FrequencyDomainEffect
 	{
 	public:
 		using FrequencyDomainEffect::Process;

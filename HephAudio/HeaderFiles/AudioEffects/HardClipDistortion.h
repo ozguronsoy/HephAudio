@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief applies hard-clipping distortion.
 	 * 
 	 */
-	class HardClipDistortion : public AudioEffect
+	class HEPH_API HardClipDistortion : public AudioEffect
 	{
 	protected:
 		/**

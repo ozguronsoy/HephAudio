@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief applies linear fade-in.
 	 * 
 	 */
-	class LinearFadeIn : public AudioEffect
+	class HEPH_API LinearFadeIn : public AudioEffect
 	{
 	public:
 		using AudioEffect::Process;

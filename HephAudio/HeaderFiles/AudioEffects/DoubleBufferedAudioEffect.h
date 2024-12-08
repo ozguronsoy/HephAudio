@@ -9,7 +9,7 @@ namespace HephAudio
 	/**
 	 * @brief base class for audio effects that use a temporary buffer while processing.
 	 */
-	class DoubleBufferedAudioEffect : public AudioEffect
+	class HEPH_API DoubleBufferedAudioEffect : public AudioEffect
 	{
 	public:
 		using AudioEffect::Process;

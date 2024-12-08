@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief changes the playback speed of the audio data without changing the pitch.
 	 * 
 	 */
-	class TimeStretcher : public OlaEffect
+	class HEPH_API TimeStretcher : public OlaEffect
 	{
 	protected:
 		/**

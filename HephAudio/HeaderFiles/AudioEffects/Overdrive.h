@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief applies overdrive distortion.
 	 *
 	 */
-	class Overdrive : public AudioEffect
+	class HEPH_API Overdrive : public AudioEffect
 	{
 	protected:
 		/**

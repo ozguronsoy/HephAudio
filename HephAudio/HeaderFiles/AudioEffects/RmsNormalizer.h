@@ -11,7 +11,7 @@ namespace HephAudio
 	/**
 	 * @brief normalizes the audio data at the provided RMS.
 	 */
-	class RmsNormalizer : public AudioEffect
+	class HEPH_API RmsNormalizer : public AudioEffect
 	{
 	protected:
 		/**

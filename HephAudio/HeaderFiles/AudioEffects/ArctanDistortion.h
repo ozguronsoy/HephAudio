@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief applies soft-clipping distortion via arctan function.
 	 * 
 	 */
-	class ArctanDistortion : public AudioEffect
+	class HEPH_API ArctanDistortion : public AudioEffect
 	{
 	protected:
 		/**

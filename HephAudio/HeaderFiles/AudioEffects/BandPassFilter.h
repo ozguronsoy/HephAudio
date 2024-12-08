@@ -10,7 +10,7 @@ namespace HephAudio
 	 * @brief removes the frequencies that are not in the provided frequency band.
 	 *
 	 */
-	class BandPassFilter : public Equalizer
+	class HEPH_API BandPassFilter : public Equalizer
 	{
 	protected:
 		using Equalizer::FrequencyRange;
