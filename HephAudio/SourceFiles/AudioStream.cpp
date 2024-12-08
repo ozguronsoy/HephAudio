@@ -37,7 +37,7 @@ namespace HephAudio
 
 	AudioStream::AudioStream(AudioStream&& rhs) noexcept
 		: pNativeAudio(rhs.pNativeAudio), pAudioDecoder(rhs.pAudioDecoder),
-		formatInfo(rhs.formatInfo), frameCount(rhs.frameCount), 
+		formatInfo(rhs.formatInfo), frameCount(rhs.frameCount),
 		pAudioObject(rhs.pAudioObject), decodedBuffer(std::move(rhs.decodedBuffer))
 	{
 		if (this->pAudioObject != nullptr)
@@ -302,9 +302,16 @@ namespace HephAudio
 		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 
 		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY];
-		if (pStream != nullptr && pFinishedPlayingEventArgs->remainingLoopCount == 0)
+		if (pStream != nullptr)
 		{
-			pStream->Release(false);
+			if (pFinishedPlayingEventArgs->remainingLoopCount == 0)
+			{
+				pStream->Release(false);
+			}
+			else if (pStream->pAudioDecoder != nullptr)
+			{
+				pStream->pAudioDecoder->Seek(0);
+			}
 		}
 	}
 }
