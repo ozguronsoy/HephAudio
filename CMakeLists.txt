@@ -52,6 +52,7 @@ file(GLOB HEPHAUDIO_SRC
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Buffers/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephCommon/SourceFiles/Exceptions/*.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioEffects/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/AudioEvents/*.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HephAudio/SourceFiles/FFmpeg/*.cpp
