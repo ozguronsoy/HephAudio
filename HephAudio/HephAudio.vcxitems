@@ -31,7 +31,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\AudioEffect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EncodedAudioBuffer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegEncodedAudioBuffer.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\AndroidAudioA.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\AndroidAudioBase.h" />
@@ -56,8 +55,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\BlackmanHarrisWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\BlackmanNuttallWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\BlackmanWindow.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EchoInfo.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EqualizerInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Windows\ExactBlackmanWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioDecoder.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\FFmpeg\FFmpegAudioEncoder.h" />
@@ -151,7 +148,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephAudioShared.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioA.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioBase.cpp" />
@@ -166,8 +162,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BlackmanHarrisWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BlackmanNuttallWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BlackmanWindow.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EchoInfo.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EqualizerInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\ExactBlackmanWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioDecoder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioEncoder.cpp" />

@@ -1,6 +1,6 @@
 #include "FFmpeg/FFmpegAudioEncoder.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
-#include "AudioProcessor.h"
+#include "AudioEffects/Resampler.h"
 #include "HephMath.h"
 #include "ConsoleLogger.h"
 #include "Exceptions/Exception.h"
@@ -646,9 +646,11 @@ namespace HephAudio
 	void FFmpegAudioEncoder::Transcode(void* pDecoder, FFmpegAudioEncoder& encoder)
 	{
 		FFmpegAudioDecoder& decoder = *(FFmpegAudioDecoder*)pDecoder;
-		const uint32_t inputSampleRate = decoder.GetOutputFormatInfo().sampleRate;
-		const size_t readSize = av_rescale(encoder.avFrame->nb_samples, inputSampleRate, encoder.outputFormatInfo.sampleRate);
-		const size_t minRequiredFrameCount = FFMAX(readSize, encoder.avFrame->nb_samples);
+		Resampler resampler(encoder.outputFormatInfo.sampleRate);
+		const AudioFormatInfo inputFormat = decoder.GetOutputFormatInfo();
+		const size_t requiredFrameCount = resampler.CalculateRequiredFrameCount(encoder.avFrame->nb_samples, inputFormat);
+		const size_t advanceSize = resampler.CalculateAdvanceSize(encoder.avFrame->nb_samples, inputFormat);
+		const size_t minRequiredFrameCount = FFMAX(requiredFrameCount, encoder.avFrame->nb_samples);
 		AudioBuffer decodedBuffer;
 
 		size_t i = 0;
@@ -668,10 +670,10 @@ namespace HephAudio
 				}
 			}
 
-			if (inputSampleRate != encoder.outputFormatInfo.sampleRate)
+			if (inputFormat.sampleRate != encoder.outputFormatInfo.sampleRate)
 			{
-				AudioBuffer convertedBuffer = decodedBuffer.SubBuffer(0, readSize + 1);
-				AudioProcessor::ChangeSampleRate(convertedBuffer, encoder.outputFormatInfo.sampleRate);
+				AudioBuffer convertedBuffer = decodedBuffer.SubBuffer(0, requiredFrameCount);
+				resampler.Process(convertedBuffer);
 
 				if (convertedBuffer.FrameCount() != encoder.avFrame->nb_samples)
 				{
@@ -679,9 +681,9 @@ namespace HephAudio
 				}
 
 				encoder.Encode(convertedBuffer);
-				decodedBuffer.Cut(0, readSize);
+				decodedBuffer.Cut(0, advanceSize);
 
-				i += readSize;
+				i += advanceSize;
 			}
 			else
 			{

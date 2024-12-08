@@ -1,7 +1,8 @@
 #include "NativeAudio/NativeAudio.h"
-#include "AudioProcessor.h"
 #include "FFmpeg/FFmpegAudioDecoder.h"
 #include "FFmpeg/FFmpegAudioEncoder.h"
+#include "AudioEffects/ChannelMapper.h"
+#include "AudioEffects/Resampler.h"
 #include "AudioEvents/AudioDeviceEventArgs.h"
 #include "AudioEvents/AudioCaptureEventArgs.h"
 #include "AudioEvents/AudioRenderEventArgs.h"
@@ -103,8 +104,8 @@ namespace HephAudio
 			AudioObject* pao = this->Play(filePath, playCount, isPaused);
 			if (pao != nullptr && this->isRenderInitialized)
 			{
-				AudioProcessor::ChangeSampleRate(pao->buffer, this->renderFormat.sampleRate);
-				AudioProcessor::ChangeChannelLayout(pao->buffer, this->renderFormat.channelLayout);
+				Resampler(this->renderFormat.sampleRate).Process(pao->buffer);
+				ChannelMapper(this->renderFormat.channelLayout).Process(pao->buffer);
 			}
 			return pao;
 		}

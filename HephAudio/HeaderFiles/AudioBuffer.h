@@ -14,8 +14,6 @@ namespace HephAudio
 	 */
 	class HEPH_API AudioBuffer final : public Heph::SignedArithmeticBuffer<AudioBuffer, heph_audio_sample_t>
 	{
-		friend class AudioProcessor;
-
 	private:
 		size_t frameCount;
 		AudioFormatInfo formatInfo;

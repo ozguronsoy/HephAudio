@@ -87,14 +87,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\AndroidAudioSLES.h">
       <Filter>HeaderFiles\NativeAudio</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EchoInfo.h">
-      <Filter>HeaderFiles\AudioStructs</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\Audio.h">
       <Filter>HeaderFiles</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\EqualizerInfo.h">
-      <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\AndroidAudioA.h">
       <Filter>HeaderFiles\NativeAudio</Filter>
@@ -223,7 +217,6 @@
       <Filter>HeaderFiles\FFmpeg</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelLayout.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioChannelMixingLookupTables.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\NativeAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\WasapiParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
@@ -288,14 +281,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioSLES.cpp">
       <Filter>SourceFiles\NativeAudio</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EchoInfo.cpp">
-      <Filter>SourceFiles\AudioStructs</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Audio.cpp">
       <Filter>SourceFiles</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EqualizerInfo.cpp">
-      <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioA.cpp">
       <Filter>SourceFiles\NativeAudio</Filter>
@@ -403,7 +390,6 @@
       <Filter>SourceFiles\FFmpeg</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelMixingLookupTables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioRenderEventResult.cpp" />
