@@ -1,9 +1,10 @@
 #include "AudioObject.h"
-#include "AudioProcessor.h"
 #include "NativeAudio/NativeAudio.h"
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
 #include "AudioEvents/AudioFinishedPlayingEventArgs.h"
+#include "AudioEffects/ChannelMapper.h"
+#include "AudioEffects/Resampler.h"
 #include "HephMath.h"
 #include "Exceptions/InvalidArgumentException.h"
 
@@ -91,23 +92,27 @@ namespace HephAudio
 
 	void AudioObject::MatchFormatRenderHandler(const Heph::EventParams& eventParams)
 	{
+		static Resampler resampler;
+		static ChannelMapper channelMapper;
+
 		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
 		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
 
-		AudioFormatInfo renderFormat = pRenderArgs->pNativeAudio->GetRenderFormat();
-		const size_t readFrameCount = ceil((double)pRenderArgs->renderFrameCount * (double)pRenderArgs->pAudioObject->buffer.FormatInfo().sampleRate / (double)renderFormat.sampleRate);
+		const AudioFormatInfo& inputFormat = pRenderArgs->pAudioObject->buffer.FormatInfo();
+		const AudioFormatInfo& renderFormat = pRenderArgs->pNativeAudio->GetRenderFormat();
 
-		pRenderResult->renderBuffer = pRenderArgs->pAudioObject->buffer.SubBuffer(pRenderArgs->pAudioObject->frameIndex, readFrameCount + 1);
+		resampler.SetOutputSampleRate(renderFormat.sampleRate);
+		channelMapper.SetTargetLayout(renderFormat.channelLayout);
 
-		AudioProcessor::ChangeSampleRate(pRenderResult->renderBuffer, renderFormat.sampleRate);
-		if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
-		{
-			pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
-		}
+		const size_t requiredFrameCount = resampler.CalculateRequiredFrameCount(pRenderArgs->renderFrameCount, inputFormat);
+		const size_t advanceSize = resampler.CalculateAdvanceSize(pRenderArgs->renderFrameCount, inputFormat);
 
-		AudioProcessor::ChangeChannelLayout(pRenderResult->renderBuffer, renderFormat.channelLayout);
+		pRenderResult->renderBuffer = pRenderArgs->pAudioObject->buffer.SubBuffer(pRenderArgs->pAudioObject->frameIndex, requiredFrameCount);
+		
+		resampler.Process(pRenderResult->renderBuffer);
+		channelMapper.Process(pRenderResult->renderBuffer);
 
-		pRenderArgs->pAudioObject->frameIndex += readFrameCount;
+		pRenderArgs->pAudioObject->frameIndex += advanceSize;
 		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
 	}
 }
