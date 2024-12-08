@@ -37,6 +37,7 @@ namespace HephAudio
 		virtual std::string Name() const override;
 		virtual size_t CalculateRequiredFrameCount(size_t outputFrameCount, const AudioFormatInfo& formatInfo) const override;
 		virtual size_t CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const override;
+		virtual size_t CalculateAdvanceSize(size_t renderFrameCount, const AudioFormatInfo& formatInfo) const override;
 
 		/**
 		 * gets the output sample rate.

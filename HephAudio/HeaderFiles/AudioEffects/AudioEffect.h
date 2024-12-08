@@ -77,6 +77,15 @@ namespace HephAudio
 		virtual size_t CalculateOutputFrameCount(size_t inputFrameCount, const AudioFormatInfo& formatInfo) const;
 
 		/**
+		 * calculates the number of frames to process and advance for the current render event.
+		 * 
+		 * @param renderFrameCount number of audio frames that will be rendered.
+		 * @param formatInfo the format info of the input buffer.
+		 * 
+		 */
+		virtual size_t CalculateAdvanceSize(size_t renderFrameCount, const AudioFormatInfo& formatInfo) const;
+
+		/**
 		 * resets the variables internally used for processing.
 		 * 
 		 */

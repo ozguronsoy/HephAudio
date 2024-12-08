@@ -47,6 +47,11 @@ namespace HephAudio
 		return inputFrameCount;
 	}
 
+	size_t AudioEffect::CalculateAdvanceSize(size_t renderFrameCount, const AudioFormatInfo& formatInfo) const
+	{
+		return renderFrameCount;
+	}
+
 	void AudioEffect::ResetInternalState()
 	{
 		return;

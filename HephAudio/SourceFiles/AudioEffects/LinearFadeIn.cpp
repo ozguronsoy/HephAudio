@@ -32,21 +32,6 @@ namespace HephAudio
 		this->currentIndex += frameCount;
 	}
 
-	double LinearFadeIn::GetDuration() const
-	{
-		return this->duration;
-	}
-
-	void LinearFadeIn::SetDuration(double duration)
-	{
-		if (duration < 0)
-		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "duration cannot be negative."));
-		}
-
-		this->duration = duration;
-	}
-
 	double LinearFadeIn::GetStartTime() const
 	{
 		return this->startTime;
@@ -60,6 +45,21 @@ namespace HephAudio
 		}
 
 		this->startTime = startTime;
+	}
+
+	double LinearFadeIn::GetDuration() const
+	{
+		return this->duration;
+	}
+
+	void LinearFadeIn::SetDuration(double duration)
+	{
+		if (duration < 0)
+		{
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "duration cannot be negative."));
+		}
+
+		this->duration = duration;
 	}
 
 	void LinearFadeIn::ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount)

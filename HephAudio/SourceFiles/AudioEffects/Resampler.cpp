@@ -29,6 +29,11 @@ namespace HephAudio
 		return inputFrameCount * ((double)this->outputSampleRate / formatInfo.sampleRate);
 	}
 
+	size_t Resampler::CalculateAdvanceSize(size_t renderFrameCount, const AudioFormatInfo& formatInfo) const
+	{
+		return this->CalculateRequiredFrameCount(renderFrameCount, formatInfo) - 1;
+	}
+
 	size_t Resampler::GetOutputSampleRate() const
 	{
 		return this->outputSampleRate;
@@ -85,11 +90,6 @@ namespace HephAudio
 
 	void Resampler::InitializeOutputBuffer(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) const
 	{
-		if (startIndex != 0 || frameCount != inputBuffer.FrameCount())
-		{
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "this effect must be applied to the entire buffer."));
-		}
-
 		outputBuffer.Reset();
 	}
 }

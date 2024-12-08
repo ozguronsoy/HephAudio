@@ -17,16 +17,16 @@ namespace HephAudio
 
 	protected:
 		/**
+		 * time, in seconds, of the first audio frame the effect will be applied to.
+		 *
+		 */
+		double startTime;
+
+		/**
 		 * duration of the fade-in in seconds.
 		 * 
 		 */
 		double duration;
-
-		/**
-		 * time, in seconds, of the first audio frame the effect will be applied to.
-		 * 
-		 */
-		double startTime;
 
 		/**
 		 * for real-time processing.
@@ -63,19 +63,6 @@ namespace HephAudio
 		virtual void Process(AudioBuffer& buffer, size_t startIndex, size_t frameCount) override;
 
 		/**
-		 * gets the duration in seconds.
-		 *
-		 */
-		virtual double GetDuration() const;
-
-		/**
-		 * sets the duration.
-		 *
-		 * @param duration @copydetails duration
-		 */
-		virtual void SetDuration(double duration);
-
-		/**
 		 * gets the start time in seconds.
 		 *
 		 */
@@ -87,6 +74,19 @@ namespace HephAudio
 		 * @param startTime @copydetails startTime
 		 */
 		virtual void SetStartTime(double startTime);
+
+		/**
+		 * gets the duration in seconds.
+		 *
+		 */
+		virtual double GetDuration() const;
+
+		/**
+		 * sets the duration.
+		 *
+		 * @param duration @copydetails duration
+		 */
+		virtual void SetDuration(double duration);
 
 	protected:
 		virtual void ProcessST(const AudioBuffer& inputBuffer, AudioBuffer& outputBuffer, size_t startIndex, size_t frameCount) override;
