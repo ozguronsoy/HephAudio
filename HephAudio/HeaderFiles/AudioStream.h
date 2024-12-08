@@ -23,6 +23,7 @@ namespace HephAudio
 	{
 	private:
 		Native::NativeAudio* pNativeAudio;
+		std::shared_ptr<IAudioDecoder> pAudioDecoder;
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
 		AudioObject* pAudioObject;
@@ -75,6 +76,19 @@ namespace HephAudio
 		 * 
 		 */
 		Native::NativeAudio* GetNativeAudio() const;
+
+		/**
+		 * gets the shared pointer to the audio decoder instance.
+		 * 
+		 */
+		std::shared_ptr<IAudioDecoder> GetAudioDecoder() const;
+
+		/**
+		 * sets the decoder.
+		 *
+		 * @param pNewDecoder shared pointer to the new decoder.
+		 */
+		void SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder);
 
 		/**
 		 * gets the pointer to the \link HephAudio::AudioObject AudioObject \endlink instance that's created to play audio data.

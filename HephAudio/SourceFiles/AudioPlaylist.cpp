@@ -212,7 +212,6 @@ namespace HephAudio
 
 		std::filesystem::path filePath = this->files[0];
 		AudioObject* pAudioObject = this->stream.GetAudioObject();
-		const bool isPaused = (pAudioObject != nullptr) ? (pAudioObject->isPaused) : (true);
 
 	OPEN_NEW_STREAM:
 		try
@@ -226,7 +225,6 @@ namespace HephAudio
 				pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
 				pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY, this);
 			}
-			pAudioObject->isPaused = isPaused;
 		}
 		catch (const Exception&)
 		{
