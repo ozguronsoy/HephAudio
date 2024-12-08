@@ -12,25 +12,25 @@
  * the minimum value the azimuth can have in degrees.
  *
  */
-#define HEPHAUDIO_SPATIALIZER_AZIMUTH_MIN 0
+#define HEPHAUDIO_SPATIALIZER_AZIMUTH_MIN (0)
 
  /**
   * the maximum value the azimuth can have in degrees.
   *
   */
-#define HEPHAUDIO_SPATIALIZER_AZIMUTH_MAX 360
+#define HEPHAUDIO_SPATIALIZER_AZIMUTH_MAX (360)
 
   /**
    * the minimum value the elevation can have in degrees.
    *
    */
-#define HEPHAUDIO_SPATIALIZER_ELEVATION_MIN -90
+#define HEPHAUDIO_SPATIALIZER_ELEVATION_MIN (-90)
 
    /**
 	* the maximum value the elevation can have in degrees.
 	*
 	*/
-#define HEPHAUDIO_SPATIALIZER_ELEVATION_MAX 90
+#define HEPHAUDIO_SPATIALIZER_ELEVATION_MAX (90)
 
 namespace HephAudio
 {
@@ -48,13 +48,13 @@ namespace HephAudio
 		 * in degrees.
 		 *
 		 */
-		double azimuth;
+		float azimuth;
 
 		/**
 		 * in degrees.
 		 *
 		 */
-		double elevation;
+		float elevation;
 
 		/**
 		 * path of the SOFA file.
@@ -108,7 +108,7 @@ namespace HephAudio
 		 * @param wnd @copydetails wnd
 		 *
 		 */
-		Spatializer(double azimuth, double elevation, size_t hopSize, const Window& wnd);
+		Spatializer(float azimuth, float elevation, size_t hopSize, const Window& wnd);
 
 		/**
 		 * @copydoc constructor
@@ -121,7 +121,7 @@ namespace HephAudio
 		 * @param wnd @copydetails wnd
 		 *
 		 */
-		Spatializer(const std::filesystem::path& filePath, uint32_t sampleRate, double azimuth, double elevation, size_t hopSize, const Window& wnd);
+		Spatializer(const std::filesystem::path& filePath, uint32_t sampleRate, float azimuth, float elevation, size_t hopSize, const Window& wnd);
 
 		/** @copydoc destructor */
 		virtual ~Spatializer();
@@ -148,7 +148,7 @@ namespace HephAudio
 		 * gets the azimuth angle in degrees.
 		 *
 		 */
-		virtual double GetAzimuth() const;
+		virtual float GetAzimuth() const;
 
 		/**
 		 * sets the azimuth angle.
@@ -156,13 +156,13 @@ namespace HephAudio
 		 * @param azimuth @copydetails azimuth
 		 *
 		 */
-		virtual void SetAzimuth(double azimuth);
+		virtual void SetAzimuth(float azimuth);
 
 		/**
 		 * gets the elevation angle in degrees.
 		 *
 		 */
-		virtual double GetElevation() const;
+		virtual float GetElevation() const;
 
 		/**
 		 * sets the elevation angle.
@@ -170,7 +170,7 @@ namespace HephAudio
 		 * @param elevation @copydetails elevation
 		 *
 		 */
-		virtual void SetElevation(double elevation);
+		virtual void SetElevation(float elevation);
 
 		/**
 		 * gets the sampling rate of the HRTF filters.

@@ -27,7 +27,7 @@ namespace HephAudio
 
 	Spatializer::Spatializer(size_t hopSize, const Window& wnd) : Spatializer(0, 0, hopSize, wnd) {}
 
-	Spatializer::Spatializer(double azimuth, double elevation, size_t hopSize, const Window& wnd)
+	Spatializer::Spatializer(float azimuth, float elevation, size_t hopSize, const Window& wnd)
 		: FrequencyDomainEffect(hopSize, wnd),
 		azimuth(azimuth), elevation(elevation),
 		pEasy(nullptr), hrtfSize(0), hrtfSampleRate(48000),
@@ -36,7 +36,7 @@ namespace HephAudio
 		this->OpenDefaultFile();
 	}
 
-	Spatializer::Spatializer(const std::filesystem::path& filePath, uint32_t sampleRate, double azimuth, double elevation, size_t hopSize, const Window& wnd)
+	Spatializer::Spatializer(const std::filesystem::path& filePath, uint32_t sampleRate, float azimuth, float elevation, size_t hopSize, const Window& wnd)
 		: FrequencyDomainEffect(hopSize, wnd),
 		azimuth(azimuth), elevation(elevation),
 		pEasy(nullptr), hrtfSize(0), hrtfSampleRate(sampleRate),
@@ -149,12 +149,12 @@ namespace HephAudio
 		}
 	}
 
-	double Spatializer::GetAzimuth() const
+	float Spatializer::GetAzimuth() const
 	{
 		return this->azimuth;
 	}
 
-	void Spatializer::SetAzimuth(double azimuth)
+	void Spatializer::SetAzimuth(float azimuth)
 	{
 		if (this->azimuth != azimuth)
 		{
@@ -163,12 +163,12 @@ namespace HephAudio
 		}
 	}
 
-	double Spatializer::GetElevation() const
+	float Spatializer::GetElevation() const
 	{
 		return this->elevation;
 	}
 
-	void Spatializer::SetElevation(double elevation)
+	void Spatializer::SetElevation(float elevation)
 	{
 		if (this->elevation != elevation)
 		{
