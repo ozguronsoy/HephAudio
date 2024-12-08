@@ -1,10 +1,10 @@
 #include "AudioObject.h"
 #include "NativeAudio/NativeAudio.h"
+#include "AudioEffects/ChannelMapper.h"
+#include "AudioEffects/Resampler.h"
 #include "AudioEvents/AudioRenderEventArgs.h"
 #include "AudioEvents/AudioRenderEventResult.h"
 #include "AudioEvents/AudioFinishedPlayingEventArgs.h"
-#include "AudioEffects/ChannelMapper.h"
-#include "AudioEffects/Resampler.h"
 #include "HephMath.h"
 #include "Exceptions/InvalidArgumentException.h"
 
@@ -57,15 +57,9 @@ namespace HephAudio
 
 	void AudioObject::SetPosition(double position)
 	{
-		if (position > 1.0)
+		if (position < 0 || position > 1)
 		{
-			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "position must be between 0 and 1"));
-			position = 1.0;
-		}
-		else if (position < 0.0)
-		{
-			HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "position must be between 0 and 1"));
-			position = 0.0;
+			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "position must be in the range of [0, 1]"));
 		}
 		this->frameIndex = position * this->buffer.FrameCount();
 	}
