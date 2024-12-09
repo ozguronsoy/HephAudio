@@ -449,5 +449,17 @@ namespace HephAudio
 		{
 			return AudioChannelLayout::GetChannelCount(layout.mask);
 		}
+
+		/**
+		 * gets the channel mapping that corresponds to the channel mask.
+		 *
+		 */
+		static std::vector<AudioChannelMask> GetChannelMapping(AudioChannelMask mask);
+
+		/**
+		 * gets the channel mapping that corresponds to the channel layout.
+		 *
+		 */
+		static std::vector<AudioChannelMask> GetChannelMapping(const AudioChannelLayout& layout);
 	};
 }

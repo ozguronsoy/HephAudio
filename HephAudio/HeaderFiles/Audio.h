@@ -15,18 +15,25 @@ namespace HephAudio
 	enum AudioAPI
 	{
 		Default,
+
 #if defined(_WIN32)
 		WASAPI,
 		DirectSound,
 		MMEAPI,
-#elif defined(__APPLE__)
+#endif
+
+#if defined(__APPLE__)
 		CoreAudio,
-#elif defined(__ANDROID__)
+#endif
+
+#if defined(__ANDROID__)
 #if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
 		AAudio,
 #endif
 		OpenSLES,
-#elif defined(__linux__)
+#endif
+
+#if defined(__linux__) && !defined(__ANDROID__)
 		ALSA,
 #endif
 	};
