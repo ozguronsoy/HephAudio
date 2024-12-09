@@ -23,7 +23,6 @@ namespace HephAudio
 	{
 		if (this->pNativeAudio == nullptr)
 		{
-			this->Release(false);
 			HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "pNativeAudio must not be nullptr."));
 		}
 
@@ -54,14 +53,14 @@ namespace HephAudio
 
 	AudioStream::~AudioStream()
 	{
-		this->Release(true);
+		this->Release();
 	}
 
 	AudioStream& AudioStream::operator=(AudioStream&& rhs) noexcept
 	{
 		if (this != &rhs)
 		{
-			this->Release(true);
+			this->Release();
 
 			this->pNativeAudio = rhs.pNativeAudio;
 			this->pAudioDecoder = rhs.pAudioDecoder;
@@ -125,58 +124,69 @@ namespace HephAudio
 		const bool isPaused = (this->pAudioObject != nullptr) ? (this->pAudioObject->isPaused) : (true);
 
 		this->Stop();
+		this->CloseFile();
 
-		if (newFilePath == "")
+		if (newFilePath != "")
 		{
+			if (!std::filesystem::exists(newFilePath))
+			{
+				if (this->pAudioObject != nullptr)
+				{
+					this->pAudioObject->isPaused = isPaused;
+				}
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotFoundException(HEPH_FUNC, "Could not find the file \"" + newFilePath.string() + "\""));
+			}
+
 			if (this->pAudioObject != nullptr)
 			{
-				this->pAudioObject->name = "";
-				this->pAudioObject->frameIndex = 0;
-				this->pAudioObject->playCount = 1;
-				this->pAudioObject->isPaused = isPaused;
-
-				this->pAudioDecoder->CloseFile();
+				this->pAudioObject->name = "(stream)" + newFilePath.filename().string();
+				this->pAudioObject->filePath = newFilePath;
 			}
-			return;
-		}
-
-		if (!std::filesystem::exists(newFilePath))
-		{
-			if (this->pAudioObject != nullptr)
+			else
 			{
-				this->pAudioObject->isPaused = isPaused;
-			}
-			HEPH_RAISE_AND_THROW_EXCEPTION(this, NotFoundException(HEPH_FUNC, "Could not find the file \"" + newFilePath.string() + "\""));
-		}
+				const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
+				this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + newFilePath.filename().string(), 0, renderFormat.channelLayout, renderFormat.sampleRate);
+				this->pAudioObject->filePath = newFilePath;
 
+				this->pAudioObject->OnRender = &AudioStream::OnRender;
+				this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
+				this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+				this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+			}
+
+			this->pAudioDecoder->ChangeFile(newFilePath);
+			this->formatInfo = this->pAudioDecoder->GetOutputFormatInfo();
+			this->frameCount = this->pAudioDecoder->GetFrameCount();
+			this->pAudioObject->isPaused = isPaused;
+		}
+	}
+
+	void AudioStream::CloseFile()
+	{
 		if (this->pAudioObject != nullptr)
 		{
-			this->pAudioObject->name = "(stream)" + newFilePath.filename().string();
+			const bool isPaused = this->pAudioObject->isPaused;
+			this->pAudioObject->Pause();
+
+			this->pAudioObject->buffer.Release();
+			this->pAudioObject->name = "";
+			this->pAudioObject->filePath = "";
 			this->pAudioObject->frameIndex = 0;
 			this->pAudioObject->playCount = 1;
+			this->pAudioObject->isPaused = isPaused;
 		}
-		else
+
+		if (this->pAudioDecoder != nullptr)
 		{
-			const AudioFormatInfo renderFormat = this->pNativeAudio->GetRenderFormat();
-			this->pAudioObject = this->pNativeAudio->CreateAudioObject("(stream)" + newFilePath.filename().string(), 0, renderFormat.channelLayout, renderFormat.sampleRate);
-
-			this->pAudioObject->OnRender = &AudioStream::OnRender;
-			this->pAudioObject->OnFinishedPlaying = &AudioStream::OnFinishedPlaying;
-			this->pAudioObject->OnRender.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
-			this->pAudioObject->OnFinishedPlaying.userEventArgs.Add(HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY, this);
+			this->pAudioDecoder->CloseFile();
 		}
-
-		this->pAudioDecoder->ChangeFile(newFilePath);
-		this->formatInfo = this->pAudioDecoder->GetOutputFormatInfo();
-		this->frameCount = this->pAudioDecoder->GetFrameCount();
-		this->pAudioObject->isPaused = isPaused;
 	}
 
 	void AudioStream::Start()
 	{
 		if (this->pAudioObject != nullptr)
 		{
-			this->pAudioObject->isPaused = false;
+			this->pAudioObject->Resume();
 		}
 	}
 
@@ -184,7 +194,7 @@ namespace HephAudio
 	{
 		if (this->pAudioObject != nullptr)
 		{
-			this->pAudioObject->isPaused = true;
+			this->pAudioObject->Pause();
 		}
 	}
 
@@ -211,18 +221,10 @@ namespace HephAudio
 
 	void AudioStream::Release()
 	{
-		this->Release(true);
-	}
-
-	void AudioStream::Release(bool destroyAudioObject)
-	{
 		if (this->pNativeAudio != nullptr)
 		{
 			this->pAudioDecoder->CloseFile();
-			if (destroyAudioObject)
-			{
-				this->pNativeAudio->DestroyAudioObject(this->pAudioObject);
-			}
+			this->pNativeAudio->DestroyAudioObject(this->pAudioObject);
 		}
 
 		this->decodedBuffer.Release();
@@ -306,7 +308,7 @@ namespace HephAudio
 		{
 			if (pFinishedPlayingEventArgs->remainingLoopCount == 0)
 			{
-				pStream->Release(false);
+				pStream->CloseFile();
 			}
 			else if (pStream->pAudioDecoder != nullptr)
 			{

@@ -189,6 +189,7 @@ namespace HephAudio
 				this->Clear();
 				return;
 			}
+
 			this->files.erase(this->files.begin(), this->files.begin() + n);
 			this->ChangeFile();
 		}
@@ -197,16 +198,14 @@ namespace HephAudio
 	void AudioPlaylist::Clear()
 	{
 		this->files.clear();
-		Native::NativeAudio* pNativeAudio = this->stream.GetNativeAudio();
-		this->stream.Release();
-		this->stream = AudioStream(pNativeAudio, "");
+		this->stream.CloseFile();
 	}
 
 	void AudioPlaylist::ChangeFile()
 	{
 		if (this->files.size() == 0)
 		{
-			this->stream.ChangeFile("");
+			this->stream.CloseFile();
 			return;
 		}
 
@@ -229,17 +228,16 @@ namespace HephAudio
 		catch (const Exception&)
 		{
 			this->files.erase(this->files.begin());
+			
 			if (this->files.size() > 0)
 			{
 				HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", trying next file...", HEPH_CL_WARNING);
 				filePath = this->files[0];
 				goto STREAM_CHANGE_FILE;
 			}
-			else
-			{
-				HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", playlist finished.", HEPH_CL_WARNING);
-				this->stream.ChangeFile("");
-			}
+		
+			HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", playlist finished.", HEPH_CL_WARNING);
+			this->stream.CloseFile();
 		}
 	}
 

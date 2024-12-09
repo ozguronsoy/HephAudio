@@ -115,6 +115,12 @@ namespace HephAudio
 		void ChangeFile(const std::filesystem::path& newFilePath);
 
 		/**
+		 * closes the file.
+		 * 
+		 */
+		void CloseFile();
+
+		/**
 		 * starts (resumes) playing the file.
 		 * 
 		 */
@@ -138,14 +144,8 @@ namespace HephAudio
 		 */
 		void SetPosition(double position);
 
-		/**
-		 * releases the resources.
-		 * 
-		 */
-		void Release();
-
 	private:
-		void Release(bool destroyAO);
+		void Release();
 		static void OnRender(const Heph::EventParams& eventParams);
 		static void OnFinishedPlaying(const Heph::EventParams& eventParams);
 	};

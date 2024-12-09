@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HephAudio\HephAudioTest.cpp" />
     <ClCompile Include="HephCommon\ComplexBufferTest.cpp" />
     <ClCompile Include="HephCommon\ArithmeticBufferTest.cpp" />
     <ClCompile Include="HephCommon\BufferBaseTest.cpp" />
