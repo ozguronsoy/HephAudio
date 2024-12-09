@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HephCommon\ComplexBufferTest.cpp" />
     <ClCompile Include="HephCommon\ArithmeticBufferTest.cpp" />
     <ClCompile Include="HephCommon\BufferBaseTest.cpp" />
     <ClCompile Include="HephCommon\ExceptionTest.cpp" />
@@ -113,6 +114,7 @@
     <ClCompile Include="HephCommon\EventTest.cpp" />
     <ClCompile Include="HephCommon\HephMathTest.cpp" />
     <ClCompile Include="HephCommon\HephSharedTest.cpp" />
+    <ClCompile Include="HephCommon\StopwatchTest.cpp" />
     <ClCompile Include="HephCommon\StringHelpersTest.cpp" />
     <ClCompile Include="HephCommon\UserEventArgsTest.cpp" />
   </ItemGroup>
