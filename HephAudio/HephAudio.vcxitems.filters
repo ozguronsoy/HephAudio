@@ -63,9 +63,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\HephAudioShared.h">
       <Filter>HeaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioProcessor.h">
-      <Filter>HeaderFiles</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioDevice.h">
       <Filter>HeaderFiles\AudioStructs</Filter>
     </ClInclude>
@@ -260,9 +257,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEffects\ChannelMapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp">
-      <Filter>SourceFiles</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioObject.cpp">
       <Filter>SourceFiles\AudioStructs</Filter>
     </ClCompile>

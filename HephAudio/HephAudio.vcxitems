@@ -45,7 +45,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioEvents\AudioFinishedPlayingEventArgs.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioFormatInfo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioPlaylist.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\AudioProcessor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AAudioParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\AlsaParams.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)HeaderFiles\NativeAudio\Params\NativeAudioParams.h" />
@@ -157,7 +156,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioFormatInfo.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioPlaylist.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioProcessor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BartlettHannWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BlackmanHarrisWindow.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\Windows\BlackmanNuttallWindow.cpp" />

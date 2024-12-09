@@ -213,9 +213,9 @@ namespace HephAudio
 		std::filesystem::path filePath = this->files[0];
 		AudioObject* pAudioObject = this->stream.GetAudioObject();
 
-	OPEN_NEW_STREAM:
+	STREAM_CHANGE_FILE:
 		try
-		{	
+		{
 			this->stream.ChangeFile(filePath);
 			pAudioObject = this->stream.GetAudioObject();
 
@@ -231,16 +231,15 @@ namespace HephAudio
 			this->files.erase(this->files.begin());
 			if (this->files.size() > 0)
 			{
-				const std::filesystem::path oldFilePath = std::move(filePath);
+				HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", trying next file...", HEPH_CL_WARNING);
 				filePath = this->files[0];
-				HEPHAUDIO_LOG("Could not play \"" + oldFilePath.string() + "\", trying next file...", HEPH_CL_ERROR);
+				goto STREAM_CHANGE_FILE;
 			}
 			else
 			{
-				HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", playlist finished.", HEPH_CL_ERROR);
-				filePath = "";
+				HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", playlist finished.", HEPH_CL_WARNING);
+				this->stream.ChangeFile("");
 			}
-			goto OPEN_NEW_STREAM;
 		}
 	}
 
