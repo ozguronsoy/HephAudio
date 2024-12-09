@@ -383,7 +383,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegAudioEncoder.cpp">
       <Filter>SourceFiles\FFmpeg</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioEvents\AudioRenderEventResult.cpp" />

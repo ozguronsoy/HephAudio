@@ -72,7 +72,7 @@ namespace HephAudio
 		AudioStream& operator=(AudioStream&& rhs) noexcept;
 
 		/**
-		 * gets the pointer to the \link HephAudio::Native::NativeAudio NativeAudio \endlink instance that's used for rendering audio data.
+		 * gets the pointer to the native audio instance that's used for rendering audio data.
 		 * 
 		 */
 		Native::NativeAudio* GetNativeAudio() const;
@@ -91,7 +91,7 @@ namespace HephAudio
 		void SetAudioDecoder(std::shared_ptr<IAudioDecoder> pNewDecoder);
 
 		/**
-		 * gets the pointer to the \link HephAudio::AudioObject AudioObject \endlink instance that's created to play audio data.
+		 * gets the pointer to the audio object instance that's created to play audio data.
 		 * 
 		 */
 		AudioObject* GetAudioObject() const;

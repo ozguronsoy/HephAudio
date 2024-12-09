@@ -147,7 +147,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\EncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\FFmpeg\FFmpegEncodedAudioBuffer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\HephAudioShared.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\AudioChannelLayout.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioA.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SourceFiles\NativeAudio\AndroidAudioSLES.cpp" />

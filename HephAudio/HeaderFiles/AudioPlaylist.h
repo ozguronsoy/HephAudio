@@ -81,10 +81,16 @@ namespace HephAudio
 		size_t Size() const;
 
 		/**
-		 * gets the pointer to the \link HephAudio::Native::NativeAudio NativeAudio \endlink instance that's used for playing the files.
+		 * gets the pointer to the native audio instance that's used for playing the files.
 		 *
 		 */
 		Native::NativeAudio* GetNativeAudio() const;
+
+		/**
+		 * gets the pointer to the audio object instance that's created to play audio data.
+		 *
+		 */
+		AudioObject* GetAudioObject() const;
 
 		/**
 		 * starts (resumes) playing the files.

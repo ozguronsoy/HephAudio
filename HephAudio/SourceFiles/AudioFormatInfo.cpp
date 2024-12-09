@@ -26,20 +26,22 @@ namespace HephAudio
 			&& this->channelLayout == rhs.channelLayout && this->sampleRate == rhs.sampleRate
 			&& this->bitRate == rhs.bitRate && this->endian == rhs.endian;
 	}
+
 	bool AudioFormatInfo::operator!=(const AudioFormatInfo& rhs) const
 	{
-		return this->formatTag != rhs.formatTag || this->bitsPerSample != rhs.bitsPerSample
-			|| this->channelLayout != rhs.channelLayout || this->sampleRate != rhs.sampleRate
-			|| this->bitRate != rhs.bitRate || this->endian != rhs.endian;
+		return !((*this) == rhs);
 	}
+
 	uint16_t AudioFormatInfo::FrameSize() const
 	{
 		return this->channelLayout.count * this->bitsPerSample / 8;
 	}
+
 	uint32_t AudioFormatInfo::ByteRate() const
 	{
 		return this->bitRate / 8;
 	}
+
 	uint32_t AudioFormatInfo::CalculateBitrate(const AudioFormatInfo& formatInfo)
 	{
 		if (formatInfo.formatTag == HEPHAUDIO_FORMAT_TAG_PCM ||

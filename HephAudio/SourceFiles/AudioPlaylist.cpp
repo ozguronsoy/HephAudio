@@ -57,6 +57,11 @@ namespace HephAudio
 		return this->stream.GetNativeAudio();
 	}
 
+	AudioObject* AudioPlaylist::GetAudioObject() const
+	{
+		return this->stream.GetAudioObject();
+	}
+
 	void AudioPlaylist::Start()
 	{
 		if (this->files.size() > 0)
