@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "Exceptions/Exception.h"
 #include "Exceptions/ExceptionEventArgs.h"
+#include "Exceptions/ExternalException.h"
 #include "Exceptions/InsufficientMemoryException.h"
 #include "Exceptions/InvalidArgumentException.h"
 #include "Exceptions/InvalidOperationException.h"
@@ -60,33 +61,15 @@ TEST_F(ExceptionTest, Handler)
 
 TEST_F(ExceptionTest, GetName)
 {
-	std::vector<std::string> names;
-
-	auto test = [&names](const std::string& name)
-		{
-			bool exists = false;
-			
-			for (const std::string& n : names)
-			{
-				if (n == name)
-				{
-					exists = true;
-					EXPECT_NE(n, name) << "Duplicate exception name \"" << n << "\"";
-				}
-			}
-			
-			if (!exists)
-				names.push_back(name);
-		};
-
-	test(Exception().GetName());
-	test(InsufficientMemoryException().GetName());
-	test(InvalidArgumentException().GetName());
-	test(InvalidOperationException().GetName());
-	test(NotFoundException().GetName());
-	test(NotImplementedException().GetName());
-	test(NotSupportedException().GetName());
-	test(TimeoutException().GetName());
+	EXPECT_EQ(Exception().GetName(), "Exception");
+	EXPECT_EQ(ExternalException().GetName(), "ExternalException");
+	EXPECT_EQ(InsufficientMemoryException().GetName(), "InsufficientMemoryException");
+	EXPECT_EQ(InvalidArgumentException().GetName(), "InvalidArgumentException");
+	EXPECT_EQ(InvalidOperationException().GetName(), "InvalidOperationException");
+	EXPECT_EQ(NotFoundException().GetName(), "NotFoundException");
+	EXPECT_EQ(NotImplementedException().GetName(), "NotImplementedException");
+	EXPECT_EQ(NotSupportedException().GetName(), "NotSupportedException");
+	EXPECT_EQ(TimeoutException().GetName(), "TimeoutException");
 }
 
 TEST_F(ExceptionTest, GetExceptions)
@@ -112,4 +95,14 @@ TEST_F(ExceptionTest, GetLastException)
 	Exception::OnException = &Handler2;
 	HEPH_RAISE_EXCEPTION(nullptr, InvalidArgumentException());
 	CHECK_EX_TYPE(Exception::GetLastException().get(), InvalidArgumentException);
+}
+
+TEST_F(ExceptionTest, ExternalException)
+{
+	ExternalException e("method", "message", "externalSource", "externalMessage");
+
+	EXPECT_EQ(e.GetMethod(), "method");
+	EXPECT_EQ(e.GetMessage(), "message");
+	EXPECT_EQ(e.GetExternalSource(), "externalSource");
+	EXPECT_EQ(e.GetExternalMessage(), "externalMessage");
 }
