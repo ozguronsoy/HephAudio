@@ -145,7 +145,7 @@ namespace Heph
 		
 		constexpr bool operator!=(const Complex& rhs) const
 		{
-			return this->real != rhs.real || this->imag != rhs.imag;
+			return !((*this) == rhs);
 		}
 		
 		/**

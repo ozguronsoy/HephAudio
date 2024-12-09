@@ -25,7 +25,7 @@
    * gets the elapsed time since the last reset of the thread local Stopwatch instance in seconds.
    *
    */
-#define HEPH_SW_DT_S	Heph::Stopwatch::GetInstance().DeltaTime()
+#define HEPH_SW_DT_S	HEPH_SW_DT
 
    /**
 	* gets the elapsed time since the last reset of the thread local Stopwatch instance in milliseconds.
@@ -75,7 +75,7 @@ namespace Heph
 		/**
 		 * gets the elapsed time since the last reset.
 		 *
-		 * @param prefix the desired metric prefix.
+		 * @param prefix the metric prefix of the time unit.
 		 */
 		double DeltaTime(double prefix) const;
 

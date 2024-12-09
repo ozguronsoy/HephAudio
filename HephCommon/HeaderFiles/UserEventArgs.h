@@ -10,7 +10,8 @@ namespace Heph
 	/**
 	 * @brief class for passing custom data to the event handlers as key/value pairs.
 	 * 
-	 * @important This class only stores the pointers to the arguments. So it's your responsibility to ensure that the arguments still exist when handling the events.
+	 * @important This class only stores the pointers to the arguments. 
+	 * Thus you have to ensure that the arguments still exist when handling the events.
 	 * 
 	 */
 	class HEPH_API UserEventArgs final
