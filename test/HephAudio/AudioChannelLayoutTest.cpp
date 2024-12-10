@@ -13,7 +13,7 @@ TEST(AudioChannelLayoutTest, MaskOperators)
 	EXPECT_EQ((uint32_t)mask, expectedStereo);
 
 	mask |= AudioChannelMask::LowFrequency;
-	EXPECT_EQ(mask, expected2point1);
+	EXPECT_EQ((uint32_t)mask, expected2point1);
 
 	EXPECT_EQ(mask & AudioChannelMask::LowFrequency, AudioChannelMask::LowFrequency);
 	mask &= AudioChannelMask::FrontRight;

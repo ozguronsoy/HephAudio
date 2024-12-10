@@ -105,7 +105,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HephAudio\AudioBufferTest.cpp" />
     <ClCompile Include="HephAudio\AudioChannelLayoutTest.cpp" />
+    <ClCompile Include="HephAudio\AudioDeviceTest.cpp" />
     <ClCompile Include="HephAudio\AudioFormatInfoTest.cpp" />
     <ClCompile Include="HephAudio\AudioObjectTest.cpp" />
     <ClCompile Include="HephAudio\EncodedAudioBufferTest.cpp" />

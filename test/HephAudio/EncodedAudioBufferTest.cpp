@@ -75,6 +75,17 @@ TEST(EncodedAudioBufferTest, Move)
 		EXPECT_EQ(b2.Size(), expectedSize);
 		EXPECT_EQ(b2.GetAudioFormatInfo(), expectedFormat);
 	}
+
+	{
+		EncodedAudioBuffer b(expectedSize, expectedFormat);
+		const uint8_t* expectedBegin = b.begin();
+		
+		b = std::move(b);
+
+		EXPECT_EQ(b.begin(), expectedBegin);
+		EXPECT_EQ(b.Size(), expectedSize);
+		EXPECT_EQ(b.GetAudioFormatInfo(), expectedFormat);
+	}
 }
 
 TEST(EncodedAudioBufferTest, Release)

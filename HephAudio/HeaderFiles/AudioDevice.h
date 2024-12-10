@@ -30,42 +30,26 @@ namespace HephAudio
 		All = Render | Capture
 	};
 
-	constexpr AudioDeviceType operator|(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	inline constexpr AudioDeviceType operator|(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		return (AudioDeviceType)((uint8_t)lhs | (uint8_t)rhs);
 	}
 
-	constexpr AudioDeviceType& operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	inline constexpr AudioDeviceType& operator|=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		lhs = lhs | rhs;
 		return lhs;
 	}
 
-	constexpr AudioDeviceType operator&(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	inline constexpr AudioDeviceType operator&(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		return (AudioDeviceType)((uint8_t)lhs & (uint8_t)rhs);
 	}
 
-	constexpr AudioDeviceType& operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
+	inline constexpr AudioDeviceType& operator&=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
 	{
 		lhs = lhs & rhs;
 		return lhs;
-	}
-
-	constexpr AudioDeviceType operator^(const AudioDeviceType& lhs, const AudioDeviceType& rhs)
-	{
-		return (AudioDeviceType)((uint8_t)lhs ^ (uint8_t)rhs);
-	}
-
-	constexpr AudioDeviceType& operator^=(AudioDeviceType& lhs, const AudioDeviceType& rhs)
-	{
-		lhs = lhs ^ rhs;
-		return lhs;
-	}
-
-	constexpr AudioDeviceType operator~(const AudioDeviceType& lhs)
-	{
-		return (AudioDeviceType)(~(uint8_t)lhs);
 	}
 
 	/**

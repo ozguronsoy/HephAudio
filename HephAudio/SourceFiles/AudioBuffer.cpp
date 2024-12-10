@@ -48,7 +48,7 @@ namespace HephAudio
 		if (this != &rhs)
 		{
 			this->Release();
-			
+
 			BufferBase::operator=(rhs);
 
 			this->frameCount = rhs.frameCount;
@@ -225,13 +225,12 @@ namespace HephAudio
 
 	void AudioBuffer::SetChannelLayout(const AudioChannelLayout& channelLayout)
 	{
-		const size_t size = this->size;
 		const size_t frameCount = this->frameCount;
-		const uint16_t sampleRate = this->formatInfo.sampleRate;
+		const uint32_t sampleRate = this->formatInfo.sampleRate;
 
 		this->Release();
 
-		this->size = size;
+		this->size = frameCount * channelLayout.count;
 		this->frameCount = frameCount;
 		this->formatInfo = HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate);
 		this->pData = SignedArithmeticBuffer::Allocate(this->SizeAsByte());
