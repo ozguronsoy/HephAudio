@@ -9,7 +9,7 @@
 /** @file */
 
 /**
- * indicates to play the audio object infinitely.
+ * indicates the audio object will be played infinitely.
  *
  */
 #define HEPHAUDIO_INFINITE_LOOP 				(0)

@@ -22,7 +22,7 @@ namespace HephAudio
 	class HEPH_API AudioStream final
 	{
 	private:
-		Native::NativeAudio* pNativeAudio;
+		std::shared_ptr<Native::NativeAudio> pNativeAudio;
 		std::shared_ptr<IAudioDecoder> pAudioDecoder;
 		AudioFormatInfo formatInfo;
 		size_t frameCount;
@@ -33,9 +33,9 @@ namespace HephAudio
 		/** 
 		 * @copydoc constructor 
 		 * 
-		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param pNativeAudio shared pointer to the native audio instance that will be used for playing the files.
 		 */
-		AudioStream(Native::NativeAudio* pNativeAudio);
+		AudioStream(std::shared_ptr<Native::NativeAudio> pNativeAudio);
 		
 		/** 
 		 * @copydoc constructor 
@@ -47,10 +47,10 @@ namespace HephAudio
 		/** 
 		 * @copydoc constructor 
 		 * 
-		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param pNativeAudio shared pointer to the native audio instance that will be used for playing the files.
 		 * @param filePath file that will be played.
 		 */
-		AudioStream(Native::NativeAudio* pNativeAudio, const std::filesystem::path& filePath);
+		AudioStream(std::shared_ptr<Native::NativeAudio> pNativeAudio, const std::filesystem::path& filePath);
 		
 		/** 
 		 * @copydoc constructor 
@@ -72,10 +72,10 @@ namespace HephAudio
 		AudioStream& operator=(AudioStream&& rhs) noexcept;
 
 		/**
-		 * gets the pointer to the native audio instance that's used for rendering audio data.
+		 * gets the shared pointer to the native audio instance that's used for rendering audio data.
 		 * 
 		 */
-		Native::NativeAudio* GetNativeAudio() const;
+		std::shared_ptr<Native::NativeAudio> GetNativeAudio() const;
 
 		/**
 		 * gets the shared pointer to the audio decoder instance.

@@ -70,13 +70,13 @@ namespace HephAudio
 		virtual void Release() override;
 
 		/**
-		 * gets the \link HephAudio::AudioFormatInfo AudioFormatInfo \endlink of the buffer.
+		 * gets the audio format of the buffer.
 		 * 
 		 */
 		const AudioFormatInfo& GetAudioFormatInfo() const;
 
 		/**
-		 * sets the \link HephAudio::AudioFormatInfo AudioFormatInfo \endlink of the buffer.
+		 * sets the audio format of the buffer.
 		 * 
 		 */
 		void SetAudioFormatInfo(const AudioFormatInfo& newFormatInfo);

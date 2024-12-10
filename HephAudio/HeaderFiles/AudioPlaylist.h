@@ -34,10 +34,10 @@ namespace HephAudio
 		/**
 		 * @copydoc constructor
 		 *
-		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param pNativeAudio shared pointer to the native audio instance that will be used for playing the files.
 		 *
 		 */
-		AudioPlaylist(Native::NativeAudio* pNativeAudio);
+		AudioPlaylist(std::shared_ptr<Native::NativeAudio> pNativeAudio);
 		/**
 		 * @copydoc constructor
 		 *
@@ -49,11 +49,11 @@ namespace HephAudio
 		/**
 		 * @copydoc constructor
 		 *
-		 * @param pNativeAudio pointer to the native audio instance that will be used for playing the files.
+		 * @param pNativeAudio shared pointer to the native audio instance that will be used for playing the files.
 		 * @param files file paths.
 		 *
 		 */
-		AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::filesystem::path>& files);
+		AudioPlaylist(std::shared_ptr<Native::NativeAudio> pNativeAudio, const std::vector<std::filesystem::path>& files);
 
 		/**
 		 * @copydoc constructor
@@ -81,10 +81,10 @@ namespace HephAudio
 		size_t Size() const;
 
 		/**
-		 * gets the pointer to the native audio instance that's used for playing the files.
+		 * gets the shared pointer to the native audio instance that's used for playing the files.
 		 *
 		 */
-		Native::NativeAudio* GetNativeAudio() const;
+		std::shared_ptr<Native::NativeAudio> GetNativeAudio() const;
 
 		/**
 		 * gets the pointer to the audio object instance that's created to play audio data.

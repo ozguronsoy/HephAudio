@@ -13,7 +13,8 @@ using namespace Heph;
 namespace HephAudio
 {
 	AudioObject::AudioObject()
-		: id(Guid::GenerateNew()), filePath(""), name(""), isPaused(true), playCount(1), volume(1.0), frameIndex(0) 
+		: id(Guid::GenerateNew()), filePath(""), name(""), 
+		isPaused(true), playCount(1), volume(1.0), frameIndex(0) 
 	{
 		this->OnRender = HEPHAUDIO_RENDER_HANDLER_DEFAULT;
 	}

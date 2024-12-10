@@ -105,7 +105,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HephAudio\HephAudioTest.cpp" />
+    <ClCompile Include="HephAudio\AudioChannelLayoutTest.cpp" />
+    <ClCompile Include="HephAudio\AudioFormatInfoTest.cpp" />
+    <ClCompile Include="HephAudio\AudioObjectTest.cpp" />
+    <ClCompile Include="HephAudio\EncodedAudioBufferTest.cpp" />
+    <ClCompile Include="HephAudio\HephAudioSharedTest.cpp" />
     <ClCompile Include="HephCommon\ComplexBufferTest.cpp" />
     <ClCompile Include="HephCommon\ArithmeticBufferTest.cpp" />
     <ClCompile Include="HephCommon\BufferBaseTest.cpp" />

@@ -6,11 +6,11 @@ using namespace Heph;
 
 namespace HephAudio
 {
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio) : AudioPlaylist(pNativeAudio, {}) {}
+	AudioPlaylist::AudioPlaylist(std::shared_ptr<Native::NativeAudio> pNativeAudio) : AudioPlaylist(pNativeAudio, {}) {}
 
 	AudioPlaylist::AudioPlaylist(Audio& audio) : AudioPlaylist(audio.GetNativeAudio()) {}
 
-	AudioPlaylist::AudioPlaylist(Native::NativeAudio* pNativeAudio, const std::vector<std::filesystem::path>& files)
+	AudioPlaylist::AudioPlaylist(std::shared_ptr<Native::NativeAudio> pNativeAudio, const std::vector<std::filesystem::path>& files)
 		: stream(pNativeAudio), files(files)
 	{
 		this->ChangeFile();
@@ -52,7 +52,7 @@ namespace HephAudio
 		return this->files.size();
 	}
 
-	Native::NativeAudio* AudioPlaylist::GetNativeAudio() const
+	std::shared_ptr<Native::NativeAudio> AudioPlaylist::GetNativeAudio() const
 	{
 		return this->stream.GetNativeAudio();
 	}

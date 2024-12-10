@@ -14,11 +14,11 @@ using namespace Heph;
 
 namespace HephAudio
 {
-	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio) : AudioStream(pNativeAudio, "") {}
+	AudioStream::AudioStream(std::shared_ptr<Native::NativeAudio> pNativeAudio) : AudioStream(pNativeAudio, "") {}
 
 	AudioStream::AudioStream(Audio& audio) : AudioStream(audio.GetNativeAudio()) {}
 
-	AudioStream::AudioStream(Native::NativeAudio* pNativeAudio, const std::filesystem::path& filePath)
+	AudioStream::AudioStream(std::shared_ptr<Native::NativeAudio> pNativeAudio, const std::filesystem::path& filePath)
 		: pNativeAudio(pNativeAudio), pAudioDecoder(new FFmpegAudioDecoder()), frameCount(0), pAudioObject(nullptr)
 	{
 		if (this->pNativeAudio == nullptr)
@@ -84,7 +84,7 @@ namespace HephAudio
 		return *this;
 	}
 
-	Native::NativeAudio* AudioStream::GetNativeAudio() const
+	std::shared_ptr<Native::NativeAudio> AudioStream::GetNativeAudio() const
 	{
 		return this->pNativeAudio;
 	}

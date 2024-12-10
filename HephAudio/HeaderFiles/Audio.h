@@ -3,6 +3,7 @@
 #include "NativeAudio/NativeAudio.h"
 #include "AudioEvents/AudioDeviceEventArgs.h"
 #include "AudioEvents/AudioCaptureEventArgs.h"
+#include <memory>
 
 /** @file */
 
@@ -45,7 +46,7 @@ namespace HephAudio
 	class HEPH_API Audio final
 	{
 	private:
-		Native::NativeAudio* pNativeAudio;
+		std::shared_ptr<Native::NativeAudio> pNativeAudio;
 
 	public:
 		void SetOnAudioDeviceAddedHandler(Heph::EventHandler handler);
@@ -66,17 +67,11 @@ namespace HephAudio
 		 */
 		Audio(AudioAPI api);
 		
-		Audio(const Audio&) = delete;
-		Audio& operator=(const Audio&) = delete;
-		
-		/** @copydoc destructor */
-		~Audio();
-		
 		/**
-		 * gets the pointer to the native audio instance that's internally used.
+		 * gets the shared pointer to the native audio instance that's internally used.
 		 * 
 		 */
-		Native::NativeAudio* GetNativeAudio() const;
+		std::shared_ptr<Native::NativeAudio> GetNativeAudio() const;
 
 		/** @copydoc HephAudio::Native::NativeAudio::GetAudioDecoder */
 		std::shared_ptr<IAudioDecoder> GetAudioDecoder() const;

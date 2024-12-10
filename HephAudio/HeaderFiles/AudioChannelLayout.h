@@ -329,22 +329,6 @@ namespace HephAudio
 		return lhs;
 	}
 
-	inline constexpr AudioChannelMask operator^(const AudioChannelMask& lhs, const AudioChannelMask& rhs)
-	{
-		return (AudioChannelMask)(((int)lhs) ^ ((int)rhs));
-	}
-
-	inline constexpr AudioChannelMask& operator^=(AudioChannelMask& lhs, const AudioChannelMask& rhs)
-	{
-		lhs = lhs ^ rhs;
-		return lhs;
-	}
-
-	inline constexpr AudioChannelMask operator~(const AudioChannelMask& lhs)
-	{
-		return (AudioChannelMask)(~((int)lhs));
-	}
-
 	/**
 	 * @brief stores information about the channel layout.
 	 *
