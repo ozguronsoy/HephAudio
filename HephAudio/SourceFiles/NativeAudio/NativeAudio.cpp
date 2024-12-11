@@ -12,6 +12,7 @@
 #include "ConsoleLogger.h"
 #include "HephMath.h"
 #include "Exceptions/InvalidArgumentException.h"
+#include "Exceptions/NotFoundException.h"
 
 using namespace Heph;
 
@@ -37,8 +38,7 @@ namespace HephAudio
 		{
 			if (pNewDecoder == nullptr)
 			{
-				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Decoder cannot be null"));
-				return;
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Decoder cannot be null"));
 			}
 			this->pAudioDecoder = pNewDecoder;
 		}
@@ -52,25 +52,24 @@ namespace HephAudio
 		{
 			if (pNewEncoder == nullptr)
 			{
-				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Encoder cannot be null"));
-				return;
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Encoder cannot be null"));
 			}
 			this->pAudioEncoder = pNewEncoder;
 		}
 
 		AudioObject* NativeAudio::Play(const std::filesystem::path& filePath)
 		{
-			return this->Play(filePath, 1u, false);
+			return this->Play(filePath, 1);
 		}
 
 		AudioObject* NativeAudio::Play(const std::filesystem::path& filePath, uint32_t playCount)
 		{
-			return this->Play(filePath, playCount, false);
-		}
-
-		AudioObject* NativeAudio::Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
-		{
 			HEPHAUDIO_LOG("Playing \"" + filePath.filename().string() + "\"", HEPH_CL_INFO);
+
+			if (!std::filesystem::exists(filePath))
+			{
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotFoundException(HEPH_FUNC, "file not found."));
+			}
 
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
@@ -83,40 +82,32 @@ namespace HephAudio
 			audioObject.buffer = this->pAudioDecoder->Decode();
 
 			audioObject.playCount = playCount;
-			audioObject.isPaused = isPaused;
+			audioObject.isPaused = false;
 
 			return &audioObject;
 		}
 
 		AudioObject* NativeAudio::Load(const std::filesystem::path& filePath)
 		{
-			return this->Load(filePath, 1, true);
+			return this->Load(filePath, 1);
 		}
 
 		AudioObject* NativeAudio::Load(const std::filesystem::path& filePath, uint32_t playCount)
 		{
-			return this->Load(filePath, playCount, true);
-		}
-
-		AudioObject* NativeAudio::Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
-		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			AudioObject* pao = this->Play(filePath, playCount, isPaused);
-			if (pao != nullptr && this->isRenderInitialized)
-			{
-				Resampler(this->renderFormat.sampleRate).Process(pao->buffer);
-				ChannelMapper(this->renderFormat.channelLayout).Process(pao->buffer);
-			}
-			return pao;
+			AudioObject* pAudioObject = this->Play(filePath, playCount);
+			pAudioObject->isPaused = true;
+			return pAudioObject;
 		}
 
-		AudioObject* NativeAudio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint16_t sampleRate)
+		AudioObject* NativeAudio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint32_t sampleRate)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 
 			AudioObject& audioObject = this->audioObjects.emplace_back();
 			audioObject.name = name;
 			audioObject.buffer = AudioBuffer(bufferFrameCount, channelLayout, sampleRate);
+			audioObject.isPaused = true;
 
 			return &audioObject;
 		}
@@ -124,11 +115,11 @@ namespace HephAudio
 		bool NativeAudio::DestroyAudioObject(AudioObject* pAudioObject)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			for (auto it = this->audioObjects.begin(); it != this->audioObjects.end(); ++it)
 			{
-				if (pAudioObject == &audioObjects[i])
+				if (pAudioObject == &(*it))
 				{
-					audioObjects.erase(audioObjects.begin() + i);
+					this->audioObjects.erase(it);
 					return true;
 				}
 			}
@@ -138,11 +129,11 @@ namespace HephAudio
 		bool NativeAudio::DestroyAudioObject(const Heph::Guid& audioObjectId)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			for (auto it = this->audioObjects.begin(); it != this->audioObjects.end(); ++it)
 			{
-				if (audioObjects[i].id == audioObjectId)
+				if (it->id == audioObjectId)
 				{
-					audioObjects.erase(audioObjects.begin() + i);
+					this->audioObjects.erase(it);
 					return true;
 				}
 			}
@@ -154,9 +145,9 @@ namespace HephAudio
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			if (pAudioObject != nullptr)
 			{
-				for (size_t i = 0; i < audioObjects.size(); i++)
+				for (const AudioObject& ao : this->audioObjects)
 				{
-					if (pAudioObject == &audioObjects[i])
+					if (pAudioObject == &ao)
 					{
 						return true;
 					}
@@ -168,9 +159,9 @@ namespace HephAudio
 		bool NativeAudio::AudioObjectExists(const Guid& audioObjectId) const
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			for (const AudioObject& ao : this->audioObjects)
 			{
-				if (audioObjects[i].id == audioObjectId)
+				if (ao.id == audioObjectId)
 				{
 					return true;
 				}
@@ -181,22 +172,25 @@ namespace HephAudio
 		AudioObject* NativeAudio::GetAudioObject(size_t index)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			if (index >= audioObjects.size())
+
+			if (index >= this->audioObjects.size())
 			{
-				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
-				return nullptr;
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "Index out of range."));
 			}
-			return &audioObjects[index];
+
+			auto it = this->audioObjects.begin();
+			std::advance(it, index);
+			return &(*it);
 		}
 
 		AudioObject* NativeAudio::GetAudioObject(const Heph::Guid& audioObjectId)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			for (AudioObject& ao : this->audioObjects)
 			{
-				if (audioObjects[i].id == audioObjectId)
+				if (ao.id == audioObjectId)
 				{
-					return &audioObjects[i];
+					return &ao;
 				}
 			}
 			return nullptr;
@@ -205,11 +199,11 @@ namespace HephAudio
 		AudioObject* NativeAudio::GetAudioObject(const std::string& audioObjectName)
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			for (AudioObject& ao : this->audioObjects)
 			{
-				if (audioObjects[i].name == audioObjectName)
+				if (ao.name == audioObjectName)
 				{
-					return &audioObjects[i];
+					return &ao;
 				}
 			}
 			return nullptr;
@@ -325,8 +319,7 @@ namespace HephAudio
 		{
 			if (deviceType == AudioDeviceType::All || deviceType == AudioDeviceType::Null)
 			{
-				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "DeviceType must be either Render or Capture."));
-				return AudioDevice();
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "DeviceType must be either Render or Capture."));
 			}
 
 			std::lock_guard<std::mutex> lockGuard(audioDevicesMutex);
@@ -347,8 +340,7 @@ namespace HephAudio
 
 			if (deviceType == AudioDeviceType::Null)
 			{
-				HEPH_RAISE_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "DeviceType must not be Null."));
-				return result;
+				HEPH_RAISE_AND_THROW_EXCEPTION(this, InvalidArgumentException(HEPH_FUNC, "DeviceType must not be Null."));
 			}
 
 			std::lock_guard<std::mutex> lockGuard(audioDevicesMutex);
@@ -453,13 +445,16 @@ namespace HephAudio
 			const size_t mixedAOCount = GetAOCountToMix();
 			AudioBuffer mixBuffer(frameCount, this->renderFormat.channelLayout, this->renderFormat.sampleRate);
 
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			size_t audioObjectCount = this->audioObjects.size();
+			for (int32_t i = 0; i < audioObjectCount; ++i)
 			{
-				AudioObject* pAudioObject = &audioObjects[i];
+				auto it = this->audioObjects.begin();
+				std::advance(it, i);
 
+				AudioObject* pAudioObject = &(*it);
 				if (!pAudioObject->isPaused)
 				{
-					const double volume = GetFinalAOVolume(pAudioObject) / mixedAOCount;
+					const double volume = this->GetFinalAOVolume(pAudioObject) / mixedAOCount;
 					const Guid audioObjectId = pAudioObject->id;
 
 					AudioRenderEventArgs rArgs(this, pAudioObject, frameCount);
@@ -468,41 +463,25 @@ namespace HephAudio
 
 					for (size_t j = 0; j < frameCount && j < rResult.renderBuffer.FrameCount(); j++)
 					{
-						for (size_t k = 0; k < renderFormat.channelLayout.count; k++)
+						for (size_t k = 0; k < this->renderFormat.channelLayout.count; k++)
 						{
 							mixBuffer[j][k] += rResult.renderBuffer[j][k] * volume;
 						}
 					}
 
-					if (rResult.isFinishedPlaying && AudioObjectExists(audioObjectId))
+					if (rResult.isFinishedPlaying && this->AudioObjectExists(audioObjectId))
 					{
-						if (pAudioObject->playCount == 1) // finish playing.
-						{
-							const std::string audioObjectName = pAudioObject->name;
+						AudioFinishedPlayingEventArgs ofpArgs(this, pAudioObject);
+						pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
+					}
 
-							AudioFinishedPlayingEventArgs ofpArgs(this, pAudioObject, 0);
-							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
-
-							HEPHAUDIO_LOG("Finished playing the file \"" + audioObjectName + "\"", HEPH_CL_INFO);
-
-							if (AudioObjectExists(audioObjectId))
-							{
-								audioObjects.erase(audioObjects.begin() + i);
-								i--;
-							}
-						}
-						else
-						{
-							pAudioObject->playCount--;
-
-							AudioFinishedPlayingEventArgs ofpArgs(this, pAudioObject, pAudioObject->playCount);
-							pAudioObject->OnFinishedPlaying(&ofpArgs, nullptr);
-
-							if (AudioObjectExists(audioObjectId))
-							{
-								pAudioObject->frameIndex = 0;
-							}
-						}
+					// audio object is destroyed during event handling
+					// adjust the loop variables
+					const size_t currentCount = this->audioObjects.size();
+					if (audioObjectCount > currentCount)
+					{
+						audioObjectCount = currentCount;
+						i--;
 					}
 				}
 			}
@@ -516,9 +495,9 @@ namespace HephAudio
 		{
 			std::lock_guard<std::recursive_mutex> lockGuard(this->audioObjectsMutex);
 			size_t result = 0;
-			for (size_t i = 0; i < audioObjects.size(); i++)
+			for (const AudioObject& ao : this->audioObjects)
 			{
-				if (!audioObjects[i].isPaused)
+				if (!ao.isPaused)
 				{
 					result++;
 				}

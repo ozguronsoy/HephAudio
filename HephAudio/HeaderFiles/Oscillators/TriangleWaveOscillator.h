@@ -21,7 +21,7 @@ namespace HephAudio
 		 * 
 		 * @param sampleRate @copydetails sampleRate
 		 */
-		TriangleWaveOscillator(uint32_t sampleRate);
+		explicit TriangleWaveOscillator(uint32_t sampleRate);
 
 		/** @copydoc Oscillator(double,double,uint32_t,double) */
 		TriangleWaveOscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);

@@ -20,7 +20,7 @@ namespace HephAudio
 		SineWindow();
 		
 		/** @copydoc Window(size_t) */
-		SineWindow(size_t size);
+		explicit SineWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

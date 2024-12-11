@@ -24,7 +24,7 @@ namespace HephAudio
 		HannPoissonWindow();
 	
 		/** @copydoc Window(size_t) */
-		HannPoissonWindow(size_t size);
+		explicit HannPoissonWindow(size_t size);
 		
 		/** 
 		 * @copydoc Window(size_t) 

@@ -19,7 +19,7 @@ namespace HephAudio
 		BartlettHannWindow();
 		
 		/** @copydoc Window(size_t) */
-		BartlettHannWindow(size_t size);
+		explicit BartlettHannWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

@@ -17,6 +17,7 @@ namespace HephAudio
 		isPaused(true), playCount(1), volume(1.0), frameIndex(0) 
 	{
 		this->OnRender = HEPHAUDIO_RENDER_HANDLER_DEFAULT;
+		this->OnFinishedPlaying = HEPHAUDIO_FINISHED_PLAYING_HANDLER_DEFAULT;
 	}
 
 	AudioObject::AudioObject(AudioObject&& rhs) noexcept
@@ -77,12 +78,12 @@ namespace HephAudio
 
 	void AudioObject::DefaultRenderHandler(const EventParams& eventParams)
 	{
-		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
-		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
+		AudioRenderEventArgs* pArgs = (AudioRenderEventArgs*)eventParams.pArgs;
+		AudioRenderEventResult* pResult = (AudioRenderEventResult*)eventParams.pResult;
 
-		pRenderResult->renderBuffer = pRenderArgs->pAudioObject->buffer.SubBuffer(pRenderArgs->pAudioObject->frameIndex, pRenderArgs->renderFrameCount);
-		pRenderArgs->pAudioObject->frameIndex += pRenderArgs->renderFrameCount;
-		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
+		pResult->renderBuffer = pArgs->pAudioObject->buffer.SubBuffer(pArgs->pAudioObject->frameIndex, pArgs->renderFrameCount);
+		pArgs->pAudioObject->frameIndex += pArgs->renderFrameCount;
+		pResult->isFinishedPlaying = pArgs->pAudioObject->frameIndex >= pArgs->pAudioObject->buffer.FrameCount();
 	}
 
 	void AudioObject::MatchFormatRenderHandler(const Heph::EventParams& eventParams)
@@ -90,24 +91,38 @@ namespace HephAudio
 		static Resampler resampler;
 		static ChannelMapper channelMapper;
 
-		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
-		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
+		AudioRenderEventArgs* pArgs = (AudioRenderEventArgs*)eventParams.pArgs;
+		AudioRenderEventResult* pResult = (AudioRenderEventResult*)eventParams.pResult;
 
-		const AudioFormatInfo& inputFormat = pRenderArgs->pAudioObject->buffer.FormatInfo();
-		const AudioFormatInfo& renderFormat = pRenderArgs->pNativeAudio->GetRenderFormat();
+		const AudioFormatInfo& inputFormat = pArgs->pAudioObject->buffer.FormatInfo();
+		const AudioFormatInfo& renderFormat = pArgs->pNativeAudio->GetRenderFormat();
 
 		resampler.SetOutputSampleRate(renderFormat.sampleRate);
 		channelMapper.SetTargetLayout(renderFormat.channelLayout);
 
-		const size_t requiredFrameCount = resampler.CalculateRequiredFrameCount(pRenderArgs->renderFrameCount, inputFormat);
-		const size_t advanceSize = resampler.CalculateAdvanceSize(pRenderArgs->renderFrameCount, inputFormat);
+		const size_t requiredFrameCount = resampler.CalculateRequiredFrameCount(pArgs->renderFrameCount, inputFormat);
+		const size_t advanceSize = resampler.CalculateAdvanceSize(pArgs->renderFrameCount, inputFormat);
 
-		pRenderResult->renderBuffer = pRenderArgs->pAudioObject->buffer.SubBuffer(pRenderArgs->pAudioObject->frameIndex, requiredFrameCount);
+		pResult->renderBuffer = pArgs->pAudioObject->buffer.SubBuffer(pArgs->pAudioObject->frameIndex, requiredFrameCount);
 		
-		resampler.Process(pRenderResult->renderBuffer);
-		channelMapper.Process(pRenderResult->renderBuffer);
+		resampler.Process(pResult->renderBuffer);
+		channelMapper.Process(pResult->renderBuffer);
 
-		pRenderArgs->pAudioObject->frameIndex += advanceSize;
-		pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pRenderArgs->pAudioObject->buffer.FrameCount();
+		pArgs->pAudioObject->frameIndex += advanceSize;
+		pResult->isFinishedPlaying = pArgs->pAudioObject->frameIndex >= pArgs->pAudioObject->buffer.FrameCount();
+	}
+
+	void AudioObject::DefaultFinishedPlayingHandler(const Heph::EventParams& eventParams)
+	{
+		AudioFinishedPlayingEventArgs* pArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
+
+		if (pArgs->pAudioObject->playCount == 1)
+		{
+			pArgs->pNativeAudio->DestroyAudioObject(pArgs->pAudioObject);
+		}
+		else
+		{
+			pArgs->pAudioObject->frameIndex = 0;
+		}
 	}
 }

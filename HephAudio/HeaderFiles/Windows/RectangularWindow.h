@@ -17,7 +17,7 @@ namespace HephAudio
 		RectangularWindow();
 		
 		/** @copydoc Window(size_t) */
-		RectangularWindow(size_t size);
+		explicit RectangularWindow(size_t size);
 
 		double operator[](size_t n) const override;
 	};

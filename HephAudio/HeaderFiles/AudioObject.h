@@ -12,19 +12,16 @@
  * indicates the audio object will be played infinitely.
  *
  */
-#define HEPHAUDIO_INFINITE_LOOP 				(0)
+#define HEPHAUDIO_INFINITE_LOOP (0)
 
- /**
-  * @copydoc HephAudio::AudioObject::DefaultRenderHandler
-  *
-  */
-#define HEPHAUDIO_RENDER_HANDLER_DEFAULT 		&HephAudio::AudioObject::DefaultRenderHandler
+ /** @copydoc HephAudio::AudioObject::DefaultRenderHandler */
+#define HEPHAUDIO_RENDER_HANDLER_DEFAULT &HephAudio::AudioObject::DefaultRenderHandler
 
-  /**
-   * @copydoc HephAudio::AudioObject::MatchFormatRenderHandler
-   *
-   */
-#define HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT 	&HephAudio::AudioObject::MatchFormatRenderHandler
+  /** @copydoc HephAudio::AudioObject::MatchFormatRenderHandler */
+#define HEPHAUDIO_RENDER_HANDLER_MATCH_FORMAT &HephAudio::AudioObject::MatchFormatRenderHandler
+
+  /** @copydoc HephAudio::AudioObject::DefaultFinishedPlayingHandler */
+#define HEPHAUDIO_FINISHED_PLAYING_HANDLER_DEFAULT &HephAudio::AudioObject::DefaultFinishedPlayingHandler
 
 namespace HephAudio
 {
@@ -143,5 +140,12 @@ namespace HephAudio
 		 *
 		 */
 		static void MatchFormatRenderHandler(const Heph::EventParams& eventParams);
+
+		/**
+		 * the default handler for the \link HephAudio::AudioObject::OnFinishedPlaying AudioObject::OnFinishedPlaying \endlink event.
+		 * If looping, replays the audio object; otherwise, destroys it.
+		 *
+		 */
+		static void DefaultFinishedPlayingHandler(const Heph::EventParams& eventParams);
 	};
 }

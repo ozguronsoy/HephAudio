@@ -20,7 +20,7 @@ namespace HephAudio
 		NuttallWindow();
 		
 		/** @copydoc Window(size_t) */
-		NuttallWindow(size_t size);
+		explicit NuttallWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

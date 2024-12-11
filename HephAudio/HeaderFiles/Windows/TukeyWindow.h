@@ -24,7 +24,7 @@ namespace HephAudio
 		TukeyWindow();
 
 		/** @copydoc Window(size_t) */
-		TukeyWindow(size_t size);
+		explicit TukeyWindow(size_t size);
 
 		/** 
 		 * @copydoc Window(size_t) 

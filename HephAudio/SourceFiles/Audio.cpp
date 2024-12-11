@@ -18,146 +18,13 @@ using namespace HephAudio::Native;
 
 namespace HephAudio
 {
-	void Audio::SetOnAudioDeviceAddedHandler(EventHandler handler)
-	{
-		this->pNativeAudio->OnAudioDeviceAdded = handler;
-	}
+	Audio::Audio() : Audio(AudioAPI::Default) {}
 
-	void Audio::AddOnAudioDeviceAddedHandler(EventHandler handler)
-	{
-		this->pNativeAudio->OnAudioDeviceAdded += handler;
-	}
-
-	void Audio::SetOnAudioDeviceRemovedHandler(EventHandler handler)
-	{
-		this->pNativeAudio->OnAudioDeviceRemoved = handler;
-	}
-
-	void Audio::AddOnAudioDeviceRemovedHandler(EventHandler handler)
-	{
-		this->pNativeAudio->OnAudioDeviceRemoved += handler;
-	}
-
-	void Audio::SetOnCaptureHandler(EventHandler handler)
-	{
-		this->pNativeAudio->OnCapture = handler;
-	}
-
-	void Audio::AddOnCaptureHandler(EventHandler handler)
-	{
-		this->pNativeAudio->OnCapture += handler;
-	}
-
-	Audio::Audio() : pNativeAudio(nullptr)
-	{
-#if defined(_WIN32)
-
-		if (IsWindowsVistaOrGreater())
-		{
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new WinAudio());
-		}
-		else
-		{
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new WinAudioDS());
-		}
-
-#elif defined(__ANDROID__)
-
-#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new AndroidAudioA());
-
-#elif __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new AndroidAudioSLES());
-
-#else
-
-#error unsupported API level
-
-#endif
-
-#elif defined(__linux__)
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new LinuxAudio());
-
-#elif defined(__APPLE__)
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new AppleAudio());
-
-#else
-
-#error unsupported platform
-
-#endif
-	}
-
-	Audio::Audio(AudioAPI api) : pNativeAudio(nullptr)
-	{
-#if defined(_WIN32)
-
-		switch (api)
-		{
-		case AudioAPI::WASAPI:
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new WinAudio());
-			break;
-		case AudioAPI::DirectSound:
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new WinAudioDS());
-			break;
-		case AudioAPI::MMEAPI:
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new WinAudioMME());
-			break;
-		case AudioAPI::Default:
-		default:
-			this->pNativeAudio =
-				(IsWindowsVistaOrGreater())
-				? (std::shared_ptr<NativeAudio>(new WinAudio()))
-				: (std::shared_ptr<NativeAudio>(new WinAudioDS()));
-			break;
-		}
-
-#elif defined(__ANDROID__)
-
-#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
-
-		switch (api)
-		{
-		case AudioAPI::AAudio:
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new AndroidAudioA());
-			break;
-		case AudioAPI::OpenSLES:
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new AndroidAudioSLES());
-			break;
-		case AudioAPI::Default:
-		default:
-			this->pNativeAudio = std::shared_ptr<NativeAudio>(new AndroidAudioA());
-			break;
-		}
-
-#elif __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new AndroidAudioSLES());
-
-#else
-
-#error unsupported API level
-
-#endif
-
-#elif defined(__linux__)
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new LinuxAudio());
-
-#elif defined(__APPLE__)
-
-		this->pNativeAudio = std::shared_ptr<NativeAudio>(new AppleAudio());
-
-#else
-
-#error unsupported platform
-
-#endif
-	}
+	Audio::Audio(AudioAPI api) 
+		: pNativeAudio(Audio::CreateNativeAudio(api)), 
+		OnAudioDeviceAdded(this->pNativeAudio->OnAudioDeviceAdded),
+		OnAudioDeviceRemoved(this->pNativeAudio->OnAudioDeviceRemoved),
+		OnCapture(this->pNativeAudio->OnCapture) {}
 
 	std::shared_ptr<NativeAudio> Audio::GetNativeAudio() const
 	{
@@ -194,11 +61,6 @@ namespace HephAudio
 		return this->pNativeAudio->Play(filePath, playCount);
 	}
 
-	AudioObject* Audio::Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
-	{
-		return this->pNativeAudio->Play(filePath, playCount, isPaused);
-	}
-
 	AudioObject* Audio::Load(const std::filesystem::path& filePath)
 	{
 		return this->pNativeAudio->Load(filePath);
@@ -209,12 +71,7 @@ namespace HephAudio
 		return this->pNativeAudio->Load(filePath, playCount);
 	}
 
-	AudioObject* Audio::Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused)
-	{
-		return this->pNativeAudio->Load(filePath, playCount, isPaused);
-	}
-
-	AudioObject* Audio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint16_t sampleRate)
+	AudioObject* Audio::CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint32_t sampleRate)
 	{
 		return this->pNativeAudio->CreateAudioObject(name, bufferFrameCount, channelLayout, sampleRate);
 	}
@@ -387,5 +244,65 @@ namespace HephAudio
 	std::vector<AudioDevice> Audio::GetAudioDevices(AudioDeviceType deviceType) const
 	{
 		return this->pNativeAudio->GetAudioDevices(deviceType);
+	}
+
+	std::shared_ptr<Native::NativeAudio> Audio::CreateNativeAudio(AudioAPI api)
+	{
+#if defined(_WIN32)
+
+		switch (api)
+		{
+		case AudioAPI::WASAPI:
+			return std::shared_ptr<NativeAudio>(new WinAudio());
+		case AudioAPI::DirectSound:
+			return std::shared_ptr<NativeAudio>(new WinAudioDS());
+		case AudioAPI::MMEAPI:
+			return std::shared_ptr<NativeAudio>(new WinAudioMME());
+		case AudioAPI::Default:
+		default:
+			return
+				(IsWindowsVistaOrGreater())
+				? (std::shared_ptr<NativeAudio>(new WinAudio()))
+				: (std::shared_ptr<NativeAudio>(new WinAudioDS()));
+		}
+
+#elif defined(__ANDROID__)
+
+#if __ANDROID_API__ >= HEPHAUDIO_ANDROID_AAUDIO_MIN_API_LEVEL
+
+		switch (api)
+		{
+		case AudioAPI::AAudio:
+			return std::shared_ptr<NativeAudio>(new AndroidAudioA());
+		case AudioAPI::OpenSLES:
+			return std::shared_ptr<NativeAudio>(new AndroidAudioSLES());
+		case AudioAPI::Default:
+		default:
+			return std::shared_ptr<NativeAudio>(new AndroidAudioA());
+		}
+
+#elif __ANDROID_API__ >= HEPHAUDIO_ANDROID_OPENSL_MIN_API_LEVEL
+
+		return std::shared_ptr<NativeAudio>(new AndroidAudioSLES());
+
+#else
+
+#error unsupported API level
+
+#endif
+
+#elif defined(__linux__)
+
+		return std::shared_ptr<NativeAudio>(new LinuxAudio());
+
+#elif defined(__APPLE__)
+
+		return std::shared_ptr<NativeAudio>(new AppleAudio());
+
+#else
+
+#error unsupported platform
+
+#endif
 	}
 }

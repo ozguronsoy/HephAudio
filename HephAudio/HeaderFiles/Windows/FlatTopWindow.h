@@ -20,7 +20,7 @@ namespace HephAudio
 		FlatTopWindow();
 		
 		/** @copydoc Window(size_t) */
-		FlatTopWindow(size_t size);
+		explicit FlatTopWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

@@ -19,7 +19,7 @@ namespace HephAudio
 		BlackmanHarrisWindow();
 		
 		/** @copydoc Window(size_t) */
-		BlackmanHarrisWindow(size_t size);
+		explicit BlackmanHarrisWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

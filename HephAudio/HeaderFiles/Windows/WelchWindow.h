@@ -19,7 +19,7 @@ namespace HephAudio
 		WelchWindow();
 		
 		/** @copydoc Window(size_t) */
-		WelchWindow(size_t size);
+		explicit WelchWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

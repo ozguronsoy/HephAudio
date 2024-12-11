@@ -215,13 +215,12 @@ namespace HephAudio
 		}
 
 		std::filesystem::path filePath = this->files[0];
-		AudioObject* pAudioObject = this->stream.GetAudioObject();
 
 	STREAM_CHANGE_FILE:
 		try
 		{
 			this->stream.ChangeFile(filePath);
-			pAudioObject = this->stream.GetAudioObject();
+			AudioObject* pAudioObject = this->stream.GetAudioObject();
 
 			if (!pAudioObject->OnFinishedPlaying.userEventArgs.Exists(HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY))
 			{
@@ -233,14 +232,14 @@ namespace HephAudio
 		catch (const Exception&)
 		{
 			this->files.erase(this->files.begin());
-			
+
 			if (this->files.size() > 0)
 			{
 				HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", trying next file...", HEPH_CL_WARNING);
 				filePath = this->files[0];
 				goto STREAM_CHANGE_FILE;
 			}
-		
+
 			HEPHAUDIO_LOG("Could not play \"" + filePath.string() + "\", playlist finished.", HEPH_CL_WARNING);
 			this->stream.CloseFile();
 		}
@@ -248,9 +247,7 @@ namespace HephAudio
 
 	void AudioPlaylist::OnFinishedPlaying(const EventParams& eventParams)
 	{
-		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 		AudioPlaylist* pPlaylist = (AudioPlaylist*)eventParams.userEventArgs[HEPHAUDIO_PLAYLIST_EVENT_USER_ARG_KEY];
-
 		if (pPlaylist != nullptr)
 		{
 			pPlaylist->Remove(0);

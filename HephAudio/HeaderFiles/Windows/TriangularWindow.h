@@ -21,7 +21,7 @@ namespace HephAudio
 		TriangularWindow();
 		
 		/** @copydoc Window(size_t) */
-		TriangularWindow(size_t size);
+		explicit TriangularWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

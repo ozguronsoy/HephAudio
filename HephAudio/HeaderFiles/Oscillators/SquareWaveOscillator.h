@@ -21,7 +21,7 @@ namespace HephAudio
 		 * 
 		 * @param sampleRate @copydetails sampleRate
 		 */
-		SquareWaveOscillator(uint32_t sampleRate);
+		explicit SquareWaveOscillator(uint32_t sampleRate);
 
 		/** @copydoc Oscillator(double,double,uint32_t,double) */
 		SquareWaveOscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);

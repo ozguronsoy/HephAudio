@@ -137,7 +137,7 @@ namespace HephAudio
 				HEPH_RAISE_AND_THROW_EXCEPTION(this, NotFoundException(HEPH_FUNC, "Could not find the file \"" + newFilePath.string() + "\""));
 			}
 
-			if (this->pAudioObject != nullptr)
+			if (this->pNativeAudio->AudioObjectExists(this->pAudioObject))
 			{
 				this->pAudioObject->name = "(stream)" + newFilePath.filename().string();
 				this->pAudioObject->filePath = newFilePath;
@@ -174,6 +174,8 @@ namespace HephAudio
 			this->pAudioObject->frameIndex = 0;
 			this->pAudioObject->playCount = 1;
 			this->pAudioObject->isPaused = isPaused;
+
+			this->decodedBuffer.Release();
 		}
 
 		if (this->pAudioDecoder != nullptr)
@@ -241,23 +243,23 @@ namespace HephAudio
 		static Resampler resampler;
 		static ChannelMapper channelMapper;
 
-		AudioRenderEventArgs* pRenderArgs = (AudioRenderEventArgs*)eventParams.pArgs;
-		AudioRenderEventResult* pRenderResult = (AudioRenderEventResult*)eventParams.pResult;
+		AudioRenderEventArgs* pArgs = (AudioRenderEventArgs*)eventParams.pArgs;
+		AudioRenderEventResult* pResult = (AudioRenderEventResult*)eventParams.pResult;
 
 		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY];
 		if (pStream != nullptr && pStream->pAudioDecoder != nullptr)
 		{
 			const AudioFormatInfo inputFormat = pStream->pAudioDecoder->GetOutputFormatInfo();
-			const AudioFormatInfo& renderFormat = pRenderArgs->pNativeAudio->GetRenderFormat();
+			const AudioFormatInfo& renderFormat = pArgs->pNativeAudio->GetRenderFormat();
 
 			resampler.SetOutputSampleRate(renderFormat.sampleRate);
 			channelMapper.SetTargetLayout(renderFormat.channelLayout);
 
 			const uint32_t renderSampleRate = renderFormat.sampleRate;
 			const size_t decodedBufferFrameCount = pStream->decodedBuffer.FrameCount();
-			const size_t requiredFrameCount = resampler.CalculateRequiredFrameCount(pRenderArgs->renderFrameCount, inputFormat);
-			const size_t advanceSize = resampler.CalculateAdvanceSize(pRenderArgs->renderFrameCount, inputFormat);
-			const size_t minRequiredFrameCount = FFMAX(requiredFrameCount, pRenderArgs->renderFrameCount);
+			const size_t requiredFrameCount = resampler.CalculateRequiredFrameCount(pArgs->renderFrameCount, inputFormat);
+			const size_t advanceSize = resampler.CalculateAdvanceSize(pArgs->renderFrameCount, inputFormat);
+			const size_t minRequiredFrameCount = FFMAX(requiredFrameCount, pArgs->renderFrameCount);
 
 			size_t remainingFrameCount{ 0 };
 			if (decodedBufferFrameCount > 0)
@@ -276,37 +278,37 @@ namespace HephAudio
 
 			if (renderSampleRate != pStream->formatInfo.sampleRate)
 			{
-				pRenderResult->renderBuffer = pStream->decodedBuffer.SubBuffer(0, requiredFrameCount);
+				pResult->renderBuffer = pStream->decodedBuffer.SubBuffer(0, requiredFrameCount);
 
-				resampler.Process(pRenderResult->renderBuffer);
-				if (pRenderResult->renderBuffer.FrameCount() != pRenderArgs->renderFrameCount)
+				resampler.Process(pResult->renderBuffer);
+				if (pResult->renderBuffer.FrameCount() != pArgs->renderFrameCount)
 				{
-					pRenderResult->renderBuffer.Resize(pRenderArgs->renderFrameCount);
+					pResult->renderBuffer.Resize(pArgs->renderFrameCount);
 				}
 
 				pStream->decodedBuffer.Cut(0, advanceSize);
 			}
 			else
 			{
-				pRenderResult->renderBuffer = pStream->decodedBuffer.SubBuffer(0, pRenderArgs->renderFrameCount);
-				pStream->decodedBuffer.Cut(0, pRenderArgs->renderFrameCount);
+				pResult->renderBuffer = pStream->decodedBuffer.SubBuffer(0, pArgs->renderFrameCount);
+				pStream->decodedBuffer.Cut(0, pArgs->renderFrameCount);
 			}
 
-			channelMapper.Process(pRenderResult->renderBuffer);
+			channelMapper.Process(pResult->renderBuffer);
 
-			pRenderArgs->pAudioObject->frameIndex += advanceSize;
-			pRenderResult->isFinishedPlaying = pRenderArgs->pAudioObject->frameIndex >= pStream->frameCount;
+			pArgs->pAudioObject->frameIndex += advanceSize;
+			pResult->isFinishedPlaying = pArgs->pAudioObject->frameIndex >= pStream->frameCount;
 		}
 	}
 
 	void AudioStream::OnFinishedPlaying(const EventParams& eventParams)
 	{
-		AudioFinishedPlayingEventArgs* pFinishedPlayingEventArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
+		AudioFinishedPlayingEventArgs* pArgs = (AudioFinishedPlayingEventArgs*)eventParams.pArgs;
 
 		AudioStream* pStream = (AudioStream*)eventParams.userEventArgs[HEPHAUDIO_STREAM_EVENT_USER_ARG_KEY];
 		if (pStream != nullptr)
 		{
-			if (pFinishedPlayingEventArgs->remainingLoopCount == 0)
+			if (pArgs->pAudioObject->playCount == 1)
 			{
 				pStream->CloseFile();
 			}

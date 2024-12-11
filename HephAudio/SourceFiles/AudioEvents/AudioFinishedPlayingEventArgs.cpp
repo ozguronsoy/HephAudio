@@ -2,6 +2,6 @@
 
 namespace HephAudio
 {
-	AudioFinishedPlayingEventArgs::AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, uint32_t remainingLoopCount)
-		: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject), remainingLoopCount(remainingLoopCount) {}
+	AudioFinishedPlayingEventArgs::AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject)
+		: AudioEventArgs(pNativeAudio), pAudioObject(pAudioObject) {}
 }

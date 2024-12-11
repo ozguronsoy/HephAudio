@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <list>
 #include <thread>
 #include <mutex>
 
@@ -56,7 +57,7 @@ namespace HephAudio
 			 * a list of audio objects.
 			 * 
 			 */
-			std::vector<AudioObject> audioObjects;
+			std::list<AudioObject> audioObjects;
 
 			/**
 			 * a list of audio devices present in the system.
@@ -168,7 +169,7 @@ namespace HephAudio
 			Heph::Event OnAudioDeviceRemoved;
 
 			/**
-			 * raised when sufficient amount (typically 10 ms) audio data is captured.
+			 * raised when sufficient amount of audio data is captured.
 			 * 
 			 */
 			Heph::Event OnCapture;
@@ -226,18 +227,9 @@ namespace HephAudio
 			 */
 			AudioObject* Play(const std::filesystem::path& filePath, uint32_t playCount);
 
-			/**
-			 * reads the file, then starts playing it.
-			 * 
-			 * @param filePath path of the file which will be played.
-			 * @param playCount number of times the file will be played.
-			 * @param isPaused indicates whether to start playing the audio data after reading it to memory.
-			 * @return pointer to the audio object instance.
-			 */
-			AudioObject* Play(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused);
 
 			/**
-			 * reads the file and converts the audio data to the render format but does not start playing it.
+			 * reads the file but does not start playing it.
 			 * 
 			 * @param filePath path of the file which will be loaded.
 			 * @return pointer to the audio object instance.
@@ -245,23 +237,13 @@ namespace HephAudio
 			AudioObject* Load(const std::filesystem::path& filePath);
 
 			/**
-			 * reads the file and converts the audio data to the render format but does not start playing it.
+			 * reads the file but does not start playing it.
 			 * 
 			 * @param filePath path of the file which will be loaded.
 			 * @param playCount number of times the file will be played.
 			 * @return pointer to the audio object instance.
 			 */			
 			AudioObject* Load(const std::filesystem::path& filePath, uint32_t playCount);
-
-			/**
-			 * reads the file and converts the audio data to the render format but does not start playing it.
-			 * 
-			 * @param filePath path of the file which will be loaded.
-			 * @param playCount number of times the file will be played.
-			 * @param isPaused indicates whether to start playing the audio data after loading it.
-			 * @return pointer to the audio object instance.
-			 */
-			AudioObject* Load(const std::filesystem::path& filePath, uint32_t playCount, bool isPaused);
 
 			/**
 			 * creates an audio object with the provided buffer info.
@@ -272,7 +254,7 @@ namespace HephAudio
 			 * @param sampleRate sample rate of the buffer.
 			 * @return pointer to the audio object instance.
 			 */
-			AudioObject* CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint16_t sampleRate);
+			AudioObject* CreateAudioObject(const std::string& name, size_t bufferFrameCount, AudioChannelLayout channelLayout, uint32_t sampleRate);
 
 			/**
 			 * destroys the audio object.

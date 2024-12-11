@@ -28,7 +28,7 @@ namespace HephAudio
 		 * 
 		 * @param size @copydetails size
 		 */
-		Window(size_t size);
+		explicit Window(size_t size);
 
 	public:
 		/** @copydoc destructor */

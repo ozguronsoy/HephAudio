@@ -20,7 +20,7 @@ namespace HephAudio
 		HannWindow();
 		
 		/** @copydoc Window(size_t) */
-		HannWindow(size_t size);
+		explicit HannWindow(size_t size);
 
 		double operator[](size_t n) const override;
 		void SetSize(size_t newSize) override;

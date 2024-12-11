@@ -21,7 +21,7 @@ namespace HephAudio
 		 * 
 		 * @param sampleRate @copydetails sampleRate
 		 */
-		SawToothWaveOscillator(uint32_t sampleRate);
+		explicit SawToothWaveOscillator(uint32_t sampleRate);
 
 		/** @copydoc Oscillator(double,double,uint32_t,double) */
 		SawToothWaveOscillator(double peakAmplitude, double frequency, uint32_t sampleRate, double phase_rad);

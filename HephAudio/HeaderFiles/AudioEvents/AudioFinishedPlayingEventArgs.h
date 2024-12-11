@@ -19,20 +19,12 @@ namespace HephAudio
 		 */
 		AudioObject* pAudioObject;
 
-		/**
-		 * number of loops remaining.
-		 * Number of times the audio object will be played again.
-		 * 
-		 */
-		uint32_t remainingLoopCount;
-
 		/** 
 		 * @copydoc constructor
 		 * 
 		 * @param pNativeAudio @copydetails AudioEventArgs::pNativeAudio
 		 * @param pAudioObject @copydetails pAudioObject
-		 * @param remainingLoopCount @copydetails remainingLoopCount
 		 */
-		AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject, uint32_t remainingLoopCount);
+		AudioFinishedPlayingEventArgs(Native::NativeAudio* pNativeAudio, AudioObject* pAudioObject);
 	};
 }

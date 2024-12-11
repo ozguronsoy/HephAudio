@@ -22,7 +22,7 @@ namespace HephAudio
 		GaussianWindow();
 	
 		/** @copydoc Window(size_t) */
-		GaussianWindow(size_t size);
+		explicit GaussianWindow(size_t size);
 		
 		/** 
 		 * @copydoc Window(size_t) 
