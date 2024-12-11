@@ -21,22 +21,26 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Configure CMake
+        working-directory: ${{github.workspace}}
         run: > 
-          cmake -B ${{github.workspace}}/build 
+          cmake
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DENABLE_SHARED=On
+          -DENABLE_TESTS=On
           -DCMAKE_CXX_FLAGS='-w'
-          -S ${{ github.workspace }}
+          .
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        working-directory: ${{github.workspace}}
+        run: cmake --build .
+
+      - name: Install
+        working-directory: ${{github.workspace}}
+        run: cmake --install .
 
       - name: Test
-        working-directory: ${{github.workspace}}/build
-        run: ctest -C ${{env.BUILD_TYPE}}
-
-      - name: Cleanup
-        run: C:\msys64\usr\bin\bash.exe -lc "rm -rf build"
+        working-directory: ${{github.workspace}}
+        run: ./hephaudio_test.exe
         
