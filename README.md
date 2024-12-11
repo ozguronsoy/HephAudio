@@ -31,7 +31,7 @@ HephAudio is a cross-platform audio library that provides:<br>
 
 ### Install Dependencies
 
-- Install [CMake](https://cmake.org/download/) 3.25.0 or higher.<br>
+- Install [CMake](https://cmake.org/download/) 3.28.0 or higher.<br>
 - Install ALSA development library for **Linux**.<br>
 - build FFmpeg and libmysofa for **macOS** and **iOS**.<br>
 
@@ -50,7 +50,7 @@ HephAudio is a cross-platform audio library that provides:<br>
 
 An example cmake file:
 ```
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
 
 # your project name
 project("my_application")
@@ -135,7 +135,7 @@ endif()
 An example cmake file:
 
 ```
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
 
 # your project name
 project("my_application")

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.28)
 
 set(HEPHAUDIO_VERSION_MAJOR 3)
 set(HEPHAUDIO_VERSION_MINOR 1)
@@ -364,11 +364,6 @@ if (ENABLE_TESTS)
         ${HEPHAUDIO_LINK_LIBS}
         gtest 
         gtest_main
-    )
-
-    install(
-        TARGETS ${HEPHAUDIO_TEST} 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}
     )
 
 endif ()

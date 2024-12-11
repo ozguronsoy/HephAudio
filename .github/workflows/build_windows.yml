@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build_msvc:
+  msvc:
     runs-on: windows-latest
 
     steps:
@@ -27,6 +27,9 @@ jobs:
           -DCMAKE_C_COMPILER=cl
           -DCMAKE_CXX_COMPILER=cl
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${{github.workspace}}
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=${{github.workspace}}
+          -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=${{github.workspace}}
           -DENABLE_TESTS=On
           -DCMAKE_CXX_FLAGS='-w'
           .
