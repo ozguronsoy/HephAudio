@@ -45,16 +45,6 @@ jobs:
         working-directory: ${{github.workspace}}
         run: ./hephaudio_test
 
-      - name: (clang) Configure CMake
-        run: > 
-          cmake
-          -DCMAKE_C_COMPILER=clang
-          -DCMAKE_CXX_COMPILER=clang++
-          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          -DENABLE_TESTS=On
-          -DCMAKE_CXX_FLAGS='-w'
-          .
-
   build_clang:
     runs-on: ubuntu-latest
     steps:
@@ -80,7 +70,7 @@ jobs:
 
       - name: Install
         working-directory: ${{github.workspace}}
-        run: sudo cmake --install .
+        run: cmake --install .
 
       - name: Test
         working-directory: ${{github.workspace}}
