@@ -18,13 +18,13 @@
  * minor part of the version.
  *
 */
-#define HEPHAUDIO_VERSION_MINOR	0
+#define HEPHAUDIO_VERSION_MINOR	1
 
 /**
  * patch part of the version.
  *
 */
-#define HEPHAUDIO_VERSION_PATCH	7
+#define HEPHAUDIO_VERSION_PATCH	0
 
 /**
  * full version as string litteral.
@@ -178,7 +178,7 @@ namespace HephAudio
 	 */
 	inline double GainToDecibel(double gain)
 	{
-		return gain == 0 ? -120.0 : 20.0 * log10(abs(gain));
+		return (gain == 0) ? (-120.0) : (20.0 * log10(fabs(gain)));
 	}
 
 	/**
