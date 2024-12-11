@@ -102,25 +102,25 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
         
         install(
             DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/
-            DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg/
+            DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg
             FILES_MATCHING 
             PATTERN "*.lib"
             PATTERN "dlls" EXCLUDE
         )
         install(
             FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/zlib.lib 
-            DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+            DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
         )
 
         if (DEFINED MSVC)
             install(
                 FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/msvc/mysofa.lib 
-                DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+                DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
             )
         else()
             install(
                 FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/mingw/mysofa.lib 
-                DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+                DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
             )
         endif()
 
@@ -128,14 +128,14 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/windows/dlls/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}
         FILES_MATCHING
         PATTERN "*.dll"
     )
     
     install(
         FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/windows/dlls/zlib.dll 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
@@ -172,12 +172,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
 
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/android/${CMAKE_ANDROID_ARCH_ABI}/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg
     )
     
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/android/${CMAKE_ANDROID_ARCH_ABI}/
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -197,12 +197,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH} 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg
     )
     
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -223,12 +223,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg
     )
     
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/macos/
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
     )
 
 elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
@@ -249,12 +249,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
 
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/ffmpeg
     )
     
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/ios/
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/libmysofa
     )
 
 else()
@@ -293,38 +293,38 @@ if (ENABLE_STATIC OR ENABLE_SHARED)
     
     install(
         TARGETS ${CMAKE_PROJECT_NAME} 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}
     )
 
     install(
         TARGETS ${CMAKE_PROJECT_NAME} 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/lib
     )
     
     install(
         FILES ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/default.sofa 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}
     )
     install(
         FILES ${CMAKE_CURRENT_LIST_DIR}/LICENSE.md 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}
     )
     
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephCommon/HeaderFiles/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/HephCommon/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/HephCommon
     )
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/HephAudio/HeaderFiles/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/HephAudio/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/HephAudio
     )
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/include/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/ffmpeg/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/ffmpeg
     )
     install(
         DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/include/ 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/libmysofa/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}/include/libmysofa
     )
 
 endif ()
@@ -367,7 +367,7 @@ if (ENABLE_TESTS)
 
     install(
         TARGETS ${HEPHAUDIO_TEST} 
-        DESTINATION ${HEPHAUDIO_BUILD_DIR}/
+        DESTINATION ${HEPHAUDIO_BUILD_DIR}
     )
 
 endif ()
