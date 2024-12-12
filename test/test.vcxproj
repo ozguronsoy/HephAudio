@@ -122,6 +122,7 @@
     <ClCompile Include="HephCommon\EventTest.cpp" />
     <ClCompile Include="HephCommon\HephMathTest.cpp" />
     <ClCompile Include="HephCommon\HephSharedTest.cpp" />
+    <ClCompile Include="HephCommon\StopwatchTest.cpp" />
     <ClCompile Include="HephCommon\StringHelpersTest.cpp" />
     <ClCompile Include="HephCommon\UserEventArgsTest.cpp" />
   </ItemGroup>

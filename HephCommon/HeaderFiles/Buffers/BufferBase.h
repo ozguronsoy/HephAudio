@@ -214,7 +214,7 @@ namespace Heph
 			}
 			else if (rhs > 0)
 			{
-				(void)std::memcpy(this->pData, this->pData + rhs, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
+				(void)std::memmove(this->pData, this->pData + rhs, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
 				BufferBase::Initialize(this->pData + this->size - rhs, this->pData + this->size);
 			}
 
@@ -265,7 +265,7 @@ namespace Heph
 			}
 			else if (rhs > 0)
 			{
-				(void)std::memcpy(this->pData + rhs, this->pData, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
+				(void)std::memmove(this->pData + rhs, this->pData, this->SizeAsByte() - BufferBase::SizeAsByte(rhs));
 				BufferBase::Initialize(this->pData, this->pData + rhs);
 			}
 			return *(Tself*)this;
@@ -645,12 +645,12 @@ namespace Heph
 
 				if (pThisData == pRhsData)
 				{
-					(void)std::memcpy(((uint8_t*)pResultData) + rhsSize_byte, pResultData, thisSize_byte);
-					(void)std::memcpy(pResultData, ((uint8_t*)pResultData) + rhsSize_byte, rhsSize_byte);
+					(void)std::memmove(((uint8_t*)pResultData) + rhsSize_byte, pResultData, thisSize_byte);
+					(void)std::memmove(pResultData, ((uint8_t*)pResultData) + rhsSize_byte, rhsSize_byte);
 				}
 				else
 				{
-					(void)std::memcpy(((uint8_t*)pResultData) + rhsSize_byte, pThisData, thisSize_byte);
+					(void)std::memmove(((uint8_t*)pResultData) + rhsSize_byte, pResultData, thisSize_byte);
 					(void)std::memcpy(pResultData, pRhsData, rhsSize_byte);
 				}
 
@@ -676,7 +676,7 @@ namespace Heph
 
 				if (pThisData == pRhsData)
 				{
-					(void)std::memcpy(((uint8_t*)pResultData) + thisSize_byte, pResultData, rhsSize_byte);
+					(void)std::memmove(((uint8_t*)pResultData) + thisSize_byte, pResultData, rhsSize_byte);
 				}
 				else
 				{
@@ -717,20 +717,20 @@ namespace Heph
 
 				if (pThisData == pRhsData)
 				{
-					(void)std::memcpy(((uint8_t*)pResultData) + index_byte + rhsSize_byte, ((uint8_t*)pResultData) + index_byte, thisSize_byte - index_byte);
+					(void)std::memmove(((uint8_t*)pResultData) + index_byte + rhsSize_byte, ((uint8_t*)pResultData) + index_byte, thisSize_byte - index_byte);
 					if (rhsSize_byte > index_byte)
 					{
-						(void)std::memcpy(((uint8_t*)pResultData) + index_byte, pResultData, index_byte);
-						(void)std::memcpy(((uint8_t*)pResultData) + 2 * index_byte, ((uint8_t*)pResultData) + index_byte + rhsSize_byte, rhsSize_byte - index_byte);
+						(void)std::memmove(((uint8_t*)pResultData) + index_byte, pResultData, index_byte);
+						(void)std::memmove(((uint8_t*)pResultData) + 2 * index_byte, ((uint8_t*)pResultData) + index_byte + rhsSize_byte, rhsSize_byte - index_byte);
 					}
 					else
 					{
-						(void)std::memcpy(((uint8_t*)pResultData) + index_byte, pResultData, rhsSize_byte);
+						(void)std::memmove(((uint8_t*)pResultData) + index_byte, pResultData, rhsSize_byte);
 					}
 				}
 				else
 				{
-					(void)std::memcpy(((uint8_t*)pResultData) + index_byte + rhsSize_byte, ((uint8_t*)pResultData) + index_byte, thisSize_byte - index_byte);
+					(void)std::memmove(((uint8_t*)pResultData) + index_byte + rhsSize_byte, ((uint8_t*)pResultData) + index_byte, thisSize_byte - index_byte);
 					(void)std::memcpy(((uint8_t*)pResultData) + index_byte, pRhsData, rhsSize_byte);
 				}
 
