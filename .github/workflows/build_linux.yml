@@ -20,7 +20,9 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Install libasound2-dev
-        run: sudo apt install -y libasound2-dev
+        run: >
+          sudo apt update &&
+          sudo apt install -y libasound2-dev
 
       - name: Configure CMake
         working-directory: ${{github.workspace}}
@@ -30,7 +32,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=g++
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DENABLE_TESTS=On
-          -DCMAKE_CXX_FLAGS='-w'
+          -DCMAKE_CXX_FLAGS='-w -O2'
           .
 
       - name: Build
@@ -51,7 +53,9 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Install libasound2-dev
-        run: sudo apt install -y libasound2-dev
+        run: > 
+          sudo apt update &&
+          sudo apt install -y libasound2-dev
 
       - name: Configure CMake
         working-directory: ${{github.workspace}}
@@ -61,7 +65,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=clang++
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DENABLE_TESTS=On
-          -DCMAKE_CXX_FLAGS='-w'
+          -DCMAKE_CXX_FLAGS='-w -O2'
           .
 
       - name: Build

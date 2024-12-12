@@ -189,10 +189,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/linux/libmysofa.so
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavcodec.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavfilter.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavformat.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavdevice.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libavutil.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libswresample.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/linux/${TARGET_ARCH}/libswscale.so
     )
 
     install(
@@ -215,10 +217,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/macos/libmysofa.so
 
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavcodec.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavfilter.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavformat.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavdevice.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libavutil.so
         ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libswresample.so
+        ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/macos/libswscale.so
     )
 
     install(
@@ -241,10 +245,12 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "iOS")
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/libmysofa/lib/ios/libmysofa.so
 
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavcodec.so
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavfilter.so
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavformat.so
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavdevice.so
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libavutil.so
             ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libswresample.so
+            ${CMAKE_CURRENT_LIST_DIR}/dependencies/ffmpeg/lib/ios/libswscale.so
     )
 
     install(
@@ -264,8 +270,6 @@ else()
 endif ()
 
 if (ENABLE_STATIC OR ENABLE_SHARED)
-
-    add_compile_options(-w -O3)
 
     if (ENABLE_SHARED)
         add_definitions(-DHEPH_SHARED_LIB -DHEPH_EXPORTS)
