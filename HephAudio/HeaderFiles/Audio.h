@@ -156,11 +156,14 @@ namespace HephAudio
 		/** @copydoc HephAudio::Native::NativeAudio::InitializeRender() */
 		void InitializeRender();
 
-		/** @copydoc HephAudio::Native::NativeAudio::InitializeRender(AudioChannelLayout,uint32_t) */
-		void InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate);
+		/** @copydoc HephAudio::Native::NativeAudio::InitializeRender(const AudioChannelLayout&,uint32_t) */
+		void InitializeRender(const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 		/** @copydoc HephAudio::Native::NativeAudio::InitializeRender(AudioFormatInfo) */
 		void InitializeRender(AudioFormatInfo format);
+
+		/** @copydoc HephAudio::Native::NativeAudio::InitializeRender(AudioDevice*,const AudioChannelLayout&,uint32_t) */
+		void InitializeRender(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 		/** @copydoc HephAudio::Native::NativeAudio::InitializeRender(AudioDevice*,AudioFormatInfo) */
 		void InitializeRender(AudioDevice* device, AudioFormatInfo format);
@@ -171,11 +174,14 @@ namespace HephAudio
 		/** @copydoc HephAudio::Native::NativeAudio::InitializeCapture() */
 		void InitializeCapture();
 
-		/** @copydoc HephAudio::Native::NativeAudio::InitializeCapture(AudioChannelLayout,uint32_t) */
-		void InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate);
+		/** @copydoc HephAudio::Native::NativeAudio::InitializeCapture(const AudioChannelLayout&,uint32_t) */
+		void InitializeCapture(const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 		/** @copydoc HephAudio::Native::NativeAudio::InitializeCapture(AudioFormatInfo) */
 		void InitializeCapture(AudioFormatInfo format);
+
+		/** @copydoc HephAudio::Native::NativeAudio::InitializeCapture(AudioDevice*,const AudioChannelLayout&,uint32_t) */
+		void InitializeCapture(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 		/** @copydoc HephAudio::Native::NativeAudio::InitializeCapture(AudioDevice*,AudioFormatInfo) */
 		void InitializeCapture(AudioDevice* device, AudioFormatInfo format);

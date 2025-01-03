@@ -7,7 +7,7 @@ using namespace Heph;
 
 namespace HephAudio
 {
-	OlaEffect::OlaEffect() : OlaEffect(0) {}
+	OlaEffect::OlaEffect() : OlaEffect(512) {}
 
 	OlaEffect::OlaEffect(size_t hopSize) : OlaEffect(hopSize, HannWindow(hopSize * 4)) {}
 

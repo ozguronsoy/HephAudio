@@ -166,7 +166,7 @@ namespace HephAudio
 		this->pNativeAudio->InitializeRender();
 	}
 
-	void Audio::InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate)
+	void Audio::InitializeRender(const AudioChannelLayout& channelLayout, uint32_t sampleRate)
 	{
 		this->pNativeAudio->InitializeRender(channelLayout, sampleRate);
 	}
@@ -174,6 +174,11 @@ namespace HephAudio
 	void Audio::InitializeRender(AudioFormatInfo format)
 	{
 		this->pNativeAudio->InitializeRender(format);
+	}
+
+	void Audio::InitializeRender(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
+	{
+		this->pNativeAudio->InitializeRender(device, channelLayout, sampleRate);
 	}
 
 	void Audio::InitializeRender(AudioDevice* device, AudioFormatInfo format)
@@ -191,7 +196,7 @@ namespace HephAudio
 		this->pNativeAudio->InitializeCapture();
 	}
 
-	void Audio::InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate)
+	void Audio::InitializeCapture(const AudioChannelLayout& channelLayout, uint32_t sampleRate)
 	{
 		this->pNativeAudio->InitializeCapture(channelLayout, sampleRate);
 	}
@@ -199,6 +204,11 @@ namespace HephAudio
 	void Audio::InitializeCapture(AudioFormatInfo format)
 	{
 		this->pNativeAudio->InitializeCapture(format);
+	}
+
+	void Audio::InitializeCapture(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
+	{
+		this->pNativeAudio->InitializeCapture(device, channelLayout, sampleRate);
 	}
 
 	void Audio::InitializeCapture(AudioDevice* device, AudioFormatInfo format)

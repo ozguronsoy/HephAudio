@@ -255,7 +255,7 @@ namespace HephAudio
 			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(HEPHAUDIO_CH_LAYOUT_STEREO, 48000));
 		}
 
-		void NativeAudio::InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate)
+		void NativeAudio::InitializeRender(const AudioChannelLayout& channelLayout, uint32_t sampleRate)
 		{
 			this->InitializeRender(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate));
 		}
@@ -265,12 +265,17 @@ namespace HephAudio
 			this->InitializeRender(nullptr, format);
 		}
 
+		void NativeAudio::InitializeRender(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
+		{
+			this->InitializeRender(device, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate));
+		}
+
 		void NativeAudio::InitializeCapture()
 		{
 			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(HEPHAUDIO_CH_LAYOUT_STEREO, 48000));
 		}
 
-		void NativeAudio::InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate)
+		void NativeAudio::InitializeCapture(const AudioChannelLayout& channelLayout, uint32_t sampleRate)
 		{
 			this->InitializeCapture(nullptr, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate));
 		}
@@ -278,6 +283,11 @@ namespace HephAudio
 		void NativeAudio::InitializeCapture(AudioFormatInfo format)
 		{
 			this->InitializeCapture(nullptr, format);
+		}
+
+		void NativeAudio::InitializeCapture(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate)
+		{
+			this->InitializeCapture(device, HEPHAUDIO_INTERNAL_FORMAT(channelLayout, sampleRate));
 		}
 
 		AudioDevice NativeAudio::GetAudioDeviceById(const std::string& deviceId) const

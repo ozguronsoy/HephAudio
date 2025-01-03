@@ -387,7 +387,7 @@ namespace HephAudio
 			 * @param channelLayout channel layout of the render format.
 			 * @param sampleRate sample rate of the render format.
 			 */
-			void InitializeRender(AudioChannelLayout channelLayout, uint32_t sampleRate);
+			void InitializeRender(const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 			/**
 			 * initializes rendering with the default device and the provided format.
@@ -395,6 +395,15 @@ namespace HephAudio
 			 * @param format render format.
 			 */
 			void InitializeRender(AudioFormatInfo format);
+
+			/**
+			 * initializes rendering with the provided device and the provided format.
+			 *
+			 * @param device pointer to the audio render device.
+			 * @param channelLayout channel layout of the render format.
+			 * @param sampleRate sample rate of the render format.
+			 */
+			void InitializeRender(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 			/**
 			 * initializes rendering with the provided device and the provided format.
@@ -422,7 +431,7 @@ namespace HephAudio
 			 * @param channelLayout channel layout of the capture format.
 			 * @param sampleRate sample rate of the capture format.
 			 */
-			void InitializeCapture(AudioChannelLayout channelLayout, uint32_t sampleRate);
+			void InitializeCapture(const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 			/**
 			 * initializes capturing with the default device and the provided format.
@@ -430,6 +439,15 @@ namespace HephAudio
 			 * @param format capture format.
 			 */
 			void InitializeCapture(AudioFormatInfo format);
+
+			/**
+			 * initializes capturing with the provided device and the provided format.
+			 *
+			 * @param device pointer to the audio capture device.
+			 * @param channelLayout channel layout of the capture format.
+			 * @param sampleRate sample rate of the capture format.
+			 */
+			void InitializeCapture(AudioDevice* device, const AudioChannelLayout& channelLayout, uint32_t sampleRate);
 
 			/**
 			 * initializes capturing with the provided device and the provided format.
